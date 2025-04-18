@@ -1,6 +1,6 @@
 package com.czy.post.mapper.mysql;
 
-import com.czy.api.domain.Do.post.PostInfoDo;
+import com.czy.api.domain.Do.post.post.PostInfoDo;
 import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 

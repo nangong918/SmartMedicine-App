@@ -1,4 +1,4 @@
-package com.czy.api.domain.Do.post;
+package com.czy.api.domain.Do.post.post;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

@@ -1,6 +1,6 @@
 package com.czy.post.mapper.es;
 
-import com.czy.api.domain.Do.post.PostDetailEsDo;
+import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;

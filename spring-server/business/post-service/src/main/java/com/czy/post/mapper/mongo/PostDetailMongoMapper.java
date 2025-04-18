@@ -1,6 +1,6 @@
 package com.czy.post.mapper.mongo;
 
-import com.czy.api.domain.Do.post.PostDetailDo;
+import com.czy.api.domain.Do.post.post.PostDetailDo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

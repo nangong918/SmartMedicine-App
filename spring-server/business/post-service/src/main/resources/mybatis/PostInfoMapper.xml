@@ -23,13 +23,13 @@
     <delete id="deletePostInfoDoById">
         DELETE FROM post_info WHERE id = #{id}
     </delete>
-    <select id="getPostInfoDoById" resultType="com.czy.api.domain.Do.post.PostInfoDo">
+    <select id="getPostInfoDoById" resultType="com.czy.api.domain.Do.post.post.PostInfoDo">
         SELECT
         <include refid="doDoColumns"/>
         FROM post_info
         WHERE id = #{id}
     </select>
-    <select id="getPostInfoDoListByIdList" resultType="com.czy.api.domain.Do.post.PostInfoDo">
+    <select id="getPostInfoDoListByIdList" resultType="com.czy.api.domain.Do.post.post.PostInfoDo">
         SELECT
         <include refid="doDoColumns"/>
         FROM post_info
