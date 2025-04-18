@@ -24,4 +24,6 @@ public class PostInfoDo {
     private Long collectCount = 0L;
     // 评论数；not null
     private Long commentCount = 0L;
+    // 转发数量
+    private Long forwardCount = 0L;
 }

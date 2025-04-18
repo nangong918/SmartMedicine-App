@@ -8,7 +8,8 @@
         release_timestamp,
         like_count,
         collect_count,
-        comment_count
+        comment_count,
+        forward_count
     </sql>
     <insert id="insertPostInfoDo">
         INSERT INTO post_info
@@ -16,7 +17,7 @@
         VALUES
         (#{id}, #{authorId},
          #{releaseTimestamp}, #{likeCount},
-         #{collectCount}, #{commentCount})
+         #{collectCount}, #{commentCount}, #{forwardCount})
     </insert>
     <insert id="insertPostInfoDoList">
         INSERT INTO post_info
@@ -25,7 +26,8 @@
         <foreach collection="list" item="item" index="index" open="(" separator="),(" close=")">
             #{item.id}, #{item.authorId},
             #{item.releaseTimestamp}, #{item.likeCount},
-            #{item.collectCount}, #{item.commentCount}
+            #{item.collectCount}, #{item.commentCount},
+            #{forwardCount}
         </foreach>
     </insert>
     <update id="updatePostInfoDoById">
@@ -35,7 +37,8 @@
         release_timestamp = #{releaseTimestamp},
         like_count = #{likeCount},
         collect_count = #{collectCount},
-        comment_count = #{commentCount}
+        comment_count = #{commentCount},
+        forward_count = #{forwardCount}
         WHERE id = #{id}
     </update>
     <delete id="deletePostInfoDoById">

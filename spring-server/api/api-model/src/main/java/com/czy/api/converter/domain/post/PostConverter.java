@@ -48,6 +48,7 @@ public interface PostConverter {
     @Mapping(source = "likeCount", target = "likeCount")
     @Mapping(source = "collectCount", target = "collectCount")
     @Mapping(source = "commentCount", target = "commentCount")
+    @Mapping(source = "forwardCount", target = "forwardCount")
     PostInfoDo toMysqlDo(PostAo postAo);
 
     default PostInfoDo toMysqlDo(PostAo postAo, Long id){
@@ -84,6 +85,7 @@ public interface PostConverter {
             postAo.setLikeCount(postInfoDo.getLikeCount());
             postAo.setCollectCount(postInfoDo.getCollectCount());
             postAo.setCommentCount(postInfoDo.getCommentCount());
+            postAo.setForwardCount(postInfoDo.getForwardCount());
         }
         return postAo;
     }

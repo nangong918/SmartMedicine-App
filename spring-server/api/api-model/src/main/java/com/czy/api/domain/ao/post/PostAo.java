@@ -26,4 +26,6 @@ public class PostAo {
     private Long collectCount;
     // 评论数；not null
     private Long commentCount;
+    // 转发数量
+    private Long forwardCount;
 }
