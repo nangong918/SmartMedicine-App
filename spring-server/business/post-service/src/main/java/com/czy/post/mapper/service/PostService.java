@@ -20,9 +20,12 @@ public interface PostService {
     // 删除
     void deletePost(Long postId);
 
-    // 更改
+    // 更改完全
     void updatePostFirst(PostAo postAo, Long postId);
     void updatePostAfterOss(Long postId);
+
+    // 局部更改
+    void updatePostInfo(PostAo postAo, Long postId);
 
     // 查询
     PostAo findPostById(Long postId);

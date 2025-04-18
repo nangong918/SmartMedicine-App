@@ -125,6 +125,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void updatePostInfo(PostAo postAo, Long postId) {
+        postStorageService.updatePostInfoToDatabase(postAo, postId);
+    }
+
+    @Override
     public PostAo findPostById(Long postId) {
         return postStorageService.findPostAoById(postId);
     }
