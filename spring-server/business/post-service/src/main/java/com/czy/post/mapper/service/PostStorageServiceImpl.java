@@ -71,4 +71,15 @@ public class PostStorageServiceImpl implements PostStorageService {
         }
         return postAoList;
     }
+
+    @Override
+    public void updatePostContentToDatabase(PostAo postAo, Long postId) {
+        postTransactionService.updatePostContentToDatabase(postAo, postId);
+    }
+
+    @Override
+    public void updatePostInfoToDatabase(PostAo postAo, Long postId) {
+        PostInfoDo postInfoDo = postConverter.toMysqlDo(postAo, postId);
+        postInfoMapper.updatePostInfoDoById(postInfoDo);
+    }
 }

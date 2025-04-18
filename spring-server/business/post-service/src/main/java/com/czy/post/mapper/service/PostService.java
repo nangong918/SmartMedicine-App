@@ -21,7 +21,8 @@ public interface PostService {
     void deletePost(Long postId);
 
     // 更改
-    void updatePost(PostAo postAo);
+    void updatePostFirst(PostAo postAo, Long postId);
+    void updatePostAfterOss(Long postId);
 
     // 查询
     PostAo findPostById(Long postId);

@@ -11,4 +11,6 @@ public interface PostTransactionService {
     void storePostToDatabase(PostAo postAo, Long id);
 
     void deletePostContentById(Long id);
+
+    void updatePostContentToDatabase(PostAo postAo, Long postId);
 }

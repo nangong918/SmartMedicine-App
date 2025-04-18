@@ -92,8 +92,36 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePost(PostAo postAo) {
+    public void updatePostFirst(PostAo postAo, Long postId) {
+        // 由于两次http请求可能都不是一个服务处理的，所以数据需要缓存在redis
+        String key = PostConstant.POST_PUBLISH_KEY + postId;
+        boolean result = redisManagerService.setObjectAsString(key, postAo, PostConstant.POST_PUBLISH_KEY_EXPIRE_TIME);
+        if (!result){
+            log.warn("Post更新到Redis失败，authorId：{}", postAo.getAuthorId());
+            throw new AppException("post更新到服务端失败");
+        }
+    }
 
+    @Override
+    public void updatePostAfterOss(@NonNull Long postId) {
+        String key = PostConstant.POST_PUBLISH_KEY + postId;
+        PostAo postAo = redisManagerService.getObjectFromString(key, PostAo.class);
+        if (postAo != null){
+            // 先删除redis数据
+            redisManagerService.deleteAny(key);
+            globalTaskExecutor.execute(() -> {
+                // es + mongo 同步事务存储
+                postStorageService.updatePostContentToDatabase(postAo, postId);
+            });
+            globalTaskExecutor.execute(() -> {
+                // mysql
+                postStorageService.updatePostInfoToDatabase(postAo, postId);
+            });
+        }
+        else {
+            log.warn("Post更新失败，postId：{}", postId);
+            throw new AppException("post更新失败，服务器缓存数据过期，请重新上传");
+        }
     }
 
     @Override

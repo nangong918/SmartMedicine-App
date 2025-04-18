@@ -23,4 +23,8 @@ public interface PostStorageService {
     PostAo findPostAoById(Long id);
 
     List<PostAo> findPostAoByIds(List<Long> idList);
+
+    void updatePostContentToDatabase(PostAo postAo, Long postId);
+
+    void updatePostInfoToDatabase(PostAo postAo, Long postId);
 }
