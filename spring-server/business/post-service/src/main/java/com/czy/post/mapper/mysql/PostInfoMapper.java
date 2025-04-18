@@ -13,6 +13,12 @@ import java.util.List;
 @Mapper
 public interface PostInfoMapper {
 
+    // 插入
+    void insertPostInfoDo(PostInfoDo postInfoDo);
+
+    // 批量插入
+    void insertPostInfoDoList(List<PostInfoDo> postInfoDoList);
+
     // 根据id获取PostInfoDo
     PostInfoDo getPostInfoDoById(Long id);
 

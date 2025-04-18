@@ -10,6 +10,8 @@ import exception.AppException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 /**
  * @author 13225
  * @date 2025/4/18 17:39
+ * TODO 整个Service待测试
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class PostServiceImpl implements PostService {
 
     private final RedisManagerService redisManagerService;
     private final PostStorageService postStorageService;
+    private final ThreadPoolTaskExecutor globalTaskExecutor;
 
     /**
      * 发布消息是两个http请求：
@@ -56,42 +60,49 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public boolean releasePostAfterOss(@NonNull Long publishId) {
+    public void releasePostAfterOss(@NonNull Long publishId) {
         // 获取redis的key
         String key = PostConstant.POST_PUBLISH_KEY + publishId;
         PostAo postAo = redisManagerService.getObjectFromString(key, PostAo.class);
         if (postAo != null){
             // 先删除redis数据
             redisManagerService.deleteAny(key);
-            // es + mongo
-            postStorageService.storePostContentToDatabase(postAo, publishId);
-            // mysql
-            postStorageService.storePostInfoToDatabase(postAo, publishId);
+            // 异步存储
+            globalTaskExecutor.execute(() -> {
+                // es + mongo 同步事务存储
+                postStorageService.storePostContentToDatabase(postAo, publishId);
+            });
+            // 异步存储
+            globalTaskExecutor.execute(() -> {
+                // mysql
+                postStorageService.storePostInfoToDatabase(postAo, publishId);
+            });
         }
         else {
             log.warn("Post发布失败，postId：{}", publishId);
             throw new AppException("post发布失败，服务器缓存数据过期，请重新上传");
         }
-        return false;
     }
 
     @Override
-    public boolean deletePost(Long postId) {
-        return false;
+    public void deletePost(Long postId) {
+        postStorageService.deletePostContentFromDatabase(postId);
+        postStorageService.deletePostInfoFromDatabase(postId);
+        // 消息队列通知，异步删除oss TODO
     }
 
     @Override
-    public boolean updatePost(PostAo postAo) {
-        return false;
+    public void updatePost(PostAo postAo) {
+
     }
 
     @Override
     public PostAo findPostById(Long postId) {
-        return null;
+        return postStorageService.findPostAoById(postId);
     }
 
     @Override
     public List<PostAo> findPostsByIdList(List<Long> idList) {
-        return null;
+        return postStorageService.findPostAoByIds(idList);
     }
 }

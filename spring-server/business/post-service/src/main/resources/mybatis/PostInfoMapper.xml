@@ -10,6 +10,24 @@
         collect_count,
         comment_count
     </sql>
+    <insert id="insertPostInfoDo">
+        INSERT INTO post_info
+        <include refid="doDoColumns"/>
+        VALUES
+        (#{id}, #{authorId},
+         #{releaseTimestamp}, #{likeCount},
+         #{collectCount}, #{commentCount})
+    </insert>
+    <insert id="insertPostInfoDoList">
+        INSERT INTO post_info
+        <include refid="doDoColumns"/>
+        VALUES
+        <foreach collection="list" item="item" index="index" open="(" separator="),(" close=")">
+            #{item.id}, #{item.authorId},
+            #{item.releaseTimestamp}, #{item.likeCount},
+            #{item.collectCount}, #{item.commentCount}
+        </foreach>
+    </insert>
     <update id="updatePostInfoDoById">
         UPDATE post_info
         SET

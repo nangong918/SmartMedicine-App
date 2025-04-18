@@ -9,4 +9,6 @@ import com.czy.api.domain.ao.post.PostAo;
 public interface PostTransactionService {
     // es + mongo的事务
     void storePostToDatabase(PostAo postAo, Long id);
+
+    void deletePostContentById(Long id);
 }

@@ -32,7 +32,14 @@ public class PostTransactionServiceImpl implements PostTransactionService {
         PostDetailEsDo postDetailEsDo = postConverter.toEsDo(postAo, id);
         postDetailEsMapper.save(postDetailEsDo);
 
-        PostDetailDo postDetailDo = postConverter.toDo(postDetailEsDo);
+        PostDetailDo postDetailDo = postConverter.toMongoDo(postDetailEsDo);
         postDetailMongoMapper.savePostDetail(postDetailDo);
+    }
+
+    @Transactional(rollbackFor = StorageException.class)
+    @Override
+    public void deletePostContentById(Long id) {
+        postDetailEsMapper.deleteById(id);
+        postDetailMongoMapper.deletePostDetailById(id);
     }
 }

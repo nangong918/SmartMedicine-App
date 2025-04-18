@@ -15,13 +15,13 @@ public interface PostService {
     // 初次上传到redis
     Long releasePostFirst(@NonNull PostAo postAo);
     // oss的成功的二次上传
-    boolean releasePostAfterOss(@NonNull Long publishId);
+    void releasePostAfterOss(@NonNull Long publishId);
 
     // 删除
-    boolean deletePost(Long postId);
+    void deletePost(Long postId);
 
     // 更改
-    boolean updatePost(PostAo postAo);
+    void updatePost(PostAo postAo);
 
     // 查询
     PostAo findPostById(Long postId);
