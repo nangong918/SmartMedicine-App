@@ -1,0 +1,30 @@
+#-------------------------spring Setting-------------------------
+spring:
+  #============ name
+  application:
+    name: easy-social-gateway
+
+  cloud:
+    nacos:
+      # Nacos Config 配置项，对应 NacosConfigProperties 配置属性类
+      config:
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+        namespace: # 使用的 Nacos 的命名空间，默认为 null
+        group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
+        name: ${spring.application.name} # 使用的 Nacos 配置集的 dataId，默认为 spring.application.name
+        file-extension: yaml # 使用的 Nacos 配置集的 dataId 的文件拓展名，同时也是 Nacos 配置集的配置格式，默认为 properties
+
+# bootstrap.yml
+# 加载时机是在 Spring 应用上下文初始化之前。它用于配置重要的参数，例如配置服务器地址等，它可以影响应用启动时加载的基本配置。
+# 如果启用了 Nacos 的引导配置 (bootstrap configuration)，它将在应用启动的最早阶段访问 Nacos，以获取配置和其他可以在上下文初始化期间需要的数据
+
+# application.yml
+# 加载时机是在 Spring 应用上下文初始化之后。这意味着在这里配置的参数不能影响 Spring 上下文的初始配置，而更多是用于应用运行过程中的配置信息。
+
+# Nacos 配置
+# Nacos 在配置阶段获取配置
+# 在 bootstrap.yml 中设置 Nacos 的相关配置（例如：server-addr 和namespace）。这样可以确保在 Spring 应用上下文加载之前就能从 Nacos 中获取配置信息
+# 如果在 application.yml 中设定了 Nacos 的服务器地址，而没有在 bootstrap.yml 中配置，Nacos 的配置可能不会生效，因为上下文没有在初始化时加载这些配置
+
+# 如果不需要nacos的配置就不要使用bootstrap里面的这些配置！！！
+# 它会把本身的配置覆盖掉

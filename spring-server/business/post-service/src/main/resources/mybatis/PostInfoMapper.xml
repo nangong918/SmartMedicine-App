@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czy.post.mapper.mysql.PostInfoMapper">
+    <sql id="doDoColumns">
+        id,
+        author_id,
+        release_timestamp,
+        like_count,
+        collect_count,
+        comment_count
+    </sql>
+    <update id="updatePostInfoDoById">
+        UPDATE post_info
+        SET
+        author_id = #{authorId},
+        release_timestamp = #{releaseTimestamp},
+        like_count = #{likeCount},
+        collect_count = #{collectCount},
+        comment_count = #{commentCount}
+        WHERE id = #{id}
+    </update>
+    <delete id="deletePostInfoDoById">
+        DELETE FROM post_info WHERE id = #{id}
+    </delete>
+    <select id="getPostInfoDoById" resultType="com.czy.api.domain.Do.post.PostInfoDo">
+        SELECT
+        <include refid="doDoColumns"/>
+        FROM post_info
+        WHERE id = #{id}
+    </select>
+    <select id="getPostInfoDoListByIdList" resultType="com.czy.api.domain.Do.post.PostInfoDo">
+        SELECT
+        <include refid="doDoColumns"/>
+        FROM post_info
+        WHERE id IN
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getPostInfoDoListByAuthorId" resultType="java.lang.Long">
+        SELECT
+        id
+        FROM post_info
+        WHERE author_id = #{authorId}
+    </select>
+    <select id="getPostInfoDoListByAuthorIdPaging" resultType="java.lang.Long">
+        SELECT
+        id
+        FROM post_info
+        WHERE author_id = #{authorId}
+        LIMIT #{page} * #{size}, #{size}
+    </select>
+    <select id="getPostInfoDoListByAuthorIdBeforeTimestamp" resultType="java.lang.Long">
+        SELECT
+        id
+        FROM post_info
+        WHERE author_id = #{authorId}
+        AND release_timestamp &lt; #{timestamp}
+        ORDER BY release_timestamp DESC
+        LIMIT #{n}
+    </select>
+    <select id="getPostInfoDoListByAuthorIdAfterTimestamp" resultType="java.lang.Long">
+        SELECT
+        id
+        FROM post_info
+        WHERE author_id = #{authorId}
+        AND release_timestamp &gt; #{timestamp}
+        ORDER BY release_timestamp ASC
+        LIMIT #{n}
+    </select>
+</mapper>

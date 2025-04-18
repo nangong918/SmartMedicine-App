@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>api</name>
+    <groupId>com.api</groupId>
+    <artifactId>api</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <!--Maven 会将其视为 jar 类型，但对于父 POM，应该将其设置为 pom-->
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>api-model</module>
+    </modules>
+
+    <!--JDK版本：11-->
+    <properties>
+        <java.version>11</java.version>
+        <spring.version>2.3.12.RELEASE</spring.version><!--此处版本必须与parent相同-->
+        <httpclient.version>4.5.13</httpclient.version>
+        <lombok.version>1.18.24</lombok.version>
+        <mybatis-plus.version>3.5.3.2</mybatis-plus.version>
+        <mybatis.version>2.3.5</mybatis.version>
+        <mysql.version>8.0.30</mysql.version>
+        <druid.version>1.2.8</druid.version>
+        <commons-lang.version>3.12.0</commons-lang.version>
+        <fastjson.version>1.2.47</fastjson.version>
+        <swagger.version>3.0.0</swagger.version>
+        <springdoc.version>1.5.12</springdoc.version>
+        <commons-io.version>2.11.0</commons-io.version>
+        <io.jsonwebtoken.version>0.12.6</io.jsonwebtoken.version>
+        <hutool.version>5.8.26</hutool.version>
+        <org.jetbrains.version>13.0</org.jetbrains.version>
+        <security-core.version>5.0.6.RELEASE</security-core.version>
+        <protobuf.version>3.22.0</protobuf.version><!--Protobuf版本;3.21.5会出现错误-->
+        <mapstruct.version>1.5.0.Final</mapstruct.version>
+        <fasterxml.version>2.15.2</fasterxml.version>
+        <knife4j-openapi3.version>4.5.0</knife4j-openapi3.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Lombok for domain -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- FastJSON -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!-- fasterxml -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${fasterxml.version}</version>
+            </dependency>
+
+            <!-- jetbrains注解 -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${org.jetbrains.version}</version>
+            </dependency>
+
+            <!-- mapstruct类型转换 -->
+            <!--mapstruct核心-->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <!--mapstruct编译-->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+
+            <!-- Swagger 3 -->
+<!--            <dependency>-->
+<!--                <groupId>io.springfox</groupId>-->
+<!--                <artifactId>springfox-boot-starter</artifactId>-->
+<!--                <version>${swagger.version}</version>-->
+<!--            </dependency>-->
+            <!-- Springdoc:WebFlux Swagger -->
+<!--            <dependency>-->
+<!--                <groupId>org.springdoc</groupId>-->
+<!--                <artifactId>springdoc-openapi-webflux-ui</artifactId>-->
+<!--                <version>${springdoc.version}</version>-->
+<!--            </dependency>-->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
+                <version>${knife4j-openapi3.version}</version>
+            </dependency>
+
+            <!-- validation -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-validation</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <!-- Hutool: 集合操作,反射,加密解密 -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- protobuf -->
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java-util</artifactId>
+                <version>${protobuf.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>

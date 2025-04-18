@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czy.relationship.mapper.UserFriendMapper">
+
+    <insert id="addUserFriend">
+        insert into user_friend(user_id, friend_id, add_time)
+        values(#{userId}, #{friendId}, #{addTime})
+    </insert>
+    <update id="updateUserFriend">
+        update user_friend
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="friendId != null">
+                friend_id = #{friendId},
+            </if>
+            <if test="addTime != null">
+                add_time = #{addTime},
+            </if>
+        </set>
+        WHERE (user_id = #{userId} AND friend_id = #{friendId})
+           OR (user_id = #{friendId} AND friend_id = #{userId})
+    </update>
+    <delete id="deleteUserFriend">
+        DELETE FROM user_friend
+        WHERE (user_id = #{userId} AND friend_id = #{friendId})
+           OR (user_id = #{friendId} AND friend_id = #{userId})
+    </delete>
+    <select id="getUserFriend" resultType="com.czy.api.domain.Do.relationship.UserFriendDo">
+        SELECT *
+        FROM user_friend
+        WHERE (user_id = #{userId} AND friend_id = #{friendId})
+           OR (user_id = #{friendId} AND friend_id = #{userId})
+    </select>
+    <select id="getUserFriends" resultType="com.czy.api.domain.Do.relationship.UserFriendDo">
+        SELECT *
+        FROM user_friend
+        WHERE user_id = #{userId}
+            OR friend_id = #{userId}
+    </select>
+    <select id="getUserFriendsCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM user_friend
+        WHERE user_id = #{userId}
+            OR friend_id = #{userId}
+    </select>
+    <select id="isFriend" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM user_friend
+        WHERE (user_id = #{userId} AND friend_id = #{friendId})
+           OR (user_id = #{friendId} AND friend_id = #{userId})
+    </select>
+    <!--  考虑到user_id在userFriend表中可能是user,也可能是friend,所以内连接两次  -->
+    <select id="getUserFriendsViewByAccount" resultType="com.czy.api.domain.entity.UserViewEntity">
+        SELECT
+            lu2.id AS userId,
+            lu2.user_name AS userName,
+            lu2.avatar_url AS avatarUrl,
+            lu2.account AS userAccount
+        FROM login_user lu
+                 JOIN user_friend uf ON (uf.user_id = lu.id OR uf.friend_id = lu.id)
+                 JOIN login_user lu2 ON (
+            (uf.user_id = lu.id AND uf.friend_id = lu2.id) OR
+            (uf.friend_id = lu.id AND uf.user_id = lu2.id)
+            )
+        WHERE lu.account = #{userAccount}
+    </select>
+    <select id="getUserFriendsViewByUserId" resultType="com.czy.api.domain.entity.UserViewEntity">
+        SELECT
+            lu2.id AS userId,
+            lu2.user_name AS userName,
+            lu2.avatar_url AS avatarUrl,
+            lu2.account AS userAccount
+        FROM login_user lu
+                 JOIN user_friend uf ON (uf.user_id = lu.id OR uf.friend_id = lu.id)
+                 JOIN login_user lu2 ON (
+            (uf.user_id = lu.id AND uf.friend_id = lu2.id) OR
+            (uf.friend_id = lu.id AND uf.user_id = lu2.id)
+            )
+        WHERE lu.id = #{userId}
+    </select>
+</mapper>

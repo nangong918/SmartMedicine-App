@@ -1,0 +1,34 @@
+@startuml
+skinparam packageStyle rectangle
+
+
+package "Base" {
+    [netty-socket]
+    [oss-service]
+}
+
+package "Business" {
+    [user-service]
+    [auth-service]
+    [sms-service]
+    [message-service]
+    [relationship-service]
+
+    [message-service] --> [user-service]
+    [message-service] --> [relationship-service]
+    [message-service] -[#0000FF]--> [oss-service]
+    [message-service] -[#0000FF]--> [netty-socket]
+
+    [relationship-service] --> [user-service]
+
+    [user-service] --> [auth-service]
+    [user-service] --> [sms-service]
+}
+
+package "Gateway" {
+    [gateways]
+
+    [gateways] --> [auth-service]
+}
+
+@enduml

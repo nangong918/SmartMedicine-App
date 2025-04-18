@@ -1,0 +1,83 @@
+@startuml
+'https://plantuml.com/deployment-diagram
+
+package "管理员模块" {
+    component "数据查询" {
+        [审查用户信息]
+        [审查聊天记录]
+        [审查动态]
+        [审查推文]
+    }
+
+    component "用户管理" {
+        [封禁用户]
+        [解封用户]
+        [重置密码]
+    }
+
+    component "群聊管理" {
+        [封禁群聊]
+        [解封群聊]
+    }
+
+    component "动态管理" {
+        [封禁动态]
+        [解封动态]
+    }
+
+    component "推文管理" {
+        [封禁推文]
+        [解封推文]
+    }
+}
+'actor: 表示系统外部的用户或其他系统，通常与用例图中的参与者有关。
+'agent: 表示能够自主执行任务的实体，通常用于表示具有自主行为的系统组件。
+'artifact: 表示在软件开发过程中创建的具体工件，如文档、代码或设计模型。
+'boundary: 表示系统的边界，通常用于区分系统内部和外部的部分。
+'card: 表示具体的卡片式界面元素，通常用于展示信息。
+'circle: 表示圆形组件，通常用于图形化表示。
+'cloud: 表示云服务或云计算相关的组件。
+'collections: 表示集合或列表，通常用于表示多个元素的集合。
+'component: 表示系统中的组件，通常用于表示可重用的模块或服务。
+'control: 表示控制逻辑或处理流程的组件。
+'database: 表示数据库，通常用于表示存储数据的系统。
+'entity: 表示系统中的实体，通常与数据模型有关。
+'file: 表示文件，通常用于表示存储在文件系统中的数据。
+'folder: 表示文件夹，通常用于组织文件或组件。
+'frame: 表示框架，通常用于界面或容器的设计。
+'interface: 表示接口，通常用于定义组件之间的交互。
+'label: 表示标签，通常用于标识或注释某个元素。
+'node: 表示物理或虚拟的计算节点，通常用于表示服务器或设备。
+'package: 表示包，通常用于组织和分组相关的组件。
+'queue: 表示队列，通常用于表示消息队列或任务队列。
+'rectangle: 表示矩形，可以用于表示任意组件。
+'stack: 表示栈，通常用于表示数据结构或处理流程。
+'storage: 表示存储介质，通常用于表示数据存储位置。
+'usecase: 表示用例，通常用于描述系统的功能需求和用户交互。
+actor actor
+actor/ "actor/"
+agent agent
+artifact artifact
+boundary boundary
+card card
+circle circle
+cloud cloud
+collections collections
+component component
+control control
+database database
+entity entity
+file file
+folder folder
+frame frame
+interface interface
+label label
+node node
+package package
+queue queue
+rectangle rectangle
+stack stack
+storage storage
+usecase usecase
+usecase/ "usecase/"
+@enduml

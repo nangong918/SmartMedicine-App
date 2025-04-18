@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czy.message.mapper.mysql.SessionMapper">
+
+    <insert id="add">
+        insert into session(uuid, device_id, device_name, app_version, os_version, package_name, language, uid, nid, ipv6, bind_time, type)
+        values (#{uuid}, #{deviceId}, #{deviceName}, #{appVersion}, #{osVersion}, #{packageName}, #{language}, #{uid}, #{nid}, #{ipv6}, #{bindTime}, #{type})
+    </insert>
+    <update id="updateState">
+        update session set state = #{state} where id = #{id}
+    </update>
+    <delete id="delete">
+        delete from session where id = #{id}
+    </delete>
+    <delete id="deleteByUid">
+        delete from session where uid = #{uid}
+    </delete>
+    <select id="findAll" resultType="com.czy.api.domain.entity.event.Session">
+        select * from session
+    </select>
+    <select id="getById" resultType="com.czy.api.domain.entity.event.Session">
+        select * from session where id = #{id}
+    </select>
+    <select id="getByUid" resultType="com.czy.api.domain.entity.event.Session">
+        select * from session where uid = #{uid}
+    </select>
+</mapper>

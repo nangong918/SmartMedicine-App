@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>gateways</name>
+    <groupId>com.gateway</groupId>
+    <artifactId>gateways</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <!--Maven 会将其视为 jar 类型，但对于父 POM，应该将其设置为 pom-->
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>gateway</module>
+    </modules>
+
+    <properties>
+        <lombok.version>1.18.24</lombok.version>
+        <hutool.version>5.8.26</hutool.version>
+        <io.jsonwebtoken.version>0.12.6</io.jsonwebtoken.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Lombok for domain -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- Hutool: 集合操作,反射,加密解密 -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- JSON Web Tokens（JWT） -->
+            <!--JWT(Json Web Token)登录支持-->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${io.jsonwebtoken.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+    </dependencies>
+
+</project>

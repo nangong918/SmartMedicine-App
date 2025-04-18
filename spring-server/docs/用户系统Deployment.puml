@@ -1,0 +1,137 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+'我觉得用户创作的推文适合用MongoDB，因为基本每个用户都能看到，而且文章一般是大量的Text数据，包含的图片或者视频连接数量不确定，数据结构不明确；因为聊天记录是强数据结构类型，并且只有发送者和接收者需要查看，所以用MySQL。
+/'package "用户模块" {
+    component "登录注册" {
+        [密码登录注册]
+        [短信验证码登录注册]
+    }
+    component "好友管理" {
+        [添加好友]
+        [删除好友]
+    }
+    component "聊天" {
+        [发送文本]
+        [发送资源:包括图片、语音、视频、文件等]
+        [一对一聊天]
+        [群聊]
+    }
+    component "实时通讯" {
+        [语音通话]
+        [视频通话]
+    }
+    component "动态" {
+        [发布动态]
+        [删除动态]
+        [获取好友动态]
+        [点赞]
+        [评论]
+        [收藏]
+        [举报]
+        [消息提醒]
+    }
+    component "搜索" {
+        [搜索好友]
+        [搜索动态]
+        [搜索群聊]
+        [搜索推荐动态推文]
+    }
+    component "推文" {
+        [发布社区推文]
+        [删除推文]
+        [点赞]
+        [收藏]
+        [评论]
+        [举报]
+        [消息提醒]
+        [推荐算法：协同过滤和基于内容]
+    }
+}'/
+
+
+node "前端" {
+    component "Android 应用" as AndroidApp
+
+    database "数据库" as Database {
+        [用户数据]
+        [聊天记录]
+    }
+}
+
+node "后端" {
+    component "用户服务" as UserService
+    component "聊天服务" as ChatService
+    component "动态服务" as DynamicService
+    component "搜索服务" as SearchService
+    component "推文服务" as PostService
+    component "WebFlux：登录服务；获取消息服务" as HttpService
+}
+
+note left of UserService
+  后端消息持久化:
+end note
+
+
+database "数据库" as Database {
+    [用户数据]
+    [聊天记录]
+    [动态数据]
+    [推文数据]
+}
+
+cloud "Nginx" {
+    [路由分发]
+    [负载均衡]
+}
+
+component "RabbitMQ" as RabbitMQCluster {
+    [消息队列]
+}
+
+component "MongoDB" as MongoDB {
+    [消息存储]
+}
+
+component "MySQL" as MySQL {
+    [索引存储]
+}
+
+component "Netty" as NettyService {
+    [IM 服务]
+    [长连接管理]
+}
+
+AndroidApp --> UserService
+AndroidApp --> ChatService
+
+UserService --> Database
+ChatService --> NettyService
+ChatService --> Database
+HttpService --> Database
+
+NettyService --> RabbitMQCluster
+NettyService --> MongoDB
+NettyService --> MySQL
+
+ChatService --> HttpService : "发送资源消息使用 HTTP"
+ChatService --> NettyService : "文本聊天使用 Netty IM"
+
+note left of AndroidApp
+  消息持久化:
+  - Netty在RemoteService中保活
+  - AIDL告知Application有新消息
+  - 检查Activity存活状态
+  - 存入缓存池, 定期持久化到SQLite
+end note
+
+note right of NettyService
+  后端消息持久化:
+  - 消息通过Netty接收
+  - 注册ApplicationEvent事件
+  - 事件推送至RabbitMQ
+  - 直接发送给在线接收者
+  - 离线消息存入RabbitMQ
+end note
+
+@enduml

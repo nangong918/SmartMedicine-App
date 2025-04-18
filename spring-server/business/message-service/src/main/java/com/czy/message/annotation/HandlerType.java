@@ -1,0 +1,19 @@
+package com.czy.message.annotation;
+
+import org.springframework.stereotype.Component;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * @author 13225
+ * @date 2025/3/10 14:59
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Component
+public @interface HandlerType {
+    String value();
+}

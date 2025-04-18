@@ -1,0 +1,2 @@
+内容分发网络(CDN)
+IM系统使用ProtoBuf或ProtoStuff + MapStruct；避免使用JSON去反射

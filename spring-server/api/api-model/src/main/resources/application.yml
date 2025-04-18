@@ -1,0 +1,30 @@
+
+#-------------------------server Setting-------------------------
+
+#server:
+#  # 端口号
+#  port: ${random.int[10000,19999]}
+#  # 优雅关闭
+#  shutdown: graceful
+
+#-------------------------spring Setting-------------------------
+spring:
+  #============ name
+  application:
+    name: api-model
+
+  #============ redis
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PWD:Y)D7d%gXFsCL*&pdJ4f)}
+    ssl: false          # Redis 是否启用 SSL
+    timeout: 10000      # 连接超时时间
+    database: 0         # 选择的数据库:Redis 默认提供 16 个数据库（索引 0 到 15）
+    jedis:
+      # 配置上连接池：增加对于数据连接的管理，提升访问的效率，也保证了对资源的合理利用
+      pool:
+        max-active: 50      # 最大活动连接数
+        max-idle: 5         # 最大空闲连接数
+        max-wait: 1         # 最小空闲连接数
+        min-idle: 200       # 连接池最大阻塞等待时间（使用负值表示没有限制）

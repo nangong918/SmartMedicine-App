@@ -1,0 +1,14 @@
+经过测试：
+类型转换消费太多时间：开始消耗时间大概是160ms
+我发现了是反射的问题，取消了Hutool的BeanUtil.copyProperties(source, target)
+使用MapStruct，数据拷贝时间从80ms降至3ms
+但是出现新的问题，我发现：
+1. ProtoBuf.Response.build创建消费时间90ms
+2. AddRequest.Response.build创建消费时间95ms
+也就是说创建对象是非常消耗资源的。面向对象虽然简化了开发但是也降低了性能。
+
+开始以为是@Data或者BaseBean的问题，经过测试并不是
+
+接下来测试发现Message创建的时间只有1ms，也就是说根本不是因为创建对象出现的问题。
+经过排查发现使用了方法@Slf4j
+@Slf4j第一次调用会创建Logger，所以消费了很多性能。

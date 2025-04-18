@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czy.message.mapper.mysql.UserChatMessageMapper">
+
+    <insert id="insert">
+        INSERT INTO user_chat_message(sender_id, receiver_id, msg_content, msg_type, timestamp)
+        VALUES (#{senderId}, #{receiverId}, #{msgContent}, #{msgType}, #{timestamp})
+    </insert>
+    <insert id="batchInsert">
+        INSERT INTO user_chat_message(sender_id, receiver_id, msg_content, msg_type, timestamp)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.senderId}, #{item.receiverId}, #{item.msgContent}, #{item.msgType}, #{item.timestamp})
+        </foreach>
+    </insert>
+    <update id="updateById">
+        UPDATE user_chat_message
+        SET msg_content = #{msgContent},
+            msg_type = #{msgType},
+            sender_id = #{senderId},
+            receiver_id = #{receiverId},
+            timestamp = #{timestamp}
+        WHERE id = #{id}
+    </update>
+    <update id="batchUpdate">
+        UPDATE user_chat_message
+        SET msg_content = #{msgContent},
+            msg_type = #{msgType},
+            sender_id = #{senderId},
+            receiver_id = #{receiverId},
+            timestamp = #{timestamp}
+        WHERE id IN
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item.id}
+        </foreach>
+    </update>
+    <delete id="deleteById">
+        DELETE FROM user_chat_message WHERE id = #{id}
+    </delete>
+    <delete id="batchDelete">
+        DELETE FROM user_chat_message WHERE id IN
+        <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteBySenderReceiver">
+        DELETE FROM user_chat_message
+               WHERE sender_id = #{senderId}
+                 AND receiver_id = #{receiverId}
+    </delete>
+    <select id="selectById" resultType="com.czy.api.domain.Do.message.UserChatMessageDo">
+        SELECT * FROM user_chat_message WHERE id = #{id}
+    </select>
+    <select id="batchSelect" resultType="com.czy.api.domain.Do.message.UserChatMessageDo">
+        SELECT * FROM user_chat_message WHERE id IN
+        <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    <select id="selectIdsBefore" resultType="java.lang.Long">
+        SELECT id FROM user_chat_message
+        WHERE sender_id = #{senderId} AND receiver_id = #{receiverId} AND timestamp &lt; #{timestamp}
+        ORDER BY timestamp DESC
+        LIMIT #{limitCount}
+    </select>
+    <select id="selectMessagesBefore" resultType="com.czy.api.domain.bo.message.UserChatMessageBo">
+        SELECT
+            ucm.id,  -- 消息 ID
+            ucm.msg_content AS msgContent,  -- 消息内容
+            ucm.msg_type AS msgType,  -- 消息类型
+            ls.account AS senderAccount,  -- 发件人账号
+            lr.account AS receiverAccount,  -- 收件人账号
+            lr.user_name AS receiverName,  -- 收件人名称
+            ucm.timestamp  -- 时间戳
+        FROM user_chat_message ucm
+            LEFT JOIN login_user ls ON ucm.sender_id = ls.id  -- 连接发件人账号
+            LEFT JOIN login_user lr ON ucm.receiver_id = lr.id  -- 连接收件人账号
+        WHERE ucm.sender_id = #{senderId}
+        AND ucm.receiver_id = #{receiverId}
+        AND ucm.timestamp &lt; #{timestamp}
+        ORDER BY ucm.timestamp DESC
+        LIMIT #{limitCount}
+    </select>
+    <select id="selectIdsAfter" resultType="java.lang.Long">
+        SELECT id FROM user_chat_message
+        WHERE sender_id = #{senderId} AND receiver_id = #{receiverId} AND timestamp &gt; #{timestamp}
+        ORDER BY timestamp ASC
+        LIMIT #{limitCount}
+    </select>
+    <select id="selectMessagesAfter" resultType="com.czy.api.domain.bo.message.UserChatMessageBo">
+        SELECT
+            ucm.id,  -- 消息 ID
+            ucm.msg_content AS msgContent,  -- 消息内容
+            ucm.msg_type AS msgType,  -- 消息类型
+            ls.account AS senderAccount,  -- 发件人账号
+            lr.account AS receiverAccount,  -- 收件人账号
+            lr.user_name AS receiverName,  -- 收件人名称
+            ucm.timestamp  -- 时间戳
+        FROM user_chat_message ucm
+                 LEFT JOIN login_user ls ON ucm.sender_id = ls.id  -- 连接发件人账号
+                 LEFT JOIN login_user lr ON ucm.receiver_id = lr.id  -- 连接收件人账号
+        WHERE ucm.sender_id = #{senderId}
+          AND ucm.receiver_id = #{receiverId}
+          AND ucm.timestamp &gt; #{timestamp}  -- 使用 &gt; 符号
+        ORDER BY ucm.timestamp ASC
+            LIMIT #{limitCount}
+    </select>
+</mapper>

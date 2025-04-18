@@ -1,0 +1,59 @@
+@startuml
+skinparam packageStyle rectangle
+
+package "Utils" {
+    [JavaUtils]
+    [SpringUtils]
+    [SpringMvcUtils]
+    [SpringWebfluxUtils]
+
+    [SpringUtils] --> [JavaUtils]
+    [SpringMvcUtils] --> [SpringUtils]
+    [SpringWebfluxUtils] --> [SpringUtils]
+}
+
+package "API" {
+    [api-model]
+    [api-model] --> [JavaUtils]
+}
+
+package "Gateway" {
+    [gateways]
+    [gateways] --> [SpringWebfluxUtils]
+    [gateways] --> [api-model]
+}
+
+package "Base" {
+    [netty-socket]
+    [oss-service]
+
+    [netty-socket] --> [SpringUtils]
+    [netty-socket] --> [api-model]
+    [oss-service] --> [SpringUtils]
+    [oss-service] --> [api-model]
+}
+
+package "Business" {
+    [auth-service]
+    [user-service]
+    [sms-service]
+    [message-service]
+    [relationship-service]
+
+    [auth-service] --> [SpringWebfluxUtils]
+    [auth-service] --> [api-model]
+
+    [user-service] --> [SpringWebfluxUtils]
+    [user-service] --> [api-model]
+
+    [sms-service] --> [SpringWebfluxUtils]
+    [sms-service] --> [api-model]
+
+    [message-service] --> [SpringWebfluxUtils]
+    [message-service] --> [api-model]
+
+    [relationship-service] --> [SpringWebfluxUtils]
+    [relationship-service] --> [api-model]
+}
+
+@enduml

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--Maven 会将其视为 jar 类型，但对于父 POM，应该将其设置为 pom-->
+  <packaging>pom</packaging>
+  <artifactId>Spring</artifactId>
+  <name>Spring</name>
+  <groupId>com.spring</groupId>
+  <version>1.0.0-SNAPSHOT</version>
+  <description>EasySocial 后端</description>
+  <!--Maven version：2.3.7-->
+  <modules>
+    <module>api</module>
+    <module>base</module>
+    <module>business</module>
+    <module>gateways</module>
+    <module>tests</module>
+    <module>utils</module>
+  </modules>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.3.12.RELEASE</version>
+  </parent>
+  <!--JDK版本：11-->
+  <properties>
+    <java.version>11</java.version>
+    <spring.version>2.3.12.RELEASE</spring.version><!--此处版本必须与parent相同-->
+    <httpclient.version>4.5.13</httpclient.version>
+    <lombok.version>1.18.24</lombok.version>
+    <mybatis-plus.version>3.5.3.2</mybatis-plus.version>
+    <mybatis.version>2.3.5</mybatis.version>
+    <mysql.version>8.0.30</mysql.version>
+    <druid.version>1.2.8</druid.version>
+    <commons-lang.version>3.12.0</commons-lang.version>
+    <fastjson.version>1.2.47</fastjson.version>
+    <swagger.version>3.0.0</swagger.version>
+    <commons-io.version>2.11.0</commons-io.version>
+    <io.jsonwebtoken.version>0.12.6</io.jsonwebtoken.version>
+    <hutool.version>5.8.26</hutool.version>
+    <org.jetbrains.version>13.0</org.jetbrains.version>
+    <security-core.version>5.0.6.RELEASE</security-core.version>
+    <netty.version>4.1.79.Final</netty.version>
+    <protobuf.version>3.22.0</protobuf.version><!--Protobuf版本;3.21.5会出现错误-->
+    <jedission.version>3.11.3</jedission.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- Lombok for domain -->
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <!-- 子模块继承全部 -->
+  <dependencies>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+  </dependencies>
+
+  <!--build-->
+  <build>
+    <pluginManagement>
+
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+          </configuration>
+        </plugin>
+      </plugins>
+
+    </pluginManagement>
+  </build>
+
+</project>
