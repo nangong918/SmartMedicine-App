@@ -1,4 +1,4 @@
-package com.czy.api.domain.Do.post;
+package com.czy.api.domain.Do.post.post;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -22,7 +22,7 @@ public class PostDetailDo {
     private String title;
     // content；not null
     private String content;
-    // picturesUrl；null able
-    private List<String> picturesUrl;
+    // fileStorageNamesUrl；null able
+    private List<String> fileStorageNamesUrl;
 
 }

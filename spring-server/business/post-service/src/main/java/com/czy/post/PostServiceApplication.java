@@ -19,7 +19,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
                 // 扫描本模块
                 "com.czy.post",
                 // 扫描工具类
-                "com.utils.webflux.handler"
+                "com.utils.webflux.handler",
+                // 扫描工具类
+                "com.czy.springUtils",
         },
         // 排除
         exclude = {}

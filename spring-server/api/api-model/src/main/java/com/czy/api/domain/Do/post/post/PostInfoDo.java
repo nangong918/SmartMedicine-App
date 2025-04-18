@@ -1,4 +1,4 @@
-package com.czy.api.domain.Do.post;
+package com.czy.api.domain.Do.post.post;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -19,9 +19,11 @@ public class PostInfoDo {
     // releaseTimestamp；not null
     private Long releaseTimestamp;
     // 点赞数；not null
-    private Long likeCount;
+    private Long likeCount = 0L;
     // 收藏数；not null
-    private Long collectCount;
+    private Long collectCount = 0L;
     // 评论数；not null
-    private Long commentCount;
+    private Long commentCount = 0L;
+    // 转发数量
+    private Long forwardCount = 0L;
 }

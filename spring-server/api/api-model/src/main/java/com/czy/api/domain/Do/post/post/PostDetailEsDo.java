@@ -1,4 +1,4 @@
-package com.czy.api.domain.Do.post;
+package com.czy.api.domain.Do.post.post;
 
 import com.czy.api.constant.es.FieldAnalyzer;
 import lombok.Data;
@@ -32,6 +32,6 @@ public class PostDetailEsDo {
     @Field(analyzer = FieldAnalyzer.IK_SMART, type = FieldType.Text)
     private String content;
     // picturesUrl；null able
-    private List<String> picturesUrl;
+    private List<String> fileStorageNamesUrl;
 
 }

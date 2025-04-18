@@ -20,7 +20,7 @@ public class SocketMessageMqConstant {
 
     // 死信队列
     // 死信队列名称
-    public static final String DEAD_LETTER_QUEUE = "dead.letter.queue";
+    public static final String DEAD_LETTER_QUEUE = "socket.dead.letter.queue";
     // 为每个队列定义死信交换机
-    public static final String DEAD_LETTER_EXCHANGE = "dead.letter.exchange";
+    public static final String DEAD_LETTER_EXCHANGE = "socket.dead.letter.exchange";
 }

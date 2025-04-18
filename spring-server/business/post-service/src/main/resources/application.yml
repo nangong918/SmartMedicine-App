@@ -48,13 +48,13 @@ spring:
       # jdbc:mysql:// 指明使用 MySQL 数据库
       # localhost: 本地机器上
       # 3306  MySQL 的默认端口
-      # /easy_social 连接的具体数据库
+      # /smart_medicine 连接的具体数据库
       # serverTimezone=Asia/Shanghai 时区，上海时间（UTC+8）
       # characterEncoding=utf8：useUnicode=true 配合使用，确保数据库读写操作时使用正确的字符编码
       # connectTimeout=3000 设置连接超时时间为 3000 毫秒
       # ocketTimeout=5000 设置 socket 超时时间为 5000 毫秒 连接已经建立的情况下，如果在此时间内没有任何数据传输，则会抛出异常。这对于防止死锁或长时间无响应
       # useSSL=false 使用 SSL 连接。在开发环境中，通常可以关闭 SSL，在生产环境中，开启 SSL 以提高安全性
-      url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:easy_social}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&connectTimeout=3000&socketTimeout=5000&useSSL=false
+      url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:smart_medicine}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&connectTimeout=3000&socketTimeout=5000&useSSL=false
       username: ${MYSQL-USER:root}
       password: ${MYSQL-PWD:123456}
       initial-size: 10                  # 初始化连接池大小
@@ -84,7 +84,26 @@ spring:
       connection-timeout: 5000
       username: ${ES_USER:elastic}
       password: ${ES_PWD:akQiB0-u9wHv4YjcUU9k}
-
+  #-------------------------RabbitMq-------------------------
+  # RabbitMQ 配置项，对应 RabbitProperties 配置类
+  rabbitmq:
+    host: 127.0.0.1 # RabbitMQ 服务的地址
+    port: 5672 # RabbitMQ 服务的端口
+    username: guest # RabbitMQ 服务的账号
+    password: guest # RabbitMQ 服务的密码
+    template:
+      # 对应 RabbitProperties.Retry 类
+      retry:
+        enabled: true # 开启发送机制
+        max-attempts: 3 # 最大重试次数。默认为 3 。
+        initial-interval: 1000 # 重试间隔，单位为毫秒。默认为 1000 。
+    listener:
+      simple:
+        # 对应 RabbitProperties.ListenerRetry 类
+        retry:
+          enabled: true # 开启消费重试机制
+          max-attempts: 3 # 最大重试次数。默认为 3 。
+          initial-interval: 1000 # 重试间隔，单位为毫秒。默认为 1000 。
   data:
     #-------------------------MongoDb-------------------------
     # MongoDB 配置项，对应 MongoProperties 类

@@ -102,6 +102,18 @@
             <artifactId>mapstruct-processor</artifactId>
         </dependency>
 
+        <!-- RabbitMq -->
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+        </dependency>
+
+        <!-- 实现对 RabbitMQ amqp 的自动化配置 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
         <!-- 引入 Spring Cloud Alibaba Nacos Discovery 相关依赖，将 Nacos 作为注册中心，并实现对其的自动配置 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

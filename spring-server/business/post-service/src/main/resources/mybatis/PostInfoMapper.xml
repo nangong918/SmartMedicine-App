@@ -8,8 +8,28 @@
         release_timestamp,
         like_count,
         collect_count,
-        comment_count
+        comment_count,
+        forward_count
     </sql>
+    <insert id="insertPostInfoDo">
+        INSERT INTO post_info
+        <include refid="doDoColumns"/>
+        VALUES
+        (#{id}, #{authorId},
+         #{releaseTimestamp}, #{likeCount},
+         #{collectCount}, #{commentCount}, #{forwardCount})
+    </insert>
+    <insert id="insertPostInfoDoList">
+        INSERT INTO post_info
+        <include refid="doDoColumns"/>
+        VALUES
+        <foreach collection="list" item="item" index="index" open="(" separator="),(" close=")">
+            #{item.id}, #{item.authorId},
+            #{item.releaseTimestamp}, #{item.likeCount},
+            #{item.collectCount}, #{item.commentCount},
+            #{forwardCount}
+        </foreach>
+    </insert>
     <update id="updatePostInfoDoById">
         UPDATE post_info
         SET
@@ -17,19 +37,20 @@
         release_timestamp = #{releaseTimestamp},
         like_count = #{likeCount},
         collect_count = #{collectCount},
-        comment_count = #{commentCount}
+        comment_count = #{commentCount},
+        forward_count = #{forwardCount}
         WHERE id = #{id}
     </update>
     <delete id="deletePostInfoDoById">
         DELETE FROM post_info WHERE id = #{id}
     </delete>
-    <select id="getPostInfoDoById" resultType="com.czy.api.domain.Do.post.PostInfoDo">
+    <select id="getPostInfoDoById" resultType="com.czy.api.domain.Do.post.post.PostInfoDo">
         SELECT
         <include refid="doDoColumns"/>
         FROM post_info
         WHERE id = #{id}
     </select>
-    <select id="getPostInfoDoListByIdList" resultType="com.czy.api.domain.Do.post.PostInfoDo">
+    <select id="getPostInfoDoListByIdList" resultType="com.czy.api.domain.Do.post.post.PostInfoDo">
         SELECT
         <include refid="doDoColumns"/>
         FROM post_info

@@ -1,6 +1,6 @@
 package com.czy.post.mapper.mongo;
 
-import com.czy.api.domain.Do.post.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.index.Index;

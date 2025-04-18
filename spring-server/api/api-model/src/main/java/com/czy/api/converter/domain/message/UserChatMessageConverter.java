@@ -1,4 +1,4 @@
-package com.czy.api.converter.domain;
+package com.czy.api.converter.domain.message;
 
 import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;

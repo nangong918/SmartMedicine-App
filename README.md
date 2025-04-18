@@ -13,9 +13,11 @@
 * 爬虫：selenium、lxml
 * 后台：JS，Vue，ElementUI
 
-[Spring项目](Spring/README.md)
-[Android项目](Android/README.md)
+[Spring项目](spring-server/README.md)
+[Android项目](android-frontend/README.md)
 [项目文档](Introduction.md)
+
+[项目论文-本人本科毕业设计论文](20201220-陈治宇-基于机器学习的智能医疗对话APP的设计.pdf)
 
 ## 内容介绍
 

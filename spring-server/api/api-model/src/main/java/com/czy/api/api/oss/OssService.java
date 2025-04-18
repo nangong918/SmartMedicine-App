@@ -14,6 +14,9 @@ import java.util.List;
  */
 public interface OssService {
 
+    // id -> ossDo
+    OssFileDo getFileInfoByFileId(Long fileId);
+
     /**
      * userId + bucketName + fileName -> OssFileDo
      * @param userId            用户id
@@ -22,6 +25,9 @@ public interface OssService {
      * @return                  OssFile
      */
     OssFileDo getFileInfoByUserIdAndFileName(Long userId, String bucketName, String fileName);
+
+    // userId bucketName fileStorageName -> ossDo
+    OssFileDo getFileInfoByUserIdAndFileStorageName(Long userId, String bucketName, String fileStorageName);
 
     /**
      * 检查文件是否存在？（幂等性）
@@ -89,6 +95,9 @@ public interface OssService {
 
     // 删除文件 fileName
     boolean deleteFileByFileName(Long userId, String fileName, String bucketName);
+
+    // 根据fileId删除
+    boolean deleteFileByFileId(Long fileId);
 
     // 批量删除
     List<ErrorFile> deleteFiles(Long userId, List<String> fileStorageNames, String bucketName);

@@ -6,7 +6,7 @@ import com.czy.api.api.message.ChatSearchService;
 import com.czy.api.api.message.ChatService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.message.ChatConstant;
-import com.czy.api.converter.domain.UserChatMessageConverter;
+import com.czy.api.converter.domain.message.UserChatMessageConverter;
 import com.czy.api.converter.mongoEs.UserChatMessageEsConverter;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.Do.message.UserChatMessageEsDo;
