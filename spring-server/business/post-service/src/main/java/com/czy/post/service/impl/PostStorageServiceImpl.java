@@ -1,4 +1,4 @@
-package com.czy.post.mapper.service;
+package com.czy.post.service.impl;
 
 import com.czy.api.converter.domain.post.PostConverter;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
@@ -6,6 +6,8 @@ import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
+import com.czy.post.service.PostStorageService;
+import com.czy.post.service.PostTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

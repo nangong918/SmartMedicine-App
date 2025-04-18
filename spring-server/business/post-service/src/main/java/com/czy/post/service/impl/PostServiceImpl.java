@@ -1,16 +1,18 @@
-package com.czy.post.mapper.service.impl;
+package com.czy.post.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.ao.post.PostAo;
-import com.czy.post.mapper.service.PostService;
-import com.czy.post.mapper.service.PostStorageService;
+import com.czy.api.domain.entity.event.OssTask;
+import com.czy.post.component.RabbitMqSender;
+import com.czy.post.service.PostService;
+import com.czy.post.service.PostStorageService;
 import com.czy.springUtils.service.RedisManagerService;
 import exception.AppException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,7 @@ public class PostServiceImpl implements PostService {
     private final RedisManagerService redisManagerService;
     private final PostStorageService postStorageService;
     private final ThreadPoolTaskExecutor globalTaskExecutor;
+    private final RabbitMqSender rabbitMqSender;
 
     /**
      * 发布消息是两个http请求：
@@ -85,10 +88,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(Long postId) {
+    public void deletePost(Long postId, Long userId) {
         postStorageService.deletePostContentFromDatabase(postId);
-        postStorageService.deletePostInfoFromDatabase(postId);
-        // 消息队列通知，异步删除oss TODO
+        // 不在此处删除mysql，因为oss还需要查询具体数据，删除oss之后再删除mysql
+//        postStorageService.deletePostInfoFromDatabase(postId);
+        // 消息队列通知，异步删除oss
+        OssTask ossTask = new OssTask();
+        ossTask.setOssFileId(postId);
+        ossTask.setUserId(userId);
+        ossTask.setOssTaskType(OssTaskTypeEnum.DELETE.getCode());
+        // 消息队列异步告诉oss删除
+        rabbitMqSender.pushToOss(ossTask);
     }
 
     @Override

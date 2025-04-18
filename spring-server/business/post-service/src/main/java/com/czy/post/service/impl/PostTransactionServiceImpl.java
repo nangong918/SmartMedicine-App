@@ -1,4 +1,4 @@
-package com.czy.post.mapper.service.impl;
+package com.czy.post.service.impl;
 
 import com.czy.api.constant.exception.StorageException;
 import com.czy.api.converter.domain.post.PostConverter;
@@ -7,7 +7,7 @@ import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.post.mapper.es.PostDetailEsMapper;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
-import com.czy.post.mapper.service.PostTransactionService;
+import com.czy.post.service.PostTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

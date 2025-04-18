@@ -41,8 +41,18 @@ public class OssServiceImpl implements OssService {
     private final MinIOUtils minIOUtils;
 
     @Override
+    public OssFileDo getFileInfoByFileId(Long fileId) {
+        return ossMapper.getById(fileId);
+    }
+
+    @Override
     public OssFileDo getFileInfoByUserIdAndFileName(Long userId, String bucketName, String fileName) {
         return ossMapper.getByFileStorageNameAndBucketName(userId, fileName, bucketName);
+    }
+
+    @Override
+    public OssFileDo getFileInfoByUserIdAndFileStorageName(Long userId, String bucketName, String fileStorageName) {
+        return ossMapper.getByFileNameAndUserId(userId, fileStorageName);
     }
 
     @Override
@@ -226,6 +236,24 @@ public class OssServiceImpl implements OssService {
             try{
                 minIOUtils.removeFile(bucketName, ossFileDo.getFileStorageName());
                 ossMapper.deleteByFileStorageNameAndBucketName(ossFileDo.getFileStorageName(), bucketName);
+                return true;
+            } catch (Exception e){
+                log.warn("删除文件失败", e);
+                throw new OssException("删除文件失败");
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteFileByFileId(Long fileId) {
+        OssFileDo ossFileDo = ossMapper.getById(fileId);
+        if (ossFileDo != null){
+            try{
+                // oss删除
+                minIOUtils.removeFile(ossFileDo.getBucketName(), ossFileDo.getFileStorageName());
+                // mysql删除
+                ossMapper.delete(fileId);
                 return true;
             } catch (Exception e){
                 log.warn("删除文件失败", e);

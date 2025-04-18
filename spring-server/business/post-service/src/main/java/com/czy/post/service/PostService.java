@@ -1,4 +1,4 @@
-package com.czy.post.mapper.service;
+package com.czy.post.service;
 
 import com.czy.api.domain.ao.post.PostAo;
 import lombok.NonNull;
@@ -18,7 +18,7 @@ public interface PostService {
     void releasePostAfterOss(@NonNull Long publishId);
 
     // 删除
-    void deletePost(Long postId);
+    void deletePost(Long postId, Long userId);
 
     // 更改完全
     void updatePostFirst(PostAo postAo, Long postId);

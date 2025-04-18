@@ -1,4 +1,4 @@
-package com.czy.post.mapper.service;
+package com.czy.post.service;
 
 import com.czy.api.domain.ao.post.PostAo;
 
