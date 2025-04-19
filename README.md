@@ -3,24 +3,63 @@
 
 # 项目介绍
 
-智能医疗App:
+#### 智能医疗App:
 
-* 包括:文章推荐,医疗社区,动态发布,在线问诊,AI问答,疾病预测,便捷搜索等功能
+##### 项目功能
+
+文章推荐,医疗社区,动态发布,在线问诊,AI问答,疾病预测,便捷搜索等功能
+
+##### 模块及其技术栈
+
 * 推荐算法：协同过滤，基于内容，神经网络
 * 搜索引擎：ElasticSearch、word2vec/IK分词搜索、知识图谱
 * IM系统：SpringCloud系列，Netty
-* 终端：Android、JNI
+* 网关：spring-cloud-gateway + Nginx
+* 终端：Android、JNI/NDK
 * 大数据：Hadoop、Spark、Flink、Hive、HBase
 * 爬虫：selenium、lxml
 * 后台：JS，Vue，ElementUI
 
 [Spring项目](spring-server/README.md)
 [Android项目](android-frontend/README.md)
-[项目文档](Introduction.md)
+
+## 设计思路
+
+(下面内容包含UML图,要查看UML需要下载IDEA的插件:PlantUML):[PlantUML插件](https://plugins.jetbrains.com/plugin/7017-plantuml-integration)
+
+[项目设计思路](项目设计思路.md)
+
+### 项目基本功能
+* 推荐系统
+  * 用户特征提取：
+    * 最近浏览记录
+    * 搜索记录
+    * 聊天记录分词
+  * 搜索推荐
+    * Bert意图分类 + 知识图谱获取获取实体
+  * 文章推荐
+    * 召回
+    * 粗排精排、重排、曝光去重
+    * 数据分析：Flink、Hive、Spark，Hadoop
+* 医疗社区
+    * 发布帖子 [发布帖子](spring-server/business/post-service/docs/发布帖子.puml)
+* AI问诊
+* 搜索
+  * 搜索用户
+    * 模糊匹配用户Account(MySQL的like)
+    * 模糊分词匹配用户的Name(ElasticSearch的IK分词搜索)
+  * 搜索帖子
+      * 分词搜索帖子（ElasticSearch的IK分词搜索）
+      * 相关性关键词/帖子推荐（推荐系统(搜索模块)：知识图谱 + NLP）
+* 个人
+  * 疾病预测（多层感知机 + 全连接层）
+  * 用药提醒（Netty实现IM）
+  * 好友聊天（Netty实现IM）
+  * 点赞收藏记录
 
 ## ⚠注意
 
-此项目为个人2024年天津科技大学本科毕业设计论文，仅供开源学习参考。禁止用于其他用途。
+此项目为个人2024年天津科技大学本科毕业设计论文，仅供开源学习参考。禁止用于其他用途。/
 
 [项目论文-本人本科毕业设计论文](20201220-陈治宇-基于机器学习的智能医疗对话APP的设计.pdf)
 
@@ -175,3 +214,45 @@ Bert loss函数损失值梯度下降
 ![loss.png](assets/所有对比loss.png)
 
 各种方法的loss与训练轮次的对比（其中MSE是均方误差，由于计算公式的原因，其loss远低于其他函数，但是并不代表其模型效果最好）
+
+## 项目环境
+
+### Spring Cloud 微服务架构
+* JDK 11
+* Spring Boot：2.3.12.RELEASE
+* Spring Cloud：Hoxton.SR1
+* Spring Alibab：2.2.0.RELEASE
+* Nacos
+* Nginx
+* ElasticSearch 7.6.2
+* MongoDB
+* MySQL
+* Redis
+* RabbitMq
+
+### Android
+* JDK 17
+* Kotlin：ktx:1.8.0
+* C++ 11
+* NDK：21.1.6352462
+
+### 推荐算法
+* Python 3.9
+* Anaconda 
+* Tensorflow 2
+* CUDA;CUDNN
+* Pytorch
+
+## 开发工具
+
+Spring后端：
+* IntelliJ IDEA
+* Navicat 16（MySQL）
+* JMeter（压测）
+* Kibana（可视化ElasticSearch）
+
+终端Android：
+* Android Studio
+
+推荐算法
+* Pycharm

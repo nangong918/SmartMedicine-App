@@ -1,6 +1,10 @@
 **IM系统设计思路**
 ==================
 
+# 整体架构
+
+![后端架构](../assets/后端架构.png)
+
 # 关键点
 
 #### 1. 长连接
@@ -17,7 +21,7 @@ Tomcat，Spring的WebSocket，MQTT，STOMP，Netty
 * 服务端（Spring）：收到PING之后响应PONG
 * 重连机制：
   * 前端每30秒发送一次PING确定在线。如果5秒没有收到PONG就断开连接尝试重联，重连每隔
-  * Androi注册ConnectivityManager.NetworkCallback监听网络变化，onLost之后进行重连。
+  * Android注册ConnectivityManager.NetworkCallback监听网络变化，onLost之后进行重连。
 
 #### 2. 消息传递
 
