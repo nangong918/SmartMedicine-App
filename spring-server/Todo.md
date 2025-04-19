@@ -299,7 +299,9 @@ Android前端随便搞搞得了，重心不在Android
 ###### 目前任务
 
 TODO ：
-1. oss和mysql数据库数据需要一致，需要@Transactional
-2. oss文件上传service实现,controller实现
-3. oss文件上传下载测试
-4. 重点项目:搜索NLP;推荐算法;转型升级
+1. 学习推荐系统架构\学习Java场景题(由场景入八股)
+2. 完成Post+Oss的增删改查测试
+3. 完成PostController功能:增删改查帖子
+4. 完成帖子的点赞,评论,收藏,转发[全是netty]
+5. 完成帖子的点赞数,评论数,收藏数,转发数获取[全是http]
+6. 完成获取帖子的一级评论,获取帖子的二级评论[全是http]

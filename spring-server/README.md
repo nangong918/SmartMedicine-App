@@ -1,7 +1,7 @@
 **SmartMedicine Spring端**
 =============
 
-[返回](../README.md)
+[返回主README](../README.md)
 
 # 项目介绍
 
