@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>后台管理界面 - 用户管理</title>
+  <link rel="stylesheet" href="author-style.css">
+</head>
+
+<body>
+  <div class="tz_content">
+        <!--t_left start-->
+
+        <div class="t_left">
+            <div class="l_logo"></div>
+            <div class="l_nav">
+                <ul>
+                    <li class="active">
+                        <a href="../home/home.html">
+                            <i class="icon_1"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../user/user.html">
+                            <i class="icon_1"></i>
+                            <span>用户管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../article/article.html">
+                            <i class="icon_2"></i>
+                            <span>文章管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                            <i class="icon_3"></i>
+                            <span>作者管理</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--t_left end-->
+
+                <!--t_header start-->
+                <div class="t_header">
+                    <!--h_nav start-->
+                    <div class="h_nav">
+                        <ul>
+                            <li>
+                                <a href="../home/home.html" class="h_sel">
+                                    <i class="h_icon1"></i>
+                                    <span>首页</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--end h_nav-->
+        
+                    <!--h_info start-->
+                    <div class="h_info">
+                        <div class="h_user">当前用户：Administrators , 身份：系统管理员</div>
+                        <div class="h_out">
+                            <a href="../sign_in.html">
+                                <span>退出</span>
+                                <i></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!--end h_info-->
+        
+                </div>
+                <!--end t_header-->
+
+        <!--t_right start-->
+        <div class="t_right">
+            <!-- r_location start -->
+            <div class="r_location">
+              <i></i>
+              <p>您当前所在位置：作者管理</p>
+            </div>
+            <!-- end r_location -->
+        
+            <!-- 显示复选框和查询框 -->
+            <div class="action-container">
+                <button onclick="deleteAuthor()">删除</button>
+                <input type="checkbox" id="selectAll" onchange="toggleSelectAll()"> <label for="selectAll">全选</label>
+                <input type="text" id="searchInput" class="search-input" placeholder="请输入作者名称">
+                <button onclick="searchAuthor()">查询</button>
+            </div>
+        
+            <ul id="authorList"></ul>
+
+            <div class="add-container">
+                <input id="newAuthorName" type="text" placeholder="作者名称">
+                <button onclick="addAuthor()">添加</button>
+              </div>
+        
+            <!-- 分页容器 -->
+            <div id="paginationContainer" class="pagination-container"></div>
+
+
+        <!--end t_right-->
+  </div>
+
+  <script src="author.js"></script>
+</body>
+</html>

@@ -42,7 +42,7 @@
     * 粗排精排、重排、曝光去重
     * 数据分析：Flink、Hive、Spark，Hadoop
 * 医疗社区
-    * 发布帖子 [发布帖子](spring-server/business/post-service/docs/发布帖子.puml)
+    * 发布帖子 [发布帖子UML时序图](spring-server/business/post-service/docs/发布帖子.puml)
 * AI问诊
 * 搜索
   * 搜索用户
