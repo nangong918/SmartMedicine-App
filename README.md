@@ -256,3 +256,13 @@ Spring后端：
 
 推荐算法
 * Pycharm
+
+## 资源相关
+
+由于Bert模型过大没有放到项目中，可以去Hugging Face下载一个Bert中文模型
+[Hugging Face模型网站](https://huggingface.co/models)
+或者下载我的百度网盘链接：
+[Bert模型百度网盘链接](https://pan.baidu.com/s/137UH7WW44cQysRUTwLLgiA?pwd=smme)
+提取码: smme
+
+下载成功之后将其添加到路径：[Bert路径](python-nlp/nlu/bert_intent_recognition/Bert) 下面
