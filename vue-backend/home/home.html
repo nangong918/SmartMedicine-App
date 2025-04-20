@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>后台管理界面 - 主页</title>
+  <link rel="stylesheet" href="home-style.css">
+</head>
+
+<body>
+  <div class="tz_content">
+        <!--t_left start-->
+
+        <div class="t_left">
+            <div class="l_logo"></div>
+            <div class="l_nav">
+                <ul>
+                    <li class="active">
+                        <a href="">
+                            <i class="icon_1"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../user/user.html">
+                            <i class="icon_1"></i>
+                            <span>用户管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../article/article.html">
+                            <i class="icon_2"></i>
+                            <span>文章管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../author/author.html">
+                            <i class="icon_3"></i>
+                            <span>作者管理</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--t_left end-->
+
+                <!--t_header start-->
+                <div class="t_header">
+                    <!--h_nav start-->
+                    <div class="h_nav">
+                        <ul>
+                            <li>
+                                <a href="#" class="h_sel">
+                                    <i class="h_icon1"></i>
+                                    <span>首页</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--end h_nav-->
+        
+                    <!--h_info start-->
+                    <div class="h_info">
+                        <div class="h_user">当前用户：Administrators , 身份：系统管理员</div>
+                        <div class="h_out">
+                            <a href="../sign_in.html">
+                                <span>退出</span>
+                                <i></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!--end h_info-->
+        
+                </div>
+                <!--end t_header-->
+
+        <!--t_right start-->
+        <div class="t_right">
+
+            <!--r_location start-->
+            <div class="r_location">
+                <i></i>
+                <p>您当前所在位置：首页 > 后台中心</p>
+            </div>
+            <!--end r_location-->
+
+              <!--r_message start-->
+                <div class="r_message">
+                    <div class="m_list m_1">
+                        <div class="m_pic"></div>
+                        <div class="m_desc">
+                            <span id="userCount">0</span>
+                            <p>所有用户数量</p>
+                        </div>
+                    </div>
+                    <div class="m_list m_2">
+                        <div class="m_pic"></div>
+                        <div class="m_desc">
+                            <span id="articleCount">0</span>
+                            <p>所有文章数量</p>
+                        </div>
+                    </div>
+                    <div class="m_list m_3">
+                        <div class="m_pic"></div>
+                        <div class="m_desc">
+                            <span id="authorCount">0</span>
+                            <p>所有作者数量</p>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            <!--end r_message-->
+
+        </div>
+        <!--end t_right-->
+  </div>
+
+  <script src="home.js"></script>
+</body>
+</html>
