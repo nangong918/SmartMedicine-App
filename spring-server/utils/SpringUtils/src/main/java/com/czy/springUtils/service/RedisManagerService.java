@@ -92,6 +92,7 @@ public interface RedisManagerService {
 
     // ---------------------Object---------------------
     boolean setObjectAsString(String key, Object obj, Long expireTimes);
+    boolean setObjectAsString(Object object, Object obj, Long expireTimes);
     boolean setObjectAsHash(String key, Object obj, Long expireTimes);
         // 反序列化失败 异常处理
     <T> T getObjectFromString(String key, Class<T> clazz);

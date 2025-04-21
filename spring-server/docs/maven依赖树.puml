@@ -39,6 +39,7 @@ package "Business" {
     [sms-service]
     [message-service]
     [relationship-service]
+    [post-service]
 
     [auth-service] --> [SpringWebfluxUtils]
     [auth-service] --> [api-model]
@@ -54,6 +55,9 @@ package "Business" {
 
     [relationship-service] --> [SpringWebfluxUtils]
     [relationship-service] --> [api-model]
+
+    [post-service] --> [SpringMvcUtils]
+    [post-service] --> [api-model]
 }
 
 @enduml

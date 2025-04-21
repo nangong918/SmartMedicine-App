@@ -18,10 +18,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
                 "com.czy.api",
                 // 扫描本模块
                 "com.czy.post",
-                // 扫描工具类
-                "com.utils.webflux.handler",
-                // 扫描工具类
-                "com.czy.springUtils",
+//                // 扫描工具类 Webflux的异常处理
+//                "com.utils.webflux.handler",
+                // 扫描工具类springMvcUtils
+                "com.utils.mvc",
         },
         // 排除
         exclude = {}

@@ -4,6 +4,7 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -94,4 +95,14 @@ public interface PostConverter {
         PostDetailDo postDetailDo = toMongoDo(postDetailEsDo);
         return doToAo(postDetailDo, postInfoDo);
     }
+
+    // request -> ao
+    default PostAo requestToAo(PostPublishRequest request, Long userId){
+        PostAo postAo = new PostAo();
+        postAo.setTitle(request.getTitle());
+        postAo.setContent(request.getContent());
+        postAo.setAuthorId(userId);
+        return postAo;
+    };
+
 }
