@@ -112,4 +112,13 @@ public class RedissonServiceImpl implements RedissonService {
         RBucket<T> bucket = redissonClient.getBucket(key);
         return bucket.get();
     }
+
+    @Override
+    public boolean deleteObject(String key) {
+        // 获取RBucket对象
+        RBucket<Object> bucket = redissonClient.getBucket(key);
+
+        // 删除键并返回结果
+        return bucket.delete();
+    }
 }

@@ -9,6 +9,7 @@ import com.czy.post.component.RabbitMqSender;
 import com.czy.post.service.PostService;
 import com.czy.post.service.PostStorageService;
 import com.czy.springUtils.service.RedisManagerService;
+import com.utils.mvc.redisson.RedissonService;
 import exception.AppException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ import java.util.List;
 @Service
 public class PostServiceImpl implements PostService {
 
-    private final RedisManagerService redisManagerService;
+    private final RedissonService redissonService;
     private final PostStorageService postStorageService;
     private final ThreadPoolTaskExecutor globalTaskExecutor;
     private final RabbitMqSender rabbitMqSender;
@@ -48,13 +49,14 @@ public class PostServiceImpl implements PostService {
      * @return          boolean
      */
     @Override
-    public Long releasePostFirst(@NonNull PostAo postAo) {
+    public long releasePostFirst(@NonNull PostAo postAo) {
         // 由于两次http请求可能都不是一个服务处理的，所以数据需要缓存在redis
         // 生成发布的雪花id
         long publishId = IdUtil.getSnowflakeNextId();
         // redis的存储key是：post_publish_key: + 发布id
+        // key统一格式：post_publish_key:snowflakeId（注意是snowflakeId不是userAccount或者userName）
         String key = PostConstant.POST_PUBLISH_KEY + publishId;
-        boolean result = redisManagerService.setObjectAsString(key, postAo, PostConstant.POST_PUBLISH_KEY_EXPIRE_TIME);
+        boolean result = redissonService.setObjectByJson(key, postAo, PostConstant.POST_PUBLISH_KEY_EXPIRE_TIME);
         if (!result){
             log.warn("Post上传到Redis失败，authorId：{}", postAo.getAuthorId());
             throw new AppException("post上传到服务端失败");
@@ -66,10 +68,10 @@ public class PostServiceImpl implements PostService {
     public void releasePostAfterOss(@NonNull Long publishId) {
         // 获取redis的key
         String key = PostConstant.POST_PUBLISH_KEY + publishId;
-        PostAo postAo = redisManagerService.getObjectFromString(key, PostAo.class);
+        PostAo postAo = redissonService.getObjectFromJson(key, PostAo.class);
         if (postAo != null){
             // 先删除redis数据
-            redisManagerService.deleteAny(key);
+            redissonService.deleteObject(key);
             // 异步存储
             globalTaskExecutor.execute(() -> {
                 // es + mongo 同步事务存储
@@ -105,7 +107,7 @@ public class PostServiceImpl implements PostService {
     public void updatePostFirst(PostAo postAo, Long postId) {
         // 由于两次http请求可能都不是一个服务处理的，所以数据需要缓存在redis
         String key = PostConstant.POST_PUBLISH_KEY + postId;
-        boolean result = redisManagerService.setObjectAsString(key, postAo, PostConstant.POST_PUBLISH_KEY_EXPIRE_TIME);
+        boolean result = redissonService.setObjectByJson(key, postAo, PostConstant.POST_PUBLISH_KEY_EXPIRE_TIME);
         if (!result){
             log.warn("Post更新到Redis失败，authorId：{}", postAo.getAuthorId());
             throw new AppException("post更新到服务端失败");
@@ -115,10 +117,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public void updatePostAfterOss(@NonNull Long postId) {
         String key = PostConstant.POST_PUBLISH_KEY + postId;
-        PostAo postAo = redisManagerService.getObjectFromString(key, PostAo.class);
+        PostAo postAo = redissonService.getObjectFromJson(key, PostAo.class);
         if (postAo != null){
             // 先删除redis数据
-            redisManagerService.deleteAny(key);
+            redissonService.deleteObject(key);
             globalTaskExecutor.execute(() -> {
                 // es + mongo 同步事务存储
                 postStorageService.updatePostContentToDatabase(postAo, postId);

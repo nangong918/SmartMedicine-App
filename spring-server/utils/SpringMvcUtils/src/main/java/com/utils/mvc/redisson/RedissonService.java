@@ -87,4 +87,7 @@ public interface RedissonService {
      * @param <T>
      */
     <T> T getObjectFromSerializable(String key, Class<T> clazz);
+
+    // 删除对象和key
+    boolean deleteObject(String key);
 }

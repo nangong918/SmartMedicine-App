@@ -13,7 +13,7 @@ public interface PostService {
 
     // 发布
     // 初次上传到redis
-    Long releasePostFirst(@NonNull PostAo postAo);
+    long releasePostFirst(@NonNull PostAo postAo);
     // oss的成功的二次上传
     void releasePostAfterOss(@NonNull Long publishId);
 

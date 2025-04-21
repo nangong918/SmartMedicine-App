@@ -9,6 +9,7 @@ import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
+import com.czy.post.service.PostService;
 import com.czy.springUtils.service.RedisManagerService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
@@ -39,8 +40,8 @@ public class PostController {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     private final PostConverter postConverter;
-    private final RedisManagerService redisManagerService;
     private final RedissonService redissonService;
+    private final PostService postService;
 
     // 发布post
     /**
@@ -58,12 +59,13 @@ public class PostController {
             String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
             return Mono.just(BaseResponse.LogBackError(warningMessage, log));
         }
-        String userAccount = request.getSenderId();
-        // 对userAccount上分布式锁
+        // 对userId上分布式锁
+        // 选择userId是因为oss那边只知道userId，对userAccount无感知
         // 分布式锁在此上锁，如果出现异常就解锁
+        // 解锁在整个流程任何地方出现异常以及结束
         RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
-                userAccount,
-                PostConstant.POST_PUBLISH_FIRST,
+                String.valueOf(userDo.getId()),
+                PostConstant.Post_CONTROLLER + PostConstant.POST_PUBLISH_FIRST,
                 PostConstant.POST_PUBLISH_KEY_EXPIRE_TIME
         );
         if (!redissonService.tryLock(redissonClusterLock)){
@@ -72,11 +74,9 @@ public class PostController {
         }
         // 2.缓存到redis
         PostAo postAo = postConverter.requestToAo(request, userDo.getId());
-        // 生成雪花id
-        long snowflakeId = IdUtil.getSnowflakeNextId();
+        // redis + 生成雪花id
+        long snowflakeId = postService.releasePostFirst(postAo);
         // key统一格式：post_publish_key:snowflakeId（注意是snowflakeId不是userAccount或者userName）
-        String key = PostConstant.POST_PUBLISH_KEY + snowflakeId;
-        redisManagerService.setObjectAsString(postAo, key, PostConstant.POST_PUBLISH_KEY_EXPIRE_TIME);
         PostPublishResponse response = new PostPublishResponse();
         response.setSnowflakeId(snowflakeId);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
