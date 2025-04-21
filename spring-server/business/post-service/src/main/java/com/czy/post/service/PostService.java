@@ -17,7 +17,11 @@ public interface PostService {
     // oss的成功的二次上传
     void releasePostAfterOss(@NonNull Long publishId);
 
-    // 删除
+    /**
+     * 删除
+     * @param postId    publishId;也就是雪花id
+     * @param userId    用户id
+     */
     void deletePost(Long postId, Long userId);
 
     // 更改完全
@@ -25,6 +29,7 @@ public interface PostService {
     void updatePostAfterOss(Long postId);
 
     // 局部更改
+    void updatePostInfoAndContent(PostAo postAo, Long postId);
     void updatePostInfo(PostAo postAo, Long postId);
 
     // 查询

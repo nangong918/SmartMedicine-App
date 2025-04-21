@@ -1,6 +1,5 @@
 package com.czy.post.controller;
 
-import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostConverter;
@@ -8,9 +7,9 @@ import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
+import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
 import com.czy.post.service.PostService;
-import com.czy.springUtils.service.RedisManagerService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -66,7 +67,7 @@ public class PostController {
         RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
                 String.valueOf(userDo.getId()),
                 PostConstant.Post_CONTROLLER + PostConstant.POST_PUBLISH_FIRST,
-                PostConstant.POST_PUBLISH_KEY_EXPIRE_TIME
+                PostConstant.POST_CHANGE_KEY_EXPIRE_TIME
         );
         if (!redissonService.tryLock(redissonClusterLock)){
             String warningMessage = String.format("用户正在发布帖子，请稍后再试，account: %s", request.getSenderId());
@@ -83,8 +84,55 @@ public class PostController {
     }
 
     // 删除post
+    @DeleteMapping("/postDelete")
+    public Mono<BaseResponse<String>> deletePost(
+            @RequestParam Long postId,
+            @RequestParam Long userId) {
+        if (postId == null || userId == null){
+            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+        }
+        postService.deletePost(postId, userId);
+        return Mono.just(BaseResponse.getResponseEntitySuccess("删除申请已提交，请等待"));
+    }
 
     // 修改post
+    // 只修改内容
+    @PostMapping("/postUpdate")
+    public Mono<BaseResponse<String>>
+    updatePost(@Valid @RequestBody PostUpdateRequest request){
+        UserDo userDo = userService.getUserByAccount(request.getSenderId());
+        if (userDo == null){
+            String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
+            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+        }
+        PostAo postAo = postConverter.updateRequestToAo(request, userDo.getId());
+        postService.updatePostInfoAndContent(postAo, request.getPostId());
+        return Mono.just(BaseResponse.getResponseEntitySuccess("修改申请已提交，请等待"));
+    }
+
+    // 修改了全部
+    @PostMapping(PostConstant.POST_UPDATE_ALL)
+    public Mono<BaseResponse<String>>
+    updatePostAll(@Valid @RequestBody PostUpdateRequest request){
+        // 1.给用户id上分布式锁
+        UserDo userDo = userService.getUserByAccount(request.getSenderId());
+        if (userDo == null){
+            String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
+            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+        }
+        RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
+                String.valueOf(userDo.getId()),
+                PostConstant.Post_CONTROLLER + PostConstant.POST_UPDATE_ALL,
+                PostConstant.POST_CHANGE_KEY_EXPIRE_TIME
+        );
+        if (!redissonService.tryLock(redissonClusterLock)){
+            String warningMessage = String.format("用户正在修改帖子，请稍后再试，account: %s", request.getSenderId());
+            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+        }
+        PostAo postAo = postConverter.updateRequestToAo(request, userDo.getId());
+        postService.updatePostFirst(postAo, request.getPostId());
+        return Mono.just(BaseResponse.getResponseEntitySuccess("修改申请已提交，请等待"));
+    }
 
     // 查询post
 

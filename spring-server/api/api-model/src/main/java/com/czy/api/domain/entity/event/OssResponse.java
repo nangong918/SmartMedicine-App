@@ -1,6 +1,7 @@
 package com.czy.api.domain.entity.event;
 
 import com.czy.api.constant.oss.OssResponseTypeEnum;
+import com.czy.api.constant.oss.OssTaskTypeEnum;
 import lombok.Data;
 
 /**
@@ -23,4 +24,6 @@ public class OssResponse {
     public Long currentTime = System.currentTimeMillis();
     // oss响应类型
     public int ossResponseType = OssResponseTypeEnum.NULL.getCode();
+    // oss操作类型：增删改查
+    public int ossOperationType = OssTaskTypeEnum.NULL.getCode();
 }

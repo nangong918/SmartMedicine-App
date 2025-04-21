@@ -5,6 +5,7 @@ import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
+import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -98,6 +99,15 @@ public interface PostConverter {
 
     // request -> ao
     default PostAo requestToAo(PostPublishRequest request, Long userId){
+        PostAo postAo = new PostAo();
+        postAo.setTitle(request.getTitle());
+        postAo.setContent(request.getContent());
+        postAo.setAuthorId(userId);
+        return postAo;
+    };
+
+    // update request -> ao
+    default PostAo updateRequestToAo(PostUpdateRequest request, Long userId){
         PostAo postAo = new PostAo();
         postAo.setTitle(request.getTitle());
         postAo.setContent(request.getContent());

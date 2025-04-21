@@ -1,6 +1,7 @@
 package com.czy.post.eventListener;
 
 import com.czy.api.constant.oss.OssResponseTypeEnum;
+import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.entity.event.OssResponse;
 import com.czy.api.domain.entity.event.event.OssResponseEvent;
@@ -48,8 +49,14 @@ public class OssResponseEventListener implements ApplicationListener<OssResponse
                     log.error("获取redis失败，postAo == null，fileRedisKey: {}", fileRedisKey);
                     return;
                 }
-                // 发布成功之后，将post的消息存储到数据库中
-                postService.releasePostAfterOss(ossResponse.getPublishId());
+                if (OssTaskTypeEnum.ADD.getCode() == ossResponse.ossOperationType){
+                    // 发布成功之后，将post的消息存储到数据库中
+                    postService.releasePostAfterOss(ossResponse.getPublishId());
+                }
+                else if (OssTaskTypeEnum.UPDATE.getCode() == ossResponse.ossOperationType){
+                    // 更新成功之后，将post的消息存储到数据库中
+                    postService.updatePostAfterOss(ossResponse.getPublishId());
+                }
             } catch (Exception e) {
                 log.error("获取redis失败，fileRedisKey: {}", fileRedisKey);
             }

@@ -8,7 +8,6 @@ import com.czy.api.domain.entity.event.OssTask;
 import com.czy.post.component.RabbitMqSender;
 import com.czy.post.service.PostService;
 import com.czy.post.service.PostStorageService;
-import com.czy.springUtils.service.RedisManagerService;
 import com.utils.mvc.redisson.RedissonService;
 import exception.AppException;
 import lombok.NonNull;
@@ -56,7 +55,7 @@ public class PostServiceImpl implements PostService {
         // redis的存储key是：post_publish_key: + 发布id
         // key统一格式：post_publish_key:snowflakeId（注意是snowflakeId不是userAccount或者userName）
         String key = PostConstant.POST_PUBLISH_KEY + publishId;
-        boolean result = redissonService.setObjectByJson(key, postAo, PostConstant.POST_PUBLISH_KEY_EXPIRE_TIME);
+        boolean result = redissonService.setObjectByJson(key, postAo, PostConstant.POST_CHANGE_KEY_EXPIRE_TIME);
         if (!result){
             log.warn("Post上传到Redis失败，authorId：{}", postAo.getAuthorId());
             throw new AppException("post上传到服务端失败");
@@ -106,8 +105,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public void updatePostFirst(PostAo postAo, Long postId) {
         // 由于两次http请求可能都不是一个服务处理的，所以数据需要缓存在redis
-        String key = PostConstant.POST_PUBLISH_KEY + postId;
-        boolean result = redissonService.setObjectByJson(key, postAo, PostConstant.POST_PUBLISH_KEY_EXPIRE_TIME);
+        String key = PostConstant.POST_UPDATE_KEY + postId;
+        boolean result = redissonService.setObjectByJson(key, postAo, PostConstant.POST_CHANGE_KEY_EXPIRE_TIME);
         if (!result){
             log.warn("Post更新到Redis失败，authorId：{}", postAo.getAuthorId());
             throw new AppException("post更新到服务端失败");
@@ -116,7 +115,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void updatePostAfterOss(@NonNull Long postId) {
-        String key = PostConstant.POST_PUBLISH_KEY + postId;
+        String key = PostConstant.POST_UPDATE_KEY + postId;
         PostAo postAo = redissonService.getObjectFromJson(key, PostAo.class);
         if (postAo != null){
             // 先删除redis数据
@@ -134,6 +133,12 @@ public class PostServiceImpl implements PostService {
             log.warn("Post更新失败，postId：{}", postId);
             throw new AppException("post更新失败，服务器缓存数据过期，请重新上传");
         }
+    }
+
+    @Override
+    public void updatePostInfoAndContent(PostAo postAo, Long postId) {
+        postStorageService.updatePostInfoToDatabase(postAo, postId);
+        postStorageService.updatePostContentToDatabase(postAo, postId);
     }
 
     @Override
