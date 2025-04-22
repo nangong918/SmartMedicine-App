@@ -12,10 +12,12 @@ import java.util.List;
 public interface PostService {
 
     // 发布
+    // 不需要上传文件的情况
+    long releasePostWithoutFile(@NonNull PostAo postAo);
     // 初次上传到redis
     long releasePostFirst(@NonNull PostAo postAo);
     // oss的成功的二次上传
-    void releasePostAfterOss(@NonNull Long publishId);
+    void releasePostAfterOss(@NonNull PostAo postAo);
 
     /**
      * 删除
@@ -26,7 +28,7 @@ public interface PostService {
 
     // 更改完全
     void updatePostFirst(PostAo postAo, Long postId);
-    void updatePostAfterOss(Long postId);
+    void updatePostAfterOss(PostAo postAo);
 
     // 局部更改
     void updatePostInfoAndContent(PostAo postAo);

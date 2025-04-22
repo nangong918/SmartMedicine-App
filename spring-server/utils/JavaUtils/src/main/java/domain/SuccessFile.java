@@ -11,6 +11,7 @@ public class SuccessFile {
     private String fileName;
     private String fileStorageName;
     private Long fileSize;
+    private Long fileId;
     public SuccessFile(){
 
     }

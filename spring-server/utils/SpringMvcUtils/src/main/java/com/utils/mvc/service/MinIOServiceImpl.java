@@ -57,6 +57,8 @@ public class MinIOServiceImpl implements MinIOService{
                 errorFiles.add(new ErrorFile(fileName, "[上传失败]"));
             }
         }
+        // 添加fileId
+
         fileOptionResult.setErrorFiles(errorFiles);
         fileOptionResult.setSuccessFiles(successFiles);
         return fileOptionResult;

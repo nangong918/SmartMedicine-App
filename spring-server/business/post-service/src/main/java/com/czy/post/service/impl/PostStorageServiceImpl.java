@@ -44,6 +44,14 @@ public class PostStorageServiceImpl implements PostStorageService {
     }
 
     @Override
+    public void storePostFilesToDatabase(PostAo postAo) {
+        List<PostFilesDo> postFilesDoList = postConverter.toPostFilesList(postAo);
+        if (!CollectionUtils.isEmpty(postFilesDoList)){
+            postFilesMapper.insertPostFilesDoList(postFilesDoList);
+        }
+    }
+
+    @Override
     public void deletePostContentFromDatabase(Long id) {
         postTransactionService.deletePostContentById(id);
     }
@@ -89,5 +97,13 @@ public class PostStorageServiceImpl implements PostStorageService {
     public void updatePostInfoToDatabase(PostAo postAo) {
         PostInfoDo postInfoDo = postConverter.toInfoDo(postAo);
         postInfoMapper.updatePostInfoDoById(postInfoDo);
+    }
+
+    @Override
+    public void updatePostFilesToDatabase(PostAo postAo) {
+        List<PostFilesDo> postFilesDoList = postConverter.toPostFilesList(postAo);
+        if (!CollectionUtils.isEmpty(postFilesDoList)){
+            postFilesMapper.updatePostFilesDoByPostDos(postFilesDoList);
+        }
     }
 }

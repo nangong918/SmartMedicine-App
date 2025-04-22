@@ -4,18 +4,22 @@ import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author 13225
  * @date 2025/4/21 15:25
  */
 @Data
-public class OssResponse {
+public class PostOssResponse {
     // 用户id
     public Long userId;
     // service id
     public String serviceId;
-    // publish的雪花id
+    // publish的雪花id// postId
     public Long publishId;
+    // fileIds
+    public List<Long> fileIds;
     // oss处理id;redis的雪花id
     public String fileRedisKey;
     // clusterLockPath

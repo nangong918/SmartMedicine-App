@@ -2,8 +2,8 @@ package com.czy.post.mqHander;
 
 import com.czy.api.constant.mq.OssMqConstant;
 import com.czy.api.constant.post.PostConstant;
-import com.czy.api.domain.entity.event.OssResponse;
-import com.czy.api.domain.entity.event.event.OssResponseEvent;
+import com.czy.api.domain.entity.event.PostOssResponse;
+import com.czy.api.domain.entity.event.event.PostOssResponseEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -27,11 +27,11 @@ public class OssMqHandler {
     private final ApplicationContext applicationContext;
 
     @RabbitHandler
-    public void handleMessage(@Valid OssResponse ossResponse) {
-        if (ossResponse != null &&
+    public void handleMessage(@Valid PostOssResponse postOssResponse) {
+        if (postOssResponse != null &&
                 // 属于本服务的事件
-                PostConstant.serviceName.equals(ossResponse.serviceId)){
-            applicationContext.publishEvent(new OssResponseEvent(ossResponse));
+                PostConstant.serviceName.equals(postOssResponse.serviceId)){
+            applicationContext.publishEvent(new PostOssResponseEvent(postOssResponse));
         }
     }
 

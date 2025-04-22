@@ -58,30 +58,38 @@ public class PostController {
     @PostMapping(PostConstant.POST_PUBLISH_FIRST)
     public Mono<BaseResponse<PostPublishResponse>>
     postPublishFirst(@Valid @RequestBody PostPublishRequest request){
+        long snowflakeId;
         // 1.给用户id上分布式锁
         UserDo userDo = userService.getUserByAccount(request.getSenderId());
         if (userDo == null){
             String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
             return Mono.just(BaseResponse.LogBackError(warningMessage, log));
         }
-        // 对userId上分布式锁
-        // 选择userId是因为oss那边只知道userId，对userAccount无感知
-        // 分布式锁在此上锁，如果出现异常就解锁
-        // 解锁在整个流程任何地方出现异常以及结束
-        RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
-                String.valueOf(userDo.getId()),
-                PostConstant.Post_CONTROLLER + PostConstant.POST_PUBLISH_FIRST,
-                PostConstant.POST_CHANGE_KEY_EXPIRE_TIME
-        );
-        if (!redissonService.tryLock(redissonClusterLock)){
-            String warningMessage = String.format("用户正在发布帖子，请稍后再试，account: %s", request.getSenderId());
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+        // 不需要上传文件的情况
+        if (!request.getIsHaveFiles()){
+            PostAo postAo = postConverter.requestToAo(request, userDo.getId());
+            snowflakeId = postService.releasePostWithoutFile(postAo);
         }
-        // 2.缓存到redis
-        PostAo postAo = postConverter.requestToAo(request, userDo.getId());
-        // redis + 生成雪花id
-        long snowflakeId = postService.releasePostFirst(postAo);
-        // key统一格式：post_publish_key:snowflakeId（注意是snowflakeId不是userAccount或者userName）
+        else {
+            // 对userId上分布式锁
+            // 选择userId是因为oss那边只知道userId，对userAccount无感知
+            // 分布式锁在此上锁，如果出现异常就解锁
+            // 解锁在整个流程任何地方出现异常以及结束
+            RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
+                    String.valueOf(userDo.getId()),
+                    PostConstant.Post_CONTROLLER + PostConstant.POST_PUBLISH_FIRST,
+                    PostConstant.POST_CHANGE_KEY_EXPIRE_TIME
+            );
+            if (!redissonService.tryLock(redissonClusterLock)){
+                String warningMessage = String.format("用户正在发布帖子，请稍后再试，account: %s", request.getSenderId());
+                return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+            }
+            // 2.缓存到redis
+            PostAo postAo = postConverter.requestToAo(request, userDo.getId());
+            // redis + 生成雪花id
+            snowflakeId = postService.releasePostFirst(postAo);
+            // key统一格式：post_publish_key:snowflakeId（注意是snowflakeId不是userAccount或者userName）
+        }
         PostPublishResponse response = new PostPublishResponse();
         response.setSnowflakeId(snowflakeId);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));

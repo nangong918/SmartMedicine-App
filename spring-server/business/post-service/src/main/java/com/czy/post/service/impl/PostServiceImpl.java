@@ -33,6 +33,18 @@ public class PostServiceImpl implements PostService {
     private final ThreadPoolTaskExecutor globalTaskExecutor;
     private final RabbitMqSender rabbitMqSender;
 
+    @Override
+    public long releasePostWithoutFile(@NonNull PostAo postAo) {
+        long publishId = IdUtil.getSnowflakeNextId();
+        postAo.setId(publishId);
+        // mysql
+        postStorageService.storePostInfoToDatabase(postAo);
+        postStorageService.storePostFilesToDatabase(postAo);
+        // mongo + es
+        postStorageService.storePostContentToDatabase(postAo);
+        return publishId;
+    }
+
     /**
      * 发布消息是两个http请求：
      * 【此方法上游要进行限流】
@@ -64,29 +76,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void releasePostAfterOss(@NonNull Long publishId) {
-        // 获取redis的key
-        String key = PostConstant.POST_PUBLISH_KEY + publishId;
-        PostAo postAo = redissonService.getObjectFromJson(key, PostAo.class);
-        if (postAo != null){
-            postAo.setId(publishId);
-            // 先删除redis数据
-            redissonService.deleteObject(key);
-            // 异步存储
-            globalTaskExecutor.execute(() -> {
-                // es + mongo 同步事务存储
-                postStorageService.storePostContentToDatabase(postAo);
-            });
-            // 异步存储
-            globalTaskExecutor.execute(() -> {
-                // mysql
-                postStorageService.storePostInfoToDatabase(postAo);
-            });
-        }
-        else {
-            log.warn("Post发布失败，postId：{}", publishId);
-            throw new AppException("post发布失败，服务器缓存数据过期，请重新上传");
-        }
+    public void releasePostAfterOss(@NonNull PostAo postAo) {
+        // 异步存储
+        globalTaskExecutor.execute(() -> {
+            // es + mongo 同步事务存储
+            postStorageService.storePostContentToDatabase(postAo);
+        });
+        // 异步存储
+        globalTaskExecutor.execute(() -> {
+            // mysql
+            postStorageService.storePostInfoToDatabase(postAo);
+            // files
+            postStorageService.storePostFilesToDatabase(postAo);
+        });
     }
 
     @Override
@@ -115,31 +117,22 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePostAfterOss(@NonNull Long postId) {
-        String key = PostConstant.POST_UPDATE_KEY + postId;
-        PostAo postAo = redissonService.getObjectFromJson(key, PostAo.class);
-        if (postAo != null){
-            postAo.setId(postId);
-            // 先删除redis数据
-            redissonService.deleteObject(key);
-            globalTaskExecutor.execute(() -> {
-                // es + mongo 同步事务存储
-                postStorageService.updatePostContentToDatabase(postAo);
-            });
-            globalTaskExecutor.execute(() -> {
-                // mysql
-                postStorageService.updatePostInfoToDatabase(postAo);
-            });
-        }
-        else {
-            log.warn("Post更新失败，postId：{}", postId);
-            throw new AppException("post更新失败，服务器缓存数据过期，请重新上传");
-        }
+    public void updatePostAfterOss(@NonNull PostAo postAo) {
+        globalTaskExecutor.execute(() -> {
+            // es + mongo 同步事务存储
+            postStorageService.updatePostContentToDatabase(postAo);
+        });
+        globalTaskExecutor.execute(() -> {
+            // mysql
+            postStorageService.updatePostInfoToDatabase(postAo);
+            postStorageService.updatePostFilesToDatabase(postAo);
+        });
     }
 
     @Override
     public void updatePostInfoAndContent(PostAo postAo) {
         postStorageService.updatePostInfoToDatabase(postAo);
+        postStorageService.updatePostFilesToDatabase(postAo);
         postStorageService.updatePostContentToDatabase(postAo);
     }
 

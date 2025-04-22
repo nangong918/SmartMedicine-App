@@ -3,6 +3,8 @@ package com.czy.api.api.oss;
 import com.czy.api.domain.Do.oss.OssFileDo;
 import com.czy.api.domain.ao.oss.FileNameAo;
 import domain.ErrorFile;
+import domain.FileIsExistResult;
+import domain.FileOptionResult;
 import domain.SuccessFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,14 +42,16 @@ public interface OssService {
      */
     boolean checkFileIdempotent(Long userId, String fileName, Long fileSize);
 
+    // 检查文件是否存再，返回result
+    FileIsExistResult checkFileNameExistForResult(Long userId, String fileName, String bucketName, Long fileSize);
     /**
      * 检查文件名是否存在？（非幂等性）
      * @param userId            用户id
-     * @param fileStorageName   文件存储名称
+     * @param fileName          文件名称
      * @param bucketName        bucketName
      * @return                  true：文件名存在；false：文件名不存在
      */
-    boolean checkFileNameExist(Long userId, String fileStorageName, String bucketName);
+    boolean checkFileNameExist(Long userId, String fileName, String bucketName);
 
     // 某个用户上传的文件数量
     long getFileCountByUserId(Long userId);
@@ -62,10 +66,11 @@ public interface OssService {
      * @param bucketName        bucketName
      * @return                  ErrorFileList
      */
-    List<ErrorFile> uploadFiles(List<MultipartFile> files, Long userId, String bucketName);
+    FileOptionResult uploadFiles(List<MultipartFile> files, Long userId, String bucketName);
 
     /**
      * 成功的存储到数据库
+     * 方法存储成功之后会对将files的id赋值
      * @param files             文件List
      * @param userId            用户id
      * @param bucketName        bucketName

@@ -13,6 +13,7 @@ public interface PostStorageService {
     void storePostContentToDatabase(PostAo postAo);
     // mysql
     void storePostInfoToDatabase(PostAo postAo);
+    void storePostFilesToDatabase(PostAo postAo);
 
     // 删除es + mongo
     void deletePostContentFromDatabase(Long id);
@@ -27,4 +28,5 @@ public interface PostStorageService {
     void updatePostContentToDatabase(PostAo postAo);
 
     void updatePostInfoToDatabase(PostAo postAo);
+    void updatePostFilesToDatabase(PostAo postAo);
 }
