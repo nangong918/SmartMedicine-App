@@ -10,16 +10,19 @@ import java.util.List;
  */
 @Data
 public class PostAo {
+    private Long id;
+    // authorId；not null（索引）
+    private Long authorId;
+    // fileIds
+    private List<Long> fileIds;
+
     // title；not null
     private String title;
     // content；not null
     private String content;
-    // picturesUrl；null able；是fileStorageName值，直接查找
-    private List<String> fileStorageNamesUrl;
-    // authorId；not null（索引）
-    private Long authorId;
     // releaseTimestamp；not null
     private Long releaseTimestamp;
+
     // 点赞数；not null
     private Long likeCount;
     // 收藏数；not null

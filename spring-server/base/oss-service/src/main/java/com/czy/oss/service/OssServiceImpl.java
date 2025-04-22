@@ -195,23 +195,43 @@ public class OssServiceImpl implements OssService {
                 .filter(ossFileDo -> fileNames.contains(ossFileDo.getFileName()))
                 .collect(Collectors.toList());
         for (OssFileDo ossFileDo : ossFileDos){
-            try{
-                String bucketName = ossFileDo.getBucketName();
-                if (!StringUtils.hasText(bucketName)){
-                    throw new OssException("存储桶不存在");
-                }
-                String fileStorageName = ossFileDo.getFileStorageName();
-                if (!StringUtils.hasText(fileStorageName)){
-                    throw new OssException("文件不存在");
-                }
-                String fileUrl = minIOUtils.getPresignedObjectUrl(bucketName, fileStorageName);
-                fileUrls.add(fileUrl);
-            } catch (Exception e){
-                log.warn("获取文件地址失败", e);
-                fileUrls.add("");
-            }
+            addUrlToList(fileUrls, ossFileDo);
         }
         return fileUrls;
+    }
+
+    @Override
+    public List<String> getFileUrlsByFileIds(List<Long> fileIds) {
+        List<String> fileUrls = new LinkedList<>();
+        for (Long fileId : fileIds){
+            OssFileDo ossFileDo = ossMapper.getById(fileId);
+            addUrlToList(fileUrls, ossFileDo);
+        }
+        return fileUrls;
+    }
+
+    private void addUrlToList(List<String> fileUrls, OssFileDo ossFileDo){
+        if (ossFileDo != null){
+            String bucketName = ossFileDo.getBucketName();
+            String fileStorageName = ossFileDo.getFileStorageName();
+            String url = getFileUrl(bucketName, fileStorageName);
+            fileUrls.add(url);
+        }
+    }
+
+    private String getFileUrl(String bucketName, String fileStorageName){
+        try{
+            if (!StringUtils.hasText(bucketName)){
+                throw new OssException("存储桶不存在");
+            }
+            if (!StringUtils.hasText(fileStorageName)){
+                throw new OssException("文件不存在");
+            }
+            return minIOUtils.getPresignedObjectUrl(bucketName, fileStorageName);
+        } catch (Exception e){
+            log.warn("获取文件地址失败", e);
+            return "";
+        }
     }
 
     @Override

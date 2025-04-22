@@ -28,10 +28,8 @@ public class PostDetailEsDo {
     // title；not null
     @Field(analyzer = FieldAnalyzer.IK_MAX_WORD, type = FieldType.Text)
     private String title;
-    // content；not null
-    @Field(analyzer = FieldAnalyzer.IK_SMART, type = FieldType.Text)
-    private String content;
-    // picturesUrl；null able
-    private List<String> fileStorageNamesUrl;
+//    // content；not null
+//    @Field(analyzer = FieldAnalyzer.IK_SMART, type = FieldType.Text)
+//    private String content;
 
 }

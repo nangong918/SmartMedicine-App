@@ -69,17 +69,18 @@ public class PostServiceImpl implements PostService {
         String key = PostConstant.POST_PUBLISH_KEY + publishId;
         PostAo postAo = redissonService.getObjectFromJson(key, PostAo.class);
         if (postAo != null){
+            postAo.setId(publishId);
             // 先删除redis数据
             redissonService.deleteObject(key);
             // 异步存储
             globalTaskExecutor.execute(() -> {
                 // es + mongo 同步事务存储
-                postStorageService.storePostContentToDatabase(postAo, publishId);
+                postStorageService.storePostContentToDatabase(postAo);
             });
             // 异步存储
             globalTaskExecutor.execute(() -> {
                 // mysql
-                postStorageService.storePostInfoToDatabase(postAo, publishId);
+                postStorageService.storePostInfoToDatabase(postAo);
             });
         }
         else {
@@ -118,15 +119,16 @@ public class PostServiceImpl implements PostService {
         String key = PostConstant.POST_UPDATE_KEY + postId;
         PostAo postAo = redissonService.getObjectFromJson(key, PostAo.class);
         if (postAo != null){
+            postAo.setId(postId);
             // 先删除redis数据
             redissonService.deleteObject(key);
             globalTaskExecutor.execute(() -> {
                 // es + mongo 同步事务存储
-                postStorageService.updatePostContentToDatabase(postAo, postId);
+                postStorageService.updatePostContentToDatabase(postAo);
             });
             globalTaskExecutor.execute(() -> {
                 // mysql
-                postStorageService.updatePostInfoToDatabase(postAo, postId);
+                postStorageService.updatePostInfoToDatabase(postAo);
             });
         }
         else {
@@ -136,14 +138,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePostInfoAndContent(PostAo postAo, Long postId) {
-        postStorageService.updatePostInfoToDatabase(postAo, postId);
-        postStorageService.updatePostContentToDatabase(postAo, postId);
+    public void updatePostInfoAndContent(PostAo postAo) {
+        postStorageService.updatePostInfoToDatabase(postAo);
+        postStorageService.updatePostContentToDatabase(postAo);
     }
 
     @Override
-    public void updatePostInfo(PostAo postAo, Long postId) {
-        postStorageService.updatePostInfoToDatabase(postAo, postId);
+    public void updatePostInfo(PostAo postAo) {
+        postStorageService.updatePostInfoToDatabase(postAo);
     }
 
     @Override

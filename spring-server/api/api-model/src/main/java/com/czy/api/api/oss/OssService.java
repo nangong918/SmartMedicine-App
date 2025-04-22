@@ -90,6 +90,8 @@ public interface OssService {
      */
     List<String> getFileUrlsByUserIdAndFileNames(Long userId, List<String> fileNames);
 
+    List<String> getFileUrlsByFileIds(List<Long> fileIds);
+
     // 删除文件 fileStorageName
     boolean deleteFileByStorageName(Long userId, String fileStorageName, String bucketName);
 

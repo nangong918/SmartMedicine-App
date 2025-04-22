@@ -29,8 +29,8 @@ public interface PostService {
     void updatePostAfterOss(Long postId);
 
     // 局部更改
-    void updatePostInfoAndContent(PostAo postAo, Long postId);
-    void updatePostInfo(PostAo postAo, Long postId);
+    void updatePostInfoAndContent(PostAo postAo);
+    void updatePostInfo(PostAo postAo);
 
     // 查询
     PostAo findPostById(Long postId);

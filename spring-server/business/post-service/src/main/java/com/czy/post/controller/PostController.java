@@ -6,8 +6,10 @@ import com.czy.api.converter.domain.post.PostConverter;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.base.BaseResponse;
+import com.czy.api.domain.dto.http.request.GetPostRequest;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
+import com.czy.api.domain.dto.http.response.GetPostResponse;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
 import com.czy.post.service.PostService;
 import com.utils.mvc.redisson.RedissonClusterLock;
@@ -15,6 +17,7 @@ import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author 13225
@@ -106,7 +110,8 @@ public class PostController {
             return Mono.just(BaseResponse.LogBackError(warningMessage, log));
         }
         PostAo postAo = postConverter.updateRequestToAo(request, userDo.getId());
-        postService.updatePostInfoAndContent(postAo, request.getPostId());
+        postAo.setId(request.getPostId());
+        postService.updatePostInfoAndContent(postAo);
         return Mono.just(BaseResponse.getResponseEntitySuccess("修改申请已提交，请等待"));
     }
 
@@ -135,5 +140,20 @@ public class PostController {
     }
 
     // 查询post
+    // 响应体应该包含：postInfo，post-fileIds，postDetails
+    // 通过list<postId>查询post消息;
+    @PostMapping("/getPosts")
+    public Mono<BaseResponse<GetPostResponse>>
+    getPosts(@Valid @RequestBody GetPostRequest request){
+        List<Long> postIds = request.getPostIds();
+        if (CollectionUtils.isEmpty(postIds)){
+            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+        }
+        List<PostAo> postAoList = postService.findPostsByIdList(postIds);
+        GetPostResponse getPostResponse = new GetPostResponse();
+        getPostResponse.setPostAos(postAoList);
+        return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
+    }
 
+    // 如何从各种数据查询List<postId>的逻辑在postSearchService中
 }

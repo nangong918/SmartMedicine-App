@@ -10,9 +10,9 @@ import java.util.List;
  */
 public interface PostStorageService {
     // es + mongo
-    void storePostContentToDatabase(PostAo postAo, Long id);
+    void storePostContentToDatabase(PostAo postAo);
     // mysql
-    void storePostInfoToDatabase(PostAo postAo, Long id);
+    void storePostInfoToDatabase(PostAo postAo);
 
     // 删除es + mongo
     void deletePostContentFromDatabase(Long id);
@@ -24,7 +24,7 @@ public interface PostStorageService {
 
     List<PostAo> findPostAoByIds(List<Long> idList);
 
-    void updatePostContentToDatabase(PostAo postAo, Long postId);
+    void updatePostContentToDatabase(PostAo postAo);
 
-    void updatePostInfoToDatabase(PostAo postAo, Long postId);
+    void updatePostInfoToDatabase(PostAo postAo);
 }
