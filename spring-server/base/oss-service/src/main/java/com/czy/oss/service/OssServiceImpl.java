@@ -8,6 +8,7 @@ import com.czy.oss.mapper.OssMapper;
 import com.utils.mvc.service.MinIOService;
 import domain.ErrorFile;
 import com.utils.mvc.utils.MinIOUtils;
+import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import exception.OssException;
@@ -66,14 +67,29 @@ public class OssServiceImpl implements OssService {
     }
 
     @Override
-    public boolean checkFileNameExist(Long userId, String fileStorageName, String bucketName) {
-        OssFileDo ossFileDo = ossMapper.getByFileStorageNameAndBucketName(userId, fileStorageName, bucketName);
-        boolean isMysqlExist = ossFileDo != null;
+    public FileIsExistResult checkFileNameExistForResult(Long userId, String fileName, String bucketName, Long fileSize) {
+        FileIsExistResult result = new FileIsExistResult();
+        Boolean isExist = ossMapper.checkFileExist(userId, fileName, fileSize);
+        result.setIsExist(isExist);
+        if (isExist){
+            OssFileDo ossFileDo = ossMapper.getByFileStorageNameAndBucketName(userId, fileName, bucketName);
+            result.setFileId(ossFileDo.getId());
+        }
+        return result;
+    }
+
+    @Override
+    public boolean checkFileNameExist(Long userId, String fileName, String bucketName) {
+        OssFileDo ossFileDo = ossMapper.getByFileStorageNameAndBucketName(userId, fileName, bucketName);
+        if (ossFileDo == null){
+            return false;
+        }
+        String fileStorageName = ossFileDo.getFileStorageName();
         boolean isOssExist = minIOUtils.isObjectExist(bucketName, fileStorageName);
-        if (isOssExist != isMysqlExist){
+        if (!isOssExist){
             log.warn("mysql和oss文件信息不一致，请检查");
         }
-        return isOssExist;
+        return true;
     }
 
     @Override
@@ -103,9 +119,9 @@ public class OssServiceImpl implements OssService {
     }
 
     @Override
-    public List<ErrorFile> uploadFiles(List<MultipartFile> files, Long userId, String bucketName) {
+    public FileOptionResult uploadFiles(List<MultipartFile> files, Long userId, String bucketName) {
         if (CollectionUtils.isEmpty(files)){
-            return new LinkedList<>();
+            return new FileOptionResult();
         }
         List<ErrorFile> errorFileList = new LinkedList<>();
         files.forEach(file -> {
@@ -123,8 +139,8 @@ public class OssServiceImpl implements OssService {
         // 成功的存储到数据库
         uploadFilesRecord(result.getSuccessFiles(), userId, bucketName);
         // 失败的加入到list
-        errorFileList.addAll(result.getErrorFiles());
-        return errorFileList;
+        result.getErrorFiles().addAll(errorFileList);
+        return result;
     }
 
     @Override
@@ -138,7 +154,10 @@ public class OssServiceImpl implements OssService {
             ossFileDo.setFileStorageName(successFile.getFileStorageName());
             ossFileDo.setFileSize(successFile.getFileSize());
             ossFileDo.setUploadTimestamp(System.currentTimeMillis());
-            ossMapper.insert(ossFileDo);
+            // 插入
+            Long fileId = ossMapper.insert(ossFileDo);
+            // 设置fileId
+            successFile.setFileId(fileId);
         }
     }
 

@@ -2,9 +2,7 @@ package com.czy.oss.component;
 
 
 import com.czy.api.constant.mq.OssMqConstant;
-import com.czy.api.constant.mq.PostMqConstant;
-import com.czy.api.domain.entity.event.OssResponse;
-import com.czy.api.domain.entity.event.OssTask;
+import com.czy.api.domain.entity.event.PostOssResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -22,8 +20,8 @@ public class RabbitMqSender {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public void pushToOss(OssResponse ossResponse){
-        rabbitTemplate.convertAndSend(OssMqConstant.OSS_TO_SERVICE_QUEUE, ossResponse);
+    public void pushToOss(PostOssResponse postOssResponse){
+        rabbitTemplate.convertAndSend(OssMqConstant.OSS_TO_SERVICE_QUEUE, postOssResponse);
     }
     
 }

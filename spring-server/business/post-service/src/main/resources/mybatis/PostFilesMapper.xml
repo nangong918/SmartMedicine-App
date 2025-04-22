@@ -7,7 +7,7 @@
         post_id,
         file_id
     </sql>
-    <insert id="insertPostFilesDo">
+    <insert id="insertPostFilesDo" parameterType="com.czy.api.domain.Do.post.post.PostFilesDo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO post_files
         <include refid="doDoColumns"/>
         VALUES
@@ -28,11 +28,21 @@
         file_id = #{fileId}
         WHERE id = #{id}
     </update>
-    <update id="updatePostFilesDoByPostId">
+    <update id="updatePostFilesDoByPostDo">
         UPDATE post_files
         SET
-        post_id = #{postId}
-        WHERE id = #{id}
+        post_id = #{postId},
+        file_id = #{fileId}
+        WHERE post_id = #{postId}
+    </update>
+    <update id="updatePostFilesDoByPostDos">
+        <foreach collection="list" item="item">
+            UPDATE post_files
+            SET
+            post_id = #{item.postId},
+            file_id = #{item.fileId}
+            WHERE post_id = #{item.postId};
+        </foreach>
     </update>
     <delete id="deletePostFilesDoById">
         DELETE FROM post_files WHERE id = #{id}

@@ -1,8 +1,9 @@
 package com.czy.post.mapper.mysql;
 
 import com.czy.api.domain.Do.post.post.PostInfoDo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.mapstruct.Mapper;
+
 
 import java.util.List;
 
@@ -14,10 +15,10 @@ import java.util.List;
 public interface PostInfoMapper {
 
     // 插入
-    void insertPostInfoDo(PostInfoDo postInfoDo);
+    Long insertPostInfoDo(PostInfoDo postInfoDo);
 
     // 批量插入
-    void insertPostInfoDoList(List<PostInfoDo> postInfoDoList);
+    List<Long> insertPostInfoDoList(List<PostInfoDo> postInfoDoList);
 
     // 根据id获取PostInfoDo
     PostInfoDo getPostInfoDoById(Long id);

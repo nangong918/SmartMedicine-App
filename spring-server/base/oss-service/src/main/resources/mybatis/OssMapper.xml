@@ -11,28 +11,26 @@
         file_size,
         bucket_name
     </sql>
-    <insert id="insert">
+    <insert id="insert" parameterType="com.czy.api.domain.Do.oss.OssFileDo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO oss_file(
         <include refid="doColumns"/>
         )
         VALUES (
-        #{do.id},
-        #{do.fileName},
-        #{do.uploadTimestamp},
-        #{do.userId},
-        #{do.fileStorageName},
-        #{do.fileSize},
-        #{do.bucketName}
+            #{fileName},
+            #{uploadTimestamp},
+            #{userId},
+            #{fileStorageName},
+            #{fileSize},
+            #{bucketName}
         )
     </insert>
-    <insert id="insertBatch">
-        INSERT INTO oss_file(
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO oss_file (
         <include refid="doColumns"/>
         )
         VALUES
-        <foreach collection="doList" item="do" separator=",">
+        <foreach collection="list" item="do" separator=",">
             (
-            #{do.id},
             #{do.fileName},
             #{do.uploadTimestamp},
             #{do.userId},
@@ -134,7 +132,7 @@
         FROM oss_file
         WHERE
             user_id = #{userId}
-          AND file_storage_name = #{fileStorageName}
+          AND file_name = #{fileName}
           AND bucket_name = #{bucketName}
     </select>
     <select id="checkFileExist" resultType="java.lang.Boolean">

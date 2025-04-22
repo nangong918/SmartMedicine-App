@@ -1,6 +1,7 @@
 package com.czy.oss.controller;
 
 import com.czy.api.api.oss.OssService;
+import domain.FileOptionResult;
 import exception.OssException;
 import com.czy.api.constant.oss.OssConstant;
 import domain.ErrorFile;
@@ -52,14 +53,13 @@ public class OssController {
         }
         List<MultipartFile> fileList = new ArrayList<>();
         fileList.add(file);
-        List<ErrorFile> list = ossService.uploadFiles(fileList, userId, globalOssBucket);
+        FileOptionResult result = ossService.uploadFiles(fileList, userId, globalOssBucket);
 
-
-        if (!ObjectUtils.isEmpty(list)){
+        if (!ObjectUtils.isEmpty(result.getErrorFiles())){
             StringBuilder sb = new StringBuilder();
             sb.append("上传失败的文件：\n");
             log.warn("存在上传失败的文件");
-            for (ErrorFile errorFile : list) {
+            for (ErrorFile errorFile : result.getErrorFiles()) {
                 sb.append(errorFile.getFileName()).append(": ").append(errorFile.getErrorMessage()).append(";\n");
             }
             return sb.toString();
