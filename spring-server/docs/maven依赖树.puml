@@ -26,11 +26,15 @@ package "Gateway" {
 package "Base" {
     [netty-socket]
     [search-service]
+    [oss-service]
 
     [netty-socket] --> [SpringUtils]
     [netty-socket] --> [api-model]
     [search-service] --> [SpringUtils]
     [search-service] --> [api-model]
+
+    [oss-service] --> [SpringMvcUtils]
+    [oss-service] --> [api-model]
 }
 
 package "Business" {
@@ -40,7 +44,7 @@ package "Business" {
     [message-service]
     [relationship-service]
     [post-service]
-    [oss-service]
+
     [recommend-service]
 
     [auth-service] --> [SpringWebfluxUtils]
@@ -60,9 +64,6 @@ package "Business" {
 
     [post-service] --> [SpringMvcUtils]
     [post-service] --> [api-model]
-
-    [oss-service] --> [SpringUtils]
-    [oss-service] --> [api-model]
 
     [recommend-service] --> [SpringUtils]
     [recommend-service] --> [api-model]

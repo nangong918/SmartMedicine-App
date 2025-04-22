@@ -2,6 +2,7 @@ package com.czy.oss.controller;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.constant.exception.OssException;
+import com.czy.api.constant.oss.OssConstant;
 import com.czy.api.domain.ao.oss.ErrorFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/oss")
+@RequestMapping(OssConstant.OSS_CONTROLLER)
 public class OssController {
 
     // 需要符合Amazon S3 存储桶命名规则

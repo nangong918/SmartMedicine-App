@@ -9,8 +9,8 @@
     </description>
 
     <parent>
-        <groupId>com.business</groupId>
-        <artifactId>business</artifactId>
+        <groupId>com.base</groupId>
+        <artifactId>base</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <!--        <relativePath>../pom.xml</relativePath>-->
     </parent>
@@ -83,7 +83,7 @@
         <!--公共工具类模块-->
         <dependency>
             <groupId>com.utils</groupId>
-            <artifactId>SpringUtils</artifactId>
+            <artifactId>SpringMvcUtils</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

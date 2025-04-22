@@ -22,4 +22,5 @@ public class PostConstant {
     public static final String POST_UPDATE_ALL = "/postUpdateAll";
     // serviceUri
     public static final String serviceUri = "lb://" + serviceName;
+    public static final String POST_FILE_CONTROLLER = "/postFile";
 }
