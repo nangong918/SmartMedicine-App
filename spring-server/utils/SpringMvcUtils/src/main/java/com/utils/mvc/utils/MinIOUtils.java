@@ -1,4 +1,4 @@
-package com.czy.oss.utils;
+package com.utils.mvc.utils;
 
 import io.minio.*;
 import io.minio.errors.MinioException;

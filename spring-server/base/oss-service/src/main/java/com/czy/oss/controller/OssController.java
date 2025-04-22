@@ -1,9 +1,9 @@
 package com.czy.oss.controller;
 
 import com.czy.api.api.oss.OssService;
-import com.czy.api.constant.exception.OssException;
+import exception.OssException;
 import com.czy.api.constant.oss.OssConstant;
-import com.czy.api.domain.ao.oss.ErrorFile;
+import domain.ErrorFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;

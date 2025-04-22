@@ -45,6 +45,7 @@
     <netty.version>4.1.79.Final</netty.version>
     <protobuf.version>3.22.0</protobuf.version><!--Protobuf版本;3.21.5会出现错误-->
     <jedission.version>3.11.3</jedission.version>
+    <minio.version>8.2.2</minio.version>
   </properties>
 
   <dependencyManagement>
@@ -81,6 +82,12 @@
       <!--                <optional>true</optional>-->
       <!--            </dependency>-->
 
+      <!-- MinIO 客户端 -->
+      <dependency>
+        <groupId>io.minio</groupId>
+        <artifactId>minio</artifactId>
+        <version>${minio.version}</version>
+      </dependency>
 
       <!-- Lombok for domain -->
       <dependency>

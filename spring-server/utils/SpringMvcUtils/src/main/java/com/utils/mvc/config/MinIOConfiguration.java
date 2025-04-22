@@ -1,4 +1,4 @@
-package com.czy.oss.config;
+package com.utils.mvc.config;
 
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Value;

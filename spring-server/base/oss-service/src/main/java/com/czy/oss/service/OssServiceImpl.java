@@ -2,16 +2,20 @@ package com.czy.oss.service;
 
 
 import com.czy.api.api.oss.OssService;
-import com.czy.api.constant.exception.OssException;
 import com.czy.api.domain.Do.oss.OssFileDo;
-import com.czy.api.domain.ao.oss.ErrorFile;
 import com.czy.api.domain.ao.oss.FileNameAo;
 import com.czy.oss.mapper.OssMapper;
-import com.czy.oss.utils.MinIOUtils;
+import com.utils.mvc.service.MinIOService;
+import domain.ErrorFile;
+import com.utils.mvc.utils.MinIOUtils;
+import domain.FileOptionResult;
+import domain.SuccessFile;
+import exception.OssException;
 import io.minio.ObjectWriteResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +43,7 @@ public class OssServiceImpl implements OssService {
 
     private final OssMapper ossMapper;
     private final MinIOUtils minIOUtils;
+    private final MinIOService minIOService;
 
     @Override
     public OssFileDo getFileInfoByFileId(Long fileId) {
@@ -77,19 +82,6 @@ public class OssServiceImpl implements OssService {
     }
 
     @Override
-    public String getFileStorageName(Long userId, String fileName) {
-        // userId + fileName + 时间戳
-        // 保留 fileName 的前 15 个字符
-        String shortFileName = fileName.length() > 15 ? fileName.substring(0, 15) : fileName;
-        // 获取当前时间戳
-        long timestamp = System.currentTimeMillis();
-        // 构建待编码字符串
-        String input = userId + "_" + shortFileName + "_" + timestamp;
-        // 使用 Base64 编码
-        return Base64.getEncoder().encodeToString(input.getBytes(StandardCharsets.UTF_8));
-    }
-
-    @Override
     public FileNameAo getFileNameAoByFileStorageName(String fileStorageName) {
         try{
             byte[] decodedBytes = Base64.getDecoder().decode(fileStorageName);
@@ -112,48 +104,42 @@ public class OssServiceImpl implements OssService {
 
     @Override
     public List<ErrorFile> uploadFiles(List<MultipartFile> files, Long userId, String bucketName) {
-        // 内部包含检查是否已经存在的逻辑
-        try {
-            minIOUtils.createBucket(bucketName);
-        } catch (Exception e) {
-            log.error("创建存储桶失败", e);
-            throw new OssException("创建存储桶失败");
+        if (CollectionUtils.isEmpty(files)){
+            return new LinkedList<>();
         }
-        List<ErrorFile> errorFileNames = new LinkedList<>();
-        // 存储
+        List<ErrorFile> errorFileList = new LinkedList<>();
         files.forEach(file -> {
             // 幂等性
             String fileName = file.getOriginalFilename();
-            if (fileName == null){
-                errorFileNames.add(new ErrorFile("", "[文件名不能为空]"));
-                return;
-            }
             Long fileSize = file.getSize();
             boolean idempotent = checkFileIdempotent(userId, fileName, fileSize);
             if (idempotent){
-                errorFileNames.add(new ErrorFile(fileName, "[文件已存在]"));
-                return;
-            }
-            String fileStorageName = getFileStorageName(userId, fileName);
-            // oss
-            try {
-                ObjectWriteResponse response = minIOUtils.uploadFile(bucketName, file, fileStorageName, file.getContentType());
-                if (response.object() != null){
-                    OssFileDo ossFileDo = new OssFileDo();
-                    ossFileDo.setFileName(fileName);
-                    ossFileDo.setUserId(userId);
-                    ossFileDo.setBucketName(bucketName);
-                    ossFileDo.setFileStorageName(fileStorageName);
-                    ossFileDo.setFileSize(fileSize);
-                    ossFileDo.setUploadTimestamp(System.currentTimeMillis());
-                    ossMapper.insert(ossFileDo);
-                }
-            } catch (Exception e) {
-                log.error("上传文件失败", e);
-                errorFileNames.add(new ErrorFile(fileName, "[上传失败]"));
+                // 此处不需要position
+                errorFileList.add(new ErrorFile(fileName, "[文件已存在]"));
+                files.remove(file);
             }
         });
-        return errorFileNames;
+        FileOptionResult result = minIOService.uploadFiles(files, userId, bucketName);
+        // 成功的存储到数据库
+        uploadFilesRecord(result.getSuccessFiles(), userId, bucketName);
+        // 失败的加入到list
+        errorFileList.addAll(result.getErrorFiles());
+        return errorFileList;
+    }
+
+    @Override
+    public void uploadFilesRecord(List<SuccessFile> files, Long userId, String bucketName) {
+        for (SuccessFile successFile : files){
+            // oss
+            OssFileDo ossFileDo = new OssFileDo();
+            ossFileDo.setFileName(successFile.getFileName());
+            ossFileDo.setUserId(userId);
+            ossFileDo.setBucketName(bucketName);
+            ossFileDo.setFileStorageName(successFile.getFileStorageName());
+            ossFileDo.setFileSize(successFile.getFileSize());
+            ossFileDo.setUploadTimestamp(System.currentTimeMillis());
+            ossMapper.insert(ossFileDo);
+        }
     }
 
     @Override

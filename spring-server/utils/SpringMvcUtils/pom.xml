@@ -51,6 +51,12 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- MinIO 客户端 -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

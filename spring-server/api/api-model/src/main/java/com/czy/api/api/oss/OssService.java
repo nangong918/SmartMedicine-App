@@ -1,8 +1,9 @@
 package com.czy.api.api.oss;
 
 import com.czy.api.domain.Do.oss.OssFileDo;
-import com.czy.api.domain.ao.oss.ErrorFile;
 import com.czy.api.domain.ao.oss.FileNameAo;
+import domain.ErrorFile;
+import domain.SuccessFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -51,9 +52,6 @@ public interface OssService {
     // 某个用户上传的文件数量
     long getFileCountByUserId(Long userId);
 
-    // fileName + userId 生成 fileStorageName
-    String getFileStorageName(Long userId, String fileName);
-
     // 通过fileStorageName获取FileNameAo
     FileNameAo getFileNameAoByFileStorageName(String fileStorageName);
 
@@ -65,6 +63,14 @@ public interface OssService {
      * @return                  ErrorFileList
      */
     List<ErrorFile> uploadFiles(List<MultipartFile> files, Long userId, String bucketName);
+
+    /**
+     * 成功的存储到数据库
+     * @param files             文件List
+     * @param userId            用户id
+     * @param bucketName        bucketName
+     */
+    void uploadFilesRecord(List<SuccessFile> files, Long userId, String bucketName);
 
     /**
      * 通过fileStorageName单个文件下载

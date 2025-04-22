@@ -1,6 +1,5 @@
-package com.czy.api.constant.exception;
+package exception;
 
-import exception.AppException;
 import lombok.Getter;
 import lombok.Setter;
 

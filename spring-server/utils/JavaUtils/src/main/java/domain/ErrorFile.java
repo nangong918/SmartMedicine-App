@@ -1,4 +1,4 @@
-package com.czy.api.domain.ao.oss;
+package domain;
 
 import lombok.Data;
 
