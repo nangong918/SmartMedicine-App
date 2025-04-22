@@ -4,7 +4,7 @@ skinparam packageStyle rectangle
 
 package "Base" {
     [netty-socket]
-    [oss-service]
+    [search-service]
 }
 
 package "Business" {
@@ -13,6 +13,9 @@ package "Business" {
     [sms-service]
     [message-service]
     [relationship-service]
+    [oss-service]
+    [post-service]
+    [recommend-service]
 
     [message-service] --> [user-service]
     [message-service] --> [relationship-service]
@@ -23,6 +26,13 @@ package "Business" {
 
     [user-service] --> [auth-service]
     [user-service] --> [sms-service]
+
+    [post-service] --> [user-service]
+    [post-service] -[#0000FF]--> [oss-service]
+
+    [recommend-service] --> [user-service]
+    [recommend-service] --> [post-service]
+    [recommend-service] --> [relationship-service]
 }
 
 package "Gateway" {
