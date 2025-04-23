@@ -82,22 +82,6 @@
             <artifactId>mapstruct-processor</artifactId>
         </dependency>
 
-        <!-- Swagger 3：生成前后端Api文档-->
-        <!--http://localhost:8080/swagger-ui/-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-boot-starter</artifactId>-->
-<!--        </dependency>-->
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
-        </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.springdoc</groupId>-->
-<!--            <artifactId>springdoc-openapi-webflux-ui</artifactId>-->
-<!--        </dependency>-->
-
         <!-- validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -114,29 +98,6 @@
             <artifactId>protobuf-java-util</artifactId>
         </dependency>
 
-        <!-- Hutool: 集合操作,反射,加密解密 -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-
-        <!--SpringBoot Starter-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
-        <!-- 自动化配置 Spring Data Elasticsearch -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>
-
-        <!--mongodb-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
 
         <!-- Test -->
         <dependency>

@@ -9,9 +9,9 @@ import lombok.Data;
  */
 @Data
 public class UserFriendDo implements BaseBean {
-    private Integer id;
-    private Integer userId;
-    private Integer friendId;
+    private Long id;
+    private Long userId;
+    private Long friendId;
     private Long addTime = System.currentTimeMillis();
     private Long lastChatTime;
 }

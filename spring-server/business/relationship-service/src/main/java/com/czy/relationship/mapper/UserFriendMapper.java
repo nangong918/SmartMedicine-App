@@ -20,7 +20,7 @@ public interface UserFriendMapper {
     int addUserFriend(UserFriendDo userFriendDo);
 
     // 查询好友关系
-    UserFriendDo getUserFriend(@Param("userId") int userId, @Param("friendId") int friendId);
+    UserFriendDo getUserFriend(@Param("userId") Long userId, @Param("friendId") Long friendId);
 
     // 更新好友关系 (保险方法，因为user_id后续可能会变)
     int updateUserFriend(UserFriendDo userFriendDo);
@@ -41,6 +41,6 @@ public interface UserFriendMapper {
     int getUserFriendsCount(int userId);
 
     // 查询两个用户是否是好友
-    int isFriend(@Param("userId") int userId, @Param("friendId") int friendId);
+    int isFriend(@Param("userId") Long userId, @Param("friendId") Long friendId);
 
 }
