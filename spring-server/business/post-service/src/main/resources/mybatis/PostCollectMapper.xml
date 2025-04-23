@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czy.post.mapper.mysql.PostCollectMapper">
+
+    <sql id="doDoColumns">
+        id,
+        post_id,
+        collect_folder_id
+    </sql>
+    <insert id="savePostCollect">
+        INSERT INTO post_collect
+        <include refid="doDoColumns"/>
+        VALUES
+        (#{id}, #{postId}, #{collectFolderId})
+    </insert>
+    <update id="updatePostCollect">
+        UPDATE post_collect
+        SET
+        post_id = #{postId},
+        collect_folder_id = #{collectFolderId}
+        WHERE id = #{id}
+    </update>
+    <delete id="deletePostCollect">
+        DELETE FROM post_collect WHERE id = #{id}
+    </delete>
+    <delete id="deletePostCollectsByCollectFolderId">
+        DELETE FROM post_collect WHERE collect_folder_id = #{collectFolderId}
+    </delete>
+    <select id="findPostCollectById" resultType="com.czy.api.domain.Do.post.collect.PostCollectDo">
+        SELECT
+        <include refid="doDoColumns"/>
+        FROM post_collect
+        WHERE id = #{id}
+    </select>
+    <select id="findPostCollectsByCollectFolderId"
+            resultType="com.czy.api.domain.Do.post.collect.PostCollectDo">
+        SELECT
+        <include refid="doDoColumns"/>
+        FROM post_collect
+        WHERE collect_folder_id = #{collectFolderId}
+    </select>
+</mapper>
