@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+actor ClientA as CA
+participant "Spring后端" as BE
+actor ClientB as CB
+
+CA -> BE : 使用Retrofit将Http搜索请求发送到后端\nGET请求，account账号所搜用户
+BE --> CA : 返回搜索结果\n返回List<User>
+CA -> BE : 使用Retrofit将Http添加好友请求发送到后端\nPOST请求，AddUserRequest
+BE -> BE : AddUserRequest转为Message\n请求type转为响应type
+BE -> BE : 推送Event事件到Redis/RabbitMq集群\n clusterEventsPusher
+BE -> BE : 监听推送事件\nPushMessageListener将消息推送给用户
+CB -> CB : 主动Http请求当前是否有好友申请
+BE -> CB : IM消息推送给用户B\nAddUserToTargetUserResponse响应
+CB -> BE : 使用Retrofit将Http响应添加好友的消息发送给后端\nPOST请求，HandleAddUserRequest
+BE -> BE : 如果B接受了A：\n存储A和B的关系信息；\n存储A和B的会话信息
+CB -> CB : 主动Http请求当前是否有好友申请响应
+BE --> CB : IM消息推送给用户B\nHandleAddUserResponse响应 (A用户基本信息)
+CA -> CA : 主动Http请求当前是否有好友申请响应
+BE -> CA : IM消息推送给用户A\nHandleAddUserResponse响应 (B用户基本信息)
+CB -> CB : 存储A和B的关系信息；\n存储A和B的会话信息
+CA -> CA : 存储A和B的关系信息；\n存储A和B的会话信息
+
+@enduml

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="color_gray">#999999</color>
+    <color name="red">#ffff0000</color>
+    <color name="text_color">#FF4D4B40</color>
+    <color name="grey_line_color">#FFCCCCCC</color>
+    <color name="grey_bar_color">#EDEDED</color>
+    <color name="origin_text_color">#FFFAA41A</color>
+
+    <!--style-->
+    <color name="light_blue_10">#E1F5FD</color>
+    <color name="light_blue_50">#C0EAFD</color>
+    <color name="light_blue_100">#80D5FB</color>
+    <color name="light_blue_200">#49C5FD</color>
+    <color name="light_blue_400">#FF29B6F6</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="gray_10">#F1F1F1</color>
+    <color name="gray_400">#FFBDBDBD</color>
+    <color name="gray_600">#FF757575</color>
+
+
+    <color name="purple_0">#FEF7FF</color>
+    <color name="purple_10">#F3EDF7</color>
+    <color name="purple_20">#EFE7F1</color>
+    <color name="purple_100">#EDE2FF</color>
+    <color name="purple_200">#E6D6FF</color>
+    <color name="purple_300">#FFBB86FC</color>
+    <color name="purple_400">#4F378B</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="purple_1000">#49454F</color>
+
+    <color name="red_0">#FFF8F9</color>
+    <color name="red_10">#FFF1F3</color>
+    <color name="red_20">#FFE4E7</color>
+    <color name="red_100">#FFD4D4</color>
+    <color name="red_200">#FFC4C4</color>
+    <color name="red_300">#FFB4B4</color>
+    <color name="red_400">#FFA4A4</color>
+    <color name="red_500">#FFA7A7</color>
+    <color name="red_600">#FF979F</color>
+    <color name="red_700">#FF7882</color>
+    <color name="red_800">#FF5A66</color>
+    <color name="red_900">#fe515e</color>
+    <color name="red_1000">#FF3544</color>
+
+    <!-- 原始红色系列中较浅的颜色适当加深 -->
+    <color name="dark_red_0">#FF5A66</color>
+    <color name="dark_red_10">#E3515B</color>
+    <color name="dark_red_20">#D64C56</color>
+    <color name="dark_red_100">#C3454E</color>
+    <color name="dark_red_200">#AE3E46</color>
+    <color name="dark_red_300">#97363D</color>
+    <color name="dark_red_400">#7A2C32</color>
+    <color name="dark_red_500">#68272C</color>
+    <color name="dark_red_600">#532024</color>
+    <color name="dark_red_700">#421A1D</color>
+    <color name="dark_red_800">#371518</color>
+    <color name="dark_red_900">#230E10</color>
+    <color name="dark_red_1000">#15080A</color>
+</resources>

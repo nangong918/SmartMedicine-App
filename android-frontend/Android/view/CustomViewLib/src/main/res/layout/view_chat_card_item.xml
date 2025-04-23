@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/ly_main"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 头像 -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imvg_avatar"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@mipmap/logo" />
+
+    <!-- 名称 -->
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="用户名"
+        android:textSize="16sp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imvg_avatar"
+        app:layout_constraintEnd_toStartOf="@id/tv_time"
+        android:layout_marginEnd="18dp"/>
+
+    <!-- 消息概览 -->
+    <TextView
+        android:id="@+id/tv_message_preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="消息概览..."
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@id/tv_name"
+        app:layout_constraintStart_toStartOf="@id/tv_name"
+        app:layout_constraintEnd_toStartOf="@id/tv_time"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="4dp"/>
+
+    <!-- 时间 -->
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="10:00"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@id/imvg_avatar"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.czy.customviewlib.view.MessagePrompt
+        android:id="@+id/v_messagePrompt"
+        android:layout_width="21dp"
+        android:layout_height="21dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_name" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
