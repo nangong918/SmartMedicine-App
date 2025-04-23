@@ -45,6 +45,7 @@
         <mapstruct.version>1.5.0.Final</mapstruct.version>
         <jedission.version>3.11.3</jedission.version>
         <rabbitmq.version>5.5.3</rabbitmq.version>
+        <minio.version>8.2.2</minio.version>
     </properties>
 
     <dependencyManagement>
@@ -81,6 +82,13 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
                 <scope>runtime</scope>
+            </dependency>
+
+            <!-- MinIO 客户端 -->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
             </dependency>
 
             <!-- Druid -->

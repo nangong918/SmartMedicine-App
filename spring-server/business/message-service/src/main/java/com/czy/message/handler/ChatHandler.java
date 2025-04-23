@@ -12,7 +12,7 @@ import com.czy.api.domain.dto.http.request.SendImageRequest;
 import com.czy.api.domain.dto.http.request.SendTextDataRequest;
 import com.czy.api.domain.dto.http.response.UserImageResponse;
 import com.czy.api.domain.dto.http.response.UserTextDataResponse;
-import com.czy.message.annotation.HandlerType;
+import com.czy.springUtils.annotation.HandlerType;
 import com.czy.message.component.RabbitMqSender;
 import com.czy.message.handler.api.ChatApi;
 import com.czy.api.api.message.ChatService;
@@ -27,6 +27,7 @@ import org.springframework.util.StringUtils;
 /**
  * @author 13225
  * @date 2025/3/10 17:04
+ * 需要注册到MessageConstant
  */
 
 @HandlerType(RequestMessageType.Chat.root)

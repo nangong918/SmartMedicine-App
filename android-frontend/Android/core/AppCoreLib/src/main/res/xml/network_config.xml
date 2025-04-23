@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--  Android 9以上不允许HTTP明文网络传输，必须使用HTTPS加密安全传输，此处暂时申明使用HTTP明文  -->
+    <base-config cleartextTrafficPermitted="true" />
+
+    <!--  指定特定ip使用明文  -->
+<!--    <domain-config cleartextTrafficPermitted="true">-->
+<!--        <domain includeSubdomains="true">192.168.101.176</domain>-->
+<!--    </domain-config>-->
+</network-security-config>
+

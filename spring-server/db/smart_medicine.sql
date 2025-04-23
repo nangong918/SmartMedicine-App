@@ -11,7 +11,7 @@
  Target Server Version : 80034
  File Encoding         : 65001
 
- Date: 18/04/2025 22:35:13
+ Date: 23/04/2025 17:47:59
 */
 
 SET NAMES utf8mb4;
@@ -35,7 +35,7 @@ CREATE TABLE `friend_apply`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_apply_user_id`(`apply_user_id` ASC) USING BTREE,
   INDEX `idx_handle_user_id`(`handle_user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for login_user
@@ -54,7 +54,7 @@ CREATE TABLE `login_user`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uniq_account`(`account` ASC) USING BTREE,
   INDEX `normal_phone`(`phone` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for oss_file
@@ -72,6 +72,43 @@ CREATE TABLE `oss_file`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
   INDEX `idx_bucket_storage`(`bucket_name` ASC, `file_storage_name` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for post_collect
+-- ----------------------------
+DROP TABLE IF EXISTS `post_collect`;
+CREATE TABLE `post_collect`  (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `post_id` bigint NOT NULL,
+  `collect_folder_id` bigint NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_collect_folder`(`collect_folder_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for post_collect_folder
+-- ----------------------------
+DROP TABLE IF EXISTS `post_collect_folder`;
+CREATE TABLE `post_collect_folder`  (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `post_id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  `collect_folder_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `unique_post_user`(`post_id` ASC, `user_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for post_files
+-- ----------------------------
+DROP TABLE IF EXISTS `post_files`;
+CREATE TABLE `post_files`  (
+  `id` bigint NOT NULL,
+  `post_id` bigint NOT NULL,
+  `file_id` bigint NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_post_id`(`post_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for post_info
@@ -109,7 +146,7 @@ CREATE TABLE `session`  (
   `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_uid`(`uid` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 383 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_chat_message
@@ -127,7 +164,7 @@ CREATE TABLE `user_chat_message`  (
   INDEX `idx_receiver`(`receiver_id` ASC) USING BTREE,
   INDEX `idx_sender_receiver`(`sender_id` ASC, `receiver_id` ASC) USING BTREE,
   INDEX `idx_timestamp`(`timestamp` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 185 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_friend
@@ -144,6 +181,6 @@ CREATE TABLE `user_friend`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
   INDEX `idx_friend_id`(`friend_id` ASC) USING BTREE,
   INDEX `idx_timestamp`(`add_time` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;

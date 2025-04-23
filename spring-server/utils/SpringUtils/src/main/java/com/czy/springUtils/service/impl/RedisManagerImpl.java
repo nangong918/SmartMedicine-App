@@ -108,6 +108,12 @@ public class RedisManagerImpl implements RedisManagerService {
     }
 
     @Override
+    public boolean setObjectAsString(Object object, Object obj, Long expireTimes) {
+        String jsonString = JSON.toJSONString(obj);
+        return setObjectAsString(jsonString, obj, expireTimes);
+    }
+
+    @Override
     public boolean setObjectAsHash(String key, Object obj, Long expireTimes) {
         try {
             Map<?, ?> map = convertObjectToMap(obj); // 将对象转换为 Map

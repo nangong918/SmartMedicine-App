@@ -2,12 +2,21 @@ package com.czy.api.converter.domain.post;
 
 import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostDetailEsDo;
+import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.dto.http.request.PostPublishRequest;
+import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.factory.Mappers;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -19,65 +28,56 @@ public interface PostConverter {
     PostConverter INSTANCE = Mappers.getMapper(PostConverter.class);
 
     // ao -> esDo
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "title", target = "title")
-    @Mapping(source = "content", target = "content")
-    @Mapping(source = "fileStorageNamesUrl", target = "fileStorageNamesUrl")
     PostDetailEsDo toEsDo(PostAo postAo);
 
-    default PostDetailEsDo toEsDo(PostAo postAo, Long id){
-        PostDetailEsDo postDetailEsDo = toEsDo(postAo);
-        postDetailEsDo.setId(id);
-        return postDetailEsDo;
-    }
 
     // ao -> mongoDo
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
-    @Mapping(source = "fileStorageNamesUrl", target = "fileStorageNamesUrl")
     PostDetailDo toMongoDo(PostAo postAo);
 
-    default PostDetailDo toMongoDo(PostAo postAo, Long id){
-        PostDetailDo postDetailDo = toMongoDo(postAo);
-        postDetailDo.setId(id);
-        return postDetailDo;
-    }
-
     // ao -> mysqlDo
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "authorId", target = "authorId")
     @Mapping(source = "releaseTimestamp", target = "releaseTimestamp")
     @Mapping(source = "likeCount", target = "likeCount")
     @Mapping(source = "collectCount", target = "collectCount")
     @Mapping(source = "commentCount", target = "commentCount")
     @Mapping(source = "forwardCount", target = "forwardCount")
-    PostInfoDo toMysqlDo(PostAo postAo);
+    PostInfoDo toInfoDo(PostAo postAo);
 
-    default PostInfoDo toMysqlDo(PostAo postAo, Long id){
-        PostInfoDo postInfoDo = toMysqlDo(postAo);
-        postInfoDo.setId(id);
-        return postInfoDo;
+    /**
+     * ao -> PostFiles
+     * 注意此处拿不到PostFiles的id
+     * @param postAo
+     * @return
+     */
+    default List<PostFilesDo> toPostFilesList(PostAo postAo){
+        if (postAo == null || CollectionUtils.isEmpty(postAo.getFileIds())){
+            return new ArrayList<>();
+        }
+        List<PostFilesDo> postFilesDoList = new ArrayList<>();
+        postAo.getFileIds().forEach(fileId -> {
+            PostFilesDo postFilesDo = new PostFilesDo();
+            postFilesDo.setPostId(postAo.getId());
+            postFilesDo.setFileId(fileId);
+            // 注意此处拿不到PostFiles的id
+            postFilesDoList.add(postFilesDo);
+        });
+        return postFilesDoList;
     }
 
-    // esDo -> mongoDo
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "content", target = "content")
-    @Mapping(source = "fileStorageNamesUrl", target = "fileStorageNamesUrl")
-    PostDetailDo toMongoDo(PostDetailEsDo postDetailEsDo);
-
-    // mongoDo -> esDo
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "content", target = "content")
-    @Mapping(source = "fileStorageNamesUrl", target = "fileStorageNamesUrl")
-    PostDetailEsDo toEsDo(PostDetailDo postDetailDo);
-
     // do -> ao
-    default PostAo doToAo(PostDetailDo postDetailDo, PostInfoDo postInfoDo){
+    default PostAo doToAo(
+            PostDetailDo postDetailDo,
+            PostInfoDo postInfoDo, List<PostFilesDo> postFilesDoList){
         PostAo postAo = new PostAo();
         if (postDetailDo != null){
             postAo.setTitle(postDetailDo.getTitle());
             postAo.setContent(postDetailDo.getContent());
-            postAo.setFileStorageNamesUrl(postDetailDo.getFileStorageNamesUrl());
         }
         if (postInfoDo != null){
             postAo.setAuthorId(postInfoDo.getAuthorId());
@@ -87,11 +87,34 @@ public interface PostConverter {
             postAo.setCommentCount(postInfoDo.getCommentCount());
             postAo.setForwardCount(postInfoDo.getForwardCount());
         }
+        if (!CollectionUtils.isEmpty(postFilesDoList)){
+            List<Long> fileIds = postFilesDoList.
+                    stream()
+                    .filter(Objects::nonNull)
+                    .map(PostFilesDo::getFileId)
+                    .collect(Collectors.toList());
+            postAo.setFileIds(fileIds);
+        }
         return postAo;
     }
 
-    default PostAo doToAo(PostDetailEsDo postDetailEsDo, PostInfoDo postInfoDo){
-        PostDetailDo postDetailDo = toMongoDo(postDetailEsDo);
-        return doToAo(postDetailDo, postInfoDo);
+
+    // request -> ao
+    default PostAo requestToAo(PostPublishRequest request, Long userId){
+        PostAo postAo = new PostAo();
+        postAo.setTitle(request.getTitle());
+        postAo.setContent(request.getContent());
+        postAo.setAuthorId(userId);
+        return postAo;
     }
+
+    // update request -> ao
+    default PostAo updateRequestToAo(PostUpdateRequest request, Long userId){
+        PostAo postAo = new PostAo();
+        postAo.setTitle(request.getTitle());
+        postAo.setContent(request.getContent());
+        postAo.setAuthorId(userId);
+        return postAo;
+    }
+
 }

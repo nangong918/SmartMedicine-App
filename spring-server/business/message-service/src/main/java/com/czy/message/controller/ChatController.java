@@ -5,7 +5,7 @@ package com.czy.message.controller;
 import com.czy.api.api.message.ChatSearchService;
 import com.czy.api.api.message.ChatService;
 import com.czy.api.api.user.UserService;
-import com.czy.api.constant.message.ChatConstant;
+import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.converter.domain.message.UserChatMessageConverter;
 import com.czy.api.converter.mongoEs.UserChatMessageEsConverter;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
@@ -121,7 +121,7 @@ import java.util.stream.Collectors;
 @RestController
 @Validated // 启用校验
 @RequiredArgsConstructor // 自动注入@Autowired
-@RequestMapping(ChatConstant.Chat_CONTROLLER)
+@RequestMapping(MessageConstant.Chat_CONTROLLER)
 public class ChatController {
 
     private final ChatService chatService;

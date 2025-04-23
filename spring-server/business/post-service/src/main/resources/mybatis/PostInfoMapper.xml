@@ -30,7 +30,7 @@
             #{forwardCount}
         </foreach>
     </insert>
-    <update id="updatePostInfoDoById">
+    <update id="updatePostInfoDo">
         UPDATE post_info
         SET
         author_id = #{authorId},

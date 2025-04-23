@@ -2,16 +2,21 @@ package com.czy.oss.service;
 
 
 import com.czy.api.api.oss.OssService;
-import com.czy.api.constant.exception.OssException;
 import com.czy.api.domain.Do.oss.OssFileDo;
-import com.czy.api.domain.ao.oss.ErrorFile;
 import com.czy.api.domain.ao.oss.FileNameAo;
 import com.czy.oss.mapper.OssMapper;
-import com.czy.oss.utils.MinIOUtils;
+import com.utils.mvc.service.MinIOService;
+import domain.ErrorFile;
+import com.utils.mvc.utils.MinIOUtils;
+import domain.FileIsExistResult;
+import domain.FileOptionResult;
+import domain.SuccessFile;
+import exception.OssException;
 import io.minio.ObjectWriteResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +44,7 @@ public class OssServiceImpl implements OssService {
 
     private final OssMapper ossMapper;
     private final MinIOUtils minIOUtils;
+    private final MinIOService minIOService;
 
     @Override
     public OssFileDo getFileInfoByFileId(Long fileId) {
@@ -61,32 +67,34 @@ public class OssServiceImpl implements OssService {
     }
 
     @Override
-    public boolean checkFileNameExist(Long userId, String fileStorageName, String bucketName) {
-        OssFileDo ossFileDo = ossMapper.getByFileStorageNameAndBucketName(userId, fileStorageName, bucketName);
-        boolean isMysqlExist = ossFileDo != null;
+    public FileIsExistResult checkFileNameExistForResult(Long userId, String fileName, String bucketName, Long fileSize) {
+        FileIsExistResult result = new FileIsExistResult();
+        Boolean isExist = ossMapper.checkFileExist(userId, fileName, fileSize);
+        result.setIsExist(isExist);
+        if (isExist){
+            OssFileDo ossFileDo = ossMapper.getByFileStorageNameAndBucketName(userId, fileName, bucketName);
+            result.setFileId(ossFileDo.getId());
+        }
+        return result;
+    }
+
+    @Override
+    public boolean checkFileNameExist(Long userId, String fileName, String bucketName) {
+        OssFileDo ossFileDo = ossMapper.getByFileStorageNameAndBucketName(userId, fileName, bucketName);
+        if (ossFileDo == null){
+            return false;
+        }
+        String fileStorageName = ossFileDo.getFileStorageName();
         boolean isOssExist = minIOUtils.isObjectExist(bucketName, fileStorageName);
-        if (isOssExist != isMysqlExist){
+        if (!isOssExist){
             log.warn("mysql和oss文件信息不一致，请检查");
         }
-        return isOssExist;
+        return true;
     }
 
     @Override
     public long getFileCountByUserId(Long userId) {
         return ossMapper.getFileCountByUserId(userId);
-    }
-
-    @Override
-    public String getFileStorageName(Long userId, String fileName) {
-        // userId + fileName + 时间戳
-        // 保留 fileName 的前 15 个字符
-        String shortFileName = fileName.length() > 15 ? fileName.substring(0, 15) : fileName;
-        // 获取当前时间戳
-        long timestamp = System.currentTimeMillis();
-        // 构建待编码字符串
-        String input = userId + "_" + shortFileName + "_" + timestamp;
-        // 使用 Base64 编码
-        return Base64.getEncoder().encodeToString(input.getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
@@ -111,49 +119,46 @@ public class OssServiceImpl implements OssService {
     }
 
     @Override
-    public List<ErrorFile> uploadFiles(List<MultipartFile> files, Long userId, String bucketName) {
-        // 内部包含检查是否已经存在的逻辑
-        try {
-            minIOUtils.createBucket(bucketName);
-        } catch (Exception e) {
-            log.error("创建存储桶失败", e);
-            throw new OssException("创建存储桶失败");
+    public FileOptionResult uploadFiles(List<MultipartFile> files, Long userId, String bucketName) {
+        if (CollectionUtils.isEmpty(files)){
+            return new FileOptionResult();
         }
-        List<ErrorFile> errorFileNames = new LinkedList<>();
-        // 存储
+        List<ErrorFile> errorFileList = new LinkedList<>();
         files.forEach(file -> {
             // 幂等性
             String fileName = file.getOriginalFilename();
-            if (fileName == null){
-                errorFileNames.add(new ErrorFile("", "[文件名不能为空]"));
-                return;
-            }
             Long fileSize = file.getSize();
             boolean idempotent = checkFileIdempotent(userId, fileName, fileSize);
             if (idempotent){
-                errorFileNames.add(new ErrorFile(fileName, "[文件已存在]"));
-                return;
-            }
-            String fileStorageName = getFileStorageName(userId, fileName);
-            // oss
-            try {
-                ObjectWriteResponse response = minIOUtils.uploadFile(bucketName, file, fileStorageName, file.getContentType());
-                if (response.object() != null){
-                    OssFileDo ossFileDo = new OssFileDo();
-                    ossFileDo.setFileName(fileName);
-                    ossFileDo.setUserId(userId);
-                    ossFileDo.setBucketName(bucketName);
-                    ossFileDo.setFileStorageName(fileStorageName);
-                    ossFileDo.setFileSize(fileSize);
-                    ossFileDo.setUploadTimestamp(System.currentTimeMillis());
-                    ossMapper.insert(ossFileDo);
-                }
-            } catch (Exception e) {
-                log.error("上传文件失败", e);
-                errorFileNames.add(new ErrorFile(fileName, "[上传失败]"));
+                // 此处不需要position
+                errorFileList.add(new ErrorFile(fileName, "[文件已存在]"));
+                files.remove(file);
             }
         });
-        return errorFileNames;
+        FileOptionResult result = minIOService.uploadFiles(files, userId, bucketName);
+        // 成功的存储到数据库
+        uploadFilesRecord(result.getSuccessFiles(), userId, bucketName);
+        // 失败的加入到list
+        result.getErrorFiles().addAll(errorFileList);
+        return result;
+    }
+
+    @Override
+    public void uploadFilesRecord(List<SuccessFile> files, Long userId, String bucketName) {
+        for (SuccessFile successFile : files){
+            // oss
+            OssFileDo ossFileDo = new OssFileDo();
+            ossFileDo.setFileName(successFile.getFileName());
+            ossFileDo.setUserId(userId);
+            ossFileDo.setBucketName(bucketName);
+            ossFileDo.setFileStorageName(successFile.getFileStorageName());
+            ossFileDo.setFileSize(successFile.getFileSize());
+            ossFileDo.setUploadTimestamp(System.currentTimeMillis());
+            // 插入
+            Long fileId = ossMapper.insert(ossFileDo);
+            // 设置fileId
+            successFile.setFileId(fileId);
+        }
     }
 
     @Override
@@ -195,23 +200,43 @@ public class OssServiceImpl implements OssService {
                 .filter(ossFileDo -> fileNames.contains(ossFileDo.getFileName()))
                 .collect(Collectors.toList());
         for (OssFileDo ossFileDo : ossFileDos){
-            try{
-                String bucketName = ossFileDo.getBucketName();
-                if (!StringUtils.hasText(bucketName)){
-                    throw new OssException("存储桶不存在");
-                }
-                String fileStorageName = ossFileDo.getFileStorageName();
-                if (!StringUtils.hasText(fileStorageName)){
-                    throw new OssException("文件不存在");
-                }
-                String fileUrl = minIOUtils.getPresignedObjectUrl(bucketName, fileStorageName);
-                fileUrls.add(fileUrl);
-            } catch (Exception e){
-                log.warn("获取文件地址失败", e);
-                fileUrls.add("");
-            }
+            addUrlToList(fileUrls, ossFileDo);
         }
         return fileUrls;
+    }
+
+    @Override
+    public List<String> getFileUrlsByFileIds(List<Long> fileIds) {
+        List<String> fileUrls = new LinkedList<>();
+        for (Long fileId : fileIds){
+            OssFileDo ossFileDo = ossMapper.getById(fileId);
+            addUrlToList(fileUrls, ossFileDo);
+        }
+        return fileUrls;
+    }
+
+    private void addUrlToList(List<String> fileUrls, OssFileDo ossFileDo){
+        if (ossFileDo != null){
+            String bucketName = ossFileDo.getBucketName();
+            String fileStorageName = ossFileDo.getFileStorageName();
+            String url = getFileUrl(bucketName, fileStorageName);
+            fileUrls.add(url);
+        }
+    }
+
+    private String getFileUrl(String bucketName, String fileStorageName){
+        try{
+            if (!StringUtils.hasText(bucketName)){
+                throw new OssException("存储桶不存在");
+            }
+            if (!StringUtils.hasText(fileStorageName)){
+                throw new OssException("文件不存在");
+            }
+            return minIOUtils.getPresignedObjectUrl(bucketName, fileStorageName);
+        } catch (Exception e){
+            log.warn("获取文件地址失败", e);
+            return "";
+        }
     }
 
     @Override

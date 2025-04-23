@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="8dp"
+    android:padding="4dp">
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ly_content"
+        android:background="@drawable/background_send_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintWidth_max="wrap"
+        app:layout_constraintWidth_percent="0.8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imgv_message"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@mipmap/logo" />
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark_red_500"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgv_message"
+            tools:text="test text"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_time"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/dark_red_500"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="2023/10/9"
+        app:layout_constraintTop_toBottomOf="@+id/ly_content"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

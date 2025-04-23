@@ -23,7 +23,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
                 // 扫描本模块
                 "com.czy.message",
                 // 扫描工具类
-                "com.utils.webflux.handler",
+//                "com.utils.webflux.handler",
+                "com.utils.mvc",
                 // springUtils
                 "com.czy.springUtils"
         },

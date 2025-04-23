@@ -1,0 +1,50 @@
+<resources>
+
+    <!--style-->
+    <color name="light_blue_10">#E1F5FD</color>
+    <color name="light_blue_50">#C0EAFD</color>
+    <color name="light_blue_100">#80D5FB</color>
+    <color name="light_blue_200">#49C5FD</color>
+    <color name="light_blue_400">#FF29B6F6</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="gray_400">#FFBDBDBD</color>
+    <color name="gray_600">#FF757575</color>
+
+
+    <!--code-->
+    <color name="java_keyword">#F97BB0</color>
+    <color name="function_color">#75C2B3</color>
+    <color name="class_color">#82E6FF</color>
+    <color name="string_color">#FF694B</color>
+    <color name="codeBackground_color">#292A30</color>
+    <color name="notes_color">#A8C023</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="black_light">#222222</color>
+    <color name="white_dark">#eaeaea</color>
+    <color name="grey_100">#878787</color>
+    <color name="grey_70">#ABAEAEAE</color>
+    <color name="grey_light_70">#B5E4E4E4</color>
+    <color name="grey_30">#3CAEAEAE</color>
+    <color name="grey_light_30">#45E4E4E4</color>
+    <color name="blue_light">#89f8ff</color>
+    <color name="blue_dark">#49c6cc</color>
+    <color name="green_light">#85ff92</color>
+    <color name="green_dark">#92f066</color>
+    <color name="yellow_light">#e6ff97</color>
+    <color name="yellow_dark">#d9f974</color>
+    <color name="pink_light">#f66b80</color>
+    <color name="pink_dark">#e099d5</color>
+    <color name="purple_dark_30">#57E099D5</color>
+
+    <color name="blue_light_50">#8089F8FF</color>
+    <color name="blue_dark_50">#8049c6cc</color>
+    <color name="green_light_50">#8085ff92</color>
+    <color name="green_dark_50">#8092f066</color>
+    <color name="yellow_light_50">#80e6ff97</color>
+    <color name="yellow_dark_50">#80d9f974</color>
+    <color name="switch_thumb_color">#FF4081</color>
+    <color name="switch_track_color">#9E9E9E</color>
+</resources>

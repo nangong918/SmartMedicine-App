@@ -8,6 +8,12 @@ package com.utils.mvc.redisson;
  */
 public interface RedissonService {
 
+    //---------------------分布式锁---------------------
+
+    boolean tryLock(RedissonClusterLock redisLock);
+
+    void unlock(RedissonClusterLock redisLock);
+
     //---------------------Key---------------------
     /**
      * 设置键的过期时间
@@ -81,4 +87,7 @@ public interface RedissonService {
      * @param <T>
      */
     <T> T getObjectFromSerializable(String key, Class<T> clazz);
+
+    // 删除对象和key
+    boolean deleteObject(String key);
 }

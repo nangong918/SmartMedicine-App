@@ -15,7 +15,7 @@ import com.czy.api.domain.dto.socket.request.DeleteUserRequest;
 import com.czy.api.domain.dto.socket.request.HandleAddedUserRequest;
 import com.czy.api.domain.dto.socket.response.DeleteUserResponse;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.message.annotation.HandlerType;
+import com.czy.springUtils.annotation.HandlerType;
 import com.czy.message.component.RabbitMqSender;
 import com.czy.message.handler.api.FriendApi;
 import lombok.RequiredArgsConstructor;

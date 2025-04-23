@@ -137,5 +137,9 @@ public class BaseResponse<T> implements BaseBean, Serializable {
         return new BaseResponse<>(400, warningMessage, null);
     }
 
+    public static <T> BaseResponse<T> LogBackError(String warningMessage) {
+        return new BaseResponse<>(400, warningMessage, null);
+    }
+
     // TODO LogBackErrorCode 给前端和后端日志分离，并且单独拆分出 AppException
 }

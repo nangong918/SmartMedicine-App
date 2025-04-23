@@ -10,6 +10,7 @@ package "Utils" {
     [SpringUtils] --> [JavaUtils]
     [SpringMvcUtils] --> [SpringUtils]
     [SpringWebfluxUtils] --> [SpringUtils]
+    [SpringMvcUtils] --> [api-model]
 }
 
 package "API" {
@@ -25,11 +26,15 @@ package "Gateway" {
 
 package "Base" {
     [netty-socket]
+    [search-service]
     [oss-service]
 
     [netty-socket] --> [SpringUtils]
     [netty-socket] --> [api-model]
-    [oss-service] --> [SpringUtils]
+    [search-service] --> [SpringUtils]
+    [search-service] --> [api-model]
+
+    [oss-service] --> [SpringMvcUtils]
     [oss-service] --> [api-model]
 }
 
@@ -39,6 +44,9 @@ package "Business" {
     [sms-service]
     [message-service]
     [relationship-service]
+    [post-service]
+
+    [recommend-service]
 
     [auth-service] --> [SpringWebfluxUtils]
     [auth-service] --> [api-model]
@@ -49,11 +57,17 @@ package "Business" {
     [sms-service] --> [SpringWebfluxUtils]
     [sms-service] --> [api-model]
 
-    [message-service] --> [SpringWebfluxUtils]
+    [message-service] --> [SpringMvcUtils]
     [message-service] --> [api-model]
 
     [relationship-service] --> [SpringWebfluxUtils]
     [relationship-service] --> [api-model]
+
+    [post-service] --> [SpringMvcUtils]
+    [post-service] --> [api-model]
+
+    [recommend-service] --> [SpringUtils]
+    [recommend-service] --> [api-model]
 }
 
 @enduml

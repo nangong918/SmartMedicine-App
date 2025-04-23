@@ -22,7 +22,4 @@ public class PostDetailDo {
     private String title;
     // content；not null
     private String content;
-    // fileStorageNamesUrl；null able
-    private List<String> fileStorageNamesUrl;
-
 }

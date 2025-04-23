@@ -14,10 +14,10 @@ import java.util.List;
 public interface OssMapper {
 
     // 增
-    void insert(@Param("do") OssFileDo ossFileDo);
+    Long insert(OssFileDo ossFileDo);
 
     // 批量增
-    void insertBatch(@Param("doList") List<OssFileDo> ossFileDos);
+    List<Long> insertBatch(List<OssFileDo> ossFileDos);
 
     // 删
     void delete(Long id);
@@ -45,7 +45,7 @@ public interface OssMapper {
     // 根据fileStorageName + bucketName 查询
     OssFileDo getByFileStorageNameAndBucketName(
             @Param("userId") Long userId,
-            @Param("fileStorageName") String fileStorageName,
+            @Param("fileName") String fileName,
             @Param("bucketName") String bucketName
     );
 

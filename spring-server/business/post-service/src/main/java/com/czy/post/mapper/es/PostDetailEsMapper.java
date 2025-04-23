@@ -12,6 +12,6 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 public interface PostDetailEsMapper extends ElasticsearchRepository<PostDetailEsDo, Long> {
     // 通过标题搜索
     Page<PostDetailEsDo> findByTitleContaining(String title, Pageable pageable);
-    // 通过内容搜索
-    Page<PostDetailEsDo> findByContentContaining(String content, Pageable pageable);
+//    // 通过内容搜索
+//    Page<PostDetailEsDo> findByContentContaining(String content, Pageable pageable);
 }

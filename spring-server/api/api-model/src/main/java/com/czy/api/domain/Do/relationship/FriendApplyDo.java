@@ -15,11 +15,11 @@ import lombok.Data;
 @Data
 public class FriendApplyDo implements BaseBean {
     // 主键
-    public Integer id;
+    public Long id;
     // 申请用户ID
-    public Integer applyUserId;
+    public Long applyUserId;
     // 处理用户ID
-    public Integer handleUserId;
+    public Long handleUserId;
     // 申请时间 (时间戳)
     public Long applyTime;
     // 处理时间 (时间戳，可以为空)

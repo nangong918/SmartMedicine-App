@@ -134,29 +134,26 @@ public class RequestMessageType {
         public static final String HANDLE_ADDED_USER = root + handle;
     }
 
-    public final static class Moment {
-        public final static String root = "Moment:";
-        private static final String publish = "publish";
-        private static final String delete = "delete";
+    public final static class Post {
+        public final static String root = "Post:";
         private static final String like = "like";
         private static final String comment = "comment";
         private static final String collect = "collect";
+        // 转发
+        private static final String forward = "forward";
 
-        // 发布动态
-        @MsgTranslator(responseType = Constants.MESSAGE_TYPE_HTTP)
-        public final static String PUBLISH_MOMENT = root + publish;
-        // 删除动态
-        @MsgTranslator(responseType = Constants.MESSAGE_TYPE_HTTP)
-        public final static String DELETE_MOMENT = root + delete;
         // 点赞
-        @MsgTranslator(responseType = ResponseMessageType.Moment.LIKE_MOMENT)
-        public final static String LIKE_MOMENT = root + like;
+        @MsgTranslator(responseType = ResponseMessageType.Post.LIKE_POST)
+        public final static String LIKE_POST = root + like;
         // 评论
-        @MsgTranslator(responseType = ResponseMessageType.Moment.COMMENT_MOMENT)
-        public final static String COMMENT_MOMENT = root + comment;
+        @MsgTranslator(responseType = ResponseMessageType.Post.COMMENT_POST)
+        public final static String COMMENT_POST = root + comment;
         // 收藏
-        @MsgTranslator(responseType = ResponseMessageType.Moment.COLLECT_MOMENT)
-        public final static String COLLECT_MOMENT = root + collect;
+        @MsgTranslator(responseType = ResponseMessageType.Post.COLLECT_POST)
+        public final static String COLLECT_POST = root + collect;
+        // 转发
+        @MsgTranslator(responseType = ResponseMessageType.Post.FORWARD_POST)
+        public final static String FORWARD_POST = root + forward;
     }
 
     public final static class Call {

@@ -3,7 +3,7 @@ package com.czy.message.controller;
 
 
 
-import com.czy.api.constant.message.ChatConstant;
+import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.domain.dto.http.base.BaseNettyRequest;
 import com.czy.api.domain.dto.http.response.ResponseEntity;
@@ -12,7 +12,6 @@ import com.czy.message.component.RabbitMqSender;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +23,7 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(ChatConstant.WebRTC_CONTROLLER)
+@RequestMapping(MessageConstant.WebRTC_CONTROLLER)
 @Validated // 启用校验
 @RequiredArgsConstructor // 自动注入@Autowired
 @Api(produces = "application/json", tags = "单人通话信令推送接口 Java+Netty+WebRTC" )

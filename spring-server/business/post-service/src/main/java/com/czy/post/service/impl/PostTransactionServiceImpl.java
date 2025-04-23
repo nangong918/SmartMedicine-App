@@ -28,11 +28,11 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Transactional(rollbackFor = StorageException.class)
     @Override
-    public void storePostToDatabase(PostAo postAo, Long id) {
-        PostDetailEsDo postDetailEsDo = postConverter.toEsDo(postAo, id);
+    public void storePostToDatabase(PostAo postAo) {
+        PostDetailEsDo postDetailEsDo = postConverter.toEsDo(postAo);
         postDetailEsMapper.save(postDetailEsDo);
 
-        PostDetailDo postDetailDo = postConverter.toMongoDo(postDetailEsDo);
+        PostDetailDo postDetailDo = postConverter.toMongoDo(postAo);
         postDetailMongoMapper.savePostDetail(postDetailDo);
     }
 
@@ -45,10 +45,10 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Transactional(rollbackFor = StorageException.class)
     @Override
-    public void updatePostContentToDatabase(PostAo postAo, Long postId) {
-        PostDetailEsDo postDetailEsDo = postConverter.toEsDo(postAo, postId);
+    public void updatePostContentToDatabase(PostAo postAo) {
+        PostDetailEsDo postDetailEsDo = postConverter.toEsDo(postAo);
         postDetailEsMapper.save(postDetailEsDo);
-        PostDetailDo postDetailDo = postConverter.toMongoDo(postDetailEsDo);
+        PostDetailDo postDetailDo = postConverter.toMongoDo(postAo);
         postDetailMongoMapper.savePostDetail(postDetailDo);
     }
 }

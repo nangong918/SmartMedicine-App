@@ -65,8 +65,8 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     @Override
     public boolean addUserFriend(AddUserAo addUserAo) {
         // 获取用户id
-        int senderId = getUserId(addUserAo.applyAccount);
-        int receiverId = getUserId(addUserAo.handlerAccount);
+        Long senderId = getUserId(addUserAo.applyAccount);
+        Long receiverId = getUserId(addUserAo.handlerAccount);
 
         // 构建 FriendApplyDo 对象
         FriendApplyDo friendApplyDo = new FriendApplyDo();
@@ -101,7 +101,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     // 将消息注册为ChatListJson
     private String getChatListJson(String chatContent,
-                                   int senderId, int receiverId,
+                                   Long senderId, Long receiverId,
                                    Long timestamp,
                                    String senderAccount, String receiverAccount){
         if (!StringUtils.hasText(chatContent)){
@@ -147,8 +147,8 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public Message handleAddedUser(HandleAddedMeAo handleAddedMeAo) {
-        int applyId = getUserId(handleAddedMeAo.applyAccount);
-        int handlerId = getUserId(handleAddedMeAo.handlerAccount);
+        Long applyId = getUserId(handleAddedMeAo.applyAccount);
+        Long handlerId = getUserId(handleAddedMeAo.handlerAccount);
 
         // 修改申请记录
         FriendApplyDo friendApplyDo = friendApplyMapper.getFriendApplyByUserIds(applyId, handlerId);
@@ -213,8 +213,8 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         handleAddUserResponse.avatarUrl = userDo.getAvatarUrl();
         handleAddUserResponse.userName = userDo.getUserName();
         handleAddUserResponse.userAccount = handleAddedMeAo.handlerAccount;
-        Integer applierId = getUserId(handleAddedMeAo.applyAccount);
-        Integer handlerId = getUserId(handleAddedMeAo.handlerAccount);
+        Long applierId = getUserId(handleAddedMeAo.applyAccount);
+        Long handlerId = getUserId(handleAddedMeAo.handlerAccount);
 
         // addUserStatusAo
         FriendApplyDo friendApplyDo = friendApplyMapper.getFriendApplyByUserIds(
@@ -249,7 +249,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     }
 
     // 设置已经是好友了
-    private void setIsFriend(int applyId, int handleId, Long handleTime){
+    private void setIsFriend(Long applyId, Long handleId, Long handleTime){
         FriendApplyDo friendApplyDo = friendApplyMapper.getFriendApplyByUserIds(applyId, handleId);
         friendApplyDo.setApplyStatus(ApplyStatusEnum.HANDLED.code);
         friendApplyDo.setHandleStatus(HandleStatusEnum.AGREE.code);
@@ -258,7 +258,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     }
 
     // 删除某条申请记录
-    private void deleteFriendApply(int applyId, int handleId){
+    private void deleteFriendApply(Long applyId, Long handleId){
         FriendApplyDo friendApplyDo = friendApplyMapper.getFriendApplyByUserIds(applyId, handleId);
         if (friendApplyDo != null && friendApplyDo.getId() != null){
             friendApplyMapper.deleteFriendApply(friendApplyDo.getId());
@@ -266,7 +266,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     }
 
     // 更新某条申请记录
-    private void updateFriendApply(int applyId, int handleId,
+    private void updateFriendApply(Long applyId, Long handleId,
                                    String additionalContent,
                                    Long timestamp,
                                    String senderAccount, String receiverAccount){
@@ -292,7 +292,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public List<NewUserItemAo> getAddMeRequestList(String handlerAccount) {
-        int handlerId = getUserId(handlerAccount);
+        Long handlerId = getUserId(handlerAccount);
         List<NewUserItemBo> applyToMeList = friendApplyMapper.getAddMeRequestList(handlerId);
         List<NewUserItemAo> newUserItemAoList = new ArrayList<>();
         Optional.ofNullable(applyToMeList)
@@ -308,7 +308,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public List<NewUserItemAo> getHandleMyAddUserResponseList(String senderAccount) {
-        int senderId = getUserId(senderAccount);
+        Long senderId = getUserId(senderAccount);
         List<NewUserItemBo> applyToMeList = friendApplyMapper.getHandleMyAddUserResponseList(senderId);
         List<NewUserItemAo> newUserItemAoList = new ArrayList<>();
         Optional.ofNullable(applyToMeList)
@@ -367,8 +367,8 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public void updateApplyStatus(AddUserAo addUserAo) {
-        int applyId = getUserId(addUserAo.applyAccount);
-        int handleId = getUserId(addUserAo.handlerAccount);
+        Long applyId = getUserId(addUserAo.applyAccount);
+        Long handleId = getUserId(addUserAo.handlerAccount);
         updateFriendApply(
                 applyId,
                 handleId,
@@ -381,8 +381,8 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public void deleteApplyStatus(AddUserAo addUserAo) {
-        int applyId = getUserId(addUserAo.applyAccount);
-        int handleId = getUserId(addUserAo.handlerAccount);
+        Long applyId = getUserId(addUserAo.applyAccount);
+        Long handleId = getUserId(addUserAo.handlerAccount);
         deleteFriendApply(applyId, handleId);
         // 如果有记录删除
         deleteFriend(addUserAo);
@@ -390,8 +390,8 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public void deleteFriend(AddUserAo addUserAo) {
-        int applyId = getUserId(addUserAo.applyAccount);
-        int handleId = getUserId(addUserAo.handlerAccount);
+        Long applyId = getUserId(addUserAo.applyAccount);
+        Long handleId = getUserId(addUserAo.handlerAccount);
         // 如果存在记录就删除
         UserFriendDo userFriendDo = userFriendMapper.getUserFriend(applyId, handleId);
         if (userFriendDo != null){
@@ -399,8 +399,8 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         }
     }
 
-    private Integer getUserId(String account){
-        Integer userId = userService.getIdByAccount(account);
+    private Long getUserId(String account){
+        Long userId = userService.getIdByAccount(account);
         if (userId == null){
             String errorMsg = String.format("account：%s 不存在", account);
             log.warn(errorMsg);

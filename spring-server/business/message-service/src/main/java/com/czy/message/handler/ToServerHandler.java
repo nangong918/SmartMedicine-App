@@ -8,7 +8,7 @@ import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.domain.dto.socket.request.HaveReadMessageRequest;
 import com.czy.api.domain.dto.socket.response.HaveReadMessageResponse;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.message.annotation.HandlerType;
+import com.czy.springUtils.annotation.HandlerType;
 import com.czy.message.component.RabbitMqSender;
 import com.czy.message.handler.api.ToServiceApi;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,11 @@
 package com.utils.mvc.redisson.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBucket;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,26 @@ public class RedissonServiceImpl implements RedissonService {
 
     private static final Long EXPIRE_SECONDS = 3600L; // 如果为设置时间，默认为1小时
     private final RedissonClient redissonClient;
+
+    @Override
+    public boolean tryLock(RedissonClusterLock redisLock) {
+        RLock lock = redissonClient.getLock(redisLock.getId());
+        try {
+            // 尝试获取锁，最多等待5秒，锁定时间为lockTimeout秒
+            return lock.tryLock(5, redisLock.getLockTimeout(), TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+
+    @Override
+    public void unlock(RedissonClusterLock redisLock) {
+        RLock lock = redissonClient.getLock(redisLock.getId());
+        if (lock.isHeldByCurrentThread()) {
+            lock.unlock();
+        }
+    }
 
     @Override
     public boolean expireKey(String key, long timeout) {
@@ -89,5 +111,14 @@ public class RedissonServiceImpl implements RedissonService {
     public <T> T getObjectFromSerializable(String key, Class<T> clazz) {
         RBucket<T> bucket = redissonClient.getBucket(key);
         return bucket.get();
+    }
+
+    @Override
+    public boolean deleteObject(String key) {
+        // 获取RBucket对象
+        RBucket<Object> bucket = redissonClient.getBucket(key);
+
+        // 删除键并返回结果
+        return bucket.delete();
     }
 }
