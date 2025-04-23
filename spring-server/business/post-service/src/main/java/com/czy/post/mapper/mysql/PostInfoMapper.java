@@ -51,5 +51,5 @@ public interface PostInfoMapper {
     void deletePostInfoDoById(Long id);
 
     // 根据id更新PostInfoDo
-    void updatePostInfoDoById(PostInfoDo postInfoDo);
+    void updatePostInfoDo(PostInfoDo postInfoDo);
 }

@@ -96,7 +96,7 @@ public class PostStorageServiceImpl implements PostStorageService {
     @Override
     public void updatePostInfoToDatabase(PostAo postAo) {
         PostInfoDo postInfoDo = postConverter.toInfoDo(postAo);
-        postInfoMapper.updatePostInfoDoById(postInfoDo);
+        postInfoMapper.updatePostInfoDo(postInfoDo);
     }
 
     @Override

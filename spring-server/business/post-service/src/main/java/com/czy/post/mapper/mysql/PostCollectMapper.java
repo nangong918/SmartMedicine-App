@@ -2,6 +2,7 @@ package com.czy.post.mapper.mysql;
 
 import com.czy.api.domain.Do.post.collect.PostCollectDo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -25,6 +26,10 @@ public interface PostCollectMapper {
 
     // 通过collectFolderId删除全部
     void deletePostCollectsByCollectFolderId(Long collectFolderId);
+    // 联合postId和collectFolderId删除某条
+    void deletePostCollectByPostIdAndCollectFolderId(
+            @Param("postId") Long postId,
+            @Param("collectFolderId") Long collectFolderId);
 
     // 更新PostCollectDo
     void updatePostCollect(PostCollectDo postCollectDo);

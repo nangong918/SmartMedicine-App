@@ -23,4 +23,6 @@ public class PostConstant {
     // serviceUri
     public static final String serviceUri = "lb://" + serviceName;
     public static final String POST_FILE_CONTROLLER = "/postFile";
+    // 默认文件夹
+    public static final String DEFAULT_COLLECT_FOLDER_NAME = "默认收藏夹";
 }

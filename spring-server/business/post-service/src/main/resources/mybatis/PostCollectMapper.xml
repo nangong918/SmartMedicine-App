@@ -27,6 +27,11 @@
     <delete id="deletePostCollectsByCollectFolderId">
         DELETE FROM post_collect WHERE collect_folder_id = #{collectFolderId}
     </delete>
+    <delete id="deletePostCollectByPostIdAndCollectFolderId">
+        DELETE FROM post_collect
+               WHERE post_id = #{postId}
+                 AND collect_folder_id = #{collectFolderId}
+    </delete>
     <select id="findPostCollectById" resultType="com.czy.api.domain.Do.post.collect.PostCollectDo">
         SELECT
         <include refid="doDoColumns"/>
