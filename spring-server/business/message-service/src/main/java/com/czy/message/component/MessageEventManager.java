@@ -4,20 +4,14 @@ package com.czy.message.component;
 import com.czy.api.converter.base.BaseRequestConverter;
 import com.czy.api.domain.dto.base.BaseRequestData;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.message.annotation.HandlerType;
-import com.czy.message.annotation.MessageType;
+import com.czy.springUtils.component.BaseEventManager;
 import com.czy.springUtils.debug.DebugConfig;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author 13225
@@ -27,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-public class MessageEventManager {
+public class MessageEventManager extends BaseEventManager<Message> {
 
     @Autowired
     private DebugConfig debugConfig;
@@ -35,48 +29,15 @@ public class MessageEventManager {
     @Autowired
     private BaseRequestConverter baseRequestConverter;
 
-
-    // 存储所有 Handler
-    private final Map<String, Object> handlers = new ConcurrentHashMap<>();
-    // 存储消息类型与方法的映射
-    private final Map<String, Method> methodCache = new ConcurrentHashMap<>();
-
-    @Getter
-    private List<String> messageHandlers = new ArrayList<>();
-//    @Lazy 用lazy/PostConstruct避免循环依赖
-//    @Lazy
-    @Autowired
-    private List<Object> handlerBeans;
-
     @PostConstruct
     public void init() {
-        for (Object handler : handlerBeans) {
-            HandlerType handlerType = handler.getClass().getAnnotation(HandlerType.class);
-            if (handlerType != null) {
-                messageHandlers.add(handlerType.value());
-                handlers.put(handlerType.value(), handler);
-                cacheAnnotatedMethods(handler.getClass());
-            }
-        }
+        super.init();
     }
 
-    /**
-     * 缓存标注了 @MessageType 的方法
-     */
-    private void cacheAnnotatedMethods(Class<?> clazz) {
-        // 处理接口的方法
-        for (Class<?> iface : clazz.getInterfaces()) {
-            for (Method method : iface.getDeclaredMethods()) {
-                MessageType annotation = method.getAnnotation(MessageType.class);
-                if (annotation != null) {
-                    methodCache.put(annotation.value(), method);
-                }
-            }
-        }
-    }
 
     // 此处需要优化性能，频繁调用的方法禁止使用反射。可以先将反射内容存储起来
     // 我已经用BaseRequestData.class.isAssignableFrom(parameterType)检查了
+    @Override
     @SuppressWarnings("unchecked")
     public void process(Message msg) {
         if (msg == null){
@@ -110,6 +71,9 @@ public class MessageEventManager {
                 Class<? extends BaseRequestData> safeParameterType = (Class<? extends BaseRequestData>) parameterType;
 
                 // 现在可以使用 safeParameterType 来调用 getBaseTransferData
+                // 按理来说应该IM系统应该禁用动态反射的，但是代价是开发成本。这是一个折中的选择。
+                // 就像ProtoBuf比JSON快但是难以映射为对象。
+                // NoSQL比ORM数据库快但是也难以映射为对象
                 Object request = baseRequestConverter.getBaseRequestData(msg, safeParameterType);
 
                 if (request == null) {
@@ -127,19 +91,5 @@ public class MessageEventManager {
             log.error("调用方法失败: [messageType: {}]", msgType, e);
         }
     }
-
-    /**
-     * 根据消息类型找到对应的 Handler
-     */
-    private Object findHandlerByMessageType(String messageType) {
-        for (Map.Entry<String, Object> entry : handlers.entrySet()) {
-            if (messageType.contains(entry.getKey())) {
-                return entry.getValue();
-            }
-        }
-        return null;
-    }
 }
-/**
- * 将消息转为需要的类型
- */
+

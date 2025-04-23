@@ -15,7 +15,6 @@
 
     <modules>
 <!--        <module>../SpringUtils</module>-->
-        <module>oss-service</module>
         <module>user-service</module>
         <module>sms-service</module>
         <module>message-service</module>

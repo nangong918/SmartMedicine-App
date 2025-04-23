@@ -6,7 +6,7 @@ import com.czy.api.converter.http.SessionConverter;
 import com.czy.api.domain.dto.http.request.DisconnectRequest;
 import com.czy.api.domain.dto.http.request.RegisterRequest;
 import com.czy.api.domain.entity.event.Session;
-import com.czy.message.annotation.HandlerType;
+import com.czy.springUtils.annotation.HandlerType;
 import com.czy.message.handler.api.ConnectApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -14,6 +14,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>oss-service</module>
         <module>netty-socket</module>
         <module>search-service</module>
     </modules>

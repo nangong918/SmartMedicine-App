@@ -15,6 +15,7 @@
 
     <modules>
         <module>api-model</module>
+        <module>entity</module>
     </modules>
 
     <!--JDK版本：11-->

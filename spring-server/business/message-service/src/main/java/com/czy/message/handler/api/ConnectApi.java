@@ -5,7 +5,7 @@ package com.czy.message.handler.api;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.domain.dto.http.request.DisconnectRequest;
 import com.czy.api.domain.dto.http.request.RegisterRequest;
-import com.czy.message.annotation.MessageType;
+import com.czy.springUtils.annotation.MessageType;
 
 /**
  * @author 13225
