@@ -2,7 +2,7 @@ package com.czy.message.handler.eventListener;
 
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.event.MessageRouteEvent;
-import com.czy.message.component.EventManager;
+import com.czy.message.component.MessageEventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -19,12 +19,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class MessageRouteListener implements ApplicationListener<MessageRouteEvent> {
 
-    private final EventManager eventManager;
+    private final MessageEventManager messageEventManager;
 //    @EventListener // 继承了ApplicationListener就不需要@EventListener
     @Override
     public void onApplicationEvent(@NotNull MessageRouteEvent event) {
         Message message = event.getSource();
         // 路由处理消息
-        eventManager.process(message);
+        messageEventManager.process(message);
     }
 }

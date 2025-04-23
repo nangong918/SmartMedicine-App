@@ -27,6 +27,7 @@ import org.springframework.util.StringUtils;
 /**
  * @author 13225
  * @date 2025/3/10 17:04
+ * 需要注册到MessageConstant
  */
 
 @HandlerType(RequestMessageType.Chat.root)

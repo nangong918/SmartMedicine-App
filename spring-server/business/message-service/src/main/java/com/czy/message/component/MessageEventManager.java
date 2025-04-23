@@ -7,12 +7,14 @@ import com.czy.api.domain.entity.event.Message;
 import com.czy.message.annotation.HandlerType;
 import com.czy.message.annotation.MessageType;
 import com.czy.springUtils.debug.DebugConfig;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,11 +22,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author 13225
  * @date 2025/2/12 16:37
+ * Message服务的EventMananger
  */
 
 @Slf4j
 @Component
-public class EventManager {
+public class MessageEventManager {
 
     @Autowired
     private DebugConfig debugConfig;
@@ -38,6 +41,8 @@ public class EventManager {
     // 存储消息类型与方法的映射
     private final Map<String, Method> methodCache = new ConcurrentHashMap<>();
 
+    @Getter
+    private List<String> messageHandlers = new ArrayList<>();
 //    @Lazy 用lazy/PostConstruct避免循环依赖
 //    @Lazy
     @Autowired
@@ -48,6 +53,7 @@ public class EventManager {
         for (Object handler : handlerBeans) {
             HandlerType handlerType = handler.getClass().getAnnotation(HandlerType.class);
             if (handlerType != null) {
+                messageHandlers.add(handlerType.value());
                 handlers.put(handlerType.value(), handler);
                 cacheAnnotatedMethods(handler.getClass());
             }

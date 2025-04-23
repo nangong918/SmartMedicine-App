@@ -4,7 +4,7 @@ package com.czy.api.constant.message;
  * @author 13225
  * @date 2025/3/12 17:17
  */
-public class ChatConstant {
+public class MessageConstant {
 
     // 最近的消息Key [包含的是UserChatLastMessageBo]
     public static final String CHAT_MESSAGE_KEY = "chat:last_message:";

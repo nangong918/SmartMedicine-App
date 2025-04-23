@@ -1,6 +1,6 @@
 package com.czy.gateway.config;
 
-import com.czy.api.constant.message.ChatConstant;
+import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.constant.relationship.RelationshipConstant;
 import com.czy.api.constant.user.UserConstant;
 import com.czy.gateway.filter.IpGatewayFilterFactory;
@@ -51,19 +51,19 @@ public class GatewayConfig {
                         .uri(UserConstant.serviceUri)
                         .id("login_jwt_route")
                 )
-                .route(r -> r.path(ChatConstant.serviceRoute + ChatConstant.Chat_CONTROLLER + "/**")
+                .route(r -> r.path(MessageConstant.serviceRoute + MessageConstant.Chat_CONTROLLER + "/**")
                         .filters(f -> f
                                 .filter(jwtGatewayFilterFactory.apply(new JwtGatewayFilterFactory.Config()))
                                 .stripPrefix(1)
                         )
-                        .uri(ChatConstant.serviceUri)
+                        .uri(MessageConstant.serviceUri)
                         .id("chat_jwt_route")
                 )
-                .route(r -> r.path(ChatConstant.serviceRoute + ChatConstant.WebRTC_CONTROLLER + "/**")
+                .route(r -> r.path(MessageConstant.serviceRoute + MessageConstant.WebRTC_CONTROLLER + "/**")
                         .filters(f -> f.filter(jwtGatewayFilterFactory.apply(new JwtGatewayFilterFactory.Config()))
                                        .stripPrefix(1)
                         )
-                        .uri(ChatConstant.serviceUri)
+                        .uri(MessageConstant.serviceUri)
                         .id("webrtc_jwt_route")
                 )
                 .route(r -> r.path(RelationshipConstant.serviceRoute + RelationshipConstant.Relationship_CONTROLLER + "/**")

@@ -4,7 +4,7 @@ package com.czy.message.service;
 
 
 import com.czy.api.api.user.UserService;
-import com.czy.api.constant.message.ChatConstant;
+import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.ao.message.FetchUserMessageAo;
 import com.czy.api.domain.bo.message.UserChatLastMessageBo;
@@ -49,9 +49,9 @@ public class ChatServiceImpl implements ChatService {
     public List<UserChatLastMessageBo> getUserAllChatMessage(String senderAccount) {
         List<UserChatLastMessageBo> messages = new LinkedList<>();
         // 获取所有相关的键 考虑到senderId可能是receiverId
-//        Set<String> keys = redisService.getKeys(ChatConstant.CHAT_MESSAGE_KEY + senderId + ":");
+//        Set<String> keys = redisService.getKeys(MessageConstant.CHAT_MESSAGE_KEY + senderId + ":");
         // 此时的sender是想要查询sender收到的消息；所以sender要作为receiver；所以
-        String checkKey = ChatConstant.CHAT_MESSAGE_KEY + "*:" + senderAccount;
+        String checkKey = MessageConstant.CHAT_MESSAGE_KEY + "*:" + senderAccount;
         Set<String> keysReceiver = redisService.getKeys(checkKey);
 
         for (String key : keysReceiver) {
@@ -67,13 +67,13 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public UserChatLastMessageBo getUserChatMessage(String senderAccount, String receiverAccount) {
-        String key = ChatConstant.CHAT_MESSAGE_KEY + senderAccount + ":" + receiverAccount + ":";
+        String key = MessageConstant.CHAT_MESSAGE_KEY + senderAccount + ":" + receiverAccount + ":";
         return redisService.getObject(key, UserChatLastMessageBo.class);
     }
 
     @Override
     public void clearUserChatMessageUnreadCount(String senderAccount, String receiverAccount) {
-        String key = ChatConstant.CHAT_MESSAGE_KEY + senderAccount + ":" + receiverAccount + ":";
+        String key = MessageConstant.CHAT_MESSAGE_KEY + senderAccount + ":" + receiverAccount + ":";
         UserChatLastMessageBo bo = redisService.getObject(key, UserChatLastMessageBo.class);
         if (bo != null){
             bo.setUnreadCount(0);
@@ -103,7 +103,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void saveUserChatMessageToRedis(UserChatLastMessageBo userChatLastMessageBo) {
-        String key = ChatConstant.CHAT_MESSAGE_KEY + userChatLastMessageBo.senderAccount + ":" + userChatLastMessageBo.receiverAccount + ":";
+        String key = MessageConstant.CHAT_MESSAGE_KEY + userChatLastMessageBo.senderAccount + ":" + userChatLastMessageBo.receiverAccount + ":";
         redisService.setObject(key, userChatLastMessageBo, CHAT_MESSAGE_EXPIRE_TIME);
     }
 

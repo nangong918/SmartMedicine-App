@@ -3,14 +3,15 @@ package com.czy.message.mqHandler;
 
 import com.czy.api.constant.mq.SocketMessageMqConstant;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.api.domain.entity.event.event.BigDataEvent;
 import com.czy.api.domain.entity.event.event.MessageRouteEvent;
+import com.czy.message.component.MessageEventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.validation.Valid;
 
@@ -24,17 +25,36 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Component
 @RabbitListener(queues = SocketMessageMqConstant.USER_RECEIVE_QUEUE)
-public class UserMqHandler {
+public class MessageUserToServerMqHandler {
 
     private final ApplicationContext applicationContext;
+    private final MessageEventManager messageEventManager;
 
     @RabbitHandler
     public void handleMessage(@Valid Message userReceivedMessage) {
         // 事件驱动处理消息
-        // 第一份交给消息路由
-        applicationContext.publishEvent(new MessageRouteEvent(userReceivedMessage));
-        // 第二份交给大数据平台
-        applicationContext.publishEvent(new BigDataEvent(userReceivedMessage));
+        boolean isToThisServiceMessage = checkIsToThisServiceMessage(userReceivedMessage.getType());
+        if (isToThisServiceMessage){
+            // 第一份交给消息路由
+            applicationContext.publishEvent(new MessageRouteEvent(userReceivedMessage));
+        }
+        // 第二份交给大数据平台 (大数据平台自己去监听)
+//        applicationContext.publishEvent(new BigDataEvent(userReceivedMessage));
+    }
+
+
+    private boolean checkIsToThisServiceMessage(String messageType){
+        if (!StringUtils.hasText(messageType)){
+            return false;
+        }
+        boolean isToThisServiceMessage = false;
+        for (String handlers : messageEventManager.getMessageHandlers()){
+            if (messageType.equals(handlers)){
+                isToThisServiceMessage = true;
+                break;
+            }
+        }
+        return isToThisServiceMessage;
     }
 }
 /**
