@@ -38,13 +38,6 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.api</groupId>
-            <artifactId>entity</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
         <!--继承工具类：有些工具类的类型api需要继承-->
 <!--        <dependency>-->
 <!--            <groupId>com.utils</groupId>-->

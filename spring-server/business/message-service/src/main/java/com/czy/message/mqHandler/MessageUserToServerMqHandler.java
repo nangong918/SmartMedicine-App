@@ -4,7 +4,8 @@ package com.czy.message.mqHandler;
 import com.czy.api.constant.mq.SocketMessageMqConstant;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.event.MessageRouteEvent;
-import com.czy.message.component.MessageEventManager;
+
+import com.utils.mvc.component.EventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -28,7 +29,7 @@ import javax.validation.Valid;
 public class MessageUserToServerMqHandler {
 
     private final ApplicationContext applicationContext;
-    private final MessageEventManager messageEventManager;
+    private final EventManager<Message> eventManager;
 
     @RabbitHandler
     public void handleMessage(@Valid Message userReceivedMessage) {
@@ -48,7 +49,7 @@ public class MessageUserToServerMqHandler {
             return false;
         }
         boolean isToThisServiceMessage = false;
-        for (String handlers : messageEventManager.getMessageHandlers()){
+        for (String handlers : eventManager.getMessageHandlers()){
             if (messageType.equals(handlers)){
                 isToThisServiceMessage = true;
                 break;

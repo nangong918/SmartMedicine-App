@@ -10,6 +10,7 @@ package "Utils" {
     [SpringUtils] --> [JavaUtils]
     [SpringMvcUtils] --> [SpringUtils]
     [SpringWebfluxUtils] --> [SpringUtils]
+    [SpringMvcUtils] --> [api-model]
 }
 
 package "API" {
@@ -56,7 +57,7 @@ package "Business" {
     [sms-service] --> [SpringWebfluxUtils]
     [sms-service] --> [api-model]
 
-    [message-service] --> [SpringWebfluxUtils]
+    [message-service] --> [SpringMvcUtils]
     [message-service] --> [api-model]
 
     [relationship-service] --> [SpringWebfluxUtils]
