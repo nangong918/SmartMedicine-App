@@ -94,14 +94,15 @@ public class ResponseMessageType {
         public static final String HANDLE_ADDED_USER = root + "handleAddedUser";
     }
 
-    public final static class Moment {
-        public final static String root = "Moment:";
+    public final static class Post {
+        public final static String root = "Post:";
         // 朋友圈被点赞
-        public final static String LIKE_MOMENT = root + "likeMoment";
+        public final static String LIKE_POST = root + "likePost";
         // 朋友圈被评论
-        public final static String COMMENT_MOMENT = root + "commentMoment";
+        public final static String COMMENT_POST = root + "commentPost";
         // 朋友圈被收藏
-        public final static String COLLECT_MOMENT = root + "collectMoment";
+        public final static String COLLECT_POST = root + "collectPost";
+        public static final String FORWARD_POST = root + "forwardPost";
     }
 
     public final static class Call {
@@ -154,4 +155,8 @@ public class ResponseMessageType {
     public final static String SUCCESS = "success";
     // 失败
     public final static String FAILURE = "failure";
+
+    public final static String[] responseTypes = {
+            WAITING, SUCCESS, FAILURE
+    };
 }
