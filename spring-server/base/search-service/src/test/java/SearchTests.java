@@ -1,3 +1,4 @@
+import com.czy.api.constant.es.FieldAnalyzer;
 import com.czy.api.domain.Do.test.TestSearchDo;
 import com.czy.api.domain.Do.test.TestSearchEsDo;
 import com.czy.search.SearchApplication;
@@ -5,11 +6,17 @@ import com.czy.search.mapper.es.TestSearchEsMapper;
 import com.czy.search.mapper.TestSearchMapper;
 import com.czy.search.mapper.TestSearchMongoMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.AnalyzeRequest;
+import org.elasticsearch.client.indices.AnalyzeResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -27,8 +34,8 @@ public class SearchTests {
             "新冠病毒如何治疗",
             "新冠病毒最佳治疗方法",
             "普通感冒治疗",
-            "新馆病毒致死率是多少",
-            "管状病毒感染如何治疗",
+            "新冠病毒致死率是多少",
+            "冠状病毒感染如何治疗",
             "季节性流感应该如何治疗？"
     };
     @Test
@@ -107,24 +114,56 @@ public class SearchTests {
         testSearchDo.forEach(item -> System.out.println(item.toJsonString()));
     }
 
+    @Autowired
+    ElasticsearchRestTemplate elasticsearchRestTemplate;
+
     @Test
     public void testEsLikeSearch(){
-        List<TestSearchEsDo> testSearchDo = testSearchEsMapper.findBySearchNameContaining("新冠病毒");
-        List<TestSearchEsDo> testSearchDo1 = testSearchEsMapper.findBySearchNameContaining("病毒");
-        List<TestSearchEsDo> testSearchDo2 = testSearchEsMapper.findBySearchNameContaining("新冠");
+        List<TestSearchEsDo> testSearchDo = testSearchEsMapper.findBySearchNameLike("如何");
+        List<TestSearchEsDo> testSearchDo1 = testSearchEsMapper.findBySearchNameLike("病毒");
+        List<TestSearchEsDo> testSearchDo2 = testSearchEsMapper.findBySearchNameLike("冠");
+
+        System.out.println("=========如何=========");
         testSearchDo.forEach(item -> System.out.println(item.toJsonString()));
+        System.out.println("=========病毒=========");
         testSearchDo1.forEach(item -> System.out.println(item.toJsonString()));
+        System.out.println("=========冠=========");
         testSearchDo2.forEach(item -> System.out.println(item.toJsonString()));
     }
 
-    // TODO 此处失败
+    //  TODO 此处失败
     @Test
     public void testEsLikeMain(){
         testEsDelete();
         testEsInsert();
-        testEsPrintAll();
+//        testEsPrintAll();
         System.out.println("=========testEsLikeSearch=========");
         testEsLikeSearch();
+    }
+
+    @Autowired
+    private RestHighLevelClient client;
+    @Test
+    public void testIk() throws IOException {
+
+
+        for (String message : testContent){
+            AnalyzeRequest request = AnalyzeRequest.withGlobalAnalyzer(
+                    FieldAnalyzer.IK_MAX_WORD,
+                    message
+            );
+
+            AnalyzeResponse response = client.indices().analyze(request, RequestOptions.DEFAULT);
+            List<AnalyzeResponse.AnalyzeToken> token1 = response.getTokens();
+            System.out.println("IK_MAX_WORD token");
+            token1.forEach(token -> {
+                System.out.println("term: " + token.getTerm());
+                System.out.println("start: " + token.getStartOffset());
+                System.out.println("end: " + token.getEndOffset());
+                System.out.println("type: " + token.getType());
+            });
+        }
+
     }
 
     /**

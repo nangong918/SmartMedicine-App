@@ -21,6 +21,6 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 public class TestSearchEsDo implements BaseBean {
     @Id
     private Long id;
-    @Field(analyzer = FieldAnalyzer.IK_MAX_WORD, type = FieldType.Text)
+    @Field(analyzer = FieldAnalyzer.IK_MAX_WORD, searchAnalyzer = FieldAnalyzer.IK_MAX_WORD, type = FieldType.Text)
     private String searchName;
 }
