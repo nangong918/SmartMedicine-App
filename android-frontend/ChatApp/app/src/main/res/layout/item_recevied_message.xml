@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="8dp"
+    android:padding="4dp">
+
+    <com.example.chattest.NewViewTools.CircleImage
+        android:id="@+id/imageProfile"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@color/secondary_text"
+        app:srcCompat="@drawable/chat_ai"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_recevied_message"
+        android:id="@+id/textSendMessage"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        app:layout_constraintWidth_max="wrap"
+        android:textColor="@color/green_1000"
+        android:textSize="17sp"
+        app:layout_constraintStart_toEndOf="@+id/imageProfile"
+        android:layout_marginStart="5dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        android:text="test text"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/textDateTime"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/secondary_text"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/textSendMessage"
+        android:text="2023/10/9"
+        app:layout_constraintTop_toBottomOf="@+id/textSendMessage"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

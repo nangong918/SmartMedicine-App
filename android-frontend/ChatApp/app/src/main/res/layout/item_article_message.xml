@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="8dp"
+    android:padding="4dp">
+
+    <com.example.chattest.NewViewTools.CircleImage
+        android:id="@+id/imageProfile"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@color/secondary_text"
+        app:srcCompat="@drawable/chat_ai"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/article_card"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        app:cardBackgroundColor="@color/green_50"
+        app:cardElevation="25dp"
+        android:layout_marginStart="12dp"
+        app:layout_constraintStart_toEndOf="@+id/imageProfile"
+        app:layout_constraintTop_toTopOf="@+id/imageProfile">
+
+        <LinearLayout
+            android:layout_width="165dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/cardImage"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="130dp"
+                android:layout_height="77dp"
+                android:src="@drawable/chat_ai"/>
+
+            <TextView
+                android:id="@+id/textTitle"
+                android:background="@drawable/text_background"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:paddingStart="5dp"
+                android:layout_width="130dp"
+                android:text="标题"
+                android:maxLines="1"
+                android:textSize="12sp"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.example.chattest.NewViewTools.CircleImage
+                    android:id="@+id/cardUserFace"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/chat_ai"/>
+
+                <TextView
+                    android:id="@+id/cardUserID"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="90dp"
+                    android:text="用户ID"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/textDateTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="2023/10/9"
+        android:textColor="@color/secondary_text"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/article_card"
+        app:layout_constraintTop_toBottomOf="@+id/article_card" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

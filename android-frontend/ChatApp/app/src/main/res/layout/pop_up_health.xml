@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="350dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="高血压:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/hypertension"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/hypertension_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="高胆固醇:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/High_cholesterol"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/High_cholesterol_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="身体质量指数BMI:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/BMI_edit"
+                    android:inputType="number"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="吸烟:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/smoke"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/smoke_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="中风:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/apoplexy"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/apoplexy_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="体力运动:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/Physical"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/Physical_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="水果:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/fruit"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/fruit_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="蔬菜:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/vegetable"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/vegetable_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="重度饮酒:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/alcohol"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/alcohol_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="任何医疗保健:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/medical_care"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/medical_care_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="没有医疗花费:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/No_medical"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/No_medical_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="一般健康状况:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/Health_edit"
+                    android:inputType="number"
+                    android:hint="评级:1~5"
+                    android:textSize="15sp"
+                    android:textColor="@color/black_light"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="心理健康:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/Psychological_edit"
+                    android:hint="评级:0~30"
+                    android:inputType="number"
+                    android:textSize="15sp"
+                    android:textColor="@color/black_light"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="身体健康:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/Physical_edit"
+                    android:hint="评级:0~30"
+                    android:inputType="number"
+                    android:textSize="15sp"
+                    android:textColor="@color/black_light"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="行走困难:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/Difficulty_walking"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="情况">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/Difficulty_walking_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/Judge_boolean" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="性别:"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/sex"
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="35dp"
+                    android:hint="性别">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/sex_Option"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/sex"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="年龄:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/age_edit"
+                    android:hint="年龄age"
+                    android:inputType="number"
+                    android:textSize="15sp"
+                    android:textColor="@color/black_light"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:hint="教育水平:"
+                    android:inputType="number"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/educational_level_edit"
+                    android:hint="评级:1~6"
+                    android:inputType="number"
+                    android:textSize="15sp"
+                    android:textColor="@color/black_light"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:hint="收入:"
+                    android:inputType="number"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/income_edit"
+                    android:hint="评级:1~8"
+                    android:inputType="number"
+                    android:textSize="15sp"
+                    android:textColor="@color/black_light"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="70dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/Button_cancel"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="30dp"
+            android:layout_width="90dp"
+            android:layout_height="45dp"
+            android:text="取消"
+            android:background="@drawable/new_shape_a3_100"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/Button_select"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="50dp"
+            android:layout_toRightOf="@+id/Button_cancel"
+            android:layout_width="90dp"
+            android:layout_height="45dp"
+            android:text="确定"
+            android:background="@drawable/new_shape_a3_100"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

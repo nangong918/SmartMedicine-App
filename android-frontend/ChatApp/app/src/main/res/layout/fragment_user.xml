@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/green_0"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".User.UserFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/green_90"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="用户信息"
+        android:textColor="@color/green_1000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="485dp"
+        app:layout_constraintTop_toBottomOf="@+id/view"
+        tools:layout_editor_absoluteX="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginTop="40dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.example.chattest.NewViewTools.CircleImage
+                    android:id="@+id/userFace"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:src="@drawable/chat_ai"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp">
+                <TextView
+                    android:id="@+id/UserName"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="UserName"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/UserId"
+                    android:textSize="15sp"
+                    android:text="UserID"
+                    android:layout_marginTop="30dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/collection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp">
+                <com.example.chattest.NewViewTools.RoundedImage
+                    android:layout_width="350dp"
+                    android:layout_height="80dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@color/green_90"/>
+
+                <TextView
+                    android:layout_marginTop="25dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="收藏文章"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp">
+                <com.example.chattest.NewViewTools.RoundedImage
+                    android:layout_width="350dp"
+                    android:layout_height="80dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@color/green_90"/>
+
+                <TextView
+                    android:layout_marginTop="25dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="用户设置"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout >

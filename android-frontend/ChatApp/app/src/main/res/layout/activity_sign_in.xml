@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:overScrollMode="never"
+    android:padding="24dp"
+    android:scrollbars="none"
+    tools:context=".Sign.SignIn">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="智医"
+            android:textColor="@color/green_1000"
+            android:textSize="30sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/login_to_continue"
+            android:textColor="@color/green_100"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/SignIn_inputEmail"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/background_input"
+            android:hint="@string/email"
+            android:imeOptions="actionNext"
+            android:importantForAutofill="no"
+            android:inputType="textEmailAddress"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/primary_text"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/SignIn_inputPassword"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/background_input"
+            android:hint="@string/password"
+            android:imeOptions="actionNext"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/primary_text"
+            android:textSize="18sp"/>
+
+
+        <CheckBox
+            android:layout_marginTop="16dp"
+            android:id="@+id/checkBox_remember_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="记住账号" />
+
+        <CheckBox
+            android:id="@+id/checkBox_remember_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="记住密码" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_marginTop="35dp"
+            android:id="@+id/buttonSignIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="登录"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/textCreateNewAccount"
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="创建新的账户"
+            android:textColor="@color/primary_text"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/textSkipAndEnter"
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="游客模式"
+            android:textColor="@color/primary_text"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+
+</ScrollView>

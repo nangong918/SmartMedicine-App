@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="Judge_boolean">
+        <item>是</item>
+        <item>否</item>
+    </array>
+
+    <array name="sex">
+        <item>男</item>
+        <item>女</item>
+    </array>
+
+</resources>

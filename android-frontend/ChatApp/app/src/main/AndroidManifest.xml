@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 网络 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ChatTest"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+        <service
+            android:name=".SQLite.SQLiteService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <receiver
+            android:name=".Health.ReminderReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
+        <service
+            android:name=".Health.ReminderService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".User.Service.HeartBeatService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".ToolActivity.ArticleList.ArticleListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Home.ArticlePage.ArticlePage"
+            android:exported="false" />
+        <activity
+            android:name=".Test.TestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Search.SearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Chat.main.Chat"
+            android:exported="false" />
+        <activity
+            android:name=".Sign.SignUp"
+            android:exported="false" />
+        <activity
+            android:name=".Sign.SignIn"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

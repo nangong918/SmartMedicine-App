@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="280dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="药名:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/name_edit"
+                    android:inputType="text"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="日:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/day_edit"
+                    android:inputType="number"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="小时:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/hour_edit"
+                    android:inputType="number"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="分钟:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/min_edit"
+                    android:inputType="number"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="秒:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/second_edit"
+                    android:inputType="text"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="0dp"
+                    android:text="注释:"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/reminder_edit"
+                    android:inputType="text"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+
+
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="70dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/Button_cancel"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="30dp"
+            android:layout_width="90dp"
+            android:layout_height="45dp"
+            android:text="取消"
+            android:background="@drawable/new_shape_a3_100"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/Button_select"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="50dp"
+            android:layout_toRightOf="@+id/Button_cancel"
+            android:layout_width="90dp"
+            android:layout_height="45dp"
+            android:text="确定"
+            android:background="@drawable/new_shape_a3_100"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
