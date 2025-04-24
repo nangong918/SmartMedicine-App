@@ -64,7 +64,7 @@ public class PostCommentMongoMapper {
     }
 
     // 查询postId并且replyCommentId==null的List评论（一级评论）
-    public List<PostCommentDo> findCommentsByPostIdAndReplyCommentIdIsNull(Long postId) {
+    public List<PostCommentDo> findLevel1CommentsByPostId(Long postId) {
         return mongoTemplate.find(
                 Query.query(
                         Criteria.where("postId").is(postId)
@@ -74,25 +74,8 @@ public class PostCommentMongoMapper {
         );
     }
 
-    // 查询postId并且replyCommentId的List评论（二级评论）
-    public List<PostCommentDo> findCommentsByPostIdAndReplyCommentId(Long postId, Long replyCommentId) {
-        return mongoTemplate.find(
-                Query.query(
-                        Criteria.where("postId").is(postId)
-                                .and("replyCommentId").is(replyCommentId)
-                )                .with(Sort.by("timestamp")),
-                PostCommentDo.class
-        );
-    }
-
-    /**
-     * 查询postId并且replyCommentId==null的List评论（一级评论）+ 分页
-     * @param postId    帖子id
-     * @param page      页码       从0开始
-     * @param size      每页大小
-     * @return          List<PostCommentDo>
-     */
-    public List<PostCommentDo> findCommentsByPostIdAndReplyCommentIdIsNullPaging(Long postId, int page, int size) {
+    // 分页获取某个post的一级comment （replyCommentId==null）（一页多少条n + 第几页m）（comment在mongodb需要用Page）
+    public List<PostCommentDo> findLevel1CommentsByPostIdAndPaging(Long postId, int page, int size) {
         return mongoTemplate.find(
                 Query.query(
                         Criteria.where("postId").is(postId)
@@ -100,6 +83,17 @@ public class PostCommentMongoMapper {
                 )                .skip((long) page * size)
                         .limit(size)
                         .with(Sort.by("timestamp")),
+                PostCommentDo.class
+        );
+    }
+
+    // 查询postId并且replyCommentId的List评论（二级评论）
+    public List<PostCommentDo> findLevel2CommentsByPostIdAndReplyCommentId(Long postId, Long replyCommentId) {
+        return mongoTemplate.find(
+                Query.query(
+                        Criteria.where("postId").is(postId)
+                                .and("replyCommentId").is(replyCommentId)
+                )                .with(Sort.by("timestamp")),
                 PostCommentDo.class
         );
     }
@@ -112,7 +106,7 @@ public class PostCommentMongoMapper {
      * @param size              每页大小
      * @return                  List<PostCommentDo>
      */
-    public List<PostCommentDo> findCommentsByPostIdAndReplyCommentIdPaging(Long postId, Long replyCommentId, int page, int size) {
+    public List<PostCommentDo> findLevel2CommentsByPostIdAndReplyCommentIdPaging(Long postId, Long replyCommentId, int page, int size) {
         return mongoTemplate.find(
                 Query.query(
                         Criteria.where("postId").is(postId)

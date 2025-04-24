@@ -5,6 +5,7 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
@@ -77,6 +78,7 @@ public class PostStorageServiceImpl implements PostStorageService {
         List<PostInfoDo> postInfoDoList = postInfoMapper.getPostInfoDoListByIdList(idList);
         List<PostDetailDo> postDetailDoList = postDetailMongoMapper.findPostDetailsByIdList(idList);
         List<PostAo> postAoList = new ArrayList<>();
+        assert idList.size() == postInfoDoList.size() && postDetailDoList.size() == idList.size();
         for(int i = 0; i < idList.size(); i++){
             PostInfoDo postInfoDo = postInfoDoList.get(i);
             PostDetailDo postDetailDo = postDetailDoList.get(i);
@@ -86,6 +88,22 @@ public class PostStorageServiceImpl implements PostStorageService {
             postAoList.add(postAo);
         }
         return postAoList;
+    }
+
+    @Override
+    public List<PostInfoAo> findPostInfoAoList(List<Long> idList) {
+        if (CollectionUtils.isEmpty(idList)){
+            return new ArrayList<>();
+        }
+        List<PostInfoAo> postInfoAoList = new ArrayList<>();
+        List<PostInfoDo> postInfoDoList = postInfoMapper.getPostInfoDoListByIdList(idList);
+        assert idList.size() == postInfoDoList.size();
+        for (int i = 0; i < idList.size(); i++){
+            PostInfoDo postInfoDo = postInfoDoList.get(i);
+            PostInfoAo ao = postConverter.postInfoDoToAo(postInfoDo);
+            postInfoAoList.add(ao);
+        }
+        return postInfoAoList;
     }
 
     @Override

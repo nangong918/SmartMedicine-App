@@ -23,7 +23,7 @@ public interface PostCommentConverter {
     @Mapping(source = "replyCommentId", target = "replyCommentId")
     PostCommentDo postCommentRequestToPostCommentDo(PostCommentRequest request);
 
-    default PostCommentDo postCommentRequestToPostCommentDo(PostCommentRequest request,Long commenterId) {
+    default PostCommentDo postCommentRequestToPostCommentDo(PostCommentRequest request, Long commenterId) {
         PostCommentDo postCommentDo = postCommentRequestToPostCommentDo(request);
         postCommentDo.setCommenterId(commenterId);
         return postCommentDo;

@@ -10,7 +10,7 @@ import java.util.List;
  * @date 2025/4/21 17:26
  */
 @Data
-public class GetPostRequest {
+public class GetPostInfoListRequest {
     @NotEmpty(message = "帖子 IDs 不能为空")
     public List<Long> postIds;
 }

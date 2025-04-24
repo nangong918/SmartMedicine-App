@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.entity.event.OssTask;
 import com.czy.post.component.RabbitMqSender;
 import com.czy.post.service.PostService;
@@ -149,5 +150,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostAo> findPostsByIdList(List<Long> idList) {
         return postStorageService.findPostAoByIds(idList);
+    }
+
+    @Override
+    public List<PostInfoAo> findPostInfoList(List<Long> idList) {
+        return postStorageService.findPostInfoAoList(idList);
     }
 }

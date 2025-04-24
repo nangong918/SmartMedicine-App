@@ -3,14 +3,18 @@ package com.czy.post.controller;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostConverter;
+import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.request.GetPostRequest;
+import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
+import com.czy.api.domain.dto.http.response.GetPostInfoListResponse;
 import com.czy.api.domain.dto.http.response.GetPostResponse;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
+import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
@@ -21,6 +25,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +52,7 @@ public class PostController {
     private final PostConverter postConverter;
     private final RedissonService redissonService;
     private final PostService postService;
+    private final PostCommentService postCommentService;
 
     // 发布post
     /**
@@ -147,21 +153,44 @@ public class PostController {
         return Mono.just(BaseResponse.getResponseEntitySuccess("修改申请已提交，请等待"));
     }
 
-    // 查询post
-    // 响应体应该包含：postInfo，post-fileIds，postDetails
-    // 通过list<postId>查询post消息;
-    @PostMapping("/getPosts")
-    public Mono<BaseResponse<GetPostResponse>>
-    getPosts(@Valid @RequestBody GetPostRequest request){
+    /**
+     * 预览postList
+     * 查询postList,只包含list的基本信息不包括内容content
+     * 响应体应该包含：postInfo，post-fileIds，postDetails
+     * 通过list<postId>查询post消息;
+     * @param request   List<Long> postIds
+     * @return      List<PostInfoAo> postInfoAos;
+     */
+    @PostMapping("/getPostInfoList")
+    public Mono<BaseResponse<GetPostInfoListResponse>>
+    getPosts(@Valid @RequestBody GetPostInfoListRequest request){
         List<Long> postIds = request.getPostIds();
         if (CollectionUtils.isEmpty(postIds)){
             return Mono.just(BaseResponse.LogBackError("参数错误", log));
         }
-        List<PostAo> postAoList = postService.findPostsByIdList(postIds);
-        GetPostResponse getPostResponse = new GetPostResponse();
-        getPostResponse.setPostAos(postAoList);
+        List<PostInfoAo> postAoList = postService.findPostInfoList(postIds);
+        GetPostInfoListResponse getPostResponse = new GetPostInfoListResponse();
+        getPostResponse.setPostInfoAos(postAoList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
     }
 
     // 如何从各种数据查询List<postId>的逻辑在postSearchService中
+    // get Post
+    @GetMapping("/getPost")
+    public Mono<BaseResponse<GetPostResponse>>
+    getPost(@RequestParam Long postId){
+        if (postId == null){
+            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+        }
+        PostAo postAo = postService.findPostById(postId);
+        if (postAo == null){
+            String warningMessage = String.format("帖子不存在，postId: %s", postId);
+            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+        }
+        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(postId, 20, 1);
+        GetPostResponse getPostResponse = new GetPostResponse();
+        getPostResponse.setPostAo(postAo);
+        getPostResponse.setPostCommentList(postCommentList);
+        return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
+    }
 }

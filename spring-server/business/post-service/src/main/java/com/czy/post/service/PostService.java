@@ -1,6 +1,7 @@
 package com.czy.post.service;
 
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.ao.post.PostInfoAo;
 import lombok.NonNull;
 
 import java.util.List;
@@ -37,5 +38,7 @@ public interface PostService {
     // 查询
     PostAo findPostById(Long postId);
     List<PostAo> findPostsByIdList(List<Long> idList);
+    // 查询PostInfoList
+    List<PostInfoAo> findPostInfoList(List<Long> idList);
 
 }
