@@ -209,6 +209,10 @@ public class OssServiceImpl implements OssService {
     public List<String> getFileUrlsByFileIds(List<Long> fileIds) {
         List<String> fileUrls = new LinkedList<>();
         for (Long fileId : fileIds){
+            if (fileId == null){
+                fileUrls.add(null);
+                continue;
+            }
             OssFileDo ossFileDo = ossMapper.getById(fileId);
             addUrlToList(fileUrls, ossFileDo);
         }

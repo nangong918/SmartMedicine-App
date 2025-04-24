@@ -1,6 +1,8 @@
 package com.czy.api.converter.domain.post;
 
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.ao.post.PostCommentAo;
+import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.socket.request.PostCommentRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -27,5 +29,21 @@ public interface PostCommentConverter {
         PostCommentDo postCommentDo = postCommentRequestToPostCommentDo(request);
         postCommentDo.setCommenterId(commenterId);
         return postCommentDo;
+    }
+
+    // ao -> dto
+    @Mapping(source = "postId", target = "postId")
+    @Mapping(source = "commenterId", target = "commenterId")
+    @Mapping(source = "replyCommentId", target = "replyCommentId")
+    @Mapping(source = "content", target = "content")
+    @Mapping(source = "timestamp", target = "timestamp")
+    @Mapping(source = "commenterAccount", target = "commenterAccount")
+    @Mapping(source = "commenterName", target = "commenterName")
+    PostCommentDto postCommentAoToPostCommentDto(PostCommentAo ad);
+
+    default PostCommentDto postCommentAoToPostCommentDto(PostCommentAo ad, String commenterAvatarUrl){
+        PostCommentDto postCommentDto = postCommentAoToPostCommentDto(ad);
+        postCommentDto.setCommenterAvatarUrl(commenterAvatarUrl);
+        return postCommentDto;
     }
 }

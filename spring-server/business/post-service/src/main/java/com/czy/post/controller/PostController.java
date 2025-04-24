@@ -1,16 +1,21 @@
 package com.czy.post.controller;
 
+import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.post.PostConstant;
+import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.converter.domain.post.PostConverter;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.dto.base.BaseResponse;
+import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
+import com.czy.api.domain.dto.http.response.GetPostCommentsResponse;
 import com.czy.api.domain.dto.http.response.GetPostInfoListResponse;
 import com.czy.api.domain.dto.http.response.GetPostResponse;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
@@ -34,7 +39,9 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -53,6 +60,9 @@ public class PostController {
     private final RedissonService redissonService;
     private final PostService postService;
     private final PostCommentService postCommentService;
+    private final PostCommentConverter postCommentConverter;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private OssService ossService;
 
     // 发布post
     /**
@@ -192,5 +202,43 @@ public class PostController {
         getPostResponse.setPostAo(postAo);
         getPostResponse.setPostCommentList(postCommentList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
+    }
+
+    @GetMapping("/getPostComments")
+    public Mono<BaseResponse<GetPostCommentsResponse>>
+    getPostComments(@RequestParam Long postId,
+                    @RequestParam Long commentId,
+                    @RequestParam Integer pageSize,
+                    @RequestParam Integer pageNum){
+        if (postId == null){
+            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+        }
+        PostCommentDo postCommentDo = postCommentService.getPostCommentById(commentId);
+        if (postCommentDo == null){
+            String warningMessage = String.format("评论不存在，commentId: %s", commentId);
+            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+        }
+        // 内部限制了10~20
+        List<PostCommentDo> postCommentList = postCommentService.getLevel2PostComments(postId, commentId, pageSize, pageNum);
+        List<PostCommentAo> postCommentAoList = postCommentService.getPostCommentAoList(postCommentList);
+        GetPostCommentsResponse getPostCommentsResponse = new GetPostCommentsResponse();
+        if (!CollectionUtils.isEmpty(postCommentAoList)){
+            List<Long> fileIds = postCommentAoList.stream()
+                    // 支持null
+                    .map(postCommentAo -> postCommentAo.getCommenterAvatarFileId() == null ? null : postCommentAo.getCommenterAvatarFileId())
+                    .collect(Collectors.toList());
+            List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+
+            List<PostCommentDto> postCommentDtoList = new ArrayList<>();
+            for (int i = 0; i < postCommentAoList.size(); i++){
+                PostCommentDto dto = postCommentConverter.postCommentAoToPostCommentDto(postCommentAoList.get(i), fileUrls.get(i));
+                postCommentDtoList.add(dto);
+            }
+            getPostCommentsResponse.setPostCommentDtosList(postCommentDtoList);
+            return Mono.just(BaseResponse.getResponseEntitySuccess(getPostCommentsResponse));
+        }
+        else {
+            return Mono.just(BaseResponse.getResponseEntitySuccess(getPostCommentsResponse));
+        }
     }
 }

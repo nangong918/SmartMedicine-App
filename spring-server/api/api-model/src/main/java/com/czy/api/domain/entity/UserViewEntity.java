@@ -21,6 +21,6 @@ public class UserViewEntity implements BaseBean {
         }
         this.userAccount = userDo.getAccount();
         this.userName = userDo.getUserName();
-        this.avatarUrl = userDo.getAvatarUrl();
+        this.avatarUrl = userDo.getAvatarFileId();
     }
 }

@@ -101,6 +101,12 @@ public interface OssService {
      */
     List<String> getFileUrlsByUserIdAndFileNames(Long userId, List<String> fileNames);
 
+    /**
+     * 通过fileIds获取图片List<Url>
+     * @param fileIds           文件idList
+     * @return                  List<Url>
+     *     支持Long为null返回null的url
+     */
     List<String> getFileUrlsByFileIds(List<Long> fileIds);
 
     // 删除文件 fileStorageName

@@ -7,18 +7,38 @@
         user_name,
         account,
         phone,
-        permission,
         register_time,
-        last_online_time
+        last_online_time,
+        avatar_file_id
     </sql>
+    <insert id="insertUserInfo">
+        INSERT INTO login_user
+        (
+        user_name,
+        account,
+        phone,
+        register_time,
+        last_online_time,
+        avatar_file_id
+        )
+        VALUES
+        (
+        #{userName},
+        #{account},
+        #{phone},
+        #{registerTime},
+        #{lastOnlineTime},
+        #{avatarFileId}
+        )
+    </insert>
     <update id="updateUserInfo">
         UPDATE login_user
         <set>
             <if test="userName != null">
                 user_name = #{userName},
             </if>
-            <if test="avatarUrl != null">
-                avatar_url = #{avatarUrl},
+            <if test="avatarFileId != null">
+                avatar_file_id = #{avatarFileId},
             </if>
         </set>
         WHERE id = #{id}
@@ -56,5 +76,17 @@
             <include refid="UserDoColumns"/>
         FROM login_user
         WHERE account LIKE CONCAT('%', #{account}, '%')
+    </select>
+    <select id="getUserListByIdList" resultType="com.czy.api.domain.Do.user.UserDo">
+        SELECT
+        <include refid="UserDoColumns"/>
+        FROM login_user
+        WHERE
+        <if test="list != null and list.size() > 0">
+            id IN
+            <foreach collection="list" item="id" open="(" separator="," close=")">
+                <if test="id != null">#{id}</if>
+            </foreach>
+        </if>
     </select>
 </mapper>

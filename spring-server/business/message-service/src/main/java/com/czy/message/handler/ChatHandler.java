@@ -58,7 +58,7 @@ public class ChatHandler implements ChatApi {
         response.initResponseByRequest(request);
         // ??头像是否变化??
         UserDo userDo = userService.getUserByAccount(request.getSenderId());
-        response.setAvatarUrl(userDo.getAvatarUrl());
+        response.setAvatarUrl(userDo.getAvatarFileId());
         String name = StringUtils.hasText(userDo.getUserName()) ? userDo.getUserName() : userDo.getAccount();
         response.setSenderName(name);
         response.setContent(request.getContent());
@@ -87,7 +87,7 @@ public class ChatHandler implements ChatApi {
         UserImageResponse response = new UserImageResponse();
         response.initResponseByRequest(request);
         UserDo userDo = userService.getUserByAccount(request.getSenderId());
-        response.setAvatarUrl(userDo.getAvatarUrl());
+        response.setAvatarUrl(userDo.getAvatarFileId());
         response.setSenderName(userDo.getUserName());
         // 图片消息就是图片名称
         response.setImageUrl(request.fileName);

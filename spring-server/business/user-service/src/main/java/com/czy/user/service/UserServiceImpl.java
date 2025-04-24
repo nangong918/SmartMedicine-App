@@ -50,6 +50,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDo> getByUserIds(List<Long> ids) {
+        return userMapper.getUserListByIdList(ids);
+    }
+
+    @Override
     public UserDo getUserByAccount(String userAccount) {
         return userMapper.getUserByAccount(userAccount);
     }
@@ -75,7 +80,7 @@ public class UserServiceImpl implements UserService {
         if (userDo != null){
             userDo.setUserName(newUserName);
             if (StringUtils.hasText(newAvatarUrl)){
-                userDo.setAvatarUrl(newAvatarUrl);
+                userDo.setAvatarFileId(newAvatarUrl);
             }
             try {
                 userStorageService.saveUserToDataBase(userDo);

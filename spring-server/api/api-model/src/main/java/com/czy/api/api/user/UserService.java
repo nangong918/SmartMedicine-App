@@ -17,6 +17,7 @@ public interface UserService {
     Integer checkAccountExist(String userAccount);
     Long getIdByAccount(String userAccount);
     UserDo getUserById(Long id);
+    List<UserDo> getByUserIds(List<Long> ids);
     UserDo getUserByAccount(String userAccount);
     UserDo getUserByPhone(String phone);
     // 重新设置账号的属性[重新设置userName，头像等][调用方需要进行入参非空校验]

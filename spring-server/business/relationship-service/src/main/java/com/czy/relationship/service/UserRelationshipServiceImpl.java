@@ -210,7 +210,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         // handleAddUserResponse
         handleAddUserResponse.additionalContent = handleAddedMeAo.additionalContent;
         UserDo userDo = userService.getUserByAccount(handleAddedMeAo.handlerAccount);
-        handleAddUserResponse.avatarUrl = userDo.getAvatarUrl();
+        handleAddUserResponse.avatarUrl = userDo.getAvatarFileId();
         handleAddUserResponse.userName = userDo.getUserName();
         handleAddUserResponse.userAccount = handleAddedMeAo.handlerAccount;
         Long applierId = getUserId(handleAddedMeAo.applyAccount);
