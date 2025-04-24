@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
  * @author 13225
  * @date 2025/4/23 11:00
  * 收藏帖子
+ * senderId:user
+ * receiverId:service
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

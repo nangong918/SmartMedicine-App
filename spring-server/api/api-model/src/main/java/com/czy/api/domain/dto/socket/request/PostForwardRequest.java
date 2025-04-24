@@ -20,7 +20,7 @@ public class PostForwardRequest extends BaseRequestData {
     // 转发附带的话
 
     public PostForwardRequest(Long postId){
-        super.setType(RequestMessageType.Post.LIKE_POST);
+        super.setType(RequestMessageType.Post.FORWARD_POST);
         this.postId = postId;
     }
 }

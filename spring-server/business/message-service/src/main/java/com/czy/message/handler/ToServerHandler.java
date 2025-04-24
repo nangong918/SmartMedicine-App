@@ -2,7 +2,7 @@ package com.czy.message.handler;
 
 
 import com.czy.api.api.message.ChatService;
-import com.czy.api.constant.netty.Constants;
+import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.MessageTypeTranslator;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.domain.dto.socket.request.HaveReadMessageRequest;
@@ -34,7 +34,7 @@ public class ToServerHandler implements ToServiceApi {
         String pongType = MessageTypeTranslator.translate(ping.getType());
         pong.setType(pongType);
         pong.setReceiverId(ping.getSenderId());
-        pong.setSenderId(Constants.SERVER_ID);
+        pong.setSenderId(NettyConstants.SERVER_ID);
 
         rabbitMqSender.push(pong);
     }
@@ -55,7 +55,7 @@ public class ToServerHandler implements ToServiceApi {
         // 通过请求初始化
         response.initResponseByRequest(request);
         // 特殊处理：此处单独设置
-        response.senderId = Constants.SERVER_ID;
+        response.senderId = NettyConstants.SERVER_ID;
         response.receiverId = senderAccount;
         // 属性值
         response.receiverAccount = receiverAccount;

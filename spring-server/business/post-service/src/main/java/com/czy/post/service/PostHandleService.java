@@ -24,7 +24,7 @@ public interface PostHandleService {
     void deletePostLike(Long postId, Long userId);
 
     // 转发（聊天记录 + netty）
-    void postForward(Long postId, Long userId);
+    void postForward(Long postId);
 
     // 收藏（直接插入数据库）
     void postCollect(Long postId, Long collectFolderId);

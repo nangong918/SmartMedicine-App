@@ -2,7 +2,7 @@ package com.czy.message.handler;
 
 
 import com.czy.api.constant.netty.RequestMessageType;
-import com.czy.api.converter.http.SessionConverter;
+import com.czy.api.converter.domain.netty.SessionConverter;
 import com.czy.api.domain.dto.http.request.DisconnectRequest;
 import com.czy.api.domain.dto.http.request.RegisterRequest;
 import com.czy.api.domain.entity.event.Session;

@@ -1,4 +1,4 @@
-package com.czy.api.converter.http;
+package com.czy.api.converter.domain.netty;
 
 import com.czy.api.domain.dto.http.request.RegisterRequest;
 import com.czy.api.domain.entity.event.Session;

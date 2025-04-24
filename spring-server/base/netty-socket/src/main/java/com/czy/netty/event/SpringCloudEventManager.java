@@ -1,10 +1,9 @@
 package com.czy.netty.event;
 
 
-import com.czy.api.constant.netty.Constants;
+import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.MessageTypeTranslator;
 import com.czy.api.constant.netty.RequestMessageType;
-import com.czy.api.converter.base.BaseRequestConverter;
 import com.czy.api.converter.base.MessageConverter;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.model.RequestBodyProto;
@@ -65,7 +64,7 @@ public class SpringCloudEventManager {
                     String pongType = MessageTypeTranslator.translate(request.getType());
                     pong.setType(pongType);
                     pong.setReceiverId(request.getSenderId());
-                    pong.setSenderId(Constants.SERVER_ID);
+                    pong.setSenderId(NettyConstants.SERVER_ID);
 
                     rabbitMqSender.sendToMessageService(pong);
                     return;

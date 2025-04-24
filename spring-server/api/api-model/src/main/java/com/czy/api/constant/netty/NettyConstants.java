@@ -4,7 +4,7 @@ package com.czy.api.constant.netty;
  * @author 13225
  * @date 2025/2/11 23:42
  */
-public interface Constants {
+public interface NettyConstants {
     // 推送消息队列
     String PUSH_MESSAGE_INNER_QUEUE = "signal/channel/PUSH_MESSAGE_INNER_QUEUE";
     // 绑定队列

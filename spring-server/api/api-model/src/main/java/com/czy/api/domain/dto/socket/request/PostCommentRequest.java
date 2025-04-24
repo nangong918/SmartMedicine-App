@@ -23,7 +23,7 @@ public class PostCommentRequest extends BaseRequestData {
     // commenterId ;就是senderId查询为id
 
     public PostCommentRequest(Long postId){
-        super.setType(RequestMessageType.Post.LIKE_POST);
+        super.setType(RequestMessageType.Post.COMMENT_POST);
         this.postId = postId;
     }
 }

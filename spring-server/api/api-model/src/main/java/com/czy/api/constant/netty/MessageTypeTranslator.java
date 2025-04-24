@@ -44,7 +44,7 @@ public class MessageTypeTranslator {
         // 如果是null，则设置为空字符串
         resType = resType == null ? "" : resType;
         // 如果是http请求，则不设置type
-        resType = Constants.MESSAGE_TYPE_HTTP.equals(resType) ? "" : resType;
+        resType = NettyConstants.MESSAGE_TYPE_HTTP.equals(resType) ? "" : resType;
         return resType;
     }
 }
