@@ -45,7 +45,7 @@ public class NewUserItemAo implements BaseBean {
         this.userViewEntity = new UserViewEntity();
         this.userViewEntity.userName = bo.userName;
         this.userViewEntity.userAccount = bo.userAccount;
-        this.userViewEntity.avatarUrl = bo.avatarUrl;
+        this.userViewEntity.avatarFileId = bo.avatarFileId;
         this.applyTime = bo.applyTime;
         this.handleTime = bo.handleTime;
         this.addSource = bo.addSource;

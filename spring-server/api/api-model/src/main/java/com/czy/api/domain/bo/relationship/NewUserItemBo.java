@@ -21,7 +21,7 @@ public class NewUserItemBo {
     public String userName;
 
     // 用户头像
-    public String avatarUrl;
+    public Long avatarFileId;
 
     // 申请时间
     public Long applyTime;

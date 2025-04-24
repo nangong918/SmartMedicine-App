@@ -11,5 +11,5 @@ import lombok.Data;
 public class ResetUserInfoRequest {
     public String account;
     public String userName;
-    public String avatarUrl;
+    public Long avatarFileId;
 }

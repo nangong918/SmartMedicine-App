@@ -39,7 +39,7 @@ public interface HandleAddUserResConverter {
         data.put("additionalContent", response.getAdditionalContent());
         data.put("userAccount", response.getUserAccount());
         data.put("userName", response.getUserName());
-        data.put("avatarUrl", response.getAvatarUrl());
+        data.put("avatarFileId", String.valueOf(response.getAvatarFileId()));
         message.setData(data);
         return message;
     }

@@ -41,9 +41,9 @@ public interface PostCommentConverter {
     @Mapping(source = "commenterName", target = "commenterName")
     PostCommentDto postCommentAoToPostCommentDto(PostCommentAo ad);
 
-    default PostCommentDto postCommentAoToPostCommentDto(PostCommentAo ad, String commenterAvatarUrl){
+    default PostCommentDto postCommentAoToPostCommentDto(PostCommentAo ad, String commenterAvatarFileId){
         PostCommentDto postCommentDto = postCommentAoToPostCommentDto(ad);
-        postCommentDto.setCommenterAvatarUrl(commenterAvatarUrl);
+        postCommentDto.setCommenterAvatarFileId(commenterAvatarFileId);
         return postCommentDto;
     }
 }

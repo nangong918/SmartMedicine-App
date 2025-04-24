@@ -13,7 +13,7 @@ public class UserViewEntity implements BaseBean {
     public String userName;
 
     // 用户头像
-    public String avatarUrl;
+    public Long avatarFileId;
 
     public void setByLoginUserDo(UserDo userDo) {
         if (userDo == null){
@@ -21,6 +21,6 @@ public class UserViewEntity implements BaseBean {
         }
         this.userAccount = userDo.getAccount();
         this.userName = userDo.getUserName();
-        this.avatarUrl = userDo.getAvatarFileId();
+        this.avatarFileId = userDo.getAvatarFileId();
     }
 }

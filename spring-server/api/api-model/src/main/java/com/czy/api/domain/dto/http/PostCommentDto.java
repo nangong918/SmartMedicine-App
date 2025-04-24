@@ -15,7 +15,7 @@ public class PostCommentDto {
     private String commenterName;
     // 评论者头像文件id；not null
     // 注意此字段在查询的时候是fileId，需要调用oss将id转为url
-    private String commenterAvatarUrl;
+    private String commenterAvatarFileId;
     // 此评论回复的评论id（索引）；null able（null就是直接回复帖子；是一级评论）
     private Long replyCommentId = null;
     // 评论内容；not null

@@ -18,6 +18,7 @@ public class PostInfoDo {
     private Long id;
     // authorId；not null（索引）
     private Long authorId;
+    private String title;
     // releaseTimestamp；not null
     private Long releaseTimestamp;
     // 点赞数；not null

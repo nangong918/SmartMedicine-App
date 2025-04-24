@@ -33,5 +33,5 @@ public class HandleAddUserResponse extends BaseResponseData {
     // user名称
     public String userName;
     // 用户头像
-    public String avatarUrl;
+    public Long avatarFileId;
 }

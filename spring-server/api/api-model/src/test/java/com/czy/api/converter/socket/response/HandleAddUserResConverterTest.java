@@ -28,7 +28,7 @@ class HandleAddUserResConverterTest {
         handleAddUserResponse.setApplyStatus(1);
         handleAddUserResponse.setHandleStatus(1);
         handleAddUserResponse.setBlack(true);
-        handleAddUserResponse.setAvatarUrl("avatarUrl");
+        handleAddUserResponse.setAvatarFileId(null);
         handleAddUserResponse.setUserName("userName");
         handleAddUserResponse.setUserAccount("userAccount");
         handleAddUserResponse.setAdditionalContent("additionalContent");

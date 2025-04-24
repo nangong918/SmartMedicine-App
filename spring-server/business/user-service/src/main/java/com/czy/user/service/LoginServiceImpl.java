@@ -82,7 +82,7 @@ public class LoginServiceImpl implements LoginService {
         // 存储UserName到ElasticSearch
         UserDo userDo = new UserDo();
         BeanUtils.copyProperties(loginUserDo, userDo);
-        userDo.setAvatarFileId("");// TODO 头像地址需要设置，后面完成整个系统再更新OSS逻辑
+        userDo.setAvatarFileId(null);// TODO 头像地址需要设置，后面完成整个系统再更新OSS逻辑
         // 存储到ES
         userEsMapper.save(userDo);
         return loginUserRequest;
