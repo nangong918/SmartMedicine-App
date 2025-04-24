@@ -1,5 +1,6 @@
 package com.czy.api.domain.dto.base;
 
+import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.converter.base.BaseResponseConverter;
 import com.czy.api.domain.entity.event.Message;
 import lombok.Data;
@@ -16,8 +17,8 @@ import java.util.Optional;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class BaseResponseData extends BaseRequestData {
-    public String code = "200";
-    public String message = "";
+    public String code = NettyResponseStatuesEnum.SUCCESS.getCode();
+    public String message = NettyResponseStatuesEnum.SUCCESS.getMessage();
 
     public BaseResponseData(){
 

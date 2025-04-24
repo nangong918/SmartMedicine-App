@@ -4,7 +4,9 @@ package com.czy.message.controller;
 
 
 import com.czy.api.constant.message.MessageConstant;
+import com.czy.api.constant.netty.MessageTypeTranslator;
 import com.czy.api.constant.netty.ResponseMessageType;
+import com.czy.api.converter.base.MessageConverter;
 import com.czy.api.domain.dto.http.base.BaseNettyRequest;
 import com.czy.api.domain.dto.http.response.ResponseEntity;
 import com.czy.api.domain.entity.event.Message;
@@ -22,6 +24,11 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+
+/**
+ * 这一块没用
+ * 根本就不应该适用http
+ */
 @RestController
 @RequestMapping(MessageConstant.WebRTC_CONTROLLER)
 @Validated // 启用校验
@@ -30,16 +37,15 @@ import javax.validation.Valid;
 public class WebrtcController {
 
 	private final RabbitMqSender rabbitMqSender;
+	private final MessageConverter messageConverter;
 
 	@ApiOperation(httpMethod = "POST", value = "发起单人语音通话")
 	@ApiImplicitParam(name = "receiverId", value = "对方用户ID", paramType = "query",  dataTypeClass = Long.class)
 	@PostMapping(value = {"/voice"})
 	public Mono<ResponseEntity<Void>> voice(@Valid @RequestBody BaseNettyRequest request) {
 
-		Message message = new Message();
-		message.setType(ResponseMessageType.WAITING);
-		message.setSenderId(request.getSenderId());
-		message.setReceiverId(request.getReceiverId());
+		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
+		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
 		rabbitMqSender.push(message);
 
 		return Mono.just(ResponseEntity.make());
@@ -51,10 +57,8 @@ public class WebrtcController {
 	@PostMapping(value =  {"/video"})
 	public Mono<ResponseEntity<Void>> video(@Valid @RequestBody BaseNettyRequest request) {
 
-		Message message = new Message();
-		message.setType(ResponseMessageType.WAITING);
-		message.setSenderId(request.getSenderId());
-		message.setReceiverId(request.getReceiverId());
+		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
+		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
 		rabbitMqSender.push(message);
 
 		return Mono.just(ResponseEntity.make());
@@ -64,10 +68,8 @@ public class WebrtcController {
 	@ApiImplicitParam(name = "receiverId", value = "对方用户ID", paramType = "query",  dataTypeClass = Long.class)
 	@PostMapping(value =  {"/accept"})
 	public Mono<ResponseEntity<Void>> accept(@Valid @RequestBody BaseNettyRequest request) {
-		Message message = new Message();
-		message.setType(ResponseMessageType.SUCCESS);
-		message.setSenderId(request.getSenderId());
-		message.setReceiverId(request.getReceiverId());
+		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
+		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
 		rabbitMqSender.push(message);
 
 		return Mono.just(ResponseEntity.make());
@@ -78,10 +80,8 @@ public class WebrtcController {
 	@PostMapping(value =  {"/reject"})
 	public Mono<ResponseEntity<Void>> reject(@Valid @RequestBody BaseNettyRequest request) {
 
-		Message message = new Message();
-		message.setType(ResponseMessageType.SUCCESS);
-		message.setSenderId(request.getSenderId());
-		message.setReceiverId(request.getReceiverId());
+		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
+		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
 		rabbitMqSender.push(message);
 
 		return Mono.just(ResponseEntity.make());
@@ -92,10 +92,8 @@ public class WebrtcController {
 	@PostMapping(value =  {"/hangup"})
 	public Mono<ResponseEntity<Void>> hangup(@Valid @RequestBody BaseNettyRequest request) {
 
-		Message message = new Message();
-		message.setType(ResponseMessageType.SUCCESS);
-		message.setSenderId(request.getSenderId());
-		message.setReceiverId(request.getReceiverId());
+		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
+		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
 		rabbitMqSender.push(message);
 
 		return Mono.just(ResponseEntity.make());
@@ -106,10 +104,8 @@ public class WebrtcController {
 	@PostMapping(value =  {"/cancel"})
 	public Mono<ResponseEntity<Void>> cancel(@Valid @RequestBody BaseNettyRequest request) {
 
-		Message message = new Message();
-		message.setType(ResponseMessageType.SUCCESS);
-		message.setSenderId(request.getSenderId());
-		message.setReceiverId(request.getReceiverId());
+		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
+		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
 		rabbitMqSender.push(message);
 
 		return Mono.just(ResponseEntity.make());

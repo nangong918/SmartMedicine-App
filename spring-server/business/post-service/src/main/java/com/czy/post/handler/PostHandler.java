@@ -1,6 +1,7 @@
 package com.czy.post.handler;
 
 import com.czy.api.api.user.UserService;
+import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.constant.post.PostConstant;
@@ -10,6 +11,7 @@ import com.czy.api.domain.dto.socket.request.PostCommentRequest;
 import com.czy.api.domain.dto.socket.request.PostForwardRequest;
 import com.czy.api.domain.dto.socket.request.PostLikeRequest;
 import com.czy.api.domain.dto.socket.response.NettyServerResponse;
+import com.czy.post.component.RabbitMqSender;
 import com.czy.post.handler.api.PostApi;
 import com.czy.post.service.PostHandleService;
 import com.czy.post.service.PostService;
@@ -35,12 +37,13 @@ public class PostHandler implements PostApi {
 
     private final PostService postService;
     private final PostHandleService postHandleService;
+    private final RabbitMqSender rabbitMqSender;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
 
     @Override
     public void postCollect(PostCollectRequest request) {
-        String isSuccess = ResponseMessageType.SUCCESS;
+        NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
         try {
             UserDo userDo = userService.getUserByAccount(request.getSenderId());
             Long folderId = request.getFolderId();
@@ -50,12 +53,13 @@ public class PostHandler implements PostApi {
             }
             postHandleService.postCollect(request.getPostId(), folderId);
         } catch (Exception e){
-            isSuccess = ResponseMessageType.FAILURE;
+            isSuccess = NettyResponseStatuesEnum.FAILURE;
         }
         // netty通知前端
         NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess);
         nettyServerResponse.setBaseRequestData(request);
         // Mq -> user
+        rabbitMqSender.push(nettyServerResponse);
     }
 
     @Override

@@ -158,11 +158,15 @@ public class RequestMessageType {
 
     public final static class Call {
         public final static String root = "Call:";
+        // p2p or group
         private static final String user = "user:";
         private static final String group = "group:";
+        // call type
         private static final String voice = "voice";
         private static final String video = "video";
+        // option
         private static final String send = "send:";
+        private static final String received = "received:";
         private static final String accept = "accept:";
         private static final String reject = "reject:";
         private static final String hangup = "hangup:";

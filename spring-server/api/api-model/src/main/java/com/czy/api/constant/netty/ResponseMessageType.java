@@ -107,10 +107,14 @@ public class ResponseMessageType {
 
     public final static class Call {
         public final static String root = "Call:";
+        // p2p or group
         private static final String user = "user:";
         private static final String group = "group:";
+        // call type
         private static final String voice = "voice";
         private static final String video = "video";
+        // option
+        private static final String send = "send:";
         private static final String received = "received:";
         private static final String accept = "accept:";
         private static final String reject = "reject:";
@@ -149,14 +153,4 @@ public class ResponseMessageType {
         public final static String GROUP_VIDEO_CALL_HANGUP = root + group + hangup + video;
     }
 
-    // 等待
-    public final static String WAITING = "waiting";
-    // 成功
-    public final static String SUCCESS = "success";
-    // 失败
-    public final static String FAILURE = "failure";
-
-    public final static String[] responseTypes = {
-            WAITING, SUCCESS, FAILURE
-    };
 }
