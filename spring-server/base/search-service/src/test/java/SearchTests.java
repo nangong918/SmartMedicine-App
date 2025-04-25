@@ -90,6 +90,13 @@ public class SearchTests {
     /**
      * 一级匹配
      * ElasticSearch倒排索引匹配
+     * <p>
+     * 关于一级匹配：需要添加专业词语到分词器。
+     * 我有个问题，怎么给分词器添加我指定的词典，
+     * 比如“新冠病毒”这种是属于专业词语，它不能直接进行分词，而且要识别出来作为索引。
+     * 而现状是不因分为了：新 + 冠 + 病毒；还没有把新冠病毒作为索引
+     * <p>
+     * 上述已完成
      */
     @Autowired
     private TestSearchEsMapper testSearchEsMapper;
@@ -131,7 +138,6 @@ public class SearchTests {
         testSearchDo2.forEach(item -> System.out.println(item.toJsonString()));
     }
 
-    //  TODO 此处失败
     @Test
     public void testEsLikeMain(){
         testEsDelete();
@@ -173,4 +179,13 @@ public class SearchTests {
      * 3. 用elasticSearch匹配这15个词语，只要找到一个内容包含2个以上的关键词就返回。
      */
 
+    /**
+     * 三级搜索（类推荐）:
+     * 输入是句子，将句子分词但是二级搜索也找不到，查询知识图谱，
+     * 知识图谱查询到其实体最相近的物品，将物品返回到搜索结果（新冠病毒怎么治疗–>感冒怎么治疗）
+     */
+
+    /**
+     * 四级搜索（nlp）:输入句子，Bert意图分类，知识图谱匹配，返回规则集组合
+     */
 }

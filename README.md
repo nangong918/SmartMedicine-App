@@ -230,6 +230,30 @@ Bert loss函数损失值梯度下降
 * Redis
 * RabbitMq
 
+### ElasticSearch
+* ElasticSearch 7.6.2
+* 分词器：IK分词器
+* 词典：配置在：\config\analysis-ik 路径下，将需要的配置写在.dic文件中，然后保存在IKAnalyzer.cfg.xml；例如：
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>IK Analyzer 扩展配置</comment>
+	<!--用户可以在这里配置自己的扩展字典 -->
+	<entry key="ext_dict">
+		search_test.dic
+	</entry>
+	 <!--用户可以在这里配置自己的扩展停止词字典-->
+	<entry key="ext_stopwords"></entry>
+	<!--用户可以在这里配置远程扩展字典 -->
+	<!-- <entry key="remote_ext_dict">words_location</entry> -->
+	<!--用户可以在这里配置远程扩展停止词字典-->
+	<!-- <entry key="remote_ext_stopwords">words_location</entry> -->
+</properties>
+```
+  在添加扩展词典之后需要从新启动ElasticSearch服务器，否则不会生效。
+* 
+
 ### Android
 * JDK 17
 * Kotlin：ktx:1.8.0
