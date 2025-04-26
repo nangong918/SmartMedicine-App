@@ -31,4 +31,6 @@ public interface PostStorageService {
 
     void updatePostInfoToDatabase(PostAo postAo);
     void updatePostFilesToDatabase(PostAo postAo);
+    // 通过authorId和title找到postId
+    Long findPostIdByAuthorIdAndTitle(Long authorId, String title);
 }

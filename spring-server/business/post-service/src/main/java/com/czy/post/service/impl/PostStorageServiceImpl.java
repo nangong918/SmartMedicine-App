@@ -124,4 +124,9 @@ public class PostStorageServiceImpl implements PostStorageService {
             postFilesMapper.updatePostFilesDoByPostDos(postFilesDoList);
         }
     }
+
+    @Override
+    public Long findPostIdByAuthorIdAndTitle(Long authorId, String title) {
+        return postInfoMapper.findPostIdByAuthorIdAndTitle(authorId, title);
+    }
 }

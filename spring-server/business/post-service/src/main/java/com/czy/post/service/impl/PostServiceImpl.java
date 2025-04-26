@@ -93,6 +93,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public boolean isLegalPost(@NonNull PostAo postAo) {
+        // 查询authorId是否发布过相同的title，防止刷帖
+        Long postId = postStorageService.findPostIdByAuthorIdAndTitle(postAo.getAuthorId(), postAo.getTitle());
+        if (postId != null){
+            log.warn("用户:{}发布过相同的标题:{};postId:{}", postAo.getAuthorId(), postAo.getTitle(), postId);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public void deletePost(Long postId, Long userId) {
         postStorageService.deletePostContentFromDatabase(postId);
         // 不在此处删除mysql，因为oss还需要查询具体数据，删除oss之后再删除mysql

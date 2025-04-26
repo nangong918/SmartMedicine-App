@@ -2,7 +2,6 @@ package com.czy.post.controller;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user.UserService;
-import com.czy.api.constant.oss.OssConstant;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.post.PostConstant;
@@ -52,7 +51,13 @@ public class PostFileController {
     private final ApplicationContext applicationContext;
 
 
-    // 上传帖子file
+    /**
+     * 上传帖子files
+     * @param files         需要上传的文件
+     * @param postId        第一次http获取的雪花id，此雪花id为postId也是publishId
+     * @param userAccount   用户账号
+     * @return              上传结果
+     */
     @PostMapping("/upload")
     public BaseResponse<String> upload(
             @RequestParam("files") List<MultipartFile> files,
@@ -74,6 +79,7 @@ public class PostFileController {
         String lockPath = PostConstant.Post_CONTROLLER + PostConstant.POST_PUBLISH_FIRST;
         if (!redissonService.hasKey(ossKey)){
             log.warn("postId：{}，上传帖子file失败，请检查postId", postId);
+            // 上传失败就是从新上传了，所以需要删除redis中的数据
             releaseLock(
                     lockData,
                     lockPath
@@ -92,25 +98,37 @@ public class PostFileController {
                 files.remove(file);
             }
         });
-        FileOptionResult fileOptionResult = minIOService.uploadFiles(files, userId, POST_FILE_BUCKET);
-        // 成功的存储到数据库
-        ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, POST_FILE_BUCKET);
-        List<Long> successIds = fileOptionResult.getSuccessFiles()
-                .stream()
-                .map(SuccessFile::getFileId)
-                .collect(Collectors.toList());
-        fileIdList.addAll(successIds);
-        PostOssResponse postOssResponse = new PostOssResponse();
-        postOssResponse.setUserId(userId);
-        postOssResponse.setServiceId(PostConstant.serviceName);
-        postOssResponse.setPublishId(postId);
-        postOssResponse.setFileIds(fileIdList);
-        postOssResponse.setFileRedisKey(ossKey);
-        postOssResponse.setClusterLockPath(lockPath);
-        postOssResponse.setOssResponseType(OssResponseTypeEnum.SUCCESS.getCode());
-        postOssResponse.setOssOperationType(OssTaskTypeEnum.ADD.getCode());
-        applicationContext.publishEvent(postOssResponse);
-        return BaseResponse.getResponseEntitySuccess("上传成功");
+        try {
+            FileOptionResult fileOptionResult = minIOService.uploadFiles(files, userId, POST_FILE_BUCKET);
+            // 成功的存储到数据库
+            ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, POST_FILE_BUCKET);
+            List<Long> successIds = fileOptionResult.getSuccessFiles()
+                    .stream()
+                    .map(SuccessFile::getFileId)
+                    .collect(Collectors.toList());
+            fileIdList.addAll(successIds);
+            PostOssResponse postOssResponse = new PostOssResponse();
+            postOssResponse.setUserId(userId);
+            postOssResponse.setUserAccount(userAccount);
+            postOssResponse.setServiceId(PostConstant.serviceName);
+            postOssResponse.setPublishId(postId);
+            postOssResponse.setFileIds(fileIdList);
+            postOssResponse.setFileRedisKey(ossKey);
+            postOssResponse.setClusterLockPath(lockPath);
+            postOssResponse.setOssResponseType(OssResponseTypeEnum.SUCCESS.getCode());
+            postOssResponse.setOssOperationType(OssTaskTypeEnum.ADD.getCode());
+            applicationContext.publishEvent(postOssResponse);
+        } catch (Exception e){
+            log.error("postId：{}，上传帖子file失败，请检查postId", postId);
+            // 上传失败就是从新上传了，所以需要删除redis中的数据
+            releaseLock(
+                    lockData,
+                    lockPath
+            );
+            return BaseResponse.LogBackError("请检查帖子的文件是否正确;postId：" + postId);
+        }
+
+        return BaseResponse.getResponseEntitySuccess("上传中，请等待");
     }
 
     //    // 关联postId 和 fileIdList
@@ -128,7 +146,11 @@ public class PostFileController {
                 lockData,
                 path
         );
-        redissonService.unlock(redissonClusterLock);
+        try {
+            redissonService.unlock(redissonClusterLock);
+        } catch (Exception e){
+            log.error("redissonService.unlock(redissonClusterLock)失败，请检查redissonClusterLock：{}", redissonClusterLock);
+        }
         log.info("已解除分布式锁：lockData：{}，lockPath：{}", lockData, path);
     }
 }

@@ -219,4 +219,12 @@ public class RequestMessageType {
         public final static String HANGUP_GROUP_VIDEO_CALL = root + group + hangup + video;
         // 对方正方
     }
+
+    public final static class Oss {
+        public final static String root = "Oss:";
+        @MsgTranslator(responseType = ResponseMessageType.Oss.UPLOAD_FILE)
+        public final static String UPLOAD_FILE = root + "uploadFile";
+        @MsgTranslator(responseType = ResponseMessageType.Oss.DELETE_FILE)
+        public final static String DELETE_FILE = root + "deleteFile";
+    }
 }

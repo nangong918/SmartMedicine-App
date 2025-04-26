@@ -153,4 +153,10 @@ public class ResponseMessageType {
         public final static String GROUP_VIDEO_CALL_HANGUP = root + group + hangup + video;
     }
 
+    public final static class Oss {
+        public final static String root = "Oss:";
+        public final static String UPLOAD_FILE = root + "uploadFile";
+        public final static String DELETE_FILE = root + "deleteFile";
+    }
+
 }

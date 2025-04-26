@@ -19,6 +19,8 @@ public interface PostService {
     long releasePostFirst(@NonNull PostAo postAo);
     // oss的成功的二次上传
     void releasePostAfterOss(@NonNull PostAo postAo);
+    // 验证是否为合法的发布
+    boolean isLegalPost(PostAo postAo);
 
     /**
      * 删除
