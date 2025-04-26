@@ -8,6 +8,7 @@ import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.PostOssResponse;
+import com.czy.post.config.FileConfig;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import com.utils.mvc.service.MinIOService;
@@ -18,6 +19,8 @@ import domain.SuccessFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -40,14 +43,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(PostConstant.POST_FILE_CONTROLLER)
 public class PostFileController {
-
+    private final String postFileBucket = FileConfig.POST_FILE_BUCKET;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
     private final MinIOService minIOService;
     private final RedissonService redissonService;
-    private final String POST_FILE_BUCKET = "post-file";
     private final ApplicationContext applicationContext;
 
 
@@ -92,16 +94,16 @@ public class PostFileController {
             // 幂等性
             String fileName = file.getOriginalFilename();
             Long fileSize = file.getSize();
-            FileIsExistResult result = ossService.checkFileNameExistForResult(userId, fileName, POST_FILE_BUCKET, fileSize);
+            FileIsExistResult result = ossService.checkFileNameExistForResult(userId, fileName, postFileBucket, fileSize);
             if (result.getIsExist()){
                 fileIdList.add(result.getFileId());
                 files.remove(file);
             }
         });
         try {
-            FileOptionResult fileOptionResult = minIOService.uploadFiles(files, userId, POST_FILE_BUCKET);
+            FileOptionResult fileOptionResult = minIOService.uploadFiles(files, userId, postFileBucket);
             // 成功的存储到数据库
-            ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, POST_FILE_BUCKET);
+            ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, postFileBucket);
             List<Long> successIds = fileOptionResult.getSuccessFiles()
                     .stream()
                     .map(SuccessFile::getFileId)
