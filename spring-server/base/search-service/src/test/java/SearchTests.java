@@ -178,10 +178,36 @@ public class SearchTests {
      * 2. 由于限制句子长度为15个，所以关键词的长的数量一定小于7；
      * 3. 用elasticSearch匹配这15个词语，只要找到一个内容包含2个以上的关键词就返回。
      */
+    // 分词测试
+    @Test
+    public void testIkSegmentWord() throws IOException {
+
+    }
+
+    // 1. 句子分词
+    private void segmentWord(String message) throws IOException {
+        AnalyzeRequest request = AnalyzeRequest.withGlobalAnalyzer(
+                FieldAnalyzer.IK_MAX_WORD,
+                message
+        );
+
+        AnalyzeResponse response = client.indices().analyze(request, RequestOptions.DEFAULT);
+        List<AnalyzeResponse.AnalyzeToken> token1 = response.getTokens();
+        System.out.println("IK_MAX_WORD token");
+        token1.forEach(token -> {
+            System.out.println("term: " + token.getTerm());
+            System.out.println("start: " + token.getStartOffset());
+            System.out.println("end: " + token.getEndOffset());
+            System.out.println("type: " + token.getType());
+        });
+    }
+
+    // 逐级匹配：2，3，4，5，6
 
     /**
      * 三级搜索（类推荐）:
      * 输入是句子，将句子分词但是二级搜索也找不到，查询知识图谱，
+     * 知识图谱的增删改查
      * 知识图谱查询到其实体最相近的物品，将物品返回到搜索结果（新冠病毒怎么治疗–>感冒怎么治疗）
      */
 
