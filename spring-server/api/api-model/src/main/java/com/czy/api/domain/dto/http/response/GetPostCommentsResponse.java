@@ -1,9 +1,6 @@
 package com.czy.api.domain.dto.http.response;
 
 
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
-import com.czy.api.domain.ao.post.PostAo;
-import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.dto.http.PostCommentDto;
 import lombok.Data;
 

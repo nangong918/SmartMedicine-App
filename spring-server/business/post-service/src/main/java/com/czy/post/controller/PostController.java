@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -217,8 +218,9 @@ public class PostController {
     // get Post
     @GetMapping("/getPost")
     public Mono<BaseResponse<GetPostResponse>>
-    getPost(@RequestParam Long postId){
-        if (postId == null){
+    getPost(@RequestParam Long postId,
+            @RequestParam Integer pageNum){
+        if (ObjectUtils.isEmpty(postId)){
             return Mono.just(BaseResponse.LogBackError("参数错误", log));
         }
         PostAo postAo = postService.findPostById(postId);
@@ -226,48 +228,77 @@ public class PostController {
             String warningMessage = String.format("帖子不存在，postId: %s", postId);
             return Mono.just(BaseResponse.LogBackError(warningMessage, log));
         }
-        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(postId, 20, 1);
+        if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
+            pageNum = 1;
+        }
+        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(postId, 20, pageNum);
         GetPostResponse getPostResponse = new GetPostResponse();
         getPostResponse.setPostAo(postAo);
         getPostResponse.setPostCommentList(postCommentList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
     }
 
-    @GetMapping("/getPostComments")
+    // 获取下拉一级评论（pageNum）
+    @GetMapping("/getPostLevel1Comments")
     public Mono<BaseResponse<GetPostCommentsResponse>>
-    getPostComments(@RequestParam Long postId,
-                    @RequestParam Long commentId,
+    getPostLevel1Comments(@RequestParam Long postId,
                     @RequestParam Integer pageSize,
                     @RequestParam Integer pageNum){
-        if (postId == null){
+        return getPostComments(postId, null, pageSize, pageNum);
+    }
+
+    // 获取二级评论（commentId + pageNum）
+    @GetMapping("/getPostLevel2Comments")
+    public Mono<BaseResponse<GetPostCommentsResponse>>
+    getPostLevel2Comments(@RequestParam Long postId,
+                    @RequestParam Long leve1commentId,
+                    @RequestParam Integer pageSize,
+                    @RequestParam Integer pageNum){
+        return getPostComments(postId, leve1commentId, pageSize, pageNum);
+    }
+
+    private Mono<BaseResponse<GetPostCommentsResponse>> getPostComments(
+            Long postId,
+            Long leve1commentId,
+            Integer pageSize,
+            Integer pageNum) {
+        if (postId == null) {
             return Mono.just(BaseResponse.LogBackError("参数错误", log));
         }
-        PostCommentDo postCommentDo = postCommentService.getPostCommentById(commentId);
-        if (postCommentDo == null){
-            String warningMessage = String.format("评论不存在，commentId: %s", commentId);
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+
+        if (leve1commentId != null) {
+            PostCommentDo postCommentDo = postCommentService.getPostCommentById(leve1commentId);
+            if (postCommentDo == null) {
+                String warningMessage = String.format("评论不存在，commentId: %s", leve1commentId);
+                return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+            }
         }
-        // 内部限制了10~20
-        List<PostCommentDo> postCommentList = postCommentService.getLevel2PostComments(postId, commentId, pageSize, pageNum);
+
+        List<PostCommentDo> postCommentList;
+        // 没有level1Id默认为他就是level1评论
+        if (leve1commentId == null) {
+            postCommentList = postCommentService.getLevel1PostComments(postId, pageSize, pageNum);
+        } else {
+            postCommentList = postCommentService.getLevel2PostComments(postId, leve1commentId, pageSize, pageNum);
+        }
+
         List<PostCommentAo> postCommentAoList = postCommentService.getPostCommentAoList(postCommentList);
         GetPostCommentsResponse getPostCommentsResponse = new GetPostCommentsResponse();
-        if (!CollectionUtils.isEmpty(postCommentAoList)){
+
+        if (!CollectionUtils.isEmpty(postCommentAoList)) {
             List<Long> fileIds = postCommentAoList.stream()
-                    // 支持null
                     .map(postCommentAo -> postCommentAo.getCommenterAvatarFileId() == null ? null : postCommentAo.getCommenterAvatarFileId())
                     .collect(Collectors.toList());
             List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
 
             List<PostCommentDto> postCommentDtoList = new ArrayList<>();
-            for (int i = 0; i < postCommentAoList.size(); i++){
+            for (int i = 0; i < postCommentAoList.size(); i++) {
                 PostCommentDto dto = postCommentConverter.postCommentAoToPostCommentDto(postCommentAoList.get(i), fileUrls.get(i));
                 postCommentDtoList.add(dto);
             }
             getPostCommentsResponse.setPostCommentDtosList(postCommentDtoList);
-            return Mono.just(BaseResponse.getResponseEntitySuccess(getPostCommentsResponse));
         }
-        else {
-            return Mono.just(BaseResponse.getResponseEntitySuccess(getPostCommentsResponse));
-        }
+
+        return Mono.just(BaseResponse.getResponseEntitySuccess(getPostCommentsResponse));
     }
 }
