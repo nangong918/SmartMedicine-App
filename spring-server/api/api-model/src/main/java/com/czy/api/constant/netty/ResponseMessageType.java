@@ -103,6 +103,7 @@ public class ResponseMessageType {
         // 朋友圈被收藏
         public final static String COLLECT_POST = root + "collectPost";
         public static final String FORWARD_POST = root + "forwardPost";
+        public static final String COLLECT_FOLDER = root + "folder";
     }
 
     public final static class Call {

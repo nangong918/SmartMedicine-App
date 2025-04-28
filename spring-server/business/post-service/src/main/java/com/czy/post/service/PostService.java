@@ -2,7 +2,6 @@ package com.czy.post.service;
 
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
-import exception.AppException;
 import lombok.NonNull;
 
 import java.util.List;

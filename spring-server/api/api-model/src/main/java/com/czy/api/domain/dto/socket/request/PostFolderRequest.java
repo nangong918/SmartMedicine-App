@@ -15,25 +15,19 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PostCollectRequest extends NettyOptionRequest {
+public class PostFolderRequest extends NettyOptionRequest {
 
-    // postId
-    public Long postId;
-    // 收藏夹Id
+    // id
     public Long folderId;
-    // 新的收藏夹id
-    public Long newFolderId;
+    // name
+    public String name;
+    // newName
+    public String newName;
     // option
     public int optionCode = NettyOptionEnum.NULL.getCode();
 
-    public PostCollectRequest(Long postId, Long folderId){
-        super.setType(RequestMessageType.Post.COLLECT_POST);
-        this.postId = postId;
-        if (folderId != null){
-            this.folderId = folderId;
-        }
-        else {
-            this.folderId = 0L;
-        }
+    public PostFolderRequest(String name){
+        super.setType(RequestMessageType.Post.COLLECT_FOLDER);
+        this.name = name;
     }
 }

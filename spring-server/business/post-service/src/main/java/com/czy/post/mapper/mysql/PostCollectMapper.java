@@ -14,6 +14,11 @@ import java.util.List;
 public interface PostCollectMapper {
     // 通过id获取
     PostCollectDo findPostCollectById(Long id);
+    // 通过postId和FolderId查找到
+    PostCollectDo findPostCollectByPostIdAndFolderId(
+            @Param("postId") Long postId,
+            @Param("collectFolderId") Long collectFolderId
+    );
 
     // 通过collectFolderId获取全部List<PostCollectDo>
     List<PostCollectDo> findPostCollectsByCollectFolderId(Long collectFolderId);

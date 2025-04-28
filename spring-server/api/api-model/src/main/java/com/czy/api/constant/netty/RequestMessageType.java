@@ -141,6 +141,8 @@ public class RequestMessageType {
         private static final String collect = "collect";
         // 转发
         private static final String forward = "forward";
+        // 文件夹
+        private static final String folder = "folder";
 
         // 点赞
         @MsgTranslator(responseType = ResponseMessageType.Post.LIKE_POST)
@@ -154,6 +156,9 @@ public class RequestMessageType {
         // 转发
         @MsgTranslator(responseType = ResponseMessageType.Post.FORWARD_POST)
         public final static String FORWARD_POST = root + forward;
+        // 收藏文件夹
+        @MsgTranslator(responseType = ResponseMessageType.Post.COLLECT_FOLDER)
+        public final static String COLLECT_FOLDER = root + folder;
     }
 
     public final static class Call {

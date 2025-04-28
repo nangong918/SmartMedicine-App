@@ -1,19 +1,16 @@
-package com.czy.api.domain.dto.socket.request;
+package com.czy.api.domain.dto.socket.response;
 
-import com.czy.api.constant.netty.RequestMessageType;
-import com.czy.api.domain.dto.base.NettyOptionRequest;
+import com.czy.api.domain.dto.base.NettyOptionResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * @author 13225
- * @date 2025/4/23 11:00
- * 评论帖子
+ * @date 2025/4/28 17:27
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PostCommentRequest extends NettyOptionRequest {
-
+public class PostCommentResponse extends NettyOptionResponse {
     // postId
     public Long postId;
     // 评论id (删除评论的时候用)
@@ -23,9 +20,4 @@ public class PostCommentRequest extends NettyOptionRequest {
     // 此评论回复的评论id（索引）；null able（null就是直接回复帖子；是一级评论）
     public Long replyCommentId = null;
     // commenterId ;就是senderId查询为id
-
-    public PostCommentRequest(Long postId){
-        super.setType(RequestMessageType.Post.COMMENT_POST);
-        this.postId = postId;
-    }
 }
