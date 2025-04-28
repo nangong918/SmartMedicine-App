@@ -18,6 +18,7 @@ import com.czy.api.domain.dto.socket.request.PostLikeRequest;
 import com.czy.api.domain.dto.socket.response.NettyServerResponse;
 import com.czy.api.domain.dto.socket.response.PostCommentResponse;
 import com.czy.api.domain.dto.socket.response.PostForwardResponse;
+import com.czy.api.domain.dto.socket.response.PostLikeResponse;
 import com.czy.post.component.RabbitMqSender;
 import com.czy.post.handler.api.PostApi;
 import com.czy.post.service.PostCommentService;
@@ -241,7 +242,7 @@ public class PostHandler implements PostApi{
         rabbitMqSender.push(nettyServerResponse);
     }
 
-    // 通知作者
+    // comment通知作者
     private void notifyAuthor(PostCommentResponse postCommentResponse){
         PostAo postAo = postService.findPostById(postCommentResponse.getPostId());
         if (postAo == null || postAo.getAuthorId() == null){
@@ -255,7 +256,7 @@ public class PostHandler implements PostApi{
         rabbitMqSender.push(postCommentResponse);
     }
 
-    // 通知评论发布者
+    // comment通知评论发布者
     private void notifyCommenter(PostCommentResponse postCommentResponse){
         if (postCommentResponse.getReplyCommentId() != null){
             PostCommentDo postCommenterDo = postCommentService.getPostCommentById(postCommentResponse.getReplyCommentId());
@@ -280,47 +281,75 @@ public class PostHandler implements PostApi{
             if (senderDo == null || receiverDo == null){
                 String warningMessage = String.format("用户不存在，sender: %s; receiver: %s", request.getSenderId(), request.getReceiverId());
                 log.warn(warningMessage);
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
-                // netty通知前端 内部会设置发送id是serverId
-                NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
-                // Mq -> user
-                rabbitMqSender.push(nettyServerResponse);
                 return;
             }
+            // 数据库操作
             postHandleService.postForward(request.getPostId());
+            // netty通知前端 内部会设置发送id是serverId
+            PostForwardResponse postForwardResponse = new PostForwardResponse(request.getPostId());
+            postForwardResponse.setContent(request.getContent());
+            postForwardResponse.setSenderAccount(request.getSenderId());
+            // 对前端的receiverId不信任，可能是SERVER_ID，设置为ToUserAccount
+            postForwardResponse.setReceiverId(request.getToUserAccount());
+            rabbitMqSender.push(postForwardResponse);
         } catch (Exception e){
             isSuccess = NettyResponseStatuesEnum.FAILURE;
         }
-        // netty先通知sender
+        // netty通知sender
         // netty通知前端 内部会设置发送id是serverId
         NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
         // Mq -> user
         rabbitMqSender.push(nettyServerResponse);
-        // netty通知receiver
-        PostForwardResponse postForwardResponse = new PostForwardResponse(request.getPostId());
-        postForwardResponse.initResponseByRequest(request);
-        // Mq -> user 发送方法中包含转换方法
-        rabbitMqSender.push(postForwardResponse);
     }
+
 
     @Override
     public void postLike(PostLikeRequest request) {
         NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
-        try {
-            UserDo userDo = userService.getUserByAccount(request.getSenderId());
-            if (userDo == null){
-                String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
-                log.warn(warningMessage);
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
-                // netty通知前端 内部会设置发送id是serverId
-                NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
-                // Mq -> user
-                rabbitMqSender.push(nettyServerResponse);
-                return;
-            }
-            postHandleService.postLike(request.getPostId(), userDo.getId());
-        } catch (Exception e){
+        boolean isOptionLegal = checkOption(request);
+        if (!isOptionLegal){
+            return;
+        }
+        UserDo userDo = userService.getUserByAccount(request.getSenderId());
+        if (userDo == null){
+            String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
+            log.warn(warningMessage);
             isSuccess = NettyResponseStatuesEnum.FAILURE;
+            // netty通知前端 内部会设置发送id是serverId
+            NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
+            // Mq -> user
+            rabbitMqSender.push(nettyServerResponse);
+            return;
+        }
+        // 点赞
+        if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
+            try {
+                // 数据库增加
+                postHandleService.postLike(request.getPostId(), userDo.getId());
+                // 通知作者
+                PostAo postAo = postService.findPostById(request.getPostId());
+                if (postAo == null || postAo.getAuthorId() == null){
+                    return;
+                }
+                UserDo authorDo = userService.getUserById(postAo.getAuthorId());
+                if (authorDo == null || !StringUtils.hasText(authorDo.getAccount())){
+                    return;
+                }
+                PostLikeResponse postLikeResponse = new PostLikeResponse(request.getPostId());
+                postLikeResponse.setLikeUserAccount(request.getSenderId());
+                postLikeResponse.setReceiverId(authorDo.getAccount());
+                rabbitMqSender.push(postLikeResponse);
+            } catch (Exception e){
+                isSuccess = NettyResponseStatuesEnum.FAILURE;
+            }
+        }
+        // 取消点赞
+        if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
+            try {
+                postHandleService.deletePostLike(request.getPostId(), userDo.getId());
+            } catch (Exception e){
+                isSuccess = NettyResponseStatuesEnum.FAILURE;
+            }
         }
         // netty通知前端 内部会设置发送id是serverId
         NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);

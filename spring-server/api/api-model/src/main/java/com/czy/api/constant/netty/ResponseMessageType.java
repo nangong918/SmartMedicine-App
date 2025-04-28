@@ -50,12 +50,12 @@ package com.czy.api.constant.netty;
  *      被收藏
  */
 public class ResponseMessageType {
-
+    public static final String responseRoot = "resp:";
     public final static class Connect {
         public final static String root = "Connect:";
-        public final static String CONNECT_SUCCESS = root + "connectSuccess";
-        public final static String DISCONNECT_SUCCESS = root + "disconnectSuccess";
-        public final static String FORCE_OFFLINE = root + "forceOffline";
+        public final static String CONNECT_SUCCESS = responseRoot + root + "connectSuccess";
+        public final static String DISCONNECT_SUCCESS = responseRoot + root + "disconnectSuccess";
+        public final static String FORCE_OFFLINE = responseRoot + root + "forceOffline";
     }
 
     public final static class Chat {
@@ -67,43 +67,43 @@ public class ResponseMessageType {
         private static final String image = "image";
         private static final String video = "video";
         private static final String file = "file";
-        public final static String RECEIVE_USER_TEXT_MESSAGE = root + fromUser + text;
-        public final static String RECEIVE_USER_VOICE_MESSAGE = root + fromUser + voice;
-        public final static String RECEIVE_USER_IMAGE_MESSAGE = root + fromUser + image;
-        public final static String RECEIVE_USER_VIDEO_MESSAGE = root + fromUser + video;
-        public final static String RECEIVE_USER_FILE_MESSAGE = root + fromUser + file;
-        public final static String RECEIVE_GROUP_TEXT_MESSAGE = root + fromGroup + text;
-        public final static String RECEIVE_GROUP_VOICE_MESSAGE = root + fromGroup + voice;
-        public final static String RECEIVE_GROUP_IMAGE_MESSAGE = root + fromGroup + image;
-        public final static String RECEIVE_GROUP_VIDEO_MESSAGE = root + fromGroup + video;
-        public final static String RECEIVE_GROUP_FILE_MESSAGE = root + fromGroup + file;
-        public final static String RECALL_MESSAGE = root + "recallMessage";
+        public final static String RECEIVE_USER_TEXT_MESSAGE = responseRoot + root + fromUser + text;
+        public final static String RECEIVE_USER_VOICE_MESSAGE = responseRoot + root + fromUser + voice;
+        public final static String RECEIVE_USER_IMAGE_MESSAGE = responseRoot + root + fromUser + image;
+        public final static String RECEIVE_USER_VIDEO_MESSAGE = responseRoot + root + fromUser + video;
+        public final static String RECEIVE_USER_FILE_MESSAGE = responseRoot + root + fromUser + file;
+        public final static String RECEIVE_GROUP_TEXT_MESSAGE = responseRoot + root + fromGroup + text;
+        public final static String RECEIVE_GROUP_VOICE_MESSAGE = responseRoot + root + fromGroup + voice;
+        public final static String RECEIVE_GROUP_IMAGE_MESSAGE = responseRoot + root + fromGroup + image;
+        public final static String RECEIVE_GROUP_VIDEO_MESSAGE = responseRoot + root + fromGroup + video;
+        public final static String RECEIVE_GROUP_FILE_MESSAGE = responseRoot + root + fromGroup + file;
+        public final static String RECALL_MESSAGE = responseRoot + root + "recallMessage";
         // 消息已读
-        public final static String MESSAGE_HAVE_BEEN_READ = root + "messageHaveBeenRead";
+        public final static String MESSAGE_HAVE_BEEN_READ = responseRoot + root + "messageHaveBeenRead";
     }
 
     public final static class ToServer {
         public final static String root = "ToServer:";
-        public final static String PONG = root + "pong";
+        public final static String PONG = responseRoot + root + "pong";
     }
 
     public final static class Friend {
         public final static String root = "Friend:";
-        public final static String DELETED_FRIEND = root + "deletedFriend";
-        public final static String ADDED_FRIEND = root + "addedFriend";
-        public static final String HANDLE_ADDED_USER = root + "handleAddedUser";
+        public final static String DELETED_FRIEND = responseRoot + root + "deletedFriend";
+        public final static String ADDED_FRIEND = responseRoot + root + "addedFriend";
+        public static final String HANDLE_ADDED_USER = responseRoot + root + "handleAddedUser";
     }
 
     public final static class Post {
         public final static String root = "Post:";
         // 朋友圈被点赞
-        public final static String LIKE_POST = root + "likePost";
+        public final static String LIKE_POST = responseRoot + root + "likePost";
         // 朋友圈被评论
-        public final static String COMMENT_POST = root + "commentPost";
+        public final static String COMMENT_POST = responseRoot + root + "commentPost";
         // 朋友圈被收藏
-        public final static String COLLECT_POST = root + "collectPost";
-        public static final String FORWARD_POST = root + "forwardPost";
-        public static final String COLLECT_FOLDER = root + "folder";
+        public final static String COLLECT_POST = responseRoot + root + "collectPost";
+        public static final String FORWARD_POST = responseRoot + root + "forwardPost";
+        public static final String COLLECT_FOLDER = responseRoot + root + "folder";
     }
 
     public final static class Call {
@@ -121,43 +121,43 @@ public class ResponseMessageType {
         private static final String reject = "reject:";
         private static final String hangup = "hangup:";
         // 收到用户语音通话
-        public final static String RECEIVE_USER_VOICE_CALL = root + user + received + voice;
+        public final static String RECEIVE_USER_VOICE_CALL = responseRoot + root + user + received + voice;
         // 收到用户视频通话
-        public final static String RECEIVE_USER_VIDEO_CALL = root + user + received + video;
+        public final static String RECEIVE_USER_VIDEO_CALL = responseRoot + root + user + received + video;
         // 用户语音通话被接受
-        public final static String USER_VOICE_CALL_ACCEPT = root + user + accept + voice;
+        public final static String USER_VOICE_CALL_ACCEPT = responseRoot + root + user + accept + voice;
         // 用户视频通话被接受
-        public final static String USER_VIDEO_CALL_ACCEPT = root + user + accept + video;
+        public final static String USER_VIDEO_CALL_ACCEPT = responseRoot + root + user + accept + video;
         // 用户语音通话被拒绝
-        public final static String USER_VOICE_CALL_REJECT = root + user + reject + voice;
+        public final static String USER_VOICE_CALL_REJECT = responseRoot + root + user + reject + voice;
         // 用户视频通话被拒绝
-        public final static String USER_VIDEO_CALL_REJECT = root + user + reject + video;
+        public final static String USER_VIDEO_CALL_REJECT = responseRoot + root + user + reject + video;
         // 用户语音通话被挂断
-        public final static String USER_VOICE_CALL_HANGUP = root + user + hangup + voice;
+        public final static String USER_VOICE_CALL_HANGUP = responseRoot + root + user + hangup + voice;
         // 用户视频通话被挂断
-        public final static String USER_VIDEO_CALL_HANGUP = root + user + hangup + video;
+        public final static String USER_VIDEO_CALL_HANGUP = responseRoot + root + user + hangup + video;
         // 收到群语音通话
-        public final static String RECEIVE_GROUP_VOICE_CALL = root + group + received + voice;
+        public final static String RECEIVE_GROUP_VOICE_CALL = responseRoot + root + group + received + voice;
         // 收到群视频通话
-        public final static String RECEIVE_GROUP_VIDEO_CALL = root + group + received + video;
+        public final static String RECEIVE_GROUP_VIDEO_CALL = responseRoot + root + group + received + video;
         // 群语音通话被接受
-        public final static String GROUP_VOICE_CALL_ACCEPT = root + group + accept + voice;
+        public final static String GROUP_VOICE_CALL_ACCEPT = responseRoot + root + group + accept + voice;
         // 群视频通话被接受
-        public final static String GROUP_VIDEO_CALL_ACCEPT = root + group + accept + video;
+        public final static String GROUP_VIDEO_CALL_ACCEPT = responseRoot + root + group + accept + video;
         // 群语音通话被拒绝
-        public final static String GROUP_VOICE_CALL_REJECT = root + group + reject + voice;
+        public final static String GROUP_VOICE_CALL_REJECT = responseRoot + root + group + reject + voice;
         // 群视频通话被拒绝
-        public final static String GROUP_VIDEO_CALL_REJECT = root + group + reject + video;
+        public final static String GROUP_VIDEO_CALL_REJECT = responseRoot + root + group + reject + video;
         // 群语音通话被挂断
-        public final static String GROUP_VOICE_CALL_HANGUP = root + group + hangup + voice;
+        public final static String GROUP_VOICE_CALL_HANGUP = responseRoot + root + group + hangup + voice;
         // 群视频通话被挂断
-        public final static String GROUP_VIDEO_CALL_HANGUP = root + group + hangup + video;
+        public final static String GROUP_VIDEO_CALL_HANGUP = responseRoot + root + group + hangup + video;
     }
 
     public final static class Oss {
         public final static String root = "Oss:";
-        public final static String UPLOAD_FILE = root + "uploadFile";
-        public final static String DELETE_FILE = root + "deleteFile";
+        public final static String UPLOAD_FILE = responseRoot + root + "uploadFile";
+        public final static String DELETE_FILE = responseRoot + root + "deleteFile";
     }
 
 }
