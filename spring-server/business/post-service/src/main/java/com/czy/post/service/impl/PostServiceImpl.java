@@ -73,7 +73,7 @@ public class PostServiceImpl implements PostService {
      * @return          boolean
      */
     @Override
-    public long releasePostFirst(@NonNull PostAo postAo) {
+    public long releasePostFirst(@NonNull PostAo postAo) throws Exception{
         // 由于两次http请求可能都不是一个服务处理的，所以数据需要缓存在redis
         // 生成发布的雪花id
         long publishId = IdUtil.getSnowflakeNextId();
@@ -149,7 +149,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePostFirst(PostAo postAo, Long postId) {
+    public void updatePostFirst(PostAo postAo, Long postId) throws Exception{
         // 由于两次http请求可能都不是一个服务处理的，所以数据需要缓存在redis
         String key = PostConstant.POST_UPDATE_KEY + postId;
         boolean result = redissonService.setObjectByJson(key, postAo, PostConstant.POST_CHANGE_KEY_EXPIRE_TIME);

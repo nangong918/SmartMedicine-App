@@ -23,6 +23,7 @@ import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
+import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -107,7 +108,17 @@ public class PostController {
             }
             // 2.缓存到redis
             // redis + 生成雪花id
-            snowflakeId = postService.releasePostFirst(postAo);
+            try {
+                snowflakeId = postService.releasePostFirst(postAo);
+            } catch (Exception e) {
+                // 任何异常都直接解除分布式锁
+                redissonService.unlock(redissonClusterLock);
+                if (e instanceof AppException){
+                    // 交给全局或异常处理
+                    throw new AppException(e.getMessage());
+                }
+                return Mono.just(BaseResponse.LogBackError(e.getMessage(), log));
+            }
             // key统一格式：post_publish_key:snowflakeId（注意是snowflakeId不是userAccount或者userName）
         }
         PostPublishResponse response = new PostPublishResponse();
@@ -140,7 +151,7 @@ public class PostController {
         PostAo postAo = postConverter.updateRequestToAo(request, userDo.getId());
         postAo.setId(request.getPostId());
         postService.updatePostInfoAndContent(postAo);
-        return Mono.just(BaseResponse.getResponseEntitySuccess("修改申请已提交，请等待"));
+        return Mono.just(BaseResponse.getResponseEntitySuccess("修改成功"));
     }
 
     // 修改了全部
@@ -153,6 +164,7 @@ public class PostController {
             String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
             return Mono.just(BaseResponse.LogBackError(warningMessage, log));
         }
+        // 获取分布式锁
         RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
                 String.valueOf(userDo.getId()),
                 PostConstant.Post_CONTROLLER + PostConstant.POST_UPDATE_ALL,
@@ -162,8 +174,19 @@ public class PostController {
             String warningMessage = String.format("用户正在修改帖子，请稍后再试，account: %s", request.getSenderId());
             return Mono.just(BaseResponse.LogBackError(warningMessage, log));
         }
-        PostAo postAo = postConverter.updateRequestToAo(request, userDo.getId());
-        postService.updatePostFirst(postAo, request.getPostId());
+        // try-catch优先级高于全局异常
+        try {
+            PostAo postAo = postConverter.updateRequestToAo(request, userDo.getId());
+            postService.updatePostFirst(postAo, request.getPostId());
+        } catch (Exception e){
+            // 出现任何异常都直接解除分布式锁
+            redissonService.unlock(redissonClusterLock);
+            // 如果是App异常，就抛出交给全局异常处理器，然后交给前端
+            if (e instanceof AppException){
+                throw new AppException(e.getMessage());
+            }
+        }
+
         return Mono.just(BaseResponse.getResponseEntitySuccess("修改申请已提交，请等待"));
     }
 
