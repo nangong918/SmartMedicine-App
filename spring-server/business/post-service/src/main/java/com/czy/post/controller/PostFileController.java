@@ -12,15 +12,13 @@ import com.czy.post.config.FileConfig;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import com.utils.mvc.service.MinIOService;
-import domain.ErrorFile;
 import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import domain.SuccessFile;
+import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -60,55 +58,70 @@ public class PostFileController {
      * @param userAccount   用户账号
      * @return              上传结果
      */
-    @PostMapping("/upload")
-    public BaseResponse<String> upload(
+    @PostMapping("/uploadPost")
+    public BaseResponse<String> uploadPostFiles(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("postId") Long postId,
             @RequestParam("userAccount") String userAccount){
-        if (CollectionUtils.isEmpty(files)){
+        return handleUpload(files, postId, userAccount, OssTaskTypeEnum.ADD);
+    }
+
+    //    // 关联postId 和 fileIdList
+    //    void recordPostIdAndFileIdList(Long postId, List<Long> fileIdList);
+
+    // 获取帖子files；[不需要，因为在service能提postService下载url]
+
+    // 修改帖子file
+    @PostMapping("/updatePost")
+    public BaseResponse<String> updatePostFiles(
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("postId") Long postId,
+            @RequestParam("userAccount") String userAccount){
+        return handleUpload(files, postId, userAccount, OssTaskTypeEnum.UPDATE);
+    }
+
+    private BaseResponse<String> handleUpload(
+            List<MultipartFile> files,
+            Long postId,
+            String userAccount,
+            OssTaskTypeEnum operationType) {
+        if (CollectionUtils.isEmpty(files)) {
             return BaseResponse.LogBackError("请检查files");
         }
+
         String ossKey = PostConstant.POST_PUBLISH_KEY + postId;
-        if (!StringUtils.hasText(userAccount)){
-            return BaseResponse.LogBackError("请检查userAccount: " + userAccount);
-        }
-        UserDo userDo = userService.getUserByAccount(userAccount);
-        if (userDo == null || userDo.getId() == null){
-            return BaseResponse.LogBackError("请检查userAccount: " + userAccount);
-        }
+        UserDo userDo = getUserDo(userAccount);
         Long userId = userDo.getId();
         String lockData = String.valueOf(userDo.getId());
         String lockPath = PostConstant.Post_CONTROLLER + PostConstant.POST_PUBLISH_FIRST;
-        if (!redissonService.hasKey(ossKey)){
+
+        if (!redissonService.hasKey(ossKey)) {
             log.warn("postId：{}，上传帖子file失败，请检查postId", postId);
-            // 上传失败就是从新上传了，所以需要删除redis中的数据
-            releaseLock(
-                    lockData,
-                    lockPath
-            );
+            releaseLock(lockData, lockPath);
             return BaseResponse.LogBackError("请检查postId: " + postId);
         }
+
         List<Long> fileIdList = new ArrayList<>();
-        // 幂等性检查，以及相同文件就不用存储了，post指向相同的文件id
-        files.forEach(file -> {
-            // 幂等性
+        files.removeIf(file -> {
             String fileName = file.getOriginalFilename();
             Long fileSize = file.getSize();
             FileIsExistResult result = ossService.checkFileNameExistForResult(userId, fileName, postFileBucket, fileSize);
-            if (result.getIsExist()){
+            if (result.getIsExist()) {
                 fileIdList.add(result.getFileId());
-                files.remove(file);
+                return true; // 移除已存在的文件
             }
+            return false; // 保留文件
         });
+
         try {
             FileOptionResult fileOptionResult = minIOService.uploadFiles(files, userId, postFileBucket);
-            // 成功的存储到数据库
             ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, postFileBucket);
             List<Long> successIds = fileOptionResult.getSuccessFiles()
                     .stream()
                     .map(SuccessFile::getFileId)
                     .collect(Collectors.toList());
             fileIdList.addAll(successIds);
+
             PostOssResponse postOssResponse = new PostOssResponse();
             postOssResponse.setUserId(userId);
             postOssResponse.setUserAccount(userAccount);
@@ -118,31 +131,39 @@ public class PostFileController {
             postOssResponse.setFileRedisKey(ossKey);
             postOssResponse.setClusterLockPath(lockPath);
             postOssResponse.setOssResponseType(OssResponseTypeEnum.SUCCESS.getCode());
-            postOssResponse.setOssOperationType(OssTaskTypeEnum.ADD.getCode());
+            postOssResponse.setOssOperationType(operationType.getCode());
+
             applicationContext.publishEvent(postOssResponse);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("postId：{}，上传帖子file失败，请检查postId", postId);
-            // 上传失败就是从新上传了，所以需要删除redis中的数据
-            releaseLock(
-                    lockData,
-                    lockPath
-            );
+            releaseLock(lockData, lockPath);
             return BaseResponse.LogBackError("请检查帖子的文件是否正确;postId：" + postId);
         }
 
         return BaseResponse.getResponseEntitySuccess("上传中，请等待");
     }
 
-    //    // 关联postId 和 fileIdList
-    //    void recordPostIdAndFileIdList(Long postId, List<Long> fileIdList);
+    // 删除帖子 [不需要，因为直接调用ossService传入filesId]
 
-    // 获取帖子files；(不需要，因为在service能提postService下载url)
 
-    // 修改帖子file
+    // 检查用户是否合法
+    private UserDo getUserDo(String userAccount) throws AppException {
+        String errMsg = "请检查userAccount: " + userAccount;
+        if (!StringUtils.hasText(userAccount)){
+            throw new AppException(errMsg);
+        }
+        UserDo userDo = userService.getUserByAccount(userAccount);
+        if (userDo == null || userDo.getId() == null){
+            throw new AppException(errMsg);
+        }
+        return userDo;
+    }
 
-    // 删除帖子
-
-    // 解除分布式锁
+    /**
+     * 解除分布式锁
+     * @param lockData  lockData
+     * @param path      lockPath
+     */
     private void releaseLock(String lockData, String path){
         RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
                 lockData,

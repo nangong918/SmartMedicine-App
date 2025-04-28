@@ -94,7 +94,7 @@ public class OssResponseEventListener implements ApplicationListener<PostOssResp
             if (!result){
                 log.error("删除redis失败，fileRedisKey: {}", fileRedisKey);
             }
-            if (StringUtils.hasText(serverToFrontend) && StringUtils.hasText(userId)){
+            if (StringUtils.hasText(serverToFrontend) && StringUtils.hasText(postOssResponse.getUserAccount())){
                 // 发送消息给前端
                 Message message = new Message();
                 message.setSenderId(NettyConstants.SERVER_ID);
@@ -105,7 +105,7 @@ public class OssResponseEventListener implements ApplicationListener<PostOssResp
             }
             // 无论成功失败都要删掉分布式锁
             try {
-                redissonService.deleteObject(clusterLockPath);
+                redissonService.unlock(redissonClusterLock);
             } catch (Exception e){
                 log.error("删除分布式锁失败，clusterLockPath: {}", clusterLockPath);
             }
