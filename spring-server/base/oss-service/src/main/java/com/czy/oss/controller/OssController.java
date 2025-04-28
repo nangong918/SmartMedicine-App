@@ -131,12 +131,23 @@ public class OssController {
     }
 
     // 通过文件fileName + userId获取文件url
-    @GetMapping("/getFileUrlByFileName")
+    @GetMapping("/getFileUrlByFileNames")
     public List<String> getFileUrlByFileName(
             @RequestParam("fileNames") List<String> fileNames,
             @RequestParam("userId") Long userId) {
         try {
             return ossService.getFileUrlsByUserIdAndFileNames(userId, fileNames);
+        } catch (Exception e){
+            log.warn("获取文件地址失败", e);
+            return null;
+        }
+    }
+
+    @GetMapping("/getFileUrlByFileIds")
+    public List<String> getFileUrlByFileIds(
+            @RequestParam("fileIds") List<Long> fileIds) {
+        try {
+            return ossService.getFileUrlsByFileIds(fileIds);
         } catch (Exception e){
             log.warn("获取文件地址失败", e);
             return null;

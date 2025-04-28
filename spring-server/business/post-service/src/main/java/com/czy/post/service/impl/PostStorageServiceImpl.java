@@ -101,6 +101,14 @@ public class PostStorageServiceImpl implements PostStorageService {
         for (int i = 0; i < idList.size(); i++){
             PostInfoDo postInfoDo = postInfoDoList.get(i);
             PostInfoAo ao = postConverter.postInfoDoToAo(postInfoDo);
+            Long postId = postInfoDo.getId();
+            List<PostFilesDo> postFilesDoList = postFilesMapper.getPostFilesDoListByPostId(postId);
+            // 存在可能帖子没图片的情况
+            if (!CollectionUtils.isEmpty(postFilesDoList)){
+                PostFilesDo postFilesDo = postFilesDoList.get(0);
+                Long fileId = postFilesDo.getFileId();
+                ao.setFileId(fileId);
+            }
             postInfoAoList.add(ao);
         }
         return postInfoAoList;

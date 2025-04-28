@@ -195,6 +195,8 @@ public class PostController {
      * 查询postList,只包含list的基本信息不包括内容content
      * 响应体应该包含：postInfo，post-fileIds，postDetails
      * 通过list<postId>查询post消息;
+     * FileId拿到之后直接去oss服务将fileIdList转为url
+     * 调用：/oss/getFileUrlByFileIds
      * @param request   List<Long> postIds
      * @return      List<PostInfoAo> postInfoAos;
      */
