@@ -44,8 +44,12 @@ public class UserRelationshipController {
 //    private final LoginService loginService;
 //    private final RabbitMqSender clusterEventsPusher;
     private final UserRelationshipService userRelationshipService;
-    // 搜索用户
-    // 搜索用户
+
+    /**
+     * like模糊搜索用户
+     * @param request   请求体，包含senderId和receiverId；其中receiverId是模糊的account
+     * @return List搜索结果。之所以是list是因为模糊搜索可能出现一系列匹配
+     */
     @PostMapping(RelationshipConstant.Search_User)
     public Mono<BaseResponse<SearchUserResponse>>
     searchUser(@Validated @RequestBody BaseNettyRequest request) {
@@ -56,16 +60,18 @@ public class UserRelationshipController {
         return Mono.just(BaseResponse.getResponseEntitySuccess(searchUser));
     }
 
-    // getAddMeRequestList
+    /**
+     * 获取添加我的申请列表
+     * @param request
+     * @return
+     */
     @PostMapping(RelationshipConstant.Get_Add_Me_Request_List)
     public Mono<BaseResponse<GetAddMeRequestListResponse>>
     getAddMeRequestList(@Validated @RequestBody BaseNettyRequest request){
-        String senderId = request.getSenderId();
-
-        List<NewUserItemAo> list = userRelationshipService.getAddMeRequestList(senderId);
+        String senderAccount = request.getSenderId();
+        List<NewUserItemAo> list = userRelationshipService.getAddMeRequestList(senderAccount);
         GetAddMeRequestListResponse response = new GetAddMeRequestListResponse();
-        response.addMeRequestList = list;
-
+        response.setAddMeRequestList(list);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 

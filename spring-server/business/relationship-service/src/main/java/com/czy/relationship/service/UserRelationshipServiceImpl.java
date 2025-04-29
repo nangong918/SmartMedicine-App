@@ -3,6 +3,7 @@ package com.czy.relationship.service;
 import com.czy.api.api.relationship.UserRelationshipService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.netty.ResponseMessageType;
+import com.czy.api.converter.domain.relationship.NewUserItemConverter;
 import com.czy.api.converter.domain.relationship.SearchFriendApplyConverter;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.Do.relationship.FriendApplyDo;
@@ -53,6 +54,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     private final UserFriendMapper userFriendMapper;
     private final SearchFriendApplyConverter searchFriendApplyConverter;
+    private final NewUserItemConverter newUserItemConverter;
 
     // Dubbo远程调用User服务
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
@@ -297,32 +299,24 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     public List<NewUserItemAo> getAddMeRequestList(String handlerAccount) {
         Long handlerId = getUserId(handlerAccount);
         List<NewUserItemBo> applyToMeList = friendApplyMapper.getAddMeRequestList(handlerId);
-        List<NewUserItemAo> newUserItemAoList = new ArrayList<>();
-        Optional.ofNullable(applyToMeList)
-                .ifPresent(list -> {
-                    list.forEach(bo -> {
-                        NewUserItemAo newUserItemAo = new NewUserItemAo();
-                        newUserItemAo.setByNewUserItemBo(bo);
-                        newUserItemAoList.add(newUserItemAo);
-                    });
-                });
-        return newUserItemAoList;
+        return convertBoListToAoList(applyToMeList);
     }
 
     @Override
     public List<NewUserItemAo> getHandleMyAddUserResponseList(String senderAccount) {
         Long senderId = getUserId(senderAccount);
         List<NewUserItemBo> applyToMeList = friendApplyMapper.getHandleMyAddUserResponseList(senderId);
-        List<NewUserItemAo> newUserItemAoList = new ArrayList<>();
-        Optional.ofNullable(applyToMeList)
-                .ifPresent(list -> {
-                    list.forEach(newUserItemBo -> {
-                        NewUserItemAo newUserItemAo = new NewUserItemAo();
-                        newUserItemAo.setByNewUserItemBo(newUserItemBo);
-                        newUserItemAoList.add(newUserItemAo);
-                    });
-                });
-        return newUserItemAoList;
+        return convertBoListToAoList(applyToMeList);
+    }
+
+    private List<NewUserItemAo> convertBoListToAoList(List<NewUserItemBo> boList) {
+        List<NewUserItemAo> aoList = new ArrayList<>();
+        Optional.ofNullable(boList)
+                .ifPresent(list -> list.forEach(bo -> {
+                    NewUserItemAo ao = newUserItemConverter.boToAo(bo);
+                    aoList.add(ao);
+                }));
+        return aoList;
     }
 
     @Override

@@ -1,16 +1,16 @@
 package com.czy.api.domain.ao.relationship;
 
 import com.czy.api.constant.relationship.newUserGroup.AddSourceEnum;
-import com.czy.api.domain.bo.relationship.NewUserItemBo;
 import com.czy.api.domain.entity.ChatEntity;
 import com.czy.api.domain.entity.UserViewEntity;
-import com.czy.api.utils.JsonUtil;
 import json.BaseBean;
+import lombok.Data;
 
 
 import java.util.LinkedList;
 import java.util.List;
 
+@Data
 public class NewUserItemAo implements BaseBean {
 
     // 是否是添加我的请求 / 是否对我添加别人请求的响应
@@ -37,23 +37,4 @@ public class NewUserItemAo implements BaseBean {
     // 添加状态
     public AddUserStatusAo addUserStatusAo = new AddUserStatusAo();
 
-    public void setByNewUserItemBo(NewUserItemBo bo){
-        this.isAddMeNotResponse = bo.isAddMeNotResponse;
-        // string -> list
-        this.chatList = JsonUtil.getListEntity(bo.chatList, ChatEntity.class);
-
-        this.userViewEntity = new UserViewEntity();
-        this.userViewEntity.userName = bo.userName;
-        this.userViewEntity.userAccount = bo.userAccount;
-        this.userViewEntity.avatarFileId = bo.avatarFileId;
-        this.applyTime = bo.applyTime;
-        this.handleTime = bo.handleTime;
-        this.addSource = bo.addSource;
-        this.addUserStatusAo.applyStatus = bo.applyStatus;
-        this.addUserStatusAo.handleStatus = bo.handleStatus;
-        this.addUserStatusAo.isBlack = bo.isBlack != 0;
-        this.addUserStatusAo.applyAccount = bo.applyAccount;
-        this.addUserStatusAo.handlerAccount = bo.handlerAccount;
-        this.isBeAdd = this.addUserStatusAo.isBeAdd(bo.applyAccount);
-    }
 }
