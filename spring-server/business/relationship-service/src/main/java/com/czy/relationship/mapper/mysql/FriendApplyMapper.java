@@ -1,4 +1,4 @@
-package com.czy.relationship.mapper;
+package com.czy.relationship.mapper.mysql;
 
 
 
@@ -48,6 +48,12 @@ public interface FriendApplyMapper {
     List<SearchFriendApplyBo> fuzzySearchHandlerByApplyAccount(
             @Param("applyAccount") String applyAccount,
             @Param("handlerAccount") String handlerAccount
+    );
+
+    // 根据applyUserId和handlerUserId查询
+    List<SearchFriendApplyBo> getFriendApplyByUserId(
+            @Param("applyUserId") Long applyUserId,
+            @Param("handlerUserId") Long handlerUserId
     );
 
     // 根据applyUserId 查询 List<NewUserItemBo>

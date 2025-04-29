@@ -58,6 +58,8 @@ public interface UserRelationshipService {
 
     // 搜索好友及其添加状态
     List<SearchFriendApplyAo> searchFriend(String applyAccount, String handlerAccount);
+    // 根据用户名搜索好友
+    List<SearchFriendApplyAo> searchFriendByName(String applyAccount, String handlerUserName);
 
     void updateApplyStatus(AddUserAo addUserAo);
 

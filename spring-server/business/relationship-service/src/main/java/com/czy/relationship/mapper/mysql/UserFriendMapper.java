@@ -1,4 +1,4 @@
-package com.czy.relationship.mapper;
+package com.czy.relationship.mapper.mysql;
 
 
 

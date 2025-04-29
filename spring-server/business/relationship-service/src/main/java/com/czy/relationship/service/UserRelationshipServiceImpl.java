@@ -1,6 +1,7 @@
 package com.czy.relationship.service;
 
 import com.czy.api.api.relationship.UserRelationshipService;
+import com.czy.api.api.user.UserSearchService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.converter.domain.relationship.NewUserItemConverter;
@@ -9,7 +10,6 @@ import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.Do.relationship.FriendApplyDo;
 import com.czy.api.domain.Do.relationship.UserFriendDo;
 import com.czy.api.domain.ao.relationship.AddUserAo;
-import com.czy.api.domain.ao.relationship.AddUserStatusAo;
 import com.czy.api.domain.ao.relationship.HandleAddedMeAo;
 import com.czy.api.domain.ao.relationship.MyFriendItemAo;
 import com.czy.api.domain.ao.relationship.NewUserItemAo;
@@ -24,8 +24,8 @@ import com.czy.api.domain.entity.event.Message;
 import com.czy.relationship.constant.ApplyStatusEnum;
 import com.czy.relationship.constant.HandleStatusEnum;
 import com.czy.relationship.constant.ListAddOrDeleteStatusEnum;
-import com.czy.relationship.mapper.FriendApplyMapper;
-import com.czy.relationship.mapper.UserFriendMapper;
+import com.czy.relationship.mapper.mysql.FriendApplyMapper;
+import com.czy.relationship.mapper.mysql.UserFriendMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.AppException;
@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -59,7 +60,8 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     // Dubbo远程调用User服务
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
-
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private UserSearchService userSearchService;
     private final FriendApplyMapper friendApplyMapper;
 
     private final ObjectMapper objectMapper;
@@ -341,6 +343,30 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         List<SearchFriendApplyBo> boList = friendApplyMapper.fuzzySearchHandlerByApplyAccount(applyAccount, handlerAccount);
         // 使用 Stream API 进行转换
         return boList.stream()
+                .map(searchFriendApplyConverter::boToAo)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SearchFriendApplyAo> searchFriendByName(String applyAccount, String handlerUserName) {
+        UserDo applyUserDo = userService.getUserByAccount(applyAccount);
+        if (applyUserDo == null){
+            throw new AppException("申请用户存在问题：不存在");
+        }
+        List<UserDo> userDos = userSearchService.searchUserByIkName(handlerUserName);
+        if (CollectionUtils.isEmpty(userDos)){
+            return new ArrayList<>();
+        }
+        // limit 20
+        userDos = userDos.stream()
+                .limit(20)
+                .collect(Collectors.toList());
+        List<SearchFriendApplyBo> boAllList = new ArrayList<>();
+        userDos.forEach(handleUserDo -> {
+            List<SearchFriendApplyBo> boList = friendApplyMapper.getFriendApplyByUserId(applyUserDo.getId(), handleUserDo.getId());
+            boAllList.addAll(boList);
+        });
+        return boAllList.stream()
                 .map(searchFriendApplyConverter::boToAo)
                 .collect(Collectors.toList());
     }

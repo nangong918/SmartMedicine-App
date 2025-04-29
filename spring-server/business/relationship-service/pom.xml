@@ -123,6 +123,12 @@
             <artifactId>mapstruct-processor</artifactId>
         </dependency>
 
+        <!-- 自动化配置 Spring Data Elasticsearch -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+        </dependency>
+
         <!-- validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
