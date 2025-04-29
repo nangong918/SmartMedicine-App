@@ -3,10 +3,12 @@ package com.czy.relationship.service;
 import com.czy.api.api.relationship.UserRelationshipService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.netty.ResponseMessageType;
+import com.czy.api.converter.domain.relationship.SearchFriendApplyConverter;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.Do.relationship.FriendApplyDo;
 import com.czy.api.domain.Do.relationship.UserFriendDo;
 import com.czy.api.domain.ao.relationship.AddUserAo;
+import com.czy.api.domain.ao.relationship.AddUserStatusAo;
 import com.czy.api.domain.ao.relationship.HandleAddedMeAo;
 import com.czy.api.domain.ao.relationship.MyFriendItemAo;
 import com.czy.api.domain.ao.relationship.NewUserItemAo;
@@ -50,6 +52,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
 
     private final UserFriendMapper userFriendMapper;
+    private final SearchFriendApplyConverter searchFriendApplyConverter;
 
     // Dubbo远程调用User服务
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
@@ -344,24 +347,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         List<SearchFriendApplyBo> boList = friendApplyMapper.fuzzySearchHandlerByApplyAccount(applyAccount, handlerAccount);
         // 使用 Stream API 进行转换
         return boList.stream()
-                .map(bo -> {
-                    SearchFriendApplyAo ao = new SearchFriendApplyAo();
-                    ao.account = bo.account;
-                    ao.userName = bo.userName;
-                    ao.phone = bo.phone;
-                    ao.applyTime = bo.applyTime; // 这里需要修改 SearchFriendApplyAo 类以添加 applyTime
-                    ao.handleTime = bo.handleTime; // 同样，这里需要修改 SearchFriendApplyAo 类以添加 handleTime
-                    ao.source = bo.source; // 这里需要修改 SearchFriendApplyAo 类以添加 source
-                    ao.chatList = bo.chatList; // 同样，添加 chatList
-                    ao.avatarUri = bo.avatarUri;
-                    // 设置 AddUserStatusAo
-                    ao.addUserStatusAo.applyStatus = bo.applyStatus;
-                    ao.addUserStatusAo.handleStatus = bo.handleStatus;
-                    ao.addUserStatusAo.isBlack = bo.isBlack;
-                    ao.addUserStatusAo.applyAccount = bo.applyAccount;
-                    ao.addUserStatusAo.handlerAccount = bo.handlerAccount;
-                    return ao;
-                })
+                .map(searchFriendApplyConverter::boToAo)
                 .collect(Collectors.toList());
     }
 

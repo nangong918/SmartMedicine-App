@@ -17,7 +17,7 @@ public class AddUserToTargetUserResponse extends BaseNettyResponse {
     public String AppliedUserAccount;
     public String AppliedUserName;
     // 头像uri
-    public String AppliedUserAvatarUri;
+    public String AppliedUseravatarFileId;
     // 添加附加内容
     public String AppliedUserAddContent;
     // 添加时间

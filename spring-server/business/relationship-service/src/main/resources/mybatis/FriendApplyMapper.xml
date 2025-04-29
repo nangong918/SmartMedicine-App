@@ -53,7 +53,7 @@
             lu.account AS account,
             lu.user_name AS userName,
             lu.phone AS phone,
-            lu.avatar_url AS avatarUri,  -- 使用 avatar_url
+            lu.avatar_file_id AS avatarFileId,  -- 使用 avatar_file_id
             IFNULL(fa.apply_time, 0) AS applyTime,  -- 申请时间
             IFNULL(fa.handle_time, NULL) AS handleTime,  -- 处理时间
             IFNULL(fa.source, 0) AS source,  -- 申请来源
@@ -75,7 +75,7 @@
         SELECT
             lh.user_name AS userName,  -- 用户名称
             lh.phone AS applyPhone,  -- 申请人的电话
-            lh.avatar_url AS avatarFileId,  -- 申请人的头像 URL
+            lh.avatar_file_id AS avatarFileId,  -- 申请人的头像 URL
             lu.account AS applyAccount,  -- 申请人的账号
             lh.account AS userAccount,  -- 处理人的账号
             lh.account AS handlerAccount,  -- 处理人的账号
@@ -101,7 +101,7 @@
         SELECT
             la.user_name AS userName,  -- 用户名称
             la.phone AS handlerPhone,  -- 处理人的电话
-            la.avatar_url AS avatarFileId,  -- 处理人的头像 URL
+            la.avatar_file_id AS avatarFileId,  -- 处理人的头像 URL
             lu.account AS handlerAccount,  -- 处理人的账号
             la.account AS userAccount, -- 处理人的账号
             la.account AS applyAccount,  -- 申请者账号

@@ -22,7 +22,7 @@ public class SearchFriendApplyAo implements BaseBean {
     // 聊天列表 (JSON 格式)
     public String chatList;
     // 头像uri
-    public String avatarUri;
+    public Long avatarFileId;
     // 默认设置为不是好友，所以状态是申请
     public AddUserStatusAo addUserStatusAo = new AddUserStatusAo();
 

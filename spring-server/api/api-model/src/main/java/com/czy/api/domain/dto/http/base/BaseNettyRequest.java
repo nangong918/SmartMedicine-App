@@ -21,7 +21,7 @@ import java.util.Map;
 @Data
 public class BaseNettyRequest extends BaseRequest {
 
-    @NotEmpty(message = "发送者 ID 不能为空")
+    @NotEmpty(message = "发送者 Account 不能为空")
     public String senderId = "";
     public String receiverId = "";
     public String type = "";

@@ -57,7 +57,7 @@
         SELECT
             lu2.id AS userId,
             lu2.user_name AS userName,
-            lu2.avatar_url AS avatarFileId,
+            lu2.avatar_file_id AS avatarFileId,
             lu2.account AS userAccount
         FROM login_user lu
                  JOIN user_friend uf ON (uf.user_id = lu.id OR uf.friend_id = lu.id)
@@ -71,7 +71,7 @@
         SELECT
             lu2.id AS userId,
             lu2.user_name AS userName,
-            lu2.avatar_url AS avatarFileId,
+            lu2.avatar_file_id AS avatarFileId,
             lu2.account AS userAccount
         FROM login_user lu
                  JOIN user_friend uf ON (uf.user_id = lu.id OR uf.friend_id = lu.id)

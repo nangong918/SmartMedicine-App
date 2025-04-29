@@ -49,9 +49,10 @@ public class UserRelationshipController {
     @PostMapping(RelationshipConstant.Search_User)
     public Mono<BaseResponse<SearchUserResponse>>
     searchUser(@Validated @RequestBody BaseNettyRequest request) {
-        List<SearchFriendApplyAo> searchFriendApplyAoList = userRelationshipService.searchFriend(request.senderId, request.receiverId);
+        List<SearchFriendApplyAo> searchFriendApplyAoList =
+                userRelationshipService.searchFriend(request.getSenderId(), request.getReceiverId());
         SearchUserResponse searchUser = new SearchUserResponse();
-        searchUser.userList = searchFriendApplyAoList;
+        searchUser.setUserList(searchFriendApplyAoList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(searchUser));
     }
 

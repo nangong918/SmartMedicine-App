@@ -39,10 +39,16 @@ public interface FriendApplyMapper {
     List<FriendApplyDo> getHandleAppliesByHandlerId(Long handleId);
 
     // 根据申请用户 ID 和处理用户 ID 联合查询
-    FriendApplyDo getFriendApplyByUserIds(@Param("applyUserId") Long applyUserId, @Param("handleUserId") Long handleUserId);
+    FriendApplyDo getFriendApplyByUserIds(
+            @Param("applyUserId") Long applyUserId,
+            @Param("handleUserId") Long handleUserId
+    );
 
     // 根据申请id 和 模糊的 处理用户id 查询
-    List<SearchFriendApplyBo> fuzzySearchHandlerByApplyAccount(@Param("applyAccount") String applyAccount, @Param("handlerAccount") String handlerAccount);
+    List<SearchFriendApplyBo> fuzzySearchHandlerByApplyAccount(
+            @Param("applyAccount") String applyAccount,
+            @Param("handlerAccount") String handlerAccount
+    );
 
     // 根据applyUserId 查询 List<NewUserItemBo>
     List<NewUserItemBo> getHandleMyAddUserResponseList(Long applyUserId);

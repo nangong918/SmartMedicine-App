@@ -48,7 +48,7 @@ CREATE TABLE `login_user`  (
   `password` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT 'account非null的时候不为null',
   `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'account和phone至少一个不为null',
   `permission` int NOT NULL COMMENT '用户的权限等级：user：1，admin：2',
-  `avatar_url` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '用户的头像链接',
+  `avatar_file_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '用户的头像链接',
   `register_time` bigint NOT NULL,
   `last_online_time` bigint NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
