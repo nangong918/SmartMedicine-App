@@ -75,7 +75,11 @@ public class UserRelationshipController {
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 
-    // getHandleMyAddUserResponseList
+    /**
+     * 获取我处理的我添加的申请列表
+     * @param request
+     * @return
+     */
     @PostMapping(RelationshipConstant.Get_Handle_My_Add_User_Response_List)
     public Mono<BaseResponse<GetHandleMyAddUserResponseListResponse>>
     getHandleMyAddUserResponseList(@Validated @RequestBody BaseNettyRequest request){
@@ -86,16 +90,18 @@ public class UserRelationshipController {
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 
-    // /getMyFriendList
+    /**
+     * 好友列表
+     * @param request
+     * @return
+     */
     @PostMapping(RelationshipConstant.Get_My_Friend_List)
     public Mono<BaseResponse<GetMyFriendsResponse>>
     getMyFriendList(@Validated @RequestBody GetMyFriendsRequest request){
         String senderId = request.getSenderId();
-
         List<MyFriendItemAo> list = userRelationshipService.getMyFriendList(senderId);
         GetMyFriendsResponse response = new GetMyFriendsResponse();
-        response.addMeRequestList = list;
-
+        response.setAddMeRequestList(list);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 
