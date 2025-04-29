@@ -79,12 +79,10 @@ public class UserRelationshipController {
     @PostMapping(RelationshipConstant.Get_Handle_My_Add_User_Response_List)
     public Mono<BaseResponse<GetHandleMyAddUserResponseListResponse>>
     getHandleMyAddUserResponseList(@Validated @RequestBody BaseNettyRequest request){
-        String senderId = request.getSenderId();
-
-        List<NewUserItemAo> list = userRelationshipService.getHandleMyAddUserResponseList(senderId);
+        String senderAccount = request.getSenderId();
+        List<NewUserItemAo> list = userRelationshipService.getHandleMyAddUserResponseList(senderAccount);
         GetHandleMyAddUserResponseListResponse response = new GetHandleMyAddUserResponseListResponse();
-        response.handleMyAddUserResponseList = list;
-
+        response.setHandleMyAddUserResponseList(list);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 
