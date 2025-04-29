@@ -1,4 +1,4 @@
-package com.czy.message.handler;
+package com.czy.relationship.handler;
 
 
 import com.czy.api.api.user.LoginService;
@@ -15,9 +15,9 @@ import com.czy.api.domain.dto.socket.request.DeleteUserRequest;
 import com.czy.api.domain.dto.socket.request.HandleAddedUserRequest;
 import com.czy.api.domain.dto.socket.response.DeleteUserResponse;
 import com.czy.api.domain.entity.event.Message;
+import com.czy.relationship.component.RabbitMqSender;
+import com.czy.relationship.handler.api.FriendApi;
 import com.czy.springUtils.annotation.HandlerType;
-import com.czy.message.component.RabbitMqSender;
-import com.czy.message.handler.api.FriendApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;

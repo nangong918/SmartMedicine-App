@@ -1,4 +1,4 @@
-package com.czy.message.handler.api;
+package com.czy.relationship.handler.api;
 
 
 

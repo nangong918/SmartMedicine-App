@@ -19,7 +19,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
                 // 扫描本模块
                 "com.czy.relationship",
                 // 扫描工具类
-                "com.utils.webflux.handler"
+                "com.utils.mvc"
         }
 )
 public class RelationshipApplication {
