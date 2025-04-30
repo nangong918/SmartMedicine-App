@@ -132,7 +132,11 @@ public class ChatController {
     private UserService userService;
 
 
-    // 拉取用户的全部聊天消息(限制200条，超过就流式传输)：某个用户跟所有用户的1条最新消息List
+    /**
+     * 从Redis拉取用户的全部聊天消息(限制200条，超过就流式传输)：某个用户跟所有用户的1条最新消息List
+     * @param request
+     * @return 跟每个用户的最新一条消息
+     */
     @PostMapping("/getUserNewMessage")
     public Mono<BaseResponse<UserNewMessageResponse>>
     getUserNewMessage(@Valid @RequestBody BaseNettyRequest request) {
@@ -140,25 +144,29 @@ public class ChatController {
         List<UserChatLastMessageBo> lastMessageList = chatService.getUserAllChatMessage(request.getSenderId());
         // 封装响应
         UserNewMessageResponse userNewMessageResponse = new UserNewMessageResponse();
-        userNewMessageResponse.lastMessageList = lastMessageList;
+        userNewMessageResponse.setLastMessageList(lastMessageList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(userNewMessageResponse));
     }
 
-    // 拉取用户和某个用户全部聊天消息(分页：一次拉取50条最新聊天消息)
+    /**
+     * 拉取用户和某个用户全部聊天消息(分页：一次拉取50条最新聊天消息)
+     * @param request   拉取用户和某个用户全部聊天消息的请求
+     * @return  用户和某个用户全部聊天消息
+     */
     @PostMapping("/fetchUserMessage")
     public Mono<BaseResponse<FetchUserMessageResponse>>
     fetchUserMessage(@Valid @RequestBody FetchUserMessageRequest request) {
         // 封装请求 -> Ao
         FetchUserMessageAo fetchUserMessageAo = new FetchUserMessageAo();
-        fetchUserMessageAo.senderAccount = request.senderAccount;
-        fetchUserMessageAo.receiverAccount = request.receiverAccount;
-        fetchUserMessageAo.timestampIndex = request.timestampIndex;
-        fetchUserMessageAo.messageCount = request.messageCount;
+        fetchUserMessageAo.setSenderAccount(request.getSenderAccount());
+        fetchUserMessageAo.setReceiverAccount(request.getReceiverAccount());
+        fetchUserMessageAo.setTimestampIndex(request.getTimestampIndex());
+        fetchUserMessageAo.setMessageCount(request.getMessageCount());
         // 获取用户聊天消息
         List<UserChatMessageBo> messageList = chatService.getUserChatMessage(fetchUserMessageAo);
         // 封装响应
         FetchUserMessageResponse fetchUserMessageResponse = new FetchUserMessageResponse();
-        fetchUserMessageResponse.messageList = messageList;
+        fetchUserMessageResponse.setMessageList(messageList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(fetchUserMessageResponse));
     }
 
