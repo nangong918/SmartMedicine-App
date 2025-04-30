@@ -37,7 +37,6 @@ public interface HandleAddUserResConverter {
         data.put("applyAccount", response.getApplyAccount());
         data.put("handlerAccount", response.getHandlerAccount());
         data.put("additionalContent", response.getAdditionalContent());
-        data.put("userAccount", response.getUserAccount());
         data.put("userName", response.getHandlerName());
         data.put("avatarFileId", String.valueOf(response.getHandlerAvatarFileId()));
         message.setData(data);

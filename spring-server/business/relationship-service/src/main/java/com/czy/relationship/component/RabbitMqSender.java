@@ -1,11 +1,13 @@
 package com.czy.relationship.component;
 
 
+import com.czy.api.constant.mq.RelationshipMqConstant;
 import com.czy.api.constant.mq.SocketMessageMqConstant;
 import com.czy.api.constant.netty.MessageTypeTranslator;
 import com.czy.api.converter.base.BaseResponseConverter;
 import com.czy.api.domain.dto.base.BaseResponseData;
 import com.czy.api.domain.entity.event.Message;
+import com.czy.api.domain.entity.event.RelationshipDelete;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -30,6 +32,15 @@ public class RabbitMqSender {
         }
         rabbitTemplate.convertAndSend(
                 SocketMessageMqConstant.USER_RECEIVE_QUEUE,
+                message);
+    }
+
+    public void push(RelationshipDelete message){
+        if (message == null){
+            return;
+        }
+        rabbitTemplate.convertAndSend(
+                RelationshipMqConstant.RELATION_SEND_MESSAGE_QUEUE,
                 message);
     }
 

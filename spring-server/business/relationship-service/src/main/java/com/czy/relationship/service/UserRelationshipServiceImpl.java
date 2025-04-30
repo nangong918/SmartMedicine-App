@@ -21,6 +21,8 @@ import com.czy.api.domain.entity.ChatEntity;
 import com.czy.api.domain.entity.MessageEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.entity.event.Message;
+import com.czy.api.domain.entity.event.RelationshipDelete;
+import com.czy.relationship.component.RabbitMqSender;
 import com.czy.relationship.constant.ApplyStatusEnum;
 import com.czy.relationship.constant.HandleStatusEnum;
 import com.czy.relationship.constant.ListAddOrDeleteStatusEnum;
@@ -56,6 +58,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     private final UserFriendMapper userFriendMapper;
     private final SearchFriendApplyConverter searchFriendApplyConverter;
     private final NewUserItemConverter newUserItemConverter;
+    private final RabbitMqSender rabbitMqSender;
 
     // Dubbo远程调用User服务
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
@@ -409,7 +412,11 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         UserFriendDo userFriendDo = userFriendMapper.getUserFriend(applyId, handleId);
         if (userFriendDo != null){
             userFriendMapper.deleteUserFriend(userFriendDo);
-// Todo 删除好友之间的聊天记录
+
+            RelationshipDelete relationshipDelete = new RelationshipDelete();
+            relationshipDelete.setSenderId(userFriendDo.getUserId());
+            relationshipDelete.setReceiverId(userFriendDo.getFriendId());
+            rabbitMqSender.push(relationshipDelete);
         }
     }
 
