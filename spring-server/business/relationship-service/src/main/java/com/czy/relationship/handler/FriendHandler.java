@@ -4,9 +4,10 @@ package com.czy.relationship.handler;
 import com.czy.api.api.user.LoginService;
 import com.czy.api.api.relationship.UserRelationshipService;
 import com.czy.api.api.user.UserService;
-import com.czy.api.constant.netty.MessageTypeTranslator;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.relationship.newUserGroup.ApplyStatusEnum;
+import com.czy.api.converter.domain.relationship.AddUserConverter;
+import com.czy.api.converter.domain.relationship.HandleAddUserConverter;
 import com.czy.api.domain.ao.relationship.AddUserAo;
 import com.czy.api.domain.ao.relationship.HandleAddedMeAo;
 import com.czy.api.domain.dto.http.response.AddUserToTargetUserResponse;
@@ -40,60 +41,61 @@ public class FriendHandler implements FriendApi {
     private UserService userService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserRelationshipService userRelationshipService;
-
+    private final AddUserConverter addUserConverter;
     private final RabbitMqSender rabbitMqSender;
+    private final HandleAddUserConverter handleAddUserConverter;
 
     @Override
     public void addUser(AddUserRequest request) {
-        // TODO 入参检查
-        if (request == null || !StringUtils.hasText(request.getAddUserAccount())){
+        if (request == null || !StringUtils.hasText(request.getReceiverId())){
             return;
         }
-        // 检查账号是否已存在
-        if (userService.checkAccountExist(request.getAddUserAccount()) <= 0) {
-            String warningMessage = String.format("用户account不存在，account: %s", request.getAddUserAccount());
-            log.warn(warningMessage);
+        Long senderId = userService.getIdByAccount(request.getSenderId());
+        Long receiverId = userService.getIdByAccount(request.getReceiverId());
+        if (senderId == null || receiverId == null){
             return;
         }
-
+        String chatJsonList = userRelationshipService.getChatListJson(
+                request.getAddContent(),
+                senderId,
+                receiverId,
+                Long.parseLong(request.getTimestamp()),
+                request.getSenderId(),
+                request.getReceiverId()
+        );
         // 转为响应体
-        AddUserToTargetUserResponse response = new AddUserToTargetUserResponse();
-        response.setType(MessageTypeTranslator.translateClean(request.getType()));
-        response.setReceiverId(request.getSenderId());
-        response.setSenderId(request.getReceiverId());
-        response.setAppliedUserAccount(request.getAddUserAccount());
-        response.setAppliedUserName(request.getMyName());
-        response.setAppliedUserAddContent(request.getAddContent());
-        response.AppliedUserApplyStatus = request.applyType;
+        AddUserToTargetUserResponse response = addUserConverter.requestToResponse(request);
+        response.setAppliedUserChatList(chatJsonList);
 
         // 构建Message
-        Message msg2 = response.getToMessage();
+        Message msg = response.getToMessage();
         // 推送消息
-        rabbitMqSender.push(msg2);
+        rabbitMqSender.push(msg);
 
         // 添加到MySQL持久化
-        AddUserAo addUserAo = new AddUserAo();
-        addUserAo.applyAccount = request.getSenderId();
-        addUserAo.handlerAccount = request.getReceiverId();
-        addUserAo.applyTime = Long.valueOf(request.getTimestamp());
-        addUserAo.applyContent = request.addContent;
-        addUserAo.source = request.source;
-        addUserAo.applyStatus = request.applyType;
+        AddUserAo addUserAo = addUserConverter.requestToAo(request);
 
-        // 未申请 (可能取消申请了)
-        if (ApplyStatusEnum.NOT_APPLY.code == request.applyType){
+
+        if (
+                // 未申请 (可能取消申请了)
+                ApplyStatusEnum.NOT_APPLY.code == request.applyType ||
+                // 已处理
+                ApplyStatusEnum.HANDLED.code == request.applyType
+        ){
             userRelationshipService.updateApplyStatus(addUserAo);
         }
-        // 申请中 (添加好友)
-        else if (ApplyStatusEnum.APPLYING.code == request.applyType){
+
+        else if (
+                // 申请中 (添加好友)
+                ApplyStatusEnum.APPLYING.code == request.applyType
+        ){
             // 添加好友
             userRelationshipService.addUserFriend(addUserAo);
         }
-        // 已处理
-        else if (ApplyStatusEnum.HANDLED.code == request.applyType){
-            userRelationshipService.updateApplyStatus(addUserAo);
-        }
-        else if (ApplyStatusEnum.DELETED.code == request.applyType) {
+        else if (
+                // 删除
+                ApplyStatusEnum.DELETED.code == request.applyType
+        ) {
             userRelationshipService.deleteApplyStatus(addUserAo);
         }
     }
@@ -101,19 +103,12 @@ public class FriendHandler implements FriendApi {
     @Override
     public void deleteUser(DeleteUserRequest request) {
         // 删除消息持久化到MySQL
-        AddUserAo addUserAo = new AddUserAo();
-        addUserAo.applyAccount = request.getSenderId();
-        addUserAo.handlerAccount = request.getReceiverId();
-        addUserAo.applyTime = Long.valueOf(request.getTimestamp());
-        addUserAo.applyStatus = request.applyType;
+        AddUserAo addUserAo = addUserConverter.deleteRequestToAo(request);
 
         userRelationshipService.deleteFriend(addUserAo);
 
         // Netty响应
-        DeleteUserResponse response = new DeleteUserResponse();
-        response.setType(MessageTypeTranslator.translateClean(request.getType()));
-        response.setReceiverId(request.getSenderId());
-        response.setSenderId(request.getReceiverId());
+        DeleteUserResponse response = addUserConverter.deleteRequestToDeleteResponse(request);
 //        response.setApplyStatus(ApplyStatusEnum.DELETED.code);
         Message respMsg = response.getMessageByResponse();
 
@@ -124,11 +119,10 @@ public class FriendHandler implements FriendApi {
     @Override
     public void handleAddedUser(HandleAddedUserRequest request) {
         // Ao -> Service
-        HandleAddedMeAo handleAddedMeAo = new HandleAddedMeAo();
-        handleAddedMeAo.setByRequest(request);
+        HandleAddedMeAo handleAddedMeAo = handleAddUserConverter.requestToAo(request);
 
         // 内部包含消息推送，以后进行重构
-        com.czy.api.domain.entity.event.Message msg = userRelationshipService.handleAddedUser(handleAddedMeAo);
+        Message msg = userRelationshipService.handleAddedUser(handleAddedMeAo);
         log.info("处理加好友的响应: {}", (msg != null));
 
         // 推送消息

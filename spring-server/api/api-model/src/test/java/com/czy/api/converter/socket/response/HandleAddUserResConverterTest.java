@@ -5,8 +5,6 @@ import com.czy.api.domain.dto.socket.response.HandleAddUserResponse;
 import com.czy.api.domain.entity.event.Message;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author 13225
  * @date 2025/4/10 14:42
@@ -28,8 +26,8 @@ class HandleAddUserResConverterTest {
         handleAddUserResponse.setApplyStatus(1);
         handleAddUserResponse.setHandleStatus(1);
         handleAddUserResponse.setBlack(true);
-        handleAddUserResponse.setAvatarFileId(null);
-        handleAddUserResponse.setUserName("userName");
+        handleAddUserResponse.setHandlerAvatarFileId(null);
+        handleAddUserResponse.setHandlerName("userName");
         handleAddUserResponse.setUserAccount("userAccount");
         handleAddUserResponse.setAdditionalContent("additionalContent");
         handleAddUserResponse.setApplyAccount("applyAccount");

@@ -28,10 +28,8 @@ public class HandleAddUserResponse extends BaseResponseData {
 
     // 附加消息
     public String additionalContent;
-    // user账号
-    public String userAccount;
     // user名称
-    public String userName;
+    public String handlerName;
     // 用户头像
-    public Long avatarFileId;
+    public Long handlerAvatarFileId;
 }

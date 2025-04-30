@@ -45,7 +45,10 @@
     </select>
 
     <select id="getFriendApplyByUserIds" resultType="com.czy.api.domain.Do.relationship.FriendApplyDo">
-        SELECT * FROM friend_apply WHERE apply_user_id = #{applyUserId} AND handle_user_id = #{handleUserId}
+        SELECT *
+        FROM friend_apply
+        WHERE apply_user_id = #{applyUserId}
+          AND handle_user_id = #{handleUserId}
     </select>
     <!--  LEFT JOIN保存左边表没记录的SQL  -->
     <select id="fuzzySearchHandlerByApplyAccount" resultType="com.czy.api.domain.bo.relationship.SearchFriendApplyBo">

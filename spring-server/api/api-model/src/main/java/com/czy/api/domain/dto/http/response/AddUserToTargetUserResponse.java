@@ -14,15 +14,16 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class AddUserToTargetUserResponse extends BaseNettyResponse {
-    public String AppliedUserAccount;
-    public String AppliedUserName;
+    // 申请者名称
+    public String appliedUserName;
     // 头像uri
-    public String AppliedUseravatarFileId;
+    // 另外的策略，在响应体中设置url
+    public String appliedUserAvatarUrl = null;
     // 添加附加内容
-    public String AppliedUserAddContent;
+    public String appliedUserAddContent;
     // 添加时间
-    public Long AppliedUserAddTime;
-    public Integer AppliedUserSource;
-    public String AppliedUserChatList;
-    public Integer AppliedUserApplyStatus;
+    public Long appliedUserAddTime;
+    public Integer appliedUserSource;
+    public String appliedUserChatList;
+    public Integer appliedUserApplyStatus;
 }
