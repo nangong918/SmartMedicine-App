@@ -170,67 +170,52 @@ public class ChatController {
         return Mono.just(BaseResponse.getResponseEntitySuccess(fetchUserMessageResponse));
     }
 
-    // senderAccount用户的全部keyword聊天记录
+    /**
+     * 获取用户的全部keyword聊天记录
+     * @param request   聊天记录请求
+     * @return          用户的全部keyword聊天记录
+     */
     @PostMapping("/getUserKeyChatHistory")
     public Mono<BaseResponse<FetchUserMessageResponse>>
     getUserKeyChatHistory(@Valid @RequestBody KeywordChatHistoryRequest request) {
         UserDo userDo = userService.getUserByAccount(request.getSenderAccount());
-        if (userDo == null || userDo.getId() == null){
+        if (userDo == null || userDo.getId() == null) {
             String warningMessage = String.format("用户account不存在，account: %s", request.getSenderAccount());
             return Mono.just(BaseResponse.LogBackError(warningMessage, log));
         }
-        List<UserChatMessageEsDo> messageEsList = chatSearchService.searchUserChatMessageLimit(userDo.getId(), request.getKeyword(), 20);
-        List<UserChatMessageDo> messageList = userChatMessageEsConverter.esListToMongoList(messageEsList);
-        if (messageList.isEmpty()){
-            return Mono.just(BaseResponse.getResponseEntitySuccess(new FetchUserMessageResponse()));
-        }
-        else {
-            List<Long> senderIdList = messageList.stream().map(UserChatMessageDo::getId).collect(Collectors.toList());
-            List<Long> receiverIdList = messageList.stream().map(UserChatMessageDo::getReceiverId).collect(Collectors.toList());
-            List<String> senderAccountList = userService.getUserAccountListByUserIdList(senderIdList);
-            List<String> receiverAccountList = userService.getUserAccountListByUserIdList(receiverIdList);
-            List<UserChatMessageBo> messageBoList = new ArrayList<>();
-            for(int i = 0; i < messageList.size(); i++){
-                UserChatMessageBo bo = userChatMessageConverter.toBo(messageList.get(i), senderAccountList.get(i), receiverAccountList.get(i));
-                messageBoList.add(bo);
-            }
-            FetchUserMessageResponse fetchUserMessageResponse = new FetchUserMessageResponse();
-            fetchUserMessageResponse.messageList = messageBoList;
-            return Mono.just(BaseResponse.getResponseEntitySuccess(fetchUserMessageResponse));
-        }
-    }
 
-    // senderAccount和receiverAccount的全部keyword聊天记录
-    @PostMapping("/getUserKeyChatHistoryWithReceiver")
-    public Mono<BaseResponse<FetchUserMessageResponse>>
-    getUserKeyChatHistoryWithReceiver(@Valid @RequestBody KeywordChatHistoryRequest request) {
-        if (StringUtils.isEmpty(request.getReceiverAccount())){
-            String warningMessage = String.format("接收者account不能为空，account: %s", request.getSenderAccount());
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+        List<UserChatMessageEsDo> messageEsList;
+        // 没有receiver查询全部
+        if (StringUtils.isEmpty(request.getReceiverAccount())) {
+            // 如果没有接收者账户，查询发送者的聊天记录
+            messageEsList = chatSearchService.searchUserChatMessageLimit(userDo.getId(), request.getKeyword(), 20);
         }
-        UserDo userDo = userService.getUserByAccount(request.getSenderAccount());
-        if (userDo == null || userDo.getId() == null){
-            String warningMessage = String.format("用户account不存在，account: %s", request.getSenderAccount());
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+        // 有receiver查询局部
+        else {
+            // 如果有接收者账户，查询发送者和接收者之间的聊天记录
+            UserDo receiverDo = userService.getUserByAccount(request.getReceiverAccount());
+            if (receiverDo == null || receiverDo.getId() == null) {
+                String warningMessage = String.format("用户account不存在，account: %s", request.getReceiverAccount());
+                return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+            }
+            messageEsList = chatSearchService.searchUserChatMessageLimit(userDo.getId(), receiverDo.getId(), request.getKeyword(), 20);
         }
-        UserDo receiverDo = userService.getUserByAccount(request.getReceiverAccount());
-        if (receiverDo == null || receiverDo.getId() == null){
-            String warningMessage = String.format("用户account不存在，account: %s", request.getReceiverAccount());
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
-        }
-        List<UserChatMessageEsDo> messageEsList = chatSearchService.searchUserChatMessageLimit(userDo.getId(), receiverDo.getId(), request.getKeyword(), 20);
+
         List<UserChatMessageDo> messageList = userChatMessageEsConverter.esListToMongoList(messageEsList);
-        if (messageList.isEmpty()){
+        if (messageList.isEmpty()) {
             return Mono.just(BaseResponse.getResponseEntitySuccess(new FetchUserMessageResponse()));
         }
         else {
             List<Long> idList = messageList.stream().map(UserChatMessageDo::getId).collect(Collectors.toList());
             List<String> accountList = userService.getUserAccountListByUserIdList(idList);
             List<UserChatMessageBo> messageBoList = new ArrayList<>();
-            for(int i = 0; i < messageList.size(); i++){
-                UserChatMessageBo bo = userChatMessageConverter.toBo(messageList.get(i), accountList.get(i), request.getReceiverAccount());
+
+            for (int i = 0; i < messageList.size(); i++) {
+                String receiver = StringUtils.isEmpty(request.getReceiverAccount()) ? accountList.get(i) : request.getReceiverAccount();
+                UserChatMessageBo bo = userChatMessageConverter.toBo(messageList.get(i), accountList.get(i), receiver);
                 messageBoList.add(bo);
             }
+
             FetchUserMessageResponse fetchUserMessageResponse = new FetchUserMessageResponse();
             fetchUserMessageResponse.messageList = messageBoList;
             return Mono.just(BaseResponse.getResponseEntitySuccess(fetchUserMessageResponse));
