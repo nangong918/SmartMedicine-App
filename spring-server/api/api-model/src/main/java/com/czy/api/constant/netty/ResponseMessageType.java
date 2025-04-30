@@ -156,7 +156,11 @@ public class ResponseMessageType {
 
     public final static class Oss {
         public final static String root = "Oss:";
+        // 要求现在上传文件
+        public final static String UPLOAD_FILE_NOW = responseRoot + root + "uploadFileNow";
+        // 上传结果
         public final static String UPLOAD_FILE = responseRoot + root + "uploadFile";
+        // 删除结果
         public final static String DELETE_FILE = responseRoot + root + "deleteFile";
     }
 

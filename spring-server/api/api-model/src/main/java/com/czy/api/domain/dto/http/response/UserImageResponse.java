@@ -2,6 +2,7 @@ package com.czy.api.domain.dto.http.response;
 
 
 
+import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.domain.dto.base.BaseResponseData;
 import json.BaseBean;
 import lombok.Data;
@@ -19,4 +20,9 @@ public class UserImageResponse extends BaseResponseData implements BaseBean {
     public String senderName;
     // 当值不为空才更新
     public Long avatarFileId;
+    public Long messageId;
+
+    public UserImageResponse(){
+        super.setType(ResponseMessageType.Chat.RECEIVE_USER_IMAGE_MESSAGE);
+    }
 }

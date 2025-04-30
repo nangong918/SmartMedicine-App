@@ -41,7 +41,15 @@ public interface OssService {
      * @return  true：文件存在；false：文件不存在
      */
     boolean checkFileIdempotent(Long userId, String fileName, Long fileSize);
-
+    /**
+     * 检查文件是否存在？（幂等性）
+     * 文件幂等性和timestamp无关
+     * @param userId            用户id
+     * @param fileName          文件名
+     * @param fileSize          文件大小
+     * @return  Long id; null 不存在，否则存在
+     */
+    Long checkFileIdempotentAndBackId(Long userId, String fileName, Long fileSize);
     // 检查文件是否存再，返回result
     FileIsExistResult checkFileNameExistForResult(Long userId, String fileName, String bucketName, Long fileSize);
     /**

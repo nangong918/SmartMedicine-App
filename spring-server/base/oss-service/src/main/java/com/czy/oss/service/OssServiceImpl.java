@@ -67,6 +67,11 @@ public class OssServiceImpl implements OssService {
     }
 
     @Override
+    public Long checkFileIdempotentAndBackId(Long userId, String fileName, Long fileSize) {
+        return ossMapper.getFileIdByIdempotent(userId, fileName, fileSize);
+    }
+
+    @Override
     public FileIsExistResult checkFileNameExistForResult(Long userId, String fileName, String bucketName, Long fileSize) {
         FileIsExistResult result = new FileIsExistResult();
         Boolean isExist = ossMapper.checkFileExist(userId, fileName, fileSize);
@@ -154,10 +159,19 @@ public class OssServiceImpl implements OssService {
             ossFileDo.setFileStorageName(successFile.getFileStorageName());
             ossFileDo.setFileSize(successFile.getFileSize());
             ossFileDo.setUploadTimestamp(System.currentTimeMillis());
-            // 插入
-            Long fileId = ossMapper.insert(ossFileDo);
-            // 设置fileId
-            successFile.setFileId(fileId);
+            // 已经设置了id
+            if (successFile.getFileId() != null){
+                ossFileDo.setId(successFile.getFileId());
+                // 插入
+                Long fileId = ossMapper.insert(ossFileDo);
+                log.info("文件插入成功，fileId:{}, successFile.id:{}", fileId, successFile.getFileId());
+            }
+            else {
+                // 插入
+                Long fileId = ossMapper.insert(ossFileDo);
+                // 设置fileId
+                successFile.setFileId(fileId);
+            }
         }
     }
 

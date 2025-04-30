@@ -11,4 +11,5 @@ public interface NettyConstants {
     String BIND_MESSAGE_INNER_QUEUE = "signal/channel/BIND_MESSAGE_INNER_QUEUE";
     String SERVER_ID = "SERVER_ID";
     String MESSAGE_TYPE_HTTP = "messageTypeHttp";
+    String imageMessageTitle = "[图片]";
 }

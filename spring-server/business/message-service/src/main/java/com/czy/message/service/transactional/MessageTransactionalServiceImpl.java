@@ -32,7 +32,7 @@ public class MessageTransactionalServiceImpl implements MessageTransactionalServ
         // mongo
         userChatMessageMongoMapper.saveAllMessage(messages);
         // es
-        List<UserChatMessageEsDo> esMessages =userChatMessageEsConverter.mongoListToEsList(messages);
+        List<UserChatMessageEsDo> esMessages = userChatMessageEsConverter.mongoListToEsList(messages);
         userChatMessageEsMapper.saveAll(esMessages);
     }
 

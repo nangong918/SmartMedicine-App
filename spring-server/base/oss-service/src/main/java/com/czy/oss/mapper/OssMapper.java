@@ -67,4 +67,10 @@ public interface OssMapper {
             @Param("userId")Long userId,
             @Param("fileName")String fileName,
             @Param("fileSize")Long fileSize);
+
+    Long getFileIdByIdempotent(
+            @Param("userId")Long userId,
+            @Param("fileName")String fileName,
+            @Param("fileSize")Long fileSize
+    );
 }
