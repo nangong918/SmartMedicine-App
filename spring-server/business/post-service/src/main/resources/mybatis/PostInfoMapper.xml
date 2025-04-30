@@ -90,4 +90,11 @@
         ORDER BY release_timestamp ASC
         LIMIT #{n}
     </select>
+    <select id="findPostIdByAuthorIdAndTitle" resultType="java.lang.Long">
+        SELECT
+        id
+        FROM post_info
+        WHERE author_id = #{authorId}
+        AND title = #{title}
+    </select>
 </mapper>

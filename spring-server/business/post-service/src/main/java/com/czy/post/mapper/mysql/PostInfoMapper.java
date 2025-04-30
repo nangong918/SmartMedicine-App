@@ -52,4 +52,9 @@ public interface PostInfoMapper {
 
     // 根据id更新PostInfoDo
     void updatePostInfoDo(PostInfoDo postInfoDo);
+
+    // 通过authorId和title查询postId
+    Long findPostIdByAuthorIdAndTitle(
+            @Param("authorId")Long authorId,
+            @Param("title")String title);
 }

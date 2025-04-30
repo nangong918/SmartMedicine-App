@@ -1,7 +1,7 @@
 package com.czy.api.domain.dto.socket.request;
 
 import com.czy.api.constant.netty.RequestMessageType;
-import com.czy.api.domain.dto.base.BaseRequestData;
+import com.czy.api.domain.dto.base.NettyOptionRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PostLikeRequest extends BaseRequestData {
+public class PostLikeRequest extends NettyOptionRequest {
 
     public Long postId;
 

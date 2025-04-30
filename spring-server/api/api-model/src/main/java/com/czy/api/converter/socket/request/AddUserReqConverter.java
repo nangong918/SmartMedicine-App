@@ -29,8 +29,8 @@ public interface AddUserReqConverter {
         AddUserRequest request = new AddUserRequest();
         request.setBaseRequestData(BaseRequestConverter.INSTANCE.getBaseRequestData(requestBody));
         Map<String, String> data = requestBody.getDataMap();
-        request.setAddUserAccount(data.get("addUserAccount"));
-        request.setMyAccount(data.get("myAccount"));
+        request.setSenderId(requestBody.getSenderId());
+        request.setReceiverId(requestBody.getReceiverId());
         request.setMyName(data.get("myName"));
         request.setAddContent(data.get("addContent"));
         request.setSource(Integer.parseInt(data.get("source")));

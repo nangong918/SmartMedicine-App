@@ -1,6 +1,9 @@
 package com.czy.api.converter.base;
 
 
+import com.czy.api.constant.netty.MessageTypeTranslator;
+import com.czy.api.domain.dto.base.BaseRequestData;
+import com.czy.api.domain.dto.http.base.BaseNettyRequest;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.model.RequestBodyProto;
 import com.czy.api.domain.entity.model.ResponseBodyProto;
@@ -52,5 +55,45 @@ public interface MessageConverter {
         builder.setTimestamp(message.getTimestamp());
         builder.putAllData(message.getData());
         return builder.build(); // 返回构建好的 ResponseBody
+    }
+
+    // BaseRequestData -> Message
+    default Message baseDataRequestToMessage(BaseRequestData requestData) {
+        Message message = new Message();
+        message.setSenderId(requestData.getSenderId());
+        message.setReceiverId(requestData.getReceiverId());
+        message.setType(requestData.getType());
+        message.setTimestamp(Long.valueOf(requestData.getTimestamp()));
+        return message;
+    }
+
+    default Message baseDataRequestToMessageAndTranslate(BaseRequestData requestData) {
+        Message message = new Message();
+        message.setSenderId(requestData.getSenderId());
+        message.setReceiverId(requestData.getReceiverId());
+        message.setType(MessageTypeTranslator.translateClean(requestData.getType()));
+        message.setTimestamp(Long.valueOf(requestData.getTimestamp()));
+        return message;
+    }
+
+    // BaseNettyRequest -> Message
+    default Message baseNettyRequestToMessage(BaseNettyRequest request) {
+        Message message = new Message();
+        message.setSenderId(request.getSenderId());
+        message.setReceiverId(request.getReceiverId());
+        message.setType(request.getType());
+        message.setTimestamp(request.getTimestamp());
+        message.setData(request.getData());
+        return message;
+    }
+
+    default Message baseNettyRequestToMessageAndTranslate(BaseNettyRequest request) {
+        Message message = new Message();
+        message.setSenderId(request.getSenderId());
+        message.setReceiverId(request.getReceiverId());
+        message.setType(MessageTypeTranslator.translateClean(request.getType()));
+        message.setTimestamp(request.getTimestamp());
+        message.setData(request.getData());
+        return message;
     }
 }

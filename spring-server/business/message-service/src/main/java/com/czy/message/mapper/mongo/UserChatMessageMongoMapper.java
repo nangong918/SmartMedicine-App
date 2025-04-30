@@ -116,4 +116,16 @@ public class UserChatMessageMongoMapper {
 
         mongoTemplate.updateFirst(query, update, UserChatMessageDo.class);
     }
+
+    // 删除两个好友之间的全部消息
+    public void deleteAllMessages(Long senderId, Long receiverId) {
+        // 构建查询条件，确保无论 senderId 和 receiverId 的位置如何都能匹配
+        Query query = new Query(new Criteria().orOperator(
+                Criteria.where("senderId").is(senderId).and("receiverId").is(receiverId),
+                Criteria.where("senderId").is(receiverId).and("receiverId").is(senderId)
+        ));
+
+        // 执行删除操作
+        mongoTemplate.remove(query, UserChatMessageDo.class);
+    }
 }

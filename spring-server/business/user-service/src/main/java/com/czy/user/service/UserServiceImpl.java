@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -50,6 +51,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDo> getByUserIds(List<Long> ids) {
+        return userMapper.getUserListByIdList(ids);
+    }
+
+    @Override
     public UserDo getUserByAccount(String userAccount) {
         return userMapper.getUserByAccount(userAccount);
     }
@@ -60,7 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDo resetUserInfo(String account, String newUserName, String newAvatarUrl) {
+    public UserDo resetUserInfo(String account, String newUserName, Long newAvatarFileId) {
         if (checkAccountExist(account) <= 0){
             String errorMsg = String.format("用户account不存在，account: %s", account);
             log.warn(errorMsg);
@@ -74,8 +80,8 @@ public class UserServiceImpl implements UserService {
         }
         if (userDo != null){
             userDo.setUserName(newUserName);
-            if (StringUtils.hasText(newAvatarUrl)){
-                userDo.setAvatarUrl(newAvatarUrl);
+            if (!ObjectUtils.isEmpty(newAvatarFileId)){
+                userDo.setAvatarFileId(newAvatarFileId);
             }
             try {
                 userStorageService.saveUserToDataBase(userDo);

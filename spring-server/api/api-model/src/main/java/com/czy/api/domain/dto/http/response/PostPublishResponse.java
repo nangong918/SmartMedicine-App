@@ -12,5 +12,5 @@ import lombok.EqualsAndHashCode;
 @Data
 public class PostPublishResponse extends BaseResponseData {
     // 雪花id
-    public Long SnowflakeId;
+    public Long snowflakeId;
 }

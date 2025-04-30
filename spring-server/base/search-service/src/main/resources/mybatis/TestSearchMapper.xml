@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czy.search.mapper.TestSearchMapper">
+    <sql id="searchTestDoColumns">
+        id,
+        search_name
+    </sql>
+    <insert id="insert">
+        INSERT INTO test_search (
+        <if test="id != null">id,</if> <!-- 仅在 id 不为 null 时插入 -->
+        search_name) VALUES (
+        <if test="id != null">#{id},</if> <!-- 仅在 id 不为 null 时插入 -->
+        #{searchName}
+        )
+    </insert>
+    <delete id="delete">
+        DELETE FROM test_search WHERE id = #{id}
+    </delete>
+    <select id="selectById" resultType="com.czy.api.domain.Do.test.TestSearchDo">
+        SELECT
+        <include refid="searchTestDoColumns"/>
+        FROM test_search
+        WHERE id = #{id}
+    </select>
+    <select id="selectByLikeName" resultType="com.czy.api.domain.Do.test.TestSearchDo">
+        SELECT
+        <include refid="searchTestDoColumns"/>
+        FROM test_search
+        WHERE search_name LIKE CONCAT('%', #{likeName}, '%')
+    </select>
+</mapper>

@@ -99,7 +99,7 @@ public class MainTests {
     // resetUserInfo
     @Test
     public void resetUserInfo() throws Exception {
-        UserDo userDo = userService.resetUserInfo("test_user", "鸦羽天下第一！", "https://www.baidu.com/img/bd_logo1.png");
+        UserDo userDo = userService.resetUserInfo("test_user", "鸦羽天下第一！", 1L);
         System.out.println("loginUserRequest = " + userDo);
     }
 

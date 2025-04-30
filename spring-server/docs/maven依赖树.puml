@@ -60,7 +60,7 @@ package "Business" {
     [message-service] --> [SpringMvcUtils]
     [message-service] --> [api-model]
 
-    [relationship-service] --> [SpringWebfluxUtils]
+    [relationship-service] --> [SpringWebMvcUtils]
     [relationship-service] --> [api-model]
 
     [post-service] --> [SpringMvcUtils]

@@ -11,13 +11,13 @@ import com.czy.api.domain.ao.relationship.NewUserItemAo;
 import com.czy.api.domain.ao.relationship.SearchFriendApplyAo;
 import com.czy.api.domain.dto.http.base.BaseNettyRequest;
 import com.czy.api.domain.dto.http.request.GetMyFriendsRequest;
+import com.czy.api.domain.dto.http.request.SearchUserByNameRequest;
 import com.czy.api.domain.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.api.domain.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.api.domain.dto.http.response.GetMyFriendsResponse;
 import com.czy.api.domain.dto.http.response.SearchUserResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -44,65 +43,96 @@ public class UserRelationshipController {
 //    private final LoginService loginService;
 //    private final RabbitMqSender clusterEventsPusher;
     private final UserRelationshipService userRelationshipService;
-    // 搜索用户
-    // 搜索用户
-    @PostMapping(RelationshipConstant.Search_User)
+
+    /**
+     * like模糊搜索用户
+     * @param request   请求体，包含senderId和receiverId；其中receiverId是模糊的account
+     * @return List搜索结果。之所以是list是因为模糊搜索可能出现一系列匹配
+     */
+    @PostMapping(RelationshipConstant.Search_User_ByAccount)
     public Mono<BaseResponse<SearchUserResponse>>
-    searchUser(@Validated @RequestBody BaseNettyRequest request) {
-        List<SearchFriendApplyAo> searchFriendApplyAoList = userRelationshipService.searchFriend(request.senderId, request.receiverId);
+    searchUserByAccount(@Validated @RequestBody BaseNettyRequest request) {
+        List<SearchFriendApplyAo> searchFriendApplyAoList =
+                userRelationshipService.searchFriend(request.getSenderId(), request.getReceiverId());
         SearchUserResponse searchUser = new SearchUserResponse();
-        searchUser.userList = searchFriendApplyAoList;
+        searchUser.setUserList(searchFriendApplyAoList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(searchUser));
     }
 
-    // getAddMeRequestList
+    /**
+     * es + userName搜索用户
+     * @param request
+     * @return
+     */
+    @PostMapping(RelationshipConstant.Search_User_ByName)
+    public Mono<BaseResponse<SearchUserResponse>>
+    searchUserByName(@Validated @RequestBody SearchUserByNameRequest request) {
+        List<SearchFriendApplyAo> searchFriendApplyAoList =
+                userRelationshipService.searchFriendByName(request.getSenderId(), request.getReceiverId());
+        SearchUserResponse searchUser = new SearchUserResponse();
+        searchUser.setUserList(searchFriendApplyAoList);
+        return Mono.just(BaseResponse.getResponseEntitySuccess(searchUser));
+    }
+
+    /**
+     * 获取添加我的申请列表
+     * @param request
+     * @return
+     */
     @PostMapping(RelationshipConstant.Get_Add_Me_Request_List)
     public Mono<BaseResponse<GetAddMeRequestListResponse>>
     getAddMeRequestList(@Validated @RequestBody BaseNettyRequest request){
-        String senderId = request.getSenderId();
-
-        List<NewUserItemAo> list = userRelationshipService.getAddMeRequestList(senderId);
+        String senderAccount = request.getSenderId();
+        List<NewUserItemAo> list = userRelationshipService.getAddMeRequestList(senderAccount);
         GetAddMeRequestListResponse response = new GetAddMeRequestListResponse();
-        response.addMeRequestList = list;
-
+        response.setAddMeRequestList(list);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 
-    // getHandleMyAddUserResponseList
+    /**
+     * 获取我处理的我添加的申请列表
+     * @param request
+     * @return
+     */
     @PostMapping(RelationshipConstant.Get_Handle_My_Add_User_Response_List)
     public Mono<BaseResponse<GetHandleMyAddUserResponseListResponse>>
     getHandleMyAddUserResponseList(@Validated @RequestBody BaseNettyRequest request){
-        String senderId = request.getSenderId();
-
-        List<NewUserItemAo> list = userRelationshipService.getHandleMyAddUserResponseList(senderId);
+        String senderAccount = request.getSenderId();
+        List<NewUserItemAo> list = userRelationshipService.getHandleMyAddUserResponseList(senderAccount);
         GetHandleMyAddUserResponseListResponse response = new GetHandleMyAddUserResponseListResponse();
-        response.handleMyAddUserResponseList = list;
-
+        response.setHandleMyAddUserResponseList(list);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 
-    // /getMyFriendList
+    /**
+     * 好友列表
+     * @param request
+     * @return
+     */
     @PostMapping(RelationshipConstant.Get_My_Friend_List)
     public Mono<BaseResponse<GetMyFriendsResponse>>
     getMyFriendList(@Validated @RequestBody GetMyFriendsRequest request){
         String senderId = request.getSenderId();
-
         List<MyFriendItemAo> list = userRelationshipService.getMyFriendList(senderId);
         GetMyFriendsResponse response = new GetMyFriendsResponse();
-        response.addMeRequestList = list;
-
+        response.setAddMeRequestList(list);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 
-    // GetMyFriendApplyList
+    /**
+     * 获取未处理的好友申请数量
+     * 可以写成service然后交给netty
+     * @param request
+     * @return
+     */
     @PostMapping(RelationshipConstant.Get_My_Friend_Apply_List)
     public Mono<BaseResponse<Integer>>
     getMyFriendApplyList(@Validated @RequestBody BaseNettyRequest request){
-        String senderId = request.getSenderId();
+        String senderAccount = request.getSenderId();
 
         // 状态判断：添加我的，我的处理状态是未处理或者空
         int response = 0;
-        List<NewUserItemAo> addMeList = userRelationshipService.getAddMeRequestList(senderId);
+        List<NewUserItemAo> addMeList = userRelationshipService.getAddMeRequestList(senderAccount);
 //        List<NewUserItemAo> myAddList = userService.getHandleMyAddUserResponseList(senderId);
 //        Integer response = addMeList.size() + myAddList.size();
 

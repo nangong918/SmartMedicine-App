@@ -11,6 +11,7 @@ public class MessageConstant {
     public static final String serviceName = "message-service";
     public static final String serviceRoute = "/" + serviceName;
     public static final String Chat_CONTROLLER = "/chat";
+    public static final String ChatFile_CONTROLLER = "/chatFile";
     public static final String WebRTC_CONTROLLER = "/webrtc";
     public static final String serviceUri = "lb://" + serviceName;
 }

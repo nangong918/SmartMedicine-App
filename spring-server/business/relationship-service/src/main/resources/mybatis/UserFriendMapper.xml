@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.czy.relationship.mapper.UserFriendMapper">
+<mapper namespace="com.czy.relationship.mapper.mysql.UserFriendMapper">
 
     <insert id="addUserFriend">
         insert into user_friend(user_id, friend_id, add_time)
@@ -53,11 +53,21 @@
            OR (user_id = #{friendId} AND friend_id = #{userId})
     </select>
     <!--  考虑到user_id在userFriend表中可能是user,也可能是friend,所以内连接两次  -->
+<!--
+SELECT
+      lu.account,
+      lu.user_name,
+      luf.avatar_file_id
+ FROM
+      login_user lu JOIN user_friend uf
+      ON (lu.id = uf.user_id OR lu.id = uf.friend_id)
+WHERE lu.account = #{userAccount}
+-->
     <select id="getUserFriendsViewByAccount" resultType="com.czy.api.domain.entity.UserViewEntity">
         SELECT
             lu2.id AS userId,
             lu2.user_name AS userName,
-            lu2.avatar_url AS avatarUrl,
+            lu2.avatar_file_id AS avatarFileId,
             lu2.account AS userAccount
         FROM login_user lu
                  JOIN user_friend uf ON (uf.user_id = lu.id OR uf.friend_id = lu.id)
@@ -71,7 +81,7 @@
         SELECT
             lu2.id AS userId,
             lu2.user_name AS userName,
-            lu2.avatar_url AS avatarUrl,
+            lu2.avatar_file_id AS avatarFileId,
             lu2.account AS userAccount
         FROM login_user lu
                  JOIN user_friend uf ON (uf.user_id = lu.id OR uf.friend_id = lu.id)

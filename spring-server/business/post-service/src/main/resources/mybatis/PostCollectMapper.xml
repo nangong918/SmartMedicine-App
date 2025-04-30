@@ -45,4 +45,12 @@
         FROM post_collect
         WHERE collect_folder_id = #{collectFolderId}
     </select>
+    <select id="findPostCollectByPostIdAndFolderId"
+            resultType="com.czy.api.domain.Do.post.collect.PostCollectDo">
+        SELECT
+        <include refid="doDoColumns"/>
+        FROM post_collect
+        WHERE post_id = #{postId}
+          AND collect_folder_id = #{collectFolderId}
+    </select>
 </mapper>

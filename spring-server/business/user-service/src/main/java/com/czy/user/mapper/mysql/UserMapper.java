@@ -52,4 +52,9 @@ public interface UserMapper {
 
     // 更新用户信息
     void updateUserInfo(UserDo userDo);
+
+    // 插入系用户信息
+    void insertUserInfo(UserDo userDo);
+
+    List<UserDo> getUserListByIdList(List<Long> idList);
 }

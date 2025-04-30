@@ -13,4 +13,12 @@ import java.util.List;
 public class FileOptionResult {
     private List<ErrorFile> ErrorFiles = new ArrayList<>();
     private List<SuccessFile> successFiles = new ArrayList<>();
+
+    public FileOptionResult() {
+    }
+
+    public FileOptionResult(List<ErrorFile> errorFiles, List<SuccessFile> successFiles) {
+        ErrorFiles = errorFiles;
+        this.successFiles = successFiles;
+    }
 }

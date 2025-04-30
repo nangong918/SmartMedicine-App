@@ -72,7 +72,7 @@ public class PostHandleServiceImpl implements PostHandleService {
 
     @Transactional
     @Override
-    public void postForward(Long postId, Long userId) {
+    public void postForward(Long postId) {
         PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(postId);
         postInfoDo.setForwardCount(postInfoDo.getForwardCount() + 1);
         postInfoMapper.updatePostInfoDo(postInfoDo);
@@ -92,6 +92,22 @@ public class PostHandleServiceImpl implements PostHandleService {
     }
 
     @Override
+    public void postCollectUpdate(Long postId, Long folderId, Long newFolderId) {
+        PostCollectDo postCollectDo = postCollectMapper.findPostCollectByPostIdAndFolderId(postId, folderId);
+        if (postCollectDo == null || postCollectDo.getPostId() == null){
+            postCollectDo = new PostCollectDo();
+            postCollectDo.setPostId(postId);
+            postCollectDo.setCollectFolderId(newFolderId);
+            postCollectMapper.savePostCollect(postCollectDo);
+        }
+        else {
+            postCollectDo.setPostId(postId);
+            postCollectDo.setCollectFolderId(newFolderId);
+            postCollectMapper.updatePostCollect(postCollectDo);
+        }
+    }
+
+    @Override
     public Long createPostCollectFolder(Long userId, String collectFolderName) {
         PostCollectFolderDo postCollectFolderDo = new PostCollectFolderDo();
         postCollectFolderDo.setUserId(userId);
@@ -102,6 +118,22 @@ public class PostHandleServiceImpl implements PostHandleService {
     @Override
     public void deletePostCollectFolder(Long collectFolderId, Long userId) {
         postCollectFolderMapper.deletePostCollectFolder(collectFolderId, userId);
+    }
+
+    @Override
+    public void updatePostCollectFolder(Long collectFolderId, Long userId, String newCollectFolderName) {
+        PostCollectFolderDo postCollectFolderDo = postCollectFolderMapper.findPostCollectFolderById(collectFolderId);
+        if (postCollectFolderDo == null || postCollectFolderDo.getUserId() == null){
+            postCollectFolderDo = new PostCollectFolderDo();
+            postCollectFolderDo.setUserId(userId);
+            postCollectFolderDo.setCollectFolderName(newCollectFolderName);
+            postCollectFolderMapper.savePostCollectFolder(postCollectFolderDo);
+        }
+        else {
+            postCollectFolderDo.setUserId(userId);
+            postCollectFolderDo.setCollectFolderName(newCollectFolderName);
+            postCollectFolderMapper.updatePostCollectFolder(postCollectFolderDo);
+        }
     }
 
     @Override

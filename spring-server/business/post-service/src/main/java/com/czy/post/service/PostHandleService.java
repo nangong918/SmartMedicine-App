@@ -24,16 +24,20 @@ public interface PostHandleService {
     void deletePostLike(Long postId, Long userId);
 
     // 转发（聊天记录 + netty）
-    void postForward(Long postId, Long userId);
+    void postForward(Long postId);
 
     // 收藏（直接插入数据库）
     void postCollect(Long postId, Long collectFolderId);
     // 取消收藏
     void deletePostCollect(Long postId, Long collectFolderId);
+    // 修改收藏
+    void postCollectUpdate(Long postId, Long folderId, Long newFolderId);
     // 创建收藏夹
     Long createPostCollectFolder(Long userId, String collectFolderName);
     // 删除收藏夹
     void deletePostCollectFolder(Long collectFolderId, Long userId);
+    // 修改收藏夹
+    void updatePostCollectFolder(Long collectFolderId, Long userId, String newCollectFolderName);
     // 查询某个user的全部文件夹
     List<PostCollectFolderDo> findPostCollectFolderByUserId(Long userId);
     // 查询某个文件夹下的全部帖子

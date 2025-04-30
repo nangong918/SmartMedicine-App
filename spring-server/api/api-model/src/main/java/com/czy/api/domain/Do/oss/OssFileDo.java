@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
  */
 @Data
 public class OssFileDo {
+    // fileId
     @Id
     public Long id;
     // 文件本身的名称

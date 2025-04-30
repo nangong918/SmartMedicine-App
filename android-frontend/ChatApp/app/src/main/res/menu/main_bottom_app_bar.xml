@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menuHomeIcon"
+        android:icon="@drawable/baseline_home_24"
+        android:title="首页"
+        android:contentDescription="accelerator"
+        app:showAsAction="ifRoom"/>
+
+<!--    <item-->
+<!--        android:id="@+id/menuHospitalIcon"-->
+<!--        android:icon="@drawable/baseline_text_snippet_24"-->
+<!--        android:title="医疗"-->
+<!--        android:contentDescription="rotation"-->
+<!--        app:showAsAction="ifRoom"/>-->
+
+    <item
+        android:id="@+id/menuHealthIcon"
+        android:icon="@drawable/baseline_medical_services_24"
+        android:title="健康信息"
+        android:contentDescription="rotation"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menuUserIcon"
+        android:icon="@drawable/baseline_account_circle_24"
+        android:title="用户设置"
+        android:contentDescription="rotation"
+        app:showAsAction="ifRoom"/>
+
+</menu>

@@ -18,24 +18,24 @@ public interface UserChatMessageConverter {
     // do -> bo
     default UserChatMessageBo toBo(UserChatMessageDo userChatMessageDo, String senderAccount, String receiverAccount){
         UserChatMessageBo userChatMessageBo = new UserChatMessageBo();
-        userChatMessageBo.setId(userChatMessageDo.id);
-        userChatMessageBo.setMsgContent(userChatMessageDo.msgContent);
-        userChatMessageBo.setMsgType(userChatMessageDo.msgType);
+        userChatMessageBo.setId(userChatMessageDo.getId());
+        userChatMessageBo.setMsgContent(userChatMessageDo.getMsgContent());
+        userChatMessageBo.setMsgType(userChatMessageDo.getMsgType());
         userChatMessageBo.setSenderAccount(senderAccount);
         userChatMessageBo.setReceiverAccount(receiverAccount);
-        userChatMessageBo.setTimestamp(userChatMessageDo.timestamp);
+        userChatMessageBo.setTimestamp(userChatMessageDo.getTimestamp());
         return userChatMessageBo;
     }
 
     // bo -> do
     default UserChatMessageDo toDo(UserChatMessageBo userChatMessageBo, Long senderId, Long receiverId){
         UserChatMessageDo userChatMessageDo = new UserChatMessageDo();
-        userChatMessageDo.id = userChatMessageBo.getId();
-        userChatMessageDo.msgContent = userChatMessageBo.getMsgContent();
-        userChatMessageDo.msgType = userChatMessageBo.getMsgType();
-        userChatMessageDo.senderId = senderId;
-        userChatMessageDo.receiverId = receiverId;
-        userChatMessageDo.timestamp = userChatMessageBo.getTimestamp();
+        userChatMessageDo.setId(userChatMessageBo.getId());
+        userChatMessageDo.setMsgContent(userChatMessageBo.getMsgContent());
+        userChatMessageDo.setMsgType(userChatMessageBo.getMsgType());
+        userChatMessageDo.setSenderId(senderId);
+        userChatMessageDo.setReceiverId(receiverId);
+        userChatMessageDo.setTimestamp(userChatMessageBo.getTimestamp());
         return userChatMessageDo;
     }
 }

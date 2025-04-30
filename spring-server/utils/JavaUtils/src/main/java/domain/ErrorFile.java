@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class ErrorFile {
     private String fileName;
+    private Long fileId;
     private String errorMessage;
 
     public ErrorFile() {

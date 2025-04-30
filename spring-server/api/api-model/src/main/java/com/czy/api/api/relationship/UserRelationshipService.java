@@ -29,6 +29,21 @@ public interface UserRelationshipService {
     boolean cancelAddUserFriend(AddUserAo addUserAo);
 
     /**
+     * 将消息注册为ChatListJson
+     * @param chatContent       消息内容
+     * @param senderId          发送者id
+     * @param receiverId        接收者id
+     * @param timestamp         时间戳
+     * @param senderAccount     发送者账号
+     * @param receiverAccount   接收者账号
+     * @return                  ChatListJson
+     */
+    String getChatListJson(String chatContent,
+                           Long senderId, Long receiverId,
+                           Long timestamp,
+                           String senderAccount, String receiverAccount);
+
+    /**
      * 处理加好友请求
      * @param handleAddedMeAo
      */
@@ -58,6 +73,8 @@ public interface UserRelationshipService {
 
     // 搜索好友及其添加状态
     List<SearchFriendApplyAo> searchFriend(String applyAccount, String handlerAccount);
+    // 根据用户名搜索好友
+    List<SearchFriendApplyAo> searchFriendByName(String applyAccount, String handlerUserName);
 
     void updateApplyStatus(AddUserAo addUserAo);
 

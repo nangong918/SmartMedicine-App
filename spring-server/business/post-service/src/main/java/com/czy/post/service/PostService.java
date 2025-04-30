@@ -1,6 +1,7 @@
 package com.czy.post.service;
 
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.ao.post.PostInfoAo;
 import lombok.NonNull;
 
 import java.util.List;
@@ -15,9 +16,11 @@ public interface PostService {
     // 不需要上传文件的情况
     long releasePostWithoutFile(@NonNull PostAo postAo);
     // 初次上传到redis
-    long releasePostFirst(@NonNull PostAo postAo);
+    long releasePostFirst(@NonNull PostAo postAo) throws Exception;
     // oss的成功的二次上传
     void releasePostAfterOss(@NonNull PostAo postAo);
+    // 验证是否为合法的发布
+    boolean isLegalPost(PostAo postAo);
 
     /**
      * 删除
@@ -27,7 +30,7 @@ public interface PostService {
     void deletePost(Long postId, Long userId);
 
     // 更改完全
-    void updatePostFirst(PostAo postAo, Long postId);
+    void updatePostFirst(PostAo postAo, Long postId) throws Exception;
     void updatePostAfterOss(PostAo postAo);
 
     // 局部更改
@@ -37,5 +40,7 @@ public interface PostService {
     // 查询
     PostAo findPostById(Long postId);
     List<PostAo> findPostsByIdList(List<Long> idList);
+    // 查询PostInfoList
+    List<PostInfoAo> findPostInfoList(List<Long> idList);
 
 }

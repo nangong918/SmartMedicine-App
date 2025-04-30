@@ -5,6 +5,7 @@ import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import org.mapstruct.Mapper;
@@ -117,4 +118,14 @@ public interface PostConverter {
         return postAo;
     }
 
+    // postInfoDo -> postInfoAo
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "authorId", target = "authorId")
+    @Mapping(source = "title", target = "title")
+    @Mapping(source = "releaseTimestamp", target = "releaseTimestamp")
+    @Mapping(source = "likeCount", target = "likeCount")
+    @Mapping(source = "collectCount", target = "collectCount")
+    @Mapping(source = "commentCount", target = "commentCount")
+    @Mapping(source = "forwardCount", target = "forwardCount")
+    PostInfoAo postInfoDoToAo(PostInfoDo postInfoDo);
 }

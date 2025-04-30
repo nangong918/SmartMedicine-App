@@ -3,25 +3,36 @@ package com.czy.message.service;
 
 
 
+import cn.hutool.core.util.ObjectUtil;
+import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user.UserService;
+import com.czy.api.constant.MessageTypeEnum;
+import com.czy.api.constant.message.ChatConstant;
 import com.czy.api.constant.message.MessageConstant;
+import com.czy.api.converter.domain.message.UserChatMessageConverter;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.ao.message.FetchUserMessageAo;
 import com.czy.api.domain.bo.message.UserChatLastMessageBo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
 import com.czy.api.api.message.ChatService;
+import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
 import com.czy.message.mapper.mysql.UserChatMessageMapper;
 import com.czy.message.service.transactional.MessageStorageService;
 import com.czy.springUtils.service.RedisService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -36,14 +47,13 @@ public class ChatServiceImpl implements ChatService {
     private final UserChatMessageMapper chatMapper;
     private final RedisService redisService;
     private final MessageStorageService messageStorageService;
-
+    private final UserChatMessageMongoMapper userChatMessageMongoMapper;
+    private final UserChatMessageConverter userChatMessageConverter;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private OssService ossService;
 
-    public static final Long CHAT_MESSAGE_EXPIRE_TIME = 60 * 60 * 24 * 7L;
-
-    public static final int MAX_RECENT_MESSAGE_COUNT = 200;
-    public static final int MAX_SEARCH_MESSAGE_LIMIT = 50;
 
     @Override
     public List<UserChatLastMessageBo> getUserAllChatMessage(String senderAccount) {
@@ -62,7 +72,7 @@ public class ChatServiceImpl implements ChatService {
         }
 
         // 限制返回的消息数量 (交给前端去根据时间顺序排序，节省后端算力和时间)
-        return messages.size() > MAX_RECENT_MESSAGE_COUNT ? messages.subList(0, MAX_RECENT_MESSAGE_COUNT) : messages;
+        return messages.size() > ChatConstant.MAX_RECENT_MESSAGE_COUNT ? messages.subList(0, ChatConstant.MAX_RECENT_MESSAGE_COUNT) : messages;
     }
 
     @Override
@@ -77,7 +87,7 @@ public class ChatServiceImpl implements ChatService {
         UserChatLastMessageBo bo = redisService.getObject(key, UserChatLastMessageBo.class);
         if (bo != null){
             bo.setUnreadCount(0);
-            redisService.setObject(key, bo, CHAT_MESSAGE_EXPIRE_TIME);
+            redisService.setObject(key, bo, ChatConstant.CHAT_MESSAGE_EXPIRE_TIME);
         }
         else {
             log.warn("bo == null");
@@ -87,24 +97,76 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<UserChatMessageBo> getUserChatMessage(FetchUserMessageAo fetchUserMessageAo) {
         // 限制 messageCount 最大值为 200
-        int messageCount = Math.min(fetchUserMessageAo.getMessageCount(), MAX_SEARCH_MESSAGE_LIMIT);
+        int messageCount = Math.min(fetchUserMessageAo.getMessageCount(), ChatConstant.MAX_SEARCH_MESSAGE_LIMIT);
 
         long senderId = getUserId(fetchUserMessageAo.getSenderAccount());
         long receiverId = getUserId(fetchUserMessageAo.getReceiverAccount());
 
+        // 此处不应该是mysql查询，而应该是mongodb查询
+//        return chatMapper.selectMessagesAfter(
+//                senderId,
+//                receiverId,
+//                fetchUserMessageAo.getTimestampIndex(),
+//                messageCount
+//        );
+
         // 根据 timestampIndex 和 messageCount 查询用户聊天记录
-        return chatMapper.selectMessagesBefore(
-                senderId,
-                receiverId,
-                fetchUserMessageAo.getTimestampIndex(),
-                messageCount
+        // 资源文件存储的是 fileIdStr
+        List<UserChatMessageDo> messageDoList = userChatMessageMongoMapper.findMessagesAfterTimestamp(senderId, receiverId, fetchUserMessageAo.getTimestampIndex(), messageCount);
+        if (CollectionUtils.isEmpty(messageDoList)){
+            return new LinkedList<>();
+        }
+        List<UserChatMessageDo> textMessageDoList = new ArrayList<>();
+        List<UserChatMessageDo> fileMessageDoList = new ArrayList<>();
+        for (UserChatMessageDo message : messageDoList) {
+            if (message.getMsgType() == MessageTypeEnum.text.code) {
+                textMessageDoList.add(message); // 添加到文本消息列表
+            } else {
+                fileMessageDoList.add(message); // 添加到非文本消息列表
+            }
+        }
+        // 非空则将内容从id替换未url
+        if (!fileMessageDoList.isEmpty()){
+            List<Long> fileIds;
+            try {
+                fileIds = fileMessageDoList.stream()
+                        .map(UserChatMessageDo::getMsgContent)
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+            } catch (Exception e){
+                log.error("fileIdList 解析失败", e);
+                throw new AppException("fileIdList 解析失败");
+            }
+            List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+            for (int i = 0; i < fileMessageDoList.size(); i++){
+                UserChatMessageDo message = fileMessageDoList.get(i);
+                message.setMsgContent(fileUrls.get(i));
+            }
+
+            // 合并
+            messageDoList.clear();
+            messageDoList.addAll(fileMessageDoList);
+            messageDoList.addAll(textMessageDoList);
+        }
+        // 排序，按时间戳降序
+        messageDoList.sort(
+                Comparator.comparingLong(UserChatMessageDo::getTimestamp)
+                        .reversed()
         );
+
+        return messageDoList.stream()
+                .map(message -> userChatMessageConverter.toBo(
+                        message,
+                        fetchUserMessageAo.getSenderAccount(),
+                        fetchUserMessageAo.getReceiverAccount()
+                ))
+                .collect(Collectors.toList());
     }
 
     @Override
     public void saveUserChatMessageToRedis(UserChatLastMessageBo userChatLastMessageBo) {
         String key = MessageConstant.CHAT_MESSAGE_KEY + userChatLastMessageBo.senderAccount + ":" + userChatLastMessageBo.receiverAccount + ":";
-        redisService.setObject(key, userChatLastMessageBo, CHAT_MESSAGE_EXPIRE_TIME);
+        redisService.setObject(key, userChatLastMessageBo, ChatConstant.CHAT_MESSAGE_EXPIRE_TIME);
     }
 
     @Override
@@ -114,7 +176,7 @@ public class ChatServiceImpl implements ChatService {
         messageStorageService.storeMessagesToDatabase(userChatMessageDoList);
     }
 
-    private Long getUserId(String account){
+    private long getUserId(String account){
         Long userId = userService.getIdByAccount(account);
         if (userId == null){
             String errorMsg = String.format("account：%s 不存在", account);

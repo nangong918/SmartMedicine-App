@@ -2,7 +2,7 @@ package com.czy.api.domain.dto.socket.response;
 
 
 
-import com.czy.api.constant.netty.Constants;
+import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.domain.dto.base.BaseResponseData;
 import json.BaseBean;
 import lombok.Data;
@@ -15,6 +15,6 @@ public class HaveReadMessageResponse extends BaseResponseData implements BaseBea
     public String receiverAccount;
     public HaveReadMessageResponse(){
         super();
-        this.senderId = Constants.SERVER_ID;
+        this.senderId = NettyConstants.SERVER_ID;
     }
 }

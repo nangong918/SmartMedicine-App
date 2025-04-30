@@ -10,8 +10,11 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  */
 @SpringBootApplication(
         // 扫描指定包下的类
-        scanBasePackages = {"com.czy.search",
-                "com.czy.springUtils", "com.czy.api"},
+        scanBasePackages = {
+                "com.czy.search",
+                "com.czy.springUtils",
+                "com.czy.api"
+        },
         // 排除
         exclude = {}
 )

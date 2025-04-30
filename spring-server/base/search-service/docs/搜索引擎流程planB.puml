@@ -1,0 +1,51 @@
+@startuml
+start
+:输入搜索句子;
+:TF-IDF + 逻辑回归树;
+if (是否是自然语言?) then (no)
+  stop
+else (yes)
+  :Bert模型（合法检查）;
+  if (是否是无信息量寒暄语句?是否为app问题) then (yes)
+    if (是寒暄?) then (yes)
+        :随机寒暄回答;
+        stop
+    else (no)
+        :跳转到App对应功能;
+        stop
+    endif
+  else (no)
+      :一级搜索：文本内容作为mysql的like搜索;
+      if (搜索到帖子?) then (yes)
+        stop
+      else (no)
+        :二级搜索：IK分词，ElasticSearch分词搜索;
+        if (搜索到帖子?) then (yes)
+          stop
+        else (no)
+          :三级搜索：实体命名识别 + 知识图谱模糊搜索;
+          if (实体命名识别失败?) then (yes)
+            stop
+          else (no)
+            if (搜索到帖子?) then (yes)
+              :返回帖子;
+              stop
+            else (no)
+              :四级搜索：用户Context向量 + 实体命名识别 + Bert意图识别;
+              note
+                App问题、帖子问题（知识图谱分类）
+                [定义，病因，预防，相关病症...]
+              end note
+              if (搜索到帖子?) then (yes)
+                :返回帖子;
+                stop
+              else (no)
+                stop
+              endif
+            endif
+          endif
+        endif
+      endif
+  endif
+endif
+@enduml

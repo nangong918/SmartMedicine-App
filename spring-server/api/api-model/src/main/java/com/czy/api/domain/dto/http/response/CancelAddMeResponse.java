@@ -18,5 +18,5 @@ public class CancelAddMeResponse extends BaseNettyResponse {
     // user名称
     public String userName;
     // 用户头像
-    public String avatarUrl;
+    public Long avatarFileId;
 }

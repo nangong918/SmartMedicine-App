@@ -1,8 +1,11 @@
 package com.czy.relationship.service;
 
 import com.czy.api.api.relationship.UserRelationshipService;
+import com.czy.api.api.user.UserSearchService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.netty.ResponseMessageType;
+import com.czy.api.converter.domain.relationship.NewUserItemConverter;
+import com.czy.api.converter.domain.relationship.SearchFriendApplyConverter;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.Do.relationship.FriendApplyDo;
 import com.czy.api.domain.Do.relationship.UserFriendDo;
@@ -18,11 +21,13 @@ import com.czy.api.domain.entity.ChatEntity;
 import com.czy.api.domain.entity.MessageEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.entity.event.Message;
+import com.czy.api.domain.entity.event.RelationshipDelete;
+import com.czy.relationship.component.RabbitMqSender;
 import com.czy.relationship.constant.ApplyStatusEnum;
 import com.czy.relationship.constant.HandleStatusEnum;
 import com.czy.relationship.constant.ListAddOrDeleteStatusEnum;
-import com.czy.relationship.mapper.FriendApplyMapper;
-import com.czy.relationship.mapper.UserFriendMapper;
+import com.czy.relationship.mapper.mysql.FriendApplyMapper;
+import com.czy.relationship.mapper.mysql.UserFriendMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.AppException;
@@ -31,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -50,11 +56,15 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
 
     private final UserFriendMapper userFriendMapper;
+    private final SearchFriendApplyConverter searchFriendApplyConverter;
+    private final NewUserItemConverter newUserItemConverter;
+    private final RabbitMqSender rabbitMqSender;
 
     // Dubbo远程调用User服务
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
-
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private UserSearchService userSearchService;
     private final FriendApplyMapper friendApplyMapper;
 
     private final ObjectMapper objectMapper;
@@ -65,25 +75,25 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     @Override
     public boolean addUserFriend(AddUserAo addUserAo) {
         // 获取用户id
-        Long senderId = getUserId(addUserAo.applyAccount);
-        Long receiverId = getUserId(addUserAo.handlerAccount);
+        Long senderId = getUserId(addUserAo.getApplyAccount());
+        Long receiverId = getUserId(addUserAo.getHandlerAccount());
 
         // 构建 FriendApplyDo 对象
         FriendApplyDo friendApplyDo = new FriendApplyDo();
         friendApplyDo.setApplyUserId(senderId);
         friendApplyDo.setHandleUserId(receiverId);
-        friendApplyDo.setApplyTime(addUserAo.applyTime);
-        friendApplyDo.setSource(addUserAo.source);
+        friendApplyDo.setApplyTime(addUserAo.getApplyTime());
+        friendApplyDo.setSource(addUserAo.getSource());
 
         // 申请状态
-        friendApplyDo.setApplyStatus(addUserAo.applyStatus);
+        friendApplyDo.setApplyStatus(addUserAo.getApplyStatus());
         // 处理状态
 
         // chatList
-        String chatListJson = getChatListJson(addUserAo.applyContent,
+        String chatListJson = getChatListJson(addUserAo.getApplyContent(),
                 senderId, receiverId,
-                addUserAo.applyTime,
-                addUserAo.applyAccount, addUserAo.handlerAccount
+                addUserAo.getApplyTime(),
+                addUserAo.getApplyAccount(), addUserAo.getHandlerAccount()
         );
         friendApplyDo.setChatList(chatListJson);
 
@@ -100,7 +110,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     }
 
     // 将消息注册为ChatListJson
-    private String getChatListJson(String chatContent,
+    public String getChatListJson(String chatContent,
                                    Long senderId, Long receiverId,
                                    Long timestamp,
                                    String senderAccount, String receiverAccount){
@@ -147,37 +157,43 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public Message handleAddedUser(HandleAddedMeAo handleAddedMeAo) {
-        Long applyId = getUserId(handleAddedMeAo.applyAccount);
-        Long handlerId = getUserId(handleAddedMeAo.handlerAccount);
+        Long applyId = getUserId(handleAddedMeAo.getApplyAccount());
+        Long handlerId = getUserId(handleAddedMeAo.getHandlerAccount());
 
         // 修改申请记录
         FriendApplyDo friendApplyDo = friendApplyMapper.getFriendApplyByUserIds(applyId, handlerId);
         if (friendApplyDo != null){
-            friendApplyDo.setHandleStatus(handleAddedMeAo.handleType);
-            friendApplyDo.setHandleTime(handleAddedMeAo.handleTime);
+            friendApplyDo.setHandleStatus(handleAddedMeAo.getHandleType());
+            friendApplyDo.setHandleTime(handleAddedMeAo.getHandleTime());
             friendApplyDo.setChatList(
                     getChatListJson(
-                            handleAddedMeAo.additionalContent,
+                            handleAddedMeAo.getAdditionalContent(),
                             applyId,
                             handlerId,
-                            handleAddedMeAo.handleTime,
-                            handleAddedMeAo.applyAccount,
-                            handleAddedMeAo.handlerAccount
+                            handleAddedMeAo.getHandleTime(),
+                            handleAddedMeAo.getApplyAccount(),
+                            handleAddedMeAo.getHandlerAccount()
                     )
             );
             friendApplyMapper.updateFriendApply(friendApplyDo);
         }
 
         // Netty将申请结果推送到客户端
-        Message responseMessage = this.sendHandleResultToApplier(handleAddedMeAo, ResponseMessageType.Friend.HANDLE_ADDED_USER);
+        Message responseMessage = this.sendHandleResultToApplier(
+                handleAddedMeAo, ResponseMessageType.Friend.HANDLE_ADDED_USER
+        );
 
         // 同意
-        if (HandleStatusEnum.AGREE.code == handleAddedMeAo.handleType) {
+        if (HandleStatusEnum.AGREE.code == handleAddedMeAo.getHandleType()) {
             if (userFriendMapper.isFriend(applyId, handlerId) <= 0){
                 UserFriendDo userFriendDo = new UserFriendDo();
                 userFriendDo.setUserId(applyId);
                 userFriendDo.setFriendId(handlerId);
-                userFriendDo.setAddTime(handleAddedMeAo.handleTime == null ? System.currentTimeMillis() : handleAddedMeAo.handleTime);
+                userFriendDo.setAddTime(
+                        handleAddedMeAo.getHandleTime() == null ?
+                                System.currentTimeMillis() :
+                                handleAddedMeAo.getHandleTime()
+                );
 
                 if (userFriendMapper.addUserFriend(userFriendDo) > 0){
                     log.info("添加好友成功, applyId: {}, handlerId: {}", applyId, handlerId);
@@ -185,18 +201,18 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
                 return responseMessage;
             }
             else {
-                String errorMsg = String.format("sender：%s 和 receiver：%s 已经是好友", handleAddedMeAo.applyAccount, handleAddedMeAo.handlerAccount);
+                String errorMsg = String.format("sender：%s 和 receiver：%s 已经是好友", handleAddedMeAo.getApplyAccount(), handleAddedMeAo.getHandlerAccount());
                 log.warn(errorMsg);
                 // 修改申请记录
-                setIsFriend(applyId, handlerId, handleAddedMeAo.handleTime);
+                setIsFriend(applyId, handlerId, handleAddedMeAo.getHandleTime());
                 throw new AppException(errorMsg);
             }
         }
-        else if (HandleStatusEnum.REFUSED.code == handleAddedMeAo.handleType){
+        else if (HandleStatusEnum.REFUSED.code == handleAddedMeAo.getHandleType()){
             // 拒绝
             return responseMessage;
         }
-        else if (HandleStatusEnum.BLACK.code == handleAddedMeAo.handleType) {
+        else if (HandleStatusEnum.BLACK.code == handleAddedMeAo.getHandleType()) {
             // 拉黑
             return responseMessage;
         }
@@ -205,45 +221,46 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public Message sendHandleResultToApplier(HandleAddedMeAo handleAddedMeAo, String responseType) {
-        HandleAddUserResponse handleAddUserResponse = new HandleAddUserResponse();
+        HandleAddUserResponse response = new HandleAddUserResponse();
 
-        // handleAddUserResponse
-        handleAddUserResponse.additionalContent = handleAddedMeAo.additionalContent;
-        UserDo userDo = userService.getUserByAccount(handleAddedMeAo.handlerAccount);
-        handleAddUserResponse.avatarUrl = userDo.getAvatarUrl();
-        handleAddUserResponse.userName = userDo.getUserName();
-        handleAddUserResponse.userAccount = handleAddedMeAo.handlerAccount;
-        Long applierId = getUserId(handleAddedMeAo.applyAccount);
-        Long handlerId = getUserId(handleAddedMeAo.handlerAccount);
+        // response set by ao
+        response.setAdditionalContent(handleAddedMeAo.getAdditionalContent());
+        response.setHandlerAccount(handleAddedMeAo.getHandlerAccount());
+        // 处理方发送给申请方
+        response.setSenderId(handleAddedMeAo.getHandlerAccount());
+        response.setApplyAccount(handleAddedMeAo.getApplyAccount());
+        // 申请方接收消息
+        response.setReceiverId(handleAddedMeAo.getApplyAccount());
 
-        // addUserStatusAo
+        // response set by friendApplyDo
+        Long applierId = getUserId(handleAddedMeAo.getApplyAccount());
+        Long handlerId = getUserId(handleAddedMeAo.getHandlerAccount());
         FriendApplyDo friendApplyDo = friendApplyMapper.getFriendApplyByUserIds(
                 applierId,
                 handlerId
         );
-        handleAddUserResponse.applyStatus = friendApplyDo.applyStatus;
-        handleAddUserResponse.handleStatus = friendApplyDo.handleStatus;
-        handleAddUserResponse.isBlack = friendApplyDo.isBlack;
-        handleAddUserResponse.applyAccount = handleAddedMeAo.applyAccount;
-        handleAddUserResponse.handlerAccount = handleAddedMeAo.handlerAccount;
+        response.setApplyStatus(friendApplyDo.getApplyStatus());
+        response.setHandleStatus(friendApplyDo.getHandleStatus());
+        response.setBlack(friendApplyDo.isBlack());
+
+        // response set by userDo
+        UserDo userDo = userService.getUserByAccount(handleAddedMeAo.getHandlerAccount());
+        response.setHandlerAvatarFileId(userDo.getAvatarFileId());
+        response.handlerName = userDo.getUserName();
 
         // netty Base
         // 服务拆分，不在此处推送，此方法的调用方是message-service，让其推送
-        // 处理方发送给申请方
-        handleAddUserResponse.setSenderId(handleAddedMeAo.handlerAccount);
-        // 申请方接收消息
-        handleAddUserResponse.setReceiverId(handleAddedMeAo.applyAccount);
-        handleAddUserResponse.setType(responseType);
-        handleAddUserResponse.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        response.setType(responseType);
+        response.setTimestamp(String.valueOf(System.currentTimeMillis()));
 
         // http
-        handleAddUserResponse.setCode(String.valueOf(HttpStatus.OK.value()));
-        handleAddUserResponse.setMessage("");
+        response.setCode(String.valueOf(HttpStatus.OK.value()));
+        response.setMessage("");
         try {
             //            clusterEventsPusher.push(msg);
-            return handleAddUserResponse.getMessageByResponse();
+            return response.getMessageByResponse();
         } catch (Exception e){
-            log.error("用户 {} 处理用户 {} 的请求响应失败，类型转化异常",handleAddedMeAo.handlerAccount, handleAddedMeAo.applyAccount, e);
+            log.error("用户 {} 处理用户 {} 的请求响应失败，类型转化异常",handleAddedMeAo.getHandlerAccount(), handleAddedMeAo.getApplyAccount(), e);
             return null;
         }
     }
@@ -294,32 +311,24 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     public List<NewUserItemAo> getAddMeRequestList(String handlerAccount) {
         Long handlerId = getUserId(handlerAccount);
         List<NewUserItemBo> applyToMeList = friendApplyMapper.getAddMeRequestList(handlerId);
-        List<NewUserItemAo> newUserItemAoList = new ArrayList<>();
-        Optional.ofNullable(applyToMeList)
-                .ifPresent(list -> {
-                    list.forEach(bo -> {
-                        NewUserItemAo newUserItemAo = new NewUserItemAo();
-                        newUserItemAo.setByNewUserItemBo(bo);
-                        newUserItemAoList.add(newUserItemAo);
-                    });
-                });
-        return newUserItemAoList;
+        return convertBoListToAoList(applyToMeList);
     }
 
     @Override
     public List<NewUserItemAo> getHandleMyAddUserResponseList(String senderAccount) {
         Long senderId = getUserId(senderAccount);
         List<NewUserItemBo> applyToMeList = friendApplyMapper.getHandleMyAddUserResponseList(senderId);
-        List<NewUserItemAo> newUserItemAoList = new ArrayList<>();
-        Optional.ofNullable(applyToMeList)
-                .ifPresent(list -> {
-                    list.forEach(newUserItemBo -> {
-                        NewUserItemAo newUserItemAo = new NewUserItemAo();
-                        newUserItemAo.setByNewUserItemBo(newUserItemBo);
-                        newUserItemAoList.add(newUserItemAo);
-                    });
-                });
-        return newUserItemAoList;
+        return convertBoListToAoList(applyToMeList);
+    }
+
+    private List<NewUserItemAo> convertBoListToAoList(List<NewUserItemBo> boList) {
+        List<NewUserItemAo> aoList = new ArrayList<>();
+        Optional.ofNullable(boList)
+                .ifPresent(list -> list.forEach(bo -> {
+                    NewUserItemAo ao = newUserItemConverter.boToAo(bo);
+                    aoList.add(ao);
+                }));
+        return aoList;
     }
 
     @Override
@@ -344,45 +353,52 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         List<SearchFriendApplyBo> boList = friendApplyMapper.fuzzySearchHandlerByApplyAccount(applyAccount, handlerAccount);
         // 使用 Stream API 进行转换
         return boList.stream()
-                .map(bo -> {
-                    SearchFriendApplyAo ao = new SearchFriendApplyAo();
-                    ao.account = bo.account;
-                    ao.userName = bo.userName;
-                    ao.phone = bo.phone;
-                    ao.applyTime = bo.applyTime; // 这里需要修改 SearchFriendApplyAo 类以添加 applyTime
-                    ao.handleTime = bo.handleTime; // 同样，这里需要修改 SearchFriendApplyAo 类以添加 handleTime
-                    ao.source = bo.source; // 这里需要修改 SearchFriendApplyAo 类以添加 source
-                    ao.chatList = bo.chatList; // 同样，添加 chatList
-                    ao.avatarUri = bo.avatarUri;
-                    // 设置 AddUserStatusAo
-                    ao.addUserStatusAo.applyStatus = bo.applyStatus;
-                    ao.addUserStatusAo.handleStatus = bo.handleStatus;
-                    ao.addUserStatusAo.isBlack = bo.isBlack;
-                    ao.addUserStatusAo.applyAccount = bo.applyAccount;
-                    ao.addUserStatusAo.handlerAccount = bo.handlerAccount;
-                    return ao;
-                })
+                .map(searchFriendApplyConverter::boToAo)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SearchFriendApplyAo> searchFriendByName(String applyAccount, String handlerUserName) {
+        UserDo applyUserDo = userService.getUserByAccount(applyAccount);
+        if (applyUserDo == null){
+            throw new AppException("申请用户存在问题：不存在");
+        }
+        List<UserDo> userDos = userSearchService.searchUserByIkName(handlerUserName);
+        if (CollectionUtils.isEmpty(userDos)){
+            return new ArrayList<>();
+        }
+        // limit 20
+        userDos = userDos.stream()
+                .limit(20)
+                .collect(Collectors.toList());
+        List<SearchFriendApplyBo> boAllList = new ArrayList<>();
+        userDos.forEach(handleUserDo -> {
+            List<SearchFriendApplyBo> boList = friendApplyMapper.getFriendApplyByUserId(applyUserDo.getId(), handleUserDo.getId());
+            boAllList.addAll(boList);
+        });
+        return boAllList.stream()
+                .map(searchFriendApplyConverter::boToAo)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void updateApplyStatus(AddUserAo addUserAo) {
-        Long applyId = getUserId(addUserAo.applyAccount);
-        Long handleId = getUserId(addUserAo.handlerAccount);
+        Long applyId = getUserId(addUserAo.getApplyAccount());
+        Long handleId = getUserId(addUserAo.getHandlerAccount());
         updateFriendApply(
                 applyId,
                 handleId,
-                addUserAo.applyContent,
-                addUserAo.applyTime,
-                addUserAo.applyAccount,
-                addUserAo.handlerAccount
+                addUserAo.getApplyContent(),
+                addUserAo.getApplyTime(),
+                addUserAo.getApplyAccount(),
+                addUserAo.getHandlerAccount()
         );
     }
 
     @Override
     public void deleteApplyStatus(AddUserAo addUserAo) {
-        Long applyId = getUserId(addUserAo.applyAccount);
-        Long handleId = getUserId(addUserAo.handlerAccount);
+        Long applyId = getUserId(addUserAo.getApplyAccount());
+        Long handleId = getUserId(addUserAo.getHandlerAccount());
         deleteFriendApply(applyId, handleId);
         // 如果有记录删除
         deleteFriend(addUserAo);
@@ -390,12 +406,17 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public void deleteFriend(AddUserAo addUserAo) {
-        Long applyId = getUserId(addUserAo.applyAccount);
-        Long handleId = getUserId(addUserAo.handlerAccount);
+        Long applyId = getUserId(addUserAo.getApplyAccount());
+        Long handleId = getUserId(addUserAo.getHandlerAccount());
         // 如果存在记录就删除
         UserFriendDo userFriendDo = userFriendMapper.getUserFriend(applyId, handleId);
         if (userFriendDo != null){
             userFriendMapper.deleteUserFriend(userFriendDo);
+
+            RelationshipDelete relationshipDelete = new RelationshipDelete();
+            relationshipDelete.setSenderId(userFriendDo.getUserId());
+            relationshipDelete.setReceiverId(userFriendDo.getFriendId());
+            rabbitMqSender.push(relationshipDelete);
         }
     }
 

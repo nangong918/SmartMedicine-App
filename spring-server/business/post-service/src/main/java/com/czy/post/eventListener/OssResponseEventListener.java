@@ -1,10 +1,14 @@
 package com.czy.post.eventListener;
 
+import com.czy.api.constant.netty.NettyConstants;
+import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.PostOssResponse;
 import com.czy.api.domain.entity.event.event.PostOssResponseEvent;
+import com.czy.post.component.RabbitMqSender;
 import com.czy.post.service.PostService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
@@ -28,18 +32,26 @@ public class OssResponseEventListener implements ApplicationListener<PostOssResp
 
     private final RedissonService redissonService;
     private final PostService postService;
+    private final RabbitMqSender rabbitMqSender;
+
 
     // 成功失败的netty消息都由oss直接调用netty；避免了注册为mq的event和spring的event产生额外消耗
     @Override
     public void onApplicationEvent(@NotNull PostOssResponseEvent event) {
-        if (event.getSource() == null || event.getSource().getOssResponseType() == OssResponseTypeEnum.NULL.getCode()){
+        PostOssResponse postOssResponse = event.getSource();
+        if (postOssResponse == null || postOssResponse.getOssResponseType() == OssResponseTypeEnum.NULL.getCode()){
             return;
         }
-        PostOssResponse postOssResponse = event.getSource();
 
         String clusterLockPath = postOssResponse.getClusterLockPath();
         String userId = String.valueOf(postOssResponse.getUserId());
-        RedissonClusterLock redissonClusterLock = new RedissonClusterLock(userId, clusterLockPath);
+        RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
+                // 此处正确，因为上锁也是使用userId
+                // 使用userId 1.是因为为了避免用户在执行的过程中修改了userAccount
+                // 2.是因为oss服务使用的就是userId
+                userId,
+                clusterLockPath
+        );
         String fileRedisKey = postOssResponse.getFileRedisKey();
         String serverToFrontend = "";
         if (!StringUtils.hasText(fileRedisKey)){
@@ -82,12 +94,21 @@ public class OssResponseEventListener implements ApplicationListener<PostOssResp
             if (!result){
                 log.error("删除redis失败，fileRedisKey: {}", fileRedisKey);
             }
-            if (StringUtils.hasText(serverToFrontend) && StringUtils.hasText(userId)){
+            if (StringUtils.hasText(serverToFrontend) && StringUtils.hasText(postOssResponse.getUserAccount())){
                 // 发送消息给前端
-                // TODO 消息发给Netty
+                Message message = new Message();
+                message.setSenderId(NettyConstants.SERVER_ID);
+                message.setReceiverId(postOssResponse.getUserAccount());
+                message.setTimestamp(System.currentTimeMillis());
+                message.setType(ResponseMessageType.Oss.UPLOAD_FILE);
+                rabbitMqSender.push(message);
             }
             // 无论成功失败都要删掉分布式锁
-            redissonService.unlock(redissonClusterLock);
+            try {
+                redissonService.unlock(redissonClusterLock);
+            } catch (Exception e){
+                log.error("删除分布式锁失败，clusterLockPath: {}", clusterLockPath);
+            }
         }
     }
 }

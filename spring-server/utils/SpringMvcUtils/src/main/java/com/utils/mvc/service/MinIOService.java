@@ -1,6 +1,6 @@
 package com.utils.mvc.service;
 
-import domain.ErrorFile;
+
 import domain.FileOptionResult;
 import org.springframework.web.multipart.MultipartFile;
 

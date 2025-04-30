@@ -18,5 +18,5 @@ public class UserTextDataResponse extends BaseResponseData implements BaseBean {
     private String content;
     public String senderName;
     // 当值不为空才更新
-    public String avatarUrl = "";
+    public Long avatarFileId;
 }

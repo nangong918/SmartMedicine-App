@@ -1,7 +1,7 @@
 package com.czy.api.domain.dto.socket.request;
 
 import com.czy.api.constant.netty.RequestMessageType;
-import com.czy.api.domain.dto.base.BaseRequestData;
+import com.czy.api.domain.dto.base.NettyOptionRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,10 +12,12 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PostCommentRequest extends BaseRequestData {
+public class PostCommentRequest extends NettyOptionRequest {
 
     // postId
     public Long postId;
+    // 评论id (删除评论的时候用)
+    public Long commentId;
     // 评论内容
     public String content;
     // 此评论回复的评论id（索引）；null able（null就是直接回复帖子；是一级评论）
@@ -23,7 +25,7 @@ public class PostCommentRequest extends BaseRequestData {
     // commenterId ;就是senderId查询为id
 
     public PostCommentRequest(Long postId){
-        super.setType(RequestMessageType.Post.LIKE_POST);
+        super.setType(RequestMessageType.Post.COMMENT_POST);
         this.postId = postId;
     }
 }

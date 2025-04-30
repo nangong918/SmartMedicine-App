@@ -1,0 +1,23 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.ChatTest" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/green_90</item>
+        <item name="android:textColorSecondary">@android:color/black</item>
+    </style>
+
+    <style name="Theme.ChatTest" parent="Base.Theme.ChatTest" />
+
+    <style name="ShapeAppearanceOverlay.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="MyNavigationViewStyle" parent="Widget.Design.NavigationView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:background">@drawable/shape_navi_view</item>
+    </style>
+
+
+</resources>

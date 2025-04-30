@@ -157,4 +157,13 @@
             user_id = #{userId}
           AND file_name = #{fileName}
     </select>
+    <select id="getFileIdByIdempotent" resultType="java.lang.Long">
+        SELECT id
+        FROM oss_file
+        WHERE
+            user_id = #{userId}
+          AND file_name = #{fileName}
+          AND file_size = #{fileSize}
+        Order BY id DESC LIMIT 1
+    </select>
 </mapper>

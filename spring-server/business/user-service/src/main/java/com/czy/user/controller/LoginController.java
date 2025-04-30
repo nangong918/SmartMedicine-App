@@ -185,7 +185,7 @@ public class LoginController {
         UserDo newUser = userService.resetUserInfo(
                 request.getAccount(),
                 request.getUserName(),
-                request.getAvatarUrl()
+                request.getAvatarFileId()
         );
         if (newUser != null) {
             return Mono.just(BaseResponse.getResponseEntitySuccess(newUser));

@@ -35,6 +35,6 @@ public class UserDo implements BaseBean, Serializable {
     // last_online_time
     @Schema(description = "最后登录时间", type = "long", example = "1643676800")
     private Long lastOnlineTime;
-    @Schema(description = "头像地址", type = "string", example = "https://www.baidu.com/img/bd_logo1.png")
-    private String avatarUrl;
+    @Schema(description = "头像FileId，需要转为url：https://www.baidu.com/img/bd_logo1.png", type = "string", example = "31341241")
+    private Long avatarFileId;
 }

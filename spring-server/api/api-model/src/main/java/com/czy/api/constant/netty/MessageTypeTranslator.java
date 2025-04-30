@@ -40,11 +40,15 @@ public class MessageTypeTranslator {
 
 
     public static String translateClean(String reqType){
+        // 已经转换了就不要转换了
+        if (StringUtils.hasText(reqType) && reqType.contains(ResponseMessageType.responseRoot)){
+            return reqType;
+        }
         String resType = translate(reqType);
         // 如果是null，则设置为空字符串
         resType = resType == null ? "" : resType;
         // 如果是http请求，则不设置type
-        resType = Constants.MESSAGE_TYPE_HTTP.equals(resType) ? "" : resType;
+        resType = NettyConstants.MESSAGE_TYPE_HTTP.equals(resType) ? "" : resType;
         return resType;
     }
 }

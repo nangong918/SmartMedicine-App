@@ -1,6 +1,7 @@
 package com.czy.post.service;
 
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.ao.post.PostInfoAo;
 
 import java.util.List;
 
@@ -24,9 +25,12 @@ public interface PostStorageService {
     PostAo findPostAoById(Long id);
 
     List<PostAo> findPostAoByIds(List<Long> idList);
+    List<PostInfoAo> findPostInfoAoList(List<Long> idList);
 
     void updatePostContentToDatabase(PostAo postAo);
 
     void updatePostInfoToDatabase(PostAo postAo);
     void updatePostFilesToDatabase(PostAo postAo);
+    // 通过authorId和title找到postId
+    Long findPostIdByAuthorIdAndTitle(Long authorId, String title);
 }

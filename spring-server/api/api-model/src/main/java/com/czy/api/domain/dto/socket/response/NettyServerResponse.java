@@ -1,10 +1,16 @@
 package com.czy.api.domain.dto.socket.response;
 
+import com.czy.api.constant.netty.NettyConstants;
+import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.constant.netty.ResponseMessageType;
+import com.czy.api.domain.dto.base.BaseRequestData;
 import com.czy.api.domain.dto.base.BaseResponseData;
+import com.czy.api.domain.dto.http.base.BaseNettyRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author 13225
@@ -15,34 +21,18 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 public class NettyServerResponse extends BaseResponseData {
 
-    public NettyServerResponse(String responseType){
-        if (isResponseType(responseType)){
-            return;
-        }
-        super.setType(responseType);
+    public NettyServerResponse(@NotNull NettyResponseStatuesEnum responseStatuesEnum){
+        super.setType(responseStatuesEnum.getCode());
+        super.setMessage(responseStatuesEnum.getMessage());
+        super.setSenderId(NettyConstants.SERVER_ID);
+    }
+    public NettyServerResponse(@NotNull NettyResponseStatuesEnum responseStatuesEnum, BaseRequestData request){
+        super.setType(responseStatuesEnum.getCode());
+        super.setMessage(responseStatuesEnum.getMessage());
+        super.setSenderId(NettyConstants.SERVER_ID);
+        super.setReceiverId(request.getSenderId());
+        super.setTimestamp(String.valueOf(request.getTimestamp()));
     }
 
-    public NettyServerResponse(String responseType, String code, String message){
-        if (isResponseType(responseType)){
-            return;
-        }
-        super.setType(responseType);
-        super.setCode(code);
-        super.setMessage(message);
-    }
-
-    private boolean isResponseType(String responseType){
-        boolean isResponseType = false;
-        for (String responseTypes : ResponseMessageType.responseTypes){
-            if (responseTypes.equals(responseType)){
-                isResponseType = true;
-                break;
-            }
-        }
-        if (!isResponseType){
-            log.warn("NettyServerResponse构建失败！responseType不存在");
-        }
-        return isResponseType;
-    }
 
 }
