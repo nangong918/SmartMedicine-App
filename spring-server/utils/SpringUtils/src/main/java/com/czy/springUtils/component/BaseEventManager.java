@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 @Slf4j
-@Component
+//@Component
 public abstract class BaseEventManager <T> {
 
     // 存储所有 Handler
@@ -33,11 +33,22 @@ public abstract class BaseEventManager <T> {
     @Getter
     protected List<String> messageHandlers = new ArrayList<>();
 
-    @Autowired
-    protected List<Object> handlerBeans;
+//    @Autowired
+//    protected List<Object> handlerBeans;
 
-    @PostConstruct
-    public void init() {
+//    @PostConstruct
+//    public void init(List<Object> handlerBeans) {
+//        for (Object handler : handlerBeans) {
+//            HandlerType handlerType = handler.getClass().getAnnotation(HandlerType.class);
+//            if (handlerType != null) {
+//                messageHandlers.add(handlerType.value());
+//                handlers.put(handlerType.value(), handler);
+//                cacheAnnotatedMethods(handler.getClass());
+//            }
+//        }
+//    }
+
+    protected void initEventManager(List<Object> handlerBeans){
         for (Object handler : handlerBeans) {
             HandlerType handlerType = handler.getClass().getAnnotation(HandlerType.class);
             if (handlerType != null) {
@@ -47,6 +58,17 @@ public abstract class BaseEventManager <T> {
             }
         }
     }
+
+//    protected BaseEventManager(List<Object> handlerBeans){
+//        for (Object handler : handlerBeans) {
+//            HandlerType handlerType = handler.getClass().getAnnotation(HandlerType.class);
+//            if (handlerType != null) {
+//                messageHandlers.add(handlerType.value());
+//                handlers.put(handlerType.value(), handler);
+//                cacheAnnotatedMethods(handler.getClass());
+//            }
+//        }
+//    }
 
     /**
      * 缓存标注了 @MessageType 的方法

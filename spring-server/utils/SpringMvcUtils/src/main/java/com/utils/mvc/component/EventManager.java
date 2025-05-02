@@ -4,21 +4,13 @@ package com.utils.mvc.component;
 import com.czy.api.converter.base.BaseRequestConverter;
 import com.czy.api.domain.dto.base.BaseRequestData;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.springUtils.annotation.HandlerType;
-import com.czy.springUtils.annotation.MessageType;
 import com.czy.springUtils.component.BaseEventManager;
 import com.czy.springUtils.debug.DebugConfig;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+//import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author 13225
@@ -27,19 +19,40 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 @Slf4j
-@Component
-public abstract class EventManager<T> extends BaseEventManager<Message> {
+public class EventManager<T> extends BaseEventManager<Message> {
 
-    @Autowired
     private DebugConfig debugConfig;
 
-    @Autowired
     private BaseRequestConverter baseRequestConverter;
 
-    @PostConstruct
-    public void init() {
-        super.init();
+    protected void initEventManager(
+            List<Object> handlerBeans,
+            DebugConfig debugConfig,
+            BaseRequestConverter baseRequestConverter
+    ){
+        this.baseRequestConverter = baseRequestConverter;
+        this.debugConfig = debugConfig;
+        super.initEventManager(handlerBeans);
     }
+
+//    protected EventManager(
+//            List<Object> handlerBeans,
+//            DebugConfig debugConfig,
+//            BaseRequestConverter baseRequestConverter
+//    ){
+//        super(handlerBeans);
+//    }
+
+//    @PostConstruct
+//    public void init(
+//            List<Object> handlerBeans,
+//            DebugConfig debugConfig,
+//            BaseRequestConverter baseRequestConverter
+//    ) {
+//        super.init(handlerBeans);
+//        this.debugConfig = debugConfig;
+//        this.baseRequestConverter = baseRequestConverter;
+//    }
 
     // 此处需要优化性能，频繁调用的方法禁止使用反射。可以先将反射内容存储起来
     // 我已经用BaseRequestData.class.isAssignableFrom(parameterType)检查了
