@@ -37,7 +37,6 @@ public interface AddUserConverter {
     // 交换收发者
     @Mapping(target = "receiverId", source = "senderId")
     @Mapping(target = "senderId", source = "receiverId")
-    @Mapping(target = "receiverName", source = "addUserAccount")
     @Mapping(target = "appliedUserName", source = "myName")
     @Mapping(target = "appliedUserAddContent", source = "addContent")
     @Mapping(target = "appliedUserApplyStatus", source = "applyType")
@@ -54,7 +53,7 @@ public interface AddUserConverter {
     // deleteRequest -> ao
     @Mapping(target = "applyAccount", source = "senderId")
     @Mapping(target = "handlerAccount", source = "receiverId")
-    @Mapping(target = "applyStatus", constant = "deleted")
+    @Mapping(target = "applyStatus", ignore = true)
     AddUserAo deleteRequestToAo_(DeleteUserRequest request);
 
     default AddUserAo deleteRequestToAo(DeleteUserRequest request){

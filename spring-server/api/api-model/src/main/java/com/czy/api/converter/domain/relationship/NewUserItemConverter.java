@@ -22,6 +22,7 @@ public interface NewUserItemConverter {
     @Mapping(target = "applyTime", source = "applyTime")
     @Mapping(target = "handleTime", source = "handleTime")
     @Mapping(target = "addSource", source = "addSource")
+    @Mapping(target = "chatList", ignore = true)
     NewUserItemAo boToAo_(NewUserItemBo bo);
 
     default NewUserItemAo boToAo(NewUserItemBo bo) {
@@ -40,6 +41,7 @@ public interface NewUserItemConverter {
     @Mapping(target = "handleStatus", source = "handleStatus")
     @Mapping(target = "applyAccount", source = "applyAccount")
     @Mapping(target = "handlerAccount", source = "handlerAccount")
+    @Mapping(target = "isBlack", ignore = true)
     AddUserStatusAo boToAddUserStatusAo_(NewUserItemBo bo);
 
     default AddUserStatusAo boToAddUserStatusAo(NewUserItemBo bo){

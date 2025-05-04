@@ -22,6 +22,7 @@
         <module>auth-service</module>
         <module>post-service</module>
         <module>recommend-service</module>
+        <module>search-service</module>
     </modules>
 
     <!--JDK版本：11-->

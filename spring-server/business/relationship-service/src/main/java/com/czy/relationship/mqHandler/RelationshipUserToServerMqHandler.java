@@ -4,7 +4,7 @@ package com.czy.relationship.mqHandler;
 import com.czy.api.constant.mq.SocketMessageMqConstant;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.event.MessageRouteEvent;
-import com.utils.mvc.component.EventManager;
+import com.czy.relationship.component.RelationshipEventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -28,7 +28,7 @@ import javax.validation.Valid;
 public class RelationshipUserToServerMqHandler {
 
     private final ApplicationContext applicationContext;
-    private final EventManager<Message> eventManager;
+    private final RelationshipEventManager<Message> eventManager;
 
     @RabbitHandler
     public void handleMessage(@Valid Message userReceivedMessage) {
