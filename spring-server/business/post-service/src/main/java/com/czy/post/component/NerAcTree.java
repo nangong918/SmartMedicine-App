@@ -100,7 +100,7 @@ public class NerAcTree {
      * @return              实体识别结果
      */
     public List<PostNerResult> getPostNerResults(String postTitle){
-            if (!(StringUtils.hasText(postTitle) && postTitle.length() >= 2)){
+            if (StringUtils.hasText(postTitle) && postTitle.length() >= 2){
                 List<PostNerResult> results = new ArrayList<>();
                 acTree.parseText(postTitle, (begin, end, valueInfo) -> {
                     PostNerResult result = new PostNerResult();
