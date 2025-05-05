@@ -79,6 +79,7 @@ public class PostController {
      * post用acTree自动机对比词典，查询是否存在关键词
      * 将关键词结果存入对应的neo4j
      * 待完成发布的时候将帖子的内容转为特征值，并将特征值存入Neo4j
+     * AcTree的速度很快，可以对全文进行实体检测大概是10ms
      */
     @PostMapping(PostConstant.POST_PUBLISH_FIRST)
     public Mono<BaseResponse<PostPublishResponse>>
