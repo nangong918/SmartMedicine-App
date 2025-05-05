@@ -52,7 +52,7 @@ public class AcTreeTest {
     public void test() {
         // 获取当前项目的绝对路径
         String currentDir = System.getProperty("user.dir");
-        String projectRoot = Paths.get(currentDir).getParent().getParent().toString(); // 获取根目录
+        String projectRoot = Paths.get(currentDir).getParent().getParent().getParent().toString(); // 获取根目录
 
         String relativePath = "/files/diseases.json";
         String absolutePath = Paths.get(projectRoot, relativePath).toString();

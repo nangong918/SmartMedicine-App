@@ -27,6 +27,7 @@ import java.util.Map;
  * @author 13225
  * @date 2025/5/5 13:46
  * 实体命名识别的AcTree自动机
+ * 为了避免多次实例化，AcTree就暂时放在post-service
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class NerAcTree {
     }
 
     public static void main(String[] args) {
-        String relativePath = "/spring-server/files/diseases.json";
+        String relativePath = "/files/diseases.json";
         String absolutePath = getAbsolutePath(relativePath);
         System.out.println(absolutePath);
 
@@ -143,7 +144,7 @@ public class NerAcTree {
             if (redissonService.tryLock(redissonClusterLock)){
                 try {
                     for (String filePath : filePaths){
-                        String relativePath = "/spring-server/files/" + filePath;
+                        String relativePath = "/files/" + filePath;
                         String absolutePath = getAbsolutePath(relativePath);
                         String type = filePath.split("\\.")[0];
                         loadToRedis(type, absolutePath);
