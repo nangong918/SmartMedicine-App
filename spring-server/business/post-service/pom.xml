@@ -154,6 +154,11 @@
             <artifactId>spring-cloud-starter-dubbo</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.hankcs</groupId>
+            <artifactId>aho-corasick-double-array-trie</artifactId>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

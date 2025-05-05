@@ -1,6 +1,7 @@
 package ac;
 
 import com.alibaba.fastjson.JSONArray;
+import com.czy.api.domain.ao.post.AcTreeInfo;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 import org.junit.jupiter.api.Test;
 
@@ -8,9 +9,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @author 13225
@@ -55,31 +57,31 @@ public class AcTreeTest {
         String relativePath = "/files/diseases.json";
         String absolutePath = Paths.get(projectRoot, relativePath).toString();
 
-        Map<String, String> diseasesMap = loadDiseases(absolutePath);
+        Map<String, AcTreeInfo> diseasesMap = loadDiseases(absolutePath);
         System.out.println(diseasesMap.size());
 
         // 构建字典树
-        AhoCorasickDoubleArrayTrie<String> act = new AhoCorasickDoubleArrayTrie<>();
+        AhoCorasickDoubleArrayTrie<AcTreeInfo> act = new AhoCorasickDoubleArrayTrie<>();
         act.build(diseasesMap);
 
         // 关键词提取
-        Map<String, String> foundDiseases = new HashMap<>();
+        List<AcTreeInfo> foundDiseases = new ArrayList<>();
         String textToSearch = "我得了感冒，怎么治疗？";
         act.parseText(textToSearch, (begin, end, value) -> {
             System.out.printf("[%d:%d]=%s\n", begin, end, value);
             // 将找到的词汇存入 Map
-            foundDiseases.put(value, "diseases");
+            foundDiseases.add(value);
         });
 
         if (!foundDiseases.isEmpty()) {
-            foundDiseases.forEach((k, v) -> {
-                System.out.printf("Key: %s, Value: %s\n", k, v);
+            foundDiseases.forEach(item -> {
+                System.out.printf("Key: %s, Value: %s\n", item.getKey(), item.getValue());
             });
         }
     }
 
-    private static Map<String, String> loadDiseases(String path) {
-        Map<String, String> map = new TreeMap<>();
+    private static Map<String, AcTreeInfo> loadDiseases(String path) {
+        Map<String, AcTreeInfo> map = new HashMap<>();
         StringBuilder jsonString = new StringBuilder();
 
         try (BufferedReader br = new BufferedReader(new FileReader(Paths.get(path).toAbsolutePath().toString()))) {
@@ -95,7 +97,7 @@ public class AcTreeTest {
         JSONArray jsonArray = JSONArray.parseArray(jsonString.toString());
         for (int i = 0; i < jsonArray.size(); i++) {
             String disease = jsonArray.getString(i);
-            map.put(disease, disease); // 或者根据需要修改 value
+            map.put(disease, new AcTreeInfo(disease, "diseases"));
         }
         return map;
     }

@@ -1,6 +1,9 @@
 package com.czy.post.component;
 
 import com.alibaba.fastjson.JSONArray;
+import com.czy.api.domain.ao.post.AcTreeInfo;
+import com.czy.api.domain.ao.post.PostNerResult;
+import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 import com.utils.mvc.config.NerConstant;
 import com.utils.mvc.domain.IsLoadNerFilesAo;
 import com.utils.mvc.redisson.RedissonClusterLock;
@@ -9,12 +12,15 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -87,6 +93,25 @@ public class NerAcTree {
         }
     }
 
+    /**
+     * 根据帖子标题获取AcTree实体识别结果
+     * @param postTitle     帖子标题
+     * @return              实体识别结果
+     */
+    public List<PostNerResult> getPostNerResults(String postTitle){
+            if (!(StringUtils.hasText(postTitle) && postTitle.length() >= 2)){
+                List<PostNerResult> results = new ArrayList<>();
+                acTree.parseText(postTitle, (begin, end, valueInfo) -> {
+                    PostNerResult result = new PostNerResult();
+                    result.setKeyWord(valueInfo.getKey());
+                    result.setNerType(valueInfo.getValue());
+                    results.add(result);
+                });
+                return results;
+            }
+            return new ArrayList<>();
+    }
+
     private final static String[] filePaths = {
             "checks.json",
             "departments.json",
@@ -139,13 +164,33 @@ public class NerAcTree {
         else {
             log.info("已加载ner文件数据到redis");
         }
-        check();
+        // 创建AcTree
+        initAcTree();
     }
 
-    // 抽查
-    private void check(){
-        HashMap<String, String> map = redissonService.getHashMap(NerConstant.NER_REDIS_KEY);
-        log.info("map 的大小 = {}, map的第一个元素k：{}，v：{}", map.size(), map.entrySet().iterator().next().getKey(), map.entrySet().iterator().next().getValue());
-    }
+    private final AhoCorasickDoubleArrayTrie<AcTreeInfo> acTree = new AhoCorasickDoubleArrayTrie<>();
 
+
+    // init AcTree
+    public void initAcTree(){
+
+        HashMap<String, String> maps = redissonService.getHashMap(NerConstant.NER_REDIS_KEY);
+        String testKey = maps.entrySet().iterator().next().getKey();
+        String testValue = maps.entrySet().iterator().next().getValue();
+        log.info("check::maps 的大小 = {}, map的第一个元素k：{}，v：{}", maps.size(), testKey, testValue);
+
+        HashMap<String, AcTreeInfo> acTreeInfoMap = new HashMap<>();
+        for (Map.Entry<String, String> entry : maps.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            AcTreeInfo acTreeInfo = new AcTreeInfo(key, value);
+            acTreeInfoMap.put(key, acTreeInfo);
+        }
+
+        acTree.build(acTreeInfoMap);
+        String testStr = testValue + "我是一个测试字符串，我要测试一下" + testKey;
+        acTree.parseText(testStr, (begin, end, value) -> {
+            log.info("check::, begin = {}, end = {}, value = {}", begin, end, value);
+        });
+    }
 }
