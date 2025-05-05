@@ -6,6 +6,7 @@ import threading
 import re
 import codecs
 
+# 如果操作失误，执行 MATCH (n) DETACH DELETE n
 
 #正则表达式清洗语句，防止cql出问题
 def delete_special_symbols(text):
@@ -240,27 +241,39 @@ class MedicalExtractor(object):
 
                 self.disease_infos.append(disease_dict)
 
+    # 写入neo4j图节点：MERGE (n:Person {name: 'Alice', age: 30, city: 'New York'})
     #写入图的节点
     def write_nodes(self,entities,entity_type):
+        node_count = 0  # 记录写入的节点数量
         print("写入 {0} 实体".format(entity_type))
         # set除去重复内容
-        for node in tqdm(set(entities),ncols=80):
+        for node in tqdm(set(entities), ncols=80):
             # MERGE: 这是CQL语句的关键字，用于合并节点。
             # (n:{label}: 这部分定义了一个节点变量 n 和节点的标签 label
             # {{name:'{entity_name}'}}: 这部分定义了节点的属性，其中 name 是属性名
             # replace("'","") CQL 语句中，单引号被用作引号字符，替换实体名称中的单引号，防止 CQL 语句的语法错误。
-            cql = """MERGE(n:{label}{{name:'entity_name'}})""".format(label=entity_type,entity_name=node.replace("'",""))
+            cql = ("""MERGE(n:{label}{{name:'{entity_name}'}})"""
+                   .format(
+                label=entity_type,
+                entity_name=node
+                .replace("'","")))
             try:
+                if node_count % 1000 == 0:
+                    print("cql抽查：写入 {0} 实体 {1} 条；cql语句：{2}".format(entity_type, node_count, cql))
                 self.graph.run(cql)
+                node_count += 1
             except Exception as e:
                 print("nodes异常：",e)
                 print(cql)
+                node_count += 1
+                # 如果出现错误，其他的仍然需要导入
+                continue
 
     #写入图的边
-    def write_edges(self,triples,head_type,tail_type):
+    def write_edges(self, triples, head_type, tail_type):
         print("写入 {0} 关系".format(triples[0][1]))
-        #set(map(tuple, triples)除去重复内容
-        for head,relation,tail in tqdm(set(map(tuple, triples)),ncols=80):
+        # set(map(tuple, triples)除去重复内容
+        for head, relation, tail in tqdm(set(map(tuple, triples)), ncols=80):
             head = delete_special_symbols(head)
             tail = delete_special_symbols(tail)
             head_type = delete_special_symbols(head_type)
@@ -277,8 +290,9 @@ class MedicalExtractor(object):
             try:
                 self.graph.run(cql)
             except Exception as e:
-                print("Edge异常：",e)
+                print("Edge异常：", e)
                 print(cql)
+                continue  # 添加 continue 语句
 
     #设置属性
     def set_attributes(self,entity_infos,e_type):
@@ -413,9 +427,9 @@ def single_diseases_import_test(name):
 
 def import_data():
     extractor.create_entities()
-    extractor.create_relations()
-    extractor.set_diseases_attributes()
-    extractor.export_entities_relations()
+    # extractor.create_relations()
+    # extractor.set_diseases_attributes()
+    # extractor.export_entities_relations()
     pass
 
 if __name__ == '__main__':
@@ -425,12 +439,12 @@ if __name__ == '__main__':
     extractor = MedicalExtractor()
     extractor.extract_triples(path)
 
-    # import_data()
+    import_data()
 
     #----------------------------Test
 
-    check_diseases("感冒")
-    single_diseases_import_test('感冒')
+    # check_diseases("感冒")
+    # single_diseases_import_test('感冒')
 
 
 
