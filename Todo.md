@@ -82,5 +82,5 @@ Neo4j：
 
 1. 看完视频，梳理可执行方案
 
-
+写一份python的requirements.txt
 
