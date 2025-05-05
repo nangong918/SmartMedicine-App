@@ -72,6 +72,12 @@ public class PostController {
      * 第一步缓存 + 获取雪花id，此处是第一步
      * 此处帖子未发布完成的用户需要上分布式锁，禁止其发布其他帖子。避免造成频繁访问
      * 第二个http请求在oss
+     * <p>
+     * 额外补充1：埋点事件
+     * <p>
+     * 额外补充2：特征提取 + 存储：
+     * post用acTree自动机对比词典，查询是否存在关键词
+     * 将关键词结果存入对应的neo4j
      */
     @PostMapping(PostConstant.POST_PUBLISH_FIRST)
     public Mono<BaseResponse<PostPublishResponse>>
