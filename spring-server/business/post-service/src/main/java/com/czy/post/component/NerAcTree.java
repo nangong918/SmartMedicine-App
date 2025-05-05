@@ -109,11 +109,12 @@ public class NerAcTree {
             return;
         }
         // 还没加载文件数据到redis
-        if (ao != null && !ao.getIsLoadNerFiles()){
+        if (ao == null || !ao.getIsLoadNerFiles()){
             RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
-                    "ner",
-                    "ner"
+                    NerConstant.NER_REDIS_KEY,
+                    NerConstant.NER_REDIS_KEY
             );
+            // 分布式锁，防止其他实例重复加载
             if (redissonService.tryLock(redissonClusterLock)){
                 try {
                     for (String filePath : filePaths){
@@ -133,10 +134,18 @@ public class NerAcTree {
                     redissonService.unlock(redissonClusterLock);
                 }
             }
+            log.info("已初始化ner文件数据到redis成功");
         }
         else {
             log.info("已加载ner文件数据到redis");
         }
+        check();
+    }
+
+    // 抽查
+    private void check(){
+        HashMap<String, String> map = redissonService.getHashMap(NerConstant.NER_REDIS_KEY);
+        log.info("map 的大小 = {}, map的第一个元素k：{}，v：{}", map.size(), map.entrySet().iterator().next().getKey(), map.entrySet().iterator().next().getValue());
     }
 
 }
