@@ -269,9 +269,16 @@ class MedicalExtractor(object):
                 # 如果出现错误，其他的仍然需要导入
                 continue
 
-    #写入图的边
+    # 写入图的边
+    '''
+    MATCH(p:Person),(q:Movie)
+    WHERE p.name=$head AND q.name=$tail
+    MERGE (p)-[r:ACTED_IN]->(q)
+    '''
+    # 写入图的边
     def write_edges(self, triples, head_type, tail_type):
         print("写入 {0} 关系".format(triples[0][1]))
+        node_count = 0  # 记录写入的节点数量
         # set(map(tuple, triples)除去重复内容
         for head, relation, tail in tqdm(set(map(tuple, triples)), ncols=80):
             head = delete_special_symbols(head)
@@ -288,10 +295,14 @@ class MedicalExtractor(object):
                 relation=relation
             )
             try:
+                if node_count % 1000 == 0:
+                    print("cql抽查：写入 {0} 关系 {1} 条；cql语句：{2}".format(triples[0][1], node_count, cql))
                 self.graph.run(cql)
+                node_count += 1
             except Exception as e:
                 print("Edge异常：", e)
                 print(cql)
+                node_count += 1
                 continue  # 添加 continue 语句
 
     #设置属性
@@ -426,9 +437,9 @@ def single_diseases_import_test(name):
 #-------------------------------import-------------------------------
 
 def import_data():
-    extractor.create_entities()
+    # extractor.create_entities()
     # extractor.create_relations()
-    # extractor.set_diseases_attributes()
+    extractor.set_diseases_attributes()
     # extractor.export_entities_relations()
     pass
 
