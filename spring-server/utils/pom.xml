@@ -46,6 +46,7 @@
     <protobuf.version>3.22.0</protobuf.version><!--Protobuf版本;3.21.5会出现错误-->
     <jedission.version>3.11.3</jedission.version>
     <minio.version>8.2.2</minio.version>
+    <hankcs.version>1.2.3</hankcs.version>
   </properties>
 
   <dependencyManagement>
@@ -206,6 +207,12 @@
         <groupId>org.redisson</groupId>
         <artifactId>redisson-spring-boot-starter</artifactId>
         <version>${jedission.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.hankcs</groupId>
+        <artifactId>aho-corasick-double-array-trie</artifactId>
+        <version>${hankcs.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
