@@ -1,4 +1,4 @@
-package com.czy.springUtils.util;
+package ac;
 
 import com.alibaba.fastjson.JSONArray;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
@@ -18,7 +18,17 @@ import java.util.TreeMap;
  */
 
 public class AcTreeTest {
-
+    private final static String[] filePaths = {
+            "checks.json",
+            "departments.json",
+            "diseases.json",
+            "drugs.json",
+            "foods.json",
+            "medical.json",
+            "producers.json",
+            "recipes.json",
+            "symptoms.json",
+    };
     @Test
     public void testPath() {
         // 获取当前项目的绝对路径
@@ -29,6 +39,11 @@ public class AcTreeTest {
         String absolutePath = Paths.get(projectRoot, relativePath).toString();
 
         System.out.println("absolutePath = " + absolutePath);
+
+        for (String filePath : filePaths){
+            String type = filePath.split("\\.")[0];
+            System.out.println("type = " + type);
+        }
     }
 
     @Test
@@ -53,7 +68,7 @@ public class AcTreeTest {
         act.parseText(textToSearch, (begin, end, value) -> {
             System.out.printf("[%d:%d]=%s\n", begin, end, value);
             // 将找到的词汇存入 Map
-            foundDiseases.put("diseases", value);
+            foundDiseases.put(value, "diseases");
         });
 
         if (!foundDiseases.isEmpty()) {

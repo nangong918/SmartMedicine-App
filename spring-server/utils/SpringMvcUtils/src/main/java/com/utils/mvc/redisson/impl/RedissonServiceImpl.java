@@ -6,9 +6,11 @@ import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
+import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -120,5 +122,41 @@ public class RedissonServiceImpl implements RedissonService {
 
         // 删除键并返回结果
         return bucket.delete();
+    }
+
+    @Override
+    public void saveHashMap(String key, HashMap<String, String> data, Long expireTimes) {
+        RMap<String, String> map = redissonClient.getMap(key);
+        map.putAll(data);
+        if (expireTimes != null){
+            map.expire(expireTimes, TimeUnit.SECONDS);
+        }
+        else {
+            map.expire(EXPIRE_SECONDS, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public HashMap<String, String> getHashMap(String key) {
+        RMap<String, String> map = redissonClient.getMap(key);
+        return new HashMap<>(map.readAllMap());
+    }
+
+    @Override
+    public void updateHashMap(String hashKey, String field, String value) {
+        RMap<String, String> map = redissonClient.getMap(hashKey);
+        map.put(field, value);
+    }
+
+    @Override
+    public void deleteHashMap(String redisKey) {
+        RMap<String, String> map = redissonClient.getMap(redisKey);
+        map.delete();
+    }
+
+    @Override
+    public void deleteFieldFromHash(String redisKey, String hashKey) {
+        RMap<String, String> map = redissonClient.getMap(redisKey);
+        map.remove(hashKey);
     }
 }

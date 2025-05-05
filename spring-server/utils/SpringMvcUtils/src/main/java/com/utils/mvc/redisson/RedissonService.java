@@ -1,6 +1,7 @@
 package com.utils.mvc.redisson;
 
 
+import java.util.HashMap;
 
 /**
  * @author 13225
@@ -90,4 +91,11 @@ public interface RedissonService {
 
     // 删除对象和key
     boolean deleteObject(String key);
+
+    //---------------------Hash---------------------
+    void saveHashMap(String key, HashMap<String, String> data, Long expireTimes);
+    HashMap<String, String> getHashMap(String key);
+    void updateHashMap(String hashKey, String field, String value);
+    void deleteHashMap(String redisKey); // 删除整个 Hash
+    void deleteFieldFromHash(String redisKey, String hashKey); // 删除 Hash 中的某个字段
 }
