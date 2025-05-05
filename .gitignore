@@ -39,3 +39,8 @@ hs_err_pid*
 .idea/
 src/test/
 *.iml
+
+/files/Bert/bert_model.ckpt
+/files/Bert/bert_model.ckpt.data-00000-of-00001
+/files/Bert/bert_model.ckpt.index
+/files/Bert/bert_model.ckpt.meta
