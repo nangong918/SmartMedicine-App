@@ -1,11 +1,11 @@
 @startuml
 start
 :输入搜索句子;
-:TF-IDF + 逻辑回归树;
+:Bert NLJ(自然语言检查);
 if (是否是自然语言?) then (no)
   stop
 else (yes)
-  :Bert模型（合法检查）;
+  :Bert NLL（合法检查）;
   if (是否是无信息量寒暄语句?是否为app问题) then (yes)
     if (是寒暄?) then (yes)
         :随机寒暄回答;
@@ -31,7 +31,7 @@ else (yes)
               :返回帖子;
               stop
             else (no)
-              :四级搜索：用户Context向量 + 实体命名识别 + Bert意图识别;
+              :四级搜索：用户Context向量 + 实体命名识别 + Bert NLU(意图识别);
               note
                 App问题、帖子问题（知识图谱分类）
                 [定义，病因，预防，相关病症...]
