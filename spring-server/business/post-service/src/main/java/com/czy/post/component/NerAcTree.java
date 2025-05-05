@@ -51,7 +51,7 @@ public class NerAcTree {
     }
 
     public static void main(String[] args) {
-        String relativePath = "/files/diseases.json";
+        String relativePath = "/files/build_kg/diseases.json";
         String absolutePath = getAbsolutePath(relativePath);
         System.out.println(absolutePath);
 
@@ -144,7 +144,7 @@ public class NerAcTree {
             if (redissonService.tryLock(redissonClusterLock)){
                 try {
                     for (String filePath : filePaths){
-                        String relativePath = "/files/" + filePath;
+                        String relativePath = "/files/build_kg/" + filePath;
                         String absolutePath = getAbsolutePath(relativePath);
                         String type = filePath.split("\\.")[0];
                         loadToRedis(type, absolutePath);

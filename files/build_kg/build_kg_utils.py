@@ -9,21 +9,26 @@ import codecs
 
 #正则表达式清洗语句，防止cql出问题
 def delete_special_symbols(text):
+    # 输入类型保护
+    if not isinstance(text, str):
+        return text
+
     special_symbols = [
-        r"!=",
-        r"%",
-        r"\*",
-        r"\+",
-        r"-",
-        r"/",
-        r"::",
-        r"<",
-        r"\<=",
-        r"<>",
-        r"=",
-        r"=~",
-        r">",
-        r">=",
+        r"\<=",     # <=
+        r"<",       # <
+        r">=",      # >=
+        r">",       # >
+        r"\<>",     # <>
+        r"=~",      # ~=
+        r"!",       # !
+        r"!=",      # !=
+        r"%",       # %
+        r"\*",      # *
+        r"\+",      # +
+        r"-",       # -
+        r"/",       # /
+        r"::",      # ::
+        r"=",       # =
         r"AND",
         r"CALL",
         r"CONTAINS",
@@ -48,16 +53,23 @@ def delete_special_symbols(text):
         r"USE",
         r"WITH",
         r"XOR",
-        r"\^",
-        r"'"
+        r"\^",      # ^
+        r"'",       # 单引号
     ]
-    pattern = "|".join(special_symbols)
-    cleaned_text = re.sub(pattern, "", text)
+
+    # 使用 re.escape 避免特殊字符干扰，并按长度排序以保证长匹配优先
+    escaped_symbols = [re.escape(sym) for sym in special_symbols]
+    escaped_symbols.sort(key=lambda x: -len(x))  # 长度从高到低排序
+    pattern = "|".join(escaped_symbols)
+
+    # 编译一次，提升性能
+    regex = re.compile(pattern)
+    cleaned_text = regex.sub("", text)
     return cleaned_text
+
 
 def replace_special_symbols(text):
     special_symbols = {
-
         "'":"''"
     }
 
@@ -400,10 +412,10 @@ def single_diseases_import_test(name):
 #-------------------------------import-------------------------------
 
 def import_data():
-    # extractor.create_entities()
-    # extractor.create_relations()
-    # extractor.set_diseases_attributes()
-    # extractor.export_entities_relations()
+    extractor.create_entities()
+    extractor.create_relations()
+    extractor.set_diseases_attributes()
+    extractor.export_entities_relations()
     pass
 
 if __name__ == '__main__':
@@ -413,7 +425,7 @@ if __name__ == '__main__':
     extractor = MedicalExtractor()
     extractor.extract_triples(path)
 
-    import_data()
+    # import_data()
 
     #----------------------------Test
 

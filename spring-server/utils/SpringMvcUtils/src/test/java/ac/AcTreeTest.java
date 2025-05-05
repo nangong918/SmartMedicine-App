@@ -37,7 +37,7 @@ public class AcTreeTest {
         String currentDir = System.getProperty("user.dir");
         String projectRoot = Paths.get(currentDir).getParent().getParent().toString(); // 获取根目录
 
-        String relativePath = "/files/diseases.json";
+        String relativePath = "/files/build_kg/diseases.json";
         String absolutePath = Paths.get(projectRoot, relativePath).toString();
 
         System.out.println("absolutePath = " + absolutePath);
@@ -54,7 +54,7 @@ public class AcTreeTest {
         String currentDir = System.getProperty("user.dir");
         String projectRoot = Paths.get(currentDir).getParent().getParent().getParent().toString(); // 获取根目录
 
-        String relativePath = "/files/diseases.json";
+        String relativePath = "/files/build_kg/diseases.json";
         String absolutePath = Paths.get(projectRoot, relativePath).toString();
 
         Map<String, AcTreeInfo> diseasesMap = loadDiseases(absolutePath);

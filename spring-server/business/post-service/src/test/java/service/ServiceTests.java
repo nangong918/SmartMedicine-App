@@ -508,7 +508,7 @@ public class ServiceTests {
     public static void main(String[] args) {
         HashMap<String, String> map = new HashMap<>();
         for (String filePath : filePaths){
-            String relativePath = "/files/" + filePath;
+            String relativePath = "/files/build_kg/" + filePath;
             String absolutePath = getAbsolutePath(relativePath);
             String type = filePath.split("\\.")[0];
             map = loadData(type, absolutePath);
