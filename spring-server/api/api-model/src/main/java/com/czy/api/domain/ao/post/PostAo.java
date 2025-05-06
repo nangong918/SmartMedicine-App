@@ -2,6 +2,7 @@ package com.czy.api.domain.ao.post;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,4 +32,7 @@ public class PostAo {
     private Long commentCount;
     // 转发数量
     private Long forwardCount;
+
+    // post特征
+    private List<PostNerResult> nerResults = new ArrayList<>();
 }

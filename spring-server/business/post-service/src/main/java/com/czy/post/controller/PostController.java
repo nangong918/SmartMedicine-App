@@ -1,6 +1,7 @@
 package com.czy.post.controller;
 
 import com.czy.api.api.oss.OssService;
+import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
@@ -10,6 +11,7 @@ import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
@@ -65,6 +67,8 @@ public class PostController {
     private final PostCommentConverter postCommentConverter;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private PostNerService postNerService;
 
     // 发布post
     /**
@@ -116,8 +120,14 @@ public class PostController {
                 return Mono.just(BaseResponse.LogBackError(warningMessage, log));
             }
             // 2.缓存到redis
+            // 2.1特征提取
+            // 使用知识图谱实体 + AcTree进行特征提取
+            List<PostNerResult> resultList = postNerService.getPostNerResults(postAo.getTitle());
+            postAo.setNerResults(resultList);
+            // 特征存储在mongodb；mysql不适合存储非结构化数据
             // redis + 生成雪花id
             try {
+                // 2.2存储到redis并生成雪花id返回
                 snowflakeId = postService.releasePostFirst(postAo);
             } catch (Exception e) {
                 // 任何异常都直接解除分布式锁

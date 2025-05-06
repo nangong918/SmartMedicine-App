@@ -119,7 +119,6 @@ public class NerAcTree {
             "diseases.json",
             "drugs.json",
             "foods.json",
-            "medical.json",
             "producers.json",
             "recipes.json",
             "symptoms.json",

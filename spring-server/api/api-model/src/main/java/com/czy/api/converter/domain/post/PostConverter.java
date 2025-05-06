@@ -38,6 +38,7 @@ public interface PostConverter {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
+    @Mapping(source = "nerResults", target = "nerResults")
     PostDetailDo toMongoDo(PostAo postAo);
 
     // ao -> mysqlDo
@@ -79,6 +80,9 @@ public interface PostConverter {
         if (postDetailDo != null){
             postAo.setTitle(postDetailDo.getTitle());
             postAo.setContent(postDetailDo.getContent());
+            if (!CollectionUtils.isEmpty(postDetailDo.getNerResults())){
+                postAo.setNerResults(postDetailDo.getNerResults());
+            }
         }
         if (postInfoDo != null){
             postAo.setAuthorId(postInfoDo.getAuthorId());
