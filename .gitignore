@@ -44,3 +44,4 @@ src/test/
 /files/Bert/bert_model.ckpt.data-00000-of-00001
 /files/Bert/bert_model.ckpt.index
 /files/Bert/bert_model.ckpt.meta
+/python-nlp/nlj/weight/save/*.weights
