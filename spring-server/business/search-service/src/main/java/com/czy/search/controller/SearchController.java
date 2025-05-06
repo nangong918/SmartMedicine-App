@@ -1,24 +1,33 @@
 package com.czy.search.controller;
 
 import com.czy.api.api.oss.OssService;
+import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
+import com.czy.api.constant.es.FieldAnalyzer;
 import com.czy.api.constant.search.FuzzySearchResponseEnum;
 import com.czy.api.constant.search.SearchConstant;
-import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.Do.test.TestSearchEsDo;
+import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.ao.search.PostSearchResultAo;
 import com.czy.api.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.AnalyzeRequest;
+import org.elasticsearch.client.indices.AnalyzeResponse;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -44,6 +53,8 @@ public class SearchController {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private PostSearchService postSearchService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private PostNerService postNerService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
 
     /**
@@ -53,6 +64,7 @@ public class SearchController {
      */
     @PostMapping("/fuzzy")
     public FuzzySearchResponse fuzzySearch(@Valid FuzzySearchRequest request) {
+        // 搜索这种消耗资源的操作需要给用户上限流和分布式锁
         FuzzySearchResponse response = new FuzzySearchResponse();
         String sentence = request.getSentence();
         // 略过python搜索响应
@@ -62,7 +74,10 @@ public class SearchController {
 
         // 0~1级搜索 到此处说明sentence本身就是title，所以likeTitle传递sentence
         List<Long> likePostIdList = likeSearch(sentence);
-
+        // 2级搜索 搜索：AcTree匹配实体 + ElasticSearch搜索
+        // 缓存结结果，避免后续搜索调用两次
+        List<PostNerResult> nerResults = new ArrayList<>();
+        List<Long> tokenizedPostIdList = tokenizedSearch(sentence, nerResults);
         return null;
     }
 
@@ -74,6 +89,22 @@ public class SearchController {
     private List<Long> likeSearch(String title){
         return postSearchService.searchPostIdsByLikeTitle(title);
     }
+
+
+    // TODO 用python给IK导出一份词典！！！！！！！！！！！！！！！！！！！！！！！！
+    private List<Long> tokenizedSearch(String title, List<PostNerResult> results){
+        List<PostNerResult> nerResults = postNerService.getPostNerResults(title);
+        results.clear();
+        // 缓存结结果，避免后续搜索调用两次
+        results.addAll(nerResults);
+        if (nerResults.isEmpty()){
+            // 如果没有词典中的词，则返回空
+            return new ArrayList<>();
+        }
+        // 有词典关键词的情况
+        return postSearchService.searchPostIdsByTokenizedTitle(title);
+    }
+
 
 
 }
