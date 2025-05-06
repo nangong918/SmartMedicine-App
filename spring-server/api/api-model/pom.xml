@@ -82,6 +82,12 @@
             <artifactId>mapstruct-processor</artifactId>
         </dependency>
 
+        <!-- 自动化配置 neo4j -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-neo4j</artifactId>
+        </dependency>
+
         <!-- Swagger 3：生成前后端Api文档-->
         <!--http://localhost:8080/swagger-ui/-->
 <!--        <dependency>-->
