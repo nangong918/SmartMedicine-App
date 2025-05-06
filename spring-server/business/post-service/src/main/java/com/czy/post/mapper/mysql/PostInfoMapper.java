@@ -57,4 +57,7 @@ public interface PostInfoMapper {
     Long findPostIdByAuthorIdAndTitle(
             @Param("authorId")Long authorId,
             @Param("title")String title);
+
+    // 通过title模糊查询postId
+    List<Long> findPostIdByLikeTitle(String likeTitle);
 }

@@ -12,4 +12,6 @@ public class SearchConstant {
 
     public static final String serviceUri = "lb://" + serviceName;
 
+    // 最少search结果数量；少于num就继续进入下一层
+    public static final int SEARCH_MIN_NUM = 6;
 }
