@@ -16,7 +16,7 @@ note left of 后端: 帖子信息存在Redis而不是服务堆内存是因为：
 后端Post服务 -> 后端Post服务: 通过雪花Id在Redis找到帖子数据，删除Redis缓存。\n如果Oss失败则解除分布式锁。\nOss执行之后SpringEvent将PostOssResponse通知后端Post服务。
 note left of 后端Oss服务: OSS失败了直接删除Redis缓存就好，\n避免了分布式事务
 note left of 后端Post服务: 采用ES和Mongo的原因：\n帖子的标题由IK分词存入ES，\n搜索功能ES更强\n帖子内容存入MongoDB，\n查询文本Mongo比MySQL和ES都快。\n文件索引存入MySQL的原因，\nMySQL是ORM，适合存储结构化数据
-后端Post服务 -> 后端Post服务: 事务存储帖子内容信息进入ES和MongoDB；异步存储帖子索引信息到MySQL。
+后端Post服务 -> 后端Post服务: 事务存储帖子内容信息进入ES和MongoDB；异步存储帖子索引信息到MySQL。\n帖子特征信息存储到mongodb并在neo4j进行关联
 后端Post服务 --> 后端Netty服务: 雪花Id + userAccount，通知前端发布帖子成功。
 后端Netty服务 -> 前端: 通知前端发布帖子成功
 
