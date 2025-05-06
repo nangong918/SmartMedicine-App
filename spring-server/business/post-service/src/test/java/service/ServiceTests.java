@@ -57,12 +57,10 @@ public class ServiceTests {
             "diseases.json",
             "drugs.json",
             "foods.json",
-//            "medical.json",  //  TODO 存在问题，注意检查
             "producers.json",
             "recipes.json",
-            "symptoms.json",
+//            "symptoms.json",
     };
-    // 上述json存在问题：数据不完全： TODO 待修复，java和python维护一套files
     private static String getAbsolutePath(String relativePath){
         // 获取当前项目的绝对路径
         String currentDir = System.getProperty("user.dir");
@@ -501,24 +499,23 @@ public class ServiceTests {
             "9篇\n" +
             "\n" +
             "栈\n" +
-            "3篇";
+            "感冒";
 
-    // TODO ：数据集存在大量问题，将存在问题的数据清晰掉
     @SneakyThrows
     public static void main(String[] args) {
+        HashMap<String, AcTreeInfo> acTreeMap = new HashMap<>();
         HashMap<String, String> map = new HashMap<>();
         for (String filePath : filePaths){
             String relativePath = "/files/build_kg/" + filePath;
             String absolutePath = getAbsolutePath(relativePath);
             String type = filePath.split("\\.")[0];
             map = loadData(type, absolutePath);
-        }
-        HashMap<String, AcTreeInfo> acTreeMap = new HashMap<>();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            AcTreeInfo acTreeInfo = new AcTreeInfo(key, value);
-            acTreeMap.put(key, acTreeInfo);
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                AcTreeInfo acTreeInfo = new AcTreeInfo(key, value);
+                acTreeMap.put(key, acTreeInfo);
+            }
         }
         String testKey = acTreeMap.entrySet().iterator().next().getKey();
         AcTreeInfo testValue = acTreeMap.entrySet().iterator().next().getValue();

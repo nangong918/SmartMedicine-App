@@ -26,7 +26,6 @@ public class AcTreeTest {
             "diseases.json",
             "drugs.json",
             "foods.json",
-            "medical.json",
             "producers.json",
             "recipes.json",
             "symptoms.json",
