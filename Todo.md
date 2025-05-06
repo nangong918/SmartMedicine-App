@@ -182,3 +182,13 @@ item内容存放在mongoDB，item和attitude的关系不知道存在哪里
 * 1.需要找到一个实体是否和任何user/item相关
 
 * 图数据库的关系转为特征向量，然后存在向量数据库，快速查找：TransE、TransH
+
+
+1. 构建Neo4j全部实体
+2. 构建Neo4j的post和user实体
+* 
+1. python的NLJ实现，并且实现Java调用Python的NLJ
+2. Neo4j的全部实体，医疗相关的全部实体 + post、user实体
+3. 发布帖子的时候进行审核：用NLJ审核是否是自然语言。
+4. 特征提取：对帖子进行AcTree特征提取 + Bert模型意图分类；（需要设计具体分为哪些类别，按照什么角度进行切分？是否能够实现）
+5. 简单的前端demo进行测试

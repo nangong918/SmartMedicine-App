@@ -78,6 +78,10 @@ public class SearchController {
         // 缓存结结果，避免后续搜索调用两次
         List<PostNerResult> nerResults = new ArrayList<>();
         List<Long> tokenizedPostIdList = tokenizedSearch(sentence, nerResults);
+        // TODO 3级别：Neo4j查询实体相似度，要求此实体必须存在实体，列出此实体的top-k相似实体，然后找到post
+        // TODO 4级别：Bert意图识别；帖子还能如何分类？首先先将帖子分类；存入帖子的时候调用bert模型将post标签分类
+        //  用户查询帖子的是时候，也对句子按照post进行分类，得到系列接股票；用user context对结果进行按照用户感兴趣顺序排序
+        // 基于内容的问题，存在特征不清晰的情况，就比方说，如果帖子基本全都是非专业属于的分享帖子，标签大量标签相同，属于是特征工程做的不到位。系统中不应该存在大量特征相同的。
         return null;
     }
 
