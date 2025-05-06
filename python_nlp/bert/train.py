@@ -8,7 +8,7 @@ from sklearn.metrics import classification_report
 import numpy as np
 import os
 
-# C:\CodeLearning\smart-medicine\python-nlp\nlu\bert
+# C:\CodeLearning\smart-medicine\python_nlp\nlu\bert
 current_dir = os.path.dirname(os.path.abspath(__file__))  # 获取当前脚本文件的绝对路径
 # C:\CodeLearning\smart-medicine
 parent_dir_3 = os.path.dirname(os.path.dirname(current_dir)) + '/'
@@ -123,11 +123,11 @@ class LossHistory(keras.callbacks.Callback):
 训练自然语言识别模型
 '''
 def train_nlj():
-    train_data_path = parent_dir_3 + "python-nlp/nlj/train.csv"
-    test_data_path = parent_dir_3 + "python-nlp/nlj/test.csv"
-    model_save_path = parent_dir_3 + "python-nlp/nlj/weight/save/best_model.weights"
-    acc_img_save_path = parent_dir_3 + "python-nlp/nlj/weight/save/acc.png"
-    loss_img_save_path = parent_dir_3 + "python-nlp/nlj/weight/save/loss.png"
+    train_data_path = parent_dir_3 + "python_nlp/nlj/train.csv"
+    test_data_path = parent_dir_3 + "python_nlp/nlj/test.csv"
+    model_save_path = parent_dir_3 + "python_nlp/nlj/weight/save/best_model.weights"
+    acc_img_save_path = parent_dir_3 + "python_nlp/nlj/weight/save/acc.png"
+    loss_img_save_path = parent_dir_3 + "python_nlp/nlj/weight/save/loss.png"
     print(f"loss_img_save_path的绝对路径为：{loss_img_save_path}")
     train(train_data_path, test_data_path, model_save_path, acc_img_save_path, loss_img_save_path)
     pass
@@ -297,9 +297,9 @@ def test(test_data_path,
             print("真实标签:", target_names[test_true[idx]])
 
 def test_nlj():
-    test_data_path = parent_dir_3 + "python-nlp/nlj/test.csv"
-    model_save_path = parent_dir_3 + "python-nlp/nlj/weight/save/best_model.weights"
-    label_path = parent_dir_3 + "python-nlp/nlj/label"
+    test_data_path = parent_dir_3 + "python_nlp/nlj/test.csv"
+    model_save_path = parent_dir_3 + "python_nlp/nlj/weight/save/best_model.weights"
+    label_path = parent_dir_3 + "python_nlp/nlj/label"
     test(test_data_path,model_save_path,label_path)
 
 # 继续训练

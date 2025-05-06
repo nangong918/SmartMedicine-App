@@ -1,7 +1,7 @@
 import flask
 from flask_cors import CORS
 from gevent import pywsgi
-from Ner import MedicalNerAcTree
+from ner import MedicalNerAcTree
 
 
 #初始化模型

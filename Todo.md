@@ -93,7 +93,7 @@ Neo4j：
 7. 写python-learning，模仿别人的算法 + kaggle数据集做实验
 8. 看完视频，梳理可执行方案
 
-### python-nlp
+### python_nlp
 
 #### TODO：
 

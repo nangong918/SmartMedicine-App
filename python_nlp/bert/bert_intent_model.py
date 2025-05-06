@@ -1,20 +1,20 @@
 from bert4keras.tokenizers import Tokenizer
-from bert_model import build_bert_model
+from python_nlp.bert.bert_model import build_bert_model
 import os
 
 
 class BertIntentModel(object):
     def __init__(self, lable_path, weights_path):
         super(BertIntentModel, self).__init__()
-        # C:\CodeLearning\smart-medicine\python-nlp\nlu\bert
+        # C:\CodeLearning\smart-medicine\python_nlp\nlu\bert
         self.current_dir = os.path.dirname(os.path.abspath(__file__))  # 获取当前脚本文件的绝对路径
         # C:\CodeLearning\smart-medicine
-        self.parent_dir_3 = os.path.dirname(os.path.dirname(os.path.dirname(self.current_dir))) + "/"
+        self.parent_dir_3 = os.path.dirname(os.path.dirname(self.current_dir)) + "/"
         self.dict_path = os.path.join(self.parent_dir_3, 'files/Bert/vocab.txt')
         self.config_path = os.path.join(self.parent_dir_3, 'files/Bert/bert_config.json')
         self.model_path = os.path.join(self.parent_dir_3, 'files/Bert/bert_model.ckpt')
         self.label_path = os.path.join(self.parent_dir_3, lable_path)
-        self.model_weights_path = os.path.join(self.parent_dir_3, weights_path)
+        self.model_weights_path = weights_path
 
         # 打开 'label' 文件，并逐行读取文件内容
         self.label_list = [line.strip() for line in open(self.label_path, 'r', encoding='utf8')]
@@ -25,6 +25,7 @@ class BertIntentModel(object):
         self.tokenizer = Tokenizer(self.dict_path)
         self.model = build_bert_model(self.config_path, self.model_path, len(self.id2label))
         #self.model.load_weights('./weights/best_model.weights')
+        print(self.model_weights_path)
         self.model.load_weights(self.model_weights_path)
 
     def Predict(self, text):

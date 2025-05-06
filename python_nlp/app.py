@@ -4,7 +4,7 @@ from keras.backend.tensorflow_backend import set_session
 from nlu.bert_intent_recognition.bert_intent_model import BertIntentModel
 import tensorflow as tf
 from gevent import pywsgi
-from ner.AcTree.Ner import MedicalNerAcTree
+from ner.acTree.ner import MedicalNerAcTree
 from py2neo import Graph
 from recommend_database.check_entities_distance import open_entity_file,calculate_with_all_limitDistance,limit_distance
 import pymysql
@@ -24,7 +24,7 @@ conn = pymysql.connect(host=host, port=port, user=user, password=password, datab
 
 entities_dict = open_entity_file('entities.csv')
 
-global graph,model,sess
+global model
 
 config = tf.ConfigProto()
 config.gpu_options.allow_growth=True
@@ -124,7 +124,7 @@ def entities_distance():
 
 def open_service():
     server = pywsgi.WSGIServer(("0.0.0.0", 30002), app)
-    print("NLU,AcTree,entities_distance服务器正常启动")
+    print("NLU,acTree,entities_distance服务器正常启动")
     server.serve_forever()
 
 
