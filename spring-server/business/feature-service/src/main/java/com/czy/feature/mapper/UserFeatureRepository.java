@@ -32,6 +32,7 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
     String RELS_USER_RECIPES = "user_recipes";
     // user_symptoms
     String RELS_USER_SYMPTOMS = "user_symptoms";
+    String RELS_USER_POSTS = "user_post";
 
 
     UserFeatureNeo4jDo findByAccount(String account);
@@ -48,6 +49,21 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
             @Param("targetLabel") String targetLabel,
             @Param("targetName") String targetName,
             @Param("relationType") String relationType
+    );
+
+    // 创建关系并设置权重
+    @Query("MATCH (u:user) WHERE u.name = $userName " +
+            "MATCH (t:`${targetLabel}`) WHERE t.name = $targetName " +
+            "MERGE (u)-[r:`${relationType}`]->(t) " +
+            "ON CREATE SET r.weight = $initialWeight " +
+            "ON MATCH SET r.weight = r.weight + $increment")
+    void upsertWeightedRelationship(
+            @Param("userName") String userName,
+            @Param("targetLabel") String targetLabel,
+            @Param("targetName") String targetName,
+            @Param("relationType") String relationType,
+            @Param("initialWeight") double initialWeight,
+            @Param("increment") double increment
     );
 
     // 删除某条关系

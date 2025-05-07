@@ -9,6 +9,7 @@ import com.czy.api.domain.Do.neo4j.DrugsDo;
 import com.czy.api.domain.Do.neo4j.FoodsDo;
 import com.czy.api.domain.Do.neo4j.ProducersDo;
 import com.czy.api.domain.Do.neo4j.RecipesDo;
+import com.czy.api.domain.Do.neo4j.SymptomsDo;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
@@ -77,6 +78,7 @@ public class PostStorageServiceImpl implements PostStorageService {
         List<FoodsDo> foodsDoList = new ArrayList<>();
         List<ProducersDo> producerDoList = new ArrayList<>();
         List<RecipesDo> recipesDoList = new ArrayList<>();
+        List<SymptomsDo> symptomsDoList = new ArrayList<>();
 
         for (PostNerResult postNerResult : featureList){
             if (postNerResult == null || postNerResult.isEmpty()){
@@ -117,6 +119,11 @@ public class PostStorageServiceImpl implements PostStorageService {
                 recipesDo.setName(postNerResult.getKeyWord());
                 recipesDoList.add(recipesDo);
             }
+            else if (DiseasesKnowledgeGraphEnum.SYMPTOMS.getName().equals(postNerResult.getNerType())){
+                SymptomsDo symptomsDo = new SymptomsDo();
+                symptomsDo.setName(postNerResult.getKeyWord());
+                symptomsDoList.add(symptomsDo);
+            }
         }
 
         if (!checksDoList.isEmpty()){
@@ -139,6 +146,9 @@ public class PostStorageServiceImpl implements PostStorageService {
         }
         if (!recipesDoList.isEmpty()){
             postTransactionService.createRelationPostWithRecipes(postNeo4jDo, recipesDoList);
+        }
+        if (!symptomsDoList.isEmpty()){
+            postTransactionService.createRelationPostWithSymptoms(postNeo4jDo, symptomsDoList);
         }
     }
 

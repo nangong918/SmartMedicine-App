@@ -59,7 +59,7 @@ public class ServiceTests {
             "foods.json",
             "producers.json",
             "recipes.json",
-//            "symptoms.json",
+            "symptoms.json",
     };
     private static String getAbsolutePath(String relativePath){
         // 获取当前项目的绝对路径

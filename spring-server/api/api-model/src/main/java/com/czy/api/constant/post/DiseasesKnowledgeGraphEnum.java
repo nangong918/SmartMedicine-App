@@ -14,6 +14,7 @@ public enum DiseasesKnowledgeGraphEnum {
      *             "foods.json",
      *             "producers.json",
      *             "recipes.json",
+     *             "symptoms.json"
      */
 
     NULL(0, "NULL"),
@@ -23,7 +24,8 @@ public enum DiseasesKnowledgeGraphEnum {
     DRUGS(4, "drugs"),
     FOODS(5, "foods"),
     PRODUCERS(6, "producers"),
-    RECIPES(7, "recipes");
+    RECIPES(7, "recipes"),
+    SYMPTOMS(8, "symptoms");
 
     private final int value;
     private final String name;
