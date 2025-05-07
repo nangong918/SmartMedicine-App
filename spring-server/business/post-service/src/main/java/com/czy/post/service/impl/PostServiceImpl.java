@@ -24,7 +24,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 13225
@@ -145,6 +147,9 @@ public class PostServiceImpl implements PostService {
             message.setReceiverId(userDo.getAccount());
             message.setTimestamp(System.currentTimeMillis());
             message.setType(ResponseMessageType.Oss.DELETE_FILE);
+            Map<String, String> data = new HashMap<>();
+            data.put("message", toFront);
+            message.setData(data);
 
             rabbitMqSender.push(message);
         }

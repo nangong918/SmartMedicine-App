@@ -19,6 +19,7 @@ import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
+import com.czy.post.mapper.neo4j.PostRepository;
 import com.czy.post.service.PostStorageService;
 import com.czy.post.service.PostTransactionService;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,7 @@ public class PostStorageServiceImpl implements PostStorageService {
     private final PostDetailMongoMapper postDetailMongoMapper;
     private final PostConverter postConverter;
     private final PostFilesMapper postFilesMapper;
+    private final PostRepository postRepository;
     @Override
     public void storePostContentToDatabase(PostAo postAo) {
         postTransactionService.storePostToDatabase(postAo);
@@ -138,6 +140,19 @@ public class PostStorageServiceImpl implements PostStorageService {
         if (!recipesDoList.isEmpty()){
             postTransactionService.createRelationPostWithRecipes(postNeo4jDo, recipesDoList);
         }
+    }
+
+    @Override
+    public void updatePostCharacteristicToNeo4j(PostAo postAo, List<PostNerResult> characteristicList) {
+        // 删除已有关系
+        deletePostCharacteristicFromNeo4j(postAo.getId());
+        // 添加新的关系
+        storePostCharacteristicToNeo4j(postAo, characteristicList);
+    }
+
+    @Override
+    public void deletePostCharacteristicFromNeo4j(Long postId) {
+        postRepository.deletePostByIdWithRelations(postId);
     }
 
     @Override

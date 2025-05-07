@@ -50,6 +50,40 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
             @Param("relationType") String relationType
     );
 
+    // 删除某条关系
+    @Query("MATCH (p:post)-[r:`${relationType}`]->(d:`${targetLabel}`) " +
+            "WHERE p.name = $postName AND d.name = $targetName " +
+            "DELETE r")
+    void deleteDynamicRelationship(
+            @Param("postName") String postName,
+            @Param("targetLabel") String targetLabel,
+            @Param("targetName") String targetName,
+            @Param("relationType") String relationType
+    );
+
+    // 删除post与其他全部节点的关系
+    @Query("MATCH (p:post {name: $postName}) " +
+            "MATCH (p)-[r]->() " +
+            "DELETE r " +  // 删除与其他节点的关系
+            "DELETE p")    // 删除该 post 节点
+    void deletePostWithRelations(@Param("postName") String postName);
+
+    // 根据 ID 删除 post 与其他全部节点的关系
+    @Query("MATCH (p:post) WHERE id(p) = $postId " +
+            "MATCH (p)-[r]->() " +
+            "DELETE r " +  // 删除与其他节点的关系
+            "DELETE p")    // 删除该 post 节点
+    void deletePostByIdWithRelations(@Param("postId") Long postId);
+
+    // 修改某条关系
+    @Query("MATCH (d:`${targetLabel}`) WHERE d.name = $targetName " +
+            "SET d.propertyName = $newValue")
+    void updateNodeProperty(
+            @Param("targetLabel") String targetLabel,
+            @Param("targetName") String targetName,
+            @Param("newValue") String newValue
+    );
+
     @Query("MATCH (p:post)-[:post_association]->(d:疾病) " +
             "WHERE id(p) = $postId RETURN d")
     List<DiseaseDo> findDiseasesByPostId(Long postId);

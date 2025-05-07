@@ -18,7 +18,10 @@ public interface PostStorageService {
     void storePostFilesToDatabase(PostAo postAo);
     // 特征存储到neo4j
     void storePostCharacteristicToNeo4j(PostAo postAo, List<PostNerResult> characteristicList);
-
+    // 更新post的特征到neo4j
+    void updatePostCharacteristicToNeo4j(PostAo postAo, List<PostNerResult> characteristicList);
+    // 删除post在neo4j的全部特征
+    void deletePostCharacteristicFromNeo4j(Long postId);
     // 删除es + mongo
     void deletePostContentFromDatabase(Long id);
     // 删除mysql
