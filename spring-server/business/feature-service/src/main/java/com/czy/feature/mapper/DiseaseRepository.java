@@ -144,4 +144,14 @@ public interface DiseaseRepository extends Neo4jRepository<DiseaseDo, Long> {
             "LIMIT 10")
     List<Map<String, Object>> findTopSimilarDiseasesByPath1(@Param("diseaseName") String diseaseName);
 
+
+    /**
+     * 查询是否存在伴随疾病
+     * @param diseaseName   疾病名称
+     * @return              伴随疾病名称列表 双向的关系
+     */
+    @Query("MATCH (d1:疾病 {name: $diseaseName})-[r:acompany_with]-(d2:疾病) " +
+            "RETURN d2.name AS diseaseName")
+    List<Map<String, Object>> findAccompanyingDiseases(@Param("diseaseName") String diseaseName);
+
 }
