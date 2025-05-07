@@ -11,6 +11,8 @@ import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.ao.search.PostSearchResultAo;
 import com.czy.api.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
+import com.czy.search.rule.Rule1AccompanyingDiseases;
+import com.czy.search.rule.Rule2AccompanyingSymptoms;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -109,6 +111,14 @@ public class SearchController {
         }
         // 有词典关键词的情况
         return postSearchService.searchPostIdsByTokenizedTitle(title);
+    }
+
+    // 规则集
+    private final Rule1AccompanyingDiseases rule1AccompanyingDiseases;
+    private final Rule2AccompanyingSymptoms rule2AccompanyingSymptoms;
+    private List<Long> neo4jRuleSearch(String title){
+        List<Long> rule1MatchList = rule1AccompanyingDiseases.execute(title);
+        List<Long> rule2MatchList = rule2AccompanyingSymptoms.execute(title);
     }
 
     // 制定规则集

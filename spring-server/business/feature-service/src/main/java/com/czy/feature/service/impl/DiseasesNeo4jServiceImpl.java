@@ -33,4 +33,17 @@ public class DiseasesNeo4jServiceImpl implements DiseasesNeo4jService {
         }
         return accompanyingDiseaseNames;
     }
+
+    @Override
+    public List<String> findDiseaseWithAccompanyingSymptoms(String diseaseName) {
+        List<Map<String, Object>> accompanyingSymptoms = diseaseRepository.findAccompanyingSymptoms(diseaseName);
+        List<String> accompanyingSymptomNames = new ArrayList<>();
+        for (Map<String, Object> accompanyingSymptom : accompanyingSymptoms) {
+            String accompanyingSymptomName = (String) accompanyingSymptom.get("symptomName");
+            if (accompanyingSymptomName != null) {
+                accompanyingSymptomNames.add(accompanyingSymptomName);
+            }
+        }
+        return accompanyingSymptomNames;
+    }
 }

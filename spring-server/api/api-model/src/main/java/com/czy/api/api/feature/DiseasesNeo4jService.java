@@ -12,5 +12,6 @@ public interface DiseasesNeo4jService {
 
     // 查询disease是否存在伴随疾病
     List<String> findDiseaseWithAccompanyingDiseases(String diseaseName);
-
+    // 查询disease是否存在伴随症状
+    List<String> findDiseaseWithAccompanyingSymptoms(String diseaseName);
 }
