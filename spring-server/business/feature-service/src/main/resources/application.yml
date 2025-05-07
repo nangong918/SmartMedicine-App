@@ -1,0 +1,163 @@
+# 端口号 10000-20000
+port:
+  min: 10000
+  max: 20000
+#-------------------------server Setting-------------------------
+
+server:
+  # 端口号
+#  port: ${random.int[10000,19999]}
+  # 优雅关闭
+  shutdown: graceful
+
+#-------------------------spring Setting-------------------------
+spring:
+  #============ name
+  application:
+    name: feature-service
+  #============ International i18n (国际化)
+  messages:
+    # @value
+    basename: i18n/messages
+    encoding: UTF-8
+  #============ redis
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PWD:Y)D7d%gXFsCL*&pdJ4f)}
+    ssl: false          # Redis 是否启用 SSL
+    timeout: 10000      # 连接超时时间
+    database: 0         # 选择的数据库:Redis 默认提供 16 个数据库（索引 0 到 15）
+    jedis:
+      # 配置上连接池：增加对于数据连接的管理，提升访问的效率，也保证了对资源的合理利用
+      pool:
+        max-active: 50      # 最大活动连接数
+        max-idle: 5         # 最大空闲连接数
+        max-wait: 1         # 最小空闲连接数
+        min-idle: 200       # 连接池最大阻塞等待时间（使用负值表示没有限制）
+
+  #-------------------------database Setting-------------------------
+  datasource:
+    # 非druid配置数据源
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # Druid 数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 指定 JDBC 驱动类名：MySQL 的 JDBC 驱动
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      # jdbc:mysql:// 指明使用 MySQL 数据库
+      # localhost: 本地机器上
+      # 3306  MySQL 的默认端口
+      # /smart_medicine 连接的具体数据库
+      # serverTimezone=Asia/Shanghai 时区，上海时间（UTC+8）
+      # characterEncoding=utf8：useUnicode=true 配合使用，确保数据库读写操作时使用正确的字符编码
+      # connectTimeout=3000 设置连接超时时间为 3000 毫秒
+      # ocketTimeout=5000 设置 socket 超时时间为 5000 毫秒 连接已经建立的情况下，如果在此时间内没有任何数据传输，则会抛出异常。这对于防止死锁或长时间无响应
+      # useSSL=false 使用 SSL 连接。在开发环境中，通常可以关闭 SSL，在生产环境中，开启 SSL 以提高安全性
+      url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:smart_medicine}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&connectTimeout=3000&socketTimeout=5000&useSSL=false
+      username: ${MYSQL-USER:root}
+      password: ${MYSQL-PWD:123456}
+      initial-size: 10                  # 初始化连接池大小
+      max-active: 100                   # 最大连接池数量
+      min-idle: 10                      # 最小连接池数量
+      max-wait: 60000                   # 最大等待时间
+      pool-prepared-statements: true     # 是否启用预编译语句缓存
+      validation-query: SELECT 1 FROM DUAL  # 用于验证连接是否有效的 SQL 查询
+      max-pool-prepared-statement-per-connection-size: 20  # 每个连接允许的最大预编译语句数量
+      time-between-eviction-runs-millis: 60000  # 连接池中空闲连接的检测周期，单位为毫秒
+      min-evictable-idle-time-millis: 300000  # 连接在池中保持空闲的最小时间，单位为毫秒
+      test-on-borrow: false              # 从连接池借用连接时是否验证连接有效性
+      test-on-return: false              # 归还连接时是否验证连接有效性
+      test-while-idle: true              # 在空闲时是否验证连接有效性
+      filter:
+        stat:
+          log-slow-sql: true             # 是否记录慢 SQL 日志
+          slow-sql-millis: 1000          # 定义慢 SQL 的阈值，单位为毫秒
+          merge-sql: false                # 是否合并相同的 SQL 统计信息
+        wall:
+          config:
+            multi-statement-allow:  true # 是否允许多语句执行
+  #-------------------------elasticsearch-------------------------
+  elasticsearch:
+    rest:
+      uris: http://127.0.0.1:9200
+      connection-timeout: 5000
+      username: ${ES_USER:elastic}
+      password: ${ES_PWD:akQiB0-u9wHv4YjcUU9k}
+  #-------------------------RabbitMq-------------------------
+  # RabbitMQ 配置项，对应 RabbitProperties 配置类
+  rabbitmq:
+    host: 127.0.0.1 # RabbitMQ 服务的地址
+    port: 5672 # RabbitMQ 服务的端口
+    username: guest # RabbitMQ 服务的账号
+    password: guest # RabbitMQ 服务的密码
+    template:
+      # 对应 RabbitProperties.Retry 类
+      retry:
+        enabled: true # 开启发送机制
+        max-attempts: 3 # 最大重试次数。默认为 3 。
+        initial-interval: 1000 # 重试间隔，单位为毫秒。默认为 1000 。
+    listener:
+      simple:
+        # 对应 RabbitProperties.ListenerRetry 类
+        retry:
+          enabled: true # 开启消费重试机制
+          max-attempts: 3 # 最大重试次数。默认为 3 。
+          initial-interval: 1000 # 重试间隔，单位为毫秒。默认为 1000 。
+  data:
+    #-------------------------MongoDb-------------------------
+    # MongoDB 配置项，对应 MongoProperties 类
+    mongodb:
+      host: 127.0.0.1
+      port: 27017
+      database: test
+  #      username: test01
+  #      password: password01
+    #-------------------------Neo4j-------------------------
+    neo4j:
+      uri: bolt://localhost:7687
+      username: neo4j
+      password: 12345678
+  #-------------------------spring cloud-------------------------
+
+  cloud:
+    # Nacos 作为注册中心的配置项
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+
+# Dubbo 配置项，对应 DubboConfigurationProperties 类
+dubbo:
+  scan:
+    base-packages: com.czy.auth.service # 指定 Dubbo 服务实现类的扫描基准包
+  # Dubbo 服务暴露的协议配置，对应 ProtocolConfig Map
+  protocols:
+    dubbo:
+      name: dubbo # 协议名称
+      port: -1 # 协议端口，-1 表示自增端口，从 20880 开始
+  # Dubbo 服务注册中心配置，对应 RegistryConfig 类
+  registry:
+    address: spring-cloud://127.0.0.1:8848 # 指定 Dubbo 服务注册中心的地址
+  # Spring Cloud Alibaba Dubbo 专属配置项，对应 DubboCloudProperties 类
+  cloud:
+    subscribed-services: user-service # 设置订阅的应用列表，默认为 * 订阅所有应用。
+  #============ oss：minIO
+minio:
+  endpoint: "http://127.0.0.1:9000" # minIO 服务器地址
+  access-key: "minioadmin"  # minIO 用户名
+  secret-key: "minioadmin"  # minIO 密码
+#-------------------------Mybatis-plus setting-------------------------
+
+mybatis-plus:
+  type-aliases-package: com.czy.api.domain # 扫描实体类
+  mapper-locations: classpath*:mybatis/*Mapper.xml, classpath*:mybatis-plus/*Mapper.xml #指定多个 Mapper XML 文件的路径
+  global-config:
+    db-config:
+      id-type: auto # 数据库主键策略配置
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    org:
+      mybatis: DEBUG

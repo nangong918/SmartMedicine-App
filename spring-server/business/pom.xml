@@ -23,6 +23,7 @@
         <module>post-service</module>
         <module>recommend-service</module>
         <module>search-service</module>
+        <module>feature-service</module>
     </modules>
 
     <!--JDK版本：11-->

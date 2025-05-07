@@ -16,6 +16,7 @@ package "Business" {
     [post-service]
     [recommend-service]
     [search-service]
+    [feature-service]
 
     [message-service] --> [user-service]
     [message-service] --> [relationship-service]

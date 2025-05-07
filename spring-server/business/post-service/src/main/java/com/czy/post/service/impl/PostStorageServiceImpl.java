@@ -65,8 +65,8 @@ public class PostStorageServiceImpl implements PostStorageService {
     }
 
     @Override
-    public void storePostCharacteristicToNeo4j(PostAo postAo, List<PostNerResult> characteristicList) {
-        if (CollectionUtils.isEmpty(characteristicList)){
+    public void storePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList) {
+        if (CollectionUtils.isEmpty(featureList)){
             return;
         }
         PostNeo4jDo postNeo4jDo = postConverter.toNeo4jDo(postAo);
@@ -78,7 +78,7 @@ public class PostStorageServiceImpl implements PostStorageService {
         List<ProducersDo> producerDoList = new ArrayList<>();
         List<RecipesDo> recipesDoList = new ArrayList<>();
 
-        for (PostNerResult postNerResult : characteristicList){
+        for (PostNerResult postNerResult : featureList){
             if (postNerResult == null || postNerResult.isEmpty()){
                 continue;
             }
@@ -143,15 +143,15 @@ public class PostStorageServiceImpl implements PostStorageService {
     }
 
     @Override
-    public void updatePostCharacteristicToNeo4j(PostAo postAo, List<PostNerResult> characteristicList) {
+    public void updatePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList) {
         // 删除已有关系
-        deletePostCharacteristicFromNeo4j(postAo.getId());
+        deletePostFeatureFromNeo4j(postAo.getId());
         // 添加新的关系
-        storePostCharacteristicToNeo4j(postAo, characteristicList);
+        storePostFeatureToNeo4j(postAo, featureList);
     }
 
     @Override
-    public void deletePostCharacteristicFromNeo4j(Long postId) {
+    public void deletePostFeatureFromNeo4j(Long postId) {
         postRepository.deletePostByIdWithRelations(postId);
     }
 

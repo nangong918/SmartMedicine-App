@@ -56,7 +56,7 @@ public class PostServiceImpl implements PostService {
         // mongo + es
         postStorageService.storePostContentToDatabase(postAo);
         // neo4j
-        postStorageService.storePostCharacteristicToNeo4j(postAo, postAo.getNerResults());
+        postStorageService.storePostFeatureToNeo4j(postAo, postAo.getNerResults());
         return publishId;
     }
 
@@ -97,7 +97,7 @@ public class PostServiceImpl implements PostService {
             // es + mongo 同步事务存储
             postStorageService.storePostContentToDatabase(postAo);
             // neo4j
-            postStorageService.storePostCharacteristicToNeo4j(postAo, postAo.getNerResults());
+            postStorageService.storePostFeatureToNeo4j(postAo, postAo.getNerResults());
         });
         // 异步存储
         globalTaskExecutor.execute(() -> {

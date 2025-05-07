@@ -44,6 +44,7 @@ package "Business" {
     [relationship-service]
     [post-service]
     [search-service]
+    [feature-service]
 
     [recommend-service]
 
@@ -70,6 +71,9 @@ package "Business" {
 
     [recommend-service] --> [SpringUtils]
     [recommend-service] --> [api-model]
+
+    [feature-service] --> [SpringMvcUtils]
+    [feature-service] --> [api-model]
 }
 
 @enduml
