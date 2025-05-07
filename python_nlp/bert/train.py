@@ -182,7 +182,7 @@ def train(train_data_path, test_data_path,
     model.fit_generator(
         train_generator.forfit(),
         steps_per_epoch=len(train_generator),
-        epochs=10,
+        epochs=5,
         validation_data=test_generator.forfit(),
         validation_steps=len(test_generator),
         shuffle=True,
@@ -300,7 +300,7 @@ def test_nlj():
     test_data_path = parent_dir_3 + "python_nlp/nlj/test.csv"
     model_save_path = parent_dir_3 + "python_nlp/nlj/weight/save/best_model.weights"
     label_path = parent_dir_3 + "python_nlp/nlj/label"
-    test(test_data_path,model_save_path,label_path)
+    test(test_data_path, model_save_path, label_path)
 
 # 继续训练
 def train_continue(train_data_path, test_data_path, bast_weight_save_path):
@@ -364,8 +364,8 @@ def test2():
 
 
 if __name__ == '__main__':
-    train_nlj()
-    # test_nlj()
+    # train_nlj()
+    test_nlj()
     #train_continue()
     # test_text("我刚刚填写了健康信息，你帮我看看我的健康状况怎么样？")
     # test_text("我最近胃口不好，你能推荐我两篇关于治疗胃口不好的文章吗？")
