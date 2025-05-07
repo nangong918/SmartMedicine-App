@@ -10,4 +10,8 @@ import lombok.Data;
 public class PostNerResult {
     private String keyWord;
     private String nerType;
+
+    public boolean isEmpty() {
+        return keyWord == null || keyWord.isEmpty() || nerType == null || nerType.isEmpty();
+    }
 }

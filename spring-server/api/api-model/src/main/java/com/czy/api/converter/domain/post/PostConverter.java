@@ -4,8 +4,10 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
+import com.czy.api.domain.Do.post.post.PostNeo4jDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import org.mapstruct.Mapper;
@@ -132,4 +134,12 @@ public interface PostConverter {
     @Mapping(source = "commentCount", target = "commentCount")
     @Mapping(source = "forwardCount", target = "forwardCount")
     PostInfoAo postInfoDoToAo(PostInfoDo postInfoDo);
+
+    default PostNeo4jDo toNeo4jDo(PostAo postAo){
+        PostNeo4jDo postNeo4jDo = new PostNeo4jDo();
+        postNeo4jDo.setName(postAo.getTitle());
+        postNeo4jDo.setTitle(postAo.getTitle());
+        postNeo4jDo.setId(postAo.getId());
+        return postNeo4jDo;
+    }
 }
