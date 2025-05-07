@@ -94,7 +94,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             if (existingDisease != null) {
                 postRepository.createDynamicRelationship(
                         savedPost.getName(), "疾病",
-                        disease.getName(), "post_diseases");
+                        disease.getName(), PostRepository.RELS_POST_DISEASES);
             }
         }
     }
@@ -107,7 +107,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             if (existingChecks != null) {
                 postRepository.createDynamicRelationship(
                         savedPost.getName(), "检查",
-                        checks.getName(), "post_checks");
+                        checks.getName(), PostRepository.RELS_POST_CHECKS);
             }
         }
     }
@@ -120,7 +120,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             if (existingDepartments != null) {
                 postRepository.createDynamicRelationship(
                         savedPost.getName(), "科室",
-                        departments.getName(), "post_departments");
+                        departments.getName(), PostRepository.RELS_POST_DEPARTMENTS);
             }
         }
     }
@@ -133,7 +133,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             if (existingDrugs != null) {
                 postRepository.createDynamicRelationship(
                         savedPost.getName(), "药品",
-                        drugs.getName(), "post_drugs");
+                        drugs.getName(), PostRepository.RELS_POST_DRUGS);
             }
         }
     }
@@ -146,7 +146,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             if (existingFoods != null) {
                 postRepository.createDynamicRelationship(
                         savedPost.getName(), "食物",
-                        foods.getName(), "post_foods");
+                        foods.getName(), PostRepository.RELS_POST_FOODS);
             }
         }
     }
@@ -159,7 +159,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             if (existingProducers != null) {
                 postRepository.createDynamicRelationship(
                         savedPost.getName(), "药企",
-                        producers.getName(), "post_producers");
+                        producers.getName(), PostRepository.RELS_POST_PRODUCERS);
             }
         }
     }
@@ -172,7 +172,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             if (existingRecipes != null) {
                 postRepository.createDynamicRelationship(
                         savedPost.getName(), "菜谱",
-                        recipes.getName(), "post_recipes");
+                        recipes.getName(), PostRepository.RELS_POST_RECIPES);
             }
         }
     }
@@ -185,7 +185,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             if (existingSymptoms != null) {
                 postRepository.createDynamicRelationship(
                         savedPost.getName(), "症状",
-                        symptoms.getName(), "post_symptoms");
+                        symptoms.getName(), PostRepository.RELS_POST_SYMPTOMS);
             }
         }
     }

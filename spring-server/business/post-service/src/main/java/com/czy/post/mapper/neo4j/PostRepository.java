@@ -16,9 +16,28 @@ import java.util.List;
  */
 @Repository
 public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
+    // post_diseases
+    String RELS_POST_DISEASES = "post_diseases";
+    // post_checks
+    String RELS_POST_CHECKS = "post_checks";
+    // post_departments
+    String RELS_POST_DEPARTMENTS = "post_departments";
+    // post_drugs
+    String RELS_POST_DRUGS = "post_drugs";
+    // post_foods
+    String RELS_POST_FOODS = "post_foods";
+    // post_producers
+    String RELS_POST_PRODUCERS = "post_producers";
+    // post_recipes
+    String RELS_POST_RECIPES = "post_recipes";
+    // post_symptoms
+    String RELS_POST_SYMPTOMS = "post_symptoms";
+
 
     PostNeo4jDo findByTitle(String title);
     PostNeo4jDo findByName(String name);
+
+
 
     // 使用 MERGE 来避免重复关系：而不是使用CREATE
     @Query("MATCH (p:post) WHERE p.name = $postName " +
