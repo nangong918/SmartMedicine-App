@@ -1,6 +1,5 @@
 package com.czy.api.api.feature;
 
-import com.czy.api.domain.Do.neo4j.DiseaseDo;
 
 import java.util.List;
 
@@ -14,4 +13,6 @@ public interface DiseasesNeo4jService {
     List<String> findDiseaseWithAccompanyingDiseases(String diseaseName);
     // 查询disease是否存在伴随症状
     List<String> findDiseaseWithAccompanyingSymptoms(String diseaseName);
+    // 查询disease是存在建议：药品，食物，菜谱
+    List<String> findDiseaseWithSuggestions(String diseaseName);
 }

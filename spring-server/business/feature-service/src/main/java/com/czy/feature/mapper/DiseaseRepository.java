@@ -164,4 +164,17 @@ public interface DiseaseRepository extends Neo4jRepository<DiseaseDo, Long> {
             "RETURN s.name AS symptomName")
     List<Map<String, Object>> findAccompanyingSymptoms(@Param("diseaseName") String diseaseName);
 
+    // 疾病相关的：药品
+    @Query("MATCH (d1:疾病 {name: $diseaseName})-[r:recommand_drug]-(d2:药品) " +
+            "RETURN d2.name AS drugName")
+    List<Map<String, Object>> findRelatedDrugs(@Param("diseaseName") String diseaseName);
+    // 疾病相关的：食物
+    @Query("MATCH (d1:疾病 {name: $diseaseName})-[r:do_eat]-(d2:食物) " +
+            "RETURN d2.name AS foodName")
+    List<Map<String, Object>> findRelatedFoods(@Param("diseaseName") String diseaseName);
+    // 疾病相关的：菜谱
+    @Query("MATCH (d1:疾病 {name: $diseaseName})-[r:recommand_recipes]-(d2:菜谱) " +
+            "RETURN d2.name AS recipeName")
+    List<Map<String, Object>> findRelatedRecipes(@Param("diseaseName") String diseaseName);
+
 }

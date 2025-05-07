@@ -13,6 +13,7 @@ import com.czy.api.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.search.rule.Rule1AccompanyingDiseases;
 import com.czy.search.rule.Rule2AccompanyingSymptoms;
+import com.czy.search.rule.Rule3DiseasesHasSuggestions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -116,9 +117,16 @@ public class SearchController {
     // 规则集
     private final Rule1AccompanyingDiseases rule1AccompanyingDiseases;
     private final Rule2AccompanyingSymptoms rule2AccompanyingSymptoms;
+    private final Rule3DiseasesHasSuggestions rule3DiseasesHasSuggestions;
     private List<Long> neo4jRuleSearch(String title){
         List<Long> rule1MatchList = rule1AccompanyingDiseases.execute(title);
         List<Long> rule2MatchList = rule2AccompanyingSymptoms.execute(title);
+        List<Long> rule3MatchList = rule3DiseasesHasSuggestions.execute(title);
+        List<Long> finalList = new ArrayList<>();
+        finalList.addAll(rule1MatchList);
+        finalList.addAll(rule2MatchList);
+        finalList.addAll(rule3MatchList);
+        return finalList;
     }
 
     // 制定规则集
@@ -127,8 +135,9 @@ public class SearchController {
      * 1.疾病实体：
      *      1. 如果某种疾病存在伴随疾病，则搜索（疾病 + 伴随疾病）
      *      2. 疾病如果伴随某些症状，则搜索（疾病 + 症状）
-     *      3. 如果继斌存在解决方案：药品，食物，菜谱，则直接搜索这些
+     *      3. 如果疾病存在解决方案：药品，食物，菜谱
      *      4. 疾病跟某科室相关，查询（科室 + 疾病）
+     *      5. 疾病存在需要检查，治疗方法：查询 need_check，cure_way并直接返回
      * 2. 症状
      *      1. 如果包含多个症状，则症状的集合匹配是否存在疾病。
      */
