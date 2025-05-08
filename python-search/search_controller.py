@@ -2,7 +2,7 @@ import flask
 from flask_cors import CORS
 import tensorflow as tf
 from python_nlp.bert.bert_intent_model import BertIntentModel
-from python_nlp.ner.acTree.ner import MedicalNerAcTree
+# from python_nlp.ner.acTree.ner import MedicalNerAcTree
 from keras.backend.tensorflow_backend import set_session
 from gevent import pywsgi
 
@@ -63,33 +63,51 @@ BIM = BertIntentModel(label_path, weights_path)
 #       *收集用户数据回答（帖子特征 + 用户健康数据 + 医疗预测结果）
 #   *App问题
 #       *识别出是App问题进入App规则集回答，如果规则集没有数据则回答不知道
-
+import time
 if __name__ == '__main__':
     app = flask.Flask(__name__)
     CORS(app)
 
-    @app.route(search_controller + nlp_api,
-               methods=["GET","POST"])
+    @app.route(search_controller + nlp_api, methods=["GET", "POST"])
     def nlp():
-        data = {
+        response = {
             "code": 500,
-            "message": "nlj模型处理失败"
+            "message": "",
+            "nlj_time": 0.0,
         }
         result = None
-        BIM.Predict(flask.request.args.get('text'))
-        param = flask.request.get_json()
-        print(param)
+        request = flask.request.get_json()
+        print(request)
 
-        text = param["text"]
-        with graph.as_default():
-            set_session(sess)
-            result = BIM.Predict(text)
+        text = request["text"]
 
-        data["type"] = result
-        data["doce"] = 200
+        try:
+            with graph.as_default():
+                set_session(sess)
+                start_time = time.time()  # 记录开始时间
+                result = BIM.Predict(text)
+                end_time = time.time()  # 记录结束时间
+                model_processing_time = end_time - start_time  # 计算处理时间
+                print("模型处理时间：{:.2f}s".format(model_processing_time))
+                response["nlj_time"] = model_processing_time
+        except Exception as e:
+            print(e)
+            response["message"] = "nlj服务器异常: {}".format(str(e))
+            return flask.jsonify(response)
 
-        return flask.jsonify(data)
+        response["type"] = result
+        response["code"] = 200
 
-    server = pywsgi.WSGIServer(("0.0.0.0",60001), app)
-    print("NLJ服务器正常启动")
+        return flask.jsonify(response)
+
+    host = "0.0.0.0"
+    port = 60001
+    server = pywsgi.WSGIServer((host, port), app)
+    print(f'NLJ服务器正常启动，访问地址为: http://{host}:{port}')
     server.serve_forever()
+
+
+## Todo 1.java调用python服务其的demo
+##  2.用python给IK导出一份词典
+##  3.继续完成bert nlp
+##  4.构建特征工程
