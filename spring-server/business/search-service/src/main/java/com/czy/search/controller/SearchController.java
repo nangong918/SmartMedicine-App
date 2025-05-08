@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,11 +91,8 @@ public class SearchController {
         // 4级搜索：neo4j疾病相似度查询 + user context vector排序;
         List<Long> similarList = similaritySearch(nerResults);
         // 5级搜索：neo4j帖子相似度查询 + user context vector排序（类推荐系统）;
-        // TODO 4级别：Bert意图识别；帖子还能如何分类？首先先将帖子分类；存入帖子的时候调用bert模型将post标签分类
-        //  用户查询帖子的是时候，也对句子按照post进行分类，得到系列接股票；用user context对结果进行按照用户感兴趣顺序排序
-        // TODO 5级别：问题回复
-        // 基于内容的问题，存在特征不清晰的情况，就比方说，如果帖子基本全都是非专业属于的分享帖子，标签大量标签相同，属于是特征工程做的不到位。系统中不应该存在大量特征相同的。
-        // neo4j相似度搜索
+
+        // id去重
         return null;
     }
 
@@ -128,7 +126,12 @@ public class SearchController {
      * @return      搜索结果
      */
     private List<Long> likeSearch(String title){
-        return postSearchService.searchPostIdsByLikeTitle(title);
+        List<Long> postIds = postSearchService.searchPostIdsByLikeTitle(title);
+        if (postIds.isEmpty()){
+            return new ArrayList<>();
+        }
+        // 去重
+        return new ArrayList<>(new LinkedHashSet<>(postIds));
     }
 
 
@@ -143,7 +146,12 @@ public class SearchController {
             return new ArrayList<>();
         }
         // 有词典关键词的情况
-        return postSearchService.searchPostIdsByTokenizedTitle(title);
+        List<Long> postIds = postSearchService.searchPostIdsByTokenizedTitle(title);
+        if (postIds.isEmpty()){
+            return new ArrayList<>();
+        }
+        // 去重
+        return new ArrayList<>(new LinkedHashSet<>(postIds));
     }
 
     // 规则集
@@ -187,7 +195,8 @@ public class SearchController {
         // 症状：全部症状共同查询
         List<Long> rule4MatchList = rule4SymptomsFindDiseases.execute(symptomNames);
         finalList.addAll(rule4MatchList);
-        return finalList;
+        // 去重
+        return new ArrayList<>(new LinkedHashSet<>(finalList));
     }
 
 
@@ -210,7 +219,8 @@ public class SearchController {
             List<Long> postIds = postSearchService.searchPostIdsByLikeTitle(similarName);
             similarPostIds.addAll(postIds);
         }
-        return similarPostIds;
+        // 去重
+        return new ArrayList<>(new LinkedHashSet<>(similarPostIds));
     }
 
     /**
