@@ -36,8 +36,8 @@ NER = MedicalNerAcTree()
 
 # C:\CodeLearning\smart-medicine\python_nlp\nlj\label
 
-# @app.route(
-#     search_controller + nlj_api,
-#     methods=["GET", "POST"])
-# def nlj():
-#     pass
+@app.route(
+    search_controller + nlj_api,
+    methods=["GET", "POST"])
+def nlj():
+    pass

@@ -71,7 +71,7 @@ learning_rate = 5e-6
 batch_size = 16
 maxlen = 60
 class_nums = 13
-new_class_nums = 15
+
 # # 保存路径
 # bast_model_filepath = '../demo/bert_intent_recognition/weights_save/best_model.weights'
 # # 老数据集
@@ -129,14 +129,19 @@ def train_nlj():
     acc_img_save_path = parent_dir_3 + "python_nlp/nlj/weight/save/acc.png"
     loss_img_save_path = parent_dir_3 + "python_nlp/nlj/weight/save/loss.png"
     print(f"loss_img_save_path的绝对路径为：{loss_img_save_path}")
-    train(train_data_path, test_data_path, model_save_path, acc_img_save_path, loss_img_save_path)
+    label_path = parent_dir_3 + "python_nlp/nlj/label"
+    train(train_data_path, test_data_path,
+          model_save_path,
+          acc_img_save_path, loss_img_save_path,
+          label_path
+          )
     pass
 
 
 def train(train_data_path, test_data_path,
           bast_weight_save_path,
           acc_img_save_path,
-          loss_img_save_path):
+          loss_img_save_path, label_path):
     # 声明使用全局变量
     global val_loss
     global val_acc
@@ -149,7 +154,12 @@ def train(train_data_path, test_data_path,
     train_generator = data_generator(train_data, batch_size)
     test_generator = data_generator(test_data, batch_size)
 
-    model = build_bert_model(config_path,bert_model_path,new_class_nums)
+    label_list = [line.strip() for line in open(label_path, 'r', encoding='utf8')]
+    class_num = len({idx: label for idx, label in enumerate(label_list)})
+
+    print("class_num: " + str(class_num))
+
+    model = build_bert_model(config_path,bert_model_path,class_num)
     print(model.summary())
 
     # 编译模型
@@ -182,7 +192,7 @@ def train(train_data_path, test_data_path,
     model.fit_generator(
         train_generator.forfit(),
         steps_per_epoch=len(train_generator),
-        epochs=5,
+        epochs=10,
         validation_data=test_generator.forfit(),
         validation_steps=len(test_generator),
         shuffle=True,
@@ -239,8 +249,10 @@ def train(train_data_path, test_data_path,
 def test(test_data_path,
          bast_weight_save_path,
          label_path):
+    label_list = [line.strip() for line in open(label_path, 'r', encoding='utf8')]
+    class_num = len({idx: label for idx, label in enumerate(label_list)})
     # 模型
-    model = build_bert_model(config_path, bert_model_path, new_class_nums)
+    model = build_bert_model(config_path, bert_model_path, class_num)
     print(model.summary())
 
     test_data = load_data(test_data_path)
@@ -303,7 +315,7 @@ def test_nlj():
     test(test_data_path, model_save_path, label_path)
 
 # 继续训练
-def train_continue(train_data_path, test_data_path, bast_weight_save_path):
+def train_continue(train_data_path, test_data_path, bast_weight_save_path, label_path):
     # 加载数据集
     train_data = load_data(train_data_path)
     test_data = load_data(test_data_path)
@@ -312,7 +324,9 @@ def train_continue(train_data_path, test_data_path, bast_weight_save_path):
     train_generator = data_generator(train_data, batch_size)
     test_generator = data_generator(test_data, batch_size)
 
-    model = build_bert_model(config_path,bert_model_path,new_class_nums)
+    label_list = [line.strip() for line in open(label_path, 'r', encoding='utf8')]
+    class_num = len({idx: label for idx, label in enumerate(label_list)})
+    model = build_bert_model(config_path,bert_model_path,class_num)
 
     # 编译模型
     model.compile(
@@ -364,8 +378,8 @@ def test2():
 
 
 if __name__ == '__main__':
-    # train_nlj()
-    test_nlj()
+    train_nlj()
+    # test_nlj()
     #train_continue()
     # test_text("我刚刚填写了健康信息，你帮我看看我的健康状况怎么样？")
     # test_text("我最近胃口不好，你能推荐我两篇关于治疗胃口不好的文章吗？")

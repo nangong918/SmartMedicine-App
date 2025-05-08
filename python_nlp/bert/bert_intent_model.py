@@ -14,13 +14,14 @@ class BertIntentModel(object):
         self.config_path = os.path.join(self.parent_dir_3, 'files/Bert/bert_config.json')
         self.model_path = os.path.join(self.parent_dir_3, 'files/Bert/bert_model.ckpt')
         self.label_path = os.path.join(self.parent_dir_3, lable_path)
+        print("label_path: " + self.label_path)
         self.model_weights_path = weights_path
 
         # 打开 'label' 文件，并逐行读取文件内容
         self.label_list = [line.strip() for line in open(self.label_path, 'r', encoding='utf8')]
         # 按照序号将label做成字典类型
         self.id2label = {idx: label for idx, label in enumerate(self.label_list)}
-
+        print("len(self.id2label): " + str(len(self.id2label)))
         # 词表用Token转化为Bert可接收的类型
         self.tokenizer = Tokenizer(self.dict_path)
         self.model = build_bert_model(self.config_path, self.model_path, len(self.id2label))
