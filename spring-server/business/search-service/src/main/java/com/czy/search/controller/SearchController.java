@@ -4,6 +4,7 @@ import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.es.FieldAnalyzer;
+import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.constant.search.FuzzySearchResponseEnum;
 import com.czy.api.constant.search.SearchConstant;
 import com.czy.api.domain.Do.test.TestSearchEsDo;
@@ -14,6 +15,7 @@ import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.search.rule.Rule1AccompanyingDiseases;
 import com.czy.search.rule.Rule2AccompanyingSymptoms;
 import com.czy.search.rule.Rule3DiseasesHasSuggestions;
+import com.czy.search.rule.Rule4SymptomsFindDiseases;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -81,7 +83,10 @@ public class SearchController {
         // 缓存结结果，避免后续搜索调用两次
         List<PostNerResult> nerResults = new ArrayList<>();
         List<Long> tokenizedPostIdList = tokenizedSearch(sentence, nerResults);
-        // TODO 3级别：Neo4j查询实体相似度，要求此实体必须存在实体，列出此实体的top-k相似实体，然后找到post
+
+
+        // 3级搜索：neo4j规则集 + es查询 + user context vector排序;
+        List<Long> neo4jRulePostIdList = neo4jRuleSearch(nerResults);
         // TODO 4级别：Bert意图识别；帖子还能如何分类？首先先将帖子分类；存入帖子的时候调用bert模型将post标签分类
         //  用户查询帖子的是时候，也对句子按照post进行分类，得到系列接股票；用user context对结果进行按照用户感兴趣顺序排序
         // TODO 5级别：问题回复
@@ -118,14 +123,33 @@ public class SearchController {
     private final Rule1AccompanyingDiseases rule1AccompanyingDiseases;
     private final Rule2AccompanyingSymptoms rule2AccompanyingSymptoms;
     private final Rule3DiseasesHasSuggestions rule3DiseasesHasSuggestions;
-    private List<Long> neo4jRuleSearch(String title){
-        List<Long> rule1MatchList = rule1AccompanyingDiseases.execute(title);
-        List<Long> rule2MatchList = rule2AccompanyingSymptoms.execute(title);
-        List<Long> rule3MatchList = rule3DiseasesHasSuggestions.execute(title);
+    private final Rule4SymptomsFindDiseases rule4SymptomsFindDiseases;
+    private List<Long> neo4jRuleSearch(List<PostNerResult> nerResults){
         List<Long> finalList = new ArrayList<>();
-        finalList.addAll(rule1MatchList);
-        finalList.addAll(rule2MatchList);
-        finalList.addAll(rule3MatchList);
+        List<String> diseaseNames = new ArrayList<>();
+        for (PostNerResult nerResult : nerResults) {
+            if (nerResult.getNerType().equals(DiseasesKnowledgeGraphEnum.DISEASES.getName())){
+                diseaseNames.add(nerResult.getKeyWord());
+            }
+        }
+        List<String> symptomNames = new ArrayList<>();
+        for (PostNerResult nerResult : nerResults) {
+            if (nerResult.getNerType().equals(DiseasesKnowledgeGraphEnum.SYMPTOMS.getName())){
+                symptomNames.add(nerResult.getKeyWord());
+            }
+        }
+        // 疾病：每个疾病都单独去查询
+        for (String diseaseName : diseaseNames){
+            List<Long> rule1MatchList = rule1AccompanyingDiseases.execute(diseaseName);
+            List<Long> rule2MatchList = rule2AccompanyingSymptoms.execute(diseaseName);
+            List<Long> rule3MatchList = rule3DiseasesHasSuggestions.execute(diseaseName);
+            finalList.addAll(rule1MatchList);
+            finalList.addAll(rule2MatchList);
+            finalList.addAll(rule3MatchList);
+        }
+        // 症状：全部症状共同查询
+        List<Long> rule4MatchList = rule4SymptomsFindDiseases.execute(symptomNames);
+        finalList.addAll(rule4MatchList);
         return finalList;
     }
 
@@ -136,10 +160,8 @@ public class SearchController {
      *      1. 如果某种疾病存在伴随疾病，则搜索（疾病 + 伴随疾病）
      *      2. 疾病如果伴随某些症状，则搜索（疾病 + 症状）
      *      3. 如果疾病存在解决方案：药品，食物，菜谱
-     *      4. 疾病跟某科室相关，查询（科室 + 疾病）
-     *      5. 疾病存在需要检查，治疗方法：查询 need_check，cure_way并直接返回
      * 2. 症状
-     *      1. 如果包含多个症状，则症状的集合匹配是否存在疾病。
+     *      4. 如果包含多个症状，则症状的集合匹配是否存在疾病。
      */
 
     /**

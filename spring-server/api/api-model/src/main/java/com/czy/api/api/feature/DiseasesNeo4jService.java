@@ -15,4 +15,6 @@ public interface DiseasesNeo4jService {
     List<String> findDiseaseWithAccompanyingSymptoms(String diseaseName);
     // 查询disease是存在建议：药品，食物，菜谱
     List<String> findDiseaseWithSuggestions(String diseaseName);
+    // 查询disease是存在检查Solution
+    List<String> findSymptomsFindDiseases(List<String> symptomNames);
 }

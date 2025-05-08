@@ -3,8 +3,10 @@ package com.czy.feature.service.impl;
 import com.czy.api.api.feature.DiseasesNeo4jService;
 import com.czy.api.domain.Do.neo4j.DiseaseDo;
 import com.czy.feature.mapper.DiseaseRepository;
+import com.czy.feature.mapper.SymptomsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.util.Map;
 public class DiseasesNeo4jServiceImpl implements DiseasesNeo4jService {
 
     private final DiseaseRepository diseaseRepository;
+    private final SymptomsRepository symptomsRepository;
 
     @Override
     public List<String> findDiseaseWithAccompanyingDiseases(String diseaseName) {
@@ -74,4 +77,21 @@ public class DiseasesNeo4jServiceImpl implements DiseasesNeo4jService {
         }
         return allName;
     }
+
+    @Override
+    public List<String> findSymptomsFindDiseases(List<String> symptomNames) {
+        if (CollectionUtils.isEmpty(symptomNames)){
+            return new ArrayList<>();
+        }
+        List<Map<String, Object>> diseases = symptomsRepository.findDiseasesByAllSymptoms(symptomNames);
+        List<String> diseaseNames = new ArrayList<>();
+        for (Map<String, Object> disease : diseases) {
+            String diseaseName = (String) disease.get("diseaseName");
+            if (StringUtils.hasText(diseaseName)) {
+                diseaseNames.add(diseaseName);
+            }
+        }
+        return diseaseNames;
+    }
+
 }
