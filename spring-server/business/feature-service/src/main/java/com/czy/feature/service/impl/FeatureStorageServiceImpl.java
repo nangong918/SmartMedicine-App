@@ -10,7 +10,7 @@ import com.czy.api.domain.Do.neo4j.RecipesDo;
 import com.czy.api.domain.Do.neo4j.SymptomsDo;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
 import com.czy.api.domain.Do.post.post.PostNeo4jDo;
-import com.czy.feature.mapper.*;
+import com.czy.api.mapper.*;
 import com.czy.feature.service.FeatureStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

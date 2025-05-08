@@ -1,4 +1,4 @@
-package com.czy.post.mapper.neo4j;
+package com.czy.api.mapper;
 
 
 import com.czy.api.domain.Do.neo4j.DiseaseDo;

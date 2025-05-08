@@ -1,8 +1,8 @@
 package com.czy.feature.service.impl;
 
 import com.czy.api.api.feature.DiseasesNeo4jService;
-import com.czy.feature.mapper.DiseaseRepository;
-import com.czy.feature.mapper.SymptomsRepository;
+import com.czy.api.mapper.DiseaseRepository;
+import com.czy.api.mapper.SymptomsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
