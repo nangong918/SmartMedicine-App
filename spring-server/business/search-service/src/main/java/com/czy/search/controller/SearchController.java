@@ -1,46 +1,34 @@
 package com.czy.search.controller;
 
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
-import com.czy.api.api.post.PostSearchService;
-import com.czy.api.constant.es.FieldAnalyzer;
-import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.constant.search.FuzzySearchResponseEnum;
 import com.czy.api.constant.search.SearchConstant;
-import com.czy.api.converter.domain.post.PostConverter;
-import com.czy.api.domain.Do.test.TestSearchEsDo;
-import com.czy.api.domain.ao.post.PostInfoAo;
-import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.ao.search.PostSearchResultAo;
 import com.czy.api.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
-import com.czy.search.rule.Rule1AccompanyingDiseases;
-import com.czy.search.rule.Rule2AccompanyingSymptoms;
-import com.czy.search.rule.Rule3DiseasesHasSuggestions;
-import com.czy.search.rule.Rule4SymptomsFindDiseases;
+import com.czy.api.domain.dto.python.NlpSearchResponse;
 import com.czy.search.service.FuzzySearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.AnalyzeRequest;
-import org.elasticsearch.client.indices.AnalyzeResponse;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 
 /**
@@ -66,6 +54,7 @@ public class SearchController {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private PostNerService postNerService;
     private final FuzzySearchService fuzzySearchService;
+    private final RestTemplate restTemplate;
     /**
      * 模糊搜索
      * @param request  模糊搜索的句子 + userId（用于userContext特征上下文）
@@ -75,8 +64,36 @@ public class SearchController {
     public FuzzySearchResponse fuzzySearch(@Valid @RequestBody FuzzySearchRequest request) {
         // 搜索这种消耗资源的操作需要给用户上限流和分布式锁
         FuzzySearchResponse response = new FuzzySearchResponse();
+
+        // 提取搜素句子
         String sentence = request.getSentence();
-        // 略过python搜索响应
+
+        // python服务处理nlp搜索
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("text", sentence);
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
+        // python搜索响应
+        ResponseEntity<NlpSearchResponse> pythonResponseEntity = restTemplate.postForEntity(
+                SearchConstant.PYTHON_NLP_SEARCH_URL,
+                requestEntity,
+                NlpSearchResponse.class
+        );
+        // 处理 Python 响应
+        NlpSearchResponse nlpSearchResponse = null;
+        if (pythonResponseEntity.getStatusCode().is2xxSuccessful()) {
+            nlpSearchResponse = pythonResponseEntity.getBody();
+        }
+        else {
+            response.setType(FuzzySearchResponseEnum.NO_RESULT.getType());
+        }
+        if (nlpSearchResponse == null || nlpSearchResponse.getCode() != 200){
+            response.setType(FuzzySearchResponseEnum.ERROR_RESULT.getType());
+            return response;
+        }
+
         // 到此处了说明一定是post
         response.setType(FuzzySearchResponseEnum.SEARCH_POST_RESULT.getType());
         PostSearchResultAo postSearchResultAo = new PostSearchResultAo();
@@ -169,4 +186,5 @@ public class SearchController {
      *      App问题
      *          识别出是App问题进入App规则集回答，如果规则集没有数据则回答不知道
      */
+
 }
