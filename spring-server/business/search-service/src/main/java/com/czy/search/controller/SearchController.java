@@ -19,6 +19,7 @@ import com.czy.search.rule.Rule1AccompanyingDiseases;
 import com.czy.search.rule.Rule2AccompanyingSymptoms;
 import com.czy.search.rule.Rule3DiseasesHasSuggestions;
 import com.czy.search.rule.Rule4SymptomsFindDiseases;
+import com.czy.search.service.FuzzySearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -30,6 +31,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,20 +64,15 @@ public class SearchController {
 
     // mainSearch，包括全部的模糊搜索。依赖全部business模块
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private PostSearchService postSearchService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private PostNerService postNerService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
-    private final PostConverter postConverter;
-
+    private final FuzzySearchService fuzzySearchService;
     /**
      * 模糊搜索
      * @param request  模糊搜索的句子 + userId（用于userContext特征上下文）
      * @return  搜索结果
      */
     @PostMapping("/fuzzy")
-    public FuzzySearchResponse fuzzySearch(@Valid FuzzySearchRequest request) {
+    public FuzzySearchResponse fuzzySearch(@Valid @RequestBody FuzzySearchRequest request) {
         // 搜索这种消耗资源的操作需要给用户上限流和分布式锁
         FuzzySearchResponse response = new FuzzySearchResponse();
         String sentence = request.getSentence();
@@ -85,23 +82,23 @@ public class SearchController {
         PostSearchResultAo postSearchResultAo = new PostSearchResultAo();
 
         // 0~1级搜索 到此处说明sentence本身就是title，所以likeTitle传递sentence;
-        List<Long> likePostIdList = likeSearch(sentence);
+        List<Long> likePostIdList = fuzzySearchService.likeSearch(sentence);
         // 2级搜索 搜索：AcTree匹配实体 + ElasticSearch搜索;
         // 缓存结结果，避免后续搜索调用两次
-        List<PostNerResult> nerResults = new ArrayList<>();
-        List<Long> tokenizedPostIdList = tokenizedSearch(sentence, nerResults);
+        List<PostNerResult> nerResults = postNerService.getPostNerResults(sentence);
+        List<Long> tokenizedPostIdList = fuzzySearchService.tokenizedSearch(sentence);
 
 
         // 3级搜索：neo4j规则集 + es查询 + user context vector排序;
-        List<Long> neo4jRulePostIdList = neo4jRuleSearch(nerResults);
+        List<Long> neo4jRulePostIdList = fuzzySearchService.neo4jRuleSearch(nerResults);
         // 4级搜索：neo4j疾病相似度查询 + user context vector排序;
-        List<Long> similarList = similaritySearch(nerResults);
+        List<Long> similarList = fuzzySearchService.similaritySearch(nerResults);
 
         // 转换
-        postSearchResultAo.setLikePostList(getPostInfoUrlAos(likePostIdList));
-        postSearchResultAo.setTokenizedPostList(getPostInfoUrlAos(tokenizedPostIdList));
-        postSearchResultAo.setSimilarPostList(getPostInfoUrlAos(similarList));
-        postSearchResultAo.setRecommendPostList(getPostInfoUrlAos(neo4jRulePostIdList));
+        postSearchResultAo.setLikePostList(fuzzySearchService.getPostInfoUrlAos(likePostIdList));
+        postSearchResultAo.setTokenizedPostList(fuzzySearchService.getPostInfoUrlAos(tokenizedPostIdList));
+        postSearchResultAo.setSimilarPostList(fuzzySearchService.getPostInfoUrlAos(similarList));
+        postSearchResultAo.setRecommendPostList(fuzzySearchService.getPostInfoUrlAos(neo4jRulePostIdList));
 
         response.setType(FuzzySearchResponseEnum.SEARCH_POST_RESULT.getType());
         response.setData(postSearchResultAo);
@@ -132,137 +129,9 @@ public class SearchController {
      *          用户对不同帖子的权重
      */
 
-    /**
-     * 0~1级 的like搜索
-     * @param title 搜索的标题
-     * @return      搜索结果
-     */
-    private List<Long> likeSearch(String title){
-        List<Long> postIds = postSearchService.searchPostIdsByLikeTitle(title);
-        if (postIds.isEmpty()){
-            return new ArrayList<>();
-        }
-        // 去重
-        return new ArrayList<>(new LinkedHashSet<>(postIds));
-    }
-
 
     // TODO 用python给IK导出一份词典！！！！！！！！！！！！！！！！！！！！！！！！
-    private List<Long> tokenizedSearch(String title, List<PostNerResult> results){
-        List<PostNerResult> nerResults = postNerService.getPostNerResults(title);
-        results.clear();
-        // 缓存结结果，避免后续搜索调用两次
-        results.addAll(nerResults);
-        if (nerResults.isEmpty()){
-            // 如果没有词典中的词，则返回空
-            return new ArrayList<>();
-        }
-        // 有词典关键词的情况
-        List<Long> postIds = postSearchService.searchPostIdsByTokenizedTitle(title);
-        if (postIds.isEmpty()){
-            return new ArrayList<>();
-        }
-        // 去重
-        return new ArrayList<>(new LinkedHashSet<>(postIds));
-    }
 
-    // 规则集
-    private final Rule1AccompanyingDiseases rule1AccompanyingDiseases;
-    private final Rule2AccompanyingSymptoms rule2AccompanyingSymptoms;
-    private final Rule3DiseasesHasSuggestions rule3DiseasesHasSuggestions;
-    private final Rule4SymptomsFindDiseases rule4SymptomsFindDiseases;
-    // 制定规则集
-    /**
-     * 检查句子中是否存在（疾病/症状实体）
-     * 1.疾病实体：
-     *      1. 如果某种疾病存在伴随疾病，则搜索（疾病 + 伴随疾病）
-     *      2. 疾病如果伴随某些症状，则搜索（疾病 + 症状）
-     *      3. 如果疾病存在解决方案：药品，食物，菜谱
-     * 2. 症状
-     *      4. 如果包含多个症状，则症状的集合匹配是否存在疾病。
-     */
-    private List<Long> neo4jRuleSearch(List<PostNerResult> nerResults){
-        List<Long> finalList = new ArrayList<>();
-        List<String> diseaseNames = new ArrayList<>();
-        for (PostNerResult nerResult : nerResults) {
-            if (nerResult.getNerType().equals(DiseasesKnowledgeGraphEnum.DISEASES.getName())){
-                diseaseNames.add(nerResult.getKeyWord());
-            }
-        }
-        List<String> symptomNames = new ArrayList<>();
-        for (PostNerResult nerResult : nerResults) {
-            if (nerResult.getNerType().equals(DiseasesKnowledgeGraphEnum.SYMPTOMS.getName())){
-                symptomNames.add(nerResult.getKeyWord());
-            }
-        }
-        // 疾病：每个疾病都单独去查询
-        for (String diseaseName : diseaseNames){
-            List<Long> rule1MatchList = rule1AccompanyingDiseases.execute(diseaseName);
-            List<Long> rule2MatchList = rule2AccompanyingSymptoms.execute(diseaseName);
-            List<Long> rule3MatchList = rule3DiseasesHasSuggestions.execute(diseaseName);
-            finalList.addAll(rule1MatchList);
-            finalList.addAll(rule2MatchList);
-            finalList.addAll(rule3MatchList);
-        }
-        // 症状：全部症状共同查询
-        List<Long> rule4MatchList = rule4SymptomsFindDiseases.execute(symptomNames);
-        finalList.addAll(rule4MatchList);
-        // 去重
-        return new ArrayList<>(new LinkedHashSet<>(finalList));
-    }
-
-
-    /**
-     * 相似度查询
-     * 疾病的Jacard相似度
-     * 疾病之间的共同邻居相似度
-     * 疾病之间的距离相似度
-     */
-    private List<Long> similaritySearch(List<PostNerResult> nerResults){
-        List<String> diseaseNames = new ArrayList<>();
-        for (PostNerResult nerResult : nerResults) {
-            if (nerResult.getNerType().equals(DiseasesKnowledgeGraphEnum.DISEASES.getName())){
-                diseaseNames.add(nerResult.getKeyWord());
-            }
-        }
-        List<String> similarList = postSearchService.searchBySimilarity(diseaseNames, 3);
-        List<Long> similarPostIds = new ArrayList<>();
-        for (String similarName : similarList) {
-            List<Long> postIds = postSearchService.searchPostIdsByLikeTitle(similarName);
-            similarPostIds.addAll(postIds);
-        }
-        // 去重
-        return new ArrayList<>(new LinkedHashSet<>(similarPostIds));
-    }
-
-    private List<PostInfoUrlAo> getPostInfoUrlAos(List<Long> postIds){
-        List<PostInfoAo> postInfoAos = postSearchService.searchPostInfAoByIds(postIds);
-        List<Long> fileIds = new ArrayList<>();
-        for (PostInfoAo postInfoAo : postInfoAos){
-            if (postInfoAo != null && !ObjectUtils.isEmpty(postInfoAo.getFileId())){
-                fileIds.add(postInfoAo.getFileId());
-            }
-            else {
-                // 为了保证返回顺序一一对应
-                fileIds.add(null);
-            }
-        }
-        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
-        List<PostInfoUrlAo> postInfoUrlAos = new ArrayList<>();
-        assert fileUrls.size() == postInfoAos.size();
-        for (int i = 0; i < postInfoAos.size(); i++){
-            PostInfoAo postInfoAo = postInfoAos.get(i);
-            PostInfoUrlAo postInfoUrlAo = postConverter.postInfoDoToUrlAo(postInfoAo);
-            if (fileUrls.get(i) != null){
-                postInfoUrlAo.setFileUrl(fileUrls.get(i));
-            }
-            else {
-                postInfoUrlAo.setFileUrl(null);
-            }
-            postInfoUrlAos.add(postInfoUrlAo);
-        }
-        return postInfoUrlAos;
-    }
 
     /**
      * plan C
