@@ -1,14 +1,21 @@
 package com.czy.post.service.impl;
 
+import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.es.FieldAnalyzer;
 import com.czy.api.constant.search.SearchConstant;
+import com.czy.api.converter.domain.post.PostConverter;
 import com.czy.api.domain.Do.post.post.PostDetailEsDo;
+import com.czy.api.domain.Do.post.post.PostFilesDo;
+import com.czy.api.domain.Do.post.post.PostInfoDo;
+import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
+import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.mapper.neo4j.DiseaseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.AnalyzeRequest;
@@ -41,6 +48,8 @@ public class PostSearchServiceImpl implements PostSearchService {
     private final PostInfoMapper postInfoMapper;
     private final DiseaseRepository diseaseRepository;
     private final ElasticsearchRestTemplate elasticsearchRestTemplate;
+    private final PostConverter postConverter;
+    private final PostFilesMapper postFilesMapper;
     private static final String SEARCH_KEY_ATTRIBUTE = "title";
     // elasticsearch的客户端
     private final RestHighLevelClient restHighLevelClient;
@@ -150,6 +159,23 @@ public class PostSearchServiceImpl implements PostSearchService {
             }
         }
         return result;
+    }
+
+    @Override
+    public List<PostInfoAo> searchPostInfAoByIds(List<Long> postIds) {
+        List<PostInfoAo> postInfoAos = new ArrayList<>();
+        List<PostInfoDo> postInfoDoList = postInfoMapper.getPostInfoDoListByIdList(postIds);
+        for (PostInfoDo postInfoDo : postInfoDoList) {
+            List<PostFilesDo> postFilesDoList = postFilesMapper.getPostFilesDoListByPostId(postInfoDo.getId());
+            PostInfoAo postInfoAo = postConverter.postInfoDoToAo(postInfoDo);
+            if (!CollectionUtils.isEmpty(postFilesDoList)){
+                PostFilesDo postFilesDo = postFilesDoList.get(0);
+                Long fileId = postFilesDo.getFileId();
+                postInfoAo.setFileId(fileId);
+            }
+            postInfoAos.add(postInfoAo);
+        }
+        return postInfoAos;
     }
 
     private int calculateMatchedCount(String content, List<String> keywords) {

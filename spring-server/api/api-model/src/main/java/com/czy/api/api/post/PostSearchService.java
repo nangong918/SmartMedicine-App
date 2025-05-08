@@ -1,6 +1,7 @@
 package com.czy.api.api.post;
 
 
+import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 
 import java.util.List;
@@ -32,4 +33,6 @@ public interface PostSearchService {
     List<PostSearchEsAo> searchByKeywordsByMapper(List<String> keywords, int minShouldMatch);
 
     List<String> searchBySimilarity(List<String> diseaseNames, int limitNum);
+    // postIds -> PostInfoAos
+    List<PostInfoAo> searchPostInfAoByIds(List<Long> postIds);
 }

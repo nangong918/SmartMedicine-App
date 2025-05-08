@@ -7,6 +7,7 @@ import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.post.post.PostNeo4jDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
@@ -134,6 +135,17 @@ public interface PostConverter {
     @Mapping(source = "commentCount", target = "commentCount")
     @Mapping(source = "forwardCount", target = "forwardCount")
     PostInfoAo postInfoDoToAo(PostInfoDo postInfoDo);
+
+    // postInfoAo -> postInfoUrlAo
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "authorId", target = "authorId")
+    @Mapping(source = "title", target = "title")
+    @Mapping(source = "releaseTimestamp", target = "releaseTimestamp")
+    @Mapping(source = "likeCount", target = "likeCount")
+    @Mapping(source = "collectCount", target = "collectCount")
+    @Mapping(source = "commentCount", target = "commentCount")
+    @Mapping(source = "forwardCount", target = "forwardCount")
+    PostInfoUrlAo postInfoDoToUrlAo(PostInfoAo postInfoAo);
 
     default PostNeo4jDo toNeo4jDo(PostAo postAo){
         PostNeo4jDo postNeo4jDo = new PostNeo4jDo();

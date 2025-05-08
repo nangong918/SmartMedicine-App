@@ -7,7 +7,10 @@ import com.czy.api.constant.es.FieldAnalyzer;
 import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.constant.search.FuzzySearchResponseEnum;
 import com.czy.api.constant.search.SearchConstant;
+import com.czy.api.converter.domain.post.PostConverter;
 import com.czy.api.domain.Do.test.TestSearchEsDo;
+import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.ao.search.PostSearchResultAo;
 import com.czy.api.domain.dto.http.request.FuzzySearchRequest;
@@ -23,6 +26,8 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.AnalyzeRequest;
 import org.elasticsearch.client.indices.AnalyzeResponse;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,6 +67,7 @@ public class SearchController {
     private PostNerService postNerService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
+    private final PostConverter postConverter;
 
     /**
      * 模糊搜索
@@ -90,10 +96,16 @@ public class SearchController {
         List<Long> neo4jRulePostIdList = neo4jRuleSearch(nerResults);
         // 4级搜索：neo4j疾病相似度查询 + user context vector排序;
         List<Long> similarList = similaritySearch(nerResults);
-        // 5级搜索：neo4j帖子相似度查询 + user context vector排序（类推荐系统）;
 
-        // id去重
-        return null;
+        // 转换
+        postSearchResultAo.setLikePostList(getPostInfoUrlAos(likePostIdList));
+        postSearchResultAo.setTokenizedPostList(getPostInfoUrlAos(tokenizedPostIdList));
+        postSearchResultAo.setSimilarPostList(getPostInfoUrlAos(similarList));
+        postSearchResultAo.setRecommendPostList(getPostInfoUrlAos(neo4jRulePostIdList));
+
+        response.setType(FuzzySearchResponseEnum.SEARCH_POST_RESULT.getType());
+        response.setData(postSearchResultAo);
+        return response;
     }
 
     /**
@@ -221,6 +233,35 @@ public class SearchController {
         }
         // 去重
         return new ArrayList<>(new LinkedHashSet<>(similarPostIds));
+    }
+
+    private List<PostInfoUrlAo> getPostInfoUrlAos(List<Long> postIds){
+        List<PostInfoAo> postInfoAos = postSearchService.searchPostInfAoByIds(postIds);
+        List<Long> fileIds = new ArrayList<>();
+        for (PostInfoAo postInfoAo : postInfoAos){
+            if (postInfoAo != null && !ObjectUtils.isEmpty(postInfoAo.getFileId())){
+                fileIds.add(postInfoAo.getFileId());
+            }
+            else {
+                // 为了保证返回顺序一一对应
+                fileIds.add(null);
+            }
+        }
+        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+        List<PostInfoUrlAo> postInfoUrlAos = new ArrayList<>();
+        assert fileUrls.size() == postInfoAos.size();
+        for (int i = 0; i < postInfoAos.size(); i++){
+            PostInfoAo postInfoAo = postInfoAos.get(i);
+            PostInfoUrlAo postInfoUrlAo = postConverter.postInfoDoToUrlAo(postInfoAo);
+            if (fileUrls.get(i) != null){
+                postInfoUrlAo.setFileUrl(fileUrls.get(i));
+            }
+            else {
+                postInfoUrlAo.setFileUrl(null);
+            }
+            postInfoUrlAos.add(postInfoUrlAo);
+        }
+        return postInfoUrlAos;
     }
 
     /**

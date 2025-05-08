@@ -70,13 +70,7 @@ else (yes)
             stop
           else (no)
             ' Search Branch - Level 4
-            :5级搜索：neo4j帖子相似度查询 +\n user context vector排序（类推荐系统）;
-            if (搜索到帖子?) then (yes)
-              :返回帖子;
-              stop
-            else (no)
-              stop
-            endif
+            stop
           endif
         endif
       endif
