@@ -1,7 +1,6 @@
 package com.czy.feature.service.impl;
 
 import com.czy.api.api.feature.DiseasesNeo4jService;
-import com.czy.api.domain.Do.neo4j.DiseaseDo;
 import com.czy.feature.mapper.DiseaseRepository;
 import com.czy.feature.mapper.SymptomsRepository;
 import lombok.RequiredArgsConstructor;

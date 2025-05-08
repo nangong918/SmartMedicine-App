@@ -77,9 +77,9 @@ public class SearchController {
         response.setType(FuzzySearchResponseEnum.SEARCH_POST_RESULT.getType());
         PostSearchResultAo postSearchResultAo = new PostSearchResultAo();
 
-        // 0~1级搜索 到此处说明sentence本身就是title，所以likeTitle传递sentence
+        // 0~1级搜索 到此处说明sentence本身就是title，所以likeTitle传递sentence;
         List<Long> likePostIdList = likeSearch(sentence);
-        // 2级搜索 搜索：AcTree匹配实体 + ElasticSearch搜索
+        // 2级搜索 搜索：AcTree匹配实体 + ElasticSearch搜索;
         // 缓存结结果，避免后续搜索调用两次
         List<PostNerResult> nerResults = new ArrayList<>();
         List<Long> tokenizedPostIdList = tokenizedSearch(sentence, nerResults);
@@ -87,6 +87,8 @@ public class SearchController {
 
         // 3级搜索：neo4j规则集 + es查询 + user context vector排序;
         List<Long> neo4jRulePostIdList = neo4jRuleSearch(nerResults);
+        // 4级搜索：neo4j疾病相似度查询 + user context vector排序;
+        // 5级搜索：neo4j帖子相似度查询 + user context vector排序（类推荐系统）;
         // TODO 4级别：Bert意图识别；帖子还能如何分类？首先先将帖子分类；存入帖子的时候调用bert模型将post标签分类
         //  用户查询帖子的是时候，也对句子按照post进行分类，得到系列接股票；用user context对结果进行按照用户感兴趣顺序排序
         // TODO 5级别：问题回复
@@ -94,6 +96,30 @@ public class SearchController {
         // neo4j相似度搜索
         return null;
     }
+
+    /**
+     * user feature context 设计：
+     * 1. 发布的时候用户手动打分区标签 + Bert模型对文章进行分类：#日常分享 #专业医疗知识 #养生技巧 #医疗新闻 #其他
+     * 2. 根据用户行为：
+     *      发布行为；
+     *      显性帖子行为：
+     *          点赞，
+     *          评论（BERT情感分类NLE：肯定态度，否定态度，中立态度），
+     *          收藏；
+     *      隐性行为：
+     *          点击率，
+     *          浏览时长（1.根据文章长度估算大概要读取的时间 - 用户已读取的时间 2.固定判断时长：超过30秒一定增加权重）
+     *          搜搜行为
+     * 3. 热衰减：
+     *       定时任务：每3天用户的全部权重*0.8；30天全部消失（存储在Redis自发消失）
+     * 4.特征设计：
+     *       1.分类（u-l）特征：
+     *          用户对不同的标签的权重
+     *       2.实体（u-a）特征：
+     *          用户对不同的实体的特征权重
+     *       3.物品（u-i）特征：
+     *          用户对不同帖子的权重
+     */
 
     /**
      * 0~1级 的like搜索
@@ -124,6 +150,16 @@ public class SearchController {
     private final Rule2AccompanyingSymptoms rule2AccompanyingSymptoms;
     private final Rule3DiseasesHasSuggestions rule3DiseasesHasSuggestions;
     private final Rule4SymptomsFindDiseases rule4SymptomsFindDiseases;
+    // 制定规则集
+    /**
+     * 检查句子中是否存在（疾病/症状实体）
+     * 1.疾病实体：
+     *      1. 如果某种疾病存在伴随疾病，则搜索（疾病 + 伴随疾病）
+     *      2. 疾病如果伴随某些症状，则搜索（疾病 + 症状）
+     *      3. 如果疾病存在解决方案：药品，食物，菜谱
+     * 2. 症状
+     *      4. 如果包含多个症状，则症状的集合匹配是否存在疾病。
+     */
     private List<Long> neo4jRuleSearch(List<PostNerResult> nerResults){
         List<Long> finalList = new ArrayList<>();
         List<String> diseaseNames = new ArrayList<>();
@@ -153,16 +189,7 @@ public class SearchController {
         return finalList;
     }
 
-    // 制定规则集
-    /**
-     * 检查句子中是否存在（疾病/症状实体）
-     * 1.疾病实体：
-     *      1. 如果某种疾病存在伴随疾病，则搜索（疾病 + 伴随疾病）
-     *      2. 疾病如果伴随某些症状，则搜索（疾病 + 症状）
-     *      3. 如果疾病存在解决方案：药品，食物，菜谱
-     * 2. 症状
-     *      4. 如果包含多个症状，则症状的集合匹配是否存在疾病。
-     */
+
 
     /**
      * 相似度查询
