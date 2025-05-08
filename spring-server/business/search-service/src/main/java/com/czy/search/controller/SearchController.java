@@ -88,6 +88,7 @@ public class SearchController {
         // 3级搜索：neo4j规则集 + es查询 + user context vector排序;
         List<Long> neo4jRulePostIdList = neo4jRuleSearch(nerResults);
         // 4级搜索：neo4j疾病相似度查询 + user context vector排序;
+        List<Long> similarList = similaritySearch(nerResults);
         // 5级搜索：neo4j帖子相似度查询 + user context vector排序（类推荐系统）;
         // TODO 4级别：Bert意图识别；帖子还能如何分类？首先先将帖子分类；存入帖子的时候调用bert模型将post标签分类
         //  用户查询帖子的是时候，也对句子按照post进行分类，得到系列接股票；用user context对结果进行按照用户感兴趣顺序排序
@@ -190,13 +191,27 @@ public class SearchController {
     }
 
 
-
     /**
      * 相似度查询
      * 疾病的Jacard相似度
      * 疾病之间的共同邻居相似度
      * 疾病之间的距离相似度
      */
+    private List<Long> similaritySearch(List<PostNerResult> nerResults){
+        List<String> diseaseNames = new ArrayList<>();
+        for (PostNerResult nerResult : nerResults) {
+            if (nerResult.getNerType().equals(DiseasesKnowledgeGraphEnum.DISEASES.getName())){
+                diseaseNames.add(nerResult.getKeyWord());
+            }
+        }
+        List<String> similarList = postSearchService.searchBySimilarity(diseaseNames, 3);
+        List<Long> similarPostIds = new ArrayList<>();
+        for (String similarName : similarList) {
+            List<Long> postIds = postSearchService.searchPostIdsByLikeTitle(similarName);
+            similarPostIds.addAll(postIds);
+        }
+        return similarPostIds;
+    }
 
     /**
      * plan C

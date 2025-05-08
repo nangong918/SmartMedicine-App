@@ -31,4 +31,5 @@ public interface PostSearchService {
      */
     List<PostSearchEsAo> searchByKeywordsByMapper(List<String> keywords, int minShouldMatch);
 
+    List<String> searchBySimilarity(List<String> diseaseNames, int limitNum);
 }

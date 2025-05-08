@@ -77,8 +77,8 @@ public interface DiseaseRepository extends Neo4jRepository<DiseaseDo, Long> {
             "           ELSE size(intersection) * 1.0 / (size(ids1) + size(ids2)) " +
             "       END AS jaccardIndex " +
             "ORDER BY jaccardIndex DESC " +
-            "LIMIT 10")
-    List<Map<String, Object>> findTopSimilarDiseasesByJaccard(@Param("name") String name);
+            "LIMIT $n")
+    List<Map<String, Object>> findTopSimilarDiseasesByJaccard(@Param("name") String name, @Param("n") int n);
 
 
     /**
@@ -126,8 +126,8 @@ public interface DiseaseRepository extends Neo4jRepository<DiseaseDo, Long> {
             "           ELSE size(commonNeighbors) * 1.0 / allNeighborsCount " +
             "       END AS similarityScore " +
             "ORDER BY similarityScore DESC " +
-            "LIMIT 10")
-    List<Map<String, Object>> findTopSimilarDiseasesByNeighbor(@Param("diseaseName") String diseaseName);
+            "LIMIT $n")
+    List<Map<String, Object>> findTopSimilarDiseasesByNeighbor(@Param("diseaseName") String diseaseName, @Param("n") int n);
 
 
     /**
@@ -141,7 +141,7 @@ public interface DiseaseRepository extends Neo4jRepository<DiseaseDo, Long> {
     @Query("MATCH (d1:疾病 {name: $diseaseName})-[:has_symptom|recommand_drug|do_eat|not_eat|acompany_with]-(d2:疾病) " +
             "WHERE d1 <> d2 " +
             "RETURN d2.name AS diseaseName " +
-            "LIMIT 10")
-    List<Map<String, Object>> findTopSimilarDiseasesByPath1(@Param("diseaseName") String diseaseName);
+            "LIMIT $n")
+    List<Map<String, Object>> findTopSimilarDiseasesByPath1(@Param("diseaseName") String diseaseName, @Param("n") int n);
 
 }

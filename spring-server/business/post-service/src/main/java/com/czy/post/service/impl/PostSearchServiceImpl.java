@@ -6,6 +6,7 @@ import com.czy.api.constant.search.SearchConstant;
 import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 import com.czy.post.mapper.mysql.PostInfoMapper;
+import com.czy.post.mapper.neo4j.DiseaseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.RequestOptions;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
 public class PostSearchServiceImpl implements PostSearchService {
 
     private final PostInfoMapper postInfoMapper;
+    private final DiseaseRepository diseaseRepository;
     private final ElasticsearchRestTemplate elasticsearchRestTemplate;
     private static final String SEARCH_KEY_ATTRIBUTE = "title";
     // elasticsearch的客户端
@@ -124,6 +127,29 @@ public class PostSearchServiceImpl implements PostSearchService {
                 })
                 .sorted((a, b) -> b.getMatchedCount() - a.getMatchedCount()) // 降序排序
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> searchBySimilarity(List<String> diseaseNames, int limitNum) {
+        List<String> result = new ArrayList<>();
+        for (String diseaseName : diseaseNames){
+            List<Map<String, Object>> jaccardResult = diseaseRepository.findTopSimilarDiseasesByJaccard(diseaseName, limitNum);
+            for (Map<String, Object> map : jaccardResult) {
+                String similarDiseaseName = (String) map.get("diseaseName");
+                result.add(similarDiseaseName);
+            }
+            List<Map<String, Object>> neighborResult = diseaseRepository.findTopSimilarDiseasesByNeighbor(diseaseName, limitNum);
+            for (Map<String, Object> map : neighborResult) {
+                String similarDiseaseName = (String) map.get("diseaseName");
+                result.add(similarDiseaseName);
+            }
+            List<Map<String, Object>> pathResult = diseaseRepository.findTopSimilarDiseasesByPath1(diseaseName, limitNum);
+            for (Map<String, Object> map : pathResult) {
+                String similarDiseaseName = (String) map.get("diseaseName");
+                result.add(similarDiseaseName);
+            }
+        }
+        return result;
     }
 
     private int calculateMatchedCount(String content, List<String> keywords) {
