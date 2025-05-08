@@ -17,10 +17,12 @@ public enum FuzzySearchResponseEnum {
      * 4：4级 user context特征向量 + Bert意图识别 + AcTree推荐搜索结果
      * 0：非自然语言；99：寒暄；100：App功能问题
      */
-    NOT_NATURAL_LANGUAGE_RESULT(0, "非自然语言"),
-    SEARCH_POST_RESULT(1, "各级搜索结果"),
-    TALK_RESULT(2, "寒暄"),
-    APP_QUESTION_RESULT(3, "App功能问题");
+    NOT_NATURAL_LANGUAGE_RESULT(0, "非自然语言：string返回，提示"),
+    SEARCH_POST_RESULT(1, "各级搜索结果；PostSearchResultAo回复，结果"),
+    TALK_RESULT(2, "寒暄：string返回。寒暄"),
+    QUESTION_RESULT(3, "问题问题"),
+    RECOMMEND_QUESTION_RESULT(4, "推荐问题：RecommendAo返回。推荐结果"),
+    APP_FUNCTION_RESULT(5, "App功能问题：AppFunctionAo返回。App功能问题");
 
     private final Integer type;
     private final String desc;
