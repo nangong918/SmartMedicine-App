@@ -71,7 +71,7 @@ public class BurialPointController {
         if (userId == null){
             return BaseResponse.LogBackError("用户不存在");
         }
-        userActionRecordService.uploadUserInfo(request.getAo());
+        userActionRecordService.uploadUserInfo(request.getAo(), request.getTimestamp());
         return BaseResponse.getResponseEntitySuccess("上传成功");
     }
 
@@ -83,7 +83,7 @@ public class BurialPointController {
         if (userId == null){
             return BaseResponse.LogBackError("用户不存在");
         }
-        userActionRecordService.clickPost(userId, request.getPostId(), request.getTimestamp());
+        userActionRecordService.clickPost(userId, request.getPostId(), request.getTimestamp(), request.getTimestamp());
         return BaseResponse.getResponseEntitySuccess("上传成功");
     }
 
@@ -95,7 +95,7 @@ public class BurialPointController {
         if (userId == null){
             return BaseResponse.LogBackError("用户不存在");
         }
-        userActionRecordService.uploadClickPostAndBrowseTime(userId, request.getPostId(), request.getBrowseTime());
+        userActionRecordService.uploadClickPostAndBrowseTime(userId, request.getPostId(), request.getBrowseTime(), request.getTimestamp());
         return BaseResponse.getResponseEntitySuccess("上传成功");
     }
 
