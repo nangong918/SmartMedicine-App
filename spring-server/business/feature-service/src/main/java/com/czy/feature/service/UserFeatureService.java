@@ -25,6 +25,7 @@ package com.czy.feature.service;
  *          用户对不同的实体的特征权重
  *       3.物品（u-i）特征：
  *          用户对不同帖子的权重
+ * service计算特征
  */
 public interface UserFeatureService {
 }
