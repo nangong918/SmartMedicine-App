@@ -2,6 +2,7 @@ package com.czy.feature.controller;
 
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.feature.FeatureConstant;
+import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.UserBrowseTimeRequest;
 import com.czy.api.domain.dto.http.request.UserCityLocationRequest;
@@ -71,7 +72,9 @@ public class BurialPointController {
         if (userId == null){
             return BaseResponse.LogBackError("用户不存在");
         }
-        userActionRecordService.uploadUserInfo(request.getAo(), request.getTimestamp());
+        UserCityLocationInfoAo ao = request.getAo();
+        ao.setUserId(userId);
+        userActionRecordService.uploadUserInfo(ao, request.getTimestamp());
         return BaseResponse.getResponseEntitySuccess("上传成功");
     }
 

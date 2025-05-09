@@ -137,8 +137,26 @@ public class RedissonServiceImpl implements RedissonService {
     }
 
     @Override
+    public void saveObjectHaseMap(String key, HashMap<String, Object> data, Long expireTimes) {
+        RMap<String, Object> map = redissonClient.getMap(key);
+        map.putAll(data);
+        if (expireTimes != null){
+            map.expire(expireTimes, TimeUnit.SECONDS);
+        }
+        else {
+            map.expire(EXPIRE_SECONDS, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
     public HashMap<String, String> getHashMap(String key) {
         RMap<String, String> map = redissonClient.getMap(key);
+        return new HashMap<>(map.readAllMap());
+    }
+
+    @Override
+    public HashMap<String, Object> getObjectHaseMap(String key) {
+        RMap<String, Object> map = redissonClient.getMap(key);
         return new HashMap<>(map.readAllMap());
     }
 

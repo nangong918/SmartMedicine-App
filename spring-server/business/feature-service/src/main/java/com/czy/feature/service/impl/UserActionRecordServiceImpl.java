@@ -1,12 +1,16 @@
 package com.czy.feature.service.impl;
 
+import com.czy.api.constant.feature.FeatureConstant;
+import com.czy.api.constant.feature.UserActionRedisKey;
 import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.feature.service.UserActionRecordService;
+import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,6 +30,8 @@ import java.util.List;
 @Service
 public class UserActionRecordServiceImpl implements UserActionRecordService {
 
+    private final RedissonService redissonService;
+
     // 隐性特征 前端主动http埋点
 
     /**
@@ -35,7 +41,16 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
      */
     @Override
     public void uploadUserInfo(UserCityLocationInfoAo ao, Long timestamp) {
+        // 此不需要历史特征，只作为当前的特征
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("cityName", ao.getCityName());
+        data.put("longitude", ao.getLongitude());
+        data.put("latitude", ao.getLatitude());
 
+        String key = UserActionRedisKey.USER_FEATURE_CITY_LOCATION_REDIS_KEY + ao.getUserId();
+
+        // 存储 HashMap
+        redissonService.saveObjectHaseMap(key, data, FeatureConstant.FEATURE_EXPIRE_TIME);
     }
 
     /**
@@ -47,7 +62,8 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
      */
     @Override
     public void clickPost(Long userId, Long postId, Long clickTimestamp, Long timestamp) {
-
+        String userFeatureKey = UserActionRedisKey.USER_FEATURE_CLICK_POST_REDIS_KEY + userId;
+        String postHeatKey = UserActionRedisKey.POST_HEAT_CLICK_REDIS_KEY + postId;
     }
 
     /**

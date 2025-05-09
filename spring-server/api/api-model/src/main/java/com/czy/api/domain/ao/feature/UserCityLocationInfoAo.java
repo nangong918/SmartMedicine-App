@@ -16,4 +16,6 @@ public class UserCityLocationInfoAo {
     private Double longitude;
     // 纬度 null able
     private Double latitude;
+    // userId
+    private Long userId;
 }
