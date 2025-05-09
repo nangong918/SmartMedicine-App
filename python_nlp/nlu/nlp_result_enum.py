@@ -3,6 +3,7 @@ from enum import Enum
 class NlpResultEnum(Enum):
     NONE = (-1, "无结果、Error，异常等")
     NOT_NL = (0, "非自然语言")
+    # 要求python这边识别意图之后用TF-IDF识别不同的寒暄类型然后返回语句放在message中返回给前端
     GREETING = (1, "寒暄")
     SEARCH = (2, "搜索意图（问题中识别为其他的时候）")
     RECOMMEND = (3, "问题意图:推荐请求")
