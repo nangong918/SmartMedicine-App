@@ -1,0 +1,16 @@
+package com.czy.api.constant.feature;
+
+/**
+ * @author 13225
+ * @date 2025/5/9 10:58
+ */
+public class FeatureConstant {
+
+
+    public static final String serviceName = "feature-service";
+    public static final String serviceRoute = "/" + serviceName;
+
+    public static final String BurialPoint_CONTROLLER = "/burialPoint";
+    public static final String serviceUri = "lb://" + serviceName;
+
+}

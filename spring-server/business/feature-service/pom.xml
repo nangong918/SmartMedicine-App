@@ -6,9 +6,10 @@
     <artifactId>feature-service</artifactId>
     <description>feature service:
         用户特征服务
-        1.用户特征提取
-        2.对外提供用户特征
-        3.neo4j数据管理
+        1.特征收集
+        2.用户特征提取
+        3.对外提供用户特征
+        4.neo4j数据管理
     </description>
 
     <parent>
