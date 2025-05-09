@@ -154,6 +154,18 @@
             <artifactId>spring-cloud-starter-dubbo</artifactId>
         </dependency>
 
+        <!-- 自动化配置 neo4j -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-neo4j</artifactId>
+        </dependency>
+
+        <!-- AcTree自动机算法-->
+        <dependency>
+            <groupId>com.hankcs</groupId>
+            <artifactId>aho-corasick-double-array-trie</artifactId>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

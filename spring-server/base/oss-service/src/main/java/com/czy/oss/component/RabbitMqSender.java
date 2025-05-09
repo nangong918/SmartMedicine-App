@@ -1,8 +1,6 @@
 package com.czy.oss.component;
 
 
-import com.czy.api.constant.mq.OssMqConstant;
-import com.czy.api.domain.entity.event.PostOssResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,9 +17,5 @@ import org.springframework.stereotype.Component;
 public class RabbitMqSender {
 
     private final RabbitTemplate rabbitTemplate;
-
-    public void pushToOss(PostOssResponse postOssResponse){
-        rabbitTemplate.convertAndSend(OssMqConstant.OSS_TO_SERVICE_QUEUE, postOssResponse);
-    }
     
 }

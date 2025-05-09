@@ -1,0 +1,48 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Data files
+data/
+# *.csv
+*.tsv
+*.xlsx
+*.json
+# *.h5
+
+# Model files
+models/
+# *.h5
+*.pkl
+*.pt
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# IDE config files
+.idea/
+.vscode/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+/Bert/bert_model.ckpt
+/Bert/bert_model.ckpt.data-00000-of-00001
+/Bert/bert_model.ckpt.index
+/Bert/bert_model.ckpt.meta

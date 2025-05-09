@@ -2,6 +2,7 @@ package com.czy.post.service;
 
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostNerResult;
 
 import java.util.List;
 
@@ -15,7 +16,12 @@ public interface PostStorageService {
     // mysql
     void storePostInfoToDatabase(PostAo postAo);
     void storePostFilesToDatabase(PostAo postAo);
-
+    // 特征存储到neo4j
+    void storePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList);
+    // 更新post的特征到neo4j
+    void updatePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList);
+    // 删除post在neo4j的全部特征
+    void deletePostFeatureFromNeo4j(Long postId);
     // 删除es + mongo
     void deletePostContentFromDatabase(Long id);
     // 删除mysql

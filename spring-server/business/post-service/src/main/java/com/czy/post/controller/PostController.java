@@ -1,6 +1,7 @@
 package com.czy.post.controller;
 
 import com.czy.api.api.oss.OssService;
+import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
@@ -10,6 +11,7 @@ import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
@@ -65,6 +67,8 @@ public class PostController {
     private final PostCommentConverter postCommentConverter;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private PostNerService postNerService;
 
     // 发布post
     /**
@@ -72,6 +76,14 @@ public class PostController {
      * 第一步缓存 + 获取雪花id，此处是第一步
      * 此处帖子未发布完成的用户需要上分布式锁，禁止其发布其他帖子。避免造成频繁访问
      * 第二个http请求在oss
+     * <p>
+     * 额外补充1：埋点事件
+     * <p>
+     * 额外补充2：特征提取 + 存储：
+     * post用acTree自动机对比词典，查询是否存在关键词
+     * 将关键词结果存入对应的neo4j
+     * 待完成发布的时候将帖子的内容转为特征值，并将特征值存入Neo4j
+     * AcTree的速度很快，可以对全文进行实体检测大概是10ms
      */
     @PostMapping(PostConstant.POST_PUBLISH_FIRST)
     public Mono<BaseResponse<PostPublishResponse>>
@@ -108,8 +120,14 @@ public class PostController {
                 return Mono.just(BaseResponse.LogBackError(warningMessage, log));
             }
             // 2.缓存到redis
+            // 2.1特征提取
+            // 使用知识图谱实体 + AcTree进行特征提取
+            List<PostNerResult> resultList = postNerService.getPostNerResults(postAo.getTitle());
+            postAo.setNerResults(resultList);
+            // 特征存储在mongodb；mysql不适合存储非结构化数据
             // redis + 生成雪花id
             try {
+                // 2.2存储到redis并生成雪花id返回
                 snowflakeId = postService.releasePostFirst(postAo);
             } catch (Exception e) {
                 // 任何异常都直接解除分布式锁

@@ -4,6 +4,7 @@
 autonumber
 
 note left of 前端: 将Post发布拆分成两次Http请求：\n需要先对帖子的基本信息进行审核（合法、幂等）
+后端 -> 后端: AcTree特征提取
 前端 -> 后端: 发布帖子：第一次Http请求：上传文件之外的帖子信息。
 后端 -> 后端: 对userId上分布式锁，避免重复提交。
 note left of 后端: 帖子信息先存入缓存的原因：\n避免分布式事务：1.相比先存入数据库等到oss存储失败再事务回滚不如先缓存\n 2.为了数据一致性就将OSS和数据库上同步事务颇为不妥\n因为OSS和数据库的存储速度有差异，容易早场数据库锁表
@@ -15,7 +16,7 @@ note left of 后端: 帖子信息存在Redis而不是服务堆内存是因为：
 后端Post服务 -> 后端Post服务: 通过雪花Id在Redis找到帖子数据，删除Redis缓存。\n如果Oss失败则解除分布式锁。\nOss执行之后SpringEvent将PostOssResponse通知后端Post服务。
 note left of 后端Oss服务: OSS失败了直接删除Redis缓存就好，\n避免了分布式事务
 note left of 后端Post服务: 采用ES和Mongo的原因：\n帖子的标题由IK分词存入ES，\n搜索功能ES更强\n帖子内容存入MongoDB，\n查询文本Mongo比MySQL和ES都快。\n文件索引存入MySQL的原因，\nMySQL是ORM，适合存储结构化数据
-后端Post服务 -> 后端Post服务: 事务存储帖子内容信息进入ES和MongoDB；异步存储帖子索引信息到MySQL。
+后端Post服务 -> 后端Post服务: 事务存储帖子内容信息进入ES和MongoDB；异步存储帖子索引信息到MySQL。\n帖子特征信息存储到mongodb并在neo4j进行关联
 后端Post服务 --> 后端Netty服务: 雪花Id + userAccount，通知前端发布帖子成功。
 后端Netty服务 -> 前端: 通知前端发布帖子成功
 

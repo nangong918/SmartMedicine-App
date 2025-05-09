@@ -1,5 +1,6 @@
 package com.czy.api.domain.Do.post.post;
 
+import com.czy.api.domain.ao.post.PostNerResult;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -22,4 +23,6 @@ public class PostDetailDo {
     private String title;
     // content；not null
     private String content;
+    // ner特诊
+    private List<PostNerResult> nerResults;
 }

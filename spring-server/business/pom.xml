@@ -23,6 +23,7 @@
         <module>post-service</module>
         <module>recommend-service</module>
         <module>search-service</module>
+        <module>feature-service</module>
     </modules>
 
     <!--JDK版本：11-->
@@ -47,6 +48,7 @@
         <jedission.version>3.11.3</jedission.version>
         <rabbitmq.version>5.5.3</rabbitmq.version>
         <minio.version>8.2.2</minio.version>
+        <hankcs.version>1.2.3</hankcs.version>
     </properties>
 
     <dependencyManagement>
@@ -153,6 +155,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-amqp</artifactId>
                 <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hankcs</groupId>
+                <artifactId>aho-corasick-double-array-trie</artifactId>
+                <version>${hankcs.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

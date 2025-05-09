@@ -1,11 +1,23 @@
 package com.czy.post.service.impl;
 
+import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.converter.domain.post.PostConverter;
+import com.czy.api.domain.Do.neo4j.ChecksDo;
+import com.czy.api.domain.Do.neo4j.DepartmentsDo;
+import com.czy.api.domain.Do.neo4j.DiseaseDo;
+import com.czy.api.domain.Do.neo4j.DrugsDo;
+import com.czy.api.domain.Do.neo4j.FoodsDo;
+import com.czy.api.domain.Do.neo4j.ProducersDo;
+import com.czy.api.domain.Do.neo4j.RecipesDo;
+import com.czy.api.domain.Do.neo4j.SymptomsDo;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
+import com.czy.api.domain.Do.post.post.PostNeo4jDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostNerResult;
+import com.czy.api.mapper.PostRepository;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
@@ -33,6 +45,7 @@ public class PostStorageServiceImpl implements PostStorageService {
     private final PostDetailMongoMapper postDetailMongoMapper;
     private final PostConverter postConverter;
     private final PostFilesMapper postFilesMapper;
+    private final PostRepository postRepository;
     @Override
     public void storePostContentToDatabase(PostAo postAo) {
         postTransactionService.storePostToDatabase(postAo);
@@ -50,6 +63,106 @@ public class PostStorageServiceImpl implements PostStorageService {
         if (!CollectionUtils.isEmpty(postFilesDoList)){
             postFilesMapper.insertPostFilesDoList(postFilesDoList);
         }
+    }
+
+    @Override
+    public void storePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList) {
+        if (CollectionUtils.isEmpty(featureList)){
+            return;
+        }
+        PostNeo4jDo postNeo4jDo = postConverter.toNeo4jDo(postAo);
+        List<ChecksDo> checksDoList = new ArrayList<>();
+        List<DepartmentsDo> departmentsDoList = new ArrayList<>();
+        List<DiseaseDo> diseasesDoList = new ArrayList<>();
+        List<DrugsDo> drugsDoList = new ArrayList<>();
+        List<FoodsDo> foodsDoList = new ArrayList<>();
+        List<ProducersDo> producerDoList = new ArrayList<>();
+        List<RecipesDo> recipesDoList = new ArrayList<>();
+        List<SymptomsDo> symptomsDoList = new ArrayList<>();
+
+        for (PostNerResult postNerResult : featureList){
+            if (postNerResult == null || postNerResult.isEmpty()){
+                continue;
+            }
+            if (DiseasesKnowledgeGraphEnum.CHECKS.getName().equals(postNerResult.getNerType())){
+                ChecksDo checksDo = new ChecksDo();
+                checksDo.setName(postNerResult.getKeyWord());
+                checksDoList.add(checksDo);
+            }
+            else if (DiseasesKnowledgeGraphEnum.DEPARTMENTS.getName().equals(postNerResult.getNerType())){
+                DepartmentsDo departmentsDo = new DepartmentsDo();
+                departmentsDo.setName(postNerResult.getKeyWord());
+                departmentsDoList.add(departmentsDo);
+            }
+            else if (DiseasesKnowledgeGraphEnum.DISEASES.getName().equals(postNerResult.getNerType())){
+                DiseaseDo diseaseDo = new DiseaseDo();
+                diseaseDo.setName(postNerResult.getKeyWord());
+                diseasesDoList.add(diseaseDo);
+            }
+            else if (DiseasesKnowledgeGraphEnum.DRUGS.getName().equals(postNerResult.getNerType())){
+                DrugsDo drugsDo = new DrugsDo();
+                drugsDo.setName(postNerResult.getKeyWord());
+                drugsDoList.add(drugsDo);
+            }
+            else if (DiseasesKnowledgeGraphEnum.FOODS.getName().equals(postNerResult.getNerType())){
+                FoodsDo foodsDo = new FoodsDo();
+                foodsDo.setName(postNerResult.getKeyWord());
+                foodsDoList.add(foodsDo);
+            }
+            else if (DiseasesKnowledgeGraphEnum.PRODUCERS.getName().equals(postNerResult.getNerType())){
+                ProducersDo producersDo = new ProducersDo();
+                producersDo.setName(postNerResult.getKeyWord());
+                producerDoList.add(producersDo);
+            }
+            else if (DiseasesKnowledgeGraphEnum.RECIPES.getName().equals(postNerResult.getNerType())){
+                RecipesDo recipesDo = new RecipesDo();
+                recipesDo.setName(postNerResult.getKeyWord());
+                recipesDoList.add(recipesDo);
+            }
+            else if (DiseasesKnowledgeGraphEnum.SYMPTOMS.getName().equals(postNerResult.getNerType())){
+                SymptomsDo symptomsDo = new SymptomsDo();
+                symptomsDo.setName(postNerResult.getKeyWord());
+                symptomsDoList.add(symptomsDo);
+            }
+        }
+
+        if (!checksDoList.isEmpty()){
+            postTransactionService.createRelationPostWithChecks(postNeo4jDo, checksDoList);
+        }
+        if (!departmentsDoList.isEmpty()){
+            postTransactionService.createRelationPostWithDepartments(postNeo4jDo, departmentsDoList);
+        }
+        if (!diseasesDoList.isEmpty()){
+            postTransactionService.createRelationPostWithDiseases(postNeo4jDo, diseasesDoList);
+        }
+        if (!drugsDoList.isEmpty()){
+            postTransactionService.createRelationPostWithDrugs(postNeo4jDo, drugsDoList);
+        }
+        if (!foodsDoList.isEmpty()){
+            postTransactionService.createRelationPostWithFoods(postNeo4jDo, foodsDoList);
+        }
+        if (!producerDoList.isEmpty()){
+            postTransactionService.createRelationPostWithProducers(postNeo4jDo, producerDoList);
+        }
+        if (!recipesDoList.isEmpty()){
+            postTransactionService.createRelationPostWithRecipes(postNeo4jDo, recipesDoList);
+        }
+        if (!symptomsDoList.isEmpty()){
+            postTransactionService.createRelationPostWithSymptoms(postNeo4jDo, symptomsDoList);
+        }
+    }
+
+    @Override
+    public void updatePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList) {
+        // 删除已有关系
+        deletePostFeatureFromNeo4j(postAo.getId());
+        // 添加新的关系
+        storePostFeatureToNeo4j(postAo, featureList);
+    }
+
+    @Override
+    public void deletePostFeatureFromNeo4j(Long postId) {
+        postRepository.deletePostByIdWithRelations(postId);
     }
 
     @Override

@@ -1,0 +1,85 @@
+@startuml
+' Styling options - feel free to adjust
+
+start
+:输入搜索句子;
+
+' Natural Language Check
+:Bert NLJ (自然语言检查);
+if (是否是自然语言?) then (no)
+  stop
+else (yes)
+  ' Intent Recognition
+  :Bert NLU (意图识别:\n标题检索；询问问题；寒暄);
+    note
+    从自然语言角度出发,问题意图和搜索意图是重叠的,所以分为以下情况:
+    搜索意图（问题中识别为其他的时候）
+    问题意图或者搜索意图（同时返回问诊和搜索）
+    end note
+  if (无信息量寒暄或咨询问题?) then (yes)
+    if (是寒暄?) then (yes)
+      :随机寒暄回答;
+      stop
+    else (no)
+      :Bert NLU (二级意图识别:\n疾病属性问题集合;\n症状问诊意图;推荐;个人评价;App问题);
+      if (疾病属性问题集合?) then (yes)
+        :知识回答：\n检查类型:\n定义;病因;预防;\n临床表现;相关病症;\n治疗方法;所属科室;\n传染性;治愈率;禁忌;\n化验/体检方案;治疗时间;
+        :返回帖子;
+        stop
+      elseif (症状问诊意图?) then (yes)
+        :检索回答：\n多个症状进行共同疾病搜索;
+        :返回帖子;
+        stop
+      elseif (推荐?) then (yes)
+        :推荐回答：\n推荐内容检索 + \n post评分排序 + \n user context vector排序;
+        :返回帖子;
+        stop
+      elseif (个人评价?) then (yes)
+        :评价回答：\n收集用户数据回答\n（帖子特征 + 用户健康数据 + 医疗预测结果）;
+        :返回帖子;
+        stop
+      elseif (App问题?) then (yes)
+        :App回答：\n识别出是App问题进入App规则集回答，\n如果规则集没有数据则回答不知道;
+        :返回帖子;
+        stop
+      else (no)
+        :回复听不懂问题;
+        stop
+      endif
+
+    endif
+  else (no)
+    ' Search Branch - Level 1
+    :0~1级搜索：文本内容 LIKE 搜索 (MySQL);
+    if (搜索到帖子?) then (yes)
+      stop
+    else (no)
+      ' Search Branch - Level 2
+      :2级搜索：IK分词，ElasticSearch的tokenized 分词搜索;
+      if (搜索到帖子?) then (yes)
+        stop
+      else (no)
+        ' Search Branch - Level 3
+        :3级搜索：neo4j规则集 + es查询 + user context vector排序;
+        :(1). 如果某种疾病存在伴随疾病，则搜索（疾病 + 伴随疾病）
+        (2). 疾病如果伴随某些症状，则搜索（疾病 + 症状）
+        (3). 如果疾病存在解决方案：药品，食物，菜谱
+        (4).如果包含多个症状，则症状的集合匹配是否存在疾病;
+        if (搜索到帖子?) then (yes)
+          stop
+        else (no)
+          :4级搜索：neo4j疾病相似度查询 + user context vector排序;
+          if (搜索到帖子?) then (yes)
+            :返回帖子;
+            stop
+          else (no)
+            ' Search Branch - Level 4
+            stop
+          endif
+        endif
+      endif
+    endif
+  endif
+endif
+
+@enduml

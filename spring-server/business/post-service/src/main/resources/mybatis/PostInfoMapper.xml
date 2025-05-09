@@ -97,4 +97,10 @@
         WHERE author_id = #{authorId}
         AND title = #{title}
     </select>
+    <select id="findPostIdByLikeTitle" resultType="java.lang.Long">
+        SELECT
+        id
+        FROM post_info
+        WHERE title LIKE CONCAT('%', #{likeTitle}, '%')
+    </select>
 </mapper>

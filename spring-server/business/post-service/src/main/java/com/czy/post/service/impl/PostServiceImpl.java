@@ -24,7 +24,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 13225
@@ -53,6 +55,8 @@ public class PostServiceImpl implements PostService {
         postStorageService.storePostFilesToDatabase(postAo);
         // mongo + es
         postStorageService.storePostContentToDatabase(postAo);
+        // neo4j
+        postStorageService.storePostFeatureToNeo4j(postAo, postAo.getNerResults());
         return publishId;
     }
 
@@ -92,6 +96,8 @@ public class PostServiceImpl implements PostService {
         globalTaskExecutor.execute(() -> {
             // es + mongo 同步事务存储
             postStorageService.storePostContentToDatabase(postAo);
+            // neo4j
+            postStorageService.storePostFeatureToNeo4j(postAo, postAo.getNerResults());
         });
         // 异步存储
         globalTaskExecutor.execute(() -> {
@@ -141,6 +147,9 @@ public class PostServiceImpl implements PostService {
             message.setReceiverId(userDo.getAccount());
             message.setTimestamp(System.currentTimeMillis());
             message.setType(ResponseMessageType.Oss.DELETE_FILE);
+            Map<String, String> data = new HashMap<>();
+            data.put("message", toFront);
+            message.setData(data);
 
             rabbitMqSender.push(message);
         }

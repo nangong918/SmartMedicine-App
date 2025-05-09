@@ -293,4 +293,4 @@ Spring后端：
 [Bert模型百度网盘链接](https://pan.baidu.com/s/137UH7WW44cQysRUTwLLgiA?pwd=smme)
 提取码: smme
 
-下载成功之后将其添加到路径：[Bert路径](python-nlp/nlu/bert_intent_recognition/Bert) 下面
+下载成功之后将其添加到路径：[Bert路径](python_nlp/nlu/bert_intent_recognition/Bert) 下面

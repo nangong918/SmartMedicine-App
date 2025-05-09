@@ -39,3 +39,15 @@ hs_err_pid*
 .idea/
 src/test/
 *.iml
+
+/files/Bert/bert_model.ckpt
+/files/Bert/bert_model.ckpt.data-00000-of-00001
+/files/Bert/bert_model.ckpt.index
+/files/Bert/bert_model.ckpt.meta
+/python_nlp/nlj/weight/save/*.weights
+/python-nlp/chat_context_records/user.json
+/python-nlp/ner/AcTree/dictionary/diseases.json
+/python-nlp/ner/AcTree/dictionary/recommend.json
+/python-nlp/ner/AcTree/dictionary/symptoms.json
+/python-nlp/nlu/bert_intent_recognition/weights_save/best_model.weights
+/python-nlp/nlu/bert_intent_recognition/weights/best_model.weights
