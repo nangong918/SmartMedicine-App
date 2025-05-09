@@ -1,7 +1,6 @@
 package com.czy.feature.controller;
 
 import com.czy.api.constant.feature.FeatureConstant;
-import com.czy.api.constant.message.MessageConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;

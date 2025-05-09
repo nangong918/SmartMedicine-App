@@ -159,6 +159,4 @@ public class SearchController {
      *      App问题
      *          识别出是App问题进入App规则集回答，如果规则集没有数据则回答不知道
      */
-
-    // TODO 从新安装idea 2025
 }
