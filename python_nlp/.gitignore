@@ -44,3 +44,4 @@ Thumbs.db
 /nlu/bert_intent_recognition/weights/*
 /nlu/bert_intent_recognition/weights_save/*
 /nlu/bert_intent_recognition/Bert/*
+/nlu/weight/save/best_model.weights
