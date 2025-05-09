@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 
 
 
-seed = 222
+seed = 10086
 random.seed(seed)
 np.random.seed(seed)
 label_data_path = './data/intent_recog_data.txt'
