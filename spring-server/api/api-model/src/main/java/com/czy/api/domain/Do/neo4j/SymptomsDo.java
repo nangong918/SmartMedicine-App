@@ -12,6 +12,8 @@ import org.springframework.data.elasticsearch.annotations.Field;
 @Data
 @NodeEntity("症状")
 public class SymptomsDo {
+    // nodeLabel
+    public static final String nodeLabel = "症状";
     @Id
     @Field("id")
     private Long id;

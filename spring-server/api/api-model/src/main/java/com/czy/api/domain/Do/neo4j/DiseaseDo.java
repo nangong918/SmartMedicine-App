@@ -16,6 +16,8 @@ import java.util.List;
 @Data
 @NodeEntity("疾病")
 public class DiseaseDo implements BaseBean {
+    // nodeLabel
+    public static final String nodeLabel = "疾病";
     @Id
     @Field("id")
     private Long id;

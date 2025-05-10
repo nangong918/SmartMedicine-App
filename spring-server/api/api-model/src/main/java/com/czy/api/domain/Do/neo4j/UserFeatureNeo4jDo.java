@@ -12,6 +12,8 @@ import org.springframework.data.elasticsearch.annotations.Field;
 @Data
 @NodeEntity("user")
 public class UserFeatureNeo4jDo {
+    // nodeLabel
+    public static final String nodeLabel = "user";
     @Id
     @Field("id")
     private Long id;

@@ -13,6 +13,8 @@ import org.springframework.data.elasticsearch.annotations.Field;
 @Data
 @NodeEntity("post")
 public class PostNeo4jDo implements BaseBean {
+    // nodeLabel
+    public static final String NODE_LABEL = "post";
     @Id
     @Field("id")
     private Long id;
@@ -20,4 +22,6 @@ public class PostNeo4jDo implements BaseBean {
     private String title;
     @Field("name")
     private String name;
+    @Field("label")
+    private String label;
 }

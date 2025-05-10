@@ -93,7 +93,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             DiseaseDo existingDisease = diseaseRepository.findByName(disease.getName());
             if (existingDisease != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), "疾病",
+                        savedPost.getName(), DiseaseDo.nodeLabel,
                         disease.getName(), PostRepository.RELS_POST_DISEASES);
             }
         }
@@ -106,7 +106,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             ChecksDo existingChecks = checksRepository.findByName(checks.getName());
             if (existingChecks != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), "检查",
+                        savedPost.getName(), ChecksDo.nodeLabel,
                         checks.getName(), PostRepository.RELS_POST_CHECKS);
             }
         }
@@ -119,7 +119,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             DepartmentsDo existingDepartments = departmentsRepository.findByName(departments.getName());
             if (existingDepartments != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), "科室",
+                        savedPost.getName(), DepartmentsDo.nodeLabel,
                         departments.getName(), PostRepository.RELS_POST_DEPARTMENTS);
             }
         }
@@ -132,7 +132,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             DrugsDo existingDrugs = drugsRepository.findByName(drugs.getName());
             if (existingDrugs != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), "药品",
+                        savedPost.getName(), DrugsDo.nodeLabel,
                         drugs.getName(), PostRepository.RELS_POST_DRUGS);
             }
         }
@@ -145,7 +145,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             FoodsDo existingFoods = foodsRepository.findByName(foods.getName());
             if (existingFoods != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), "食物",
+                        savedPost.getName(), FoodsDo.nodeLabel,
                         foods.getName(), PostRepository.RELS_POST_FOODS);
             }
         }
@@ -158,7 +158,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             ProducersDo existingProducers = producersRepository.findByName(producers.getName());
             if (existingProducers != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), "药企",
+                        savedPost.getName(), ProducersDo.nodeLabel,
                         producers.getName(), PostRepository.RELS_POST_PRODUCERS);
             }
         }
@@ -171,7 +171,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             RecipesDo existingRecipes = recipesRepository.findByName(recipes.getName());
             if (existingRecipes != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), "菜谱",
+                        savedPost.getName(), RecipesDo.nodeLabel,
                         recipes.getName(), PostRepository.RELS_POST_RECIPES);
             }
         }
@@ -184,7 +184,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             SymptomsDo existingSymptoms = symptomsRepository.findByName(symptoms.getName());
             if (existingSymptoms != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), "症状",
+                        savedPost.getName(), SymptomsDo.nodeLabel,
                         symptoms.getName(), PostRepository.RELS_POST_SYMPTOMS);
             }
         }
