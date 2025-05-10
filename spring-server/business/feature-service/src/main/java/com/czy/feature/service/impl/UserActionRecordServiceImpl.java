@@ -43,6 +43,7 @@ import java.util.Optional;
  * 根据需求分析：
  *  1.临时特征：快速获取用户最近的上下文
  *  2.历史特征：构建协同过滤，矩阵分解，user相似度计算
+ *  TODO 待优化，让思路更明确，去掉重复代码
  */
 @Slf4j
 @RequiredArgsConstructor
