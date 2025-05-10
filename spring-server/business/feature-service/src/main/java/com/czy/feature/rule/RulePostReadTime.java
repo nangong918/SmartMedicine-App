@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class PostReadTimeRule {
+public class RulePostReadTime {
 
     public double execute(Integer wordCount, Long readTime) {
         // 非合法数据
@@ -93,7 +93,7 @@ public class PostReadTimeRule {
     }
 
     private static void allScore(){
-        PostReadTimeRule calculator = new PostReadTimeRule();
+        RulePostReadTime calculator = new RulePostReadTime();
         int wordCount = 100;
         for (int t = 0; t < 60; t++) {
             double speed = (double) wordCount / t;
@@ -105,7 +105,7 @@ public class PostReadTimeRule {
     }
 
     private static void testCalculateBonus(){
-        PostReadTimeRule calculator = new PostReadTimeRule();
+        RulePostReadTime calculator = new RulePostReadTime();
         for (double time = 15; time <= 60; time++) {
             System.out.println("time：" + time + "s，score：" + calculator.calculateBonus(time));
         }
@@ -160,7 +160,7 @@ public class PostReadTimeRule {
     }
 
     private static void testCalculateInterest(){
-        PostReadTimeRule calculator = new PostReadTimeRule();
+        RulePostReadTime calculator = new RulePostReadTime();
         for (int speed = 1; speed <= 20; speed++){
             System.out.println("speed：" + speed + "，score：" + calculator.calculateInterest(speed));
         }

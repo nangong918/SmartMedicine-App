@@ -4,12 +4,14 @@ import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.es.FieldAnalyzer;
 import com.czy.api.constant.search.SearchConstant;
 import com.czy.api.converter.domain.post.PostConverter;
+import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 import com.czy.api.mapper.DiseaseRepository;
+import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +53,7 @@ public class PostSearchServiceImpl implements PostSearchService {
     private static final String SEARCH_KEY_ATTRIBUTE = "title";
     // elasticsearch的客户端
     private final RestHighLevelClient restHighLevelClient;
+    private final PostDetailMongoMapper postDetailMongoMapper;
 
     @Override
     public List<Long> searchPostIdsByLikeTitle(String likeTitle) {
@@ -174,6 +177,11 @@ public class PostSearchServiceImpl implements PostSearchService {
             postInfoAos.add(postInfoAo);
         }
         return postInfoAos;
+    }
+
+    @Override
+    public PostDetailDo searchPostDetailById(Long postId) {
+        return postDetailMongoMapper.findPostDetailById(postId);
     }
 
     private int calculateMatchedCount(String content, List<String> keywords) {
