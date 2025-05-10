@@ -91,6 +91,14 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
     void deleteUserPostRelation(@Param("userId") Long userId,
                                 @Param("postId") Long postId);
 
+    // 设置关系score
+    @Query("MATCH (u:user)-[r:user_post]->(p:post) " +
+            "WHERE u.id = $userId AND p.id = $postId " +
+            "SET r.score = $score")
+    void setUserPostRelationWeight(@Param("userId") Long userId,
+                                  @Param("postId") Long postId,
+                                  @Param("score") double score);
+
     // 创建关系并设置权重
     @Query("MATCH (u:user) WHERE u.name = $userName " +
             "MATCH (t:`${targetLabel}`) WHERE t.name = $targetName " +
