@@ -7,11 +7,17 @@ import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
+import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.protocol.ScoredEntry;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -176,5 +182,132 @@ public class RedissonServiceImpl implements RedissonService {
     public void deleteFieldFromHash(String redisKey, String hashKey) {
         RMap<String, String> map = redissonClient.getMap(redisKey);
         map.remove(hashKey);
+    }
+
+
+    private void setExpire(RScoredSortedSet<Object> zSet, Long expireTime) {
+        if (expireTime == null) {
+            zSet.expire(EXPIRE_SECONDS, TimeUnit.SECONDS);
+        } else {
+            zSet.expire(expireTime, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public boolean zAdd(String key, Object value, double score, Long expireTime) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        boolean result = zSet.add(score, value);
+        setExpire(zSet, expireTime);
+        return result;
+    }
+
+    @Override
+    public int zAddAll(String key, Map<Object, Double> values, Long expireTime) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        int count = 0;
+        for (Map.Entry<Object, Double> entry : values.entrySet()) {
+            if (zSet.add(entry.getValue(), entry.getKey())) {
+                count++;
+            }
+        }
+        setExpire(zSet, expireTime);
+        return count;
+    }
+
+    @Override
+    public boolean zRemove(String key, Long expireTime, Object... values) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        return zSet.removeAll(Arrays.asList(values));
+    }
+
+    @Override
+    public Double zGetScore(String key, Object value) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        return zSet.getScore(value);
+    }
+
+    @Override
+    public boolean zUpdateScore(String key, Object value, double newScore, Long expireTime) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        boolean result = zSet.add(newScore, value);
+        setExpire(zSet, expireTime);
+        return result;
+    }
+
+    @Override
+    public int zSize(String key) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        return zSet.size();
+    }
+
+    @Override
+    public int zRank(String key, Object value) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        Integer rank = zSet.rank(value);
+        return rank == null ? -1 : rank;
+    }
+
+    @Override
+    public int zReverseRank(String key, Object value) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        Integer rank = zSet.revRank(value);
+        return rank == null ? -1 : rank;
+    }
+
+    @Override
+    public Collection<Object> zRange(String key, int start, int end) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        return zSet.valueRange(start, end);
+    }
+
+    @Override
+    public Collection<Object> zReverseRange(String key, int start, int end) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        return zSet.valueRangeReversed(start, end);
+    }
+
+    @Override
+    public Collection<Object> zRangeByScore(String key, double minScore, double maxScore) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        return zSet.valueRange(minScore, true, maxScore, true);
+    }
+
+    @Override
+    public Map<Object, Double> zRangeByScoreWithScores(String key, double minScore, double maxScore) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        return zSet.entryRange(minScore, true, maxScore, true).stream()
+                .collect(Collectors.toMap(ScoredEntry::getValue, ScoredEntry::getScore));
+    }
+
+    @Override
+    public int zRemoveRangeByRank(String key, int start, int end, Long expireTime) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        int count = zSet.removeRangeByRank(start, end);
+        if (count > 0) {
+            setExpire(zSet, expireTime);
+        }
+        return count;
+    }
+
+    @Override
+    public int zRemoveRangeByScore(String key, double minScore, double maxScore, Long expireTime) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        int count = zSet.removeRangeByScore(minScore, true, maxScore, true);
+        if (count > 0) {
+            setExpire(zSet, expireTime);
+        }
+        return count;
+    }
+
+    @Override
+    public boolean zClear(String key, Long expireTime) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        boolean result = zSet.delete();
+        if (result && expireTime != null) {
+            // 重新创建空集合并设置过期时间
+            RScoredSortedSet<Object> newZSet = redissonClient.getScoredSortedSet(key);
+            setExpire(newZSet, expireTime);
+        }
+        return result;
     }
 }
