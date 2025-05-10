@@ -1,6 +1,7 @@
 package com.czy.feature.service.impl;
 
 import com.czy.api.constant.feature.FeatureConstant;
+import com.czy.api.constant.feature.FeatureTypeChanger;
 import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.constant.feature.UserActionRedisKey;
 import com.czy.api.domain.Do.neo4j.rels.UserPostRelation;
@@ -45,7 +46,6 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     private final UserFeatureRepository userFeatureRepository;
     private final DebugConfig debugConfig;
     private final PostFeatureService postFeatureService;
-
     // 隐性特征 前端主动http埋点
 
     /**
@@ -165,6 +165,22 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
                 userEntityFeatureAo,
                 FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
         );
+
+        // 点击操作只增加历史的权重，不增加历史的分数，分数由浏览时长控制
+        // 将 post的信息关联user存入neo4j
+        if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())){
+            for (PostNerResult postNerResult : postFeatureAo.getPostNerResultList()) {
+                String keyWord = postNerResult.getKeyWord();
+                String nerType = postNerResult.getNerType();
+                userFeatureRepository.createUserEntityPostRelation(
+                        userId,
+                        FeatureTypeChanger.nerTypeToEntityLabel(nerType),
+                        keyWord,
+                        FeatureTypeChanger.nerTypeToUserRelationType(nerType)
+                        );
+            }
+        }
+
     }
 
     /**

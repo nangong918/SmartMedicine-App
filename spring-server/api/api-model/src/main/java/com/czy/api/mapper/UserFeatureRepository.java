@@ -65,11 +65,21 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
     @Query("MATCH (u:user {id: $userId}) " +
             "MATCH (p:post {id: $postId}) " +
             "MERGE (u)-[r:user_post]->(p) " +
-            "ON CREATE SET r.weight = 1, r.lastUpdateTime = datetime() " +
+            "ON CREATE SET r.weight = 1, r.score = 0.0, r.lastUpdateTime = datetime() " +
             "ON MATCH SET r.weight = r.weight + 1, r.lastUpdateTime = datetime() " +
             "RETURN r")
     UserPostRelation createUserPostRelation(@Param("userId") Long userId,
                                             @Param("postId") Long postId);
+
+    @Query("MATCH (u:user) WHERE u.id = $userId " +
+            "MATCH (d:`${targetLabel}`) WHERE d.name = $targetName " +
+            "MERGE (u)-[r:`${relationType}`]->(d) " +
+            "ON CREATE SET r.weight = 1, r.score = 0.0, r.lastUpdateTime = datetime() " +
+            "ON MATCH SET r.weight = r.weight + 1, r.lastUpdateTime = datetime()")
+    void createUserEntityPostRelation(@Param("userId") Long userId,
+                                      @Param("targetLabel") String targetLabel,
+                                      @Param("targetName") String targetName,
+                                      @Param("relationType") String relationType);
 
     // 查询用户和帖子的关系
     @Query("MATCH (u:user)-[r:user_post]->(p:post) " +
