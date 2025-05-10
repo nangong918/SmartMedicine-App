@@ -1,5 +1,7 @@
 package com.czy.feature.service;
 
+import com.czy.api.domain.ao.feature.PostFeatureAo;
+
 /**
  * @author 13225
  * @date 2025/5/8 18:21
@@ -7,4 +9,12 @@ package com.czy.feature.service;
  * service计算滕峥
  */
 public interface PostFeatureService {
+
+    /**
+     * 获取post的特征
+     * @param postId    postId
+     * @return          PostFeatureAo
+     */
+    PostFeatureAo getPostFeature(Long postId);
+
 }
