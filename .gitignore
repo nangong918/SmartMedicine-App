@@ -51,3 +51,5 @@ src/test/
 /python-nlp/ner/AcTree/dictionary/symptoms.json
 /python-nlp/nlu/bert_intent_recognition/weights_save/best_model.weights
 /python-nlp/nlu/bert_intent_recognition/weights/best_model.weights
+
+/爬取数据/*

@@ -138,6 +138,22 @@ def train_nlj():
     pass
 
 
+def train_nlu():
+    train_data_path = parent_dir_3 + "files/dataset/nlp/train.csv"
+    test_data_path = parent_dir_3 + "files/dataset/nlp/test.csv"
+    model_save_path = parent_dir_3 + "python_nlp/nlu/weight/save/best_model.weights"
+    acc_img_save_path = parent_dir_3 + "python_nlp/nlu/weight/save/acc.png"
+    loss_img_save_path = parent_dir_3 + "python_nlp/nlu/weight/save/loss.png"
+    print(f"loss_img_save_path的绝对路径为：{loss_img_save_path}")
+    label_path = parent_dir_3 + "files/dataset/nlp/label"
+    train(train_data_path, test_data_path,
+          model_save_path,
+          acc_img_save_path, loss_img_save_path,
+          label_path
+          )
+    pass
+
+
 def train(train_data_path, test_data_path,
           bast_weight_save_path,
           acc_img_save_path,
@@ -314,6 +330,16 @@ def test_nlj():
     label_path = parent_dir_3 + "python_nlp/nlj/label"
     test(test_data_path, model_save_path, label_path)
 
+def test_nlu():
+    train_data_path = parent_dir_3 + "files/dataset/nlp/train.csv"
+    test_data_path = parent_dir_3 + "files/dataset/nlp/test.csv"
+    model_save_path = parent_dir_3 + "python_nlp/nlu/weight/save/best_model.weights"
+    acc_img_save_path = parent_dir_3 + "python_nlp/nlu/weight/save/acc.png"
+    loss_img_save_path = parent_dir_3 + "python_nlp/nlu/weight/save/loss.png"
+    print(f"loss_img_save_path的绝对路径为：{loss_img_save_path}")
+    label_path = parent_dir_3 + "files/dataset/nlp/label"
+    test(test_data_path, model_save_path, label_path)
+
 # 继续训练
 def train_continue(train_data_path, test_data_path, bast_weight_save_path, label_path):
     # 加载数据集
@@ -378,11 +404,12 @@ def test2():
 
 
 if __name__ == '__main__':
-    train_nlj()
+    # train_nlj()
     # test_nlj()
     #train_continue()
     # test_text("我刚刚填写了健康信息，你帮我看看我的健康状况怎么样？")
     # test_text("我最近胃口不好，你能推荐我两篇关于治疗胃口不好的文章吗？")
+    train_nlu()
     pass
 
 
