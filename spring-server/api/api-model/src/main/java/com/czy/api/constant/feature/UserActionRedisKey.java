@@ -9,8 +9,19 @@ public interface UserActionRedisKey {
     String USER_FEATURE_REDIS_KEY = "user_feature:";
     String POST_HEAT_REDIS_KEY = "post_heat:";
 
+    // feature
+    String USER_FEATURE_ENTITY_LABEL_REDIS_KEY = USER_FEATURE_REDIS_KEY + "entity_label:";
+
+    // heat
+
+    // city
     String USER_FEATURE_CITY_LOCATION_REDIS_KEY = USER_FEATURE_REDIS_KEY + "city:";
 
+    // click
     String USER_FEATURE_CLICK_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "click_post:";
     String POST_HEAT_CLICK_REDIS_KEY = POST_HEAT_REDIS_KEY + "clicked:";
+
+    // browse
+    String USER_FEATURE_BROWSE_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "browse_post:";
+    String POST_HEAT_BROWSE_REDIS_KEY = POST_HEAT_REDIS_KEY + "browsed:";
 }

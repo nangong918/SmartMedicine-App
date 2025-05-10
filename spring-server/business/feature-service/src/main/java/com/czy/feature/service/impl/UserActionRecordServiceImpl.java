@@ -1,17 +1,25 @@
 package com.czy.feature.service.impl;
 
 import com.czy.api.constant.feature.FeatureConstant;
+import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.constant.feature.UserActionRedisKey;
 import com.czy.api.domain.Do.neo4j.rels.UserPostRelation;
+import com.czy.api.domain.ao.feature.NerFeatureScoreAo;
+import com.czy.api.domain.ao.feature.PostBrowseTimeAo;
+import com.czy.api.domain.ao.feature.PostClickTimeAo;
+import com.czy.api.domain.ao.feature.PostFeatureAo;
 import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
+import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
+import com.czy.feature.service.PostFeatureService;
 import com.czy.feature.service.UserActionRecordService;
 import com.czy.springUtils.debug.DebugConfig;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +44,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     private final RedissonService redissonService;
     private final UserFeatureRepository userFeatureRepository;
     private final DebugConfig debugConfig;
+    private final PostFeatureService postFeatureService;
 
     // 隐性特征 前端主动http埋点
 
@@ -60,6 +69,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
 
     /**
      * 用户点击帖子（与浏览时长拆开，避免用户直接划掉后台）-> user/item
+     * user:item
      * @param userId            用户id
      * @param postId            帖子id
      * @param clickTimestamp    点击时间戳
@@ -70,18 +80,25 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         String userFeatureKey = UserActionRedisKey.USER_FEATURE_CLICK_POST_REDIS_KEY + userId;
         String postHeatKey = UserActionRedisKey.POST_HEAT_CLICK_REDIS_KEY + postId;
 
+        // user-post 特征
+        PostClickTimeAo ao = new PostClickTimeAo();
+        ao.setUserId(userId);
+        ao.setPostId(postId);
+        ao.setClickTime(clickTimestamp);
+
         // 临时特征：记录30天
         // 用户维度：记录用户点击的帖子及时间（ZSet）
         redissonService.zAdd(
                 userFeatureKey,
-                postId.toString(),
-                clickTimestamp.doubleValue(),
-                FeatureConstant.FEATURE_EXPIRE_TIME_SECOND);
+                ao,
+                timestamp.doubleValue(),
+                FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
+        );
         // 帖子维度：记录被点击的热度（ZSet）
         redissonService.zAdd(
                 postHeatKey,
-                userId.toString(),
-                clickTimestamp.doubleValue(),
+                ao,
+                timestamp.doubleValue(),
                 FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
         );
 
@@ -103,6 +120,51 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
                 log.warn("创建user-post关系失败");
             }
         }
+
+        // user-entity 特征
+        PostFeatureAo postFeatureAo = postFeatureService.getPostFeature(postId);
+        UserEntityFeatureAo userEntityFeatureAo = redissonService.getObjectFromJson(
+                UserActionRedisKey.USER_FEATURE_ENTITY_LABEL_REDIS_KEY,
+                UserEntityFeatureAo.class
+        );
+        if (userEntityFeatureAo == null){
+            userEntityFeatureAo = new UserEntityFeatureAo();
+        }
+        userEntityFeatureAo.setUserId(userId);
+        // 非空且有特征
+        if (postFeatureAo.getPostType() != null){
+            PostTypeEnum postType = PostTypeEnum.getByCode(postFeatureAo.getPostType());
+            if (postType != null && postType != PostTypeEnum.OTHER){
+                String postTypeName = postType.getName();
+                userEntityFeatureAo.getLabelScoreMap().merge(postTypeName, 1, Integer::sum);
+            }
+        }
+        if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())){
+            for (PostNerResult postNerResult : postFeatureAo.getPostNerResultList()) {
+                String keyWord = postNerResult.getKeyWord();
+                NerFeatureScoreAo nerFeatureScoreAo = userEntityFeatureAo.getNerFeatureScoreMap().get(keyWord);
+                if (nerFeatureScoreAo == null){
+                    nerFeatureScoreAo = new NerFeatureScoreAo();
+                    nerFeatureScoreAo.setNerType(postNerResult.getNerType());
+                    nerFeatureScoreAo.setKeyWord(keyWord);
+                    nerFeatureScoreAo.setScore(1);
+                }
+                else {
+                    nerFeatureScoreAo.setScore(nerFeatureScoreAo.getScore() + 1);
+                    // max score limit
+                    nerFeatureScoreAo.setScore(
+                            Math.min(nerFeatureScoreAo.getScore(),
+                                    FeatureConstant.USER_FEATURE_MAX_SCORE)
+                    );
+                }
+                userEntityFeatureAo.getNerFeatureScoreMap().put(keyWord, nerFeatureScoreAo);
+            }
+        }
+        redissonService.setObjectByJson(
+                UserActionRedisKey.USER_FEATURE_ENTITY_LABEL_REDIS_KEY,
+                userEntityFeatureAo,
+                FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
+        );
     }
 
     /**
@@ -114,7 +176,29 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
      */
     @Override
     public void uploadClickPostAndBrowseTime(Long userId, Long postId, Long browseTime, Long timestamp) {
+        String userFeatureKey = UserActionRedisKey.USER_FEATURE_BROWSE_POST_REDIS_KEY + userId;
+        String postHeatKey = UserActionRedisKey.POST_HEAT_BROWSE_REDIS_KEY + postId;
 
+        PostBrowseTimeAo ao = new PostBrowseTimeAo();
+        ao.setUserId(userId);
+        ao.setPostId(postId);
+        ao.setBrowseTime(browseTime);
+
+        redissonService.zAdd(
+                userFeatureKey,
+                ao,
+                timestamp.doubleValue(),
+                FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
+        );
+
+        redissonService.zAdd(
+                postHeatKey,
+                ao,
+                timestamp.doubleValue(),
+                FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
+        );
+
+        // 阅读时间的规则集：判断用户的态度
     }
 
     // 显性特征 系统内mq埋点
