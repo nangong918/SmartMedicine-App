@@ -12,7 +12,7 @@ import com.czy.api.domain.Do.neo4j.RecipesDo;
 import com.czy.api.domain.Do.neo4j.SymptomsDo;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostDetailEsDo;
-import com.czy.api.domain.Do.post.post.PostNeo4jDo;
+import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.mapper.ChecksRepository;
 import com.czy.api.mapper.DepartmentsRepository;

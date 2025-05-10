@@ -1,4 +1,4 @@
-package com.czy.api.domain.Do.post.post;
+package com.czy.api.domain.Do.neo4j;
 
 import json.BaseBean;
 import lombok.Data;

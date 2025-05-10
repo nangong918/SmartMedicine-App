@@ -3,12 +3,14 @@ package com.czy.api.mapper;
 
 import com.czy.api.domain.Do.neo4j.DiseaseDo;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
+import com.czy.api.domain.Do.neo4j.rels.UserPostRelation;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -50,6 +52,44 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
             @Param("targetName") String targetName,
             @Param("relationType") String relationType
     );
+
+    // 创建用户和帖子的关系
+//    @Query("MATCH (u:user) WHERE u.id = $userId " +
+//            "MATCH (p:post) WHERE p.id = $postId" +
+//            "MERGE (u)-[r:user_post]->(p) " +
+//            "ON CREATE SET r.weight = 1" +
+//            "ON MATCH SET r.weight = r.weight + 1" +
+//            "RETURN r")
+//    UserPostRelation createUserPostRelation(@Param("userId") Long userId,
+//                                            @Param("postId") Long postId);
+    @Query("MATCH (u:user {id: $userId}) " +
+            "MATCH (p:post {id: $postId}) " +
+            "MERGE (u)-[r:user_post]->(p) " +
+            "ON CREATE SET r.weight = 1, r.lastUpdateTime = datetime() " +
+            "ON MATCH SET r.weight = r.weight + 1, r.lastUpdateTime = datetime() " +
+            "RETURN r")
+    UserPostRelation createUserPostRelation(@Param("userId") Long userId,
+                                            @Param("postId") Long postId);
+
+    // 查询用户和帖子的关系
+    @Query("MATCH (u:user)-[r:user_post]->(p:post) " +
+            "WHERE u.id = $userId AND p.id = $postId " +
+            "RETURN r")
+    Optional<UserPostRelation> findUserPostRelation(@Param("userId") Long userId,
+                                                    @Param("postId") Long postId);
+
+    // 查询用户的所有帖子关系
+    @Query("MATCH (u:user)-[r:user_post]->(p:post) " +
+            "WHERE u.id = $userId " +
+            "RETURN r ORDER BY r.weight DESC")
+    List<UserPostRelation> findAllUserPostRelations(@Param("userId") Long userId);
+
+    // 删除特定关系
+    @Query("MATCH (u:user)-[r:user_post]->(p:post) " +
+            "WHERE u.id = $userId AND p.id = $postId " +
+            "DELETE r")
+    void deleteUserPostRelation(@Param("userId") Long userId,
+                                @Param("postId") Long postId);
 
     // 创建关系并设置权重
     @Query("MATCH (u:user) WHERE u.name = $userName " +

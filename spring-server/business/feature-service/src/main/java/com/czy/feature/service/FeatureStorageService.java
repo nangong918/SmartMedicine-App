@@ -9,7 +9,7 @@ import com.czy.api.domain.Do.neo4j.ProducersDo;
 import com.czy.api.domain.Do.neo4j.RecipesDo;
 import com.czy.api.domain.Do.neo4j.SymptomsDo;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
-import com.czy.api.domain.Do.post.post.PostNeo4jDo;
+import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 
 import java.util.List;
 

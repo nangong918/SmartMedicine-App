@@ -2,9 +2,12 @@ package com.czy.feature.service.impl;
 
 import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.feature.UserActionRedisKey;
+import com.czy.api.domain.Do.neo4j.rels.UserPostRelation;
 import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
+import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.feature.service.UserActionRecordService;
+import com.czy.springUtils.debug.DebugConfig;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,8 @@ import java.util.List;
 public class UserActionRecordServiceImpl implements UserActionRecordService {
 
     private final RedissonService redissonService;
+    private final UserFeatureRepository userFeatureRepository;
+    private final DebugConfig debugConfig;
 
     // 隐性特征 前端主动http埋点
 
@@ -50,7 +55,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         String key = UserActionRedisKey.USER_FEATURE_CITY_LOCATION_REDIS_KEY + ao.getUserId();
 
         // 存储 HashMap
-        redissonService.saveObjectHaseMap(key, data, FeatureConstant.FEATURE_EXPIRE_TIME);
+        redissonService.saveObjectHaseMap(key, data, FeatureConstant.FEATURE_EXPIRE_TIME_SECOND);
     }
 
     /**
@@ -64,6 +69,40 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     public void clickPost(Long userId, Long postId, Long clickTimestamp, Long timestamp) {
         String userFeatureKey = UserActionRedisKey.USER_FEATURE_CLICK_POST_REDIS_KEY + userId;
         String postHeatKey = UserActionRedisKey.POST_HEAT_CLICK_REDIS_KEY + postId;
+
+        // 临时特征：记录30天
+        // 用户维度：记录用户点击的帖子及时间（ZSet）
+        redissonService.zAdd(
+                userFeatureKey,
+                postId.toString(),
+                clickTimestamp.doubleValue(),
+                FeatureConstant.FEATURE_EXPIRE_TIME_SECOND);
+        // 帖子维度：记录被点击的热度（ZSet）
+        redissonService.zAdd(
+                postHeatKey,
+                userId.toString(),
+                clickTimestamp.doubleValue(),
+                FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
+        );
+
+        // 历史特征：记录入neo4j;内置检查是否已经创建的方法
+        /*
+        "MATCH (u:user {id: $userId}) " +
+            "MATCH (p:post {id: $postId}) " +
+            "MERGE (u)-[r:user_post]->(p) " +
+            "ON CREATE SET r.weight = 1, r.lastUpdateTime = datetime() " +
+            "ON MATCH SET r.weight = r.weight + 1, r.lastUpdateTime = datetime() " +
+            "RETURN r"
+         */
+        UserPostRelation userPostRelation = userFeatureRepository.createUserPostRelation(userId, postId);
+        if (debugConfig.isDebug()){
+            if (userPostRelation != null){
+                log.info("改变user-post关系权重：{}", userPostRelation.getWeight());
+            }
+            else {
+                log.warn("创建user-post关系失败");
+            }
+        }
     }
 
     /**

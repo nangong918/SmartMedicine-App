@@ -2,7 +2,7 @@ package com.czy.api.mapper;
 
 
 import com.czy.api.domain.Do.neo4j.DiseaseDo;
-import com.czy.api.domain.Do.post.post.PostNeo4jDo;
+import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.repository.query.Param;
