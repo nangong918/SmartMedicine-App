@@ -1,10 +1,13 @@
 package com.czy.feature.service.impl;
 
+import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.feature.FeatureTypeChanger;
 import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.constant.feature.UserActionRedisKey;
+import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.Do.neo4j.rels.UserPostRelation;
+import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.ao.feature.NerFeatureScoreAo;
 import com.czy.api.domain.ao.feature.PostBrowseTimeAo;
 import com.czy.api.domain.ao.feature.PostClickTimeAo;
@@ -13,17 +16,21 @@ import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
 import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
+import com.czy.feature.rule.RulePostReadTime;
 import com.czy.feature.service.PostFeatureService;
 import com.czy.feature.service.UserActionRecordService;
 import com.czy.springUtils.debug.DebugConfig;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -46,6 +53,9 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     private final UserFeatureRepository userFeatureRepository;
     private final DebugConfig debugConfig;
     private final PostFeatureService postFeatureService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private PostSearchService postSearchService;
+    private final RulePostReadTime rulePostReadTime;
     // 隐性特征 前端主动http埋点
 
     /**
@@ -114,7 +124,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         UserPostRelation userPostRelation = userFeatureRepository.createUserPostRelation(userId, postId);
         if (debugConfig.isDebug()){
             if (userPostRelation != null){
-                log.info("改变user-post关系权重：{}", userPostRelation.getWeight());
+                log.info("改变user-post点击次数：{}", userPostRelation.getClickTimes());
             }
             else {
                 log.warn("创建user-post关系失败");
@@ -195,6 +205,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         String userFeatureKey = UserActionRedisKey.USER_FEATURE_BROWSE_POST_REDIS_KEY + userId;
         String postHeatKey = UserActionRedisKey.POST_HEAT_BROWSE_REDIS_KEY + postId;
 
+        // 临时特征：记录30天
         PostBrowseTimeAo ao = new PostBrowseTimeAo();
         ao.setUserId(userId);
         ao.setPostId(postId);
@@ -214,7 +225,131 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
                 FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
         );
 
+        // 历史特征：记录入neo4j;内置检查是否已经创建的方法
+
+        // user-entity 特征
+        PostFeatureAo postFeatureAo = postFeatureService.getPostFeature(postId);
+        UserEntityFeatureAo userEntityFeatureAo = redissonService.getObjectFromJson(
+                UserActionRedisKey.USER_FEATURE_ENTITY_LABEL_REDIS_KEY,
+                UserEntityFeatureAo.class
+        );
+        if (userEntityFeatureAo == null){
+            userEntityFeatureAo = new UserEntityFeatureAo();
+        }
+        userEntityFeatureAo.setUserId(userId);
+        // 非空且有特征
+        if (postFeatureAo.getPostType() != null){
+            PostTypeEnum postType = PostTypeEnum.getByCode(postFeatureAo.getPostType());
+            if (postType != null && postType != PostTypeEnum.OTHER){
+                String postTypeName = postType.getName();
+                userEntityFeatureAo.getLabelScoreMap().merge(postTypeName, 1, Integer::sum);
+            }
+        }
+        if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())){
+            for (PostNerResult postNerResult : postFeatureAo.getPostNerResultList()) {
+                String keyWord = postNerResult.getKeyWord();
+                NerFeatureScoreAo nerFeatureScoreAo = userEntityFeatureAo.getNerFeatureScoreMap().get(keyWord);
+                if (nerFeatureScoreAo == null){
+                    nerFeatureScoreAo = new NerFeatureScoreAo();
+                    nerFeatureScoreAo.setNerType(postNerResult.getNerType());
+                    nerFeatureScoreAo.setKeyWord(keyWord);
+                    nerFeatureScoreAo.setScore(1);
+                }
+                else {
+                    nerFeatureScoreAo.setScore(nerFeatureScoreAo.getScore() + 1);
+                    // max score limit
+                    nerFeatureScoreAo.setScore(
+                            Math.min(nerFeatureScoreAo.getScore(),
+                                    FeatureConstant.USER_FEATURE_MAX_SCORE)
+                    );
+                }
+                userEntityFeatureAo.getNerFeatureScoreMap().put(keyWord, nerFeatureScoreAo);
+            }
+        }
+        redissonService.setObjectByJson(
+                UserActionRedisKey.USER_FEATURE_ENTITY_LABEL_REDIS_KEY,
+                userEntityFeatureAo,
+                FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
+        );
+
+        // 点击操作只增加历史的权重，不增加历史的分数，分数由浏览时长控制
+        // 将 post的信息关联user存入neo4j
+        if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())){
+            for (PostNerResult postNerResult : postFeatureAo.getPostNerResultList()) {
+                String keyWord = postNerResult.getKeyWord();
+                String nerType = postNerResult.getNerType();
+                userFeatureRepository.createUserEntityPostRelation(
+                        userId,
+                        FeatureTypeChanger.nerTypeToEntityLabel(nerType),
+                        keyWord,
+                        FeatureTypeChanger.nerTypeToUserRelationType(nerType)
+                );
+            }
+        }
         // 阅读时间的规则集：判断用户的态度
+        PostDetailDo postDetailDo = postSearchService.searchPostDetailById(postId);
+        if (postDetailDo != null){
+            Integer postWordCount = postDetailDo.getContent().length();
+            double implicitScore = rulePostReadTime.execute(postWordCount, timestamp);
+
+            // 帖子的分数
+            Optional<UserPostRelation> userPostRelation = userFeatureRepository.findUserPostRelation(userId, postId);
+            userPostRelation.ifPresent(item -> {
+                Double oldImplicitScore = item.getImplicitScore();
+                Double oldExplicitScore = item.getExplicitScore() == null ? 0.0 : item.getExplicitScore();
+                double newImplicitScore = implicitScore;
+                if (oldImplicitScore != null){
+                    newImplicitScore = implicitScore + oldImplicitScore;
+                    // 最小-10.0 最大10.0
+                    newImplicitScore = Math.min(newImplicitScore, 10.0);
+                    newImplicitScore = Math.max(newImplicitScore, -10.0);
+                }
+                // 更新
+                userFeatureRepository.updateUserEntityPostRelation(
+                        userId,
+                        PostNeo4jDo.NODE_LABEL,
+                        postDetailDo.getTitle(),
+                        UserFeatureRepository.RELS_USER_POSTS,
+                        newImplicitScore,
+                        oldExplicitScore
+                );
+            });
+
+            // 实体分数
+            if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())){
+                for (PostNerResult postNerResult : postFeatureAo.getPostNerResultList()) {
+                    String keyWord = postNerResult.getKeyWord();
+                    String nerType = postNerResult.getNerType();
+
+                    Optional<Map<String, Double>> scoresOptionMap = userFeatureRepository.findUserEntityPostRelation(
+                            userId,
+                            FeatureTypeChanger.nerTypeToEntityLabel(nerType),
+                            keyWord,
+                            FeatureTypeChanger.nerTypeToUserRelationType(nerType)
+                    );
+                    scoresOptionMap.ifPresent(item -> {
+                        Double oldImplicitScore = item.get("implicitScore");
+                        Double oldExplicitScore = item.get("explicitScore") == null ? 0.0 : item.get("explicitScore");
+                        double newImplicitScore = implicitScore;
+                        if (oldImplicitScore != null){
+                            newImplicitScore = implicitScore + oldImplicitScore;
+                        }
+                        // 最小-10.0 最大10.0
+                        newImplicitScore = Math.min(newImplicitScore, 10.0);
+                        newImplicitScore = Math.max(newImplicitScore, -10.0);
+                        // 更新实体和帖子的关系
+                        userFeatureRepository.updateUserEntityPostRelation(
+                                userId,
+                                FeatureTypeChanger.nerTypeToEntityLabel(nerType),
+                                keyWord,
+                                FeatureTypeChanger.nerTypeToUserRelationType(nerType),
+                                newImplicitScore,
+                                oldExplicitScore
+                        );
+                    });
+                }
+            }
+        }
     }
 
     // 显性特征 系统内mq埋点
