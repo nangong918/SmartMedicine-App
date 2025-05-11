@@ -1,6 +1,7 @@
 package com.czy.api.api.post;
 
 
+import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 
@@ -35,4 +36,6 @@ public interface PostSearchService {
     List<String> searchBySimilarity(List<String> diseaseNames, int limitNum);
     // postIds -> PostInfoAos
     List<PostInfoAo> searchPostInfAoByIds(List<Long> postIds);
+
+    PostDetailDo searchPostDetailById(Long postId);
 }

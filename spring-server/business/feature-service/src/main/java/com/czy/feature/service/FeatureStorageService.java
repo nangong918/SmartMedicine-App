@@ -9,7 +9,7 @@ import com.czy.api.domain.Do.neo4j.ProducersDo;
 import com.czy.api.domain.Do.neo4j.RecipesDo;
 import com.czy.api.domain.Do.neo4j.SymptomsDo;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
-import com.czy.api.domain.Do.post.post.PostNeo4jDo;
+import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 
 import java.util.List;
 
@@ -20,23 +20,23 @@ import java.util.List;
 public interface FeatureStorageService {
 
     //  createRelationUserWithDiseases
-    void createRelationUserWithDiseases(UserFeatureNeo4jDo user, List<DiseaseDo> dos);
+    void createRelationUserWithDiseases(UserFeatureNeo4jDo user, List<DiseaseDo> dos, List<Integer> scoreList);
     //  createRelationUserWithChecks
-    void createRelationUserWithChecks(UserFeatureNeo4jDo user, List<ChecksDo> dos);
+    void createRelationUserWithChecks(UserFeatureNeo4jDo user, List<ChecksDo> dos, List<Integer> scoreList);
     //  createRelationUserWithDepartments
-    void createRelationUserWithDepartments(UserFeatureNeo4jDo user, List<DepartmentsDo> dos);
+    void createRelationUserWithDepartments(UserFeatureNeo4jDo user, List<DepartmentsDo> dos, List<Integer> scoreList);
     //  createRelationUserWithDrugs
-    void createRelationUserWithDrugs(UserFeatureNeo4jDo user, List<DrugsDo> dos);
+    void createRelationUserWithDrugs(UserFeatureNeo4jDo user, List<DrugsDo> dos, List<Integer> scoreList);
     //  createRelationUserWithFoods
-    void createRelationUserWithFoods(UserFeatureNeo4jDo user, List<FoodsDo> dos);
+    void createRelationUserWithFoods(UserFeatureNeo4jDo user, List<FoodsDo> dos, List<Integer> scoreList);
     //  createRelationUserWithProducers
-    void createRelationUserWithProducers(UserFeatureNeo4jDo user, List<ProducersDo> dos);
+    void createRelationUserWithProducers(UserFeatureNeo4jDo user, List<ProducersDo> dos, List<Integer> scoreList);
     //  createRelationUserWithRecipes
-    void createRelationUserWithRecipes(UserFeatureNeo4jDo user, List<RecipesDo> dos);
+    void createRelationUserWithRecipes(UserFeatureNeo4jDo user, List<RecipesDo> dos, List<Integer> scoreList);
     //  createRelationUserWithSymptoms
-    void createRelationUserWithSymptoms(UserFeatureNeo4jDo user, List<SymptomsDo> dos);
+    void createRelationUserWithSymptoms(UserFeatureNeo4jDo user, List<SymptomsDo> dos, List<Integer> scoreList);
     // createRelationUserWithPosts
-    void createRelationUserWithPosts(UserFeatureNeo4jDo user, List<PostNeo4jDo> dos);
+    void createRelationUserWithPosts(UserFeatureNeo4jDo user, List<PostNeo4jDo> dos, List<Integer> scoreList);
     // deleteUserRelation
     void deleteUserRelation(UserFeatureNeo4jDo user);
 }

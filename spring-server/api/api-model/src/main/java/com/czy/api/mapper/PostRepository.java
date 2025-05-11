@@ -1,8 +1,15 @@
 package com.czy.api.mapper;
 
 
+import com.czy.api.domain.Do.neo4j.ChecksDo;
+import com.czy.api.domain.Do.neo4j.DepartmentsDo;
 import com.czy.api.domain.Do.neo4j.DiseaseDo;
-import com.czy.api.domain.Do.post.post.PostNeo4jDo;
+import com.czy.api.domain.Do.neo4j.DrugsDo;
+import com.czy.api.domain.Do.neo4j.FoodsDo;
+import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
+import com.czy.api.domain.Do.neo4j.ProducersDo;
+import com.czy.api.domain.Do.neo4j.RecipesDo;
+import com.czy.api.domain.Do.neo4j.SymptomsDo;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.repository.query.Param;
@@ -36,7 +43,6 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
 
     PostNeo4jDo findByTitle(String title);
     PostNeo4jDo findByName(String name);
-
 
 
     // 使用 MERGE 来避免重复关系：而不是使用CREATE
@@ -84,7 +90,43 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
             @Param("newValue") String newValue
     );
 
+    // DiseasesDo
     @Query("MATCH (p:post)-[:post_association]->(d:疾病) " +
             "WHERE id(p) = $postId RETURN d")
     List<DiseaseDo> findDiseasesByPostId(Long postId);
+
+    // CheckDo
+    @Query("MATCH (p:post)-[:post_checks]->(d:检查) " +
+            "WHERE id(p) = $postId RETURN d")
+    List<ChecksDo> findChecksByPostId(Long postId);
+
+    // DepartmentsDo
+    @Query("MATCH (p:post)-[:post_departments]->(d:科室) " +
+            "WHERE id(p) = $postId RETURN d")
+    List<DepartmentsDo> findDepartmentsByPostId(Long postId);
+
+    // DrugsDo
+    @Query("MATCH (p:post)-[:post_drugs]->(d:药品) " +
+            "WHERE id(p) = $postId RETURN d")
+    List<DrugsDo> findDrugsByPostId(Long postId);
+
+    // FoodsDo
+    @Query("MATCH (p:post)-[:post_foods]->(d:食物) " +
+            "WHERE id(p) = $postId RETURN d")
+    List<FoodsDo> findFoodsByPostId(Long postId);
+
+    // ProducersDo
+    @Query("MATCH (p:post)-[:post_producers]->(d:药企) " +
+            "WHERE id(p) = $postId RETURN d")
+    List<ProducersDo> findProducersByPostId(Long postId);
+
+    // RecipesDo
+    @Query("MATCH (p:post)-[:post_recipes]->(d:菜谱) " +
+            "WHERE id(p) = $postId RETURN d")
+    List<RecipesDo> findRecipesByPostId(Long postId);
+
+    // SymptomsDo
+    @Query("MATCH (p:post)-[:post_symptoms]->(d:症状) " +
+            "WHERE id(p) = $postId RETURN d")
+    List<SymptomsDo> findSymptomsByPostId(Long postId);
 }
