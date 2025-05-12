@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 public class PostSearchTimeAo {
     private Long userId;
-    private List<List<Long>> levelsPostIds;
+    private List<PostSearchScoreAo> postSearchScoreAos;
+    private List<PostSearchEntityScoreAo> postSearchEntityScoreAos;
     private Long searchTime;
 }

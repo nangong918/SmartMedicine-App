@@ -6,17 +6,11 @@ import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.constant.feature.UserActionRedisKey;
 import com.czy.api.domain.Do.neo4j.rels.UserPostRelation;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
-import com.czy.api.domain.ao.feature.NerFeatureScoreAo;
-import com.czy.api.domain.ao.feature.PostBrowseDurationAo;
-import com.czy.api.domain.ao.feature.PostClickTimeAo;
-import com.czy.api.domain.ao.feature.PostFeatureAo;
-import com.czy.api.domain.ao.feature.PostSearchTimeAo;
-import com.czy.api.domain.ao.feature.ScoreAo;
-import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
-import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
+import com.czy.api.domain.ao.feature.*;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.feature.rule.RulePostReadTime;
+import com.czy.feature.rule.RuleSearchPost;
 import com.czy.feature.service.FeatureStorageService;
 import com.czy.feature.service.PostFeatureService;
 import com.czy.feature.service.UserActionRecordService;
@@ -409,17 +403,35 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
 
     /// 显性特征 系统内mq埋点
 
+
+    private final RuleSearchPost ruleSearchPost;
+
     /**
      * 用户的搜索-> user/item
      * @param userId            用户id
-     * @param levelsPostIdList  搜索结果
-     * @param levelsNerResults        搜索句子的ner结果
+     * @param levelsPostIdMap  搜索结果
+     * @param levelsPostEntityScoreMap        搜索句子的ner结果
      * @param timestamp         特征时间戳[特征时效控制]
      */
     @Override
-    public void searchPost(Long userId, List<List<Long>> levelsPostIdList, List<List<PostNerResult>> levelsNerResults, Long timestamp) {
+    public void searchPost(Long userId, Map<Integer, List<Long>> levelsPostIdMap,
+                           Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap, Long timestamp) {
         // 1.临时特征
         PostSearchTimeAo postSearchTimeAo = new PostSearchTimeAo();
+        List<PostSearchScoreAo> postSearchScoreAos = ruleSearchPost.calculatePostScore(levelsPostIdMap);
+        List<PostSearchEntityScoreAo> postSearchEntityScoreAos = ruleSearchPost.calculatePostEntityScore(levelsPostEntityScoreMap);
+
+        postSearchTimeAo.setUserId(userId);
+        postSearchTimeAo.setPostSearchScoreAos(postSearchScoreAos);
+        postSearchTimeAo.setPostSearchEntityScoreAos(postSearchEntityScoreAos);
+        postSearchTimeAo.setSearchTime(timestamp);
+
+        // 存储到redis
+        addFeatureToRedis(
+                UserActionRedisKey.USER_FEATURE_SEARCH_POST_REDIS_KEY + userId,
+                postSearchTimeAo,
+                timestamp
+        );
 
         // 2.历史特征
     }

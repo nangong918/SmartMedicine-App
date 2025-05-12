@@ -4,6 +4,7 @@ import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 13225
@@ -43,12 +44,12 @@ public interface UserActionRecordService {
     /**
      * 用户的搜索-> user/item
      * @param userId            用户id
-     * @param levelsPostIdList  搜索结果
-     * @param levelsNerResults        搜索句子的ner结果
+     * @param levelsPostIdMap  搜索结果
+     * @param levelsPostEntityScoreMap        搜索句子的ner结果
      * @param timestamp         特征时间戳[特征时效控制]
      */
-    void searchPost(Long userId, List<List<Long>> levelsPostIdList, List<List<PostNerResult>> levelsNerResults, Long timestamp);
-
+    void searchPost(Long userId, Map<Integer, List<Long>> levelsPostIdMap,
+                    Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap, Long timestamp);
     /**
      * 操作数据 点赞、收藏、转发-> user/item
      * @param userId            用户id

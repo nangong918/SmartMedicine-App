@@ -24,4 +24,7 @@ public interface UserActionRedisKey {
     // browse
     String USER_FEATURE_BROWSE_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "browse_post:";
     String POST_HEAT_BROWSE_REDIS_KEY = POST_HEAT_REDIS_KEY + "browsed:";
+
+    // search
+    String USER_FEATURE_SEARCH_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "search_post:";
 }
