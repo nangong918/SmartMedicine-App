@@ -44,10 +44,10 @@ public interface UserActionRecordService {
      * 用户的搜索-> user/item
      * @param userId            用户id
      * @param levelsPostIdList  搜索结果
-     * @param nerResults        搜索句子的ner结果
+     * @param levelsNerResults        搜索句子的ner结果
      * @param timestamp         特征时间戳[特征时效控制]
      */
-    void searchPost(Long userId, List<List<Long>> levelsPostIdList, List<PostNerResult> nerResults, Long timestamp);
+    void searchPost(Long userId, List<List<Long>> levelsPostIdList, List<List<PostNerResult>> levelsNerResults, Long timestamp);
 
     /**
      * 操作数据 点赞、收藏、转发-> user/item

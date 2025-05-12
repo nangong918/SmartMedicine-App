@@ -10,6 +10,7 @@ import com.czy.api.domain.ao.feature.NerFeatureScoreAo;
 import com.czy.api.domain.ao.feature.PostBrowseDurationAo;
 import com.czy.api.domain.ao.feature.PostClickTimeAo;
 import com.czy.api.domain.ao.feature.PostFeatureAo;
+import com.czy.api.domain.ao.feature.PostSearchTimeAo;
 import com.czy.api.domain.ao.feature.ScoreAo;
 import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
 import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
@@ -24,10 +25,10 @@ import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,8 @@ import java.util.Optional;
  *      存储数据结构：
  *          1.user_post: userId + PostFeatureAo + scoreAo -> UserPostFeatureAo
  *          2.user_entity: userId + PostFeatureAo + scoreAo -> UserEntityFeatureAo
+ * <p>
+ * 关于特征计算：大数据：离线，近线，在线（等整个前后端完成再加入大数据）
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -64,7 +67,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     private PostSearchService postSearchService;
     private final RulePostReadTime rulePostReadTime;
     private final FeatureStorageService featureStorageService;
-    // 隐性特征 前端主动http埋点
+    /// 隐性特征 前端主动http埋点
 
     /**
      * 上传用户的城市等信息
@@ -404,18 +407,21 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         return rulePostReadTime.execute(postWordCount, browseDuration);
     }
 
-    // 显性特征 系统内mq埋点
+    /// 显性特征 系统内mq埋点
 
     /**
      * 用户的搜索-> user/item
      * @param userId            用户id
      * @param levelsPostIdList  搜索结果
-     * @param nerResults        搜索句子的ner结果
+     * @param levelsNerResults        搜索句子的ner结果
      * @param timestamp         特征时间戳[特征时效控制]
      */
     @Override
-    public void searchPost(Long userId, List<List<Long>> levelsPostIdList, List<PostNerResult> nerResults, Long timestamp) {
+    public void searchPost(Long userId, List<List<Long>> levelsPostIdList, List<List<PostNerResult>> levelsNerResults, Long timestamp) {
+        // 1.临时特征
+        PostSearchTimeAo postSearchTimeAo = new PostSearchTimeAo();
 
+        // 2.历史特征
     }
 
     /**
