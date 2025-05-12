@@ -20,6 +20,10 @@ public class ScoreAo {
         this.explicitScore += scoreAo.getExplicitScore();
     }
 
+    public boolean isEmpty(){
+        return clickTimes == 0 && implicitScore == 0.0 && explicitScore == 0.0;
+    }
+
     @Override
     protected Object clone() throws CloneNotSupportedException {
         // 浅拷贝足够，因为没有引用类型字段

@@ -2,14 +2,12 @@ package com.czy.feature.service.impl;
 
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.feature.FeatureConstant;
-import com.czy.api.constant.feature.FeatureTypeChanger;
 import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.constant.feature.UserActionRedisKey;
-import com.czy.api.domain.Do.neo4j.PostLabelNeo4jDo;
 import com.czy.api.domain.Do.neo4j.rels.UserPostRelation;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.ao.feature.NerFeatureScoreAo;
-import com.czy.api.domain.ao.feature.PostBrowseTimeAo;
+import com.czy.api.domain.ao.feature.PostBrowseDurationAo;
 import com.czy.api.domain.ao.feature.PostClickTimeAo;
 import com.czy.api.domain.ao.feature.PostFeatureAo;
 import com.czy.api.domain.ao.feature.ScoreAo;
@@ -18,6 +16,7 @@ import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.feature.rule.RulePostReadTime;
+import com.czy.feature.service.FeatureStorageService;
 import com.czy.feature.service.PostFeatureService;
 import com.czy.feature.service.UserActionRecordService;
 import com.czy.springUtils.debug.DebugConfig;
@@ -28,7 +27,7 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.constraints.NotNull;
+import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +63,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private PostSearchService postSearchService;
     private final RulePostReadTime rulePostReadTime;
+    private final FeatureStorageService featureStorageService;
     // 隐性特征 前端主动http埋点
 
     /**
@@ -157,35 +157,8 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         // 2.2 user-entity-历史特征：记录入neo4j
         // 点击操作只增加历史的权重，不增加历史的分数，分数由浏览时长控制
         // 将 post的信息关联user存入neo4j
-        uploadUserEntityFeature(postFeatureAo, userId);
+        featureStorageService.uploadUserEntityFeature(postFeatureAo, userId);
 
-    }
-
-    // 存储user-entity的历史特征 neo4j
-    public void uploadUserEntityFeature(@NotNull PostFeatureAo postFeatureAo, Long userId) {
-        // user-entity
-        if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())){
-            for (PostNerResult postNerResult : postFeatureAo.getPostNerResultList()) {
-                String keyWord = postNerResult.getKeyWord();
-                String nerType = postNerResult.getNerType();
-                userFeatureRepository.createUserEntityPostRelation(
-                        userId,
-                        FeatureTypeChanger.nerTypeToEntityLabel(nerType),
-                        keyWord,
-                        FeatureTypeChanger.nerTypeToUserRelationType(nerType)
-                );
-            }
-        }
-        // user-label
-        PostTypeEnum postTypeEnum = PostTypeEnum.getByCode(postFeatureAo.getPostType());
-        if (postFeatureAo.getPostType() != null && !postTypeEnum.equals(PostTypeEnum.OTHER)){
-            userFeatureRepository.createUserEntityPostRelation(
-                    userId,
-                    PostLabelNeo4jDo.nodeLabel,
-                    postTypeEnum.getName(),
-                    UserFeatureRepository.RELS_USER_POST_LABEL
-            );
-        }
     }
 
 
@@ -347,26 +320,6 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         return scoreAo;
     }
 
-    // 存储user-entity/label的历史特征
-    private void saveUserEntityFeature(Long userId, @NotNull UserEntityFeatureAo userEntityFeatureAo) {
-        Map<String, NerFeatureScoreAo> nerFeatureScoreMap = userEntityFeatureAo.getNerFeatureScoreMap();
-        for (Map.Entry<String, NerFeatureScoreAo> entry : nerFeatureScoreMap.entrySet()) {
-            String keyWord = entry.getKey();
-            NerFeatureScoreAo nerFeatureScoreAo = entry.getValue();
-            String nerType = nerFeatureScoreAo.getNerType();
-            if (!nerFeatureScoreAo.isEmpty()){
-                userFeatureRepository.saveOrUpdateUserEntityRelation(
-                        userId,
-                        FeatureTypeChanger.nerTypeToEntityLabel(nerType),
-                        keyWord,
-                        FeatureTypeChanger.nerTypeToUserRelationType(nerType),
-                        nerFeatureScoreAo.getScore().getClickTimes(),
-                        nerFeatureScoreAo.getScore().getImplicitScore(),
-                        nerFeatureScoreAo.getScore().getExplicitScore()
-                );
-            }
-        }
-    }
 
     /**
      * 上传用用的点击帖子 + 浏览时长 -> user/item
@@ -389,33 +342,22 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         Double implicitScore = getBrowseTimeScore(browseDuration, postDetailDo);
 
         /// 1.临时特征：记录30天
-        PostBrowseTimeAo ao = new PostBrowseTimeAo();
-        ao.setUserId(userId);
-        ao.setPostId(postId);
-        ao.setBrowseDuration(browseDuration);
-        ao.setImplicitScore(implicitScore);
+        PostBrowseDurationAo postBrowseDurationAo = new PostBrowseDurationAo();
+        postBrowseDurationAo.setUserId(userId);
+        postBrowseDurationAo.setPostId(postId);
+        postBrowseDurationAo.setBrowseDuration(browseDuration);
+        postBrowseDurationAo.setImplicitScore(implicitScore);
         // ZSet形式存储在redis中
-        redissonService.zAdd(
+        addFeatureToRedis(
                 userFeatureKey,
-                ao,
-                timestamp.doubleValue(),
-                FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
+                postBrowseDurationAo,
+                timestamp
         );
 
         /// 2.历史特征：记录入neo4j;内置检查是否已经创建的方法
         /// 2.1 user-post特征
         UserPostRelation userPostRelation = userFeatureRepository.createUserPostRelation(userId, postId);
-        ScoreAo user_postScoreAo = new ScoreAo();
-        if (userPostRelation != null){
-            user_postScoreAo.setClickTimes(userPostRelation.getClickTimes() + 1);
-            user_postScoreAo.setImplicitScore(userPostRelation.getImplicitScore() + implicitScore);
-            user_postScoreAo.setExplicitScore(userPostRelation.getExplicitScore());
-        }
-        else {
-            user_postScoreAo.setClickTimes(1);
-            user_postScoreAo.setImplicitScore(implicitScore);
-            user_postScoreAo.setExplicitScore(0.0);
-        }
+        ScoreAo user_postScoreAo = getScoreAo(userPostRelation, implicitScore);
         // 更新关系
         userFeatureRepository.updateUserPostRelation(
                 userId,
@@ -438,7 +380,23 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
                 implicitScore, 0.0);
 
         // 存储user-entity/label的历史特征
-        saveUserEntityFeature(userId, userEntityFeatureAo);
+        featureStorageService.saveUserEntityFeature(userId, userEntityFeatureAo);
+    }
+
+    @NotNull
+    private static ScoreAo getScoreAo(UserPostRelation userPostRelation, Double implicitScore) {
+        ScoreAo user_postScoreAo = new ScoreAo();
+        if (userPostRelation != null){
+            user_postScoreAo.setClickTimes(userPostRelation.getClickTimes() + 1);
+            user_postScoreAo.setImplicitScore(userPostRelation.getImplicitScore() + implicitScore);
+            user_postScoreAo.setExplicitScore(userPostRelation.getExplicitScore());
+        }
+        else {
+            user_postScoreAo.setClickTimes(1);
+            user_postScoreAo.setImplicitScore(implicitScore);
+            user_postScoreAo.setExplicitScore(0.0);
+        }
+        return user_postScoreAo;
     }
 
     private Double getBrowseTimeScore(Long browseDuration, PostDetailDo postDetailDo) {

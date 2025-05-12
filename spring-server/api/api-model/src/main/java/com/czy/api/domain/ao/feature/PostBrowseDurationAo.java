@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2025/5/10 11:53
  */
 @Data
-public class PostBrowseTimeAo {
+public class PostBrowseDurationAo {
     private Long userId;
     private Long postId;
     private Long browseDuration;

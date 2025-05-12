@@ -1,17 +1,27 @@
 package com.czy.feature.service.impl;
 
 import com.czy.api.constant.feature.FeatureTypeChanger;
+import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.domain.Do.neo4j.DiseaseDo;
+import com.czy.api.domain.Do.neo4j.PostLabelNeo4jDo;
 import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
 import com.czy.api.domain.Do.neo4j.base.BaseNeo4jDo;
-import com.czy.api.mapper.*;
+import com.czy.api.domain.ao.feature.NerFeatureScoreAo;
+import com.czy.api.domain.ao.feature.PostFeatureAo;
+import com.czy.api.domain.ao.feature.ScoreAo;
+import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
+import com.czy.api.domain.ao.post.PostNerResult;
+import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.feature.service.FeatureStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 13225
@@ -77,5 +87,78 @@ public class FeatureStorageServiceImpl implements FeatureStorageService {
     @Override
     public void deleteUserRelation(UserFeatureNeo4jDo user) {
         userFeatureRepository.deletePostWithRelations(user.getName());
+    }
+
+    @Override
+    public void uploadUserEntityFeature(@NotNull PostFeatureAo postFeatureAo, Long userId) {
+        // user-entity
+        if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())){
+            for (PostNerResult postNerResult : postFeatureAo.getPostNerResultList()) {
+                String keyWord = postNerResult.getKeyWord();
+                String nerType = postNerResult.getNerType();
+                userFeatureRepository.createUserEntityPostRelation(
+                        userId,
+                        FeatureTypeChanger.nerTypeToEntityLabel(nerType),
+                        keyWord,
+                        FeatureTypeChanger.nerTypeToUserRelationType(nerType)
+                );
+            }
+        }
+        // user-label
+        PostTypeEnum postTypeEnum = PostTypeEnum.getByCode(postFeatureAo.getPostType());
+        if (postFeatureAo.getPostType() != null && !postTypeEnum.equals(PostTypeEnum.OTHER)){
+            userFeatureRepository.createUserEntityPostRelation(
+                    userId,
+                    PostLabelNeo4jDo.nodeLabel,
+                    postTypeEnum.getName(),
+                    UserFeatureRepository.RELS_USER_POST_LABEL
+            );
+        }
+    }
+
+    @Override
+    public void saveUserEntityFeature(Long userId, UserEntityFeatureAo userEntityFeatureAo) {
+        Map<String, NerFeatureScoreAo> nerFeatureScoreMap = userEntityFeatureAo.getNerFeatureScoreMap();
+        // user-entity
+        if (!CollectionUtils.isEmpty(nerFeatureScoreMap)){
+            for (Map.Entry<String, NerFeatureScoreAo> entry : nerFeatureScoreMap.entrySet()) {
+                String keyWord = entry.getKey();
+                NerFeatureScoreAo nerFeatureScoreAo = entry.getValue();
+                String nerType = nerFeatureScoreAo.getNerType();
+                if (!nerFeatureScoreAo.isEmpty()) {
+                    ScoreAo scoreAo = nerFeatureScoreAo.getScore();
+                    if (!scoreAo.isEmpty()) {
+                        userFeatureRepository.saveOrUpdateUserEntityRelation(
+                                userId,
+                                FeatureTypeChanger.nerTypeToEntityLabel(nerType),
+                                keyWord,
+                                FeatureTypeChanger.nerTypeToUserRelationType(nerType),
+                                scoreAo.getClickTimes(),
+                                scoreAo.getImplicitScore(),
+                                scoreAo.getExplicitScore()
+                        );
+                    }
+                }
+            }
+        }
+        // user-label
+        Map<Integer, ScoreAo> labelScoreMap = userEntityFeatureAo.getLabelScoreMap();
+        if (!CollectionUtils.isEmpty(labelScoreMap)){
+            for (Map.Entry<Integer, ScoreAo> entry : labelScoreMap.entrySet()) {
+                Integer postType = entry.getKey();
+                ScoreAo scoreAo = entry.getValue();
+                if (!scoreAo.isEmpty()) {
+                    userFeatureRepository.saveOrUpdateUserEntityRelation(
+                            userId,
+                            PostLabelNeo4jDo.nodeLabel,
+                            PostTypeEnum.getByCode(postType).getName(),
+                            UserFeatureRepository.RELS_USER_POST_LABEL,
+                            scoreAo.getClickTimes(),
+                            scoreAo.getImplicitScore(),
+                            scoreAo.getExplicitScore()
+                    );
+                }
+            }
+        }
     }
 }
