@@ -34,6 +34,9 @@ import java.util.Optional;
 @Service
 public class PostFeatureServiceImpl implements PostFeatureService {
     private final PostRepository postRepository;
+
+    // TODO 优化：特征查找之后存储在Redis，缓存击穿再执行数据库查询。
+    //  并且更改策略，要预先加载当前热门的Top-k
     @Override
     public PostFeatureAo getPostFeature(Long postId) {
         List<DiseaseDo> diseases = postRepository.findDiseasesByPostId(postId);
