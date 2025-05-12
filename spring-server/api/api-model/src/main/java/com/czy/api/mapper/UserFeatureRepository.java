@@ -117,6 +117,49 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
                                       @Param("implicitScore") Double implicitScore,
                                       @Param("explicitScore") Double explicitScore);
 
+    /**
+     * 帮我写代码：
+     * 改成如果不存在关系就创建关系，然后这些数据插入进去，
+     * 如果存在关系，不是更新哦，注意不是更新，数据叠加进去，并且我要求implicitScore，explicitScore最小值是-10.0，最大值是10.0，这是避免用户某项特征过于突出。
+     * @param userId
+     * @param targetLabel
+     * @param targetName
+     * @param relationType
+     * @param clickTimes
+     * @param implicitScore
+     * @param explicitScore
+     */
+    @Query(
+            // 避免MATCH (u:user {id: $userId}), (d:`${targetLabel}` {name: $targetName}) 这样可能会导致不必要的笛卡尔积计算 **
+            "MATCH (u:user {id: $userId}) " +
+            "MATCH (d:`${targetLabel}` {name: $targetName}) " +
+            "MERGE (u)-[r:`${relationType}`]->(d) " +
+            "ON CREATE SET " +
+            "  r.clickTimes = $clickTimes, " +
+            "  r.implicitScore = CASE WHEN $implicitScore > 10.0 THEN 10.0 " +
+            "                         WHEN $implicitScore < -10.0 THEN -10.0 " +
+            "                         ELSE $implicitScore END, " +
+            "  r.explicitScore = CASE WHEN $explicitScore > 10.0 THEN 10.0 " +
+            "                         WHEN $explicitScore < -10.0 THEN -10.0 " +
+            "                         ELSE $explicitScore END, " +
+            "  r.lastUpdateTimestamp = datetime() " +
+            "ON MATCH SET " +
+            "  r.clickTimes = r.clickTimes + $clickTimes, " +
+            "  r.implicitScore = CASE WHEN r.implicitScore + $implicitScore > 10.0 THEN 10.0 " +
+            "                         WHEN r.implicitScore + $implicitScore < -10.0 THEN -10.0 " +
+            "                         ELSE r.implicitScore + $implicitScore END, " +
+            "  r.explicitScore = CASE WHEN r.explicitScore + $explicitScore > 10.0 THEN 10.0 " +
+            "                         WHEN r.explicitScore + $explicitScore < -10.0 THEN -10.0 " +
+            "                         ELSE r.explicitScore + $explicitScore END, " +
+            "  r.lastUpdateTimestamp = datetime()")
+    void saveOrUpdateUserEntityRelation(@Param("userId") Long userId,
+                                        @Param("targetLabel") String targetLabel,
+                                        @Param("targetName") String targetName,
+                                        @Param("relationType") String relationType,
+                                        @Param("clickTimes") Integer clickTimes,
+                                        @Param("implicitScore") Double implicitScore,
+                                        @Param("explicitScore") Double explicitScore);
+
     // 修改查询方法
     @Query("MATCH (u:user)-[r:`${relationType}`]->(d:`${targetLabel}`) " +
             "WHERE u.id = $userId AND d.name = $targetName " +

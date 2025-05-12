@@ -348,8 +348,24 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     }
 
     // 存储user-entity/label的历史特征
-    private void saveUserEntityFeature(Long userId, UserEntityFeatureAo userEntityFeatureAo) {
-
+    private void saveUserEntityFeature(Long userId, @NotNull UserEntityFeatureAo userEntityFeatureAo) {
+        Map<String, NerFeatureScoreAo> nerFeatureScoreMap = userEntityFeatureAo.getNerFeatureScoreMap();
+        for (Map.Entry<String, NerFeatureScoreAo> entry : nerFeatureScoreMap.entrySet()) {
+            String keyWord = entry.getKey();
+            NerFeatureScoreAo nerFeatureScoreAo = entry.getValue();
+            String nerType = nerFeatureScoreAo.getNerType();
+            if (!nerFeatureScoreAo.isEmpty()){
+                userFeatureRepository.saveOrUpdateUserEntityRelation(
+                        userId,
+                        FeatureTypeChanger.nerTypeToEntityLabel(nerType),
+                        keyWord,
+                        FeatureTypeChanger.nerTypeToUserRelationType(nerType),
+                        nerFeatureScoreAo.getScore().getClickTimes(),
+                        nerFeatureScoreAo.getScore().getImplicitScore(),
+                        nerFeatureScoreAo.getScore().getExplicitScore()
+                );
+            }
+        }
     }
 
     /**
