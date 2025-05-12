@@ -48,8 +48,12 @@ public interface UserActionRecordService {
      * @param levelsPostEntityScoreMap        搜索句子的ner结果
      * @param timestamp         特征时间戳[特征时效控制]
      */
-    void searchPost(Long userId, Map<Integer, List<Long>> levelsPostIdMap,
-                    Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap, Long timestamp);
+    void searchPost(Long userId,
+                         Map<Integer, List<Long>> levelsPostIdMap,
+                         Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap,
+                         Map<Integer, List<Integer>> levelsPostLabelScoreMap,
+                         Long timestamp);
+
     /**
      * 操作数据 点赞、收藏、转发-> user/item
      * @param userId            用户id

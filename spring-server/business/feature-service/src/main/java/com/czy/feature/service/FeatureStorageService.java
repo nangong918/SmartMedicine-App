@@ -4,6 +4,7 @@ import com.czy.api.domain.Do.neo4j.DiseaseDo;
 import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
 import com.czy.api.domain.Do.neo4j.base.BaseNeo4jDo;
+import com.czy.api.domain.ao.feature.PostExplicitTimeAo;
 import com.czy.api.domain.ao.feature.PostFeatureAo;
 import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
 
@@ -38,4 +39,11 @@ public interface FeatureStorageService {
      * @param userEntityFeatureAo   用户分数特征信息
      */
     void saveUserEntityFeature(Long userId, @NotNull UserEntityFeatureAo userEntityFeatureAo);
+
+    /**
+     * 保存用户显性特征信息
+     * @param userId                用户id
+     * @param postExplicitTimeAo    显性特征信息
+     */
+    void saveUserExplicitFeature(Long userId, @NotNull PostExplicitTimeAo postExplicitTimeAo);
 }

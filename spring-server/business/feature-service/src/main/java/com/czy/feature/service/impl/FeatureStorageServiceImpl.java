@@ -7,10 +7,7 @@ import com.czy.api.domain.Do.neo4j.PostLabelNeo4jDo;
 import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
 import com.czy.api.domain.Do.neo4j.base.BaseNeo4jDo;
-import com.czy.api.domain.ao.feature.NerFeatureScoreAo;
-import com.czy.api.domain.ao.feature.PostFeatureAo;
-import com.czy.api.domain.ao.feature.ScoreAo;
-import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
+import com.czy.api.domain.ao.feature.*;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.feature.service.FeatureStorageService;
@@ -19,9 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.constraints.NotNull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author 13225
@@ -159,6 +157,48 @@ public class FeatureStorageServiceImpl implements FeatureStorageService {
                     );
                 }
             }
+        }
+    }
+
+    @Override
+    public void saveUserExplicitFeature(Long userId, @NotNull PostExplicitTimeAo postExplicitTimeAo) {
+        // user-post
+        for (PostExplicitPostScoreAo postExplicitPostScoreAo : postExplicitTimeAo.getPostExplicitPostScoreAos()) {
+            userFeatureRepository.saveOrUpdateUserPostRelation(
+                    userId,
+                    postExplicitPostScoreAo.getPostId(),
+                    0,
+                    0.0,
+                    postExplicitPostScoreAo.getScore()
+            );
+        }
+        // user-entity
+        for (PostExplicitEntityScoreAo postExplicitEntityScoreAo : postExplicitTimeAo.getPostExplicitEntityScoreAos()) {
+            userFeatureRepository.saveOrUpdateUserEntityRelation(
+                    userId,
+                    postExplicitEntityScoreAo.getEntityLabel(),
+                    postExplicitEntityScoreAo.getEntityName(),
+                    FeatureTypeChanger.nerTypeToUserRelationType(postExplicitEntityScoreAo.getEntityLabel()),
+                    0,
+                    0.0,
+                    postExplicitEntityScoreAo.getScore()
+            );
+        }
+        // user-label
+        for (PostExplicitLabelScoreAo postExplicitLabelScoreAo : postExplicitTimeAo.getPostExplicitLabelScoreAos()) {
+            PostTypeEnum postTypeEnum = PostTypeEnum.getByCode(postExplicitLabelScoreAo.getLabel());
+            if (Objects.equals(postExplicitLabelScoreAo.getLabel(), postTypeEnum.getCode())) {
+                continue;
+            }
+            userFeatureRepository.saveOrUpdateUserEntityRelation(
+                    userId,
+                    PostLabelNeo4jDo.nodeLabel,
+                    postTypeEnum.getName(),
+                    UserFeatureRepository.RELS_USER_POST_LABEL,
+                    0,
+                    0.0,
+                    postExplicitLabelScoreAo.getScore()
+            );
         }
     }
 }

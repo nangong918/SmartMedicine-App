@@ -2,8 +2,9 @@ package com.czy.feature.rule;
 
 
 import com.czy.api.constant.search.SearchLevel;
-import com.czy.api.domain.ao.feature.PostSearchEntityScoreAo;
-import com.czy.api.domain.ao.feature.PostSearchScoreAo;
+import com.czy.api.domain.ao.feature.PostExplicitEntityScoreAo;
+import com.czy.api.domain.ao.feature.PostExplicitLabelScoreAo;
+import com.czy.api.domain.ao.feature.PostExplicitPostScoreAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -33,17 +34,17 @@ public class RuleSearchPost {
      */
     private static final Double[] SCORE_LEVEL = new Double[]{
             // 0级匹配
-            1.0,
+            0.10,
             // 1级匹配
-            0.8,
+            0.08,
             // 2级匹配
-            0.6,
+            0.06,
             // 3级匹配
-            0.4,
+            0.04,
             // 4级匹配
-            0.2,
+            0.02,
             // 5级匹配
-            0.05
+            0.005
     };
 
     /**
@@ -51,9 +52,9 @@ public class RuleSearchPost {
      * @param levelsPostIdMap  搜索等级和帖子id的映射
      * @return  计算后的帖子搜索分值
      */
-    public List<PostSearchScoreAo> calculatePostScore(Map<Integer, List<Long>> levelsPostIdMap) {
+    public List<PostExplicitPostScoreAo> calculatePostScore(Map<Integer, List<Long>> levelsPostIdMap) {
         return calculateScore(levelsPostIdMap, (postId, level) -> {
-            PostSearchScoreAo ao = new PostSearchScoreAo();
+            PostExplicitPostScoreAo ao = new PostExplicitPostScoreAo();
             ao.setPostId(postId);
             ao.setScore(SCORE_LEVEL[level]);
             return ao;
@@ -65,11 +66,25 @@ public class RuleSearchPost {
      * @param levelsPostEntityScoreMap  搜索等级和实体的映射
      * @return  计算后的帖子搜索实体分值
      */
-    public List<PostSearchEntityScoreAo> calculatePostEntityScore(Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap) {
+    public List<PostExplicitEntityScoreAo> calculatePostEntityScore(Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap) {
         return calculateScore(levelsPostEntityScoreMap, (postNerResult, level) -> {
-            PostSearchEntityScoreAo ao = new PostSearchEntityScoreAo();
+            PostExplicitEntityScoreAo ao = new PostExplicitEntityScoreAo();
             ao.setEntityName(postNerResult.getKeyWord());
             ao.setEntityLabel(postNerResult.getNerType());
+            ao.setScore(SCORE_LEVEL[level]);
+            return ao;
+        });
+    }
+
+    /**
+     * 计算帖子搜索标签分值
+     * @param levelsPostLabelScoreMap   搜索等级和标签的映射
+     * @return                          计算后的帖子搜索标签分值
+     */
+    public List<PostExplicitLabelScoreAo> calculatePostLabelScore(Map<Integer, List<Integer>> levelsPostLabelScoreMap) {
+        return calculateScore(levelsPostLabelScoreMap, (labelType, level) -> {
+            PostExplicitLabelScoreAo ao = new PostExplicitLabelScoreAo();
+            ao.setLabel(labelType);
             ao.setScore(SCORE_LEVEL[level]);
             return ao;
         });

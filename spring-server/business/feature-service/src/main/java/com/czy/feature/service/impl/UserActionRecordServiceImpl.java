@@ -414,26 +414,35 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
      * @param timestamp         特征时间戳[特征时效控制]
      */
     @Override
-    public void searchPost(Long userId, Map<Integer, List<Long>> levelsPostIdMap,
-                           Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap, Long timestamp) {
+    public void searchPost(Long userId,
+                           Map<Integer, List<Long>> levelsPostIdMap,
+                           Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap,
+                           Map<Integer, List<Integer>> levelsPostLabelScoreMap,
+                           Long timestamp) {
         // 1.临时特征
-        PostSearchTimeAo postSearchTimeAo = new PostSearchTimeAo();
-        List<PostSearchScoreAo> postSearchScoreAos = ruleSearchPost.calculatePostScore(levelsPostIdMap);
-        List<PostSearchEntityScoreAo> postSearchEntityScoreAos = ruleSearchPost.calculatePostEntityScore(levelsPostEntityScoreMap);
+        PostExplicitTimeAo postExplicitTimeAo = new PostExplicitTimeAo();
+        List<PostExplicitPostScoreAo> postExplicitPostScoreAos = ruleSearchPost.calculatePostScore(levelsPostIdMap);
+        List<PostExplicitEntityScoreAo> postExplicitEntityScoreAos = ruleSearchPost.calculatePostEntityScore(levelsPostEntityScoreMap);
+        List<PostExplicitLabelScoreAo> postExplicitLabelScoreAos = ruleSearchPost.calculatePostLabelScore(levelsPostLabelScoreMap);
 
-        postSearchTimeAo.setUserId(userId);
-        postSearchTimeAo.setPostSearchScoreAos(postSearchScoreAos);
-        postSearchTimeAo.setPostSearchEntityScoreAos(postSearchEntityScoreAos);
-        postSearchTimeAo.setSearchTime(timestamp);
+        postExplicitTimeAo.setUserId(userId);
+        postExplicitTimeAo.setPostExplicitPostScoreAos(postExplicitPostScoreAos);
+        postExplicitTimeAo.setPostExplicitEntityScoreAos(postExplicitEntityScoreAos);
+        postExplicitTimeAo.setPostExplicitLabelScoreAos(postExplicitLabelScoreAos);
+        postExplicitTimeAo.setTimestamp(timestamp);
 
         // 存储到redis
         addFeatureToRedis(
                 UserActionRedisKey.USER_FEATURE_SEARCH_POST_REDIS_KEY + userId,
-                postSearchTimeAo,
+                postExplicitTimeAo,
                 timestamp
         );
 
         // 2.历史特征
+        featureStorageService.saveUserExplicitFeature(
+                userId,
+                postExplicitTimeAo
+        );
     }
 
     /**

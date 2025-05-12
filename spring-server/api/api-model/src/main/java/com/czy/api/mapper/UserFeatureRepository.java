@@ -160,6 +160,41 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
                                         @Param("implicitScore") Double implicitScore,
                                         @Param("explicitScore") Double explicitScore);
 
+    /**
+     * @param userId
+     * @param postId
+     * @param clickTimes
+     * @param implicitScore
+     * @param explicitScore
+     */
+    @Query(
+            "MATCH (u:user {id: $userId}) " +
+                    "MATCH (d:post {id: $postId}) " +
+                    "MERGE (u)-[r:user_post]->(d) " +
+                    "ON CREATE SET " +
+                    "  r.clickTimes = $clickTimes, " +
+                    "  r.implicitScore = CASE WHEN $implicitScore > 10.0 THEN 10.0 " +
+                    "                         WHEN $implicitScore < -10.0 THEN -10.0 " +
+                    "                         ELSE $implicitScore END, " +
+                    "  r.explicitScore = CASE WHEN $explicitScore > 10.0 THEN 10.0 " +
+                    "                         WHEN $explicitScore < -10.0 THEN -10.0 " +
+                    "                         ELSE $explicitScore END, " +
+                    "  r.lastUpdateTimestamp = datetime() " +
+                    "ON MATCH SET " +
+                    "  r.clickTimes = r.clickTimes + $clickTimes, " +
+                    "  r.implicitScore = CASE WHEN r.implicitScore + $implicitScore > 10.0 THEN 10.0 " +
+                    "                         WHEN r.implicitScore + $implicitScore < -10.0 THEN -10.0 " +
+                    "                         ELSE r.implicitScore + $implicitScore END, " +
+                    "  r.explicitScore = CASE WHEN r.explicitScore + $explicitScore > 10.0 THEN 10.0 " +
+                    "                         WHEN r.explicitScore + $explicitScore < -10.0 THEN -10.0 " +
+                    "                         ELSE r.explicitScore + $explicitScore END, " +
+                    "  r.lastUpdateTimestamp = datetime()")
+    void saveOrUpdateUserPostRelation(@Param("userId") Long userId,
+                                        @Param("postId") Long postId,
+                                        @Param("clickTimes") Integer clickTimes,
+                                        @Param("implicitScore") Double implicitScore,
+                                        @Param("explicitScore") Double explicitScore);
+
     // 修改查询方法
     @Query("MATCH (u:user)-[r:`${relationType}`]->(d:`${targetLabel}`) " +
             "WHERE u.id = $userId AND d.name = $targetName " +
