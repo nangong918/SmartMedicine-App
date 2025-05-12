@@ -1,9 +1,9 @@
 package com.czy.api.domain.Do.neo4j;
 
+import com.czy.api.domain.Do.neo4j.base.BaseNeo4jDo;
 import lombok.Data;
-import org.neo4j.ogm.annotation.Id;
+import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.springframework.data.elasticsearch.annotations.Field;
 
 /**
  * @author 13225
@@ -11,14 +11,15 @@ import org.springframework.data.elasticsearch.annotations.Field;
  */
 
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NodeEntity("食物")
-public class FoodsDo {
+public class FoodsDo extends BaseNeo4jDo {
     // nodeLabel
     public static final String nodeLabel = "食物";
-    @Id
-    @Field("id")
-    private Long id;
-    @Field("name")
-    private String name;
+
+    @Override
+    public String getNodeLabel() {
+        return nodeLabel;
+    }
 }
