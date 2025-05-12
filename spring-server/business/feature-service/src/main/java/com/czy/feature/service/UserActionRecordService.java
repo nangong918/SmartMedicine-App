@@ -33,10 +33,10 @@ public interface UserActionRecordService {
      * 上传用用的点击帖子 + 浏览时长 -> user/item
      * @param userId            用户id
      * @param postId            帖子id
-     * @param browseTime        浏览时长
+     * @param browseDuration        浏览时长
      * @param timestamp         特征时间戳[特征时效控制]
      */
-    void uploadClickPostAndBrowseTime(Long userId, Long postId, Long browseTime, Long timestamp);
+    void uploadClickPostAndBrowseTime(Long userId, Long postId, Long browseDuration, Long timestamp);
 
     // 显性特征 系统内mq埋点
 

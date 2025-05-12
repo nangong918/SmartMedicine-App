@@ -11,6 +11,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UserBrowseTimeRequest extends UserActionBaseRequest {
-    private Long browseTime;
+    private Long browseDuration;
     private Long postId;
 }

@@ -10,5 +10,6 @@ import lombok.Data;
 public class PostBrowseTimeAo {
     private Long userId;
     private Long postId;
-    private Long browseTime;
+    private Long browseDuration;
+    private Double implicitScore;
 }

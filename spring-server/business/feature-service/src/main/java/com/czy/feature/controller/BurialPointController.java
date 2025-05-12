@@ -98,7 +98,7 @@ public class BurialPointController {
         if (userId == null){
             return BaseResponse.LogBackError("用户不存在");
         }
-        userActionRecordService.uploadClickPostAndBrowseTime(userId, request.getPostId(), request.getBrowseTime(), request.getTimestamp());
+        userActionRecordService.uploadClickPostAndBrowseTime(userId, request.getPostId(), request.getBrowseDuration(), request.getTimestamp());
         return BaseResponse.getResponseEntitySuccess("上传成功");
     }
 
