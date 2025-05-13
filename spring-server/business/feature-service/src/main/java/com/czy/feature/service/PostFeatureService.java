@@ -17,4 +17,6 @@ public interface PostFeatureService {
      */
     PostFeatureAo getPostFeature(Long postId);
 
+    // 获取热门帖子 TODO
+
 }
