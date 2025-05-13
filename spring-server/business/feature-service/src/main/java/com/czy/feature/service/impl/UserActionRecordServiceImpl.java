@@ -9,6 +9,7 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.ao.feature.*;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
+import com.czy.feature.rule.RulePostOperation;
 import com.czy.feature.rule.RulePostReadTime;
 import com.czy.feature.rule.RuleSearchPost;
 import com.czy.feature.service.FeatureStorageService;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,9 +61,12 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     private final PostFeatureService postFeatureService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private PostSearchService postSearchService;
-    private final RulePostReadTime rulePostReadTime;
     private final FeatureStorageService featureStorageService;
     /// 隐性特征 前端主动http埋点
+
+    private final RulePostReadTime rulePostReadTime;
+    private final RuleSearchPost ruleSearchPost;
+    private final RulePostOperation rulePostOperation;
 
     /**
      * 上传用户的城市等信息
@@ -404,13 +409,15 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     /// 显性特征 系统内mq埋点
 
 
-    private final RuleSearchPost ruleSearchPost;
+
 
     /**
      * 用户的搜索-> user/item
      * @param userId            用户id
      * @param levelsPostIdMap  搜索结果
      * @param levelsPostEntityScoreMap        搜索句子的ner结果
+     * @param levelsPostLabelScoreMap         label的结果类型 -> PostTypeEnum
+     * @see PostTypeEnum
      * @param timestamp         特征时间戳[特征时效控制]
      */
     @Override
@@ -450,11 +457,65 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
      * @param userId            用户id
      * @param postId            帖子id
      * @param operateType       操作类型
+     * @see com.czy.api.constant.feature.PostOperateTypeEnum
      * @param timestamp         特征时间戳[特征时效控制]
      */
     @Override
     public void operatePost(Long userId, Long postId, Integer operateType, Long timestamp) {
+        // 1.计算分数
+        double explicitScore = rulePostOperation.execute(operateType);
+        ScoreAo scoreAo = new ScoreAo();
+        scoreAo.setExplicitScore(explicitScore);
 
+        // 2.构建特征
+        PostExplicitTimeAo postExplicitTimeAo = new PostExplicitTimeAo();
+        postExplicitTimeAo.setUserId(userId);
+
+        // 2.1PostExplicitPostScoreAo
+        PostExplicitPostScoreAo postExplicitPostScoreAo = new PostExplicitPostScoreAo();
+        postExplicitPostScoreAo.setPostId(postId);
+        postExplicitPostScoreAo.setScore(explicitScore);
+        List<PostExplicitPostScoreAo> postExplicitPostScoreAos = new ArrayList<>();
+        postExplicitPostScoreAos.add(postExplicitPostScoreAo);
+        postExplicitTimeAo.setPostExplicitPostScoreAos(postExplicitPostScoreAos);
+
+        // 2.2帖子特征
+        List<PostExplicitEntityScoreAo> postExplicitEntityScoreAos = new ArrayList<>();
+        List<PostExplicitLabelScoreAo> postExplicitLabelScoreAos = new ArrayList<>();
+        PostFeatureAo postFeatureAo = postFeatureService.getPostFeature(postId);
+        if (postFeatureAo != null){
+            // 2.2.1PostExplicitEntityScoreAo
+            if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())){
+                for(PostNerResult postNerResult : postFeatureAo.getPostNerResultList()){
+                    PostExplicitEntityScoreAo postExplicitEntityScoreAo = new PostExplicitEntityScoreAo();
+                    postExplicitEntityScoreAo.setEntityLabel(postNerResult.getNerType());
+                    postExplicitEntityScoreAo.setEntityName(postNerResult.getKeyWord());
+                    postExplicitEntityScoreAo.setScore(explicitScore);
+                    postExplicitEntityScoreAos.add(postExplicitEntityScoreAo);
+                }
+            }
+            // 2.2.2PostExplicitLabelScoreAo
+            PostExplicitLabelScoreAo postExplicitLabelScoreAo = new PostExplicitLabelScoreAo();
+            postExplicitLabelScoreAo.setLabel(postFeatureAo.getPostType());
+            // 2.2.3PostExplicitLabelScoreAo
+            postExplicitLabelScoreAo.setScore(explicitScore);
+        }
+        postExplicitTimeAo.setPostExplicitEntityScoreAos(postExplicitEntityScoreAos);
+        postExplicitTimeAo.setPostExplicitLabelScoreAos(postExplicitLabelScoreAos);
+        postExplicitTimeAo.setTimestamp(timestamp);
+
+        // 3.存储到redis
+        addFeatureToRedis(
+                UserActionRedisKey.USER_FEATURE_SEARCH_POST_REDIS_KEY + userId,
+                postExplicitTimeAo,
+                timestamp
+        );
+
+        // 4.历史特征
+        featureStorageService.saveUserExplicitFeature(
+                userId,
+                postExplicitTimeAo
+        );
     }
 
     /**
