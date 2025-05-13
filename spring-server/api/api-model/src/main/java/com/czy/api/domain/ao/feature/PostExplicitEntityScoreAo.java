@@ -1,3 +1,4 @@
+/*
 package com.czy.api.domain.ao.feature;
 
 
@@ -10,3 +11,4 @@ public class PostExplicitEntityScoreAo {
     private Double score;
     private Long timestamp;
 }
+*/

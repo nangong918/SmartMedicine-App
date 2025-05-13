@@ -45,9 +45,12 @@ public class UserFeatureServiceImpl implements UserFeatureService {
 
     @Override
     public UserTempFeatureAo getUserTempFeature(Long userId) {
+        // 1.计算时间戳
         long currentTime = System.currentTimeMillis();
         // 30天前的时间戳
         long thirtyDaysAgoTime = currentTime - FeatureConstant.FEATURE_EXPIRE_TIME_SECOND * 1000L;
+
+        // 2.获取Redis临时特征
         String userClickFeatureKey = UserActionRedisKey.USER_FEATURE_CLICK_POST_REDIS_KEY + userId + ":*";
         String userBrowseFeatureKey = UserActionRedisKey.USER_FEATURE_BROWSE_POST_REDIS_KEY + userId + ":*";
         String userSearchFeatureKey = UserActionRedisKey.USER_FEATURE_SEARCH_POST_REDIS_KEY + userId;
@@ -67,8 +70,8 @@ public class UserFeatureServiceImpl implements UserFeatureService {
         /*
         PostExplicitTimeAo(
             List<PostExplicitPostScoreAo>,
-            List<PostExplicitEntityScoreAo>,
-            List<PostExplicitLabelScoreAo>
+//            List<PostExplicitEntityScoreAo>,
+//            List<PostExplicitLabelScoreAo>
             )
          */
         Collection<Object> userSearchFeature = redissonService.zRangeByScore(
@@ -94,7 +97,7 @@ public class UserFeatureServiceImpl implements UserFeatureService {
         userFeatureList.add(userOperateFeature);
         userFeatureList.add(userCommentFeature);
 
-        // 处理特征
+        // 3.处理特征
         return getUserTempFeatureAo(
                 userFeatureList
         );
@@ -107,7 +110,9 @@ public class UserFeatureServiceImpl implements UserFeatureService {
                                                Map<String, NerFeatureScoreDaysAo> nerFeatureScoreMap,
                                                Map<Integer, List<ScoreDaysAo>> labelScoreMap) {
         PostFeatureAo postFeatureAo = postFeatureService.getPostFeature(postId);
-        if (postFeatureAo == null) return;
+        if (postFeatureAo == null) {
+            return;
+        }
 
         // 处理实体特征
         if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())) {
@@ -128,7 +133,9 @@ public class UserFeatureServiceImpl implements UserFeatureService {
         // 处理标签特征
         Integer label = postFeatureAo.getPostType();
         PostTypeEnum postTypeEnum = PostTypeEnum.getByCode(label);
-        if (postTypeEnum == PostTypeEnum.OTHER) return;
+        if (postTypeEnum == PostTypeEnum.OTHER) {
+            return;
+        }
 
         List<ScoreDaysAo> labelScores = labelScoreMap.computeIfAbsent(label, k -> new ArrayList<>());
         ScoreDaysAo labelScoreDaysAo = new ScoreDaysAo();
@@ -162,12 +169,35 @@ public class UserFeatureServiceImpl implements UserFeatureService {
                         labelScoreMap));
     }
 
+    private void processPostFeatures(PostExplicitTimeAo feature,
+                                     Map<Long, List<ScoreDaysAo>> postFeaturesMap,
+                                     Map<String, NerFeatureScoreDaysAo> nerFeatureScoreMap,
+                                     Map<Integer, List<ScoreDaysAo>> labelScoreMap) {
+        for (PostExplicitPostScoreAo scoreAo : feature.getPostExplicitPostScoreAos()) {
+            Long postId = scoreAo.getPostId();
+            Long timestamp = scoreAo.getTimestamp();
+            if (timestamp == null) {
+                continue;
+            }
+
+            // 处理帖子post特征
+            List<ScoreDaysAo> postFeatures = postFeaturesMap.computeIfAbsent(postId, k -> new ArrayList<>());
+            ScoreDaysAo postScoreDaysAo = new ScoreDaysAo();
+            postScoreDaysAo.setDays(getDays(timestamp));
+            postScoreDaysAo.getScoreAo().setImplicitScore(scoreAo.getScore());
+            postFeatures.add(postScoreDaysAo);
+
+            // 处理实体和标签entity-label特征
+            processEntityAndLabelFeatures(postId, timestamp, scoreAo.getScore(), nerFeatureScoreMap, labelScoreMap);
+        }
+    }
+
     private UserTempFeatureAo getUserTempFeatureAo(List<Collection<Object>> userFeatureList){
         Map<Long, List<ScoreDaysAo>> postFeaturesMap = new HashMap<>();
         Map<String, NerFeatureScoreDaysAo> nerFeatureScoreMap = new HashMap<>();
         Map<Integer, List<ScoreDaysAo>> labelScoreMap = new HashMap<>();
 
-        // 点击特征处理器
+        // 1.点击特征处理器
         FeatureProcessor<PostClickTimeAo> clickProcessor = (
                 feature, postMap, nerMap,
                 labelMap) -> {
@@ -185,7 +215,7 @@ public class UserFeatureServiceImpl implements UserFeatureService {
             postFeatures.add(scoreDaysAo);
         };
 
-        // 浏览特征处理器
+        // 2.浏览特征处理器
         FeatureProcessor<PostBrowseDurationAo> browseProcessor = (
                 feature, postMap, nerMap,
                 labelMap) -> {
@@ -207,78 +237,19 @@ public class UserFeatureServiceImpl implements UserFeatureService {
                     nerMap, labelMap);
         };
 
-        // 搜索特征处理器
-        FeatureProcessor<PostExplicitTimeAo> searchProcessor = (
-                feature, postMap, nerMap,
-                labelMap) -> {
-            for (PostExplicitPostScoreAo scoreAo : feature.getPostExplicitPostScoreAos()) {
-                Long postId = scoreAo.getPostId();
-                Long timestamp = scoreAo.getTimestamp();
-                if (timestamp == null) {
-                    continue;
-                }
+        // 3.搜索特征处理器
+        FeatureProcessor<PostExplicitTimeAo> searchProcessor =
+                this::processPostFeatures;
 
-                // 处理帖子post特征
-                List<ScoreDaysAo> postFeatures = postMap.computeIfAbsent(postId, k -> new ArrayList<>());
-                ScoreDaysAo postScoreDaysAo = new ScoreDaysAo();
-                postScoreDaysAo.setDays(getDays(timestamp));
-                postScoreDaysAo.getScoreAo().setImplicitScore(scoreAo.getScore());
-                postFeatures.add(postScoreDaysAo);
+        // 4.操作特征处理器
+        FeatureProcessor<PostExplicitTimeAo> operateProcessor =
+                this::processPostFeatures;
 
-                // 处理实体和标签entity-label特征
-                processEntityAndLabelFeatures(postId, timestamp, scoreAo.getScore(),
-                        nerMap, labelMap);
-            }
-        };
+        // 5.评论帖子处理器
+        FeatureProcessor<PostExplicitTimeAo> commentProcessor =
+                this::processPostFeatures;
 
-        // 操作特征处理器
-        FeatureProcessor<PostExplicitTimeAo> operateProcessor = (
-                feature, postMap, nerMap,
-                labelMap) -> {
-            for (PostExplicitPostScoreAo scoreAo : feature.getPostExplicitPostScoreAos()) {
-                Long postId = scoreAo.getPostId();
-                Long timestamp = scoreAo.getTimestamp();
-                if (timestamp == null) {
-                    continue;
-                }
-
-                // 处理帖子post特征
-                List<ScoreDaysAo> postFeatures = postMap.computeIfAbsent(postId, k -> new ArrayList<>());
-                ScoreDaysAo postScoreDaysAo = new ScoreDaysAo();
-                postScoreDaysAo.setDays(getDays(timestamp));
-                postScoreDaysAo.getScoreAo().setImplicitScore(scoreAo.getScore());
-                postFeatures.add(postScoreDaysAo);
-
-                // 处理实体和标签entity-label特征
-                processEntityAndLabelFeatures(postId, timestamp, scoreAo.getScore(),
-                        nerMap, labelMap);
-            }
-        };
-
-        // 评论帖子处理器
-        FeatureProcessor<PostExplicitTimeAo> commentProcessor = (
-                feature, postMap, nerMap,
-                labelMap) -> {
-                    for (PostExplicitPostScoreAo scoreAo : feature.getPostExplicitPostScoreAos()) {
-                        Long postId = scoreAo.getPostId();
-                        Long timestamp = scoreAo.getTimestamp();
-                        if (timestamp == null) {
-                            continue;
-                        }
-
-                        List<ScoreDaysAo> postFeatures = postMap.computeIfAbsent(postId, k -> new ArrayList<>());
-                        ScoreDaysAo postScoreDaysAo = new ScoreDaysAo();
-                        postScoreDaysAo.setDays(getDays(timestamp));
-                        postScoreDaysAo.getScoreAo().setImplicitScore(scoreAo.getScore());
-                        postFeatures.add(postScoreDaysAo);
-
-                        // 处理实体和标签entity-label特征
-                        processEntityAndLabelFeatures(postId, timestamp, scoreAo.getScore(),
-                                nerMap, labelMap);
-                    }
-        };
-
-        // 处理各类型特征
+        // 6.处理各类型特征
         processFeatureCollection(userFeatureList.get(0), PostClickTimeAo.class, clickProcessor,
                 postFeaturesMap, nerFeatureScoreMap, labelScoreMap);
         processFeatureCollection(userFeatureList.get(1), PostBrowseDurationAo.class, browseProcessor,

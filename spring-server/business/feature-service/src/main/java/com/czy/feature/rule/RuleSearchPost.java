@@ -2,10 +2,7 @@ package com.czy.feature.rule;
 
 
 import com.czy.api.constant.search.SearchLevel;
-import com.czy.api.domain.ao.feature.PostExplicitEntityScoreAo;
-import com.czy.api.domain.ao.feature.PostExplicitLabelScoreAo;
 import com.czy.api.domain.ao.feature.PostExplicitPostScoreAo;
-import com.czy.api.domain.ao.post.PostNerResult;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -62,11 +59,11 @@ public class RuleSearchPost {
         });
     }
 
-    /**
+/*    *//**
      * 计算帖子搜索实体分值
      * @param levelsPostEntityScoreMap  搜索等级和实体的映射
      * @return  计算后的帖子搜索实体分值
-     */
+     *//*
     public List<PostExplicitEntityScoreAo> calculatePostEntityScore(Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap, Long timestamp) {
         return calculateScore(levelsPostEntityScoreMap, (postNerResult, level) -> {
             PostExplicitEntityScoreAo ao = new PostExplicitEntityScoreAo();
@@ -78,11 +75,11 @@ public class RuleSearchPost {
         });
     }
 
-    /**
+    *//**
      * 计算帖子搜索标签分值
      * @param levelsPostLabelScoreMap   搜索等级和标签的映射
      * @return                          计算后的帖子搜索标签分值
-     */
+     *//*
     public List<PostExplicitLabelScoreAo> calculatePostLabelScore(Map<Integer, List<Integer>> levelsPostLabelScoreMap, Long timestamp) {
         return calculateScore(levelsPostLabelScoreMap, (labelType, level) -> {
             PostExplicitLabelScoreAo ao = new PostExplicitLabelScoreAo();
@@ -91,7 +88,7 @@ public class RuleSearchPost {
             ao.setScore(SCORE_LEVEL[level]);
             return ao;
         });
-    }
+    }*/
 
 //    public List<PostSearchScoreAo> calculatePostScore(@NotNull Map<Integer, List<Long>> levelsPostIdList){
 //        if (CollectionUtils.isEmpty(levelsPostIdList)){
