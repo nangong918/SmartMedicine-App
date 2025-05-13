@@ -39,14 +39,6 @@ public enum PostOperateTypeEnum {
         this.code = code;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Integer getCode() {
-        return code;
-    }
-
     // code -> o
     public static PostOperateTypeEnum getByCode(Integer code) {
         for (PostOperateTypeEnum value : values()) {

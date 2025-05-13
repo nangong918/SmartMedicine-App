@@ -68,7 +68,8 @@ public interface UserActionRecordService {
      * @param userId                用户id
      * @param postId                帖子id
      * @param commentEmotionType    评论态度
+     * @param confidenceLevel        置信度
      * @param timestamp             特征时间戳[特征时效控制]
      */
-    void commentPost(Long userId, Long postId, Integer commentEmotionType, Long timestamp);
+    void commentPost(Long userId, Long postId, Integer commentEmotionType, Double confidenceLevel, Long timestamp);
 }

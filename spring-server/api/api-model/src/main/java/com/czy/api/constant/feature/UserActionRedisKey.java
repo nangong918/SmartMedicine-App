@@ -27,4 +27,8 @@ public interface UserActionRedisKey {
 
     // search
     String USER_FEATURE_SEARCH_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "search_post:";
+    // operation
+    String USER_FEATURE_OPERATION_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "operation_post:";
+    // comment
+    String USER_FEATURE_COMMENT_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "comment_post:";
 }
