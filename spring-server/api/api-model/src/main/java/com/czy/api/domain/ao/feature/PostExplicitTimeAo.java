@@ -12,7 +12,7 @@ import java.util.List;
 public class PostExplicitTimeAo {
     private Long userId;
     private List<PostExplicitPostScoreAo> postExplicitPostScoreAos;
-    private List<PostExplicitEntityScoreAo> postExplicitEntityScoreAos;
-    private List<PostExplicitLabelScoreAo> postExplicitLabelScoreAos;
+//    private List<PostExplicitEntityScoreAo> postExplicitEntityScoreAos;
+//    private List<PostExplicitLabelScoreAo> postExplicitLabelScoreAos;
     private Long timestamp;
 }

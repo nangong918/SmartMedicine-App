@@ -52,10 +52,11 @@ public class RuleSearchPost {
      * @param levelsPostIdMap  搜索等级和帖子id的映射
      * @return  计算后的帖子搜索分值
      */
-    public List<PostExplicitPostScoreAo> calculatePostScore(Map<Integer, List<Long>> levelsPostIdMap) {
+    public List<PostExplicitPostScoreAo> calculatePostScore(Map<Integer, List<Long>> levelsPostIdMap, Long timestamp) {
         return calculateScore(levelsPostIdMap, (postId, level) -> {
             PostExplicitPostScoreAo ao = new PostExplicitPostScoreAo();
             ao.setPostId(postId);
+            ao.setTimestamp(timestamp);
             ao.setScore(SCORE_LEVEL[level]);
             return ao;
         });
@@ -66,11 +67,12 @@ public class RuleSearchPost {
      * @param levelsPostEntityScoreMap  搜索等级和实体的映射
      * @return  计算后的帖子搜索实体分值
      */
-    public List<PostExplicitEntityScoreAo> calculatePostEntityScore(Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap) {
+    public List<PostExplicitEntityScoreAo> calculatePostEntityScore(Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap, Long timestamp) {
         return calculateScore(levelsPostEntityScoreMap, (postNerResult, level) -> {
             PostExplicitEntityScoreAo ao = new PostExplicitEntityScoreAo();
             ao.setEntityName(postNerResult.getKeyWord());
             ao.setEntityLabel(postNerResult.getNerType());
+            ao.setTimestamp(timestamp);
             ao.setScore(SCORE_LEVEL[level]);
             return ao;
         });
@@ -81,10 +83,11 @@ public class RuleSearchPost {
      * @param levelsPostLabelScoreMap   搜索等级和标签的映射
      * @return                          计算后的帖子搜索标签分值
      */
-    public List<PostExplicitLabelScoreAo> calculatePostLabelScore(Map<Integer, List<Integer>> levelsPostLabelScoreMap) {
+    public List<PostExplicitLabelScoreAo> calculatePostLabelScore(Map<Integer, List<Integer>> levelsPostLabelScoreMap, Long timestamp) {
         return calculateScore(levelsPostLabelScoreMap, (labelType, level) -> {
             PostExplicitLabelScoreAo ao = new PostExplicitLabelScoreAo();
             ao.setLabel(labelType);
+            ao.setTimestamp(timestamp);
             ao.setScore(SCORE_LEVEL[level]);
             return ao;
         });

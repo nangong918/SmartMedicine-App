@@ -14,10 +14,39 @@ public class ScoreAo {
     private double implicitScore = 0.0;
     private double explicitScore = 0.0;
 
+    /**
+     * 累加
+     * @param scoreAo   需要累
+     */
     public void add(@NotNull ScoreAo scoreAo){
         this.clickTimes += scoreAo.getClickTimes();
         this.implicitScore += scoreAo.getImplicitScore();
         this.explicitScore += scoreAo.getExplicitScore();
+    }
+
+    /**
+     * 乘
+     * @param weight    需要乘
+     */
+    public void product(float weight){
+        this.clickTimes = (int) (this.clickTimes * weight);
+        this.implicitScore *= weight;
+        this.explicitScore *= weight;
+    }
+
+    /**
+     * 乘
+     * @param weight    需要乘
+     */
+    public ScoreAo productBack(float weight){
+        ScoreAo scoreAo = new ScoreAo();
+        scoreAo.setClickTimes(this.clickTimes);
+        scoreAo.setImplicitScore(this.implicitScore);
+        scoreAo.setExplicitScore(this.explicitScore);
+        scoreAo.clickTimes = (int) (scoreAo.clickTimes * weight);
+        scoreAo.implicitScore *= weight;
+        scoreAo.explicitScore *= weight;
+        return scoreAo;
     }
 
     public boolean isEmpty(){

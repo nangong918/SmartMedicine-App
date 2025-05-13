@@ -12,4 +12,5 @@ public class PostBrowseDurationAo {
     private Long postId;
     private Long browseDuration;
     private Double implicitScore;
+    private Long timestamp;
 }

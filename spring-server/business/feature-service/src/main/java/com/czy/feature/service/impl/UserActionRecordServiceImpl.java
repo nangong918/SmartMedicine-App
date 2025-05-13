@@ -350,6 +350,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         postBrowseDurationAo.setUserId(userId);
         postBrowseDurationAo.setPostId(postId);
         postBrowseDurationAo.setBrowseDuration(browseDuration);
+        postBrowseDurationAo.setTimestamp(timestamp);
         postBrowseDurationAo.setImplicitScore(implicitScore);
         // ZSet形式存储在redis中
         addFeatureToRedis(
@@ -430,14 +431,14 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
                            Long timestamp) {
         // 1.临时特征
         PostExplicitTimeAo postExplicitTimeAo = new PostExplicitTimeAo();
-        List<PostExplicitPostScoreAo> postExplicitPostScoreAos = ruleSearchPost.calculatePostScore(levelsPostIdMap);
-        List<PostExplicitEntityScoreAo> postExplicitEntityScoreAos = ruleSearchPost.calculatePostEntityScore(levelsPostEntityScoreMap);
-        List<PostExplicitLabelScoreAo> postExplicitLabelScoreAos = ruleSearchPost.calculatePostLabelScore(levelsPostLabelScoreMap);
+        List<PostExplicitPostScoreAo> postExplicitPostScoreAos = ruleSearchPost.calculatePostScore(levelsPostIdMap, timestamp);
+//        List<PostExplicitEntityScoreAo> postExplicitEntityScoreAos = ruleSearchPost.calculatePostEntityScore(levelsPostEntityScoreMap, timestamp);
+//        List<PostExplicitLabelScoreAo> postExplicitLabelScoreAos = ruleSearchPost.calculatePostLabelScore(levelsPostLabelScoreMap, timestamp);
 
         postExplicitTimeAo.setUserId(userId);
         postExplicitTimeAo.setPostExplicitPostScoreAos(postExplicitPostScoreAos);
-        postExplicitTimeAo.setPostExplicitEntityScoreAos(postExplicitEntityScoreAos);
-        postExplicitTimeAo.setPostExplicitLabelScoreAos(postExplicitLabelScoreAos);
+//        postExplicitTimeAo.setPostExplicitEntityScoreAos(postExplicitEntityScoreAos);
+//        postExplicitTimeAo.setPostExplicitLabelScoreAos(postExplicitLabelScoreAos);
         postExplicitTimeAo.setTimestamp(timestamp);
 
         // 存储到redis
@@ -519,30 +520,30 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         postExplicitTimeAo.setPostExplicitPostScoreAos(postExplicitPostScoreAos);
 
         // 1.2 帖子特征
-        List<PostExplicitEntityScoreAo> postExplicitEntityScoreAos = new ArrayList<>();
-        List<PostExplicitLabelScoreAo> postExplicitLabelScoreAos = new ArrayList<>();
-        PostFeatureAo postFeatureAo = postFeatureService.getPostFeature(postId);
-        if (postFeatureAo != null) {
-            // 1.2.1 PostExplicitEntityScoreAo
-            if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())) {
-                for (PostNerResult postNerResult : postFeatureAo.getPostNerResultList()) {
-                    PostExplicitEntityScoreAo postExplicitEntityScoreAo = new PostExplicitEntityScoreAo();
-                    postExplicitEntityScoreAo.setEntityLabel(postNerResult.getNerType());
-                    postExplicitEntityScoreAo.setEntityName(postNerResult.getKeyWord());
-                    postExplicitEntityScoreAo.setScore(explicitScore);
-                    postExplicitEntityScoreAos.add(postExplicitEntityScoreAo);
-                }
-            }
+//        List<PostExplicitEntityScoreAo> postExplicitEntityScoreAos = new ArrayList<>();
+//        List<PostExplicitLabelScoreAo> postExplicitLabelScoreAos = new ArrayList<>();
+//        PostFeatureAo postFeatureAo = postFeatureService.getPostFeature(postId);
+//        if (postFeatureAo != null) {
+//            // 1.2.1 PostExplicitEntityScoreAo
+//            if (!CollectionUtils.isEmpty(postFeatureAo.getPostNerResultList())) {
+//                for (PostNerResult postNerResult : postFeatureAo.getPostNerResultList()) {
+//                    PostExplicitEntityScoreAo postExplicitEntityScoreAo = new PostExplicitEntityScoreAo();
+//                    postExplicitEntityScoreAo.setEntityLabel(postNerResult.getNerType());
+//                    postExplicitEntityScoreAo.setEntityName(postNerResult.getKeyWord());
+//                    postExplicitEntityScoreAo.setScore(explicitScore);
+//                    postExplicitEntityScoreAos.add(postExplicitEntityScoreAo);
+//                }
+//            }
+//
+//            // 1.2.2 PostExplicitLabelScoreAo
+//            PostExplicitLabelScoreAo postExplicitLabelScoreAo = new PostExplicitLabelScoreAo();
+//            postExplicitLabelScoreAo.setLabel(postFeatureAo.getPostType());
+//            postExplicitLabelScoreAo.setScore(explicitScore);
+//            postExplicitLabelScoreAos.add(postExplicitLabelScoreAo);
+//        }
 
-            // 1.2.2 PostExplicitLabelScoreAo
-            PostExplicitLabelScoreAo postExplicitLabelScoreAo = new PostExplicitLabelScoreAo();
-            postExplicitLabelScoreAo.setLabel(postFeatureAo.getPostType());
-            postExplicitLabelScoreAo.setScore(explicitScore);
-            postExplicitLabelScoreAos.add(postExplicitLabelScoreAo);
-        }
-
-        postExplicitTimeAo.setPostExplicitEntityScoreAos(postExplicitEntityScoreAos);
-        postExplicitTimeAo.setPostExplicitLabelScoreAos(postExplicitLabelScoreAos);
+//        postExplicitTimeAo.setPostExplicitEntityScoreAos(postExplicitEntityScoreAos);
+//        postExplicitTimeAo.setPostExplicitLabelScoreAos(postExplicitLabelScoreAos);
         postExplicitTimeAo.setTimestamp(timestamp);
 
         return postExplicitTimeAo;

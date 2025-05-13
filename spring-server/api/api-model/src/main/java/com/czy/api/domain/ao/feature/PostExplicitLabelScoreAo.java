@@ -8,4 +8,5 @@ import lombok.Data;
 public class PostExplicitLabelScoreAo {
     private Integer label = PostTypeEnum.OTHER.getCode();
     private Double score;
+    private Long timestamp;
 }
