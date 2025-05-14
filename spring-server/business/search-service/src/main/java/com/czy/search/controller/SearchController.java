@@ -345,13 +345,22 @@ public class SearchController {
 
     private AppFunctionAo handleAppFunctionIntent(String sentence){
         AppFunctionAo appFunctionAo = new AppFunctionAo();
-        // TODO
+        // TODO 暂未开发
         return appFunctionAo;
     }
 
+    /**
+     * 问题意图
+     * 根据句子进行实体识别，然后根据不同的意图进行neo4j图数据库查找对应的疾病属性
+     * @param sentence  句子，用于AcTree识别实体
+     * @param type  意图分类
+     * @return
+     */
     private DiseaseQuestionAo handleQuestionIntent(String sentence, int type){
         DiseaseQuestionAo diseaseQuestionAo = new DiseaseQuestionAo();
-        // TODO
+        /**
+         * Todo
+         */
         return diseaseQuestionAo;
     }
 
