@@ -126,6 +126,22 @@ public interface RedissonService {
     int zAddAll(String key, Map<Object, Double> values, Long expireTime);
 
     /**
+     * 获取某个元素的分数
+     * @param key
+     * @param member
+     * @return
+     */
+    Double zScore(String key, Object member);
+
+    /**
+     * 批量获取元素的分数
+     * @param key
+     * @param members
+     * @return
+     */
+    Map<Object, Double> zScores(String key, Collection<Object> members);
+
+    /**
      * 从有序集合中移除元素
      * @param key 键
      * @param expireTime 过期时间(秒)，null表示使用默认过期时间

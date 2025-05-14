@@ -217,6 +217,25 @@ public class RedissonServiceImpl implements RedissonService {
     }
 
     @Override
+    public Double zScore(String key, Object member) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        return zSet.getScore(member);
+    }
+
+    @Override
+    public Map<Object, Double> zScores(String key, Collection<Object> members) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        Map<Object, Double> result = new HashMap<>();
+        for (Object member : members) {
+            Double score = zSet.getScore(member);
+            if (score != null) {
+                result.put(member, score);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public boolean zRemove(String key, Long expireTime, Object... values) {
         RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
         return zSet.removeAll(Arrays.asList(values));
