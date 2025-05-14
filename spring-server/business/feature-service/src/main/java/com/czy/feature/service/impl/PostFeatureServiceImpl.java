@@ -368,12 +368,39 @@ public class PostFeatureServiceImpl implements PostFeatureService {
 
     @Override
     public PostHeatAo getPostHeat(Long postId) {
-        return null;
+        String redisKey = UserActionRedisKey.POST_HEAT_LIST_REDIS_KEY_PREFIX;
+
+        // 从 Redis 中获取热度分数
+        Double heatScore = redissonService.zScore(redisKey, postId);
+
+        // 如果热度分数为 null，返回 null 或者创建一个默认的 PostHeatAo
+        if (heatScore == null) {
+            return null; // 或者返回一个新的 PostHeatAo 例如 `new PostHeatAo(postId, 0)`
+        }
+
+        // 创建 PostHeatAo 对象并返回
+        PostHeatAo postHeatAo = new PostHeatAo();
+        postHeatAo.setPostId(postId);
+        postHeatAo.setHeatScore(heatScore);
+        return postHeatAo;
     }
 
     @Override
     public List<PostHeatAo> getPostHeats(List<Long> postIds) {
-        return null;
+        String redisKey = UserActionRedisKey.POST_HEAT_LIST_REDIS_KEY_PREFIX;
+
+        Map<Object, Double> scores = redissonService.zScores(redisKey, new ArrayList<>(postIds));
+
+        List<PostHeatAo> postHeatAos = new ArrayList<>();
+        for (Map.Entry<Object, Double> entry : scores.entrySet()) {
+            Long postId = (Long) entry.getKey();
+            Double heatScore = entry.getValue();
+            PostHeatAo postHeatAo = new PostHeatAo();
+            postHeatAo.setPostId(postId);
+            postHeatAo.setHeatScore(heatScore);
+            postHeatAos.add(postHeatAo);
+        }
+        return postHeatAos;
     }
 
     private int getDays(long timestamp) {
