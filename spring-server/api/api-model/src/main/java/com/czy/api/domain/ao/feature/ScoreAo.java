@@ -1,5 +1,6 @@
 package com.czy.api.domain.ao.feature;
 
+import json.BaseBean;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotNull;
  * @date 2025/5/12 10:45
  */
 @Data
-public class ScoreAo {
+public class ScoreAo implements BaseBean {
     private int clickTimes = 0;
     private double implicitScore = 0.0;
     private double explicitScore = 0.0;

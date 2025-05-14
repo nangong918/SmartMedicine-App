@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  * @author 13225
  * @date 2025/3/29 16:09
  */
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class RedissonServiceImpl implements RedissonService {

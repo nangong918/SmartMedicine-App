@@ -1,6 +1,9 @@
 package com.czy.feature.service;
 
 import com.czy.api.domain.ao.feature.PostFeatureAo;
+import com.czy.api.domain.ao.feature.PostHeatAo;
+
+import java.util.List;
 
 /**
  * @author 13225
@@ -17,6 +20,23 @@ public interface PostFeatureService {
      */
     PostFeatureAo getPostFeature(Long postId);
 
-    // 获取热门帖子 TODO
+    /**
+     * 获取热门帖子
+     * 提供给定时任务每日调用的方法，获取之后存储在redis
+     */
+    void getHotPosts();
+
+    /**
+     * 提供给用户调用的方法
+     * @param limitNum  获取多少条
+     * @return           List<PostHeatAo>
+     */
+    List<PostHeatAo> getHotPosts(Integer limitNum);
+
+    // 获取某条帖子的热度
+    PostHeatAo getPostHeat(Long postId);
+
+    // 获取list<postId>的热度
+    List<PostHeatAo> getPostHeats(List<Long> postIds);
 
 }
