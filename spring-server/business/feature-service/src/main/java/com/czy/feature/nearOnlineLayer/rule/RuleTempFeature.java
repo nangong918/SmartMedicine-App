@@ -1,4 +1,4 @@
-package com.czy.feature.rule;
+package com.czy.feature.nearOnlineLayer.rule;
 
 import com.czy.api.domain.ao.feature.ScoreAo;
 import com.czy.api.domain.ao.feature.ScoreDaysAo;

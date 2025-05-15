@@ -1,4 +1,4 @@
-package com.czy.feature.service.impl;
+package com.czy.feature.nearOnlineLayer.service.impl;
 
 import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.feature.PostTypeEnum;
@@ -22,8 +22,8 @@ import com.czy.api.domain.ao.feature.PostHeatAo;
 import com.czy.api.domain.ao.feature.ScoreDaysAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.PostRepository;
-import com.czy.feature.rule.RulePostHeat;
-import com.czy.feature.service.PostFeatureService;
+import com.czy.feature.nearOnlineLayer.rule.RulePostHeat;
+import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

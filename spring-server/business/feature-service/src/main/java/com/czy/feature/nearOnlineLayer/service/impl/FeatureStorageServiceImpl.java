@@ -1,4 +1,4 @@
-package com.czy.feature.service.impl;
+package com.czy.feature.nearOnlineLayer.service.impl;
 
 import com.czy.api.constant.feature.FeatureTypeChanger;
 import com.czy.api.constant.feature.PostTypeEnum;
@@ -15,8 +15,8 @@ import com.czy.api.domain.ao.feature.ScoreAo;
 import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
-import com.czy.feature.service.FeatureStorageService;
-import com.czy.feature.service.PostFeatureService;
+import com.czy.feature.nearOnlineLayer.service.FeatureStorageService;
+import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

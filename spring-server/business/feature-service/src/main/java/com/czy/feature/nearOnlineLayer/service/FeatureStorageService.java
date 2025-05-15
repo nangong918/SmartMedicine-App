@@ -1,4 +1,4 @@
-package com.czy.feature.service;
+package com.czy.feature.nearOnlineLayer.service;
 
 import com.czy.api.domain.Do.neo4j.DiseaseDo;
 import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
