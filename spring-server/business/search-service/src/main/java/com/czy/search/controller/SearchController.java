@@ -1,9 +1,11 @@
 package com.czy.search.controller;
 
+import com.czy.api.api.feature.DiseasesNeo4jService;
 import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user.UserHealthDataService;
 import com.czy.api.api.user.UserService;
+import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.constant.search.FuzzySearchResponseEnum;
 import com.czy.api.constant.search.NlpResultEnum;
 import com.czy.api.constant.search.SearchConstant;
@@ -30,6 +32,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +77,8 @@ public class SearchController {
     private final FuzzySearchService fuzzySearchService;
     private final RestTemplate restTemplate;
     private final PostSearchService postSearchService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private DiseasesNeo4jService diseasesNeo4jService;
     /**
      * 模糊搜索
      * @param request  模糊搜索的句子 + userId（用于userContext特征上下文）
@@ -354,13 +360,58 @@ public class SearchController {
      * 根据句子进行实体识别，然后根据不同的意图进行neo4j图数据库查找对应的疾病属性
      * @param sentence  句子，用于AcTree识别实体
      * @param type  意图分类
+     * @see NlpResultEnum
      * @return
      */
     private DiseaseQuestionAo handleQuestionIntent(String sentence, int type){
         DiseaseQuestionAo diseaseQuestionAo = new DiseaseQuestionAo();
-        /**
-         * Todo
-         */
+        List<PostNerResult> nerResults = postNerService.getPostNerResults(sentence);
+        if (CollectionUtils.isEmpty(nerResults)){
+            // 未找到实体
+            diseaseQuestionAo.setAnswer("抱歉没有找到您问题的答案");
+        }
+        else {
+            // 症状问诊
+            if (type == NlpResultEnum.SYMPTOM_SEARCH_QUESTION.getCode()){
+                List<String> symptoms = new ArrayList<>();
+                for (PostNerResult nerResult : nerResults){
+                    if (nerResult.getNerType().equals(DiseasesKnowledgeGraphEnum.SYMPTOMS.getName())){
+                        symptoms.add(nerResult.getKeyWord());
+                    }
+                }
+                if (symptoms.isEmpty()){
+                    diseaseQuestionAo.setAnswer("不知道您的症状是什么呢");
+                }
+                else if (symptoms.size() == 1){
+                    diseaseQuestionAo.setAnswer("请您多说几个症状，谢谢");
+                }
+                else {
+                    List<String> diseaseNames = diseasesNeo4jService.findSymptomsFindDiseases(symptoms);
+                    if (diseaseNames.isEmpty()){
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("抱歉，关于：[");
+                        for (String symptom : symptoms) {
+                            sb.append(symptom).append("、");
+                        }
+                        sb.append("] 等症状没有找到相关的疾病");
+                        diseaseQuestionAo.setAnswer(sb.toString());
+                    }
+                    else {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("关于：[");
+                        for (String symptom : symptoms) {
+                            sb.append(symptom).append("、");
+                        }
+                        sb.append("] 等症状，可能相关的疾病有：[");
+                        for (String diseaseName : diseaseNames) {
+                            sb.append(diseaseName).append("、");
+                        }
+                        sb.append("] 等疾病");
+                        diseaseQuestionAo.setAnswer(sb.toString());
+                    }
+                }
+            }
+        }
         return diseaseQuestionAo;
     }
 

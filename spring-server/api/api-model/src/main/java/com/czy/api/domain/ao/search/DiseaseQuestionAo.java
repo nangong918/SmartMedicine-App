@@ -8,4 +8,6 @@ import lombok.Data;
  */
 @Data
 public class DiseaseQuestionAo {
+    // 回答
+    private String answer;
 }
