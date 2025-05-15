@@ -1,10 +1,12 @@
 package com.czy.feature.nearOnlineLayer.rule;
 
+import com.czy.api.domain.ao.feature.HeatDaysAo;
 import com.czy.api.domain.ao.feature.ScoreAo;
 import com.czy.api.domain.ao.feature.ScoreDaysAo;
 import io.jsonwebtoken.lang.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -45,6 +47,21 @@ public class RuleTempFeature {
             scoreAo.add(newScoreAo);
         }
         return scoreAo;
+    }
+
+    public double execute2(List<HeatDaysAo> scores){
+        double sum = 0.0;
+        if (CollectionUtils.isEmpty(scores)){
+            return sum;
+        }
+        for (HeatDaysAo score : scores){
+            if (score == null){
+                continue;
+            }
+            float weight = calculateWeight(score.getDays());
+            sum += score.getScore() * weight;
+        }
+        return sum;
     }
 
     public static void main(String[] args) {

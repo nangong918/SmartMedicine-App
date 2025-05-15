@@ -34,4 +34,7 @@ public interface UserActionRedisKey {
 
     // postHeatList
     String POST_HEAT_LIST_REDIS_KEY_PREFIX = POST_HEAT_REDIS_KEY + "list";
+
+    // userHeat
+    String USER_HEAT_REDIS_KEY = "user_heat:";
 }

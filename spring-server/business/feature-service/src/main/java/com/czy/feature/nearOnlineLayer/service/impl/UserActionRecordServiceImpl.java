@@ -13,6 +13,7 @@ import com.czy.feature.nearOnlineLayer.rule.RuleCommentPost;
 import com.czy.feature.nearOnlineLayer.rule.RulePostOperation;
 import com.czy.feature.nearOnlineLayer.rule.RulePostReadTime;
 import com.czy.feature.nearOnlineLayer.rule.RuleSearchPost;
+import com.czy.feature.nearOnlineLayer.rule.RuleUserBrowseHeat;
 import com.czy.feature.nearOnlineLayer.service.FeatureStorageService;
 import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
 import com.czy.feature.nearOnlineLayer.service.UserActionRecordService;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +71,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     private final RuleSearchPost ruleSearchPost;
     private final RulePostOperation rulePostOperation;
     private final RuleCommentPost ruleCommentPost;
+    private final RuleUserBrowseHeat ruleUserBrowseHeat;
 
     /**
      * 上传用户的城市等信息
@@ -114,12 +117,25 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     @Override
     public void clickPost(Long userId, Long postId, Long clickTimestamp, Long timestamp) {
         String userFeatureKey = UserActionRedisKey.USER_FEATURE_CLICK_POST_REDIS_KEY + userId + ":" + postId;
+        String userHeatKey = UserActionRedisKey.USER_HEAT_REDIS_KEY + userId;
 
         // 1. user-post 特征
         PostClickTimeAo postClickTimeAo = new PostClickTimeAo();
         postClickTimeAo.setUserId(userId);
         postClickTimeAo.setPostId(postId);
         postClickTimeAo.setClickTime(clickTimestamp);
+
+        UserHeatRecordAo userHeatRecordAo = new UserHeatRecordAo();
+        userHeatRecordAo.setUserId(userId);
+        userHeatRecordAo.setHeatScore(1.0);
+        userHeatRecordAo.setTimestamp(timestamp);
+
+        // 添加用户热度
+        addFeatureToRedis(
+                userHeatKey,
+                userHeatRecordAo,
+                timestamp
+        );
 
         // 1.1 user-post-临时特征：记录30天
         // 用户 + post维度：记录用户点击的帖子及时间（ZSet）
@@ -335,12 +351,27 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     @Override
     public void uploadClickPostAndBrowseTime(Long userId, Long postId, Long browseDuration, Long timestamp) {
         String userFeatureKey = UserActionRedisKey.USER_FEATURE_BROWSE_POST_REDIS_KEY + userId + ":" + postId;
+        String userHeatKey = UserActionRedisKey.USER_HEAT_REDIS_KEY + userId;
 
         PostDetailDo postDetailDo = postSearchService.searchPostDetailById(postId);
         if (postDetailDo == null){
             log.warn("上传用用的点击帖子 + 浏览时长特征失败，postDetailDo is null, postId:{}", postId);
             return;
         }
+
+        // 计算用户热度
+        Double userHeatScore = ruleUserBrowseHeat.execute(browseDuration);
+        UserHeatRecordAo userHeatRecordAo = new UserHeatRecordAo();
+        userHeatRecordAo.setUserId(userId);
+        userHeatRecordAo.setHeatScore(userHeatScore);
+        userHeatRecordAo.setTimestamp(timestamp);
+
+        // 添加用户热度
+        addFeatureToRedis(
+                userHeatKey,
+                userHeatRecordAo,
+                timestamp
+        );
 
         // 计算浏览时长的分数 （隐性分数）
         Double implicitScore = getBrowseTimeScore(browseDuration, postDetailDo);
@@ -441,6 +472,17 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
 //        postExplicitTimeAo.setPostExplicitLabelScoreAos(postExplicitLabelScoreAos);
         postExplicitTimeAo.setTimestamp(timestamp);
 
+        String userHeatKey = UserActionRedisKey.USER_HEAT_REDIS_KEY + userId;
+        UserHeatRecordAo userHeatRecordAo = new UserHeatRecordAo();
+        userHeatRecordAo.setUserId(userId);
+        userHeatRecordAo.setTimestamp(timestamp);
+        userHeatRecordAo.setHeatScore(0.5);
+        addFeatureToRedis(
+                userHeatKey,
+                userHeatRecordAo,
+                timestamp
+        );
+
         // 存储到redis
         addFeatureToRedis(
                 UserActionRedisKey.USER_FEATURE_SEARCH_POST_REDIS_KEY + userId,
@@ -476,6 +518,17 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
                 timestamp
         );
 
+        String userHeatKey = UserActionRedisKey.USER_HEAT_REDIS_KEY + userId;
+        UserHeatRecordAo userHeatRecordAo = new UserHeatRecordAo();
+        userHeatRecordAo.setUserId(userId);
+        userHeatRecordAo.setTimestamp(timestamp);
+        userHeatRecordAo.setHeatScore(0.2);
+        addFeatureToRedis(
+                userHeatKey,
+                userHeatRecordAo,
+                timestamp
+        );
+
         // 3.历史特征
         featureStorageService.saveUserExplicitFeature(userId, postExplicitTimeAo);
     }
@@ -499,6 +552,18 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         addFeatureToRedis(
                 UserActionRedisKey.USER_FEATURE_COMMENT_POST_REDIS_KEY + userId,
                 postExplicitTimeAo,
+                timestamp
+        );
+
+        // 用户热度
+        String userHeatKey = UserActionRedisKey.USER_HEAT_REDIS_KEY + userId;
+        UserHeatRecordAo userHeatRecordAo = new UserHeatRecordAo();
+        userHeatRecordAo.setUserId(userId);
+        userHeatRecordAo.setTimestamp(timestamp);
+        userHeatRecordAo.setHeatScore(0.25);
+        addFeatureToRedis(
+                userHeatKey,
+                userHeatRecordAo,
                 timestamp
         );
 
@@ -547,5 +612,49 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         postExplicitTimeAo.setTimestamp(timestamp);
 
         return postExplicitTimeAo;
+    }
+
+    @Override
+    public UserHeatAo getUserHeat(Long userId) {
+        // 1.计算时间戳
+        long currentTime = System.currentTimeMillis();
+        // 30天前的时间戳
+        long thirtyDaysAgoTime = currentTime - FeatureConstant.FEATURE_EXPIRE_TIME_SECOND * 1000L;
+
+        String userHeatKey = UserActionRedisKey.USER_HEAT_REDIS_KEY + userId;
+        Collection<Object> userHeatRecordAos = redissonService.zRangeByScore(
+                userHeatKey,
+                (double) thirtyDaysAgoTime,
+                (double) currentTime);
+        UserHeatAo userHeatAo = getUserHeatAo(userHeatRecordAos);
+        userHeatAo.setUserId(userId);
+        return userHeatAo;
+    }
+
+    private UserHeatAo getUserHeatAo(Collection<Object> list) {
+        UserHeatAo userHeatAo = new UserHeatAo();
+        if (CollectionUtils.isEmpty(list)){
+            userHeatAo.setHeatScore(0.0);
+            return userHeatAo;
+        }
+        List<UserHeatRecordAo> userHeatRecordAos = new ArrayList<>();
+        for (Object userHeatRecordAo : list) {
+            if (userHeatRecordAo instanceof UserHeatRecordAo){
+                UserHeatRecordAo recordAo = (UserHeatRecordAo) userHeatRecordAo;
+                userHeatRecordAos.add(recordAo);
+            }
+        }
+        return userHeatAo;
+    }
+
+    @Override
+    public List<UserHeatAo> getUsersHeat(int pageSize, int pageNum) {
+        return null;
+    }
+
+    private int getDays(long timestamp) {
+        long currentTime = System.currentTimeMillis();
+        long days = (currentTime - timestamp) / (1000L * 60 * 60 * 24);
+        return (int) days;
     }
 }
