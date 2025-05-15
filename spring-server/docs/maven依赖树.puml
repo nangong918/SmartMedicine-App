@@ -36,6 +36,13 @@ package "Base" {
     [oss-service] --> [api-model]
 }
 
+package "offline" {
+    [recommend-offline-service]
+
+    [recommend-offline-service] --> [SpringUtils]
+    [recommend-offline-service] --> [api-model]
+}
+
 package "Business" {
     [auth-service]
     [user-service]
