@@ -3,6 +3,7 @@ package com.offline.recommend;
 import com.czy.springUtils.start.PortApplicationContextInitializer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author 13225
@@ -21,6 +22,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
                 "com.utils.mvc"
         }
 )
+@EnableScheduling
 public class OfflineRecommendApplication {
     public static void main(String[] args) {
         new SpringApplicationBuilder(OfflineRecommendApplication.class)
