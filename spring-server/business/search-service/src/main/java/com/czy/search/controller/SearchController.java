@@ -351,7 +351,7 @@ public class SearchController {
 
     private AppFunctionAo handleAppFunctionIntent(String sentence){
         AppFunctionAo appFunctionAo = new AppFunctionAo();
-        // TODO 暂未开发
+        appFunctionAo.setMessage("此功能暂时未开发。。。");
         return appFunctionAo;
     }
 
