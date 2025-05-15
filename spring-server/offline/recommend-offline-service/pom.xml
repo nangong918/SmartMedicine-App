@@ -158,6 +158,12 @@
             <artifactId>spring-boot-starter-data-neo4j</artifactId>
         </dependency>
 
+        <!-- commons-csv -->
+        <dependency>
+            <artifactId>commons-csv</artifactId>
+            <groupId>org.apache.commons</groupId>
+        </dependency>
+
         <!--        &lt;!&ndash; AcTree自动机算法&ndash;&gt;-->
         <!--        <dependency>-->
         <!--            <groupId>com.hankcs</groupId>-->
