@@ -1,7 +1,10 @@
 package com.czy.recommend.onlineLayer.service.impl;
 
+import com.czy.api.constant.offline.OfflineRedisConstant;
+import com.czy.api.domain.ao.auth.UserTempFeatureAo;
 import com.czy.api.domain.ao.feature.FeatureContext;
 import com.czy.recommend.onlineLayer.service.RecommendService;
+import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class RecommendServiceImpl implements RecommendService {
+
+    private final RedissonService redissonService;
 
     /**
      * 获取推荐帖子
@@ -36,6 +41,16 @@ public class RecommendServiceImpl implements RecommendService {
         // 2. 近线-召回
         /// 在线层
         // 3. 离线-特征
+        UserTempFeatureAo userTempFeatureAo = new UserTempFeatureAo();
+        Object userHistoryFeature = redissonService.getObjectFromHashMap(
+                OfflineRedisConstant.USER_HISTORY_FEATURE_KEY,
+                String.valueOf(context.getUserId())
+        );
+        if (userHistoryFeature instanceof UserTempFeatureAo){
+            if (!((UserTempFeatureAo) userHistoryFeature).isEmpty()){
+
+            }
+        }
         // 4. 近线-特征
         // 5. 在线（当前临时上下文）
         List<Long> postIds = getRecommendPostsByContext(context);
@@ -44,6 +59,7 @@ public class RecommendServiceImpl implements RecommendService {
 
     @Override
     public List<Long> getRecommendPostsByContext(FeatureContext context) {
+        Long userId = context.getUserId();
         return null;
     }
 }

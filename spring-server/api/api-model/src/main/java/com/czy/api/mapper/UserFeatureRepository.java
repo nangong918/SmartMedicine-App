@@ -315,4 +315,12 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
     @Query("MATCH (p:user)-[:user_post_label]->(l:post_label) " +
             "WHERE id(p) = $userId RETURN l")
     List<PostLabelNeo4jDo> findPostLabelsByPostId(Long userId);
+
+    /// --------------------------共同邻居--------------------------
+
+    // 疾病
+    // 症状
+    // 药品
+    // 食物
+    // 菜谱
 }

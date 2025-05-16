@@ -1,12 +1,17 @@
 package com.offline.recommend.service;
 
+import java.util.List;
+
 /**
  * @author 13225
  * @date 2025/5/16 15:42
  */
 public interface DistributedOfflineRecallCalculateService {
 
+    /// python
 
+    /// Java
+    List<Long> graphRecall(Long userId);
 
 }
 

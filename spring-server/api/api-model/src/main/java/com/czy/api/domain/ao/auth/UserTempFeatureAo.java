@@ -21,4 +21,8 @@ public class UserTempFeatureAo {
     private Map<String, NerFeatureScoreAo> nerFeatureScoreMap = new HashMap<>();
     // Map<LabelName.code, Score>
     private Map<Integer, ScoreAo> labelScoreMap = new HashMap<>();
+
+    public boolean isEmpty() {
+        return postScoreMap.isEmpty() && nerFeatureScoreMap.isEmpty() && labelScoreMap.isEmpty();
+    }
 }
