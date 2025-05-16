@@ -1,4 +1,4 @@
-package com.czy.feature.nearOnlineLayer.service;
+package com.czy.api.api.feature;
 
 import com.czy.api.domain.ao.auth.UserTempFeatureAo;
 
@@ -34,6 +34,5 @@ public interface UserFeatureService {
     // 获取user临时特征（redis中的全部记录统计为特征）
     UserTempFeatureAo getUserTempFeature(Long userId);
 
-    // [user历史特征是用于neo4j相似度计算的，暂时不提供特征接口]
-
+    // user历史特征是用于neo4j相似度计算的；本身就是 UserTempFeatureAo；不提供对外接口，而是直接用其召回
 }

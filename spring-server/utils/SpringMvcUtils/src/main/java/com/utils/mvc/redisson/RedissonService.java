@@ -109,12 +109,14 @@ public interface RedissonService {
 
     //---------------------Hash---------------------
     void saveHashMap(String key, HashMap<String, String> data, Long expireTimes);
-    void saveObjectHaseMap(String key, HashMap<String, Object> data, Long expireTimes);
+    void saveObjectHashMap(String key, HashMap<String, Object> data, Long expireTimes);
     HashMap<String, String> getHashMap(String key);
     HashMap<String, Object> getObjectHaseMap(String key);
     void updateHashMap(String hashKey, String field, String value);
+    void updateObjectHashMap(String hashKey, String field, Object value);
     void deleteHashMap(String redisKey); // 删除整个 Hash
-    void deleteFieldFromHash(String redisKey, String hashKey); // 删除 Hash 中的某个字段
+    void deleteFieldFromHash(String redisKey, String hashKey);
+    void deleteFieldFromObjectHashMap(String redisKey, String hashKey);
 
 
     // ===================== 有序集合(ZSet)操作 =====================

@@ -89,7 +89,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         String key = UserActionRedisKey.USER_FEATURE_CITY_LOCATION_REDIS_KEY + ao.getUserId();
 
         // 存储 HashMap
-        redissonService.saveObjectHaseMap(key, data, FeatureConstant.FEATURE_EXPIRE_TIME_SECOND);
+        redissonService.saveObjectHashMap(key, data, FeatureConstant.FEATURE_EXPIRE_TIME_SECOND);
     }
 
 

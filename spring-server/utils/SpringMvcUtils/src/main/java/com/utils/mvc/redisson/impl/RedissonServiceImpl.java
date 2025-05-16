@@ -172,7 +172,7 @@ public class RedissonServiceImpl implements RedissonService {
     }
 
     @Override
-    public void saveObjectHaseMap(String key, HashMap<String, Object> data, Long expireTimes) {
+    public void saveObjectHashMap(String key, HashMap<String, Object> data, Long expireTimes) {
         RMap<String, Object> map = redissonClient.getMap(key);
         map.putAll(data);
         if (expireTimes != null){
@@ -202,6 +202,12 @@ public class RedissonServiceImpl implements RedissonService {
     }
 
     @Override
+    public void updateObjectHashMap(String hashKey, String field, Object value) {
+        RMap<String, Object> map = redissonClient.getMap(hashKey);
+        map.put(field, value);
+    }
+
+    @Override
     public void deleteHashMap(String redisKey) {
         RMap<String, String> map = redissonClient.getMap(redisKey);
         map.delete();
@@ -210,6 +216,12 @@ public class RedissonServiceImpl implements RedissonService {
     @Override
     public void deleteFieldFromHash(String redisKey, String hashKey) {
         RMap<String, String> map = redissonClient.getMap(redisKey);
+        map.remove(hashKey);
+    }
+
+    @Override
+    public void deleteFieldFromObjectHashMap(String redisKey, String hashKey) {
+        RMap<String, Object> map = redissonClient.getMap(redisKey);
         map.remove(hashKey);
     }
 

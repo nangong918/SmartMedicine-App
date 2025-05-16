@@ -13,4 +13,9 @@ public interface OfflineRedisConstant {
     Long offlineUserHeatCalculateFlagExpireTime = 60 * 60 * 24L - 60L;
     // 一天
     Long ONE_DAY = 60 * 60 * 24L;
+
+    // userHistoryFeature的Key
+    String USER_HISTORY_FEATURE_KEY = "user_history_feature";
+    // userHistoryFeature的过期时间：5天；因为单天的话是近线层的临时特征
+    Long USER_HISTORY_FEATURE_EXPIRE_TIME = 60 * 60 * 24L * 5;
 }
