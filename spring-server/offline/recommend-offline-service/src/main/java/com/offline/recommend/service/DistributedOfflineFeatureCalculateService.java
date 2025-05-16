@@ -9,4 +9,9 @@ package com.offline.recommend.service;
  * 需要对用户的user_id上分布式锁，实现分布式计算。
  */
 public interface DistributedOfflineFeatureCalculateService {
+
+    void calculateUserHeat();
+
+    void calculateUserFeatures();
+
 }
