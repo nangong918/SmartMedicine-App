@@ -83,9 +83,7 @@ public interface UserActionRecordService {
 
     /**
      * 获取用户列表的活跃度
-     * @param pageSize            分页大小
-     * @param pageNum             页码
      * @return                       用户列表的活跃度
      */
-    List<UserHeatAo> getUsersHeat(int pageSize, int pageNum);
+    List<UserHeatAo> getUsersHeat();
 }

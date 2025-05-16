@@ -53,6 +53,13 @@ public interface RedissonService {
      */
     boolean persist(String key) throws Exception;
 
+    /**
+     * 获取所有匹配给定模式的键
+     * @param pattern   模式
+     * @return          匹配的键
+     */
+    Collection<String> getKeysByPattern(String pattern);
+
     //---------------------Object---------------------
 
     /**

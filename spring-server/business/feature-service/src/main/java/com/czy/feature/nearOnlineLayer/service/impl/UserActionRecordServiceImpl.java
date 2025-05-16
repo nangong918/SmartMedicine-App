@@ -13,6 +13,7 @@ import com.czy.feature.nearOnlineLayer.rule.RuleCommentPost;
 import com.czy.feature.nearOnlineLayer.rule.RulePostOperation;
 import com.czy.feature.nearOnlineLayer.rule.RulePostReadTime;
 import com.czy.feature.nearOnlineLayer.rule.RuleSearchPost;
+import com.czy.feature.nearOnlineLayer.rule.RuleTempFeature;
 import com.czy.feature.nearOnlineLayer.rule.RuleUserBrowseHeat;
 import com.czy.feature.nearOnlineLayer.service.FeatureStorageService;
 import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
@@ -72,6 +73,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     private final RulePostOperation rulePostOperation;
     private final RuleCommentPost ruleCommentPost;
     private final RuleUserBrowseHeat ruleUserBrowseHeat;
+    private final RuleTempFeature ruleTempFeature;
 
     /**
      * 上传用户的城市等信息
@@ -637,19 +639,56 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
             userHeatAo.setHeatScore(0.0);
             return userHeatAo;
         }
-        List<UserHeatRecordAo> userHeatRecordAos = new ArrayList<>();
+
+        List<HeatDaysAo> heatDaysAos = new ArrayList<>();
         for (Object userHeatRecordAo : list) {
             if (userHeatRecordAo instanceof UserHeatRecordAo){
                 UserHeatRecordAo recordAo = (UserHeatRecordAo) userHeatRecordAo;
-                userHeatRecordAos.add(recordAo);
+                HeatDaysAo heatDaysAo = new HeatDaysAo();
+                heatDaysAo.setDays(getDays(recordAo.getTimestamp()));
+                heatDaysAo.setScore(recordAo.getHeatScore());
+                heatDaysAos.add(heatDaysAo);
             }
         }
+        double heatScore = ruleTempFeature.executeHeat(heatDaysAos);
+        userHeatAo.setHeatScore(heatScore);
         return userHeatAo;
     }
 
     @Override
-    public List<UserHeatAo> getUsersHeat(int pageSize, int pageNum) {
-        return null;
+    public List<UserHeatAo> getUsersHeat() {
+        String pattern  = UserActionRedisKey.USER_HEAT_REDIS_KEY + "*";
+        Collection<String> keys = redissonService.getKeysByPattern(pattern);
+
+        // 1.计算时间戳
+        long currentTime = System.currentTimeMillis();
+        // 30天前的时间戳
+        long thirtyDaysAgoTime = currentTime - FeatureConstant.FEATURE_EXPIRE_TIME_SECOND * 1000L;
+
+        List<UserHeatAo> userHeatAos = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(keys)) {
+            for (String key : keys) {
+                // 从ZSet获取数据
+                Collection<Object> userHeatRecordAos = redissonService.zRangeByScore(
+                        key,
+                        (double) thirtyDaysAgoTime,
+                        (double) currentTime);
+                UserHeatAo userHeatAo = getUserHeatAo(userHeatRecordAos);
+                // 提取 userId
+                String[] parts = key.split(":");
+                // 获取最后一个部分作为 userId
+                String userIdStr = parts[parts.length - 1];
+                try {
+                    Long userId = Long.parseLong(userIdStr);
+                    userHeatAo.setUserId(userId);
+                    userHeatAos.add(userHeatAo);
+                } catch (NumberFormatException e){
+                    log.error("获取用户列表的活跃度异常，userId获取失败，userIdStr = {}", userIdStr);
+                    continue;
+                }
+            }
+        }
+        return userHeatAos;
     }
 
     private int getDays(long timestamp) {

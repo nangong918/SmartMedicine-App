@@ -23,7 +23,7 @@ public class RuleUserHeat {
         UserHeatAo userHeatAo = new UserHeatAo();
         userHeatAo.setUserId(userId);
 
-        userHeatAo.setHeatScore(ruleTempFeature.execute2(heatDaysAos));
+        userHeatAo.setHeatScore(ruleTempFeature.executeHeat(heatDaysAos));
 
         return userHeatAo;
     }

@@ -6,6 +6,7 @@ import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
+import org.redisson.api.RKeys;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
 import org.redisson.api.RScoredSortedSet;
@@ -13,9 +14,11 @@ import org.redisson.api.RedissonClient;
 import org.redisson.client.protocol.ScoredEntry;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -80,6 +83,18 @@ public class RedissonServiceImpl implements RedissonService {
         } else {
             throw new Exception("Key does not exist.");
         }
+    }
+
+    @Override
+    public Collection<String> getKeysByPattern(String pattern) {
+        RKeys keys = redissonClient.getKeys();
+        // 使用模式匹配获取所有键
+        Iterable<String> iterable = keys.getKeysByPattern(pattern);
+        List<String> list = new ArrayList<>();
+        for (String item : iterable) {
+            list.add(item);
+        }
+        return list;
     }
 
     @Override

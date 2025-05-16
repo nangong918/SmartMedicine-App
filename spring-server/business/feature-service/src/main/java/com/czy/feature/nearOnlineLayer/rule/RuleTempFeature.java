@@ -49,7 +49,7 @@ public class RuleTempFeature {
         return scoreAo;
     }
 
-    public double execute2(List<HeatDaysAo> scores){
+    public double executeHeat(List<HeatDaysAo> scores){
         double sum = 0.0;
         if (CollectionUtils.isEmpty(scores)){
             return sum;
