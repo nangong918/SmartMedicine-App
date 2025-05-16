@@ -98,6 +98,18 @@ public class RedissonServiceImpl implements RedissonService {
     }
 
     @Override
+    public void setBoolean(String key, Boolean value, Long expireTimes) {
+        RBucket<Boolean> bucket = redissonClient.getBucket(key);
+        bucket.set(value, expireTimes, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public boolean getBoolean(String key) {
+        RBucket<Boolean> bucket = redissonClient.getBucket(key);
+        return bucket.get();
+    }
+
+    @Override
     public boolean setObjectByJson(String key, Object obj, Long expireTimes) {
         try {
             String jsonString = JSON.toJSONString(obj); // 使用 Fastjson 序列化为 JSON

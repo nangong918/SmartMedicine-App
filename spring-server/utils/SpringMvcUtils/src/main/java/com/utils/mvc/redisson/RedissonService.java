@@ -60,6 +60,12 @@ public interface RedissonService {
      */
     Collection<String> getKeysByPattern(String pattern);
 
+    //---------------------Base---------------------
+
+    void setBoolean(String key, Boolean value, Long expireTimes);
+
+    boolean getBoolean(String key);
+
     //---------------------Object---------------------
 
     /**
