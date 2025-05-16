@@ -16,7 +16,7 @@ import com.czy.api.domain.ao.feature.ScoreDaysAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.feature.nearOnlineLayer.rule.RuleTempFeature;
 import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
-import com.czy.feature.nearOnlineLayer.service.UserFeatureService;
+import com.czy.api.api.feature.UserFeatureService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +38,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@org.apache.dubbo.config.annotation.Service(protocol = "dubbo", version = "1.0.0")
 public class UserFeatureServiceImpl implements UserFeatureService {
 
     private final RedissonService redissonService;
@@ -58,15 +59,27 @@ public class UserFeatureServiceImpl implements UserFeatureService {
         String userCommentFeatureKey = UserActionRedisKey.USER_FEATURE_COMMENT_POST_REDIS_KEY + userId;
 
         // PostClickTimeAo(postId)
-        Collection<Object> userClickFeature = redissonService.zRangeByScore(
-                userClickFeatureKey,
-                (double) thirtyDaysAgoTime,
-                (double) currentTime);
+        Collection<String> userClickFeatureKeys = redissonService.getKeysByPattern(userClickFeatureKey);
+        Collection<Object> userClickFeatures = new ArrayList<>();
+        for (String key : userClickFeatureKeys){
+            Collection<Object> userClickFeature = redissonService.zRangeByScore(
+                    key,
+                    (double) thirtyDaysAgoTime,
+                    (double) currentTime);
+            userClickFeatures.addAll(userClickFeature);
+        }
+
         // PostBrowseDurationAo(implicitScore)
-        Collection<Object> userBrowseFeature = redissonService.zRangeByScore(
-                userBrowseFeatureKey,
-                (double) thirtyDaysAgoTime,
-                (double) currentTime);
+        Collection<String> userBrowseFeatureKeys = redissonService.getKeysByPattern(userBrowseFeatureKey);
+        Collection<Object> userBrowseFeatures = new ArrayList<>();
+        for (String key : userBrowseFeatureKeys){
+            Collection<Object> userBrowseFeature = redissonService.zRangeByScore(
+                    key,
+                    (double) thirtyDaysAgoTime,
+                    (double) currentTime);
+            userBrowseFeatures.addAll(userBrowseFeature);
+        }
+
         /*
         PostExplicitTimeAo(
             List<PostExplicitPostScoreAo>,
@@ -91,8 +104,8 @@ public class UserFeatureServiceImpl implements UserFeatureService {
         );
 
         List<Collection<Object>> userFeatureList = new ArrayList<>();
-        userFeatureList.add(userClickFeature);
-        userFeatureList.add(userBrowseFeature);
+        userFeatureList.add(userClickFeatures);
+        userFeatureList.add(userBrowseFeatures);
         userFeatureList.add(userSearchFeature);
         userFeatureList.add(userOperateFeature);
         userFeatureList.add(userCommentFeature);
