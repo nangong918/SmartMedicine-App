@@ -1,7 +1,6 @@
 package com.czy.feature.nearOnlineLayer.service;
 
 import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
-import com.czy.api.domain.ao.feature.UserHeatAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 
 import java.util.List;
@@ -74,16 +73,4 @@ public interface UserActionRecordService {
      */
     void commentPost(Long userId, Long postId, Integer commentEmotionType, Double confidenceLevel, Long timestamp);
 
-    /**
-     * 获取用户的活跃度
-     * @param userId            用户id
-     * @return                  用户活跃度
-     */
-    UserHeatAo getUserHeat(Long userId);
-
-    /**
-     * 获取用户列表的活跃度
-     * @return                       用户列表的活跃度
-     */
-    List<UserHeatAo> getUsersHeat();
 }
