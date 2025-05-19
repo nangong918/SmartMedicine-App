@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DrugsRepository extends Neo4jRepository<DrugsDo, Long> {
+    String CQL_USER_DRUGS = UserFeatureRepository.RELS_USER_DRUGS + "|" + PostRepository.RELS_POST_DRUGS + "|has_common_drug|recommand_drug";
+
     DrugsDo findByName(String name);
 }

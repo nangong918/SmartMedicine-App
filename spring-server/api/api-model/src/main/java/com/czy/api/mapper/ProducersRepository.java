@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProducersRepository extends Neo4jRepository<ProducersDo, Long> {
+    String CQL_USER_PRODUCERS = UserFeatureRepository.RELS_USER_PRODUCERS + "|" + PostRepository.RELS_POST_PRODUCERS + "|cure_department";
+
     ProducersDo findByName(String name);
 }

@@ -316,7 +316,7 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
             "WHERE id(p) = $userId RETURN l")
     List<PostLabelNeo4jDo> findPostLabelsByPostId(Long userId);
 
-    // user 画像构建 -> （带有权重的entity集合）
+    /// user 画像构建 -> （带有权重的entity集合）
     @Query("MATCH (u:user {id:`${userId}`)-[r:`${relationType}`]->(e:`${entityType}`) " +
             "RETURN " +
             "e.name AS name, " +
@@ -327,4 +327,71 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
             @Param("userId") Long userId,
             @Param("entityType") String entityType,
             @Param("relationship") String relationship);
+
+    /// entity - relation - entity
+
+    /**
+     * jaccard 相似度
+     * @param name          entity name
+     * @param entityLabel   entity label
+     * @param relationships relationship
+     * @param n             limit 个数
+     * @return              通过Jaccard相似度计算出的List<Map<String, Object>> 返回内容包含
+     * similarEntityName
+     * jaccardIndex
+     */
+    @Query("MATCH (d1:`${entityLabel}` {name: $name})-[:`${relationships}`]->(related1), " +
+            "(d2:`${entityLabel}`)-[:`${relationships}`]->(related2) " +
+            "WHERE d2.name <> $name " +
+            "WITH d2, collect(id(related1)) AS ids1, collect(id(related2)) AS ids2 " +
+            "WITH d2, ids1, ids2, " +
+            "  [id IN ids1 WHERE id IN ids2] AS intersection " +
+            "RETURN d2.name AS similarEntityName, " +
+            "       CASE size(ids1) + size(ids2) " +
+            "           WHEN 0 THEN 0.0 " +
+            "           ELSE size(intersection) * 1.0 / (size(ids1) + size(ids2)) " +
+            "       END AS jaccardIndex " +
+            "ORDER BY jaccardIndex DESC " +
+            "LIMIT $n")
+    List<Map<String, Object>> findTopSimilarByJaccard(
+            @Param("name") String name,
+            @Param("entityLabel") String entityLabel,
+            @Param("relationships") String relationships,
+            @Param("n") int n);
+
+
+    /**
+     * neighbor 相似度
+     * @param name          entity name
+     * @param entityLabel   entity label
+     * @param relationships relationship
+     * @param n             limit 个数
+     * @return              通过neighbor相似度计算出的List<Map<String, Object>> 返回内容包含
+     * similarEntityName
+     * commonNeighborsCount
+     * similarityScore
+     */
+    @Query("MATCH (d1:`${entityLabel}` {name: $name})-[:`${relationships}`]-(neighbor1) " +
+            "WITH d1, collect(id(neighbor1)) AS neighbors1 " +
+            "MATCH (d2:`${entityLabel}`)-[:`${relationships}`]-(neighbor2) " +
+            "WHERE d2 <> d1 " +
+            "WITH d1, d2, neighbors1, collect(id(neighbor2)) AS neighbors2 " +
+            "WITH d1, d2, neighbors1, neighbors2, " +
+            "     [id IN neighbors1 WHERE id IN neighbors2] AS commonNeighbors " +
+            "WITH d1, d2, commonNeighbors, " +
+            "     size(neighbors1) + size(neighbors2) - size(commonNeighbors) AS allNeighborsCount " +
+            "RETURN d2.name AS similarEntityName, " +
+            "       size(commonNeighbors) AS commonNeighborsCount, " +
+            "       allNeighborsCount, " +
+            "       CASE allNeighborsCount " +
+            "           WHEN 0 THEN 0.0 " +
+            "           ELSE size(commonNeighbors) * 1.0 / allNeighborsCount " +
+            "       END AS similarityScore " +
+            "ORDER BY similarityScore DESC " +
+            "LIMIT $n")
+    List<Map<String, Object>> findTopSimilarByNeighbor(
+            @Param("name") String name,
+            @Param("entityLabel") String entityLabel,
+            @Param("relationships") String relationships,
+            @Param("n") int n);
 }

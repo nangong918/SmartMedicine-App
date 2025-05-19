@@ -17,6 +17,7 @@ import java.util.Map;
 
 @Repository
 public interface DiseaseRepository extends Neo4jRepository<DiseaseDo, Long> {
+
     DiseaseDo findByName(String name);
 
 //    @Query("MATCH (d:疾病 {name: $name})-[:has_symptom|recommand_drug|do_eat|not_eat|acompany_with]-(related) RETURN related LIMIT 10")

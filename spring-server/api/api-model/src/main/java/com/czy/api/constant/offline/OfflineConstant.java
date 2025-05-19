@@ -10,4 +10,5 @@ public class OfflineConstant {
     public static final String serviceRoute = "/" + serviceName;
     public static final String serviceUri = "lb://" + serviceName;
 
+    public static final int TOP_ENTITY_NUM = 3;
 }

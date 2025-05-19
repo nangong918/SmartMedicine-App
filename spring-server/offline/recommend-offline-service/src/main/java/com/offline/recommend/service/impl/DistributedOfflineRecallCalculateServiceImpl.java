@@ -1,14 +1,22 @@
 package com.offline.recommend.service.impl;
 
 import com.czy.api.api.feature.UserFeatureService;
+import com.czy.api.constant.feature.FeatureTypeChanger;
+import com.czy.api.constant.offline.OfflineConstant;
+import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.domain.ao.feature.UserEntityScore;
+import com.czy.api.mapper.DiseaseRepository;
+import com.czy.api.mapper.UserFeatureRepository;
 import com.offline.recommend.service.DistributedOfflineRecallCalculateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 13225
@@ -21,6 +29,8 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
 
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserFeatureService userFeatureService;
+    private final DiseaseRepository diseaseRepository;
+    private final UserFeatureRepository userFeatureRepository;
 
     /**
      * 图召回
@@ -36,7 +46,64 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
         // 1. user 画像构建 -> （带有权重的entity集合）
         List<UserEntityScore> userEntityScores = userFeatureService.getUserProfileList(userId);
 
+        if (CollectionUtils.isEmpty(userEntityScores)){
+            return new ArrayList<>();
+        }
+
+        // 取前三个，过滤entityType != NULL || POST_LABEL
+        List<UserEntityScore> topKEntityScores = new ArrayList<>();
+        for (int i = 0; i < Math.min(userEntityScores.size(), OfflineConstant.TOP_ENTITY_NUM); i++) {
+            UserEntityScore userEntityScore = userEntityScores.get(i);
+            if (userEntityScore.getEntityType() == DiseasesKnowledgeGraphEnum.NULL.getValue() ||
+            userEntityScore.getEntityType() == DiseasesKnowledgeGraphEnum.POST_LABEL.getValue()){
+                continue;
+            }
+            topKEntityScores.add(userEntityScore);
+        }
+        if (CollectionUtils.isEmpty(topKEntityScores)){
+            return new ArrayList<>();
+        }
+
         // 2. 知识工程：(entity - relation - entity) -> 包含关联性(共同邻居)的entity集合
+        List<String> result = new ArrayList<>();
+        for (UserEntityScore userEntityScore : topKEntityScores){
+            String entityName = userEntityScore.getEntityName();
+            Integer entityType = userEntityScore.getEntityType();
+            if (DiseasesKnowledgeGraphEnum.DISEASES.getValue() == entityType){
+                List<Map<String, Object>> jaccardResult = diseaseRepository.findTopSimilarDiseasesByJaccard(entityName, OfflineConstant.TOP_ENTITY_NUM);
+                for (Map<String, Object> map : jaccardResult) {
+                    String similarDiseaseName = (String) map.get("diseaseName");
+                    result.add(similarDiseaseName);
+                }
+                List<Map<String, Object>> neighborResult = diseaseRepository.findTopSimilarDiseasesByNeighbor(entityName, OfflineConstant.TOP_ENTITY_NUM);
+                for (Map<String, Object> map : neighborResult) {
+                    String similarDiseaseName = (String) map.get("diseaseName");
+                    result.add(similarDiseaseName);
+                }
+            }
+            else {
+                DiseasesKnowledgeGraphEnum enumByValue = DiseasesKnowledgeGraphEnum.getEnumByValue(entityType);
+                String nodeLabel = FeatureTypeChanger.nodeLabelToRelation(enumByValue.getName());
+                String relation = FeatureTypeChanger.getRelationCQL(nodeLabel);
+                if (relation == null){
+                    continue;
+                }
+                List<Map<String, Object>> similarEntities = userFeatureRepository.findTopSimilarByJaccard(
+                        entityName, nodeLabel, relation, OfflineConstant.TOP_ENTITY_NUM
+                );
+                for (Map<String, Object> map : similarEntities) {
+                    String similarEntityName = (String) map.get("similarEntityName");
+                    result.add(similarEntityName);
+                }
+                List<Map<String, Object>> similarEntitiesByNeighbor = userFeatureRepository.findTopSimilarByNeighbor(
+                        entityName, nodeLabel, relation, OfflineConstant.TOP_ENTITY_NUM
+                );
+                for (Map<String, Object> map : similarEntitiesByNeighbor) {
+                    String similarEntityName = (String) map.get("similarEntityName");
+                    result.add(similarEntityName);
+                }
+            }
+        }
 
         // 3. 图相似度：entity - similarEntity -> 包含相似度的有序集合
 

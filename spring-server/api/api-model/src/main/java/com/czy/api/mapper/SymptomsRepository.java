@@ -16,6 +16,8 @@ import java.util.Map;
 
 @Repository
 public interface SymptomsRepository extends Neo4jRepository<SymptomsDo, Long> {
+    String CQL_USER_SYMPTOMS = UserFeatureRepository.RELS_USER_SYMPTOMS + "|" + PostRepository.RELS_POST_SYMPTOMS + "|has_symptom|acompany_with";
+
     SymptomsDo findByName(String name);
 
     /**
