@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -43,6 +44,14 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
      */
     @Override
     public List<Long> graphRecall(Long userId) {
+        List<String> userFeatureEntities = getUserFeatureEntities(userId);
+        // TODO List<String> 查询对应文章，然后召回；粗拍，精排；重排
+        return null;
+    }
+
+    private List<String> getUserFeatureEntities(Long userId){
+        List<String> userFeatureEntities;
+
         // 1. user 画像构建 -> （带有权重的entity集合）
         List<UserEntityScore> userEntityScores = userFeatureService.getUserProfileList(userId);
 
@@ -55,7 +64,7 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
         for (int i = 0; i < Math.min(userEntityScores.size(), OfflineConstant.TOP_ENTITY_NUM); i++) {
             UserEntityScore userEntityScore = userEntityScores.get(i);
             if (userEntityScore.getEntityType() == DiseasesKnowledgeGraphEnum.NULL.getValue() ||
-            userEntityScore.getEntityType() == DiseasesKnowledgeGraphEnum.POST_LABEL.getValue()){
+                    userEntityScore.getEntityType() == DiseasesKnowledgeGraphEnum.POST_LABEL.getValue()){
                 continue;
             }
             topKEntityScores.add(userEntityScore);
@@ -64,7 +73,13 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
             return new ArrayList<>();
         }
 
-        // 2. 知识工程：(entity - relation - entity) -> 包含关联性(共同邻居)的entity集合
+        // 拷贝名称
+        userFeatureEntities = userEntityScores.stream()
+                .map(UserEntityScore::getEntityName)
+                .collect(Collectors.toList());
+
+        // 2. 知识工程：(entity - relation - entity) -> 包含关联性(共同邻居)的entity集合 (暂略)
+        // 3. 图相似度：entity - similarEntity -> 包含相似度的有序集合
         List<String> result = new ArrayList<>();
         for (UserEntityScore userEntityScore : topKEntityScores){
             String entityName = userEntityScore.getEntityName();
@@ -105,9 +120,10 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
             }
         }
 
-        // 3. 图相似度：entity - similarEntity -> 包含相似度的有序集合
+        userFeatureEntities.addAll(result);
 
-        // 4. user关系图：swing图userCF -> 相似的user画像集合 -> （带有权重的entity集合）
-        return null;
+        // 4. user关系图：swing图userCF -> 相似的user画像集合 -> （带有权重的entity集合）（暂略）
+
+        return userFeatureEntities;
     }
 }
