@@ -1,6 +1,7 @@
 package com.czy.api.api.feature;
 
-import com.czy.api.domain.ao.auth.UserTempFeatureAo;
+import com.czy.api.domain.ao.feature.UserHistoryFeatureAo;
+import com.czy.api.domain.ao.feature.UserTempFeatureAo;
 
 /**
  * @author 13225
@@ -34,5 +35,6 @@ public interface UserFeatureService {
     // 获取user临时特征（redis中的全部记录统计为特征）
     UserTempFeatureAo getUserTempFeature(Long userId);
 
-    // user历史特征是用于neo4j相似度计算的；本身就是 UserTempFeatureAo；不提供对外接口，而是直接用其召回
+    // user历史特征：user画像
+    UserHistoryFeatureAo getUserProfile(Long userId);
 }

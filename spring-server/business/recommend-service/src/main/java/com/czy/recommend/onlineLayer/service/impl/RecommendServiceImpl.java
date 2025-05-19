@@ -1,7 +1,7 @@
 package com.czy.recommend.onlineLayer.service.impl;
 
 import com.czy.api.constant.offline.OfflineRedisConstant;
-import com.czy.api.domain.ao.auth.UserTempFeatureAo;
+import com.czy.api.domain.ao.feature.UserTempFeatureAo;
 import com.czy.api.domain.ao.feature.FeatureContext;
 import com.czy.recommend.onlineLayer.service.RecommendService;
 import com.utils.mvc.redisson.RedissonService;

@@ -25,7 +25,8 @@ public enum DiseasesKnowledgeGraphEnum {
     FOODS(5, "foods"),
     PRODUCERS(6, "producers"),
     RECIPES(7, "recipes"),
-    SYMPTOMS(8, "symptoms");
+    SYMPTOMS(8, "symptoms"),
+    POST_LABEL(9, "post_label");
 
     private final int value;
     private final String name;
@@ -47,6 +48,16 @@ public enum DiseasesKnowledgeGraphEnum {
     public static DiseasesKnowledgeGraphEnum getEnumByValue(int value) {
         for (DiseasesKnowledgeGraphEnum o : values()) {
             if (o.value == value) {
+                return o;
+            }
+        }
+        return NULL;
+    }
+
+    // name -> o
+    public static DiseasesKnowledgeGraphEnum getEnumByName(String name) {
+        for (DiseasesKnowledgeGraphEnum o : values()) {
+            if (o.name.equals(name)) {
                 return o;
             }
         }

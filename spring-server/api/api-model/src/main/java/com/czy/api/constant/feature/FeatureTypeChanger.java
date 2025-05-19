@@ -5,6 +5,7 @@ import com.czy.api.domain.Do.neo4j.DepartmentsDo;
 import com.czy.api.domain.Do.neo4j.DiseaseDo;
 import com.czy.api.domain.Do.neo4j.DrugsDo;
 import com.czy.api.domain.Do.neo4j.FoodsDo;
+import com.czy.api.domain.Do.neo4j.PostLabelNeo4jDo;
 import com.czy.api.domain.Do.neo4j.ProducersDo;
 import com.czy.api.domain.Do.neo4j.RecipesDo;
 import com.czy.api.domain.Do.neo4j.SymptomsDo;
@@ -17,25 +18,39 @@ import org.springframework.util.StringUtils;
  */
 public class FeatureTypeChanger {
 
+    public static String[] nerTypes = new String[]{
+            "checks",
+            "departments",
+            "diseases",
+            "drugs",
+            "foods",
+            "producers",
+            "recipes",
+            "symptoms",
+            "post_label"
+    };
+
     public static String nerTypeToEntityLabel(String nerType){
         if (StringUtils.hasText(nerType)){
             switch (nerType){
                 case "checks":
-                    return "检查";
+                    return ChecksDo.nodeLabel;
                 case "departments":
-                    return "科室";
+                    return DepartmentsDo.nodeLabel;
                 case "diseases":
-                    return "疾病";
+                    return DiseaseDo.nodeLabel;
                 case "drugs":
-                    return "药品";
+                    return DrugsDo.nodeLabel;
                 case "foods":
-                    return "食物";
+                    return FoodsDo.nodeLabel;
                 case "producers":
-                    return "药企";
+                    return ProducersDo.nodeLabel;
                 case "recipes":
-                    return "菜谱";
+                    return RecipesDo.nodeLabel;
                 case "symptoms":
-                    return "症状";
+                    return SymptomsDo.nodeLabel;
+                case "post_label":
+                    return PostLabelNeo4jDo.nodeLabel;
                 default:
                     return null;
             }
@@ -69,6 +84,8 @@ public class FeatureTypeChanger {
                     return UserFeatureRepository.RELS_USER_RECIPES;
                 case SymptomsDo.nodeLabel:
                     return UserFeatureRepository.RELS_USER_SYMPTOMS;
+                case PostLabelNeo4jDo.nodeLabel:
+                    return UserFeatureRepository.RELS_USER_POST_LABEL;
                 default:
                     return null;
             }

@@ -3,7 +3,7 @@ package com.offline.recommend.service.impl;
 import com.czy.api.api.feature.UserFeatureService;
 import com.czy.api.api.feature.UserHeatService;
 import com.czy.api.constant.offline.OfflineRedisConstant;
-import com.czy.api.domain.ao.auth.UserTempFeatureAo;
+import com.czy.api.domain.ao.feature.UserTempFeatureAo;
 import com.czy.api.domain.ao.feature.UserHeatAo;
 import com.offline.recommend.service.DistributedOfflineFeatureCalculateService;
 import com.utils.mvc.redisson.RedissonClusterLock;

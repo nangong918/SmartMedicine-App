@@ -1,7 +1,5 @@
-package com.czy.api.domain.ao.auth;
+package com.czy.api.domain.ao.feature;
 
-import com.czy.api.domain.ao.feature.NerFeatureScoreAo;
-import com.czy.api.domain.ao.feature.ScoreAo;
 import lombok.Data;
 
 import java.util.HashMap;

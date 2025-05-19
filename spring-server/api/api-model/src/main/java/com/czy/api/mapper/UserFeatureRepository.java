@@ -316,11 +316,15 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
             "WHERE id(p) = $userId RETURN l")
     List<PostLabelNeo4jDo> findPostLabelsByPostId(Long userId);
 
-    /// --------------------------共同邻居--------------------------
-
-    // 疾病
-    // 症状
-    // 药品
-    // 食物
-    // 菜谱
+    // user 画像构建 -> （带有权重的entity集合）
+    @Query("MATCH (u:user {id:`${userId}`)-[r:`${relationType}`]->(e:`${entityType}`) " +
+            "RETURN " +
+            "e.name AS name, " +
+            "r.clickTimes AS clickTimes, " +
+            "r.implicitScore AS implicitScore, " +
+            "r.explicitScore AS explicitScore")
+    List<Map<String, Object>> findUserRelatedEntitiesWithWeights(
+            @Param("userId") Long userId,
+            @Param("entityType") String entityType,
+            @Param("relationship") String relationship);
 }

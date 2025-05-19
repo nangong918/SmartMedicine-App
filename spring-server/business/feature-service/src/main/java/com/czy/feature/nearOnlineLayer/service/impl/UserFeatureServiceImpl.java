@@ -1,22 +1,17 @@
 package com.czy.feature.nearOnlineLayer.service.impl;
 
+import com.czy.api.api.feature.UserFeatureService;
 import com.czy.api.constant.feature.FeatureConstant;
+import com.czy.api.constant.feature.FeatureTypeChanger;
 import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.constant.feature.UserActionRedisKey;
-import com.czy.api.domain.ao.auth.UserTempFeatureAo;
-import com.czy.api.domain.ao.feature.NerFeatureScoreAo;
-import com.czy.api.domain.ao.feature.NerFeatureScoreDaysAo;
-import com.czy.api.domain.ao.feature.PostBrowseDurationAo;
-import com.czy.api.domain.ao.feature.PostClickTimeAo;
-import com.czy.api.domain.ao.feature.PostExplicitPostScoreAo;
-import com.czy.api.domain.ao.feature.PostExplicitTimeAo;
-import com.czy.api.domain.ao.feature.PostFeatureAo;
-import com.czy.api.domain.ao.feature.ScoreAo;
-import com.czy.api.domain.ao.feature.ScoreDaysAo;
+import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
+import com.czy.api.domain.Do.neo4j.rels.UserEntityRelation;
+import com.czy.api.domain.ao.feature.*;
 import com.czy.api.domain.ao.post.PostNerResult;
+import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.feature.nearOnlineLayer.rule.RuleTempFeature;
 import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
-import com.czy.api.api.feature.UserFeatureService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +38,10 @@ public class UserFeatureServiceImpl implements UserFeatureService {
 
     private final RedissonService redissonService;
     private final PostFeatureService postFeatureService;
-
+    private final UserFeatureRepository userFeatureRepository;
+    
+    private final RuleTempFeature ruleTempFeature;
+    
     @Override
     public UserTempFeatureAo getUserTempFeature(Long userId) {
         // 1.计算时间戳
@@ -116,7 +114,8 @@ public class UserFeatureServiceImpl implements UserFeatureService {
         );
     }
 
-    private final RuleTempFeature ruleTempFeature;
+
+
 
     // 处理实体和标签特征的通用方法
     private void processEntityAndLabelFeatures(Long postId, Long timestamp, Double score,
@@ -479,5 +478,35 @@ public class UserFeatureServiceImpl implements UserFeatureService {
         long currentTime = System.currentTimeMillis();
         long days = (currentTime - timestamp) / (1000L * 60 * 60 * 24);
         return (int) days;
+    }
+
+
+
+    @Override
+    public UserHistoryFeatureAo getUserProfile(Long userId) {
+        UserHistoryFeatureAo userHistoryFeature = new UserHistoryFeatureAo();
+        for (String nodeType : FeatureTypeChanger.nerTypes){
+            List<Map<String, Object>> results = userFeatureRepository.findUserRelatedEntitiesWithWeights(
+                    userId,
+                    FeatureTypeChanger.nerTypeToEntityLabel(nodeType),
+                    FeatureTypeChanger.nerTypeToUserRelationType(nodeType)
+                    );
+
+            // 转换为UserEntityRelation对象并添加到集合
+            results.forEach(result -> {
+                UserEntityRelation relation = new UserEntityRelation();
+                relation.setUserId(userId);
+                String nodeName = (String) result.get("nodeName");
+                relation.setEntityName(nodeName);
+                relation.setEntityType(DiseasesKnowledgeGraphEnum.getEnumByName(nodeName).getValue());
+                relation.setClickTimes((Integer) result.get("clickTimes"));
+                relation.setImplicitScore((Double) result.get("implicitScore"));
+                relation.setExplicitScore((Double) result.get("explicitScore"));
+                relation.setLastUpdateTimestamp((Long) result.getOrDefault("lastUpdateTimestamp", System.currentTimeMillis()));
+
+                userHistoryFeature.getUserEntityRelations().add(relation);
+            });
+        }
+        return userHistoryFeature;
     }
 }
