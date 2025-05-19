@@ -11,6 +11,7 @@ import com.czy.api.domain.ao.feature.*;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.feature.nearOnlineLayer.rule.RuleTempFeature;
+import com.czy.feature.nearOnlineLayer.rule.RuleHistoryFeature;
 import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class UserFeatureServiceImpl implements UserFeatureService {
     private final UserFeatureRepository userFeatureRepository;
     
     private final RuleTempFeature ruleTempFeature;
+    private final RuleHistoryFeature ruleHistoryFeature;
     
     @Override
     public UserTempFeatureAo getUserTempFeature(Long userId) {
@@ -508,5 +510,34 @@ public class UserFeatureServiceImpl implements UserFeatureService {
             });
         }
         return userHistoryFeature;
+    }
+
+    @Override
+    public List<UserEntityScore> getUserProfileList(UserHistoryFeatureAo userHistoryFeatureAo) {
+        List<UserEntityScore> userEntityScores = new ArrayList<>();
+        if (userHistoryFeatureAo == null || CollectionUtils.isEmpty(userHistoryFeatureAo.getUserEntityRelations())){
+            return userEntityScores;
+        }
+        for (UserEntityRelation relation : userHistoryFeatureAo.getUserEntityRelations()){
+            UserEntityScore userEntityScore = new UserEntityScore();
+            userEntityScore.setEntityName(relation.getEntityName());
+            userEntityScore.setEntityType(relation.getEntityType());
+            ScoreAo scoreAo = new ScoreAo();
+            scoreAo.setClickTimes(relation.getClickTimes());
+            scoreAo.setImplicitScore(relation.getImplicitScore());
+            scoreAo.setExplicitScore(relation.getExplicitScore());
+            double score = ruleHistoryFeature.execute(scoreAo);
+            userEntityScore.setScore(score);
+            userEntityScores.add(userEntityScore);
+        }
+        // 从大到小排序
+        userEntityScores.sort((o1, o2) -> o2.getScore().compareTo(o1.getScore()));
+        return userEntityScores;
+    }
+
+    @Override
+    public List<UserEntityScore> getUserProfileList(Long userId) {
+        UserHistoryFeatureAo userHistoryFeatureAo = getUserProfile(userId);
+        return getUserProfileList(userHistoryFeatureAo);
     }
 }

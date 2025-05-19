@@ -1,7 +1,10 @@
 package com.czy.api.api.feature;
 
+import com.czy.api.domain.ao.feature.UserEntityScore;
 import com.czy.api.domain.ao.feature.UserHistoryFeatureAo;
 import com.czy.api.domain.ao.feature.UserTempFeatureAo;
+
+import java.util.List;
 
 /**
  * @author 13225
@@ -37,4 +40,10 @@ public interface UserFeatureService {
 
     // user历史特征：user画像
     UserHistoryFeatureAo getUserProfile(Long userId);
+
+    // user画像集合 -> user画像list
+    List<UserEntityScore> getUserProfileList(UserHistoryFeatureAo userHistoryFeatureAo);
+
+    // 直接由userId转为List<UserEntityScore>
+    List<UserEntityScore> getUserProfileList(Long userId);
 }

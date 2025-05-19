@@ -1,7 +1,7 @@
 package com.offline.recommend.service.impl;
 
 import com.czy.api.api.feature.UserFeatureService;
-import com.czy.api.domain.ao.feature.UserHistoryFeatureAo;
+import com.czy.api.domain.ao.feature.UserEntityScore;
 import com.offline.recommend.service.DistributedOfflineRecallCalculateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
     @Override
     public List<Long> graphRecall(Long userId) {
         // 1. user 画像构建 -> （带有权重的entity集合）
-        UserHistoryFeatureAo userProfile = userFeatureService.getUserProfile(userId);
+        List<UserEntityScore> userEntityScores = userFeatureService.getUserProfileList(userId);
 
         // 2. 知识工程：(entity - relation - entity) -> 包含关联性(共同邻居)的entity集合
 
