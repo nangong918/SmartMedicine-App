@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.0.2 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" modified="2025-05-20T02:33:54.521Z" version="23.0.2" etag="w7ofwQE4lAJnwrqqiX-b" type="device">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.0.2 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" modified="2025-05-20T02:51:11.153Z" version="23.0.2" etag="YGwWTyt4dqLC-QstYBMA" type="device">
   <diagram name="第 1 页" id="tgky3fX279zdv8PhlCqy">
     <mxGraphModel dx="2514" dy="2162" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -413,6 +413,9 @@
         </mxCell>
         <mxCell id="7nQ9g_u_nF_VqDbNqybr-154" value="使用在线数据&lt;br&gt;保证实时性" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="510" y="1250" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="-gl8EBEvmVz08SkBrVt--2" value="去重" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="565" y="518" width="50" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

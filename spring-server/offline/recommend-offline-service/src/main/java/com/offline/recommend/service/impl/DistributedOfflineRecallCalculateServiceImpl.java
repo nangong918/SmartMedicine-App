@@ -36,6 +36,23 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private PostSearchService postSearchService;
 
+
+    @Override
+    public List<Long> getOfflineRecommend(Long userId) {
+        // 召回：图召回
+        List<Long> recallPosts = graphRecall(userId);
+
+        // 粗拍：特征截断
+        List<Long> roughSortingPosts = roughSorting(recallPosts, userId);
+
+        // 精排：负采样
+        List<Long> fineSortingPosts = fineSorting(roughSortingPosts, userId);
+
+        // 重排：热度 时间
+        return reSorting(fineSortingPosts);
+    }
+
+
     /**
      * 图召回
      * 1.user画像构建：entity（itemCF：entity - post的映射关系 + [post分类标签]）
@@ -45,8 +62,7 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
      * @param userId    用户id
      * @return            召回的entity集合
      */
-    @Override
-    public List<Long> graphRecall(Long userId) {
+    private List<Long> graphRecall(Long userId) {
         List<String> userGraphFeatureEntities = getUserGraphFeature(userId);
 
         if (CollectionUtils.isEmpty(userGraphFeatureEntities)){
@@ -58,9 +74,17 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
             List<Long> postIds = postSearchService.searchPostIdsByTokenizedTitle(userGraphFeatureEntity);
             result.addAll(postIds);
         }
+
+        // todo 去重
+
         return result;
     }
 
+    /**
+     * 获取用户画像特征
+     * @param userId    用户id
+     * @return          用户画像特征集合
+     */
     private List<String> getUserGraphFeature(Long userId){
         List<String> userFeatureEntities;
 
@@ -138,4 +162,23 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
 
         return userFeatureEntities;
     }
+
+    // 粗排
+    private List<Long> roughSorting(List<Long> recallPostIds, Long userId){
+        // todo 特征截断：swing；MF；FM
+        return recallPostIds;
+    }
+
+    // 精排
+    private List<Long> fineSorting(List<Long> roughPostIds, Long userId){
+        // todo 负采样，点击预测，postLabels
+        return roughPostIds;
+    }
+
+    // 重排
+    private List<Long> reSorting(List<Long> finePostIds){
+        // todo 根据时间 + 热度排序
+        return finePostIds;
+    }
+
 }

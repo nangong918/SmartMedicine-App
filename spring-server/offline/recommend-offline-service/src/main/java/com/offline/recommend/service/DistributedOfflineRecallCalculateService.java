@@ -11,7 +11,7 @@ public interface DistributedOfflineRecallCalculateService {
     /// python
 
     /// Java
-    List<Long> graphRecall(Long userId);
+    List<Long> getOfflineRecommend(Long userId);
 
 }
 
