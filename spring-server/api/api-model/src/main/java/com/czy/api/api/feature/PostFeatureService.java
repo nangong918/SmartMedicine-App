@@ -4,6 +4,7 @@ import com.czy.api.domain.ao.feature.PostFeatureAo;
 import com.czy.api.domain.ao.feature.PostHeatAo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 13225
@@ -19,6 +20,8 @@ public interface PostFeatureService {
      * @return          PostFeatureAo
      */
     PostFeatureAo getPostFeature(Long postId);
+
+    Map<Long, PostFeatureAo> getPostFeatures(List<Long> postIds);
 
     /**
      * 获取热门帖子

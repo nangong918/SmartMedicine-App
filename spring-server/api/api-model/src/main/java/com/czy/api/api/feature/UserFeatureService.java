@@ -5,6 +5,7 @@ import com.czy.api.domain.ao.feature.UserHistoryFeatureAo;
 import com.czy.api.domain.ao.feature.UserTempFeatureAo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 13225
@@ -46,4 +47,7 @@ public interface UserFeatureService {
 
     // 直接由userId转为List<UserEntityScore>
     List<UserEntityScore> getUserProfileList(Long userId);
+
+    // 获取user在线特征
+    List<Map<String, Double>> getUserOnlineFeature(Long userId);
 }

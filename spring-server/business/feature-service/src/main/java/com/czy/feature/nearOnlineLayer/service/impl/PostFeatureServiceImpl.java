@@ -142,6 +142,15 @@ public class PostFeatureServiceImpl implements PostFeatureService {
         return postFeatureAo;
     }
 
+    @Override
+    public Map<Long, PostFeatureAo> getPostFeatures(List<Long> postIds) {
+        Map<Long, PostFeatureAo> postFeatureAos = new HashMap<>();
+        for (Long postId : postIds) {
+            postFeatureAos.put(postId, getPostFeature(postId));
+        }
+        return postFeatureAos;
+    }
+
 
     @Override
     public void getHotPosts() {

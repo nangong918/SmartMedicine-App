@@ -19,11 +19,4 @@ public interface RecommendService {
      */
     List<Long> getRecommendPosts(FeatureContext context);
 
-    /**
-     * 最后一步，在线（当前临时上下文）
-     * @param context   上下文
-     * @return          推荐帖子id
-     */
-    List<Long> getRecommendPostsByContext(FeatureContext context);
-
 }

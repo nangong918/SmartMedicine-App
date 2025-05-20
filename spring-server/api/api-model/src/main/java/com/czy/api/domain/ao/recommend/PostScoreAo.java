@@ -9,5 +9,13 @@ import lombok.Data;
 @Data
 public class PostScoreAo {
     private Long postId;
-    private Double score;
+    private Double score = 0.0;
+
+    public PostScoreAo() {
+    }
+
+    public PostScoreAo(Long postId, Double score) {
+        this.postId = postId;
+        this.score = score;
+    }
 }

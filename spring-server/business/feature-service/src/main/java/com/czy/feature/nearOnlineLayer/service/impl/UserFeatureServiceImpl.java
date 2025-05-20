@@ -1,5 +1,6 @@
 package com.czy.feature.nearOnlineLayer.service.impl;
 
+import com.czy.api.api.feature.PostFeatureService;
 import com.czy.api.api.feature.UserFeatureService;
 import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.feature.FeatureTypeChanger;
@@ -10,9 +11,8 @@ import com.czy.api.domain.Do.neo4j.rels.UserEntityRelation;
 import com.czy.api.domain.ao.feature.*;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
-import com.czy.feature.nearOnlineLayer.rule.RuleTempFeature;
 import com.czy.feature.nearOnlineLayer.rule.RuleHistoryFeature;
-import com.czy.api.api.feature.PostFeatureService;
+import com.czy.feature.nearOnlineLayer.rule.RuleTempFeature;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -539,5 +539,39 @@ public class UserFeatureServiceImpl implements UserFeatureService {
     public List<UserEntityScore> getUserProfileList(Long userId) {
         UserHistoryFeatureAo userHistoryFeatureAo = getUserProfile(userId);
         return getUserProfileList(userHistoryFeatureAo);
+    }
+
+    @Override
+    public List<Map<String, Double>> getUserOnlineFeature(Long userId) {
+        List<Map<String, Double>> onlineFeature = new ArrayList<>();
+        for (String nodeType : FeatureTypeChanger.nerTypes){
+            List<Map<String, Object>> results = userFeatureRepository.findUserRelatedEntitiesWithWeights(
+                    userId,
+                    FeatureTypeChanger.nerTypeToEntityLabel(nodeType),
+                    FeatureTypeChanger.nerTypeToUserRelationType(nodeType)
+            );
+
+            // 转换为UserEntityRelation对象并添加到集合
+            results.forEach(result -> {
+                String nodeName = (String) result.get("nodeName");
+                ScoreAo scoreAo = new ScoreAo();
+                scoreAo.setClickTimes((Integer) result.get("clickTimes"));
+                scoreAo.setImplicitScore((Double) result.get("implicitScore"));
+                scoreAo.setExplicitScore((Double) result.get("explicitScore"));
+                double score = ruleHistoryFeature.execute(scoreAo);
+                Map<String, Double> map = new HashMap<>();
+                map.put(nodeName, score);
+                onlineFeature.add(map);
+            });
+        }
+
+        // 排序
+        onlineFeature.sort((o1, o2) -> {
+            double score1 = o1.values().iterator().next();
+            double score2 = o2.values().iterator().next();
+            return Double.compare(score2, score1);
+        });
+
+        return onlineFeature;
     }
 }
