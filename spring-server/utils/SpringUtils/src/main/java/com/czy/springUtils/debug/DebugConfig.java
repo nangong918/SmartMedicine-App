@@ -20,4 +20,5 @@ public class DebugConfig {
     private boolean allLog = false;
     private boolean vcodeCheck = true;
     private boolean isAccessTokenCheck = true;
+    private boolean isRecordUserAccount = true;
 }
