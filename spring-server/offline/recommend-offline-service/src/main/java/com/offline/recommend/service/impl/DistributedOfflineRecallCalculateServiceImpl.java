@@ -1,6 +1,7 @@
 package com.offline.recommend.service.impl;
 
 import com.czy.api.api.feature.UserFeatureService;
+import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.feature.FeatureTypeChanger;
 import com.czy.api.constant.offline.OfflineConstant;
 import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
@@ -32,6 +33,8 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
     private UserFeatureService userFeatureService;
     private final DiseaseRepository diseaseRepository;
     private final UserFeatureRepository userFeatureRepository;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private PostSearchService postSearchService;
 
     /**
      * 图召回
@@ -44,12 +47,21 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
      */
     @Override
     public List<Long> graphRecall(Long userId) {
-        List<String> userFeatureEntities = getUserFeatureEntities(userId);
-        // TODO List<String> 查询对应文章，然后召回；粗拍，精排；重排
-        return null;
+        List<String> userGraphFeatureEntities = getUserGraphFeature(userId);
+
+        if (CollectionUtils.isEmpty(userGraphFeatureEntities)){
+            return new ArrayList<>();
+        }
+
+        List<Long> result = new ArrayList<>();
+        for (String userGraphFeatureEntity : userGraphFeatureEntities) {
+            List<Long> postIds = postSearchService.searchPostIdsByTokenizedTitle(userGraphFeatureEntity);
+            result.addAll(postIds);
+        }
+        return result;
     }
 
-    private List<String> getUserFeatureEntities(Long userId){
+    private List<String> getUserGraphFeature(Long userId){
         List<String> userFeatureEntities;
 
         // 1. user 画像构建 -> （带有权重的entity集合）
