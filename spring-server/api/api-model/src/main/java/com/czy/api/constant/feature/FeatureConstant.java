@@ -23,4 +23,7 @@ public class FeatureConstant {
     public static final int HOT_POST_MAX_NUM = 100;
     // 热门帖子存放时间：24小时，每日定时更新
     public static final Long HOT_POST_EXPIRE_TIME_SECOND = (long) 60 * 60 * 24;
+
+    // user的推荐一次获取数量
+    public static final int USER_RECOMMEND_GET_NUM = 20;
 }

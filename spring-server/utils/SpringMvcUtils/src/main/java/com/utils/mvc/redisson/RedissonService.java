@@ -3,6 +3,7 @@ package com.utils.mvc.redisson;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -270,4 +271,19 @@ public interface RedissonService {
      * @return 是否清空成功
      */
     boolean zClear(String key, Long expireTime);
+
+    /**
+     * 获取ZSet的元素数量（不加载元素到Java内存）
+     * @param key ZSet的key
+     * @return 元素数量
+     */
+    long zCount(String key);
+
+    /**
+     * 原子性地获取并删除ZSet中前N个元素（从大到小）
+     * @param key ZSet的key
+     * @param n 要获取的元素数量
+     * @return 获取到的元素列表
+     */
+    List<Object> zPopTopNAndRemove(String key, int n);
 }

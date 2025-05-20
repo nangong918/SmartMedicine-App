@@ -5,11 +5,14 @@ import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;
+import org.redisson.api.RFuture;
 import org.redisson.api.RKeys;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
 import org.redisson.api.RScoredSortedSet;
+import org.redisson.api.RScoredSortedSetAsync;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.protocol.ScoredEntry;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -375,5 +379,41 @@ public class RedissonServiceImpl implements RedissonService {
             setExpire(newZSet, expireTime);
         }
         return result;
+    }
+
+    /**
+     * 获取ZSet的元素数量（不加载元素到Java内存）
+     * @param key ZSet的key
+     * @return 元素数量
+     */
+    @Override
+    public long zCount(String key){
+        return redissonClient.getScoredSortedSet(key).size();
+    }
+
+    /**
+     * 原子性地获取并删除ZSet中前N个元素（从大到小）
+     * @param key ZSet的key
+     * @param n 要获取的元素数量
+     * @return 获取到的元素列表
+     */
+    @Override
+    public List<Object> zPopTopNAndRemove(String key, int n){
+        RBatch batch = redissonClient.createBatch();
+        RScoredSortedSetAsync<Object> setAsync = batch.getScoredSortedSet(key);
+
+        // 获取前N个元素（从大到小）
+        RFuture<Collection<Object>> elementsFuture = setAsync.valueRangeReversedAsync(0, n - 1);
+        // 删除这些元素
+        elementsFuture.thenAccept(setAsync::removeAllAsync);
+
+        // 执行事务
+        batch.execute();
+
+        try {
+            return new ArrayList<>(elementsFuture.get());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Failed to pop top N elements from ZSet", e);
+        }
     }
 }

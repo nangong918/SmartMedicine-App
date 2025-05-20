@@ -1,6 +1,6 @@
 package com.offline.recommend.service;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author 13225
@@ -11,8 +11,9 @@ public interface DistributedOfflineRecallCalculateService {
     /// python
 
     /// Java
-    List<Long> getOfflineRecommend(Long userId);
+    Map<Long, Double> getOfflineRecommend(Long userId);
 
+    void allHeatUserOfflineRecommend();
 }
 
 /**
