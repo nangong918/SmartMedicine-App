@@ -1,4 +1,4 @@
-package com.czy.recommend.onlineLayer.service;
+package com.czy.recommend.service;
 
 import com.czy.api.domain.ao.feature.FeatureContext;
 

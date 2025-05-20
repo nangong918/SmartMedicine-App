@@ -82,7 +82,7 @@ public class DistributedOfflineRecallCalculateServiceImpl implements Distributed
 
         List<Long> result = new ArrayList<>();
         for (String userGraphFeatureEntity : userGraphFeatureEntities) {
-            List<Long> postIds = postSearchService.searchPostIdsByTokenizedTitle(userGraphFeatureEntity);
+            List<Long> postIds = postSearchService.searchPostIdsByLikeTitle(userGraphFeatureEntity);
             result.addAll(postIds);
         }
 

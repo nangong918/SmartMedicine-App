@@ -16,7 +16,7 @@ import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.feature.nearOnlineLayer.service.FeatureStorageService;
-import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
+import com.czy.api.api.feature.PostFeatureService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

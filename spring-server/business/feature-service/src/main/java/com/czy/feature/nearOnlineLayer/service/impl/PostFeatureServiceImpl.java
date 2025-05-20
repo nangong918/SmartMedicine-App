@@ -23,7 +23,7 @@ import com.czy.api.domain.ao.feature.ScoreDaysAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.PostRepository;
 import com.czy.feature.nearOnlineLayer.rule.RulePostHeat;
-import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
+import com.czy.api.api.feature.PostFeatureService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +45,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@org.apache.dubbo.config.annotation.Service(protocol = "dubbo", version = "1.0.0")
 public class PostFeatureServiceImpl implements PostFeatureService {
     private final PostRepository postRepository;
     private final RedissonService redissonService;

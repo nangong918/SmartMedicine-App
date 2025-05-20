@@ -1,4 +1,4 @@
-package com.czy.recommend.onlineLayer.service.impl;
+package com.czy.recommend.service.impl;
 
 import com.czy.api.api.offline.OfflineRecommendService;
 import com.czy.api.constant.feature.FeatureConstant;
@@ -6,7 +6,8 @@ import com.czy.api.constant.offline.OfflineRedisConstant;
 import com.czy.api.domain.ao.feature.FeatureContext;
 import com.czy.api.domain.ao.feature.UserTempFeatureAo;
 import com.czy.api.domain.ao.recommend.PostScoreAo;
-import com.czy.recommend.onlineLayer.service.RecommendService;
+import com.czy.recommend.nearOnlineLayer.service.NearOnlineRecommendService;
+import com.czy.recommend.service.RecommendService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class RecommendServiceImpl implements RecommendService {
     private final RedissonService redissonService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OfflineRecommendService offlineRecommendService;
+    private final NearOnlineRecommendService nearOnlineRecommendService;
 
     /**
      * 获取推荐帖子
@@ -58,7 +60,8 @@ public class RecommendServiceImpl implements RecommendService {
             return finalRecommendPosts;
         }
         /// 近线层
-        // 2. 近线-召回
+        // 2. 近线-召回 (与在线层线程异步，设置超时机制，并且存储在redis)
+        List<PostScoreAo> nearOnlineRecommend = nearOnlineRecommendService.getNearOnlineRecommend(context);
         /// 在线层
         // 3. 离线-特征
         UserTempFeatureAo userTempFeatureAo = new UserTempFeatureAo();

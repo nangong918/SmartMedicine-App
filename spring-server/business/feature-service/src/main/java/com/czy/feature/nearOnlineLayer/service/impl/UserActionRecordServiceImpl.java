@@ -15,7 +15,7 @@ import com.czy.feature.nearOnlineLayer.rule.RulePostReadTime;
 import com.czy.feature.nearOnlineLayer.rule.RuleSearchPost;
 import com.czy.feature.nearOnlineLayer.rule.RuleUserBrowseHeat;
 import com.czy.feature.nearOnlineLayer.service.FeatureStorageService;
-import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
+import com.czy.api.api.feature.PostFeatureService;
 import com.czy.feature.nearOnlineLayer.service.UserActionRecordService;
 import com.czy.springUtils.debug.DebugConfig;
 import com.utils.mvc.redisson.RedissonService;

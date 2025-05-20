@@ -12,7 +12,7 @@ import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.feature.nearOnlineLayer.rule.RuleTempFeature;
 import com.czy.feature.nearOnlineLayer.rule.RuleHistoryFeature;
-import com.czy.feature.nearOnlineLayer.service.PostFeatureService;
+import com.czy.api.api.feature.PostFeatureService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
