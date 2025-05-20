@@ -1,14 +1,20 @@
 package com.czy.recommend.onlineLayer.service.impl;
 
+import com.czy.api.api.offline.OfflineRecommendService;
+import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.offline.OfflineRedisConstant;
-import com.czy.api.domain.ao.feature.UserTempFeatureAo;
 import com.czy.api.domain.ao.feature.FeatureContext;
+import com.czy.api.domain.ao.feature.UserTempFeatureAo;
+import com.czy.api.domain.ao.recommend.PostScoreAo;
 import com.czy.recommend.onlineLayer.service.RecommendService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +27,8 @@ import java.util.List;
 public class RecommendServiceImpl implements RecommendService {
 
     private final RedissonService redissonService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private OfflineRecommendService offlineRecommendService;
 
     /**
      * 获取推荐帖子
@@ -35,8 +43,20 @@ public class RecommendServiceImpl implements RecommendService {
      */
     @Override
     public List<Long> getRecommendPosts(FeatureContext context) {
+        // final List
+        List<Long> finalRecommendPosts = new ArrayList<>();
+
         /// 离线层
         // 1. 离线-召回
+        List<PostScoreAo> offlineRecommend = offlineRecommendService.getOfflineRecommend(context.getUserId());
+        if (!CollectionUtils.isEmpty(offlineRecommend)){
+            for (PostScoreAo postScoreAo : offlineRecommend) {
+                finalRecommendPosts.add(postScoreAo.getPostId());
+            }
+        }
+        if (finalRecommendPosts.size() >= FeatureConstant.USER_RECOMMEND_GET_NUM){
+            return finalRecommendPosts;
+        }
         /// 近线层
         // 2. 近线-召回
         /// 在线层
