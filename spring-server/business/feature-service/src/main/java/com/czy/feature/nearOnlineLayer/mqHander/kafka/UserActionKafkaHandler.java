@@ -1,6 +1,9 @@
 package com.czy.feature.nearOnlineLayer.mqHander.kafka;
 
+import com.czy.api.api.feature.NlpService;
 import com.czy.api.constant.feature.FeatureKafkaConstant;
+import com.czy.api.constant.feature.PostOption;
+import com.czy.api.domain.ao.feature.CommentEmotionAo;
 import com.czy.api.domain.entity.kafkaMessage.UserActionCommentPost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionOperatePost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
@@ -10,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * @author 13225
@@ -22,6 +26,7 @@ public class UserActionKafkaHandler {
 
     private final UserActionRecordService userActionRecordService;
     private final DebugConfig debugConfig;
+    private final NlpService nlpService;
 
     @KafkaListener(topics = UserActionCommentPost.TOPIC,
     groupId = FeatureKafkaConstant.GROUP_ID + UserActionCommentPost.TOPIC)
@@ -29,11 +34,15 @@ public class UserActionKafkaHandler {
         if (!debugConfig.isRecordUserAccount()){
             return;
         }
+        if (!StringUtils.hasText(message.getComment())){
+            return;
+        }
+        CommentEmotionAo result = nlpService.getCommentEmotion(message.getComment());
         userActionRecordService.commentPost(
                 message.getUserId(),
                 message.getPostId(),
-                message.getCommentEmotionType(),
-                message.getConfidenceLevel(),
+                result.getCommentEmotionType(),
+                result.getConfidenceLevel(),
                 message.getTimestamp()
         );
     }
@@ -42,6 +51,9 @@ public class UserActionKafkaHandler {
     groupId = FeatureKafkaConstant.GROUP_ID + UserActionOperatePost.TOPIC)
     public void handleUserActionOperatePost(UserActionOperatePost message) {
         if (!debugConfig.isRecordUserAccount()){
+            return;
+        }
+        if (PostOption.NULL.getCode().equals(message.getOperateType())){
             return;
         }
         userActionRecordService.operatePost(
