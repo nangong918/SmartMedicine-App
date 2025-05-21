@@ -9,6 +9,7 @@ import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.constant.search.FuzzySearchResponseEnum;
 import com.czy.api.constant.search.NlpResultEnum;
 import com.czy.api.constant.search.SearchConstant;
+import com.czy.api.constant.search.SearchLevel;
 import com.czy.api.constant.search.result.PersonalResultIntent;
 import com.czy.api.constant.search.result.PostRecommendResult;
 import com.czy.api.domain.Do.user.UserHealthDataDo;
@@ -24,6 +25,8 @@ import com.czy.api.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.api.domain.dto.python.MedicalPredictionResponse;
 import com.czy.api.domain.dto.python.NlpSearchResponse;
+import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
+import com.czy.search.component.KafkaSender;
 import com.czy.search.service.FuzzySearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -79,6 +83,8 @@ public class SearchController {
     private final PostSearchService postSearchService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private DiseasesNeo4jService diseasesNeo4jService;
+
+    private final KafkaSender kafkaSender;
     /**
      * 模糊搜索
      * @param request  模糊搜索的句子 + userId（用于userContext特征上下文）
@@ -101,7 +107,55 @@ public class SearchController {
                 .orElse(null);
 
         Long userId = userService.getIdByAccount(request.getUserAccount());
-        return handleNlpResult(nlpSearchResponse, sentence, userId);
+
+        FuzzySearchResponse response = handleNlpResult(nlpSearchResponse, sentence, userId);
+
+        // kafka发送搜索行为
+        searchActionKafkaSend(response, userId);
+
+        return response;
+    }
+
+    /**
+     * kafka发送搜索行为
+     * @param response  搜索结果
+     * @param userId    用户id
+     */
+    private void searchActionKafkaSend(FuzzySearchResponse response, Long userId){
+        Map<Integer, List<Long>> postIdListMap = new HashMap<>();
+        if (response.getData() != null && response.getData() instanceof PostSearchResultAo){
+            PostSearchResultAo postSearchResultAo = (PostSearchResultAo) response.getData();
+            List<Long> likePostList = Optional.ofNullable(postSearchResultAo.getLikePostList())
+                    .filter(l -> !CollectionUtils.isEmpty(l))
+                    .map(l -> l.stream().map(PostInfoUrlAo::getId).collect(Collectors.toList()))
+                    .orElse(new ArrayList<>());
+            List<Long> tokenizedPostList = Optional.ofNullable(postSearchResultAo.getTokenizedPostList())
+                    .filter(l -> !CollectionUtils.isEmpty(l))
+                    .map(l -> l.stream().map(PostInfoUrlAo::getId).collect(Collectors.toList()))
+                    .orElse(new ArrayList<>());
+            List<Long> similarPostList = Optional.ofNullable(postSearchResultAo.getSimilarPostList())
+                    .filter(l -> !CollectionUtils.isEmpty(l))
+                    .map(l -> l.stream().map(PostInfoUrlAo::getId).collect(Collectors.toList()))
+                    .orElse(new ArrayList<>());
+            List<Long> recommendPostList = Optional.ofNullable(postSearchResultAo.getRecommendPostList())
+                    .filter(l -> !CollectionUtils.isEmpty(l))
+                    .map(l -> l.stream().map(PostInfoUrlAo::getId).collect(Collectors.toList()))
+                    .orElse(new ArrayList<>());
+            postIdListMap.put(SearchLevel.ONE.getCode(), likePostList);
+            postIdListMap.put(SearchLevel.TWO.getCode(), tokenizedPostList);
+            postIdListMap.put(SearchLevel.THREE.getCode(), similarPostList);
+            postIdListMap.put(SearchLevel.FOUR.getCode(), recommendPostList);
+
+            // kafka -> feature-service
+            UserActionSearchPost userActionSearchPost = new UserActionSearchPost();
+            userActionSearchPost.setId(userId);
+            userActionSearchPost.setLevelsPostIdMap(postIdListMap);
+            try {
+                kafkaSender.sendUserActionMessage(userActionSearchPost, UserActionSearchPost.TOPIC);
+            } catch (Exception e) {
+                log.error("用户显性行为Kafka传输异常：[搜索] [userId:{}]", userId, e);
+            }
+        }
     }
 
     private ResponseEntity<NlpSearchResponse> invokePythonNlpSearch(String sentence) {
