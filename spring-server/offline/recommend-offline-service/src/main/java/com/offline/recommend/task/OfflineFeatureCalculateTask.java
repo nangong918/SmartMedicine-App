@@ -29,6 +29,13 @@ public class OfflineFeatureCalculateTask {
         distributedOfflineFeatureCalculateService.calculateUserHeat();
     }
 
+    // 每天晚上凌晨1点开始计算帖子热度[cron表达式]
+    private static final String POST_HEAT_EXPRESSION = "0 0 1 * * ?";
+    @Scheduled(cron = POST_HEAT_EXPRESSION)
+    public void offlinePostHeatCalculate() {
+        distributedOfflineFeatureCalculateService.calculatePostHeats();
+    }
+
     // 每天晚上凌晨2点开始特征计算[cron表达式]
     private static final String FEATURE_EXPRESSION = "0 0 2 * * ?";
 

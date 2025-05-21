@@ -153,81 +153,79 @@ public class PostFeatureServiceImpl implements PostFeatureService {
 
 
     @Override
-    public void getHotPosts() {
-        // 1.处理入参：最大数
-//        if (limitNum > FeatureConstant.HOT_POST_MAX_NUM){
-//            limitNum = FeatureConstant.HOT_POST_MAX_NUM;
-//        }
-//        else if (limitNum < 0){
-//            limitNum = 1;
-//        }
-
-        // 2.计算时间戳
+    public List<PostHeatAo> getHotPosts() {
+        // 1.计算时间戳
         long currentTime = System.currentTimeMillis();
         // 30天前的时间戳
         long thirtyDaysAgoTime = currentTime - FeatureConstant.FEATURE_EXPIRE_TIME_SECOND * 1000L;
 
-        // 3.获取Redis临时特征
+        // 2.获取Redis临时特征
         String userClickFeatureKey = UserActionRedisKey.USER_FEATURE_CLICK_POST_REDIS_KEY + "*" + ":*";
         String userBrowseFeatureKey = UserActionRedisKey.USER_FEATURE_BROWSE_POST_REDIS_KEY + "*" + ":*";
         String userSearchFeatureKey = UserActionRedisKey.USER_FEATURE_SEARCH_POST_REDIS_KEY + "*";
         String userOperateFeatureKey = UserActionRedisKey.USER_FEATURE_OPERATION_POST_REDIS_KEY + "*";
         String userCommentFeatureKey = UserActionRedisKey.USER_FEATURE_COMMENT_POST_REDIS_KEY + "*";
+        // 获取pattern
+        Collection<String> userClickFeatureKeys = redissonService.getKeysByPattern(userClickFeatureKey);
+        Collection<String> userBrowseFeatureKeys = redissonService.getKeysByPattern(userBrowseFeatureKey);
+        Collection<String> userSearchFeatureKeys = redissonService.getKeysByPattern(userSearchFeatureKey);
+        Collection<String> userOperateFeatureKeys = redissonService.getKeysByPattern(userOperateFeatureKey);
+        Collection<String> userCommentFeatureKeys = redissonService.getKeysByPattern(userCommentFeatureKey);
 
-        // PostClickTimeAo(postId)
-        Collection<Object> userClickFeature = redissonService.zRangeByScore(
-                userClickFeatureKey,
-                (double) thirtyDaysAgoTime,
-                (double) currentTime);
-        // PostBrowseDurationAo(implicitScore)
-        Collection<Object> userBrowseFeature = redissonService.zRangeByScore(
-                userBrowseFeatureKey,
-                (double) thirtyDaysAgoTime,
-                (double) currentTime);
-
-        /*
-            PostExplicitTimeAo(List<PostExplicitPostScoreAo>)
-         */
-        Collection<Object> userSearchFeature = redissonService.zRangeByScore(
-                userSearchFeatureKey,
-                (double) thirtyDaysAgoTime,
-                (double) currentTime);
-        // PostExplicitTimeAo
-        Collection<Object> userOperateFeature = redissonService.zRangeByScore(
-                userOperateFeatureKey,
-                (double) thirtyDaysAgoTime,
-                (double) currentTime);
-        // PostExplicitTimeAo
-        Collection<Object> userCommentFeature = redissonService.zRangeByScore(
-                userCommentFeatureKey,
-                (double) thirtyDaysAgoTime,
-                (double) currentTime
-        );
-
+        // 此处获取的是user全部特征的记录
         List<Collection<Object>> userFeatureList = new ArrayList<>();
-        userFeatureList.add(userClickFeature);
-        userFeatureList.add(userBrowseFeature);
-        userFeatureList.add(userSearchFeature);
-        userFeatureList.add(userOperateFeature);
-        userFeatureList.add(userCommentFeature);
-
-        // 4.计算热度 + 排序
-        List<PostHeatAo> postHeats = getTempPostHeats(userFeatureList);
-
-        // 记录在redis中 ZSet
-        String redisKey = UserActionRedisKey.POST_HEAT_LIST_REDIS_KEY_PREFIX;
-        // 创建一个 Map 来存储 score 和 value
-        Map<Object, Double> postHeatMap = new HashMap<>();
-        for (PostHeatAo postHeat : postHeats) {
-            postHeatMap.put(postHeat.getPostId(), postHeat.getHeatScore());
+        // 此处获取的是user:*的全部记录
+        Collection<Object> userClickFeatures = new ArrayList<>();
+        Collection<Object> userBrowseFeatures = new ArrayList<>();
+        Collection<Object> userSearchFeatures = new ArrayList<>();
+        Collection<Object> userOperateFeatures = new ArrayList<>();
+        Collection<Object> userCommentFeatures = new ArrayList<>();
+        for (String key : userClickFeatureKeys) {
+            // 此处获取的是userId:postId的多个记录
+            Collection<Object> userClickFeature = redissonService.zRangeByScore(
+                    key,
+                    (double) thirtyDaysAgoTime,
+                    (double) currentTime);
+            userClickFeatures.addAll(userClickFeature);
         }
-        // 调用 zAddAll 方法
-        int addedCount = redissonService.zAddAll(
-                redisKey,
-                postHeatMap,
-                FeatureConstant.FEATURE_EXPIRE_TIME_SECOND
-        );
-        log.info("添加 {} 条热门post据到 Redis 中，key: {}", addedCount, redisKey);
+        for (String key : userBrowseFeatureKeys) {
+            Collection<Object> userBrowseFeature = redissonService.zRangeByScore(
+                    key,
+                    (double) thirtyDaysAgoTime,
+                    (double) currentTime);
+            userBrowseFeatures.addAll(userBrowseFeature);
+        }
+        for (String key : userSearchFeatureKeys) {
+            Collection<Object> userSearchFeature = redissonService.zRangeByScore(
+                    key,
+                    (double) thirtyDaysAgoTime,
+                    (double) currentTime);
+            userSearchFeatures.addAll(userSearchFeature);
+        }
+        for (String key : userOperateFeatureKeys){
+            Collection<Object> userOperateFeature = redissonService.zRangeByScore(
+                    key,
+                    (double) thirtyDaysAgoTime,
+                    (double) currentTime);
+            userOperateFeatures.addAll(userOperateFeature);
+        }
+        for (String key : userCommentFeatureKeys){
+            Collection<Object> userCommentFeature = redissonService.zRangeByScore(
+                    key,
+                    (double) thirtyDaysAgoTime,
+                    (double) currentTime);
+            userCommentFeatures.addAll(userCommentFeature);
+        }
+
+        // 全部加入 userFeatureList
+        userFeatureList.add(userClickFeatures);
+        userFeatureList.add(userBrowseFeatures);
+        userFeatureList.add(userSearchFeatures);
+        userFeatureList.add(userOperateFeatures);
+        userFeatureList.add(userCommentFeatures);
+
+        // 3.计算热度 + 排序
+        return getTempPostHeats(userFeatureList);
     }
 
     @Override

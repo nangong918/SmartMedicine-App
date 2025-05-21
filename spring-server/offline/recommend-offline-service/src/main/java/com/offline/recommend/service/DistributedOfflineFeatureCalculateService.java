@@ -10,8 +10,18 @@ package com.offline.recommend.service;
  */
 public interface DistributedOfflineFeatureCalculateService {
 
+    /**
+     * 计算用户活跃度
+     */
     void calculateUserHeat();
 
-    void calculateUserFeatures();
+    /**
+     * 计算帖子热度
+     */
+    void calculatePostHeats();
 
+    /**
+     * 计算用户特征
+     */
+    void calculateUserFeatures();
 }

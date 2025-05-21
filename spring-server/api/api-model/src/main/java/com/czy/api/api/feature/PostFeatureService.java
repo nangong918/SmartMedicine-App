@@ -27,7 +27,7 @@ public interface PostFeatureService {
      * 获取热门帖子
      * 提供给定时任务每日调用的方法，获取之后存储在redis
      */
-    void getHotPosts();
+    List<PostHeatAo> getHotPosts();
 
     /**
      * 提供给用户调用的方法

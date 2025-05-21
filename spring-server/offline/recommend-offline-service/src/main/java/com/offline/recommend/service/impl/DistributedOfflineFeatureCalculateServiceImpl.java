@@ -1,10 +1,12 @@
 package com.offline.recommend.service.impl;
 
+import com.czy.api.api.feature.PostFeatureService;
 import com.czy.api.api.feature.UserFeatureService;
 import com.czy.api.api.feature.UserHeatService;
 import com.czy.api.constant.offline.OfflineRedisConstant;
-import com.czy.api.domain.ao.feature.UserTempFeatureAo;
+import com.czy.api.domain.ao.feature.PostHeatAo;
 import com.czy.api.domain.ao.feature.UserHeatAo;
+import com.czy.api.domain.ao.feature.UserTempFeatureAo;
 import com.offline.recommend.service.DistributedOfflineFeatureCalculateService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
@@ -15,7 +17,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ public class DistributedOfflineFeatureCalculateServiceImpl implements Distribute
 
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserHeatService userHeatService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private PostFeatureService postFeatureService;
     private final RedissonService redissonService;
     private final Environment environment;
     private final UserFeatureService userFeatureService;
@@ -43,7 +46,7 @@ public class DistributedOfflineFeatureCalculateServiceImpl implements Distribute
         RedissonClusterLock redissonClusterLock =
                 new RedissonClusterLock(
                         OfflineRedisConstant.OFFLINE_USER_HEAT_CALCULATE_FLAG,
-                        OfflineRedisConstant.offlineUserHeatCalculateFlagExpireTime
+                        OfflineRedisConstant.OFFLINE_USER_HEAT_CALCULATE_FLAG_EXPIRE_TIME
                 );
 
         if (redissonService.tryLock(redissonClusterLock)){
@@ -88,15 +91,70 @@ public class DistributedOfflineFeatureCalculateServiceImpl implements Distribute
         long userHeatSortStartTime = System.currentTimeMillis();
         userHeatAos.sort((o1, o2) -> o2.getHeatScore().compareTo(o1.getHeatScore()));
         // 输出排序时间和计算时间
-        log.info("排序耗时：{}ms， 计算总耗时：{}ms",
+        log.info("活跃用户排序耗时：{}ms， 计算总耗时：{}ms",
                 System.currentTimeMillis() - userHeatSortStartTime,
                 System.currentTimeMillis() - userHeatCalculateStartTime);
         return userHeatAos;
     }
 
     @Override
+    public void calculatePostHeats() {
+        // 检查是否已经开始计算了：并且不主动解除分布式锁，因为一天只算一次
+        RedissonClusterLock redissonClusterLock =
+                new RedissonClusterLock(
+                        OfflineRedisConstant.OFFLINE_POST_HEAT_KEY,
+                        OfflineRedisConstant.OFFLINE_POST_HEAT_EXPIRE_TIME
+                );
+
+        if (redissonService.tryLock(redissonClusterLock)){
+            log.info("开始计算帖子热度, 执行端口号：{}", getClusterCurrentPost());
+
+            // 转为ZSet的键值对
+            List<PostHeatAo> postHeatAos = getPostHeatAos();
+            if (CollectionUtils.isEmpty(postHeatAos)){
+                log.warn("帖子热度列表为空，结束计算");
+                return;
+            }
+
+            Map<Object, Double> zSetValues = new HashMap<>();
+            for (PostHeatAo postHeatAo : postHeatAos) {
+                // 假设 userId 是唯一标识，热度可以是某个属性，比如热度值
+                zSetValues.put(
+                        postHeatAo.getPostId(),
+                        postHeatAo.getHeatScore()
+                );
+            }
+
+            redissonService.zAddAll(
+                    OfflineRedisConstant.OFFLINE_POST_HEAT_KEY,
+                    zSetValues,
+                    OfflineRedisConstant.ONE_DAY
+            );
+        }
+    }
+
+    private List<PostHeatAo> getPostHeatAos(){
+        long userHeatCalculateStartTime = System.currentTimeMillis();
+        List<PostHeatAo> postHeatAos = postFeatureService.getHotPosts();
+        if (CollectionUtils.isEmpty(postHeatAos)){
+            return new ArrayList<>();
+        }
+        else {
+            log.info("帖子数量：{}", postHeatAos.size());
+        }
+        // 按照热度从大到校排序 + 排序时间
+        log.info("开始排序帖子热度列表");
+        long userHeatSortStartTime = System.currentTimeMillis();
+        postHeatAos.sort((o1, o2) -> o2.getHeatScore().compareTo(o1.getHeatScore()));
+        // 输出排序时间和计算时间
+        log.info("热门帖子排序耗时：{}ms， 计算总耗时：{}ms",
+                System.currentTimeMillis() - userHeatSortStartTime,
+                System.currentTimeMillis() - userHeatCalculateStartTime);
+        return postHeatAos;
+    }
+
+    @Override
     public void calculateUserFeatures() {
-        log.info("开始尝试计算离线特征, 当前时间：{}", LocalDateTime.now());
 
         // 获取活跃user；然后遍历，查询redis中是否存在数据，不存在就进行计算
         Collection<Object> activeUsers = redissonService.zReverseRange(
