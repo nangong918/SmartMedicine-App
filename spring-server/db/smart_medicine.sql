@@ -11,7 +11,7 @@
  Target Server Version : 80034
  File Encoding         : 65001
 
- Date: 23/04/2025 17:47:59
+ Date: 14/05/2025 16:33:42
 */
 
 SET NAMES utf8mb4;
@@ -48,7 +48,7 @@ CREATE TABLE `login_user`  (
   `password` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT 'account非null的时候不为null',
   `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'account和phone至少一个不为null',
   `permission` int NOT NULL COMMENT '用户的权限等级：user：1，admin：2',
-  `avatar_file_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '用户的头像链接',
+  `avatar_file_id` bigint NULL DEFAULT NULL COMMENT '用户的头像链接',
   `register_time` bigint NOT NULL,
   `last_online_time` bigint NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
@@ -103,7 +103,7 @@ CREATE TABLE `post_collect_folder`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `post_files`;
 CREATE TABLE `post_files`  (
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `post_id` bigint NOT NULL,
   `file_id` bigint NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
@@ -122,6 +122,7 @@ CREATE TABLE `post_info`  (
   `collect_count` bigint NOT NULL,
   `comment_count` bigint NOT NULL,
   `forward_count` bigint NULL DEFAULT 0,
+  `title` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_author_id`(`author_id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
@@ -147,6 +148,16 @@ CREATE TABLE `session`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_uid`(`uid` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for test_search
+-- ----------------------------
+DROP TABLE IF EXISTS `test_search`;
+CREATE TABLE `test_search`  (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `search_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_chat_message
@@ -182,5 +193,36 @@ CREATE TABLE `user_friend`  (
   INDEX `idx_friend_id`(`friend_id` ASC) USING BTREE,
   INDEX `idx_timestamp`(`add_time` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for user_health_data
+-- ----------------------------
+DROP TABLE IF EXISTS `user_health_data`;
+CREATE TABLE `user_health_data`  (
+  `id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  `time` bigint NOT NULL,
+  `hypertension` tinyint(1) NULL DEFAULT NULL,
+  `high_cholesterol` tinyint(1) NULL DEFAULT NULL,
+  `bmi` tinyint(1) NULL DEFAULT NULL,
+  `smoking` tinyint(1) NULL DEFAULT NULL,
+  `stroke` tinyint(1) NULL DEFAULT NULL,
+  `physical_activity` tinyint(1) NULL DEFAULT NULL,
+  `fruit_consumption` tinyint(1) NULL DEFAULT NULL,
+  `vegetable_consumption` tinyint(1) NULL DEFAULT NULL,
+  `heavy_drinking` tinyint(1) NULL DEFAULT NULL,
+  `any_healthcare` tinyint(1) NULL DEFAULT NULL,
+  `no_medical_expense` tinyint(1) NULL DEFAULT NULL,
+  `general_health_status` tinyint(1) NULL DEFAULT NULL,
+  `mental_health` tinyint(1) NULL DEFAULT NULL,
+  `physical_health` tinyint(1) NULL DEFAULT NULL,
+  `walking_difficulty` tinyint(1) NULL DEFAULT NULL,
+  `gender` tinyint(1) NULL DEFAULT NULL,
+  `age` int NULL DEFAULT NULL,
+  `education_level` tinyint(1) NULL DEFAULT NULL,
+  `income` int NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_id`(`user_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

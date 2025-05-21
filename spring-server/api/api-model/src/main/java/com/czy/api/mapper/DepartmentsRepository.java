@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DepartmentsRepository extends Neo4jRepository<DepartmentsDo, Long> {
+    String CQL_USER_DEPARTMENTS = UserFeatureRepository.RELS_USER_DEPARTMENTS + "|" + PostRepository.RELS_POST_DEPARTMENTS + "|cure_department";
+
     DepartmentsDo findByName(String name);
 }

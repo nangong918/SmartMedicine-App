@@ -1,9 +1,10 @@
 package com.czy.api.domain.Do.neo4j;
 
 
+import com.czy.api.domain.Do.neo4j.base.BaseNeo4jDo;
 import json.BaseBean;
 import lombok.Data;
-import org.neo4j.ogm.annotation.Id;
+import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.springframework.data.elasticsearch.annotations.Field;
 
@@ -13,16 +14,12 @@ import java.util.List;
  * @author 13225
  * @date 2025/4/25 16:44
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NodeEntity("疾病")
-public class DiseaseDo implements BaseBean {
+public class DiseaseDo extends BaseNeo4jDo implements BaseBean {
     // nodeLabel
     public static final String nodeLabel = "疾病";
-    @Id
-    @Field("id")
-    private Long id;
-    @Field("name")
-    private String name; // 疾病名称
     @Field("desc")
     private String desc; // 疾病描述
     @Field("prevent")
@@ -47,4 +44,9 @@ public class DiseaseDo implements BaseBean {
     private String getProb; // 感染概率
     @Field("cured_prob")
     private String curedProb; // 治愈概率
+
+    @Override
+    public String getNodeLabel() {
+        return nodeLabel;
+    }
 }

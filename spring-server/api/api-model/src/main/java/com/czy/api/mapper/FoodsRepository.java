@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FoodsRepository extends Neo4jRepository<FoodsDo, Long> {
+    String CQL_USER_FOODS = UserFeatureRepository.RELS_USER_FOODS + "|" + PostRepository.RELS_POST_FOODS + "|do_eat|not_eat";
+
     FoodsDo findByName(String name);
 }

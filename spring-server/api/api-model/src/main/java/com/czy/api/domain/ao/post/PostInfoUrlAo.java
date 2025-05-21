@@ -13,7 +13,6 @@ public class PostInfoUrlAo {
     private Long authorId;
     // fileUrl 只展示1个
     private String fileUrl;
-
     // title；not null
     private String title;
     // releaseTimestamp；not null

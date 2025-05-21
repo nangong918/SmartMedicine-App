@@ -2,20 +2,18 @@ package com.czy.api.domain.ao.post;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author 13225
  * @date 2025/4/18 17:24
  */
 @Data
 public class PostInfoAo {
+    // postId
     private Long id;
     // authorId；not null（索引）
     private Long authorId;
     // fileId 只展示1个
     private Long fileId;
-
     // title；not null
     private String title;
     // releaseTimestamp；not null

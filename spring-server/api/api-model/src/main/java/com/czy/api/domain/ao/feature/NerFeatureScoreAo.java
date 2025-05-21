@@ -12,9 +12,17 @@ import lombok.Data;
 public class NerFeatureScoreAo {
     private String keyWord;
     private String nerType;
-    private Integer score = 0;
+    private ScoreAo score = new ScoreAo();
 
     public boolean isEmpty() {
         return keyWord == null || keyWord.isEmpty() || nerType == null || nerType.isEmpty();
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        NerFeatureScoreAo cloned = (NerFeatureScoreAo) super.clone();
+        // 深拷贝 ScoreAo
+        cloned.score = (ScoreAo) score.clone();
+        return cloned;
     }
 }

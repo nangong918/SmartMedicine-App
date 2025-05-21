@@ -39,6 +39,8 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
     String RELS_POST_RECIPES = "post_recipes";
     // post_symptoms
     String RELS_POST_SYMPTOMS = "post_symptoms";
+    // post_label
+    String RELS_POST_POST_LABEL = "post_post_label";
 
 
     PostNeo4jDo findByTitle(String title);

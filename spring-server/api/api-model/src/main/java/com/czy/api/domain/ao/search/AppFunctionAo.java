@@ -8,4 +8,6 @@ import lombok.Data;
  */
 @Data
 public class AppFunctionAo {
+    private String message;
+    private Integer intent;
 }
