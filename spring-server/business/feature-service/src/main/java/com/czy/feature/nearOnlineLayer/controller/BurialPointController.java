@@ -8,6 +8,7 @@ import com.czy.api.domain.dto.http.request.UserBrowseTimeRequest;
 import com.czy.api.domain.dto.http.request.UserCityLocationRequest;
 import com.czy.api.domain.dto.http.request.UserClickPostRequest;
 import com.czy.feature.nearOnlineLayer.service.UserActionRecordService;
+import com.czy.springUtils.debug.DebugConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -63,11 +64,15 @@ public class BurialPointController {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     private final UserActionRecordService userActionRecordService;
+    private final DebugConfig debugConfig;
 
     // 上传用户的城市等信息
     @PostMapping("/city")
     public BaseResponse<String>
     uploadUserInfo(@Validated @RequestBody UserCityLocationRequest request) {
+        if (!debugConfig.isRecordUserAccount()){
+            return BaseResponse.getResponseEntitySuccess("后端debug模式不记录");
+        }
         Long userId = userService.getIdByAccount(request.getUserAccount());
         if (userId == null){
             return BaseResponse.LogBackError("用户不存在");
@@ -82,6 +87,9 @@ public class BurialPointController {
     @PostMapping("/clickPost")
     public BaseResponse<String>
     clickPost(@Validated @RequestBody UserClickPostRequest request) {
+        if (!debugConfig.isRecordUserAccount()){
+            return BaseResponse.getResponseEntitySuccess("后端debug模式不记录");
+        }
         Long userId = userService.getIdByAccount(request.getUserAccount());
         if (userId == null){
             return BaseResponse.LogBackError("用户不存在");
@@ -94,6 +102,9 @@ public class BurialPointController {
     @PostMapping("/browseTime")
     public BaseResponse<String>
     uploadClickPostAndBrowseTime(@Validated @RequestBody UserBrowseTimeRequest request) {
+        if (!debugConfig.isRecordUserAccount()){
+            return BaseResponse.getResponseEntitySuccess("后端debug模式不记录");
+        }
         Long userId = userService.getIdByAccount(request.getUserAccount());
         if (userId == null){
             return BaseResponse.LogBackError("用户不存在");
