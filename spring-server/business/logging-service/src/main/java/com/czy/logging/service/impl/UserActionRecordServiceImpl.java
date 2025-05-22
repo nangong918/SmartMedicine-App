@@ -60,7 +60,8 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     private final RedissonService redissonService;
     private final UserFeatureRepository userFeatureRepository;
     private final DebugConfig debugConfig;
-    private final PostFeatureService postFeatureService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private PostFeatureService postFeatureService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private PostSearchService postSearchService;
     private final FeatureStorageService featureStorageService;

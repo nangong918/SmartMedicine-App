@@ -1,4 +1,4 @@
-package com.czy.logging.kafka;
+package com.czy.logging.mqHander.kafka;
 
 import com.czy.api.api.feature.NlpService;
 import com.czy.api.constant.feature.FeatureKafkaConstant;
@@ -11,6 +11,7 @@ import com.czy.logging.service.UserActionRecordService;
 import com.czy.springUtils.debug.DebugConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -26,7 +27,8 @@ public class UserActionKafkaHandler {
 
     private final UserActionRecordService userActionRecordService;
     private final DebugConfig debugConfig;
-    private final NlpService nlpService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private NlpService nlpService;
 
     @KafkaListener(topics = UserActionCommentPost.TOPIC,
     groupId = FeatureKafkaConstant.GROUP_ID + UserActionCommentPost.TOPIC)

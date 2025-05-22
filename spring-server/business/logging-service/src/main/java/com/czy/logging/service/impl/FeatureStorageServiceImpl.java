@@ -19,6 +19,7 @@ import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.logging.service.FeatureStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -47,7 +48,8 @@ public class FeatureStorageServiceImpl implements FeatureStorageService {
 //    private final RecipesRepository recipesRepository;
 //    private final SymptomsRepository symptomsRepository;
 
-    private final PostFeatureService postFeatureService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private PostFeatureService postFeatureService;
 
     private void saveUserRelation(UserFeatureNeo4jDo user) {
         UserFeatureNeo4jDo findUserDo = userFeatureRepository.findByName(user.getName());
