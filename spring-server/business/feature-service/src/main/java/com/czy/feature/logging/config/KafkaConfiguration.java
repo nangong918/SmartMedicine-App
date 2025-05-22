@@ -1,4 +1,4 @@
-package com.czy.feature.nearOnlineLayer.config;
+package com.czy.feature.logging.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

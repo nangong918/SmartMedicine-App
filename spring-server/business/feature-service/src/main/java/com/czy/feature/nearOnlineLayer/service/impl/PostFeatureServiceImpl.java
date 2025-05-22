@@ -22,7 +22,7 @@ import com.czy.api.domain.ao.feature.PostHeatAo;
 import com.czy.api.domain.ao.feature.ScoreDaysAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.PostRepository;
-import com.czy.feature.nearOnlineLayer.rule.RulePostHeat;
+import com.czy.feature.rule.RulePostHeat;
 import com.czy.api.api.feature.PostFeatureService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;

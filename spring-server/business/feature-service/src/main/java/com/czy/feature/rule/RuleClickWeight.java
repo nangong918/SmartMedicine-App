@@ -1,4 +1,4 @@
-package com.czy.feature.nearOnlineLayer.rule;
+package com.czy.feature.rule;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

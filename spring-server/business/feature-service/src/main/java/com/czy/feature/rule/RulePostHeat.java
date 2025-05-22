@@ -1,4 +1,4 @@
-package com.czy.feature.nearOnlineLayer.rule;
+package com.czy.feature.rule;
 
 import com.czy.api.domain.ao.feature.PostHeatAo;
 import com.czy.api.domain.ao.feature.ScoreAo;

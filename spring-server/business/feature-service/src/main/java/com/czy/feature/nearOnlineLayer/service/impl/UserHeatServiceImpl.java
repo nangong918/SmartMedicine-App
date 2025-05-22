@@ -6,7 +6,7 @@ import com.czy.api.constant.feature.UserActionRedisKey;
 import com.czy.api.domain.ao.feature.HeatDaysAo;
 import com.czy.api.domain.ao.feature.UserHeatAo;
 import com.czy.api.domain.ao.feature.UserHeatRecordAo;
-import com.czy.feature.nearOnlineLayer.rule.RuleTempFeature;
+import com.czy.feature.rule.RuleTempFeature;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

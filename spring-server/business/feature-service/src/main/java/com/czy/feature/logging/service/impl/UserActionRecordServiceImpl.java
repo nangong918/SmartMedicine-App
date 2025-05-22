@@ -1,4 +1,4 @@
-package com.czy.feature.nearOnlineLayer.service.impl;
+package com.czy.feature.logging.service.impl;
 
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.feature.FeatureConstant;
@@ -9,14 +9,14 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.ao.feature.*;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
-import com.czy.feature.nearOnlineLayer.rule.RuleCommentPost;
-import com.czy.feature.nearOnlineLayer.rule.RulePostOperation;
-import com.czy.feature.nearOnlineLayer.rule.RulePostReadTime;
-import com.czy.feature.nearOnlineLayer.rule.RuleSearchPost;
-import com.czy.feature.nearOnlineLayer.rule.RuleUserBrowseHeat;
+import com.czy.feature.rule.RuleCommentPost;
+import com.czy.feature.rule.RulePostOperation;
+import com.czy.feature.rule.RulePostReadTime;
+import com.czy.feature.rule.RuleSearchPost;
+import com.czy.feature.rule.RuleUserBrowseHeat;
 import com.czy.feature.nearOnlineLayer.service.FeatureStorageService;
 import com.czy.api.api.feature.PostFeatureService;
-import com.czy.feature.nearOnlineLayer.service.UserActionRecordService;
+import com.czy.feature.logging.service.UserActionRecordService;
 import com.czy.springUtils.debug.DebugConfig;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;

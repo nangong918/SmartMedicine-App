@@ -2,7 +2,7 @@ package com.czy.feature.nearOnlineLayer.service.impl;
 
 import com.czy.api.api.feature.FeatureRuleService;
 import com.czy.api.domain.ao.feature.ScoreAo;
-import com.czy.feature.nearOnlineLayer.rule.RuleHistoryFeature;
+import com.czy.feature.rule.RuleHistoryFeature;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

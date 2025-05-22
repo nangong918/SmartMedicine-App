@@ -1,4 +1,4 @@
-package com.czy.feature.nearOnlineLayer.mqHander.kafka;
+package com.czy.feature.logging.mqHander.kafka;
 
 import com.czy.api.api.feature.NlpService;
 import com.czy.api.constant.feature.FeatureKafkaConstant;
@@ -7,7 +7,7 @@ import com.czy.api.domain.ao.feature.CommentEmotionAo;
 import com.czy.api.domain.entity.kafkaMessage.UserActionCommentPost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionOperatePost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
-import com.czy.feature.nearOnlineLayer.service.UserActionRecordService;
+import com.czy.feature.logging.service.UserActionRecordService;
 import com.czy.springUtils.debug.DebugConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

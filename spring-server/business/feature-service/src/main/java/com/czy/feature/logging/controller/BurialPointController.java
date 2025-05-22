@@ -1,4 +1,4 @@
-package com.czy.feature.nearOnlineLayer.controller;
+package com.czy.feature.logging.controller;
 
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.feature.FeatureConstant;
@@ -7,7 +7,7 @@ import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.UserBrowseTimeRequest;
 import com.czy.api.domain.dto.http.request.UserCityLocationRequest;
 import com.czy.api.domain.dto.http.request.UserClickPostRequest;
-import com.czy.feature.nearOnlineLayer.service.UserActionRecordService;
+import com.czy.feature.logging.service.UserActionRecordService;
 import com.czy.springUtils.debug.DebugConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
