@@ -1,13 +1,13 @@
-package com.czy.feature.logging.controller;
+package com.czy.logging.controller;
 
 import com.czy.api.api.user.UserService;
-import com.czy.api.constant.feature.FeatureConstant;
+import com.czy.api.constant.logging.LoggingConstant;
 import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.UserBrowseTimeRequest;
 import com.czy.api.domain.dto.http.request.UserCityLocationRequest;
 import com.czy.api.domain.dto.http.request.UserClickPostRequest;
-import com.czy.feature.logging.service.UserActionRecordService;
+import com.czy.logging.service.UserActionRecordService;
 import com.czy.springUtils.debug.DebugConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated // 启用校验
 @RequiredArgsConstructor // 自动注入@Autowired
-@RequestMapping(FeatureConstant.BurialPoint_CONTROLLER)
+@RequestMapping(LoggingConstant.BurialPoint_CONTROLLER)
 public class BurialPointController {
 
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)

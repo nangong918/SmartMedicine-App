@@ -1,4 +1,4 @@
-package com.czy.feature.logging.config;
+package com.czy.logging;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

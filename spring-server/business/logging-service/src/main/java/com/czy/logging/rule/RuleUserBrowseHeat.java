@@ -1,4 +1,4 @@
-package com.czy.feature.rule;
+package com.czy.logging.rule;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

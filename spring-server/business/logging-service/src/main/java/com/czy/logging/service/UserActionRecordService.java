@@ -1,4 +1,4 @@
-package com.czy.feature.logging.service;
+package com.czy.logging.service;
 
 import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;

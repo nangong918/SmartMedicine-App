@@ -1,5 +1,6 @@
-package com.czy.feature.nearOnlineLayer.service.impl;
+package com.czy.logging.service.impl;
 
+import com.czy.api.api.feature.PostFeatureService;
 import com.czy.api.constant.feature.FeatureTypeChanger;
 import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.domain.Do.neo4j.DiseaseDo;
@@ -15,8 +16,7 @@ import com.czy.api.domain.ao.feature.ScoreAo;
 import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
-import com.czy.feature.nearOnlineLayer.service.FeatureStorageService;
-import com.czy.api.api.feature.PostFeatureService;
+import com.czy.logging.service.FeatureStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

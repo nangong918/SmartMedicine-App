@@ -1,4 +1,4 @@
-package com.czy.feature.rule;
+package com.czy.logging.rule;
 
 import com.czy.api.constant.feature.CommentEmotionTypeEnum;
 import lombok.extern.slf4j.Slf4j;
