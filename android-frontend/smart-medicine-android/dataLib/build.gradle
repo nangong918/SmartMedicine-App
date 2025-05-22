@@ -1,0 +1,92 @@
+import com.czy.buildsrc.BuildConfig
+
+plugins {
+    alias(libs.plugins.android.library)
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+android {
+    namespace 'com.czy.datalib'
+    compileSdk BuildConfig.Version.compileVersion
+
+    defaultConfig {
+        minSdk BuildConfig.Version.minVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        // Jetpack的Room的schemas文件生成目录
+        javaCompileOptions {
+            annotationProcessorOptions {
+                // 指定 Room Migration 升级数据库导出的 Schema 文件位置
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+
+        // 如果使用kotlin：(使用了kapt，不使用这里会报错；用了可以不用上面那行了)
+        kapt {
+            arguments {
+                // 指定 Room Migration 升级数据库导出的 Schema 文件位置
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            multiDexEnabled BuildConfig.BuildFeature.multiDex
+            minifyEnabled BuildConfig.BuildFeature.minify
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            multiDexEnabled BuildConfig.BuildFeature.multiDex
+            minifyEnabled BuildConfig.BuildFeature.minify
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility BuildConfig.Version.javaVersion
+        targetCompatibility BuildConfig.Version.javaVersion
+    }
+    kapt {
+        correctErrorTypes = true
+    }
+}
+
+dependencies {
+    /**
+     * 基础App依赖
+     */
+    implementation libs.appcompat
+    implementation libs.material
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+
+    // OkHttp3
+    // websocket
+    implementation libs.mockwebserver
+    // OkHttp是一个高性能的HTTP客户端库,用于处理网络请求
+    implementation libs.okhttp
+    // OkHttp的日志
+    implementation libs.logging.interceptor
+
+    // Retrofit
+    implementation libs.retrofit
+    implementation libs.converter.gson
+    implementation libs.adapter.rxjava2
+
+    // RxJava和RxAndroid
+    implementation libs.rxjava
+    implementation libs.rxandroid
+
+    // Room
+    kapt libs.androidx.room.room.compiler
+    implementation libs.room.runtime
+    implementation libs.androidx.room.rxjava2
+    annotationProcessor libs.androidx.room.room.compiler
+
+    implementation project(':dal')
+    implementation project(':appCoreLib')
+    implementation project(':baseUtilsLib')
+}

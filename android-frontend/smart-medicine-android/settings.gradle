@@ -43,3 +43,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "smart-medicine-android"
 include ':app'
+include ':view'
+include ':appCoreLib'
+include ':baseUtilsLib'
+include ':dal'
+include ':dataLib'
