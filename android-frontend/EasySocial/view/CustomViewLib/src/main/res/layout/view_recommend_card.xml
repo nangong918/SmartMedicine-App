@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/basicCard"
+        android:layout_width="160dp"
+        android:layout_marginStart="15dp"
+        android:layout_height="wrap_content"
+        app:cardElevation="25dp"
+        app:cardBackgroundColor="@color/green_50">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/cardImage"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="130dp"
+                android:layout_height="100dp"
+                android:src="@mipmap/logo"/>
+
+            <TextView
+                android:id="@+id/textTitle"
+                android:background="@drawable/text_background"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:paddingStart="5dp"
+                android:layout_width="130dp"
+                android:text="标题"
+                android:maxLines="1"
+                android:textSize="17sp"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/cardUserFace"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@mipmap/logo"/>
+
+                <TextView
+                    android:id="@+id/cardUserID"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="90dp"
+                    android:text="用户ID"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/favorite"
+                    android:src="@drawable/favorite_border"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"/>
+
+                <ImageView
+                    android:id="@+id/star"
+                    android:src="@drawable/star_border"
+                    android:layout_marginStart="3dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"/>
+
+                <ImageView
+                    android:id="@+id/unlike"
+                    android:src="@drawable/heart_broken"
+                    android:layout_marginStart="40dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="5dp"
+                android:layout_height="5dp">
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/basicCard2"
+        android:layout_width="160dp"
+        android:layout_marginStart="10dp"
+        android:layout_height="wrap_content"
+        app:cardElevation="25dp"
+        app:cardBackgroundColor="@color/green_50">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/cardImage2"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="130dp"
+                android:layout_height="100dp"
+                android:src="@mipmap/logo"/>
+
+            <TextView
+                android:id="@+id/textTitle2"
+                android:background="@drawable/text_background"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:paddingStart="5dp"
+                android:layout_width="130dp"
+                android:text="标题"
+                android:maxLines="1"
+                android:textSize="17sp"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/cardUserFace2"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@mipmap/logo"/>
+
+                <TextView
+                    android:id="@+id/cardUserID2"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="90dp"
+                    android:text="用户ID"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/favorite2"
+                    android:src="@drawable/favorite_border"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"/>
+
+                <ImageView
+                    android:id="@+id/star2"
+                    android:src="@drawable/star_border"
+                    android:layout_marginStart="3dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"/>
+
+                <ImageView
+                    android:id="@+id/unlike2"
+                    android:src="@drawable/heart_broken"
+                    android:layout_marginStart="40dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="5dp"
+                android:layout_height="5dp">
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+</LinearLayout>
