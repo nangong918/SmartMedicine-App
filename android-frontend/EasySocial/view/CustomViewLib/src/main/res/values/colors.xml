@@ -66,4 +66,12 @@
     <color name="dark_red_800">#371518</color>
     <color name="dark_red_900">#230E10</color>
     <color name="dark_red_1000">#15080A</color>
+
+    <color name="green_0">#f8faf0</color>
+    <color name="green_10">#edefe5</color>
+    <color name="green_50">#F0FFD0</color>
+    <color name="green_90">#cdef85</color>
+    <color name="green_100">#6e970c</color>
+    <color name="green_500">#4b6708</color>
+    <color name="green_1000">#131f00</color>
 </resources>

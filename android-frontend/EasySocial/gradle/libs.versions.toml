@@ -21,6 +21,7 @@ roomRuntime = "2.6.1"
 rxandroid = "2.1.1"
 rxjava = "2.2.21"
 activity = "1.10.0"
+swiperefreshlayout = "1.1.0"
 
 [libraries]
 adapter-rxjava2 = { module = "com.squareup.retrofit2:adapter-rxjava2", version.ref = "retrofit" }
@@ -29,6 +30,7 @@ androidx-room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
+swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 fastjson = { module = "com.alibaba:fastjson", version.ref = "fastjson" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jacksonDatabind" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
