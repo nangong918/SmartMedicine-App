@@ -55,6 +55,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @CrossOrigin(origins = "*") // 跨域
+@Deprecated                 // 过时，改为netty传输埋点事件
 @RestController
 @Validated // 启用校验
 @RequiredArgsConstructor // 自动注入@Autowired
@@ -67,6 +68,7 @@ public class BurialPointController {
     private final DebugConfig debugConfig;
 
     // 上传用户的城市等信息
+    @Deprecated
     @PostMapping("/city")
     public BaseResponse<String>
     uploadUserInfo(@Validated @RequestBody UserCityLocationRequest request) {
@@ -84,6 +86,7 @@ public class BurialPointController {
     }
 
     // 用户点击帖子（与浏览时长拆开，避免用户直接划掉后台）
+    @Deprecated
     @PostMapping("/clickPost")
     public BaseResponse<String>
     clickPost(@Validated @RequestBody UserClickPostRequest request) {
@@ -99,6 +102,7 @@ public class BurialPointController {
     }
 
     // 上传用用的点击帖子 + 浏览时长
+    @Deprecated
     @PostMapping("/browseTime")
     public BaseResponse<String>
     uploadClickPostAndBrowseTime(@Validated @RequestBody UserBrowseTimeRequest request) {

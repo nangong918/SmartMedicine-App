@@ -4,6 +4,7 @@ package com.czy.post.component;
 import com.czy.api.constant.mq.PostMqConstant;
 import com.czy.api.constant.mq.SocketMessageMqConstant;
 import com.czy.api.constant.netty.MessageTypeTranslator;
+import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.converter.base.BaseResponseConverter;
 import com.czy.api.domain.dto.base.BaseResponseData;
 import com.czy.api.domain.entity.event.Message;
@@ -47,6 +48,9 @@ public class RabbitMqSender {
     public void push(BaseResponseData baseResponseData){
         Message message = baseResponseConverter.getMessage(baseResponseData);
         message.setType(MessageTypeTranslator.translateClean(baseResponseData.getType()));
+        if (ResponseMessageType.NULL.equals(message.getType())){
+            return;
+        }
         rabbitTemplate.convertAndSend(
                 SocketMessageMqConstant.USER_RECEIVE_QUEUE,
                 message);

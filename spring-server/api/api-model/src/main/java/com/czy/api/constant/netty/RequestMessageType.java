@@ -233,4 +233,21 @@ public class RequestMessageType {
         @MsgTranslator(responseType = ResponseMessageType.Oss.DELETE_FILE)
         public final static String DELETE_FILE = requestRoot + root + "deleteFile";
     }
+
+    public final static class Logging {
+        public final static String root = "Logging:";
+        // 位置信息事件
+        private static final String location = "location:";
+        // 点击事件
+        private static final String click = "click:";
+        // 浏览事件
+        private static final String browse = "browse:";
+
+        @MsgTranslator(responseType = ResponseMessageType.NULL)
+        public final static String LOGGING_LOCATION = requestRoot + root + location;
+        @MsgTranslator(responseType = ResponseMessageType.NULL)
+        public final static String LOGGING_CLICK = requestRoot + root + click;
+        @MsgTranslator(responseType = ResponseMessageType.NULL)
+        public final static String LOGGING_BROWSE = requestRoot + root + browse;
+    }
 }
