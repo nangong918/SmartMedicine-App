@@ -222,6 +222,20 @@ item内容存放在mongoDB，item和attitude的关系不知道存在哪里
    * Java:多线程,网络
 6. 集中本地测试
 7. 完善上线:
-   * 阿尔萨斯
+   * 阿尔萨斯s'x's
    * Docker
    * K8s
+
+
+todo 搭建Elk（Elasticsearch, Logstash, Kibana）
+集成：Hadoop；HDFS
+
+
+做个冷热的区分
+想这种30天离线数据就可以放在hive 用hivesql直接做计算
+3天的话可以放StarRocks / ClickHouse 配合flink
+如果需要查询频次高的话加ES
+
+离线层 (Hive)
+近线层 (StarRocks / ClickHouse)
+在线层 (Elasticsearch + Redis)
