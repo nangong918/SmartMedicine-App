@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace 'com.czy.easysocial'
+    namespace 'com.czy.smartmedicine'
     compileSdk BuildConfig.Version.compileVersion
 
     defaultConfig {
-        applicationId "com.czy.easysocial"
+        applicationId "com.czy.smartmedicine"
         minSdk BuildConfig.Version.minVersion
         targetSdk BuildConfig.Version.targetVersion
         versionCode BuildConfig.Version.versionCode

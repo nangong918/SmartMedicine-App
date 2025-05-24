@@ -8,17 +8,17 @@ public class BaseConfig extends com.czy.baseUtilsLib.config.BaseConfig {
     // Local Url
     public static final String LOCAL_URL = "http://" + LOCAL_ADDRESS;
     // Test Url
-    public static final String TEST_URL = "https://easysocial/test/";
+    public static final String TEST_URL = "https://smartmedicine/test/";
     // Production Url
-    public static final String PRODUCTION_URL = "https://easysocial/api/";
+    public static final String PRODUCTION_URL = "https://smartmedicine/api/";
 
     // Local webSocket Url
     public static final String LOCAL_WEB_SOCKET_URL = "ws://" + LOCAL_ADDRESS + "ws/";
-    public static final String TEST_WEB_SOCKET_URL = "ws://easysocial/ws/";
-    public static final String PRODUCTION_WEB_SOCKET_URL = "ws://easysocial/ws/";
+    public static final String TEST_WEB_SOCKET_URL = "ws://smartmedicine/ws/";
+    public static final String PRODUCTION_WEB_SOCKET_URL = "ws://smartmedicine/ws/";
 
     // 包名
-    public static final String PACKAGE_NAME = "com.czy.easysocial";
+    public static final String PACKAGE_NAME = "com.czy.smartmedicine";
 
     // 验证码长度
     public static final int V_CODE_LENGTH = 6;
