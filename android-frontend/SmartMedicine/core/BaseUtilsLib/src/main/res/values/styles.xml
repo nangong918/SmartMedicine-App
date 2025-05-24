@@ -1,0 +1,8 @@
+<resources>
+
+    <style name="My_AppCompat_Dialog_Theme" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+</resources>

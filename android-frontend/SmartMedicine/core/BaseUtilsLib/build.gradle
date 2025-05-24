@@ -1,0 +1,124 @@
+// 公共BaseUtils不使用任何Lab和BuildSrc
+plugins {
+    id 'com.android.library'
+    // 导入kotlin的库 (Java中需要调用Kotlin代码，必须导入此)
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+
+android {
+    namespace 'com.czy.baseUtilsLib'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 28
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        multiDexEnabled true
+
+        // Jetpack的Room的schemas文件生成目录
+        javaCompileOptions {
+            annotationProcessorOptions {
+                // 指定 Room Migration 升级数据库导出的 Schema 文件位置
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+
+        // 如果使用kotlin：(使用了kapt，不使用这里会报错；用了可以不用上面那行了)
+        kapt {
+            arguments {
+                // 指定 Room Migration 升级数据库导出的 Schema 文件位置
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        viewBinding = true
+        // dataBinding需要使用kapt
+        dataBinding = true
+        aidl = false
+    }
+    kapt {
+        correctErrorTypes = true
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+
+    /**
+     *  第三方库
+     */
+
+    // 圆形的 ImageView 组件
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    // 权限申请
+    implementation 'com.guolindev.permissionx:permissionx:1.6.1'
+
+    // FastJson
+    implementation 'com.alibaba:fastjson:1.2.54'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // EventBus
+    implementation 'org.greenrobot:eventbus:3.1.1'
+
+    // Room
+    kapt "androidx.room:room-compiler:2.6.1"
+    implementation 'androidx.room:room-runtime:2.6.1'
+    implementation "androidx.room:room-rxjava2:2.6.1"
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+
+    // OkHttp3
+        // websocket
+    implementation 'com.squareup.okhttp3:mockwebserver:3.8.1'
+        // OkHttp是一个高性能的HTTP客户端库,用于处理网络请求
+    implementation "com.squareup.okhttp3:okhttp:3.14.9"
+        // OkHttp的日志
+    implementation "com.squareup.okhttp3:logging-interceptor:3.14.9"
+
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.9.0"
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+    // RxJava和RxAndroid
+    implementation "io.reactivex.rxjava2:rxjava:2.2.21"
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
+
+    // MultiDexApplication
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // zxing 扫码与二维码生成
+    implementation 'com.google.zxing:core:3.3.3'
+
+    // 加密
+    implementation 'androidx.security:security-crypto:1.0.0'
+}

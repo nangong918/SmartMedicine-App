@@ -1,0 +1,69 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+'客户端A向客户端B发送消息
+'初始化SocketMessageSender
+'登录后初始化NettySocketServiceInitiator并启动NettySocketService
+'SocketMessageSender 将ConnectRequest转为AIDL统一的Message
+'用户A的从Activity发送文本消息
+'SocketMessageSender 将UserTextMessageRequest转为AIDL统一的Message
+'NettySocketService的NettySocketManager将消息发送给后端
+'后端收到消息后，将消息转发给用户A和用户B
+'客户端B初始化NettySocketServiceInitiator中的IMessageListener监听消息
+'登录后初始化启动NettySocketService
+'IMessageListener接收到消息之后将AIDL的Message发送到Application注册的监听接口
+'Application接收到消息交给MessageHandler将消息转化为不同的响应类型;并分给交给MessagePool和EventBus发送给订阅的Activity
+'MessagePool检查是否为TextMessage类型然后存储在缓存池中,每30秒或100条就进行SQLite持久化
+'Activity启动之后首先从缓存池中读取消息,然后从SQLite读取消息,最后从后端读取消息.
+
+actor ClientA
+participant "用户A登录" as LOA
+participant "用户A的\nChat Activity" as Aa
+queue "A用户的消息缓存池\nMessagePool" as MPA
+database "用户A的SQLite" as DBA
+participant "SocketMessageSender" as SMS
+participant "A用户的\nNettySocketService\n[RemoteService]" as NSSA
+participant "Spring后端" as BE
+participant "B用户的\nNettySocketService\n[RemoteService]" as NSSB
+participant "B用户的\nMessageClassifyHandler" as MCH
+queue "B用户的消息缓存池\nMessagePool" as MPB
+database "用户B的SQLite" as DBB
+participant "用户B的\nChatList Activity" as CLAB
+participant "用户B的\nActivity B\n将新List<Message>根据时间戳匹配插入" as Ab
+participant "用户B登录" as LOB
+actor ClientB
+
+ClientA -> LOA : 登录
+LOA -> NSSA : Application启动并初始化 NettySocketService\n注册IMessageService用于发送消息
+NSSA -> BE : 注册NettySocketManager\n并与后端进行Netty长连接
+BE --> NSSA : 响应长连接成功
+NSSA -> SMS : Netty长连接之后,\n将UserId注册为ConnectRequest发送给SMS
+SMS --> NSSA : SMS将ConnectRequest\n转为AIDL接收的Message交给\nNettySocketService的IMessageService
+NSSA -> BE : IMessageService调用NettySocketService的\nNettySocketManager的sendMessage方法\n将Message转为RequestBodyProto\n并通过channel.writeAndFlush(message)方法发送消息给后端
+BE -> BE : 用户Session持久化，提供给其他服务访问
+BE --> NSSA : 响应连接成成功，尝试构建心跳连接Pong
+NSSA -> BE : 心跳连接成功，构建Ping
+Aa -> SMS : 用户A的将Activity输入的文本消息\n注册为SendTextDataRequest发送给SMS\n发送的消息展示在Activity中的RecyclerView中
+SMS -> MPA : 将消息拷贝到消息缓存池,准备持久化.
+MPA -> DBA : 每30秒或100条持久化
+SMS --> NSSA : SMS将SendTextDataRequest\n转为AIDL接收的Message交给\nNettySocketService的IMessageService
+NSSA -> BE : IMessageService调用NettySocketService的\nNettySocketManager的sendMessage方法
+BE -> BE : 将消息注册Message注册为Event事件发送给Redis/MQ集群
+BE -> BE : MessageEventListener将消息转为不同类型，通过channelManager推送给客户端
+BE -> BE : 消息部分存储在MQ集群，当达到一定数量或者一定时间之后，将消息持久化到MySQL数据库
+BE --> NSSB : channelManager推送给客户端
+ClientB -> LOB : B用户登录,\n初始化IMessageListener
+LOB -> NSSB : IMessageListener将收到的消息回调给\nApplication中的MessageClassifyHandler
+
+NSSB -> BE : 注册NettySocketManager\n并与后端进行Netty长连接
+BE --> NSSB : 后端将消息以ResponseProto的形式返回给B用户\nNettySocketService中的NettySocketManager\nResponseBodyHandler的\nmessageReceived(ChannelHandlerContext ctx,\n ResponseBodyProto.ResponseBody msg)方法接收消息\n
+NSSB --> MCH : NettySocketService通过IMessageListener\n将消息发送给Application中的\nMessageClassifyHandler进行消息分类
+MCH --> Ab : 将消息通过EventBus发送给订阅对应消息的Activity
+MCH --> MPB : 将消息交给 MessagePool
+MPB -> DBB : 每30秒或100条持久化
+
+Ab <- MPB : 1. 从缓存池读取消息 (可能存在没有持久化的消息)
+Ab <- DBB : 2. 从 SQLite 读取消息 (网络不通畅的情况读取持久化消息)
+Ab <- BE : 3. 从后端读取消息 (Http拉取最新消息)
+
+Ab -> ClientB : 消息展示在RecyclerView中\n用户B查看消息
+@enduml

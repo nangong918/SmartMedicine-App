@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:gravity="center_vertical"
+    android:paddingBottom="10dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:background="@drawable/toast_shape">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/toast_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="豫章故郡，洪都新府2。星分翼轸，地接衡庐3。襟三江而带五湖4，控蛮荆而引瓯越5。物华天宝，龙光射牛斗之墟6；人杰地灵，徐孺下陈蕃之榻7。雄州雾列8，俊采星驰9。台隍枕夷夏之交10，宾主尽东南之美11。都督阎公之雅望，棨戟遥临；宇文新州之懿范，襜帷暂驻12。十旬休假13，胜友如云；千里逢迎14，高朋满座。腾蛟起凤，孟学士之词宗15；紫电青霜，王将军之武库16。家君作宰，路出名区；童子何知，躬逢胜饯17。\n时维九月，序属三秋18。潦水尽而寒潭清，烟光凝而暮山紫。俨骖騑68于上路19，访风景于崇阿。临帝子之长洲，得天人之旧馆20。层峦耸翠，上出重霄；飞阁流丹，下临无地21。鹤汀凫渚，穷岛屿之萦回；桂殿兰宫，即冈峦之体势22。\n" />
+
+</LinearLayout>
