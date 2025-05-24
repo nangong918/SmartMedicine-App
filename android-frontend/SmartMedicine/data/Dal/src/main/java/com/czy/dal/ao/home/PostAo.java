@@ -10,16 +10,13 @@ public class PostAo {
     // 单个post的信息
     public PostVo[] postVos;
 
-    // data
-    private Long postId;
-    private Long fileId;
     public int viewType = VIEW_TYPE_USER;
 
-    private PostAo(){
+    public PostAo(){
         this.postVos = new PostVo[this.viewType];
     }
 
-    private PostAo(int postType){
+    public PostAo(int postType){
         this.viewType = postType;
         this.postVos = new PostVo[this.viewType];
     }

@@ -6,6 +6,8 @@ import com.czy.baseUtilsLib.network.BaseApiRequestImpl;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.OnSuccessCallback;
 import com.czy.baseUtilsLib.network.OnThrowableCallback;
+import com.czy.dal.dto.http.request.RecommendPostRequest;
+import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.http.request.BaseNettyRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
@@ -195,6 +197,18 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                              OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
                 mApi.downloadImage(url),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST("/recommend/getPost")
+    //    Observable<BaseResponse<RecommendPostResponse>> getPost(@Body RecommendPostRequest request);
+    public void getPost(RecommendPostRequest request,
+                        OnSuccessCallback<BaseResponse<RecommendPostResponse>> onSuccessCallback,
+                        OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.getPost(request),
                 onSuccessCallback,
                 onThrowableCallback
         );

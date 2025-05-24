@@ -1,6 +1,11 @@
 package com.czy.dal.vo.entity.home;
 
+import com.czy.dal.ao.home.PostInfoUrlAo;
+
 public class PostVo {
+
+    // postId
+    public Long postId = null;
 
     // 文章图片
     public String postImgUrl = "";
@@ -34,4 +39,23 @@ public class PostVo {
     // 当前用户是否不喜欢
     public Boolean isDislike = false;
 
+    public static PostVo getRecommendPostVoFromPostInfoUrlAo(PostInfoUrlAo postInfoUrlAo){
+        PostVo postVo = new PostVo();
+        postVo.postId = postInfoUrlAo.id;
+        postVo.postImgUrl = postInfoUrlAo.fileUrl;
+        postVo.postTitle = postInfoUrlAo.title;
+        postVo.authorName = postInfoUrlAo.authorName;
+        postVo.authorAvatarUrl = postInfoUrlAo.authorAvatarUrl;
+        postVo.likeNum = postInfoUrlAo.likeCount.intValue();
+        postVo.collectNum = postInfoUrlAo.collectCount.intValue();
+        postVo.commentNum = postInfoUrlAo.commentCount.intValue();
+        postVo.readNum = postInfoUrlAo.readCount.intValue();
+        postVo.forwardNum = postInfoUrlAo.forwardCount.intValue();
+        postVo.postPublishTimestamp = postInfoUrlAo.releaseTimestamp;
+        // 推荐默认为没看过
+        postVo.isLike = false;
+        postVo.isCollect = false;
+        postVo.isDislike = false;
+        return postVo;
+    }
 }

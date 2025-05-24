@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<PostAo> postAoList;
+    private final List<PostAo> postAoList;
     private final OnPositionItemClick onPositionItemClick;
     private final OnClickArticleCardCallBack onClickArticleCardCallBack;
 
@@ -33,7 +33,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == PostAo.VIEW_TYPE_USER) {
-            ViewRecommendCardBinding  binding = ViewRecommendCardBinding.inflate(inflater, parent, false);
+            ViewRecommendCardBinding binding = ViewRecommendCardBinding.inflate(inflater, parent, false);
             return new PostItemViewHolder(binding, onClickArticleCardCallBack);
         }
         else{

@@ -1,6 +1,8 @@
 package com.czy.appcore.network.api;
 
 import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.dal.dto.http.request.RecommendPostRequest;
+import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.http.request.BaseNettyRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
@@ -17,6 +19,7 @@ import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
+import com.czy.dal.vo.entity.home.PostListVo;
 
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
@@ -148,6 +151,13 @@ public interface ApiRequest {
     @GET("/file/downloadImage")
     Observable<BaseResponse<FileDownloadBytesResponse>> downloadImage(@Query("url") String url);
 
+    /**
+     * 获取推荐帖子
+     * @param request   请求
+     * @return          推荐帖子
+     */
+    @POST("/recommend/getPost")
+    Observable<BaseResponse<RecommendPostResponse>> getPost(@Body RecommendPostRequest request);
 }
 // 1.重构响应 -> 在Friend和Message中显示 -> ChatList发送消息
 // 消息前后端持久化策略
