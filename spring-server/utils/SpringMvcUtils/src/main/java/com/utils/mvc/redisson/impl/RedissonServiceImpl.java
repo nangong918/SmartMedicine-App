@@ -5,15 +5,7 @@ import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RBatch;
-import org.redisson.api.RBucket;
-import org.redisson.api.RFuture;
-import org.redisson.api.RKeys;
-import org.redisson.api.RLock;
-import org.redisson.api.RMap;
-import org.redisson.api.RScoredSortedSet;
-import org.redisson.api.RScoredSortedSetAsync;
-import org.redisson.api.RedissonClient;
+import org.redisson.api.*;
 import org.redisson.client.protocol.ScoredEntry;
 import org.springframework.stereotype.Service;
 
@@ -104,13 +96,62 @@ public class RedissonServiceImpl implements RedissonService {
     @Override
     public void setBoolean(String key, Boolean value, Long expireTimes) {
         RBucket<Boolean> bucket = redissonClient.getBucket(key);
-        bucket.set(value, expireTimes, TimeUnit.SECONDS);
+        if (expireTimes != null){
+            bucket.set(value, expireTimes, TimeUnit.SECONDS);
+        }
     }
 
     @Override
     public boolean getBoolean(String key) {
         RBucket<Boolean> bucket = redissonClient.getBucket(key);
         return bucket.get();
+    }
+
+    @Override
+    public void setString(String key, String value, Long expireTimes) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        if (expireTimes != null){
+            bucket.set(value, expireTimes, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public String getString(String key) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        return bucket.get();
+    }
+
+    @Override
+    public void setInteger(String key, Integer value, Long expireTimes) {
+        RBucket<Integer> bucket = redissonClient.getBucket(key);
+        if (expireTimes != null){
+            bucket.set(value, expireTimes, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public Integer getInteger(String key) {
+        RBucket<Integer> bucket = redissonClient.getBucket(key);
+        return bucket.get();
+    }
+
+    @Override
+    public Integer incrementInteger(String key, Integer increment, Long expireTime) {
+        // key 不存在，使用 RAtomicLong 的 addAndGet 方法会自动将该 key 初始化为 0
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+
+        // 检查当前值，如果是第一次初始化
+        long currentValue = atomicLong.get();
+
+        // 原子递增
+        long newValue = atomicLong.addAndGet(increment);
+
+        // 如果当前值为 0，说明是第一次设置，设置过期时间
+        if (currentValue == 0) {
+            atomicLong.expire(expireTime, TimeUnit.SECONDS);
+        }
+
+        return (int) newValue;
     }
 
     @Override

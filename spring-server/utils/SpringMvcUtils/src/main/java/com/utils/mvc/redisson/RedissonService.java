@@ -64,8 +64,15 @@ public interface RedissonService {
     //---------------------Base---------------------
 
     void setBoolean(String key, Boolean value, Long expireTimes);
-
     boolean getBoolean(String key);
+
+    void setString(String key, String value, Long expireTimes);
+    String getString(String key);
+
+    void setInteger(String key, Integer value, Long expireTimes);
+    Integer getInteger(String key);
+    // 自增
+    Integer incrementInteger(String key, Integer increment, Long expireTime);
 
     //---------------------Object---------------------
 

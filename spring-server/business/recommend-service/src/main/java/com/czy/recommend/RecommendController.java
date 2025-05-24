@@ -64,7 +64,24 @@ public class RecommendController {
         }
 
         // 2.检查是否频繁点击推荐
-
+        String clickRecommendTimesKey = RecommendRedisKey.clickRecommendTimesKey + userId;
+        Integer clickRecommendTimes = redissonService.incrementInteger(
+                clickRecommendTimesKey,
+                1,
+                RecommendRedisKey.clickRecommendTimesSaveTimeout
+                );
+        if (clickRecommendTimes > RecommendRedisKey.clickRecommendTimesMax){
+            // 3.获取冷静锁
+            RedissonClusterLock clickRecommendLock = new RedissonClusterLock(
+                    clickRecommendTimesKey,
+                    RecommendRedisKey.clickRecommendSleepTimeout
+            );
+            // 此分布式锁只等其自动消失，不解锁
+            if (!redissonService.tryLock(clickRecommendLock)){
+                return BaseResponse.LogBackError("请耐心等待，请稍后再试");
+            }
+            return BaseResponse.LogBackError("用户点击推荐次数过多，请稍后再试");
+        }
 
         try {
             long startTime = System.currentTimeMillis();
