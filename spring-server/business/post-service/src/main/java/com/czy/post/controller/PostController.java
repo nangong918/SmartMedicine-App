@@ -2,6 +2,7 @@ package com.czy.post.controller;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
+import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
@@ -67,8 +68,8 @@ public class PostController {
     private final PostCommentConverter postCommentConverter;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private PostNerService postNerService;
+    private final PostNerService postNerService;
+    private final PostSearchService postSearchService;
 
     // 发布post
     /**
@@ -226,7 +227,7 @@ public class PostController {
         if (CollectionUtils.isEmpty(postIds)){
             return Mono.just(BaseResponse.LogBackError("参数错误", log));
         }
-        List<PostInfoAo> postAoList = postService.findPostInfoList(postIds);
+        List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
         GetPostInfoListResponse getPostResponse = new GetPostInfoListResponse();
         getPostResponse.setPostInfoAos(postAoList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));

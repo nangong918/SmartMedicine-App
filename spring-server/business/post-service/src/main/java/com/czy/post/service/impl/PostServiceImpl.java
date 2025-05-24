@@ -7,7 +7,6 @@ import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
-import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.post.component.RabbitMqSender;
 import com.czy.post.service.PostFileService;
@@ -199,10 +198,5 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostAo> findPostsByIdList(List<Long> idList) {
         return postStorageService.findPostAoByIds(idList);
-    }
-
-    @Override
-    public List<PostInfoAo> findPostInfoList(List<Long> idList) {
-        return postStorageService.findPostInfoAoList(idList);
     }
 }

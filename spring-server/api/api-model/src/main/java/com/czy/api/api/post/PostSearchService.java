@@ -38,4 +38,11 @@ public interface PostSearchService {
     List<PostInfoAo> searchPostInfAoByIds(List<Long> postIds);
 
     PostDetailDo searchPostDetailById(Long postId);
+
+    /**
+     * 通过idList搜索PostInfoAoList
+     * @param idList            idList
+     * @return                  PostInfoAoList
+     */
+    List<PostInfoAo> findPostInfoList(List<Long> idList);
 }

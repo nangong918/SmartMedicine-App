@@ -14,6 +14,7 @@ import com.czy.api.mapper.DiseaseRepository;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
+import com.czy.post.service.PostStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.RequestOptions;
@@ -26,6 +27,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -42,6 +44,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Service
 @org.apache.dubbo.config.annotation.Service(protocol = "dubbo", version = "1.0.0")
 public class PostSearchServiceImpl implements PostSearchService {
 
@@ -54,6 +57,7 @@ public class PostSearchServiceImpl implements PostSearchService {
     // elasticsearch的客户端
     private final RestHighLevelClient restHighLevelClient;
     private final PostDetailMongoMapper postDetailMongoMapper;
+    private final PostStorageService postStorageService;
 
     @Override
     public List<Long> searchPostIdsByLikeTitle(String likeTitle) {
@@ -227,5 +231,10 @@ public class PostSearchServiceImpl implements PostSearchService {
                 .map(PostSearchEsAo::getPostDetailEsDo)
                 .map(PostDetailEsDo::getId)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PostInfoAo> findPostInfoList(List<Long> idList) {
+        return postStorageService.findPostInfoAoList(idList);
     }
 }
