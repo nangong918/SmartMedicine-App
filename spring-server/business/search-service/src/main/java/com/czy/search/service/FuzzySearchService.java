@@ -1,6 +1,5 @@
 package com.czy.search.service;
 
-import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 
 import java.util.List;
@@ -50,10 +49,4 @@ public interface FuzzySearchService {
      */
     List<Long> similaritySearch(List<PostNerResult> nerResults);
 
-    /**
-     * 获取帖子信息   返回包含下载链接的ao
-     * @param postIds    帖子id
-     * @return            帖子信息
-     */
-    List<PostInfoUrlAo> getPostInfoUrlAos(List<Long> postIds);
 }

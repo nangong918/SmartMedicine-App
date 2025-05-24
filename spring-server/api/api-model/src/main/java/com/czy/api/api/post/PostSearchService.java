@@ -3,6 +3,7 @@ package com.czy.api.api.post;
 
 import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 
 import java.util.List;
@@ -45,4 +46,11 @@ public interface PostSearchService {
      * @return                  PostInfoAoList
      */
     List<PostInfoAo> findPostInfoList(List<Long> idList);
+
+    /**
+     * 获取帖子信息   返回包含下载链接的ao
+     * @param postIds    帖子id
+     * @return            帖子信息
+     */
+    List<PostInfoUrlAo> getPostInfoUrlAos(List<Long> postIds);
 }

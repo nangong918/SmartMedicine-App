@@ -1,6 +1,6 @@
 package com.czy.api.domain.dto.http.response;
 
-import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import lombok.Data;
 
 import java.util.List;
@@ -11,5 +11,5 @@ import java.util.List;
  */
 @Data
 public class RecommendPostResponse {
-    private List<PostInfoAo> postInfoAos;
+    private List<PostInfoUrlAo> postInfoUrlAos;
 }

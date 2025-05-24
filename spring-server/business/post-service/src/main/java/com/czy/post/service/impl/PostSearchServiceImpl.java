@@ -1,5 +1,6 @@
 package com.czy.post.service.impl;
 
+import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.es.FieldAnalyzer;
 import com.czy.api.constant.search.SearchConstant;
@@ -9,6 +10,7 @@ import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 import com.czy.api.mapper.DiseaseRepository;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
@@ -17,6 +19,7 @@ import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.service.PostStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.AnalyzeRequest;
@@ -29,6 +32,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -58,6 +62,8 @@ public class PostSearchServiceImpl implements PostSearchService {
     private final RestHighLevelClient restHighLevelClient;
     private final PostDetailMongoMapper postDetailMongoMapper;
     private final PostStorageService postStorageService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private OssService ossService;
 
     @Override
     public List<Long> searchPostIdsByLikeTitle(String likeTitle) {
@@ -236,5 +242,35 @@ public class PostSearchServiceImpl implements PostSearchService {
     @Override
     public List<PostInfoAo> findPostInfoList(List<Long> idList) {
         return postStorageService.findPostInfoAoList(idList);
+    }
+
+    @Override
+    public List<PostInfoUrlAo> getPostInfoUrlAos(List<Long> postIds){
+        List<PostInfoAo> postInfoAos = searchPostInfAoByIds(postIds);
+        List<Long> fileIds = new ArrayList<>();
+        for (PostInfoAo postInfoAo : postInfoAos){
+            if (postInfoAo != null && !ObjectUtils.isEmpty(postInfoAo.getFileId())){
+                fileIds.add(postInfoAo.getFileId());
+            }
+            else {
+                // 为了保证返回顺序一一对应
+                fileIds.add(null);
+            }
+        }
+        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+        List<PostInfoUrlAo> postInfoUrlAos = new ArrayList<>();
+        assert fileUrls.size() == postInfoAos.size();
+        for (int i = 0; i < postInfoAos.size(); i++){
+            PostInfoAo postInfoAo = postInfoAos.get(i);
+            PostInfoUrlAo postInfoUrlAo = postConverter.postInfoDoToUrlAo(postInfoAo);
+            if (fileUrls.get(i) != null){
+                postInfoUrlAo.setFileUrl(fileUrls.get(i));
+            }
+            else {
+                postInfoUrlAo.setFileUrl(null);
+            }
+            postInfoUrlAos.add(postInfoUrlAo);
+        }
+        return postInfoUrlAos;
     }
 }

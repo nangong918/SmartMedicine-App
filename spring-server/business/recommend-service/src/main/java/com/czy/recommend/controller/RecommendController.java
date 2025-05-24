@@ -1,10 +1,10 @@
-package com.czy.recommend;
+package com.czy.recommend.controller;
 
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.recommend.RecommendConstant;
 import com.czy.api.constant.recommend.RecommendRedisKey;
-import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.RecommendPostRequest;
 import com.czy.api.domain.dto.http.response.RecommendPostResponse;
@@ -86,9 +86,9 @@ public class RecommendController {
         try {
             long startTime = System.currentTimeMillis();
             List<Long> recommendPostIdList = recommendService.getRecommendPosts(request.getFeatureContext());
-            List<PostInfoAo> postInfoAoList = postSearchService.findPostInfoList(recommendPostIdList);
+            List<PostInfoUrlAo> postInfoUrlAos = postSearchService.getPostInfoUrlAos(recommendPostIdList);
             RecommendPostResponse response = new RecommendPostResponse();
-            response.setPostInfoAos(postInfoAoList);
+            response.setPostInfoUrlAos(postInfoUrlAos);
             long endTime = System.currentTimeMillis();
             log.info("用户{}推荐帖子耗时{}ms", userAccount, endTime - startTime);
             return BaseResponse.getResponseEntitySuccess(response);
