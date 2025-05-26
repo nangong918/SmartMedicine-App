@@ -2,8 +2,8 @@ package com.czy.appcore.network.netty.api.receive;
 
 import androidx.annotation.NonNull;
 
-import com.czy.appcore.network.netty.annotation.MessageType;
-import com.czy.appcore.network.netty.constant.ResponseMessageType;
+import com.czy.dal.annotation.MessageType;
+import com.czy.dal.constant.netty.ResponseMessageType;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.dal.dto.netty.forwardMessage.UserImageResponse;
 import com.czy.dal.dto.netty.forwardMessage.UserTextDataResponse;

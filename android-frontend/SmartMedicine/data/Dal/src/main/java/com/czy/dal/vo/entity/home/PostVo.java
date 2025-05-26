@@ -1,6 +1,8 @@
 package com.czy.dal.vo.entity.home;
 
 import com.czy.dal.ao.home.PostInfoUrlAo;
+import com.czy.dal.constant.home.PostOperation;
+import com.czy.dal.constant.home.RecommendButtonType;
 
 public class PostVo {
 
@@ -38,6 +40,63 @@ public class PostVo {
     public Boolean isCollect = false;
     // 当前用户是否不喜欢
     public Boolean isDislike = false;
+
+    public PostOperation clickChange(RecommendButtonType recommendButtonType){
+        if (recommendButtonType == null || recommendButtonType == RecommendButtonType.NULL){
+            return PostOperation.NULL;
+        }
+        PostOperation operation = PostOperation.NULL;
+        switch (recommendButtonType){
+            case LIKE -> {
+                if (isLike){
+                    // 取消原先状态
+                    operation = PostOperation.CANCEL_LIKE;
+                }
+                else {
+                    operation = PostOperation.LIKE;
+                }
+            }
+            case COLLECT -> {
+                if (isCollect){
+                    // 取消原先状态
+                    operation = PostOperation.CANCEL_COLLECT;
+                }
+                else {
+                    operation = PostOperation.COLLECT;
+                }
+            }
+            case DISLIKE -> {
+                if (isDislike){
+                    // 取消原先状态
+                    operation = PostOperation.CANCEL_NOT_INTERESTED;
+                }
+                else {
+                    operation = PostOperation.NOT_INTERESTED;
+                }
+            }
+        }
+        return operation;
+    }
+
+    public void clickChange(PostOperation postOperation){
+        if (postOperation == null || postOperation == PostOperation.NULL){
+            return;
+        }
+        switch (postOperation){
+            case LIKE -> {
+                isLike = true;
+                isDislike = false;
+            }
+            case CANCEL_LIKE -> isLike = false;
+            case COLLECT -> isCollect = true;
+            case CANCEL_COLLECT -> isCollect = false;
+            case NOT_INTERESTED -> {
+                isDislike = true;
+                isLike = false;
+            }
+            case CANCEL_NOT_INTERESTED -> isDislike = false;
+        }
+    }
 
     public static PostVo getRecommendPostVoFromPostInfoUrlAo(PostInfoUrlAo postInfoUrlAo){
         PostVo postVo = new PostVo();

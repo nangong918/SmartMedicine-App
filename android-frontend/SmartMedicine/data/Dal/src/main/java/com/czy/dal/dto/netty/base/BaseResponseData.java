@@ -18,7 +18,7 @@ import java.util.Map;
  * @date 2025/2/11 23:33
  */
 
-public class BaseResponseData extends BaseTransferData{
+public class BaseResponseData extends BaseRequestData {
     private static final String TAG = BaseResponseData.class.getSimpleName();
 
     private String code;

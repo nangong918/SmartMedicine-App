@@ -13,6 +13,12 @@ import com.czy.dal.dto.netty.forwardMessage.SendImageRequest;
 import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.netty.request.HaveReadMessageRequest;
+import com.czy.dal.dto.netty.request.PostCollectRequest;
+import com.czy.dal.dto.netty.request.PostCommentRequest;
+import com.czy.dal.dto.netty.request.PostDisLikeRequest;
+import com.czy.dal.dto.netty.request.PostFolderRequest;
+import com.czy.dal.dto.netty.request.PostForwardRequest;
+import com.czy.dal.dto.netty.request.PostLikeRequest;
 import com.czy.dal.netty.Message;
 import com.czy.dal.dto.netty.request.DisconnectRequest;
 import com.czy.dal.dto.netty.request.RegisterRequest;
@@ -92,13 +98,13 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
     @Override
     public void connect(@NonNull RegisterRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, null, methodName);
+        sendRequest(request, Constants.SERVER_ID, methodName);
     }
 
     @Override
     public void disconnect(@NonNull DisconnectRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, null, methodName);
+        sendRequest(request, Constants.SERVER_ID, methodName);
     }
 
     @Override
@@ -135,6 +141,42 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
     public void sendImageToUser(SendImageRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
         sendRequest(request, request.getReceiverId(), methodName);
+    }
+
+    @Override
+    public void likePost(PostLikeRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, Constants.SERVER_ID, methodName);
+    }
+
+    @Override
+    public void collectPost(PostCollectRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, Constants.SERVER_ID, methodName);
+    }
+
+    @Override
+    public void commentPost(PostCommentRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, Constants.SERVER_ID, methodName);
+    }
+
+    @Override
+    public void forwardPost(PostForwardRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, Constants.SERVER_ID, methodName);
+    }
+
+    @Override
+    public void collectFolder(PostFolderRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, Constants.SERVER_ID, methodName);
+    }
+
+    @Override
+    public void notInterested(PostDisLikeRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, Constants.SERVER_ID, methodName);
     }
 
 //    private void sendMessage(RequestBodyProto.RequestBody message){

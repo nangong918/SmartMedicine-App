@@ -3,14 +3,14 @@ package com.czy.dal.dto.netty.request;
 
 
 import com.czy.baseUtilsLib.json.BaseBean;
-import com.czy.dal.dto.netty.base.BaseTransferData;
+import com.czy.dal.dto.netty.base.BaseRequestData;
 
 /**
  * @author 13225
  * @date 2025/2/7 18:18
  */
 
-public class RegisterRequest extends BaseTransferData implements BaseBean {
+public class RegisterRequest extends BaseRequestData implements BaseBean {
     private String uuid;
     private String deviceId;
     private String deviceName;

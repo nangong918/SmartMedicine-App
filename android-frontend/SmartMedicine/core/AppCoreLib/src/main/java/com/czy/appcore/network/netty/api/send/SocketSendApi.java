@@ -3,13 +3,19 @@ package com.czy.appcore.network.netty.api.send;
 
 
 
-import com.czy.appcore.network.netty.annotation.MessageType;
-import com.czy.appcore.network.netty.constant.RequestMessageType;
+import com.czy.dal.annotation.MessageType;
+import com.czy.dal.constant.netty.RequestMessageType;
 import com.czy.dal.dto.netty.forwardMessage.SendImageRequest;
 import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.netty.request.DisconnectRequest;
 import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.netty.request.HaveReadMessageRequest;
+import com.czy.dal.dto.netty.request.PostCollectRequest;
+import com.czy.dal.dto.netty.request.PostCommentRequest;
+import com.czy.dal.dto.netty.request.PostDisLikeRequest;
+import com.czy.dal.dto.netty.request.PostFolderRequest;
+import com.czy.dal.dto.netty.request.PostForwardRequest;
+import com.czy.dal.dto.netty.request.PostLikeRequest;
 import com.czy.dal.dto.netty.request.RegisterRequest;
 import com.czy.dal.dto.netty.forwardMessage.SendTextDataRequest;
 
@@ -40,4 +46,23 @@ public interface SocketSendApi {
 
     @MessageType(value = RequestMessageType.Chat.SEND_IMAGE_MESSAGE_TO_USER, desc = "发送图片消息")
     void sendImageToUser(SendImageRequest request);
+
+    // Post
+    @MessageType(value = RequestMessageType.Post.LIKE_POST, desc = "点赞")
+    void likePost(@NonNull PostLikeRequest request);
+
+    @MessageType(value = RequestMessageType.Post.COLLECT_POST, desc = "收藏")
+    void collectPost(@NonNull PostCollectRequest request);
+
+    @MessageType(value = RequestMessageType.Post.COMMENT_POST, desc = "评论")
+    void commentPost(@NonNull PostCommentRequest request);
+
+    @MessageType(value = RequestMessageType.Post.FORWARD_POST, desc = "转发")
+    void forwardPost(@NonNull PostForwardRequest request);
+
+    @MessageType(value = RequestMessageType.Post.COLLECT_FOLDER, desc = "收藏夹")
+    void collectFolder(@NonNull PostFolderRequest request);
+
+    @MessageType(value = RequestMessageType.Post.NOT_INTERESTED, desc = "不感兴趣")
+    void notInterested(@NonNull PostDisLikeRequest request);
 }

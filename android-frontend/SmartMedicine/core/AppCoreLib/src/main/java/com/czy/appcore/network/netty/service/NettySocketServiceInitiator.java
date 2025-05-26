@@ -14,7 +14,7 @@ import com.czy.appcore.netty.IMessageListener;
 import com.czy.appcore.netty.IMessageService;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.dal.constant.Constants;
-import com.czy.appcore.network.netty.constant.RequestMessageType;
+import com.czy.dal.constant.netty.RequestMessageType;
 import com.czy.dal.netty.Message;
 
 public class NettySocketServiceInitiator {

@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
  * @date 2025/2/8 19:04
  */
 
-public class BaseTransferData implements BaseBean {
+public class BaseRequestData implements BaseBean {
 
-    private static final String TAG = BaseTransferData.class.getSimpleName();
+    private static final String TAG = BaseRequestData.class.getSimpleName();
 
     public String senderId;
     public String receiverId;
@@ -63,19 +63,19 @@ public class BaseTransferData implements BaseBean {
     }
 
     // T -> ResponseBodyProto.ResponseBody
-    public static RequestBodyProto.RequestBody getRequestBody(@NotNull BaseTransferData baseTransferData) {
-        Map<String, String> dataMapStr = getDataMap(baseTransferData);
+    public static RequestBodyProto.RequestBody getRequestBody(@NotNull BaseRequestData baseRequestData) {
+        Map<String, String> dataMapStr = getDataMap(baseRequestData);
         return RequestBodyProto.RequestBody.newBuilder()
-                .setSenderId(baseTransferData.getSenderId())
-                .setReceiverId(baseTransferData.getReceiverId())
-                .setType(baseTransferData.getType())
-                .setTimestamp(Long.parseLong(baseTransferData.getTimestamp()))
+                .setSenderId(baseRequestData.getSenderId())
+                .setReceiverId(baseRequestData.getReceiverId())
+                .setType(baseRequestData.getType())
+                .setTimestamp(Long.parseLong(baseRequestData.getTimestamp()))
                 .putAllData(dataMapStr)
                 .build();
     }
 
     // ResponseBodyProto.ResponseBody -> T
-    public static <T extends BaseTransferData> T getTargetClass(@NotNull RequestBodyProto.RequestBody requestBody, @NotNull Class<T> tClazz) {
+    public static <T extends BaseRequestData> T getTargetClass(@NotNull RequestBodyProto.RequestBody requestBody, @NotNull Class<T> tClazz) {
         T t = null;
         try {
             t = tClazz.getDeclaredConstructor().newInstance();
@@ -92,11 +92,11 @@ public class BaseTransferData implements BaseBean {
             return null;
         }
     }
-    protected static Map<String, String> getDataMap(@NotNull BaseTransferData baseTransferData) {
+    protected static Map<String, String> getDataMap(@NotNull BaseRequestData baseRequestData) {
         Map<String, String> dataMapStr = new HashMap<>();
         try {
             // 可能需要检查子类的私有字段是否转入
-            Map<String, Object> dataMap = BeanUtil.beanToMap(baseTransferData);
+            Map<String, Object> dataMap = BeanUtil.beanToMap(baseRequestData);
             dataMapStr = dataMap.entrySet().stream()
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
@@ -108,7 +108,7 @@ public class BaseTransferData implements BaseBean {
     }
 
     // Message -> T
-    public static <T extends BaseTransferData> T getRequestFromMessage(@NotNull Message message, @NotNull Class<T> tClazz) {
+    public static <T extends BaseRequestData> T getRequestFromMessage(@NotNull Message message, @NotNull Class<T> tClazz) {
         T t = null;
         try {
             t = tClazz.getDeclaredConstructor().newInstance();
@@ -127,14 +127,14 @@ public class BaseTransferData implements BaseBean {
     }
 
     // T -> Message
-    public static Message getMessage(@NotNull BaseTransferData baseTransferData) {
-        Map<String, String> dataMapStr = getDataMap(baseTransferData);
+    public static Message getMessage(@NotNull BaseRequestData baseRequestData) {
+        Map<String, String> dataMapStr = getDataMap(baseRequestData);
         return new Message(
-                baseTransferData.getSenderId(),
-                baseTransferData.getReceiverId(),
-                baseTransferData.getType(),
+                baseRequestData.getSenderId(),
+                baseRequestData.getReceiverId(),
+                baseRequestData.getType(),
                 dataMapStr,
-                Long.parseLong(baseTransferData.getTimestamp())
+                Long.parseLong(baseRequestData.getTimestamp())
         );
     }
 }

@@ -5,13 +5,18 @@ import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.customviewlib.view.home.OnRecommendCardClick;
 import com.czy.dal.ao.home.FeatureContext;
 import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
+import com.czy.dal.constant.home.PostOperation;
+import com.czy.dal.constant.home.RecommendButtonType;
 import com.czy.dal.constant.home.RecommendCardType;
+import com.czy.dal.constant.netty.NettyOptionEnum;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
+import com.czy.dal.dto.netty.request.PostCollectRequest;
+import com.czy.dal.dto.netty.request.PostDisLikeRequest;
+import com.czy.dal.dto.netty.request.PostLikeRequest;
 import com.czy.dal.vo.entity.home.PostListVo;
 import com.czy.dal.vo.entity.home.PostVo;
 import com.czy.dal.vo.viewModeVo.home.HomeVo;
@@ -216,7 +221,44 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void onButtonClick(int position, int cardType, int cardId, int buttonType){
+        PostVo postVo = getPostInfoByList(position, cardId);
+        RecommendButtonType recommendButtonType = RecommendButtonType.valueOf(buttonType);
 
+        // 根据当前状态得出操作类型
+        PostOperation postOperation = postVo.clickChange(recommendButtonType);
+        // 状态切换
+        postVo.clickChange(postOperation);
+
+        // 埋点行为交给后端
+        // 此处智能处理这6中情况
+        switch (postOperation){
+            case LIKE -> {
+                PostLikeRequest request = new PostLikeRequest(postVo.postId, NettyOptionEnum.ADD.getCode());
+                socketMessageSender.likePost(request);
+            }
+            case CANCEL_LIKE -> {
+                PostLikeRequest request = new PostLikeRequest(postVo.postId, NettyOptionEnum.DELETE.getCode());
+                socketMessageSender.likePost(request);
+            }
+            case COLLECT -> {
+                // 默认文件夹
+                PostCollectRequest request = new PostCollectRequest(postVo.postId, null, NettyOptionEnum.ADD.getCode());
+                socketMessageSender.collectPost(request);
+            }
+            case CANCEL_COLLECT -> {
+                // 默认文件夹
+                PostCollectRequest request = new PostCollectRequest(postVo.postId, null, NettyOptionEnum.DELETE.getCode());
+                socketMessageSender.collectPost(request);
+            }
+            case NOT_INTERESTED -> {
+                PostDisLikeRequest request = new PostDisLikeRequest(postVo.postId, NettyOptionEnum.ADD.getCode());
+                socketMessageSender.notInterested(request);
+            }
+            case CANCEL_NOT_INTERESTED -> {
+                PostDisLikeRequest request = new PostDisLikeRequest(postVo.postId, NettyOptionEnum.DELETE.getCode());
+                socketMessageSender.notInterested(request);
+            }
+        }
     }
 
 }

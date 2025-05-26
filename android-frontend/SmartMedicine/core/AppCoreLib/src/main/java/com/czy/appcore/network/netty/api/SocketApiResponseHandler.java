@@ -3,7 +3,7 @@ package com.czy.appcore.network.netty.api;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.czy.appcore.network.netty.annotation.MessageType;
+import com.czy.dal.annotation.MessageType;
 import com.czy.appcore.network.netty.api.receive.ReceiveAddUserApi;
 import com.czy.appcore.network.netty.api.receive.ReceiveMessageApi;
 import com.czy.appcore.network.netty.queue.SocketMessageQueue;

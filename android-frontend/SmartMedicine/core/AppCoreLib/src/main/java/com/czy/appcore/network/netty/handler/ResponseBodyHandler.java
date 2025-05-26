@@ -6,7 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 
-import com.czy.appcore.network.netty.constant.ResponseMessageType;
+import com.czy.dal.constant.netty.ResponseMessageType;
 import com.czy.appcore.network.netty.event.OnReceiveMessage;
 import com.czy.dal.model.ResponseBodyProto;
 

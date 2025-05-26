@@ -1,4 +1,4 @@
-package com.czy.appcore.network.netty.annotation;
+package com.czy.dal.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

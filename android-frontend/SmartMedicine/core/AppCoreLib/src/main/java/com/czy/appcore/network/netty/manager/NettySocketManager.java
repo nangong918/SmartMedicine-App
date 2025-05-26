@@ -14,7 +14,7 @@ import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.netty.connect.ConnectNettyCallback;
 import com.czy.appcore.network.netty.connect.NettyConnectChangeCallback;
 import com.czy.dal.constant.Constants;
-import com.czy.appcore.network.netty.constant.RequestMessageType;
+import com.czy.dal.constant.netty.RequestMessageType;
 import com.czy.appcore.network.netty.event.OnReceiveMessage;
 import com.czy.appcore.network.netty.handler.ResponseBodyHandler;
 import com.czy.dal.model.RequestBodyProto;
@@ -24,7 +24,6 @@ import com.czy.dal.dto.netty.request.RegisterRequest;
 
 import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

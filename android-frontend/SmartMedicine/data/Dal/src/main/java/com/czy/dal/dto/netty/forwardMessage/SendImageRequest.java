@@ -3,7 +3,7 @@ package com.czy.dal.dto.netty.forwardMessage;
 
 
 import com.czy.baseUtilsLib.json.BaseBean;
-import com.czy.dal.dto.netty.base.BaseTransferData;
+import com.czy.dal.dto.netty.base.BaseRequestData;
 
 /**
  * @author 13225
@@ -11,6 +11,6 @@ import com.czy.dal.dto.netty.base.BaseTransferData;
  * 思考文件的相通性检查，相同的文件发送了两次就不要存储了
  */
 
-public class SendImageRequest extends BaseTransferData implements BaseBean {
+public class SendImageRequest extends BaseRequestData implements BaseBean {
     public String fileName;
 }
