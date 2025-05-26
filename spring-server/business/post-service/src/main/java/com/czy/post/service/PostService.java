@@ -1,6 +1,9 @@
 package com.czy.post.service;
 
+import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.vo.CommentVo;
+import com.czy.api.domain.vo.PostVo;
 import lombok.NonNull;
 
 import java.util.List;
@@ -40,4 +43,9 @@ public interface PostService {
     PostAo findPostById(Long postId);
     List<PostAo> findPostsByIdList(List<Long> idList);
 
+    // 转换
+    // PostAo -> PostVo
+    PostVo postAoToPostVo(PostAo postAo);
+    // List<PostCommentDo> -> List<CommentVo>
+    List<CommentVo> getCommentVosByPostCommentDos(List<PostCommentDo> postCommentDos);
 }
