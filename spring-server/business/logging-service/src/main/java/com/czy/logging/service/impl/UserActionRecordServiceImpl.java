@@ -503,7 +503,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
      * @param userId            用户id
      * @param postId            帖子id
      * @param operateType       操作类型
-     * @see com.czy.api.constant.feature.PostOperateTypeEnum
+     * @see com.czy.api.constant.feature.PostOperation
      * @param timestamp         特征时间戳[特征时效控制]
      */
     @Override

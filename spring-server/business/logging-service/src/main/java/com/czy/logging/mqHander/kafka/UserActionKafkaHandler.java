@@ -2,7 +2,7 @@ package com.czy.logging.mqHander.kafka;
 
 import com.czy.api.api.feature.NlpService;
 import com.czy.api.constant.feature.FeatureKafkaConstant;
-import com.czy.api.constant.feature.PostOption;
+import com.czy.api.constant.feature.PostOperation;
 import com.czy.api.domain.ao.feature.CommentEmotionAo;
 import com.czy.api.domain.entity.kafkaMessage.UserActionCommentPost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionOperatePost;
@@ -55,7 +55,7 @@ public class UserActionKafkaHandler {
         if (!debugConfig.isRecordUserAccount()){
             return;
         }
-        if (PostOption.NULL.getCode().equals(message.getOperateType())){
+        if (PostOperation.NULL.getCode().equals(message.getOperateType())){
             return;
         }
         userActionRecordService.operatePost(
