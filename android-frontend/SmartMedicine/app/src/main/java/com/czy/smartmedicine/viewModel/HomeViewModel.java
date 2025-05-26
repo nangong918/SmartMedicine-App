@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.customviewlib.view.home.OnRecommendCardClick;
 import com.czy.dal.ao.home.FeatureContext;
 import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
 import com.czy.dal.constant.home.RecommendCardType;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
+import com.czy.dal.vo.entity.home.PostListVo;
 import com.czy.dal.vo.entity.home.PostVo;
 import com.czy.dal.vo.viewModeVo.home.HomeVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
@@ -191,6 +193,30 @@ public class HomeViewModel extends ViewModel {
         }
 
         return postTypes;
+    }
+
+    /**
+     * 通过cardId获取cardType获取post的view信息
+     * @param position  行索引
+     * @param cardId    卡片id
+     * @return          post的view信息
+     */
+    public PostVo getPostInfoByList(int position, int cardId){
+        PostListVo postListVo = homeVo.postListVo;
+        List<PostAo> postAoList = postListVo.postAoListLd.getValue();
+        if (postAoList == null || postAoList.isEmpty()){
+            return null;
+        }
+        PostAo postAo = postAoList.get(position);
+        assert cardId >= 0 && cardId < 2;
+        if (RecommendCardType.TWO_SMALL_CARD.value == postAo.viewType){
+            return postAo.postVos[cardId];
+        }
+        return postAo.postVos[0];
+    }
+
+    public void onButtonClick(int position, int cardType, int cardId, int buttonType){
+
     }
 
 }
