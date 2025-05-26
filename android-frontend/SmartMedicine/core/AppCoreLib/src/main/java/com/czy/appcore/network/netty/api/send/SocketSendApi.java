@@ -18,6 +18,8 @@ import com.czy.dal.dto.netty.request.PostForwardRequest;
 import com.czy.dal.dto.netty.request.PostLikeRequest;
 import com.czy.dal.dto.netty.request.RegisterRequest;
 import com.czy.dal.dto.netty.forwardMessage.SendTextDataRequest;
+import com.czy.dal.dto.netty.request.UserBrowseTimeRequest;
+import com.czy.dal.dto.netty.request.UserClickPostRequest;
 
 import io.reactivex.annotations.NonNull;
 
@@ -65,4 +67,10 @@ public interface SocketSendApi {
 
     @MessageType(value = RequestMessageType.Post.NOT_INTERESTED, desc = "不感兴趣")
     void notInterested(@NonNull PostDisLikeRequest request);
+
+    @MessageType(value = RequestMessageType.Logging.LOGGING_CLICK, desc = "点击事件")
+    void uploadClickEvent(UserClickPostRequest request);
+
+    @MessageType(value = RequestMessageType.Logging.LOGGING_BROWSE, desc = "浏览事件")
+    void uploadBrowseEvent(UserBrowseTimeRequest request);
 }

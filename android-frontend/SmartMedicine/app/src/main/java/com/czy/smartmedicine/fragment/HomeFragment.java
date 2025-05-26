@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
@@ -117,18 +118,40 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     //-----------------------intent-----------------------
 
     private ActivityResultLauncher<Intent> openPostActivityLauncher;
-
+    private long startReadPostTime;
     private void initActivityResultLauncher(){
         // 用于记录看了多久的启动方法：openPostActivityLauncher
-        // TODO 埋点行为
+        openPostActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        // 计算观看时长
+                        long endTime = System.currentTimeMillis();
+                        long duration = endTime - startReadPostTime;
+                        if (result.getData() == null){
+                            Log.w(TAG, "浏览post返回结果失败，result.getData() == null");
+                            return;
+                        }
+                        Long postId = result.getData().getLongExtra(PostIntentAo.POST_ID, Long.MIN_VALUE);
+                        viewModel.recordViewingDuration(duration, postId);
+                    }
+                }
+        );
     }
 
     private void startPostActivityIntent(Long postId){
+        if (postId == null){
+            return;
+        }
         PostIntentAo postIntentAo = new PostIntentAo();
         postIntentAo.postId = postId;
         Intent intent = new Intent(requireActivity(), PostActivity.class);
         intent.putExtra(PostIntentAo.POST_OPEN_INTENT, postIntentAo);
         openPostActivityLauncher.launch(intent);
+
+        startReadPostTime = System.currentTimeMillis();
+        viewModel.recordPostView(postId);
+
     }
 
 }

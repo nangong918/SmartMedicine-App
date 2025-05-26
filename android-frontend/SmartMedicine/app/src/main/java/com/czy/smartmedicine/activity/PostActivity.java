@@ -2,6 +2,8 @@ package com.czy.smartmedicine.activity;
 
 
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,16 +26,25 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         initIntent();
     }
 
+    @Override
+    protected void setListener() {
+        super.setListener();
+        binding.topBar.setOnClickListener(v -> {
+            finishActivityWithPostId(currentActivityPostId);
+        });
+    }
+
+    private Long currentActivityPostId = null;
 
     private void initIntent(){
         Intent initIntent = getIntent();
         PostIntentAo postIntentAo = (PostIntentAo) initIntent.getSerializableExtra(PostIntentAo.POST_OPEN_INTENT);
 
-        Long postId = Optional.ofNullable(postIntentAo)
+        currentActivityPostId = Optional.ofNullable(postIntentAo)
                 .map(p -> p.postId)
                 .orElse(null);
 
-        if (postId == null){
+        if (currentActivityPostId == null){
             Log.e(TAG, "帖子id为空");
             Toast.makeText(this, "帖子异常，请查看其他帖子", Toast.LENGTH_SHORT).show();
             finish();
@@ -41,5 +52,20 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         }
 
         // TODO 利用postId去网络请求帖子信息
+    }
+
+    // 在 PostActivity 中
+    private void finishActivityWithPostId(Long postId) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(PostIntentAo.POST_ID, postId);
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
+    }
+
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+        // 在这里处理返回逻辑
+        finishActivityWithPostId(currentActivityPostId);
     }
 }

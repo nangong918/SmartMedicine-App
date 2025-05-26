@@ -19,6 +19,8 @@ import com.czy.dal.dto.netty.request.PostDisLikeRequest;
 import com.czy.dal.dto.netty.request.PostFolderRequest;
 import com.czy.dal.dto.netty.request.PostForwardRequest;
 import com.czy.dal.dto.netty.request.PostLikeRequest;
+import com.czy.dal.dto.netty.request.UserBrowseTimeRequest;
+import com.czy.dal.dto.netty.request.UserClickPostRequest;
 import com.czy.dal.netty.Message;
 import com.czy.dal.dto.netty.request.DisconnectRequest;
 import com.czy.dal.dto.netty.request.RegisterRequest;
@@ -175,6 +177,18 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
 
     @Override
     public void notInterested(PostDisLikeRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, Constants.SERVER_ID, methodName);
+    }
+
+    @Override
+    public void uploadClickEvent(UserClickPostRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, Constants.SERVER_ID, methodName);
+    }
+
+    @Override
+    public void uploadBrowseEvent(UserBrowseTimeRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
         sendRequest(request, Constants.SERVER_ID, methodName);
     }

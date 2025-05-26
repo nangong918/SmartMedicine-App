@@ -8,6 +8,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.ao.home.FeatureContext;
 import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
+import com.czy.dal.constant.Constants;
 import com.czy.dal.constant.home.PostOperation;
 import com.czy.dal.constant.home.RecommendButtonType;
 import com.czy.dal.constant.home.RecommendCardType;
@@ -17,6 +18,8 @@ import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.netty.request.PostCollectRequest;
 import com.czy.dal.dto.netty.request.PostDisLikeRequest;
 import com.czy.dal.dto.netty.request.PostLikeRequest;
+import com.czy.dal.dto.netty.request.UserBrowseTimeRequest;
+import com.czy.dal.dto.netty.request.UserClickPostRequest;
 import com.czy.dal.vo.entity.home.PostListVo;
 import com.czy.dal.vo.entity.home.PostVo;
 import com.czy.dal.vo.viewModeVo.home.HomeVo;
@@ -259,6 +262,31 @@ public class HomeViewModel extends ViewModel {
                 socketMessageSender.notInterested(request);
             }
         }
+    }
+
+    // 记录点击（浏览）post事件
+    public void recordPostView(Long postId) {
+        String userAccount = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        Long time = System.currentTimeMillis();
+        UserClickPostRequest request = new UserClickPostRequest();
+        request.receiverId = Constants.SERVER_ID;
+        request.postId = postId;
+        request.senderId = userAccount;
+        request.timestamp = String.valueOf(time);
+        socketMessageSender.uploadClickEvent(request);
+    }
+
+    // 记录观看时长
+    public void recordViewingDuration(long duration, Long postId) {
+        String userAccount = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        Long time = System.currentTimeMillis();
+        UserBrowseTimeRequest request = new UserBrowseTimeRequest();
+        request.receiverId = Constants.SERVER_ID;
+        request.senderId = userAccount;
+        request.timestamp = String.valueOf(time);
+        request.postId = postId;
+        request.browseDuration = duration;
+        socketMessageSender.uploadBrowseEvent(request);
     }
 
 }
