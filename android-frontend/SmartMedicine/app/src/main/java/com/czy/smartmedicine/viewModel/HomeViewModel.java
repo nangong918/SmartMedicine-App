@@ -8,6 +8,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.ao.home.FeatureContext;
 import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
+import com.czy.dal.constant.home.RecommendCardType;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.vo.entity.home.PostVo;
@@ -120,7 +121,7 @@ public class HomeViewModel extends ViewModel {
         int index = 0;
         for (Integer postType : postTypeList){
             PostAo postAo = new PostAo(postType);
-            if (PostAo.VIEW_TYPE_USER == postType){
+            if (RecommendCardType.TWO_SMALL_CARD.value == postType){
                 // post1
                 PostVo postVo1 = PostVo.getRecommendPostVoFromPostInfoUrlAo(
                         postInfoAos.get(index)
@@ -145,47 +146,47 @@ public class HomeViewModel extends ViewModel {
 
     public static List<Integer> getPostType(Integer count){
         /**
-         * 整除：(4 + 1) * 4 = 20；四个一组为VIEW_TYPE_USER；第五个为VIEW_TYPE_PLUS；一直延续
+         * 整除：(4 + 1) * 4 = 20；四个一组为TWO_SMALL_CARD；第五个为SINGLE_BIG_CARD；一直延续
          * 余数：
-         *      余下1为VIEW_TYPE_PLUS
-         *      余下2为2个VIEW_TYPE_USER；
-         *      余下3为2个VIEW_TYPE_USER + 1个为VIEW_TYPE_PLUS；
-         *      余下4为4个VIEW_TYPE_USER；
-         *      余下5为4个VIEW_TYPE_USER + 1个为VIEW_TYPE_PLUS；
+         *      余下1为SINGLE_BIG_CARD
+         *      余下2为2个TWO_SMALL_CARD；
+         *      余下3为2个TWO_SMALL_CARD + 1个为SINGLE_BIG_CARD；
+         *      余下4为4个TWO_SMALL_CARD；
+         *      余下5为4个TWO_SMALL_CARD + 1个为SINGLE_BIG_CARD；
          */
         List<Integer> postTypes = new ArrayList<>();
-        // 每组包含 4 个 VIEW_TYPE_USER 和 1 个 VIEW_TYPE_PLUS
+        // 每组包含 4 个 TWO_SMALL_CARD 和 1 个 SINGLE_BIG_CARD
         int fullGroups = count / 5; // 完整组的数量
         int remainder = count % 5;   // 剩余的数量
 
         // 添加完整组
         for (int i = 0; i < fullGroups; i++) {
-            postTypes.add(PostAo.VIEW_TYPE_USER);
-            postTypes.add(PostAo.VIEW_TYPE_USER);
-//            postTypes.add(PostAo.VIEW_TYPE_USER);
-//            postTypes.add(PostAo.VIEW_TYPE_USER);
-            postTypes.add(PostAo.VIEW_TYPE_PLUS);
+            postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
+            postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
+//            postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
+//            postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
+            postTypes.add(RecommendCardType.SINGLE_BIG_CARD.value);
         }
 
         // 处理剩余的视图类型
         switch (remainder) {
             case 1:
-                postTypes.add(PostAo.VIEW_TYPE_PLUS);
+                postTypes.add(RecommendCardType.SINGLE_BIG_CARD.value);
                 break;
             case 2:
-                postTypes.add(PostAo.VIEW_TYPE_USER);
-//                postTypes.add(PostAo.VIEW_TYPE_USER);
+                postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
+//                postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
                 break;
             case 3:
-                postTypes.add(PostAo.VIEW_TYPE_USER);
-//                postTypes.add(PostAo.VIEW_TYPE_USER);
-                postTypes.add(PostAo.VIEW_TYPE_PLUS);
+                postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
+//                postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
+                postTypes.add(RecommendCardType.SINGLE_BIG_CARD.value);
                 break;
             case 4:
-                postTypes.add(PostAo.VIEW_TYPE_USER);
-                postTypes.add(PostAo.VIEW_TYPE_USER);
-//                postTypes.add(PostAo.VIEW_TYPE_USER);
-//                postTypes.add(PostAo.VIEW_TYPE_USER);
+                postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
+                postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
+//                postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
+//                postTypes.add(RecommendCardType.TWO_SMALL_CARD.value);
                 break;
         }
 

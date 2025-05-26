@@ -10,6 +10,7 @@ import com.czy.customviewlib.databinding.ViewRecommendCardBinding;
 import com.czy.customviewlib.databinding.ViewRecommendCardPlusBinding;
 import com.czy.dal.OnPositionItemClick;
 import com.czy.dal.ao.home.PostAo;
+import com.czy.dal.constant.home.RecommendCardType;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,28 +18,25 @@ import java.util.Optional;
 public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<PostAo> postAoList;
-    private final OnPositionItemClick onPositionItemClick;
-    private final OnClickArticleCardCallBack onClickArticleCardCallBack;
+    private final OnRecommendCardClick onRecommendCardClick;
 
     public PostAdapter(List<PostAo> postAoList,
-                       OnPositionItemClick onPositionItemClick,
-                       OnClickArticleCardCallBack onClickArticleCardCallBack) {
+                       OnRecommendCardClick onRecommendCardClick) {
         this.postAoList = postAoList;
-        this.onPositionItemClick = onPositionItemClick;
-        this.onClickArticleCardCallBack = onClickArticleCardCallBack;
+        this.onRecommendCardClick = onRecommendCardClick;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if (viewType == PostAo.VIEW_TYPE_USER) {
+        if (viewType == RecommendCardType.TWO_SMALL_CARD.value) {
             ViewRecommendCardBinding binding = ViewRecommendCardBinding.inflate(inflater, parent, false);
-            return new PostItemViewHolder(binding, onClickArticleCardCallBack);
+            return new PostItemViewHolder(binding, onRecommendCardClick);
         }
         else{
             ViewRecommendCardPlusBinding binding = ViewRecommendCardPlusBinding.inflate(inflater, parent, false);
-            return new PostItemPlusViewHolder(binding, onClickArticleCardCallBack);
+            return new PostItemPlusViewHolder(binding, onRecommendCardClick);
         }
     }
 
@@ -48,7 +46,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (postAo == null){
             return;
         }
-        if (postAo.viewType == PostAo.VIEW_TYPE_USER){
+        if (postAo.viewType == RecommendCardType.TWO_SMALL_CARD.value){
             ((PostItemViewHolder)holder).setView();
         }
         else {

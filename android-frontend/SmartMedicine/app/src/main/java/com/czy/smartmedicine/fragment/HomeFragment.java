@@ -6,22 +6,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.home.OnClickArticleCardCallBack;
+import com.czy.customviewlib.view.home.OnRecommendCardClick;
 import com.czy.customviewlib.view.home.PostAdapter;
-import com.czy.dal.OnPositionItemClick;
-import com.czy.dal.ao.home.PostAo;
+
 import com.czy.dal.vo.entity.home.PostListVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
 import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.HomeViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -73,23 +69,19 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                 .map(ao -> ao.postListVo)
                 .orElse(new PostListVo());
 
-        OnPositionItemClick onPositionItemClick = position -> {
-
-        };
-
-        OnClickArticleCardCallBack onClickArticleCardCallBack = new OnClickArticleCardCallBack() {
+        OnRecommendCardClick onRecommendCardClick = new OnRecommendCardClick() {
             @Override
-            public void onCardClickListener(int position, int cardType, int cardId, boolean[] feedbackButton) {
+            public void onCardClick(int position, int cardType, int cardId) {
 
             }
 
             @Override
-            public void onButtonClickListener(int position, int cardType, int cardId, int buttonType, boolean[] feedbackButton) {
+            public void onButtonClick(int position, int cardType, int cardId, int buttonType) {
 
             }
         };
 
-        PostAdapter adapter = new PostAdapter(postListVo.postAoListLd.getValue(), onPositionItemClick, onClickArticleCardCallBack);
+        PostAdapter adapter = new PostAdapter(postListVo.postAoListLd.getValue(), onRecommendCardClick);
 
         binding.rclvRecommend.setAdapter(adapter);
     }
