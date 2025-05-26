@@ -140,6 +140,8 @@ public class RequestMessageType {
         private static final String like = "like";
         private static final String comment = "comment";
         private static final String collect = "collect";
+        // 不感兴趣
+        private static final String notInterested = "notInterested";
         // 转发
         private static final String forward = "forward";
         // 文件夹
@@ -160,6 +162,9 @@ public class RequestMessageType {
         // 收藏文件夹
         @MsgTranslator(responseType = ResponseMessageType.Post.COLLECT_FOLDER)
         public final static String COLLECT_FOLDER = requestRoot + root + folder;
+        // 不感兴趣
+        @MsgTranslator(responseType = ResponseMessageType.NULL)
+        public final static String NOT_INTERESTED = requestRoot + root + notInterested;
     }
 
     public final static class Call {

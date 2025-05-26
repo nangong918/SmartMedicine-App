@@ -13,6 +13,7 @@ import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.base.NettyOptionRequest;
 import com.czy.api.domain.dto.socket.request.PostCollectRequest;
 import com.czy.api.domain.dto.socket.request.PostCommentRequest;
+import com.czy.api.domain.dto.socket.request.PostDisLikeRequest;
 import com.czy.api.domain.dto.socket.request.PostFolderRequest;
 import com.czy.api.domain.dto.socket.request.PostForwardRequest;
 import com.czy.api.domain.dto.socket.request.PostLikeRequest;
@@ -405,6 +406,59 @@ public class PostHandler implements PostApi{
         NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
         // Mq -> user
         rabbitMqSender.push(nettyServerResponse);
+        // userAction -> kafka -> feature-service
+        UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
+        Long userId = userService.getIdByAccount(request.getSenderId());
+        userActionOperatePost.setUserId(userId);
+        userActionOperatePost.setPostId(request.getPostId());
+        userActionOperatePost.setOperateType(operateType);
+
+        try {
+            kafkaSender.sendUserActionMessage(userActionOperatePost, UserActionOperatePost.TOPIC);
+        } catch (Exception e){
+            log.error("用户显性行为Kafka传输异常：[点赞] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
+        }
+    }
+
+    @Override
+    public void notInterested(PostDisLikeRequest request) {
+        Integer operateType = PostOperation.NULL.getCode();
+        boolean isOptionLegal = checkOption(request);
+        if (!isOptionLegal){
+            return;
+        }
+        UserDo userDo = userService.getUserByAccount(request.getSenderId());
+        // 不感兴趣
+        if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
+            try {
+                // 数据库增加
+                postHandleService.postNotInterested(request.getPostId(), userDo.getId());
+                // 通知作者
+                PostAo postAo = postService.findPostById(request.getPostId());
+                if (postAo == null || postAo.getAuthorId() == null){
+                    return;
+                }
+                UserDo authorDo = userService.getUserById(postAo.getAuthorId());
+                if (authorDo == null || !StringUtils.hasText(authorDo.getAccount())){
+                    return;
+                }
+                PostLikeResponse postLikeResponse = new PostLikeResponse(request.getPostId());
+                postLikeResponse.setLikeUserAccount(request.getSenderId());
+                postLikeResponse.setReceiverId(authorDo.getAccount());
+                rabbitMqSender.push(postLikeResponse);
+                operateType = PostOperation.NOT_INTERESTED.getCode();
+            } catch (Exception ignored){
+            }
+        }
+        // 取消不感兴趣
+        if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
+            try {
+                postHandleService.deletePostNotInterested(request.getPostId(), userDo.getId());
+                operateType = PostOperation.CANCEL_NOT_INTERESTED.getCode();
+            } catch (Exception ignored){
+            }
+        }
+
         // userAction -> kafka -> feature-service
         UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
         Long userId = userService.getIdByAccount(request.getSenderId());
