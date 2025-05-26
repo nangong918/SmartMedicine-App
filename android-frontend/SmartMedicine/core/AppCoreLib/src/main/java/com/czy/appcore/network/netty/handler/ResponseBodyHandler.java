@@ -46,16 +46,6 @@ public class ResponseBodyHandler extends SimpleChannelInboundHandler<ResponseBod
         else if (type.contains(ResponseMessageType.Connect.root)){
 
         }
-        // 状态消息
-        else if (type.equals(ResponseMessageType.SUCCESS)){
-
-        }
-        else if (type.equals(ResponseMessageType.FAILURE)){
-
-        }
-        else if (type.equals(ResponseMessageType.WAITING)){
-
-        }
         // EventBus消息
         else{
             // 将消息转发给 EventListener
