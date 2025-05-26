@@ -62,12 +62,12 @@ public class HomeViewModel extends ViewModel {
     }
 
     // 获取推荐帖子
-    public void getPostList(){
+    public void getRecommendPosts(){
         FeatureContext currentFeatureContext = getFeatureContext();
         RecommendPostRequest request = new RecommendPostRequest();
         request.featureContext = currentFeatureContext;
         request.userAccount = MainApplication.getInstance().getUserLoginInfoAo().account;
-        apiRequestImpl.getPost(
+        apiRequestImpl.getRecommendPosts(
                 request,
                 this::handleGetPostList,
                 ViewModelUtil::globalThrowableToast

@@ -6,19 +6,18 @@ import com.czy.baseUtilsLib.network.BaseApiRequestImpl;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.OnSuccessCallback;
 import com.czy.baseUtilsLib.network.OnThrowableCallback;
-import com.czy.dal.dto.http.request.RecommendPostRequest;
-import com.czy.dal.dto.http.response.RecommendPostResponse;
-import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.http.request.BaseNettyRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
-import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.http.request.PhoneLoginRequest;
+import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
 import com.czy.dal.dto.http.response.LoginSignResponse;
+import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
+import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
@@ -204,11 +203,27 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/recommend/getPost")
     //    Observable<BaseResponse<RecommendPostResponse>> getPost(@Body RecommendPostRequest request);
-    public void getPost(RecommendPostRequest request,
+    public void getRecommendPosts(RecommendPostRequest request,
                         OnSuccessCallback<BaseResponse<RecommendPostResponse>> onSuccessCallback,
                         OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
-                mApi.getPost(request),
+                mApi.getRecommendPosts(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @GET("/post/getPost")
+    //    Observable<BaseResponse<SinglePostResponse>> getSinglePost(
+    //            @Query("postId") Long postId,
+    //            @Query("pageNum") Long pageNum
+    //    );
+
+    public void getSinglePost(Long postId, Long pageNum,
+                        OnSuccessCallback<BaseResponse<SinglePostResponse>> onSuccessCallback,
+                        OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.getSinglePost(postId, pageNum),
                 onSuccessCallback,
                 onThrowableCallback
         );
