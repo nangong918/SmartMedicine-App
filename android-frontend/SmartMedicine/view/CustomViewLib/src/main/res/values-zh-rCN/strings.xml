@@ -35,4 +35,8 @@
     <string name="call">通话</string>
     <string name="friends">好友</string>
     <string name="groups">群聊</string>
+    <string name="make_comment">发表评论</string>
+    <string name="comment">评论</string>
+    <string name="title">标题</string>
+    <string name="article_details">文章详情</string>
 </resources>

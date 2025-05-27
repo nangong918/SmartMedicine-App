@@ -9,8 +9,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.czy.baseUtilsLib.activity.BaseActivity;
+import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.ao.home.PostIntentAo;
+import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPostBinding;
+import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.PostViewModel;
 
 import java.util.Optional;
 
@@ -24,12 +28,13 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     protected void init() {
         super.init();
         initIntent();
+        initViewModel();
     }
 
     @Override
     protected void setListener() {
         super.setListener();
-        binding.topBar.setOnClickListener(v -> {
+        binding.btnBack.setOnClickListener(v -> {
             finishActivityWithPostId(currentActivityPostId);
         });
     }
@@ -51,8 +56,34 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
             return;
         }
 
-        // TODO 利用postId去网络请求帖子信息
+        // 利用postId去网络请求帖子信息（先请求1页的评论内容）
+        viewModel.getSinglePost(currentActivityPostId, 1L);
     }
+
+    private PostViewModel viewModel;
+
+    private void initViewModel(){
+        ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
+        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, PostViewModel.class);
+
+        initViewModelVo();
+
+        observeLivedata();
+
+        // 绑定viewModel
+        binding.setViewModel(viewModel);
+        // 设置监听者
+        binding.setLifecycleOwner(this);
+    }
+
+    private void initViewModelVo(){
+
+    }
+
+    private void observeLivedata() {
+
+    }
+
 
     // 在 PostActivity 中
     private void finishActivityWithPostId(Long postId) {

@@ -3,18 +3,270 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.czy.smartmedicine.viewModel.PostViewModel" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
+        android:background="@color/green_90"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".activity.PostActivity">
 
-        <com.czy.customviewlib.view.InfoBarView
-            android:id="@+id/top_bar"
-            app:layout_constraintTop_toTopOf="parent"
+        <View
+            android:id="@+id/viewBackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="0dp"
+            android:background="@color/green_10"
+            app:layout_constraintBottom_toTopOf="@+id/editTextInput"
+            android:layout_marginBottom="16dp"/>
+
+        <View
+            android:id="@+id/viewSupporter"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/green_90"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            app:layout_constraintTop_toBottomOf="@+id/viewSupporter"
+            app:layout_constraintBottom_toTopOf="@+id/editTextInput"
+            android:layout_marginBottom="20dp"
+            android:id="@+id/scrollArticle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:background="@color/green_50"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/authorFacePicture"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@mipmap/logo"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/authorName"
+                            tools:text="想养一只Vector"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/time"
+                            tools:text="2023年4月18日 11点16"
+                            android:textStyle="italic"
+                            android:layout_marginTop="6dp"
+                            android:textSize="13sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:padding="15dp"
+                    android:id="@+id/Title"
+                    android:text="@string/title"
+                    android:textStyle="bold"
+                    android:textSize="23sp"
+                    android:layout_width="280dp"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"/>
+
+                <com.czy.customviewlib.view.RoundedImage
+                    android:id="@+id/articlePicture"
+                    android:padding="10dp"
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/logo"/>
+
+                <TextView
+                    android:id="@+id/content"
+                    android:padding="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="         杜女士是一名公务员，既有着令人羡慕的职业，又有着幸福和睦的家庭，是外人眼中的人生赢家。
+四十出头的年纪，加上平时非常注意保养，精致的打扮不俗的品位，让她看起来更加的年轻、美丽，令身边朋友艳羡不已。
+可是，腿上凸起的血管却已经困扰了她三年。"/>
+
+                <LinearLayout
+                    android:id="@+id/comment"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        tools:text="评论"
+                        android:text="@string/comment"
+                        android:textColor="@color/green_500"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@color/green_90"
+                        android:gravity="center"
+                        android:layout_gravity="center"/>
+
+                    <ListView
+                        android:id="@+id/commentList"
+                        android:background="@color/green_50"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </ScrollView>
+
+
+        <TextView
+            android:id="@+id/textName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/article_details"
+            android:textColor="@color/green_1000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginStart="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageBack"
+            app:layout_constraintStart_toEndOf="@+id/imageBack"
+            app:layout_constraintTop_toTopOf="@+id/imageBack" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/chevron_left_24px"
+            app:tint="@color/secondary_text" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            app:layout_constraintBottom_toBottomOf="@+id/viewBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/layoutSend"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="180dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/background_chat_input">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/send_24px"
+                app:tint="@color/green_500"
+                android:padding="10dp"/>
+
+        </FrameLayout>
+
+        <LinearLayout
+            app:layout_constraintTop_toTopOf="@+id/layoutSend"
+            app:layout_constraintBottom_toBottomOf="@+id/layoutSend"
+            app:layout_constraintStart_toEndOf="@+id/layoutSend"
+            android:layout_marginStart="55dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:id="@+id/favorite"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/background_chat_input">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/favoriteImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/favorite_border"
+                    app:tint="@color/green_500"
+                    android:padding="10dp"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/star"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/background_chat_input">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/starImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/star_border"
+                    app:tint="@color/green_500"
+                    android:padding="10dp"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/editTextInput"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/background_chat_input"
+            android:hint="@string/make_comment"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:textColor="@color/green_500"
+            android:textColorHint="@color/green_500"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/layoutSend"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
