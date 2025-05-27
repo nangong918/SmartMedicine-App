@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModeVo.newUserGroup;
+package com.czy.dal.vo.viewModelVo.newUserGroup;
 
 import androidx.lifecycle.MutableLiveData;
 

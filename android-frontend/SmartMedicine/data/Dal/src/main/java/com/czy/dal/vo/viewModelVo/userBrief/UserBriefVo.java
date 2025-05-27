@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModeVo.userBrief;
+package com.czy.dal.vo.viewModelVo.userBrief;
 
 import androidx.lifecycle.MutableLiveData;
 

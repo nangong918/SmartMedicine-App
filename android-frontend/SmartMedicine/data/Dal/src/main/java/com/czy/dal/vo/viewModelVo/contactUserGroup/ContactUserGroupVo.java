@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModeVo.contactUserGroup;
+package com.czy.dal.vo.viewModelVo.contactUserGroup;
 
 import com.czy.dal.vo.entity.contact.ContactListVo;
 

@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModeVo.sign;
+package com.czy.dal.vo.viewModelVo.sign;
 
 
 import androidx.lifecycle.MutableLiveData;

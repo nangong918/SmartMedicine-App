@@ -22,7 +22,7 @@ import com.czy.baseUtilsLib.timer.CountDownTimerUtil;
 import com.czy.baseUtilsLib.timer.CountdownCallback;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.dto.http.request.SendSmsRequest;
-import com.czy.dal.vo.viewModeVo.sign.SignVo;
+import com.czy.dal.vo.viewModelVo.sign.SignVo;
 import com.czy.dal.dto.http.request.PhoneLoginRequest;
 import com.czy.dal.dto.http.response.LoginSignResponse;
 import com.czy.datalib.networkRepository.ApiRequestImpl;

@@ -19,7 +19,7 @@ import com.czy.dal.constant.Constants;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
 import com.czy.dal.entity.UserViewEntity;
-import com.czy.dal.vo.viewModeVo.contactUserGroup.ContactUserGroupVo;
+import com.czy.dal.vo.viewModelVo.contactUserGroup.ContactUserGroupVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.fragment.friends.ContactUserGroupFragment;

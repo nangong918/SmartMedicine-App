@@ -34,7 +34,7 @@ import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.HaveReadMessageResponse;
 import com.czy.dal.vo.entity.message.ChatMessageItemVo;
-import com.czy.dal.vo.viewModeVo.chat.ChatVo;
+import com.czy.dal.vo.viewModelVo.chat.ChatVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 

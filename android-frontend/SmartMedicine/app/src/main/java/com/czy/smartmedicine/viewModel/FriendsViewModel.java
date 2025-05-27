@@ -16,7 +16,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.dto.http.request.BaseNettyRequest;
 import com.czy.dal.dto.netty.response.AddUserToTargetUserResponse;
 import com.czy.dal.dto.netty.response.HandleAddUserResponse;
-import com.czy.dal.vo.viewModeVo.friends.FriendsVo;
+import com.czy.dal.vo.viewModelVo.friends.FriendsVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.fragment.friends.FriendsFragment;

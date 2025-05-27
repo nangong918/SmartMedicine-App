@@ -14,7 +14,7 @@ import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.addContact.AddContactAdapter;
 import com.czy.dal.constant.SearchEnum;
-import com.czy.dal.vo.viewModeVo.search.SearchActivityUserVo;
+import com.czy.dal.vo.viewModelVo.search.SearchActivityUserVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySearchBinding;
 import com.czy.smartmedicine.viewModel.ApiViewModelFactory;

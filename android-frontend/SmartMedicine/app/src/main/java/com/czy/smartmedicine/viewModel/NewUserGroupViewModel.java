@@ -26,7 +26,7 @@ import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
 
-import com.czy.dal.vo.viewModeVo.newUserGroup.NewUserGroupVo;
+import com.czy.dal.vo.viewModelVo.newUserGroup.NewUserGroupVo;
 import com.czy.dal.ao.newUser.NewUserItemAo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;

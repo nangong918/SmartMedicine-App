@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModeVo.chat;
+package com.czy.dal.vo.viewModelVo.chat;
 
 import androidx.lifecycle.MutableLiveData;
 

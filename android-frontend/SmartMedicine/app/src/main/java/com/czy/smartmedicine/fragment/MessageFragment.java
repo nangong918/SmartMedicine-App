@@ -16,7 +16,7 @@ import com.czy.customviewlib.view.chatCard.ChatContactAdapter;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.vo.entity.message.ChatContactListVo;
-import com.czy.dal.vo.viewModeVo.message.MessageVo;
+import com.czy.dal.vo.viewModelVo.message.MessageVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.ChatActivity;
 import com.czy.smartmedicine.databinding.FragmentMessageBinding;

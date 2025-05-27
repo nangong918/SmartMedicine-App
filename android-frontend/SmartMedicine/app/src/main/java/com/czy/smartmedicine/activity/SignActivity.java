@@ -9,7 +9,7 @@ import android.view.View;
 import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.dal.vo.viewModeVo.sign.SignVo;
+import com.czy.dal.vo.viewModelVo.sign.SignVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySignBinding;
 import com.czy.smartmedicine.test.TestConfig;

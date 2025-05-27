@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModeVo.message;
+package com.czy.dal.vo.viewModelVo.message;
 
 import com.czy.dal.vo.entity.message.ChatContactListVo;
 

@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModeVo.home;
+package com.czy.dal.vo.viewModelVo.home;
 
 import com.czy.dal.vo.entity.home.PostListVo;
 

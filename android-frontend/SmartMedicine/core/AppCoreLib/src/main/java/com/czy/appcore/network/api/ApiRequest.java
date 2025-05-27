@@ -32,6 +32,8 @@ import retrofit2.http.Query;
 /**
  * @author 13225
  * 描述: 网络请求接口
+ * 网络值不能交给livedata触发，而是接口，因为livedata相同结果不触发
+ * 但是resultLiveData.setValue(newData); 每次更新都会通知观察者
  */
 public interface ApiRequest {
 

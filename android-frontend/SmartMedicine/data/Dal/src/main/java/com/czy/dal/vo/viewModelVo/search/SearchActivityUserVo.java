@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModeVo.search;
+package com.czy.dal.vo.viewModelVo.search;
 
 import androidx.lifecycle.MutableLiveData;
 

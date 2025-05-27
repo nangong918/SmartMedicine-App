@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
+import com.czy.dal.vo.viewModelVo.post.PostActivityVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 
 public class PostViewModel extends ViewModel {
@@ -21,7 +22,19 @@ public class PostViewModel extends ViewModel {
 
     //---------------------------Vo Ld---------------------------
 
+    private PostActivityVo postActivityVo = new PostActivityVo();
+
+    public void init(PostActivityVo postActivityVo) {
+        this.postActivityVo = postActivityVo;
+
+        initialNetworkRequest();
+    }
+
     //---------------------------NetWork---------------------------
+
+    // 初始化网络请求
+    private void initialNetworkRequest() {
+    }
 
     public void getSinglePost(Long postId, Long pageNum){
         apiRequestImpl.getSinglePost(
@@ -32,6 +45,10 @@ public class PostViewModel extends ViewModel {
     }
 
     private void handleSinglePost(BaseResponse<SinglePostResponse> response){
-        //TODO
+        if (ViewModelUtil.handleResponse(response)) {
+            SinglePostResponse singlePostResponse = response.getData();
+            postActivityVo.postVoLd.setValue(singlePostResponse.postVo);
+            postActivityVo.commentVosLd.setValue(singlePostResponse.commentVos);
+        }
     }
 }

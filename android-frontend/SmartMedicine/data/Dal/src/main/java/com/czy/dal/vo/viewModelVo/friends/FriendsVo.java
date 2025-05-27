@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModeVo.friends;
+package com.czy.dal.vo.viewModelVo.friends;
 
 import androidx.lifecycle.MutableLiveData;
 
