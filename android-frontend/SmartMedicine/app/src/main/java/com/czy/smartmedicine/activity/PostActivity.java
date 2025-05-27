@@ -5,12 +5,15 @@ package com.czy.smartmedicine.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.czy.baseUtilsLib.activity.BaseActivity;
+import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.ao.home.PostIntentAo;
+import com.czy.dal.vo.viewModelVo.post.PostActivityVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPostBinding;
 import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
@@ -77,13 +80,120 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     }
 
     private void initViewModelVo(){
-
+        PostActivityVo postActivityVo = new PostActivityVo();
+        viewModel.init(postActivityVo);
     }
 
     private void observeLivedata() {
-
+        observePostVo();
+        observeCommentVo();
     }
 
+    private void observePostVo(){
+        viewModel.postActivityVo.postVoLd.authorAvatarUrlLd.observe(
+                this, authorAvatarUrl -> {
+                    if (TextUtils.isEmpty(authorAvatarUrl)){
+                        return;
+                    }
+                    ImageLoadUtil.loadImageViewByUrl(authorAvatarUrl, binding.authorFacePicture);
+                }
+        );
+
+        viewModel.postActivityVo.postVoLd.postImgUrlsLd.observe(
+                this, postImgUrls -> {
+                    if (postImgUrls == null){
+                        return;
+                    }
+                    if (!postImgUrls.isEmpty()){
+                        ImageLoadUtil.loadImageViewByUrl(postImgUrls.get(0), binding.articlePicture);
+                    }
+                }
+        );
+
+        viewModel.postActivityVo.postVoLd.postContentLd.observe(
+                this, content -> {
+                    if (TextUtils.isEmpty(content)){
+                        return;
+                    }
+                    binding.content.setText(content);
+                }
+        );
+
+        viewModel.postActivityVo.postVoLd.postTitleLd.observe(
+                this, title -> {
+                    if (TextUtils.isEmpty(title)){
+                        return;
+                    }
+                    binding.Title.setText(title);
+                }
+        );
+
+        viewModel.postActivityVo.postVoLd.authorNameLd.observe(
+                this, authorName -> {
+                    if (TextUtils.isEmpty(authorName)){
+                        return;
+                    }
+                    binding.authorName.setText(authorName);
+                }
+        );
+
+        viewModel.postActivityVo.postVoLd.likeNumLd.observe(
+                this, likeNum -> {
+                    if (TextUtils.isEmpty(likeNum)){
+                        return;
+                    }
+                    binding.tvLikeNum.setText(likeNum);
+                }
+        );
+
+        viewModel.postActivityVo.postVoLd.collectNumLd.observe(
+                this, collectNum -> {
+                    if (TextUtils.isEmpty(collectNum)){
+                        return;
+                    }
+                    binding.tvCollectionNum.setText(collectNum);
+                }
+        );
+
+        viewModel.postActivityVo.postVoLd.commentNumLd.observe(
+                this, commentNum -> {
+                    if (TextUtils.isEmpty(commentNum)){
+                        return;
+                    }
+                    binding.tvCommentNum.setText(commentNum);
+                }
+        );
+
+        viewModel.postActivityVo.postVoLd.isLikeLd.observe(
+                this, isLike -> {
+                    if (isLike){
+                        binding.imgFavorite.setImageResource(com.czy.customviewlib.R.drawable.favorite_border);
+                    }else{
+                        binding.imgFavorite.setImageResource(com.czy.customviewlib.R.drawable.favorite_24px);
+                    }
+                }
+        );
+
+        viewModel.postActivityVo.postVoLd.isCollectLd.observe(
+                this, isCollect -> {
+                    if (isCollect){
+                        binding.imgvStar.setImageResource(com.czy.customviewlib.R.drawable.star_border);
+                    }
+                    else{
+                        binding.imgvStar.setImageResource(com.czy.customviewlib.R.drawable.star_24px);
+                    }
+                }
+        );
+    }
+
+    private void observeCommentVo() {
+        viewModel.postActivityVo.commentNumLd.observe(
+                this,
+                commentNum -> {
+                    // TODO recyclerView刷新
+                }
+        );
+    }
 
     // 在 PostActivity 中
     private void finishActivityWithPostId(Long postId) {

@@ -22,7 +22,7 @@ public class PostViewModel extends ViewModel {
 
     //---------------------------Vo Ld---------------------------
 
-    private PostActivityVo postActivityVo = new PostActivityVo();
+    public PostActivityVo postActivityVo = new PostActivityVo();
 
     public void init(PostActivityVo postActivityVo) {
         this.postActivityVo = postActivityVo;
@@ -47,8 +47,11 @@ public class PostViewModel extends ViewModel {
     private void handleSinglePost(BaseResponse<SinglePostResponse> response){
         if (ViewModelUtil.handleResponse(response)) {
             SinglePostResponse singlePostResponse = response.getData();
-            postActivityVo.postVoLd.setValue(singlePostResponse.postVo);
-            postActivityVo.commentVosLd.setValue(singlePostResponse.commentVos);
+            postActivityVo.postVoLd.initByPostVo(singlePostResponse.postVo);
+            postActivityVo.commentVos = singlePostResponse.commentVos;
+            postActivityVo.commentNumLd.setValue(
+                    singlePostResponse.commentVos.size()
+            );
         }
     }
 }

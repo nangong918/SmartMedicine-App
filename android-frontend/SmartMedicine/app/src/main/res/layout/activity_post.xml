@@ -132,9 +132,10 @@
                         android:gravity="center"
                         android:layout_gravity="center"/>
 
-                    <ListView
-                        android:id="@+id/commentList"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rclv_comment"
                         android:background="@color/green_50"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
 
@@ -219,12 +220,20 @@
                 android:background="@drawable/background_chat_input">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/favoriteImage"
+                    android:id="@+id/img_favorite"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/favorite_border"
                     app:tint="@color/green_500"
                     android:padding="10dp"/>
+
+                <TextView
+                    android:id="@+id/tv_likeNum"
+                    tools:text="1.2M"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:gravity="center"/>
 
             </FrameLayout>
 
@@ -238,12 +247,20 @@
                 android:background="@drawable/background_chat_input">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/starImage"
+                    android:id="@+id/imgv_star"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/star_border"
                     app:tint="@color/green_500"
                     android:padding="10dp"/>
+
+                <TextView
+                    android:id="@+id/tv_collectionNum"
+                    tools:text="1.2M"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:gravity="center"/>
 
             </FrameLayout>
 
@@ -267,6 +284,15 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/layoutSend"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_commentNum"
+            tools:text="1.2M"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:gravity="center"
+            tools:ignore="MissingConstraints" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
