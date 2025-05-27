@@ -33,4 +33,9 @@ public class DateUtils {
         return simpleDateFormat.format(data);
     }
 
+    public static String timestampToDate(long timestamp){
+        Date date = new Date(timestamp);
+        return getTime(date);
+    }
+
 }

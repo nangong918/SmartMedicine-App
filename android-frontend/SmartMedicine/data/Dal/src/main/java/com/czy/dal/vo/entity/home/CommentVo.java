@@ -5,6 +5,8 @@ public class CommentVo {
     // comment 所属相关
     public Long commentId = null;
     public Long replyCommentId = null;
+    public String replyUserId = null;
+    public String replyUserName = null;
     public Long postId = null;
 
     // comment 内容相关

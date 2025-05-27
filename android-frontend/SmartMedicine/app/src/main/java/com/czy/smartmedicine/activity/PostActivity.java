@@ -12,13 +12,17 @@ import android.widget.Toast;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
+import com.czy.customviewlib.view.post.CommentAdapter;
 import com.czy.dal.ao.home.PostIntentAo;
+import com.czy.dal.vo.entity.home.CommentVo;
 import com.czy.dal.vo.viewModelVo.post.PostActivityVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPostBinding;
 import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.PostViewModel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class PostActivity extends BaseActivity<ActivityPostBinding> {
@@ -32,6 +36,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         super.init();
         initIntent();
         initViewModel();
+        initRecyclerView();
     }
 
     @Override
@@ -167,9 +172,9 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         viewModel.postActivityVo.postVoLd.isLikeLd.observe(
                 this, isLike -> {
                     if (isLike){
-                        binding.imgFavorite.setImageResource(com.czy.customviewlib.R.drawable.favorite_border);
+                        binding.imgFavorite.setImageResource(com.czy.customviewlib.R.drawable.favorite_full);
                     }else{
-                        binding.imgFavorite.setImageResource(com.czy.customviewlib.R.drawable.favorite_24px);
+                        binding.imgFavorite.setImageResource(com.czy.customviewlib.R.drawable.favorite_border);
                     }
                 }
         );
@@ -177,22 +182,34 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         viewModel.postActivityVo.postVoLd.isCollectLd.observe(
                 this, isCollect -> {
                     if (isCollect){
-                        binding.imgvStar.setImageResource(com.czy.customviewlib.R.drawable.star_border);
+                        binding.imgvStar.setImageResource(com.czy.customviewlib.R.drawable.star_full);
                     }
                     else{
-                        binding.imgvStar.setImageResource(com.czy.customviewlib.R.drawable.star_24px);
+                        binding.imgvStar.setImageResource(com.czy.customviewlib.R.drawable.star_border);
                     }
                 }
         );
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void observeCommentVo() {
         viewModel.postActivityVo.commentNumLd.observe(
                 this,
                 commentNum -> {
-                    // TODO recyclerView刷新
+                    // 通知适配器数据已更改
+                    adapter.notifyDataSetChanged();
                 }
         );
+    }
+
+    // recyclerView
+    private CommentAdapter adapter;
+    private void initRecyclerView(){
+        List<CommentVo> commentVos = Optional.ofNullable(viewModel.postActivityVo)
+                .map(ao -> ao.commentVos)
+                .orElse(new ArrayList<>());
+        adapter = new CommentAdapter(commentVos);
+        binding.rclvComment.setAdapter(adapter);
     }
 
     // 在 PostActivity 中
