@@ -13,4 +13,8 @@ public class PostPublishRequest extends BaseNettyRequest {
     // content；not null
     public String content;
     public Boolean isHaveFiles;
+
+    public void setSuperRequest(BaseNettyRequest baseNettyRequest){
+        super.setValueByOther(baseNettyRequest);
+    }
 }

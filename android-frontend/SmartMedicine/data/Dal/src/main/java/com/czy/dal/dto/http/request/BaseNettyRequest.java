@@ -18,4 +18,11 @@ public class BaseNettyRequest extends BaseRequest{
         this.senderId = senderId;
         Log.d("Intercept", "BaseNettyRequest: senderId: " + senderId);
     }
+
+    public void setValueByOther(BaseNettyRequest request){
+        this.senderId = request.senderId;
+        this.receiverId = request.receiverId;
+        this.type = request.type;
+        this.timestamp = request.timestamp;
+    }
 }

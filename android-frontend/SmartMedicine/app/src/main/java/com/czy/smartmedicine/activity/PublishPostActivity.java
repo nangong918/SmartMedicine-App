@@ -2,6 +2,7 @@ package com.czy.smartmedicine.activity;
 
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -34,7 +35,20 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
         super.setListener();
         // 发布
         binding.btnPublish.setOnClickListener(v -> {
-            // TODO 发布帖子接口
+            // 因为后端需要先检查是否合法
+            // 所以前端需要调用第一个接口
+            String title = viewModel.publishPostVo.postTitleLd.getValue();
+            String content = viewModel.publishPostVo.postContentLd.getValue();
+            if (TextUtils.isEmpty(title) || TextUtils.isEmpty(content)){
+                return;
+            }
+            boolean isHaveFile = !(viewModel.publishPostVo.imageUriLd.getValue() == null);
+            viewModel.doPostPublishFirst(
+                    title, content,
+                    isHaveFile,
+                    this
+            );
+            // 再调用第二个接口（viewModel内部调用）
         });
 
         // 选择图片

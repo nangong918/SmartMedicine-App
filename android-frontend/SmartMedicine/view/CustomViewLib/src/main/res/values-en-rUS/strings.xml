@@ -39,4 +39,5 @@
     <string name="comment">评论</string>
     <string name="title">标题</string>
     <string name="article_details">文章详情</string>
+    <string name="publish_post_success">发帖成功</string>
 </resources>

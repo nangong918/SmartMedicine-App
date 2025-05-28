@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -18,19 +19,24 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.loader.content.CursorLoader;
 
 
 import com.bumptech.glide.Glide;
 import com.czy.baseUtilsLib.debug.DebugMyUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -394,6 +400,49 @@ public class FileUtil {
             Log.e(TAG, "Glide加载上传图片异常 : " , e);
             return null; // 处理异常，返回null
         }
+    }
+
+    public static List<MultipartBody.Part> getMultipartBodyByUri(Context context, List<Uri> uris){
+        List<MultipartBody.Part> parts = new ArrayList<>();
+        for (Uri uri : uris) {
+            File file = new File(getRealPathFromURI(context, uri));
+            RequestBody requestFile = RequestBody.create(
+                    MediaType.parse("multipart/form-data"),
+                    file
+            );
+            MultipartBody.Part body = MultipartBody.Part.createFormData(
+                    "files", file.getName(), requestFile
+            );
+            parts.add(body);
+        }
+        return parts;
+    }
+
+    // 辅助方法：获取文件路径
+// 辅助方法：获取文件路径
+    private static String getRealPathFromURI(Context context, Uri contentUri) {
+        String[] proj;
+
+        if (contentUri.toString().startsWith("content://media/external/images")) {
+            proj = new String[]{MediaStore.Images.Media.DATA};
+        } else if (contentUri.toString().startsWith("content://media/external/video")) {
+            proj = new String[]{MediaStore.Video.Media.DATA};
+        } else if (contentUri.toString().startsWith("content://media/external/audio")) {
+            proj = new String[]{MediaStore.Audio.Media.DATA};
+        } else {
+            return null; // 不支持的类型
+        }
+
+        CursorLoader loader = new CursorLoader(context, contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        if (cursor != null) {
+            int column_index = cursor.getColumnIndexOrThrow(proj[0]);
+            cursor.moveToFirst();
+            String path = cursor.getString(column_index);
+            cursor.close(); // 关闭游标
+            return path;
+        }
+        return null;
     }
 
 }
