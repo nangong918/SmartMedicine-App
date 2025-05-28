@@ -4,12 +4,14 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.dto.http.request.BaseNettyRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.request.PhoneLoginRequest;
+import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
 import com.czy.dal.dto.http.response.LoginSignResponse;
+import com.czy.dal.dto.http.response.PostPublishResponse;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
@@ -18,6 +20,8 @@ import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
@@ -152,17 +156,47 @@ public interface ApiRequest {
     Observable<BaseResponse<FileDownloadBytesResponse>> downloadImage(@Query("url") String url);
 
     /**
-     * 获取推荐帖子
+     * 获取推荐帖子列表
      * @param request   请求
      * @return          推荐帖子
      */
     @POST("/recommend/getPost")
     Observable<BaseResponse<RecommendPostResponse>> getRecommendPosts(@Body RecommendPostRequest request);
 
+    /**
+     * 获取单个帖子
+     * @param postId    帖子id
+     * @param pageNum   页码
+     * @return          帖子
+     */
     @GET("/post/getPost")
     Observable<BaseResponse<SinglePostResponse>> getSinglePost(
             @Query("postId") Long postId,
             @Query("pageNum") Long pageNum
+    );
+
+    /**
+     * 发布帖子（首次【因为1.需要审核是否发过，以及内容是否合法2.oss上传速度较慢，可以后台上传】）
+     * @param request   请求
+     * @return  发布帖子
+     */
+    @POST("/post/postPublishFirst")
+    Observable<BaseResponse<PostPublishResponse>> postPublishFirst(
+            @Body PostPublishRequest request
+    );
+
+    /**
+     * 发布帖子（首次结束拿到雪花id之后上传file到oss）
+     * @param files         文件
+     * @param postId        帖子id
+     * @param userAccount   用户账号
+     * @return              发布帖子
+     */
+    @POST("/postFile/uploadPost")
+    Observable<BaseResponse<String>> uploadPostFile(
+            @Part("files") List<MultipartBody.Part> files,
+            @Part("postId") Long postId,
+            @Part("userAccount") String userAccount
     );
 }
 // 1.重构响应 -> 在Friend和Message中显示 -> ChatList发送消息

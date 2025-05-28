@@ -9,12 +9,14 @@ import com.czy.baseUtilsLib.network.OnThrowableCallback;
 import com.czy.dal.dto.http.request.BaseNettyRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.request.PhoneLoginRequest;
+import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
 import com.czy.dal.dto.http.response.LoginSignResponse;
+import com.czy.dal.dto.http.response.PostPublishResponse;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
@@ -23,6 +25,8 @@ import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
+
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -224,6 +228,39 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                         OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
                 mApi.getSinglePost(postId, pageNum),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST("/post/postPublishFirst")
+    //    Observable<BaseResponse<PostPublishResponse>> postPublishFirst(
+    //            @Body PostPublishRequest request
+    //    );
+    public void postPublishFirst(PostPublishRequest request,
+                                 OnSuccessCallback<BaseResponse<PostPublishResponse>> onSuccessCallback,
+                                 OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.postPublishFirst(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST("/postFile/uploadPost")
+    //    Observable<BaseResponse<String>> uploadPostFile(
+    //            @Part("files") List<MultipartBody.Part> files,
+    //            @Part("postId") Long postId,
+    //            @Part("userAccount") String userAccount
+    //    );
+
+    public void uploadPostFile(List<MultipartBody.Part> files,
+                               Long postId,
+                               String userAccount,
+                               OnSuccessCallback<BaseResponse<String>> onSuccessCallback,
+                               OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.uploadPostFile(files, postId, userAccount),
                 onSuccessCallback,
                 onThrowableCallback
         );
