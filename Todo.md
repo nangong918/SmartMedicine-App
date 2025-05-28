@@ -222,7 +222,7 @@ item内容存放在mongoDB，item和attitude的关系不知道存在哪里
    * Java:多线程,网络
 6. 集中本地测试
 7. 完善上线:
-   * 阿尔萨斯s'x's
+   * 阿尔萨斯
    * Docker
    * K8s
 
@@ -239,3 +239,12 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 离线层 (Hive)
 近线层 (StarRocks / ClickHouse)
 在线层 (Elasticsearch + Redis)
+
+TODO 批量将post和user导入数据库的脚本；
+发布时间要随机的最近三十天的时间戳
+
+验收标准：
+1. 正常发布帖子
+2. 正常浏览帖子
+3. 正常推荐
+4. 行为特征上传

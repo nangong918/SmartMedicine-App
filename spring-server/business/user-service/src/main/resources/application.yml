@@ -53,7 +53,7 @@ spring:
       # connectTimeout=3000 设置连接超时时间为 3000 毫秒
       # ocketTimeout=5000 设置 socket 超时时间为 5000 毫秒 连接已经建立的情况下，如果在此时间内没有任何数据传输，则会抛出异常。这对于防止死锁或长时间无响应
       # useSSL=false 使用 SSL 连接。在开发环境中，通常可以关闭 SSL，在生产环境中，开启 SSL 以提高安全性
-      url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:smart_medicine}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&connectTimeout=3000&socketTimeout=5000&useSSL=false
+      url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:smart_medicine}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&connectTimeout=3000&socketTimeout=5000&allowPublicKeyRetrieval=true&useSSL=false
       username: ${MYSQL-USER:root}
       password: ${MYSQL-PWD:123456}
       initial-size: 10                  # 初始化连接池大小
