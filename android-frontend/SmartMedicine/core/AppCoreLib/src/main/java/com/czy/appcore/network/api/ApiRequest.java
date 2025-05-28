@@ -194,7 +194,7 @@ public interface ApiRequest {
      */
     @POST("/postFile/uploadPost")
     Observable<BaseResponse<String>> uploadPostFile(
-            @Part("files") List<MultipartBody.Part> files,
+            @Part List<MultipartBody.Part> files,
             @Part("postId") Long postId,
             @Part("userAccount") String userAccount
     );

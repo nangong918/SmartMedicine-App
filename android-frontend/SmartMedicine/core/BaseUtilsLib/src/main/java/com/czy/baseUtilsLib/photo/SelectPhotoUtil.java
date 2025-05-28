@@ -51,10 +51,13 @@ public class SelectPhotoUtil {
      * @param imageManager                 用于将 URI 转换为 Bitmap 以便显示的 ImageUtil 实例。
      * @return 返回一个 ActivityResultLauncher<Intent>，可用于启动图像选择的 Intent。
      */
-    public static ActivityResultLauncher<Intent> initActivityResultLauncher(AppCompatActivity activity, ImageView imageView, AtomicReference<Uri> selectedImageUri, ImageManager imageManager) {
+    public static ActivityResultLauncher<Intent> initActivityResultLauncher(
+            AppCompatActivity activity, ImageView imageView, AtomicReference<Uri> selectedImageUri,
+            ImageManager imageManager, Runnable runnable) {
         return activity.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
-                result -> handleImageResult(result, activity, imageView, selectedImageUri, imageManager));
+                result -> handleImageResult(result, activity, imageView,
+                        selectedImageUri, imageManager, runnable));
     }
 
     /**
@@ -65,7 +68,13 @@ public class SelectPhotoUtil {
      * @param selectedImageUri  用于保存选中图像 URI 的 AtomicReference。[如果知识传递Uri的话，只是传递形参，并不是地址，无法改变Activity中Uri的值]
      * @param imageManager         用于将 URI 转换为 Bitmap 以便显示的 ImageUtil 实例。
      */
-    private static void handleImageResult(ActivityResult result, Activity activity, ImageView imageView, AtomicReference<Uri> selectedImageUri, ImageManager imageManager) {
+    private static void handleImageResult(
+            ActivityResult result,
+            Activity activity,
+            ImageView imageView,
+            AtomicReference<Uri> selectedImageUri,
+            ImageManager imageManager,
+            Runnable finishCallback) {
         // if (result.getResultCode() == Activity.RESULT_OK){};
         Intent data = result.getData();
         if (data != null) {
@@ -75,6 +84,7 @@ public class SelectPhotoUtil {
             Bitmap bitmap = imageManager.uriToBitmapMediaStore(activity, imageUri);
             if (bitmap != null) {
                 imageView.setImageBitmap(bitmap);
+                finishCallback.run();
             }
         }
     }

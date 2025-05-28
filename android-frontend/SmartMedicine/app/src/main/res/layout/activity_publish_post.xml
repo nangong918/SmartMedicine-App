@@ -62,6 +62,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <View
+                        android:id="@+id/v_selectImage"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@drawable/add_24px"

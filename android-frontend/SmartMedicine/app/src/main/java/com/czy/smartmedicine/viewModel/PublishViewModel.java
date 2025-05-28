@@ -1,10 +1,14 @@
 package com.czy.smartmedicine.viewModel;
 
+import android.net.Uri;
+
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.dal.vo.viewModelVo.post.PublishPostVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PublishViewModel extends ViewModel {
 
@@ -17,6 +21,8 @@ public class PublishViewModel extends ViewModel {
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }
+
+    public AtomicReference<Uri> selectImageUriAtomic = new AtomicReference<>(null);
 
     //---------------------------Vo Ld---------------------------
 

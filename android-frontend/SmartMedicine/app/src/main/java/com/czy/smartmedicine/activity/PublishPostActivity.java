@@ -1,7 +1,14 @@
 package com.czy.smartmedicine.activity;
 
 
+import android.content.Intent;
+import android.view.View;
+
+import androidx.activity.result.ActivityResultLauncher;
+
 import com.czy.baseUtilsLib.activity.BaseActivity;
+import com.czy.baseUtilsLib.image.ImageManager;
+import com.czy.baseUtilsLib.photo.SelectPhotoUtil;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.vo.viewModelVo.post.PublishPostVo;
 import com.czy.smartmedicine.MainApplication;
@@ -19,13 +26,20 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
     protected void init() {
         super.init();
         initViewModel();
+        initActivityLauncher();
     }
 
     @Override
     protected void setListener() {
         super.setListener();
+        // 发布
         binding.btnPublish.setOnClickListener(v -> {
             // TODO 发布帖子接口
+        });
+
+        // 选择图片
+        binding.imgvArticlePic.setOnClickListener(v -> {
+            SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
         });
     }
 
@@ -54,6 +68,20 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
     }
 
     // 选择图片
+    private ActivityResultLauncher<Intent> selectImageLauncher;
 
+    private void initActivityLauncher() {
+        ImageManager imageManager = new ImageManager();
+
+        selectImageLauncher = SelectPhotoUtil.initActivityResultLauncher(
+                this,
+                binding.imgvArticlePic,
+                viewModel.selectImageUriAtomic,
+                imageManager,
+                () -> {
+                    binding.vSelectImage.setVisibility(View.GONE);
+                }
+        );
+    }
 
 }
