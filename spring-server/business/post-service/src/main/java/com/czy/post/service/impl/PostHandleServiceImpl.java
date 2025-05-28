@@ -72,6 +72,22 @@ public class PostHandleServiceImpl implements PostHandleService {
 
     @Transactional
     @Override
+    public void postNotInterested(Long postId, Long userId) {
+        PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(postId);
+        postInfoDo.setNotInterestedCount(postInfoDo.getNotInterestedCount() + 1);
+        postInfoMapper.updatePostInfoDo(postInfoDo);
+    }
+
+    @Transactional
+    @Override
+    public void deletePostNotInterested(Long postId, Long userId) {
+        PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(postId);
+        postInfoDo.setNotInterestedCount(postInfoDo.getNotInterestedCount() - 1);
+        postInfoMapper.updatePostInfoDo(postInfoDo);
+    }
+
+    @Transactional
+    @Override
     public void postForward(Long postId) {
         PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(postId);
         postInfoDo.setForwardCount(postInfoDo.getForwardCount() + 1);

@@ -2,6 +2,7 @@ package com.czy.post.controller;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
+import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
@@ -17,10 +18,9 @@ import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
-import com.czy.api.domain.dto.http.response.GetPostCommentsResponse;
-import com.czy.api.domain.dto.http.response.GetPostInfoListResponse;
-import com.czy.api.domain.dto.http.response.GetPostResponse;
-import com.czy.api.domain.dto.http.response.PostPublishResponse;
+import com.czy.api.domain.dto.http.response.*;
+import com.czy.api.domain.vo.CommentVo;
+import com.czy.api.domain.vo.PostVo;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
 import com.utils.mvc.redisson.RedissonClusterLock;
@@ -67,8 +67,8 @@ public class PostController {
     private final PostCommentConverter postCommentConverter;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private PostNerService postNerService;
+    private final PostNerService postNerService;
+    private final PostSearchService postSearchService;
 
     // 发布post
     /**
@@ -226,7 +226,7 @@ public class PostController {
         if (CollectionUtils.isEmpty(postIds)){
             return Mono.just(BaseResponse.LogBackError("参数错误", log));
         }
-        List<PostInfoAo> postAoList = postService.findPostInfoList(postIds);
+        List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
         GetPostInfoListResponse getPostResponse = new GetPostInfoListResponse();
         getPostResponse.setPostInfoAos(postAoList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
@@ -234,7 +234,8 @@ public class PostController {
 
     // 如何从各种数据查询List<postId>的逻辑在postSearchService中
     // get Post
-    @GetMapping("/getPost")
+    @Deprecated
+    @GetMapping("/getPost/deprecated")
     public Mono<BaseResponse<GetPostResponse>>
     getPost(@RequestParam Long postId,
             @RequestParam Integer pageNum){
@@ -249,11 +250,38 @@ public class PostController {
         if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
             pageNum = 1;
         }
-        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(postId, 20, pageNum);
+        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(postId, PostConstant.COMMENT_PAGE_SIZE, pageNum);
         GetPostResponse getPostResponse = new GetPostResponse();
         getPostResponse.setPostAo(postAo);
         getPostResponse.setPostCommentList(postCommentList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
+    }
+
+    @GetMapping("/getPost")
+    public BaseResponse<SinglePostResponse>
+    getPostNew(@RequestParam Long postId,
+            @RequestParam Integer pageNum){
+        if (ObjectUtils.isEmpty(postId)){
+            return BaseResponse.LogBackError("参数错误", log);
+        }
+
+        PostAo postAo = postService.findPostById(postId);
+        if (postAo == null){
+            String warningMessage = String.format("帖子不存在，postId: %s", postId);
+            return BaseResponse.LogBackError(warningMessage, log);
+        }
+        if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
+            pageNum = 1;
+        }
+        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(postId, PostConstant.COMMENT_PAGE_SIZE, pageNum);
+
+        SinglePostResponse singlePostResponse = new SinglePostResponse();
+        // 转换为vo
+        PostVo postVo = postService.postAoToPostVo(postAo);
+        List<CommentVo> commentVos = postService.getCommentVosByPostCommentDos(postCommentList);
+        singlePostResponse.postVo = postVo;
+        singlePostResponse.commentVos = commentVos;
+        return BaseResponse.getResponseEntitySuccess(singlePostResponse);
     }
 
     // 获取下拉一级评论（pageNum）

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- 网络请求;网络定位 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <application
+        android:name=".MainApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.EasySocial"
+        tools:targetApi="31">
+        <activity
+            android:name=".activity.PublishPostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.PostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.UserBriefActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.StartActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.NewUserGroupActivity"
+            android:exported="false" />
+
+        <service
+            android:name="com.czy.appcore.network.netty.service.NettySocketService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="remoteMessaging"
+            android:process=":nettyService" />
+
+        <activity
+            android:name=".activity.SearchActivity"
+            android:exported="false" /> <!-- AppCoreLib申请了RemoteService -->
+        <!-- <service -->
+        <!-- android:name="com.czy.appcore.network.netty.service.NettySocketService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true" -->
+        <!-- android:foregroundServiceType="remoteMessaging" -->
+        <!-- android:process=":nettyService"> -->
+        <!-- </service> -->
+        <activity
+            android:name=".activity.TestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SignActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

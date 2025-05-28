@@ -5,8 +5,6 @@ import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.converter.domain.post.PostConverter;
-import com.czy.api.domain.ao.post.PostInfoAo;
-import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.search.rule.Rule1AccompanyingDiseases;
 import com.czy.search.rule.Rule2AccompanyingSymptoms;
@@ -17,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -134,35 +131,5 @@ public class FuzzySearchServiceImpl implements FuzzySearchService {
         }
         // 去重
         return new ArrayList<>(new LinkedHashSet<>(similarPostIds));
-    }
-
-    @Override
-    public List<PostInfoUrlAo> getPostInfoUrlAos(List<Long> postIds){
-        List<PostInfoAo> postInfoAos = postSearchService.searchPostInfAoByIds(postIds);
-        List<Long> fileIds = new ArrayList<>();
-        for (PostInfoAo postInfoAo : postInfoAos){
-            if (postInfoAo != null && !ObjectUtils.isEmpty(postInfoAo.getFileId())){
-                fileIds.add(postInfoAo.getFileId());
-            }
-            else {
-                // 为了保证返回顺序一一对应
-                fileIds.add(null);
-            }
-        }
-        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
-        List<PostInfoUrlAo> postInfoUrlAos = new ArrayList<>();
-        assert fileUrls.size() == postInfoAos.size();
-        for (int i = 0; i < postInfoAos.size(); i++){
-            PostInfoAo postInfoAo = postInfoAos.get(i);
-            PostInfoUrlAo postInfoUrlAo = postConverter.postInfoDoToUrlAo(postInfoAo);
-            if (fileUrls.get(i) != null){
-                postInfoUrlAo.setFileUrl(fileUrls.get(i));
-            }
-            else {
-                postInfoUrlAo.setFileUrl(null);
-            }
-            postInfoUrlAos.add(postInfoUrlAo);
-        }
-        return postInfoUrlAos;
     }
 }

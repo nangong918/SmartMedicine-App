@@ -51,6 +51,7 @@ package com.czy.api.constant.netty;
  */
 public class ResponseMessageType {
     public static final String responseRoot = "resp:";
+    public static final String NULL = "$NULL$";
     public final static class Connect {
         public final static String root = "Connect:";
         public final static String CONNECT_SUCCESS = responseRoot + root + "connectSuccess";

@@ -140,6 +140,8 @@ public class RequestMessageType {
         private static final String like = "like";
         private static final String comment = "comment";
         private static final String collect = "collect";
+        // 不感兴趣
+        private static final String notInterested = "notInterested";
         // 转发
         private static final String forward = "forward";
         // 文件夹
@@ -160,6 +162,9 @@ public class RequestMessageType {
         // 收藏文件夹
         @MsgTranslator(responseType = ResponseMessageType.Post.COLLECT_FOLDER)
         public final static String COLLECT_FOLDER = requestRoot + root + folder;
+        // 不感兴趣
+        @MsgTranslator(responseType = ResponseMessageType.NULL)
+        public final static String NOT_INTERESTED = requestRoot + root + notInterested;
     }
 
     public final static class Call {
@@ -232,5 +237,22 @@ public class RequestMessageType {
         public final static String UPLOAD_FILE = requestRoot + root + "uploadFile";
         @MsgTranslator(responseType = ResponseMessageType.Oss.DELETE_FILE)
         public final static String DELETE_FILE = requestRoot + root + "deleteFile";
+    }
+
+    public final static class Logging {
+        public final static String root = "Logging:";
+        // 位置信息事件
+        private static final String location = "location:";
+        // 点击事件
+        private static final String click = "click:";
+        // 浏览事件
+        private static final String browse = "browse:";
+
+        @MsgTranslator(responseType = ResponseMessageType.NULL)
+        public final static String LOGGING_LOCATION = requestRoot + root + location;
+        @MsgTranslator(responseType = ResponseMessageType.NULL)
+        public final static String LOGGING_CLICK = requestRoot + root + click;
+        @MsgTranslator(responseType = ResponseMessageType.NULL)
+        public final static String LOGGING_BROWSE = requestRoot + root + browse;
     }
 }

@@ -25,4 +25,6 @@ public class PostConstant {
     public static final String POST_FILE_CONTROLLER = "/postFile";
     // 默认文件夹
     public static final String DEFAULT_COLLECT_FOLDER_NAME = "默认收藏夹";
+    // 一次获取的comment数量
+    public static final Integer COMMENT_PAGE_SIZE = 20;
 }

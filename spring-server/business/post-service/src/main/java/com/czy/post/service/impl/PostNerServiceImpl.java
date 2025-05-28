@@ -5,6 +5,7 @@ import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.post.component.NerAcTree;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Service
 @org.apache.dubbo.config.annotation.Service(protocol = "dubbo", version = "1.0.0")
 public class PostNerServiceImpl implements PostNerService {
 

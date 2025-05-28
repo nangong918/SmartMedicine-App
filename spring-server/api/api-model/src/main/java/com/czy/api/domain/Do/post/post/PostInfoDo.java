@@ -27,4 +27,6 @@ public class PostInfoDo {
     private Long commentCount = 0L;
     // 转发数量
     private Long forwardCount = 0L;
+    // 不感兴趣数量
+    private Long notInterestedCount = 0L;
 }

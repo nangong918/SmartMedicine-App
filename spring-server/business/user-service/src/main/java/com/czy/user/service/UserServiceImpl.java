@@ -56,6 +56,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDo> getByUserIdsWithNull(List<Long> ids) {
+        List<UserDo> userDoList = new ArrayList<>();
+        for (Long id : ids){
+            if (id == null){
+                userDoList.add(null);
+                continue;
+            }
+            UserDo userDo = userMapper.getUserById(id);
+            if (userDo != null){
+                userDoList.add(userDo);
+            }
+            else {
+                userDoList.add(null);
+            }
+        }
+        return userDoList;
+    }
+
+    @Override
     public UserDo getUserByAccount(String userAccount) {
         return userMapper.getUserByAccount(userAccount);
     }

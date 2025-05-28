@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.czy.smartmedicine.viewModel.ChatViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@color/red_800"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main"
+        tools:context=".activity.ChatActivity">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/basic_toolbar"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="60dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgv_circle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="20dp"
+                android:src="@mipmap/logo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_marginStart="20dp"
+                android:id="@+id/imgv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/chevron_left_24px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="22sp"
+                android:padding="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imgv_circle"
+                app:layout_constraintStart_toEndOf="@+id/imgv_back"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Test" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/viewBackground"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/basic_toolbar"
+            android:background="@drawable/chat_background_content_top"
+            app:layout_constraintBottom_toTopOf="@+id/sm_sendMessage" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            app:isLoading="@{viewModel.chatVo.isLoading}"
+            app:layout_constraintBottom_toBottomOf="@+id/viewBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rclv_message"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            android:padding="20dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="@+id/viewBackground"
+            app:layout_constraintTop_toBottomOf="@+id/basic_toolbar"
+            app:layout_constraintVertical_bias="0.0"
+            app:stackFromEnd="true"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <com.czy.customviewlib.view.SendMessage
+            android:id="@+id/sm_sendMessage"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:setTextChangedListener="@{viewModel.getTextWatcher()}"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
@@ -51,7 +52,7 @@ public class NerAcTree {
     }
 
     public static void main(String[] args) {
-        String relativePath = "/files/build_kg/diseases.json";
+        String relativePath = "/files/build_kg/graph_data/diseases.json";
         String absolutePath = getAbsolutePath(relativePath);
         System.out.println(absolutePath);
 
@@ -135,31 +136,7 @@ public class NerAcTree {
         }
         // 还没加载文件数据到redis
         if (ao == null || !ao.getIsLoadNerFiles()){
-            RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
-                    NerConstant.NER_REDIS_KEY,
-                    NerConstant.NER_REDIS_KEY
-            );
-            // 分布式锁，防止其他实例重复加载
-            if (redissonService.tryLock(redissonClusterLock)){
-                try {
-                    for (String filePath : filePaths){
-                        String relativePath = "/files/build_kg/" + filePath;
-                        String absolutePath = getAbsolutePath(relativePath);
-                        String type = filePath.split("\\.")[0];
-                        loadToRedis(type, absolutePath);
-                    }
-                    ao = new IsLoadNerFilesAo(true);
-                    redissonService.setObjectByJson(
-                            NerConstant.IS_LOAD_NER_FILES_KEY,
-                            ao,
-                            NerConstant.NER_REDIS_EXPIRE_TIME
-                    );
-                } catch (Exception e){
-                    log.error("初始化ner失败", e);
-                    redissonService.unlock(redissonClusterLock);
-                }
-            }
-            log.info("已初始化ner文件数据到redis成功");
+            loadDataToRedis();
         }
         else {
             log.info("已加载ner文件数据到redis");
@@ -175,6 +152,10 @@ public class NerAcTree {
     public void initAcTree(){
 
         HashMap<String, String> maps = redissonService.getHashMap(NerConstant.NER_REDIS_KEY);
+        if (CollectionUtils.isEmpty(maps)){
+            log.warn("maps为空, 从新加载！");
+            loadDataToRedis();
+        }
         String testKey = maps.entrySet().iterator().next().getKey();
         String testValue = maps.entrySet().iterator().next().getValue();
         log.info("check::maps 的大小 = {}, map的第一个元素k：{}，v：{}", maps.size(), testKey, testValue);
@@ -192,5 +173,33 @@ public class NerAcTree {
         acTree.parseText(testStr, (begin, end, value) -> {
             log.info("check::, begin = {}, end = {}, value = {}", begin, end, value);
         });
+    }
+
+    private void loadDataToRedis(){
+        RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
+                NerConstant.NER_REDIS_KEY,
+                NerConstant.NER_REDIS_KEY
+        );
+        // 分布式锁，防止其他实例重复加载
+        if (redissonService.tryLock(redissonClusterLock)){
+            try {
+                for (String filePath : filePaths){
+                    String relativePath = "/files/build_kg/graph_data/" + filePath;
+                    String absolutePath = getAbsolutePath(relativePath);
+                    String type = filePath.split("\\.")[0];
+                    loadToRedis(type, absolutePath);
+                }
+                IsLoadNerFilesAo ao = new IsLoadNerFilesAo(true);
+                redissonService.setObjectByJson(
+                        NerConstant.IS_LOAD_NER_FILES_KEY,
+                        ao,
+                        NerConstant.NER_REDIS_EXPIRE_TIME
+                );
+            } catch (Exception e){
+                log.error("初始化ner失败", e);
+                redissonService.unlock(redissonClusterLock);
+            }
+        }
+        log.info("已初始化ner文件数据到redis成功");
     }
 }

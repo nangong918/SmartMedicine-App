@@ -36,10 +36,13 @@
         <mxCell id="DlfPbESAJfoZUQ2CKoHn-65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="DlfPbESAJfoZUQ2CKoHn-66" target="DlfPbESAJfoZUQ2CKoHn-54" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="DlfPbESAJfoZUQ2CKoHn-11" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;日志存入Hadoop 30days&lt;/font&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
-          <mxGeometry x="292.5" y="580" width="131" height="30" as="geometry" />
+        <mxCell id="Lxm-kY-Rxsiu6XCb0hfM-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="DlfPbESAJfoZUQ2CKoHn-11" target="-K61Xz11RYhruXV_-d4R-2">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="DlfPbESAJfoZUQ2CKoHn-20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="DlfPbESAJfoZUQ2CKoHn-40" target="DlfPbESAJfoZUQ2CKoHn-11" edge="1">
+        <mxCell id="DlfPbESAJfoZUQ2CKoHn-11" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;日志存入Hadoop 30days&lt;/font&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+          <mxGeometry x="292.5" y="705" width="131" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="DlfPbESAJfoZUQ2CKoHn-20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="Lxm-kY-Rxsiu6XCb0hfM-2" target="DlfPbESAJfoZUQ2CKoHn-11" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="DlfPbESAJfoZUQ2CKoHn-17" value="logging-service" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" parent="1" vertex="1">
@@ -109,11 +112,27 @@
         <mxCell id="DlfPbESAJfoZUQ2CKoHn-46" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="DlfPbESAJfoZUQ2CKoHn-34" target="DlfPbESAJfoZUQ2CKoHn-38" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="-K61Xz11RYhruXV_-d4R-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="DlfPbESAJfoZUQ2CKoHn-34" target="-K61Xz11RYhruXV_-d4R-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="750" />
+              <mxPoint x="570" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-K61Xz11RYhruXV_-d4R-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="DlfPbESAJfoZUQ2CKoHn-34" target="-K61Xz11RYhruXV_-d4R-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="750" />
+              <mxPoint x="455" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
         <mxCell id="DlfPbESAJfoZUQ2CKoHn-34" value="user-特征" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
           <mxGeometry x="665" y="655" width="90" height="30" as="geometry" />
         </mxCell>
         <mxCell id="DlfPbESAJfoZUQ2CKoHn-38" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;关系结构存入neo4j&lt;/font&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
-          <mxGeometry x="645" y="755" width="130" height="30" as="geometry" />
+          <mxGeometry x="645" y="780" width="130" height="30" as="geometry" />
         </mxCell>
         <mxCell id="DlfPbESAJfoZUQ2CKoHn-41" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="DlfPbESAJfoZUQ2CKoHn-17" target="DlfPbESAJfoZUQ2CKoHn-40" edge="1">
           <mxGeometry relative="1" as="geometry">
@@ -182,6 +201,31 @@
         </mxCell>
         <mxCell id="DlfPbESAJfoZUQ2CKoHn-66" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;spark离线计算&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="440" y="510" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="-K61Xz11RYhruXV_-d4R-2" value="spark离线计算召回" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1">
+          <mxGeometry x="410" y="800" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="-K61Xz11RYhruXV_-d4R-3" value="Flink实时计算召回" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;" vertex="1" parent="1">
+          <mxGeometry x="530" y="800" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Lxm-kY-Rxsiu6XCb0hfM-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="DlfPbESAJfoZUQ2CKoHn-40" target="Lxm-kY-Rxsiu6XCb0hfM-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="358" y="540" as="sourcePoint" />
+            <mxPoint x="358" y="705" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Lxm-kY-Rxsiu6XCb0hfM-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;" edge="1" parent="1" source="Lxm-kY-Rxsiu6XCb0hfM-2" target="-K61Xz11RYhruXV_-d4R-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="670" />
+              <mxPoint x="430" y="670" />
+              <mxPoint x="430" y="770" />
+              <mxPoint x="570" y="770" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Lxm-kY-Rxsiu6XCb0hfM-2" value="3天日志存入ELK" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+          <mxGeometry x="292.5" y="600" width="130" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

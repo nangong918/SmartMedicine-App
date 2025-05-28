@@ -1,7 +1,7 @@
 package com.czy.post.handler;
 
 import com.czy.api.api.user.UserService;
-import com.czy.api.constant.feature.PostOption;
+import com.czy.api.constant.feature.PostOperation;
 import com.czy.api.constant.netty.NettyOptionEnum;
 import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.constant.netty.RequestMessageType;
@@ -13,6 +13,7 @@ import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.base.NettyOptionRequest;
 import com.czy.api.domain.dto.socket.request.PostCollectRequest;
 import com.czy.api.domain.dto.socket.request.PostCommentRequest;
+import com.czy.api.domain.dto.socket.request.PostDisLikeRequest;
 import com.czy.api.domain.dto.socket.request.PostFolderRequest;
 import com.czy.api.domain.dto.socket.request.PostForwardRequest;
 import com.czy.api.domain.dto.socket.request.PostLikeRequest;
@@ -86,7 +87,7 @@ public class PostHandler implements PostApi{
         if (ObjectUtils.isEmpty(request.getPostId())){
             return;
         }
-        Integer operateType = PostOption.NULL.getCode();
+        Integer operateType = PostOperation.NULL.getCode();
         // 收藏帖子
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
             try {
@@ -97,7 +98,7 @@ public class PostHandler implements PostApi{
                     folderId = postHandleService.createPostCollectFolder(userDo.getId(), PostConstant.DEFAULT_COLLECT_FOLDER_NAME);
                 }
                 postHandleService.postCollect(request.getPostId(), folderId);
-                operateType = PostOption.COLLECT.getCode();
+                operateType = PostOperation.COLLECT.getCode();
             } catch (Exception e){
                 isSuccess = NettyResponseStatuesEnum.FAILURE;
             }
@@ -110,7 +111,7 @@ public class PostHandler implements PostApi{
                     return;
                 }
                 postHandleService.deletePostCollect(request.getPostId(), folderId);
-                operateType = PostOption.CANCEL_COLLECT.getCode();
+                operateType = PostOperation.CANCEL_COLLECT.getCode();
             } catch (Exception e){
                 isSuccess = NettyResponseStatuesEnum.FAILURE;
             }
@@ -308,7 +309,7 @@ public class PostHandler implements PostApi{
     @Override
     public void postForward(PostForwardRequest request) {
         NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
-        Integer operateType = PostOption.NULL.getCode();
+        Integer operateType = PostOperation.NULL.getCode();
         try {
             UserDo senderDo = userService.getUserByAccount(request.getSenderId());
             UserDo receiverDo = userService.getUserByAccount(request.getReceiverId());
@@ -326,7 +327,7 @@ public class PostHandler implements PostApi{
             // 对前端的receiverId不信任，可能是SERVER_ID，设置为ToUserAccount
             postForwardResponse.setReceiverId(request.getToUserAccount());
             rabbitMqSender.push(postForwardResponse);
-            operateType = PostOption.FORWARD.getCode();
+            operateType = PostOperation.FORWARD.getCode();
         } catch (Exception e){
             isSuccess = NettyResponseStatuesEnum.FAILURE;
         }
@@ -353,7 +354,7 @@ public class PostHandler implements PostApi{
     @Override
     public void postLike(PostLikeRequest request) {
         NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
-        Integer operateType = PostOption.NULL.getCode();
+        Integer operateType = PostOperation.NULL.getCode();
         boolean isOptionLegal = checkOption(request);
         if (!isOptionLegal){
             return;
@@ -387,7 +388,7 @@ public class PostHandler implements PostApi{
                 postLikeResponse.setLikeUserAccount(request.getSenderId());
                 postLikeResponse.setReceiverId(authorDo.getAccount());
                 rabbitMqSender.push(postLikeResponse);
-                operateType = PostOption.LIKE.getCode();
+                operateType = PostOperation.LIKE.getCode();
             } catch (Exception e){
                 isSuccess = NettyResponseStatuesEnum.FAILURE;
             }
@@ -396,7 +397,7 @@ public class PostHandler implements PostApi{
         if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
             try {
                 postHandleService.deletePostLike(request.getPostId(), userDo.getId());
-                operateType = PostOption.CANCEL_LIKE.getCode();
+                operateType = PostOperation.CANCEL_LIKE.getCode();
             } catch (Exception e){
                 isSuccess = NettyResponseStatuesEnum.FAILURE;
             }
@@ -405,6 +406,59 @@ public class PostHandler implements PostApi{
         NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
         // Mq -> user
         rabbitMqSender.push(nettyServerResponse);
+        // userAction -> kafka -> feature-service
+        UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
+        Long userId = userService.getIdByAccount(request.getSenderId());
+        userActionOperatePost.setUserId(userId);
+        userActionOperatePost.setPostId(request.getPostId());
+        userActionOperatePost.setOperateType(operateType);
+
+        try {
+            kafkaSender.sendUserActionMessage(userActionOperatePost, UserActionOperatePost.TOPIC);
+        } catch (Exception e){
+            log.error("用户显性行为Kafka传输异常：[点赞] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
+        }
+    }
+
+    @Override
+    public void notInterested(PostDisLikeRequest request) {
+        Integer operateType = PostOperation.NULL.getCode();
+        boolean isOptionLegal = checkOption(request);
+        if (!isOptionLegal){
+            return;
+        }
+        UserDo userDo = userService.getUserByAccount(request.getSenderId());
+        // 不感兴趣
+        if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
+            try {
+                // 数据库增加
+                postHandleService.postNotInterested(request.getPostId(), userDo.getId());
+                // 通知作者
+                PostAo postAo = postService.findPostById(request.getPostId());
+                if (postAo == null || postAo.getAuthorId() == null){
+                    return;
+                }
+                UserDo authorDo = userService.getUserById(postAo.getAuthorId());
+                if (authorDo == null || !StringUtils.hasText(authorDo.getAccount())){
+                    return;
+                }
+                PostLikeResponse postLikeResponse = new PostLikeResponse(request.getPostId());
+                postLikeResponse.setLikeUserAccount(request.getSenderId());
+                postLikeResponse.setReceiverId(authorDo.getAccount());
+                rabbitMqSender.push(postLikeResponse);
+                operateType = PostOperation.NOT_INTERESTED.getCode();
+            } catch (Exception ignored){
+            }
+        }
+        // 取消不感兴趣
+        if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
+            try {
+                postHandleService.deletePostNotInterested(request.getPostId(), userDo.getId());
+                operateType = PostOperation.CANCEL_NOT_INTERESTED.getCode();
+            } catch (Exception ignored){
+            }
+        }
+
         // userAction -> kafka -> feature-service
         UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
         Long userId = userService.getIdByAccount(request.getSenderId());

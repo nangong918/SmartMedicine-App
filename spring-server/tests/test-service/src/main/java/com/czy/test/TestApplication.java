@@ -9,7 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication(scanBasePackages = {
         "com.czy.springUtils",
-        "com.czy.test"
+        "com.czy.test",
+        "com.czy.api",
 })
 public class TestApplication {
     public static void main(String[] args) {

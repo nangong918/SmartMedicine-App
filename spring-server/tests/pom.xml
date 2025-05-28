@@ -36,7 +36,11 @@
         <org.jetbrains.version>13.0</org.jetbrains.version>
         <security-core.version>5.0.6.RELEASE</security-core.version>
         <mapstruct.version>1.5.0.Final</mapstruct.version>
-        <kafka.version>2.3.3.RELEASE</kafka.version>
+        <jedission.version>3.11.3</jedission.version>
+        <rabbitmq.version>5.5.3</rabbitmq.version>
+        <minio.version>8.2.2</minio.version>
+        <hankcs.version>1.2.3</hankcs.version>
+        <kafka.version>2.6.0</kafka.version>
     </properties>
 
     <dependencyManagement>

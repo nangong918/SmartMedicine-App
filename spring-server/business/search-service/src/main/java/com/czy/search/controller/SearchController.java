@@ -79,8 +79,9 @@ public class SearchController {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserHealthDataService userHealthDataService;
     private final FuzzySearchService fuzzySearchService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private PostSearchService postSearchService;
     private final RestTemplate restTemplate;
-    private final PostSearchService postSearchService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private DiseasesNeo4jService diseasesNeo4jService;
 
@@ -273,10 +274,10 @@ public class SearchController {
         List<Long> similarList = fuzzySearchService.similaritySearch(nerResults);
 
         // 转换
-        postSearchResultAo.setLikePostList(fuzzySearchService.getPostInfoUrlAos(likePostIdList));
-        postSearchResultAo.setTokenizedPostList(fuzzySearchService.getPostInfoUrlAos(tokenizedPostIdList));
-        postSearchResultAo.setSimilarPostList(fuzzySearchService.getPostInfoUrlAos(similarList));
-        postSearchResultAo.setRecommendPostList(fuzzySearchService.getPostInfoUrlAos(neo4jRulePostIdList));
+        postSearchResultAo.setLikePostList(postSearchService.getPostInfoUrlAos(likePostIdList));
+        postSearchResultAo.setTokenizedPostList(postSearchService.getPostInfoUrlAos(tokenizedPostIdList));
+        postSearchResultAo.setSimilarPostList(postSearchService.getPostInfoUrlAos(similarList));
+        postSearchResultAo.setRecommendPostList(postSearchService.getPostInfoUrlAos(neo4jRulePostIdList));
 
         return postSearchResultAo;
     }
@@ -295,7 +296,7 @@ public class SearchController {
             postRecommendAo.setRecommendType(PostRecommendResult.NO_DATA.getCode());
             return postRecommendAo;
         }
-        List<PostInfoUrlAo> postInfoUrlAos = fuzzySearchService.getPostInfoUrlAos(tokenizedPostIdList);
+        List<PostInfoUrlAo> postInfoUrlAos = postSearchService.getPostInfoUrlAos(tokenizedPostIdList);
         postRecommendAo.setPostInfoUrlAos(postInfoUrlAos);
         postRecommendAo.setRecommendType(PostRecommendResult.HAS_DATA.getCode());
         return postRecommendAo;

@@ -5,6 +5,8 @@ package com.czy.api.domain.dto.base;
 import json.BaseBean;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
+
 /**
  * @author 13225
  * @date 2025/2/8 19:04
@@ -13,9 +15,12 @@ import lombok.Data;
 //@Slf4j    // 对象类型禁止使用@Slf4j 创建Logger会消耗很多资源
 public class BaseRequestData implements BaseBean {
 
+    @NotEmpty(message = "发送者账号不能为空")
     public String senderId;
     public String receiverId;
+    @NotEmpty(message = "请求类型不能为空")
     public String type;
+    @NotEmpty(message = "时间戳不能为空")
     public String timestamp;
 
     public BaseRequestData(){

@@ -23,6 +23,11 @@ public interface PostHandleService {
     // 取消点赞
     void deletePostLike(Long postId, Long userId);
 
+    // 不感兴趣
+    void postNotInterested(Long postId, Long userId);
+    // 取消不感兴趣
+    void deletePostNotInterested(Long postId, Long userId);
+
     // 转发（聊天记录 + netty）
     void postForward(Long postId);
 

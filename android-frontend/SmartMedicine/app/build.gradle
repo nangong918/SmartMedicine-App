@@ -1,0 +1,113 @@
+import com.czy.buildsrc.BuildConfig
+
+plugins {
+    alias(libs.plugins.android.application)
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.czy.smartmedicine'
+    compileSdk BuildConfig.Version.compileVersion
+
+    defaultConfig {
+        applicationId "com.czy.smartmedicine"
+        minSdk BuildConfig.Version.minVersion
+        targetSdk BuildConfig.Version.targetVersion
+        versionCode BuildConfig.Version.versionCode
+        versionName BuildConfig.Version.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags BuildConfig.Version.cppFlags
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            multiDexEnabled BuildConfig.BuildFeature.multiDex
+            minifyEnabled BuildConfig.BuildFeature.minify
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            multiDexEnabled BuildConfig.BuildFeature.multiDex
+            minifyEnabled BuildConfig.BuildFeature.minify
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility BuildConfig.Version.javaVersion
+        targetCompatibility BuildConfig.Version.javaVersion
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version BuildConfig.Version.cmakeVision
+        }
+    }
+    buildFeatures {
+        viewBinding = BuildConfig.BuildFeature.viewBinding
+        dataBinding = BuildConfig.BuildFeature.dataBinding
+        aidl = true
+    }
+    sourceSets {
+        main {
+            assets.srcDirs += ['src/main/assets']
+            // Aidl 文件；配置之后Java文件夹可以使用AIDL文件夹下的.java
+            java.srcDirs = ['src/main/java', 'src/main/aidl']
+        }
+    }
+}
+
+dependencies {
+
+    /**
+     * 基础App依赖
+     */
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.constraintlayout
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+
+    // OkHttp是一个高性能的HTTP客户端库,用于处理网络请求
+    implementation libs.okhttp
+
+    /**
+     * 第三方库
+     */
+    // 圆形的 ImageView 组件
+    implementation libs.circleimageview
+
+    // EventBus
+    implementation libs.eventbus
+
+    // 下拉刷新
+    implementation libs.swiperefreshlayout
+
+    /**
+     * 自定义Module
+     * 基本依赖关系：
+     * 1.BaseUtilsLib       通用依赖
+     *      无
+     * 2.AppCoreLib         核心框架 + 核心逻辑
+     *      BaseUtilsLib
+     * 3.Dal：               Domain数据层
+     *      BaseUtilsLib，AppCoreLib
+     * 4.CustomViewLib：     UI层
+     *      BaseUtilsLib，AppCoreLib，Dal
+     * 5.DataLib：           Mapper层：DataBase + Network
+     *      BaseUtilsLib，AppCoreLib，Dal
+     * 6.app：               Application
+     *      BaseUtilsLib，AppCoreLib，DataLib，CustomViewLib，Dal
+     */
+    implementation project(':core:BaseUtilsLib')
+    implementation project(':core:AppCoreLib')
+    implementation project(':data:Dal')
+    implementation project(':view:CustomViewLib')
+    implementation project(':data:DataLib')
+
+}

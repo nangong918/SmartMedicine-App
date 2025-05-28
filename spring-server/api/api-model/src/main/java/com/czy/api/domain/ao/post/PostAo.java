@@ -24,6 +24,8 @@ public class PostAo {
     // releaseTimestamp；not null
     private Long releaseTimestamp;
 
+    // 阅读数；not null TODO
+    private Long readCount;
     // 点赞数；not null
     private Long likeCount;
     // 收藏数；not null
