@@ -1,6 +1,8 @@
 package com.czy.post.service.impl;
 
+import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostSearchService;
+import com.czy.api.api.user.UserService;
 import com.czy.api.constant.es.FieldAnalyzer;
 import com.czy.api.constant.search.SearchConstant;
 import com.czy.api.converter.domain.post.PostConverter;
@@ -8,14 +10,19 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
+import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
+import com.czy.api.domain.ao.user.AuthorAo;
 import com.czy.api.mapper.DiseaseRepository;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
+import com.czy.post.service.PostStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.AnalyzeRequest;
@@ -26,7 +33,9 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -42,6 +51,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Service
 @org.apache.dubbo.config.annotation.Service(protocol = "dubbo", version = "1.0.0")
 public class PostSearchServiceImpl implements PostSearchService {
 
@@ -54,6 +64,11 @@ public class PostSearchServiceImpl implements PostSearchService {
     // elasticsearch的客户端
     private final RestHighLevelClient restHighLevelClient;
     private final PostDetailMongoMapper postDetailMongoMapper;
+    private final PostStorageService postStorageService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private OssService ossService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private UserService userService;
 
     @Override
     public List<Long> searchPostIdsByLikeTitle(String likeTitle) {
@@ -227,5 +242,77 @@ public class PostSearchServiceImpl implements PostSearchService {
                 .map(PostSearchEsAo::getPostDetailEsDo)
                 .map(PostDetailEsDo::getId)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PostInfoAo> findPostInfoList(List<Long> idList) {
+        return postStorageService.findPostInfoAoList(idList);
+    }
+
+    @Override
+    public List<PostInfoUrlAo> getPostInfoUrlAos(List<Long> postIds){
+        List<PostInfoAo> postInfoAos = searchPostInfAoByIds(postIds);
+        List<Long> fileIds = new ArrayList<>();
+        for (PostInfoAo postInfoAo : postInfoAos){
+            if (postInfoAo != null && !ObjectUtils.isEmpty(postInfoAo.getFileId())){
+                fileIds.add(postInfoAo.getFileId());
+            }
+            else {
+                // 为了保证返回顺序一一对应
+                fileIds.add(null);
+            }
+        }
+        List<Long> authorIds = new ArrayList<>();
+        for (PostInfoAo postInfoAo : postInfoAos){
+            if (postInfoAo != null && !ObjectUtils.isEmpty(postInfoAo.getAuthorId())){
+                authorIds.add(postInfoAo.getAuthorId());
+            }
+            else {
+                // 为了保证返回顺序一一对应
+                authorIds.add(null);
+            }
+        }
+        List<UserDo> userDos = userService.getByUserIdsWithNull(authorIds);
+        List<Long> authorFileIds = new ArrayList<>();
+        for (UserDo userDo : userDos){
+            if (userDo == null){
+                authorFileIds.add(null);
+                continue;
+            }
+            authorFileIds.add(userDo.getAvatarFileId());
+        }
+        List<String> authorUrlList = ossService.getFileUrlsByFileIds(authorFileIds);
+        List<AuthorAo> authorAos = new ArrayList<>();
+        for (int i = 0; i < userDos.size(); i++){
+            UserDo userDo = userDos.get(i);
+            if (userDo == null){
+                authorAos.add(null);
+                continue;
+            }
+            AuthorAo authorAo = new AuthorAo();
+            authorAo.setAuthorName(userDo.getUserName());
+            authorAo.setAuthorAvatarUrl(authorUrlList.get(i));
+            authorAos.add(authorAo);
+        }
+        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+        List<PostInfoUrlAo> postInfoUrlAos = new ArrayList<>();
+        assert fileUrls.size() == postInfoAos.size();
+        for (int i = 0; i < postInfoAos.size(); i++){
+            PostInfoAo postInfoAo = postInfoAos.get(i);
+            // TODO 阅读量需要从Redis和MySQL拿取
+            PostInfoUrlAo postInfoUrlAo = postConverter.postInfoDoToUrlAo(postInfoAo);
+            if (authorAos.get(i) != null){
+                postInfoUrlAo.setAuthorName(authorAos.get(i).getAuthorName());
+                postInfoUrlAo.setAuthorAvatarUrl(authorAos.get(i).getAuthorAvatarUrl());
+            }
+            if (fileUrls.get(i) != null){
+                postInfoUrlAo.setFileUrl(fileUrls.get(i));
+            }
+            else {
+                postInfoUrlAo.setFileUrl(null);
+            }
+            postInfoUrlAos.add(postInfoUrlAo);
+        }
+        return postInfoUrlAos;
     }
 }

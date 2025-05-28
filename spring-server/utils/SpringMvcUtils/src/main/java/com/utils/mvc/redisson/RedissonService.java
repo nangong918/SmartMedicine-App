@@ -3,6 +3,7 @@ package com.utils.mvc.redisson;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,6 +54,26 @@ public interface RedissonService {
      */
     boolean persist(String key) throws Exception;
 
+    /**
+     * 获取所有匹配给定模式的键
+     * @param pattern   模式
+     * @return          匹配的键
+     */
+    Collection<String> getKeysByPattern(String pattern);
+
+    //---------------------Base---------------------
+
+    void setBoolean(String key, Boolean value, Long expireTimes);
+    boolean getBoolean(String key);
+
+    void setString(String key, String value, Long expireTimes);
+    String getString(String key);
+
+    void setInteger(String key, Integer value, Long expireTimes);
+    Integer getInteger(String key);
+    // 自增
+    Integer incrementInteger(String key, Integer increment, Long expireTime);
+
     //---------------------Object---------------------
 
     /**
@@ -96,12 +117,15 @@ public interface RedissonService {
 
     //---------------------Hash---------------------
     void saveHashMap(String key, HashMap<String, String> data, Long expireTimes);
-    void saveObjectHaseMap(String key, HashMap<String, Object> data, Long expireTimes);
+    void saveObjectHashMap(String key, HashMap<String, Object> data, Long expireTimes);
     HashMap<String, String> getHashMap(String key);
     HashMap<String, Object> getObjectHaseMap(String key);
+    Object getObjectFromHashMap(String key, String hashKey);
     void updateHashMap(String hashKey, String field, String value);
+    void updateObjectHashMap(String hashKey, String field, Object value);
     void deleteHashMap(String redisKey); // 删除整个 Hash
-    void deleteFieldFromHash(String redisKey, String hashKey); // 删除 Hash 中的某个字段
+    void deleteFieldFromHash(String redisKey, String hashKey);
+    void deleteFieldFromObjectHashMap(String redisKey, String hashKey);
 
 
     // ===================== 有序集合(ZSet)操作 =====================
@@ -124,6 +148,22 @@ public interface RedissonService {
      * @return 添加成功的数量
      */
     int zAddAll(String key, Map<Object, Double> values, Long expireTime);
+
+    /**
+     * 获取某个元素的分数
+     * @param key
+     * @param member
+     * @return
+     */
+    Double zScore(String key, Object member);
+
+    /**
+     * 批量获取元素的分数
+     * @param key
+     * @param members
+     * @return
+     */
+    Map<Object, Double> zScores(String key, Collection<Object> members);
 
     /**
      * 从有序集合中移除元素
@@ -238,4 +278,19 @@ public interface RedissonService {
      * @return 是否清空成功
      */
     boolean zClear(String key, Long expireTime);
+
+    /**
+     * 获取ZSet的元素数量（不加载元素到Java内存）
+     * @param key ZSet的key
+     * @return 元素数量
+     */
+    long zCount(String key);
+
+    /**
+     * 原子性地获取并删除ZSet中前N个元素（从大到小）
+     * @param key ZSet的key
+     * @param n 要获取的元素数量
+     * @return 获取到的元素列表
+     */
+    List<Object> zPopTopNAndRemove(String key, int n);
 }

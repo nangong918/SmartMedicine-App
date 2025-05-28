@@ -4,18 +4,18 @@ import com.alibaba.fastjson.JSON;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
-import org.redisson.api.RBucket;
-import org.redisson.api.RLock;
-import org.redisson.api.RMap;
-import org.redisson.api.RScoredSortedSet;
-import org.redisson.api.RedissonClient;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.*;
 import org.redisson.client.protocol.ScoredEntry;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
  * @author 13225
  * @date 2025/3/29 16:09
  */
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class RedissonServiceImpl implements RedissonService {
@@ -78,6 +79,79 @@ public class RedissonServiceImpl implements RedissonService {
         } else {
             throw new Exception("Key does not exist.");
         }
+    }
+
+    @Override
+    public Collection<String> getKeysByPattern(String pattern) {
+        RKeys keys = redissonClient.getKeys();
+        // 使用模式匹配获取所有键
+        Iterable<String> iterable = keys.getKeysByPattern(pattern);
+        List<String> list = new ArrayList<>();
+        for (String item : iterable) {
+            list.add(item);
+        }
+        return list;
+    }
+
+    @Override
+    public void setBoolean(String key, Boolean value, Long expireTimes) {
+        RBucket<Boolean> bucket = redissonClient.getBucket(key);
+        if (expireTimes != null){
+            bucket.set(value, expireTimes, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public boolean getBoolean(String key) {
+        RBucket<Boolean> bucket = redissonClient.getBucket(key);
+        return bucket.get();
+    }
+
+    @Override
+    public void setString(String key, String value, Long expireTimes) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        if (expireTimes != null){
+            bucket.set(value, expireTimes, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public String getString(String key) {
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        return bucket.get();
+    }
+
+    @Override
+    public void setInteger(String key, Integer value, Long expireTimes) {
+        RBucket<Integer> bucket = redissonClient.getBucket(key);
+        if (expireTimes != null){
+            bucket.set(value, expireTimes, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public Integer getInteger(String key) {
+        RBucket<Integer> bucket = redissonClient.getBucket(key);
+        return bucket.get();
+    }
+
+    @Override
+    public Integer incrementInteger(String key, Integer increment, Long expireTime) {
+        // key 不存在，使用 RAtomicLong 的 addAndGet 方法会自动将该 key 初始化为 0
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+
+        // 检查当前值，如果是第一次初始化
+        long currentValue = atomicLong.get();
+
+        // 原子递增
+        long newValue = atomicLong.addAndGet(increment);
+
+        // 如果当前值为 0，说明是第一次设置，设置过期时间
+        if (currentValue == 0) {
+            atomicLong.expire(expireTime, TimeUnit.SECONDS);
+        }
+
+        return (int) newValue;
     }
 
     @Override
@@ -143,7 +217,7 @@ public class RedissonServiceImpl implements RedissonService {
     }
 
     @Override
-    public void saveObjectHaseMap(String key, HashMap<String, Object> data, Long expireTimes) {
+    public void saveObjectHashMap(String key, HashMap<String, Object> data, Long expireTimes) {
         RMap<String, Object> map = redissonClient.getMap(key);
         map.putAll(data);
         if (expireTimes != null){
@@ -167,8 +241,20 @@ public class RedissonServiceImpl implements RedissonService {
     }
 
     @Override
+    public Object getObjectFromHashMap(String key, String hashKey) {
+        RMap<String, Object> map = redissonClient.getMap(key);
+        return map.get(hashKey);
+    }
+
+    @Override
     public void updateHashMap(String hashKey, String field, String value) {
         RMap<String, String> map = redissonClient.getMap(hashKey);
+        map.put(field, value);
+    }
+
+    @Override
+    public void updateObjectHashMap(String hashKey, String field, Object value) {
+        RMap<String, Object> map = redissonClient.getMap(hashKey);
         map.put(field, value);
     }
 
@@ -181,6 +267,12 @@ public class RedissonServiceImpl implements RedissonService {
     @Override
     public void deleteFieldFromHash(String redisKey, String hashKey) {
         RMap<String, String> map = redissonClient.getMap(redisKey);
+        map.remove(hashKey);
+    }
+
+    @Override
+    public void deleteFieldFromObjectHashMap(String redisKey, String hashKey) {
+        RMap<String, Object> map = redissonClient.getMap(redisKey);
         map.remove(hashKey);
     }
 
@@ -212,6 +304,25 @@ public class RedissonServiceImpl implements RedissonService {
         }
         setExpire(zSet, expireTime);
         return count;
+    }
+
+    @Override
+    public Double zScore(String key, Object member) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        return zSet.getScore(member);
+    }
+
+    @Override
+    public Map<Object, Double> zScores(String key, Collection<Object> members) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        Map<Object, Double> result = new HashMap<>();
+        for (Object member : members) {
+            Double score = zSet.getScore(member);
+            if (score != null) {
+                result.put(member, score);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -309,5 +420,41 @@ public class RedissonServiceImpl implements RedissonService {
             setExpire(newZSet, expireTime);
         }
         return result;
+    }
+
+    /**
+     * 获取ZSet的元素数量（不加载元素到Java内存）
+     * @param key ZSet的key
+     * @return 元素数量
+     */
+    @Override
+    public long zCount(String key){
+        return redissonClient.getScoredSortedSet(key).size();
+    }
+
+    /**
+     * 原子性地获取并删除ZSet中前N个元素（从大到小）
+     * @param key ZSet的key
+     * @param n 要获取的元素数量
+     * @return 获取到的元素列表
+     */
+    @Override
+    public List<Object> zPopTopNAndRemove(String key, int n){
+        RBatch batch = redissonClient.createBatch();
+        RScoredSortedSetAsync<Object> setAsync = batch.getScoredSortedSet(key);
+
+        // 获取前N个元素（从大到小）
+        RFuture<Collection<Object>> elementsFuture = setAsync.valueRangeReversedAsync(0, n - 1);
+        // 删除这些元素
+        elementsFuture.thenAccept(setAsync::removeAllAsync);
+
+        // 执行事务
+        batch.execute();
+
+        try {
+            return new ArrayList<>(elementsFuture.get());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Failed to pop top N elements from ZSet", e);
+        }
     }
 }

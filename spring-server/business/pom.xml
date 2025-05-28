@@ -24,6 +24,7 @@
         <module>recommend-service</module>
         <module>search-service</module>
         <module>feature-service</module>
+        <module>logging-service</module>
     </modules>
 
     <!--JDK版本：11-->
@@ -49,6 +50,7 @@
         <rabbitmq.version>5.5.3</rabbitmq.version>
         <minio.version>8.2.2</minio.version>
         <hankcs.version>1.2.3</hankcs.version>
+        <kafka.version>2.6.0</kafka.version>
     </properties>
 
     <dependencyManagement>
@@ -161,6 +163,12 @@
                 <groupId>com.hankcs</groupId>
                 <artifactId>aho-corasick-double-array-trie</artifactId>
                 <version>${hankcs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${kafka.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -3,6 +3,7 @@ package com.czy.post.handler.api;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.domain.dto.socket.request.PostCollectRequest;
 import com.czy.api.domain.dto.socket.request.PostCommentRequest;
+import com.czy.api.domain.dto.socket.request.PostDisLikeRequest;
 import com.czy.api.domain.dto.socket.request.PostFolderRequest;
 import com.czy.api.domain.dto.socket.request.PostForwardRequest;
 import com.czy.api.domain.dto.socket.request.PostLikeRequest;
@@ -28,4 +29,7 @@ public interface PostApi {
 
     @MessageType(value = RequestMessageType.Post.LIKE_POST, desc = "点赞帖子")
     void postLike(PostLikeRequest request);
+
+    @MessageType(value = RequestMessageType.Post.NOT_INTERESTED, desc = "不感兴趣")
+    void notInterested(PostDisLikeRequest request);
 }

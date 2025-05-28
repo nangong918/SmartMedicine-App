@@ -46,9 +46,16 @@
     </dependencyManagement>
 
     <dependencies>
+        <!--公共工具类模块-->
         <dependency>
             <groupId>com.utils</groupId>
-            <artifactId>SpringUtils</artifactId>
+            <artifactId>SpringMvcUtils</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.api</groupId>
+            <artifactId>api-model</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
@@ -87,6 +94,22 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
+        </dependency>
+
+        <!-- 实现对 JSON 的自动化配置 -->
+        <!-- 因为，Kafka 对复杂对象的 Message 序列化时，我们会使用到 JSON -->
+        <!--
+            同时，spring-boot-starter-json 引入了 spring-boot-starter ，而 spring-boot-starter 又引入了 spring-boot-autoconfigure 。
+            spring-boot-autoconfigure 实现了 Spring-Kafka 的自动化配置
+         -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <!-- Test -->

@@ -3,8 +3,6 @@ package com.czy.api.domain.Do.post.post;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
-import java.util.List;
-
 /**
  * @author 13225
  * @date 2025/4/16 21:24
@@ -29,4 +27,6 @@ public class PostInfoDo {
     private Long commentCount = 0L;
     // 转发数量
     private Long forwardCount = 0L;
+    // 不感兴趣数量
+    private Long notInterestedCount = 0L;
 }

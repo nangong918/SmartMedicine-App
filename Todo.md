@@ -196,4 +196,55 @@ item内容存放在mongoDB，item和attitude的关系不知道存在哪里
 
 * 数据集收集:寒暄数据集\搜索/问诊意图数据集\推荐意图数据集\个人评价意图数据集\app功能查询数据集
 * 特征工程 -> 用于推荐意图
-* 
+
+
+* 感觉特征工程很多计算量都很大,要用大数据技术:离线,进线,在线
+
+* TODO 先了解好特征工程的原理架构再进行设计，可能会用到大数据：离线，近线，在线计算的思想架构
+* 特征工程算法层
+
+* 安装好kafka
+* 跑完kafka的spring-label教程
+* kafka接入事件埋点
+* 项目性能测试以及优化方案.
+
+1. 写测试点,进行单点测试 + 稳定性测试
+2. 完善推荐系统
+3. 完善搜索系统
+4. 完善分布式测试
+   * 完善分布式的MQ
+5. java-learning继续学习
+   * 数据库:Mysql,Redis,ES(Mongodb,neo4j)
+   * 异步调用消息队列:kafka,RabbitMq
+   * 同步调用:Dubbo
+   * 微服务\分布式
+   * 线上部署:nacos,docker,k8s,阿尔萨斯
+   * Java:多线程,网络
+6. 集中本地测试
+7. 完善上线:
+   * 阿尔萨斯
+   * Docker
+   * K8s
+
+
+todo 搭建Elk（Elasticsearch, Logstash, Kibana）
+集成：Hadoop；HDFS
+
+
+做个冷热的区分
+想这种30天离线数据就可以放在hive 用hivesql直接做计算
+3天的话可以放StarRocks / ClickHouse 配合flink
+如果需要查询频次高的话加ES
+
+离线层 (Hive)
+近线层 (StarRocks / ClickHouse)
+在线层 (Elasticsearch + Redis)
+
+TODO 批量将post和user导入数据库的脚本；
+发布时间要随机的最近三十天的时间戳
+
+验收标准：
+1. 正常发布帖子
+2. 正常浏览帖子
+3. 正常推荐
+4. 行为特征上传

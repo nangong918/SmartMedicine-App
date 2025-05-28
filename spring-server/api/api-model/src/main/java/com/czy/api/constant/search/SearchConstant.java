@@ -20,4 +20,15 @@ public class SearchConstant {
     private static final int PYTHON_NLP_SEARCH_PORT = 60001;
     private static final String PYTHON_NLP_SEARCH_ROUTE = "http://127.0.0.1:" + PYTHON_NLP_SEARCH_PORT;
     public static final String PYTHON_NLP_SEARCH_URL = PYTHON_NLP_SEARCH_ROUTE + "/search/nlp";
+
+    private static final int PYTHON_MEDICAL_PORT = 60001;
+    private static final String PYTHON_MEDICAL_ROUTE = "http://127.0.0.1:" + PYTHON_MEDICAL_PORT;
+    public static final String PYTHON_MEDICAL_URL = PYTHON_MEDICAL_ROUTE + "/medical/predict";
+
+
+    // 医疗识别常量
+    public static final String[] MEDICAL_IDENTIFY_ENTITIES = new String[]{
+            "心脏病",
+            "糖尿病"
+    };
 }

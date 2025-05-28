@@ -8,23 +8,28 @@ import lombok.Data;
  */
 @Data
 public class PostInfoUrlAo {
-    private Long id;
+    public Long id;
     // authorId；not null（索引）
-    private Long authorId;
+    public Long authorId;
+    // 作者名称
+    public String authorName;
+    // 作者头像
+    public String authorAvatarUrl;
     // fileUrl 只展示1个
-    private String fileUrl;
-
+    public String fileUrl;
     // title；not null
-    private String title;
+    public String title;
     // releaseTimestamp；not null
-    private Long releaseTimestamp;
+    public Long releaseTimestamp;
 
+    // 阅读数；not null
+    public Long readCount = 0L;
     // 点赞数；not null
-    private Long likeCount = 0L;
+    public Long likeCount = 0L;
     // 收藏数；not null
-    private Long collectCount = 0L;
+    public Long collectCount = 0L;
     // 评论数；not null
-    private Long commentCount = 0L;
+    public Long commentCount = 0L;
     // 转发数量
-    private Long forwardCount = 0L;
+    public Long forwardCount = 0L;
 }

@@ -24,4 +24,17 @@ public interface UserActionRedisKey {
     // browse
     String USER_FEATURE_BROWSE_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "browse_post:";
     String POST_HEAT_BROWSE_REDIS_KEY = POST_HEAT_REDIS_KEY + "browsed:";
+
+    // search
+    String USER_FEATURE_SEARCH_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "search_post:";
+    // operation
+    String USER_FEATURE_OPERATION_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "operation_post:";
+    // comment
+    String USER_FEATURE_COMMENT_POST_REDIS_KEY = USER_FEATURE_REDIS_KEY + "comment_post:";
+
+    // postHeatList
+    String POST_HEAT_LIST_REDIS_KEY_PREFIX = POST_HEAT_REDIS_KEY + "list";
+
+    // userHeat
+    String USER_HEAT_REDIS_KEY = "user_heat:";
 }

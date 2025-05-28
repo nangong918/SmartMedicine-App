@@ -1,5 +1,6 @@
 package com.czy.api.domain.ao.search;
 
+import com.czy.api.constant.search.result.PersonalResultIntent;
 import lombok.Data;
 
 /**
@@ -8,4 +9,9 @@ import lombok.Data;
  */
 @Data
 public class PersonalEvaluateAo {
+    private Integer intent = PersonalResultIntent.UNRECOGNIZED.getType();
+    // 心脏病可能
+    private Double heartDisease = null;
+    // 糖尿病可能
+    private Double diabetes = null;
 }

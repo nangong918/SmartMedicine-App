@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChecksRepository extends Neo4jRepository<ChecksDo, Long> {
+    String CQL_USER_CHECKS = UserFeatureRepository.RELS_USER_CHECKS + "|" + PostRepository.RELS_POST_CHECKS + "|cure_department";
+
     ChecksDo findByName(String name);
 }

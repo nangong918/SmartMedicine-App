@@ -33,4 +33,12 @@ public class RedissonClusterLock {
         this.lockTimeout = lockTimeout;
     }
 
+    public RedissonClusterLock(String singleFlag, long lockTimeout){
+        this.id = singleFlag;
+        if (lockTimeout < 0){
+            lockTimeout = 1L;
+        }
+        this.lockTimeout = lockTimeout;
+    }
+
 }

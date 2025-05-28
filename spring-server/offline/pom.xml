@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>offline</name>
+    <groupId>com.offline</groupId>
+    <artifactId>offline</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <!--Maven 会将其视为 jar 类型，但对于父 POM，应该将其设置为 pom-->
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>recommend-offline-service</module>
+    </modules>
+
+    <!--JDK版本：11-->
+    <properties>
+        <java.version>11</java.version>
+        <spring.version>2.3.12.RELEASE</spring.version><!--此处版本必须与parent相同-->
+        <httpclient.version>4.5.13</httpclient.version>
+        <lombok.version>1.18.24</lombok.version>
+        <mybatis-plus.version>3.5.3.2</mybatis-plus.version>
+        <mybatis.version>2.3.5</mybatis.version>
+        <mysql.version>8.0.30</mysql.version>
+        <druid.version>1.2.8</druid.version>
+        <commons-lang.version>3.12.0</commons-lang.version>
+        <fastjson.version>1.2.47</fastjson.version>
+        <swagger.version>3.0.0</swagger.version>
+        <commons-io.version>2.11.0</commons-io.version>
+        <io.jsonwebtoken.version>0.12.6</io.jsonwebtoken.version>
+        <hutool.version>5.8.26</hutool.version>
+        <org.jetbrains.version>13.0</org.jetbrains.version>
+        <security-core.version>5.0.6.RELEASE</security-core.version>
+        <mapstruct.version>1.5.0.Final</mapstruct.version>
+        <jedission.version>3.11.3</jedission.version>
+        <rabbitmq.version>5.5.3</rabbitmq.version>
+        <minio.version>8.2.2</minio.version>
+        <hankcs.version>1.2.3</hankcs.version>
+        <csv.version>1.8</csv.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 实现对 Spring MVC 的自动化配置 -->
+            <!--        <dependency>-->
+            <!--            <groupId>org.springframework.boot</groupId>-->
+            <!--            <artifactId>spring-boot-starter-web</artifactId>-->
+            <!--        </dependency>-->
+
+            <!--            &lt;!&ndash;    使用webflux而不是web    &ndash;&gt;-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.springframework.boot</groupId>-->
+            <!--                <artifactId>spring-boot-starter-webflux</artifactId>-->
+            <!--            </dependency>-->
+
+            <!-- Swagger 3 -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+
+            <!-- Lombok for domain -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- MySQL Connector -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- MinIO 客户端 -->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
+
+            <!-- Druid -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <!-- MyBatis Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- FastJSON -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!-- jetbrains注解 -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${org.jetbrains.version}</version>
+            </dependency>
+
+            <!-- mapstruct类型转换 -->
+            <!--mapstruct核心-->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <!--mapstruct编译-->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+
+            <!-- validation -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-validation</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <!-- RabbitMq -->
+            <dependency>
+                <groupId>com.rabbitmq</groupId>
+                <artifactId>amqp-client</artifactId>
+                <version>${rabbitmq.version}</version>
+            </dependency>
+
+            <!-- 实现对 RabbitMQ amqp 的自动化配置 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-amqp</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hankcs</groupId>
+                <artifactId>aho-corasick-double-array-trie</artifactId>
+                <version>${hankcs.version}</version>
+            </dependency>
+
+            <!-- commons-csv -->
+            <dependency>
+                <artifactId>commons-csv</artifactId>
+                <groupId>org.apache.commons</groupId>
+                <version>${csv.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>
