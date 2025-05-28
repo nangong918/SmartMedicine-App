@@ -23,6 +23,7 @@ import com.czy.dal.vo.entity.home.PostListVo;
 import com.czy.dal.vo.entity.home.PostVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.PostActivity;
+import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
 import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.HomeViewModel;
@@ -66,6 +67,11 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     @Override
     protected void setListener() {
         super.setListener();
+
+        binding.fbtnPublishPost.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), PublishPostActivity.class);
+            startActivity(intent);
+        });
     }
 
     //---------------------------viewModel---------------------------

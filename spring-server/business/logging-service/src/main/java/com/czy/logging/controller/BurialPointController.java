@@ -1,12 +1,8 @@
+/*
 package com.czy.logging.controller;
 
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.logging.LoggingConstant;
-import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
-import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.request.UserBrowseTimeRequest;
-import com.czy.api.domain.dto.http.request.UserCityLocationRequest;
-import com.czy.api.domain.dto.http.request.UserClickPostRequest;
 import com.czy.logging.service.UserActionRecordService;
 import com.czy.springUtils.debug.DebugConfig;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+*/
 /**
  * @author 13225
  * @date 2025/5/9 10:25
@@ -52,7 +47,8 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * 基本上用户的特诊都是方向特征，物品的特征都是热度特征；物品的方向特征只从第一次标签喝内容获取
  * 整个推荐系统评估：曝光率，点击率
- */
+ *//*
+
 @Slf4j
 @CrossOrigin(origins = "*") // 跨域
 @Deprecated                 // 过时，改为netty传输埋点事件
@@ -67,54 +63,55 @@ public class BurialPointController {
     private final UserActionRecordService userActionRecordService;
     private final DebugConfig debugConfig;
 
-    // 上传用户的城市等信息
-    @Deprecated
-    @PostMapping("/city")
-    public BaseResponse<String>
-    uploadUserInfo(@Validated @RequestBody UserCityLocationRequest request) {
-        if (!debugConfig.isRecordUserAccount()){
-            return BaseResponse.getResponseEntitySuccess("后端debug模式不记录");
-        }
-        Long userId = userService.getIdByAccount(request.getUserAccount());
-        if (userId == null){
-            return BaseResponse.LogBackError("用户不存在");
-        }
-        UserCityLocationInfoAo ao = request.getAo();
-        ao.setUserId(userId);
-        userActionRecordService.uploadUserInfo(ao, request.getTimestamp());
-        return BaseResponse.getResponseEntitySuccess("上传成功");
-    }
+//    // 上传用户的城市等信息
+//    @Deprecated
+//    @PostMapping("/city")
+//    public BaseResponse<String>
+//    uploadUserInfo(@Validated @RequestBody UserCityLocationRequest request) {
+//        if (!debugConfig.isRecordUserAccount()){
+//            return BaseResponse.getResponseEntitySuccess("后端debug模式不记录");
+//        }
+//        Long userId = userService.getIdByAccount(request.getUserAccount());
+//        if (userId == null){
+//            return BaseResponse.LogBackError("用户不存在");
+//        }
+//        UserCityLocationInfoAo ao = request.getAo();
+//        ao.setUserId(userId);
+//        userActionRecordService.uploadUserInfo(ao, request.getTimestamp());
+//        return BaseResponse.getResponseEntitySuccess("上传成功");
+//    }
 
     // 用户点击帖子（与浏览时长拆开，避免用户直接划掉后台）
-    @Deprecated
-    @PostMapping("/clickPost")
-    public BaseResponse<String>
-    clickPost(@Validated @RequestBody UserClickPostRequest request) {
-        if (!debugConfig.isRecordUserAccount()){
-            return BaseResponse.getResponseEntitySuccess("后端debug模式不记录");
-        }
-        Long userId = userService.getIdByAccount(request.getUserAccount());
-        if (userId == null){
-            return BaseResponse.LogBackError("用户不存在");
-        }
-        userActionRecordService.clickPost(userId, request.getPostId(), request.getTimestamp(), request.getTimestamp());
-        return BaseResponse.getResponseEntitySuccess("上传成功");
-    }
+//    @Deprecated
+//    @PostMapping("/clickPost")
+//    public BaseResponse<String>
+//    clickPost(@Validated @RequestBody UserClickPostRequest request) {
+//        if (!debugConfig.isRecordUserAccount()){
+//            return BaseResponse.getResponseEntitySuccess("后端debug模式不记录");
+//        }
+//        Long userId = userService.getIdByAccount(request.getUserAccount());
+//        if (userId == null){
+//            return BaseResponse.LogBackError("用户不存在");
+//        }
+//        userActionRecordService.clickPost(userId, request.getPostId(), request.getTimestamp(), request.getTimestamp());
+//        return BaseResponse.getResponseEntitySuccess("上传成功");
+//    }
 
     // 上传用用的点击帖子 + 浏览时长
-    @Deprecated
-    @PostMapping("/browseTime")
-    public BaseResponse<String>
-    uploadClickPostAndBrowseTime(@Validated @RequestBody UserBrowseTimeRequest request) {
-        if (!debugConfig.isRecordUserAccount()){
-            return BaseResponse.getResponseEntitySuccess("后端debug模式不记录");
-        }
-        Long userId = userService.getIdByAccount(request.getUserAccount());
-        if (userId == null){
-            return BaseResponse.LogBackError("用户不存在");
-        }
-        userActionRecordService.uploadClickPostAndBrowseTime(userId, request.getPostId(), request.getBrowseDuration(), request.getTimestamp());
-        return BaseResponse.getResponseEntitySuccess("上传成功");
-    }
+//    @Deprecated
+//    @PostMapping("/browseTime")
+//    public BaseResponse<String>
+//    uploadClickPostAndBrowseTime(@Validated @RequestBody UserBrowseTimeRequest request) {
+//        if (!debugConfig.isRecordUserAccount()){
+//            return BaseResponse.getResponseEntitySuccess("后端debug模式不记录");
+//        }
+//        Long userId = userService.getIdByAccount(request.getUserAccount());
+//        if (userId == null){
+//            return BaseResponse.LogBackError("用户不存在");
+//        }
+//        userActionRecordService.uploadClickPostAndBrowseTime(userId, request.getPostId(), request.getBrowseDuration(), request.getTimestamp());
+//        return BaseResponse.getResponseEntitySuccess("上传成功");
+//    }
 
 }
+*/
