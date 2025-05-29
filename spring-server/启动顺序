@@ -1,5 +1,4 @@
-0.nacos                         8848
-1.gateway                       8888
+1.nacos                         8848
 2.netty-socket                  10000-10009
 3.oss-service                   10010-10019
 4.auth-service                  10020-10029
@@ -13,3 +12,5 @@
 10.recommend-offline-service    10100-10109
 11.recommend-service            10110-10119
 12.search-service               10120-10129
+
+n.gateway                       8888
