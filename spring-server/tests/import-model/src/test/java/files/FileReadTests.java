@@ -47,9 +47,11 @@ public class FileReadTests {
     @Test
     public void readAuthorNames(){
         List<String> userNames = new ArrayList<>();
-        crawlerDataManager.readCrawlerData(userNames);
-        for (String userName : userNames) {
-            System.out.println(userName);
+        List<String> userImagePaths = new ArrayList<>();
+        crawlerDataManager.readCrawlerAuthorData(userNames, userImagePaths);
+        assert userNames.size() == userImagePaths.size();
+        for (int i = 0; i < userNames.size(); i++){
+            System.out.println(userNames.get(i) + "\n" + userImagePaths.get(i));
         }
     }
 

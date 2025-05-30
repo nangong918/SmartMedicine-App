@@ -22,10 +22,11 @@ public class CrawlerDataManager {
 
     public static final String authorPath = "Author";
     public static final String authorFile = "0.txt";
+    public static final String authorImagePath = "0.png";
     private final FileReadManager fileReadManager;
 
     // 去读路径下的二级文件夹，如果二级文件夹的名字的Author就打开，读取0.txt
-    public void readCrawlerData(List<String> userNames) {
+    public void readCrawlerAuthorData(List<String> userNames, List<String> userImagePaths) {
         // 获取爬取数据的路径
         String crawlerArticlePath = fileReadManager.crawlerArticlePath;
         // 一级路径的文件夹
@@ -54,6 +55,14 @@ public class CrawlerDataManager {
                             userNames.add(fileContent);
                         } catch (IOException e) {
                             log.error("读取文件失败: {}", e.getMessage());
+                        }
+                        String imagePath = file2.getPath() + File.separator + authorImagePath;
+                        // 检查file是否存在，存在加入到list，不存在加入null，用为要保证数据数量相等，数据一一对应
+                        if (new File(imagePath).exists()){
+                            userImagePaths.add(imagePath);
+                        }
+                        else {
+                            userImagePaths.add(null);
                         }
                     }
                 }
