@@ -50,4 +50,18 @@ public class FileReadManager {
         return files.length;
     }
 
+    public File[] getFiles(String path){
+        File file = new File(path);
+        if (!file.exists() || !file.isDirectory()){
+            System.err.println("路径不存在");
+            return null;
+        }
+        File[] files = file.listFiles();
+        if (files == null || files.length == 0){
+            System.err.println("路径下没有文件夹");
+            return null;
+        }
+        return files;
+    }
+
 }

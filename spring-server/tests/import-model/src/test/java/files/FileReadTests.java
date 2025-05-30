@@ -1,12 +1,16 @@
 package files;
 
 import com.czy.imports.ImportsApplication;
+import com.czy.imports.manager.CrawlerDataManager;
 import com.czy.imports.manager.FileReadManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author 13225
@@ -15,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 @Slf4j
 @SpringBootTest(classes = ImportsApplication.class)
 @TestPropertySource("classpath:application.yml")
-public class FIleReadTests {
+public class FileReadTests {
 
     @Test
     public void helloWorld() {
@@ -35,6 +39,18 @@ public class FIleReadTests {
     public void checkFolderCount(){
         int count = FileReadManager.getFolderCount(fileReadManager.crawlerArticlePath);
         System.out.println(count);
+    }
+
+    @Autowired
+    private CrawlerDataManager crawlerDataManager;
+
+    @Test
+    public void readAuthorNames(){
+        List<String> userNames = new ArrayList<>();
+        crawlerDataManager.readCrawlerData(userNames);
+        for (String userName : userNames) {
+            System.out.println(userName);
+        }
     }
 
 }
