@@ -38,7 +38,8 @@ public class DistributedOfflineFeatureCalculateServiceImpl implements Distribute
     private PostFeatureService postFeatureService;
     private final RedissonService redissonService;
     private final Environment environment;
-    private final UserFeatureService userFeatureService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private UserFeatureService userFeatureService;
 
     @Override
     public void calculateUserHeat() {
