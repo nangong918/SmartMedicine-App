@@ -15,6 +15,7 @@
 
     <modules>
         <module>test-service</module>
+        <module>import-model</module>
     </modules>
 
     <!--JDK版本：11-->
