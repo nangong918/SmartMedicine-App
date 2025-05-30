@@ -1,5 +1,6 @@
 package com.czy.imports.domain.Do;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 /**
@@ -8,8 +9,11 @@ import lombok.Data;
  */
 @Data
 public class ArticleDo {
+    @JSONField(name = "Title")
     private String title;
+    @JSONField(name = "Time")
     private String time;
+    @JSONField(name = "Content")
     private String content;
     private String articleImagePath;
 }

@@ -1,6 +1,7 @@
 package files;
 
 import com.czy.imports.ImportsApplication;
+import com.czy.imports.domain.ao.AuthorAo;
 import com.czy.imports.manager.CrawlerDataManager;
 import com.czy.imports.manager.FileReadManager;
 import lombok.extern.slf4j.Slf4j;
@@ -8,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,12 +47,12 @@ public class FileReadTests {
 
     @Test
     public void readAuthorNames(){
-        List<String> userNames = new ArrayList<>();
-        List<String> userImagePaths = new ArrayList<>();
-        crawlerDataManager.readCrawlerAuthorData(userNames, userImagePaths);
-        assert userNames.size() == userImagePaths.size();
-        for (int i = 0; i < userNames.size(); i++){
-            System.out.println(userNames.get(i) + "\n" + userImagePaths.get(i));
+
+        List<AuthorAo> userNames = crawlerDataManager.readCrawlerAuthorData();
+        if (!CollectionUtils.isEmpty(userNames)){
+            System.out.println(userNames.size());
+            AuthorAo authorAo = userNames.get(0);
+            System.out.println(authorAo.toJsonString());
         }
     }
 
