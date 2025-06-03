@@ -4,6 +4,8 @@ import com.czy.imports.ImportsApplication;
 import com.czy.imports.domain.ao.AuthorAo;
 import com.czy.imports.manager.CrawlerDataManager;
 import com.czy.imports.manager.FileReadManager;
+import com.czy.imports.service.ImportAuthorService;
+import domain.FileOptionResult;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,21 @@ public class FileReadTests {
             AuthorAo authorAo = userNames.get(0);
             System.out.println(authorAo.toJsonString());
         }
+    }
+
+    @Autowired
+    private ImportAuthorService importAuthorService;
+
+    private final static String bucketName = "author-file-test";
+
+    @Test
+    public void storageFileTest(){
+        String filePath = "D:\\CodeLearning\\smart-medicine\\爬取数据\\养生杂志\\5\\0.png";
+        FileOptionResult result = importAuthorService.uploadFiles(
+                filePath,
+                bucketName
+        );
+        System.out.println(result.toJsonString());
     }
 
 }

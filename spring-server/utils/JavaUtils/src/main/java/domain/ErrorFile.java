@@ -1,5 +1,6 @@
 package domain;
 
+import json.BaseBean;
 import lombok.Data;
 
 /**
@@ -7,7 +8,7 @@ import lombok.Data;
  * @date 2025/4/18 11:51
  */
 @Data
-public class ErrorFile {
+public class ErrorFile implements BaseBean {
     private String fileName;
     private Long fileId;
     private String errorMessage;

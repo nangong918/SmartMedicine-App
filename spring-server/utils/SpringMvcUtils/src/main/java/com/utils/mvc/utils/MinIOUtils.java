@@ -451,4 +451,24 @@ public class MinIOUtils {
         String url = str.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
         return URLDecoder.decode(url, "UTF-8");
     }
+
+    /**
+     * inputStream上传文件
+     * @param bucketName        bucket名称
+     * @param inputStream       文件流
+     * @param objectName        文件名称
+     * @param contentType       文件类型
+     * @return                  文件上传结果
+     * @throws Exception        Minio异常
+     */
+    public ObjectWriteResponse uploadFile(String bucketName, InputStream inputStream,
+                                          String objectName, String contentType) throws Exception {
+        return minioClient.putObject(
+                PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(objectName)
+                        .contentType(contentType)
+                        .stream(inputStream, inputStream.available(), -1)
+                        .build());
+    }
 }
