@@ -2,7 +2,7 @@ package com.czy.api.domain.Do.neo4j.base;
 
 import lombok.Data;
 import org.neo4j.ogm.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Field;
+import org.neo4j.ogm.annotation.Property;
 
 /**
  * @author 13225
@@ -11,9 +11,9 @@ import org.springframework.data.elasticsearch.annotations.Field;
 @Data
 public abstract class BaseNeo4jDo {
     @Id
-    @Field("id")
+    @Property("id")
     private Long id;
-    @Field("name")
+    @Property("name")
     private String name;
     public abstract String getNodeLabel();
 }
