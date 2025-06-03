@@ -61,16 +61,28 @@ public class FileReadTests {
     @Autowired
     private ImportAuthorService importAuthorService;
 
-    private final static String bucketName = "author-file-test";
+    private final static String testBucketName = "author-file-test";
 
     @Test
     public void storageFileTest(){
         String filePath = "D:\\CodeLearning\\smart-medicine\\爬取数据\\养生杂志\\5\\0.png";
         FileOptionResult result = importAuthorService.uploadFiles(
                 filePath,
-                bucketName
+                testBucketName
         );
         System.out.println(result.toJsonString());
+    }
+
+
+    /**
+     * 单个数据导入测试：
+     * 1.上传file（头像 + 文章）到minIO的oss + mysql的oss_info
+     * 2.创建user信息存储到login_user
+     * 3.创建post信息，mysql存储到post_info和post_files；postDetail->mongodb;postTitle->es
+     */
+    @Test
+    public void singleDataImportTest(){
+
     }
 
 }

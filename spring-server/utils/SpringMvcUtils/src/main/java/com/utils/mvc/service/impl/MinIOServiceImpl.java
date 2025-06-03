@@ -1,5 +1,6 @@
 package com.utils.mvc.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.utils.mvc.service.MinIOService;
 import com.utils.mvc.utils.MinIOUtils;
 import domain.ErrorFile;
@@ -60,7 +61,8 @@ public class MinIOServiceImpl implements MinIOService {
                 String fileStorageName = getFileStorageName(userId, fileName);
                 ObjectWriteResponse response = minIOUtils.uploadFile(bucketName, file, fileStorageName, file.getContentType());
                 if (response != null){
-                    successFiles.add(new SuccessFile(fileName, fileStorageName, file.getSize()));
+                    long fileId = IdUtil.getSnowflakeNextId();
+                    successFiles.add(new SuccessFile(fileName, fileStorageName, file.getSize(), fileId));
                 }
             } catch (Exception e) {
                 log.error("上传文件失败", e);
@@ -123,7 +125,8 @@ public class MinIOServiceImpl implements MinIOService {
                 );
                 String fileStorageName = getFileStorageName(-1L, fileName);
                 if (response != null){
-                    successFiles.add(new SuccessFile(fileName, fileStorageName, file.length()));
+                    long fileId = IdUtil.getSnowflakeNextId();
+                    successFiles.add(new SuccessFile(fileName, fileStorageName, file.length(), fileId));
                 }
             } catch (IOException e){
                 log.error("上传文件失败, file转为inputStream失败", e);

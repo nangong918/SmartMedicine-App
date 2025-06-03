@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.czy.imports.mapper.OssMapper">
+    <sql id="doColumns">
+        file_name,
+        upload_timestamp,
+        user_id,
+        file_storage_name,
+        file_size,
+        bucket_name
+    </sql>
+    <insert id="insert" parameterType="com.czy.api.domain.Do.oss.OssFileDo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO oss_file(
+        <include refid="doColumns"/>
+        )
+        VALUES (
+            #{fileName},
+            #{uploadTimestamp},
+            #{userId},
+            #{fileStorageName},
+            #{fileSize},
+            #{bucketName}
+        )
+    </insert>
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO oss_file (
+        <include refid="doColumns"/>
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.fileName},
+            #{item.uploadTimestamp},
+            #{item.userId},
+            #{item.fileStorageName},
+            #{item.fileSize},
+            #{item.bucketName}
+            )
+        </foreach>
+    </insert>
+<!--    <update id="update">-->
+<!--        UPDATE oss_file-->
+<!--        <set>-->
+<!--            <if test="do.id != null">-->
+<!--                id = #{do.id},-->
+<!--            </if>-->
+<!--            <if test="do.fileName != null">-->
+<!--                file_name = #{do.fileName},-->
+<!--            </if>-->
+<!--            <if test="do.uploadTimestamp != null">-->
+<!--                upload_timestamp = #{do.uploadTimestamp},-->
+<!--            </if>-->
+<!--            <if test="do.userId != null">-->
+<!--                user_id = #{do.userId},-->
+<!--            </if>-->
+<!--            <if test="do.fileStorageName != null">-->
+<!--                file_storage_name = #{do.fileStorageName},-->
+<!--            </if>-->
+<!--            <if test="do.fileSize != null">-->
+<!--                file_size = #{do.fileSize},-->
+<!--            </if>-->
+<!--            <if test="do.bucketName != null">-->
+<!--                bucket_name = #{do.bucketName},-->
+<!--            </if>-->
+<!--        </set>-->
+<!--    </update>-->
+<!--    <update id="updateBatch">-->
+<!--        UPDATE oss_file-->
+<!--        <set>-->
+<!--            <if test="do.id != null">-->
+<!--                id = #{do.id},-->
+<!--            </if>-->
+<!--            <if test="do.fileName != null">-->
+<!--                file_name = #{do.fileName},-->
+<!--            </if>-->
+<!--            <if test="do.uploadTimestamp != null">-->
+<!--                upload_timestamp = #{do.uploadTimestamp},-->
+<!--            </if>-->
+<!--            <if test="do.userId != null">-->
+<!--                user_id = #{do.userId},-->
+<!--            </if>-->
+<!--            <if test="do.fileStorageName != null">-->
+<!--                file_storage_name = #{do.fileStorageName},-->
+<!--            </if>-->
+<!--            <if test="do.fileSize != null">-->
+<!--                file_size = #{do.fileSize},-->
+<!--            </if>-->
+<!--            <if test="do.bucketName != null">-->
+<!--                bucket_name = #{do.bucketName},-->
+<!--            </if>-->
+<!--        </set>-->
+<!--    </update>-->
+<!--    <delete id="delete">-->
+<!--        DELETE FROM oss_file-->
+<!--        WHERE id = #{id}-->
+<!--    </delete>-->
+<!--    <delete id="deleteByFileStorageNameAndBucketName">-->
+<!--        DELETE FROM oss_file-->
+<!--        WHERE file_storage_name = #{fileStorageName}-->
+<!--        AND bucket_name = #{bucketName}-->
+<!--    </delete>-->
+<!--    <delete id="deleteBatch">-->
+<!--        DELETE FROM oss_file-->
+<!--        WHERE id IN-->
+<!--        <foreach collection="ids" item="id" open="(" close=")" separator=",">-->
+<!--            #{id}-->
+<!--        </foreach>-->
+<!--    </delete>-->
+<!--    <select id="getById" resultType="com.czy.api.domain.Do.oss.OssFileDo">-->
+<!--        SELECT-->
+<!--        <include refid="doColumns"/>-->
+<!--        FROM oss_file-->
+<!--        WHERE id = #{id}-->
+<!--    </select>-->
+<!--    <select id="getByUserId" resultType="com.czy.api.domain.Do.oss.OssFileDo">-->
+<!--        SELECT-->
+<!--        <include refid="doColumns"/>-->
+<!--        FROM oss_file-->
+<!--        WHERE user_id = #{userId}-->
+<!--    </select>-->
+<!--    <select id="getFileCountByUserIdAndBucketName" resultType="java.lang.Long">-->
+<!--        SELECT COUNT(*)-->
+<!--        FROM oss_file-->
+<!--        WHERE user_id = #{userId}-->
+<!--        AND bucket_name = #{bucketName}-->
+<!--    </select>-->
+<!--    <select id="getByFileStorageNameAndBucketName" resultType="com.czy.api.domain.Do.oss.OssFileDo">-->
+<!--        SELECT-->
+<!--        <include refid="doColumns"/>-->
+<!--        FROM oss_file-->
+<!--        WHERE-->
+<!--            user_id = #{userId}-->
+<!--          AND file_name = #{fileName}-->
+<!--          AND bucket_name = #{bucketName}-->
+<!--    </select>-->
+<!--    <select id="checkFileExist" resultType="java.lang.Boolean">-->
+<!--        SELECT-->
+<!--        CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END-->
+<!--        FROM oss_file-->
+<!--        WHERE-->
+<!--            user_id = #{userId}-->
+<!--          AND file_name = #{fileName}-->
+<!--          AND file_size = #{fileSize}-->
+<!--    </select>-->
+<!--    <select id="getFileCountByUserId" resultType="java.lang.Long">-->
+<!--        SELECT COUNT(*)-->
+<!--        FROM oss_file-->
+<!--        WHERE user_id = #{userId}-->
+<!--    </select>-->
+<!--    <select id="getByFileNameAndUserId" resultType="com.czy.api.domain.Do.oss.OssFileDo">-->
+<!--        SELECT-->
+<!--        <include refid="doColumns"/>-->
+<!--        FROM oss_file-->
+<!--        WHERE-->
+<!--            user_id = #{userId}-->
+<!--          AND file_name = #{fileName}-->
+<!--    </select>-->
+<!--    <select id="getFileIdByIdempotent" resultType="java.lang.Long">-->
+<!--        SELECT id-->
+<!--        FROM oss_file-->
+<!--        WHERE-->
+<!--            user_id = #{userId}-->
+<!--          AND file_name = #{fileName}-->
+<!--          AND file_size = #{fileSize}-->
+<!--        Order BY id DESC LIMIT 1-->
+<!--    </select>-->
+</mapper>

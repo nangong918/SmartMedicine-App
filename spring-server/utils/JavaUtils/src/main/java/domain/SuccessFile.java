@@ -21,4 +21,11 @@ public class SuccessFile implements BaseBean {
         this.fileStorageName = fileStorageName;
         this.fileSize = fileSize;
     }
+
+    public SuccessFile(String fileName, String fileStorageName, Long fileSize, Long fileId) {
+        this.fileName = fileName;
+        this.fileStorageName = fileStorageName;
+        this.fileSize = fileSize;
+        this.fileId = fileId;
+    }
 }

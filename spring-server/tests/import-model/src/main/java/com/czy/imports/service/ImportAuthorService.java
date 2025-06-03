@@ -8,7 +8,7 @@ import domain.FileOptionResult;
  */
 public interface ImportAuthorService {
 
-    // 1.上传file（头像 + 文章）
+    // 1.上传file（头像 + 文章）到minIO的oss + mysql的oss_info
     FileOptionResult uploadFiles(String filePath, String bucketName);
 
     // 2.创建user信息存储到login_user
