@@ -76,6 +76,7 @@ public class PostStorageServiceImpl implements PostStorageService {
             return;
         }
         PostNeo4jDo postNeo4jDo = postConverter.toNeo4jDo(postAo);
+        postRepository.save(postNeo4jDo);
         List<ChecksDo> checksDoList = new ArrayList<>();
         List<DepartmentsDo> departmentsDoList = new ArrayList<>();
         List<DiseaseDo> diseasesDoList = new ArrayList<>();

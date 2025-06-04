@@ -84,16 +84,13 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Override
     public void createRelationPostWithDiseases(PostNeo4jDo post, List<DiseaseDo> dos) {
-        // 保存 PostDo 实体
-        PostNeo4jDo savedPost = postRepository.save(post);
-
         // 保存与疾病的关系
         for (DiseaseDo disease : dos) {
             // 确保疾病实体已存在于数据库中
             DiseaseDo existingDisease = diseaseRepository.findByName(disease.getName());
             if (existingDisease != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), DiseaseDo.nodeLabel,
+                        post.getName(), DiseaseDo.nodeLabel,
                         disease.getName(), PostRepository.RELS_POST_DISEASES);
             }
         }
@@ -101,12 +98,11 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Override
     public void createRelationPostWithChecks(PostNeo4jDo post, List<ChecksDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (ChecksDo checks : dos) {
             ChecksDo existingChecks = checksRepository.findByName(checks.getName());
             if (existingChecks != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), ChecksDo.nodeLabel,
+                        post.getName(), ChecksDo.nodeLabel,
                         checks.getName(), PostRepository.RELS_POST_CHECKS);
             }
         }
@@ -114,12 +110,11 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Override
     public void createRelationPostWithDepartments(PostNeo4jDo post, List<DepartmentsDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (DepartmentsDo departments : dos) {
             DepartmentsDo existingDepartments = departmentsRepository.findByName(departments.getName());
             if (existingDepartments != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), DepartmentsDo.nodeLabel,
+                        post.getName(), DepartmentsDo.nodeLabel,
                         departments.getName(), PostRepository.RELS_POST_DEPARTMENTS);
             }
         }
@@ -127,12 +122,11 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Override
     public void createRelationPostWithDrugs(PostNeo4jDo post, List<DrugsDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (DrugsDo drugs : dos) {
             DrugsDo existingDrugs = drugsRepository.findByName(drugs.getName());
             if (existingDrugs != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), DrugsDo.nodeLabel,
+                        post.getName(), DrugsDo.nodeLabel,
                         drugs.getName(), PostRepository.RELS_POST_DRUGS);
             }
         }
@@ -140,12 +134,11 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Override
     public void createRelationPostWithFoods(PostNeo4jDo post, List<FoodsDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (FoodsDo foods : dos) {
             FoodsDo existingFoods = foodsRepository.findByName(foods.getName());
             if (existingFoods != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), FoodsDo.nodeLabel,
+                        post.getName(), FoodsDo.nodeLabel,
                         foods.getName(), PostRepository.RELS_POST_FOODS);
             }
         }
@@ -153,12 +146,11 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Override
     public void createRelationPostWithProducers(PostNeo4jDo post, List<ProducersDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (ProducersDo producers : dos) {
             ProducersDo existingProducers = producersRepository.findByName(producers.getName());
             if (existingProducers != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), ProducersDo.nodeLabel,
+                        post.getName(), ProducersDo.nodeLabel,
                         producers.getName(), PostRepository.RELS_POST_PRODUCERS);
             }
         }
@@ -166,12 +158,11 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Override
     public void createRelationPostWithRecipes(PostNeo4jDo post, List<RecipesDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (RecipesDo recipes : dos) {
             RecipesDo existingRecipes = recipesRepository.findByName(recipes.getName());
             if (existingRecipes != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), RecipesDo.nodeLabel,
+                        post.getName(), RecipesDo.nodeLabel,
                         recipes.getName(), PostRepository.RELS_POST_RECIPES);
             }
         }
@@ -179,12 +170,11 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Override
     public void createRelationPostWithSymptoms(PostNeo4jDo post, List<SymptomsDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (SymptomsDo symptoms : dos) {
             SymptomsDo existingSymptoms = symptomsRepository.findByName(symptoms.getName());
             if (existingSymptoms != null) {
                 postRepository.createDynamicRelationship(
-                        savedPost.getName(), SymptomsDo.nodeLabel,
+                        post.getName(), SymptomsDo.nodeLabel,
                         symptoms.getName(), PostRepository.RELS_POST_SYMPTOMS);
             }
         }
