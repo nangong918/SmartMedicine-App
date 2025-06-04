@@ -107,6 +107,6 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
 
     @Override
     public void createPost(String title, String content, String publishTime, String filePath) {
-
+        // post信息，mysql存储到post_info和post_files；postDetail->mongodb;postTitle->es
     }
 }

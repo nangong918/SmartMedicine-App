@@ -19,6 +19,8 @@ public class TestNeo4jDo extends BaseNeo4jDo implements BaseBean {
     public static final String nodeLabel = "test";
     @Property("account")
     private String account;
+    @Property("test_id")
+    private Long testId;
     @Override
     public String getNodeLabel() {
         return nodeLabel;

@@ -5,7 +5,7 @@ import json.BaseBean;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.springframework.data.elasticsearch.annotations.Field;
+import org.neo4j.ogm.annotation.Property;
 
 /**
  * @author 13225
@@ -17,7 +17,9 @@ import org.springframework.data.elasticsearch.annotations.Field;
 public class UserFeatureNeo4jDo extends BaseNeo4jDo implements BaseBean {
     // nodeLabel
     public static final String nodeLabel = "user";
-    @Field("account")
+    @Property("user_id")
+    private String userId;
+    @Property("account")
     private String account;
     @Override
     public String getNodeLabel() {

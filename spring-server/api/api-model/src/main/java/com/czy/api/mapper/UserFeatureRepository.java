@@ -38,6 +38,8 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
     String RELS_USER_POSTS = "user_post";
     // user_post_label
     String RELS_USER_POST_LABEL = "user_post_label";
+    // user_publish_post
+    String RELS_USER_PUBLISH_POST = "user_publish_post";
 
 
     UserFeatureNeo4jDo findByAccount(String account);
