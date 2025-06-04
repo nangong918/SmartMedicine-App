@@ -180,6 +180,7 @@ public class UserServiceImpl implements UserService {
 
         // 存储到mysql
         loginUserMapper.insertLoginUser(loginUserDo);
+        log.info("用户注册成功，loginUserDo: {}", loginUserDo.toJsonString());
 
         // 基本信息 es + mysql
         UserDo userDo = new UserDo();

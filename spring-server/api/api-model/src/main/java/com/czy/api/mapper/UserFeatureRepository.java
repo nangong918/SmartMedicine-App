@@ -43,13 +43,14 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
 
     @Query( "MATCH (n:user) " +
             "WHERE n.account = $account RETURN n")
-    Optional<UserFeatureNeo4jDo> findByAccount(String account);
+    Optional<UserFeatureNeo4jDo> findByAccount(@Param("account") String account);
     @Query( "MATCH (n:user) " +
             "WHERE n.name = $name RETURN n")
-    Optional<UserFeatureNeo4jDo> findByName(String name);
-    @Query( "MATCH (n:user) " +
-            "WHERE n.user_id = $userId RETURN n")
-    Optional<UserFeatureNeo4jDo> findByUserId(Long userId);
+    Optional<UserFeatureNeo4jDo> findByName(@Param("name") String name);
+    @Query("MATCH (n:user) " +
+            "WHERE n.user_id = $userId " +
+            "RETURN n")
+    Optional<UserFeatureNeo4jDo> findByUserId(@Param("userId") Long userId);
 
 
 

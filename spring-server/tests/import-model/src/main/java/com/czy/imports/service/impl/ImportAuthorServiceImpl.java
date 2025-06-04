@@ -47,6 +47,8 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         List<OssFileDo> ossFileDos = new ArrayList<>();
         for (SuccessFile successFile : successFiles){
             OssFileDo ossFileDo = new OssFileDo();
+            ossFileDo.setId(successFile.getFileId());
+            log.info("fileId:{}", successFile.getFileId());
             ossFileDo.setFileName(successFile.getFileName());
             ossFileDo.setFileSize(successFile.getFileSize());
             ossFileDo.setBucketName(bucketName);
@@ -73,6 +75,7 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
 
     @Override
     public void createPost(String title, String content, Long publishTime, List<Long> fileIdList, Long userId) {
+        log.info("start createPost:{}", title);
         // post信息，mysql存储到post_info和post_files；postDetail->mongodb;postTitle->es
         postImportService.importPost(title, content, publishTime, fileIdList, userId);
     }

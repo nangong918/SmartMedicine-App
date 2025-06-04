@@ -235,6 +235,13 @@ public class FileReadTests {
         }
 
     }
+    /*
+        删除neo4j数据
+        MATCH (u:user)
+        DELETE u;
+        MATCH (p:post)
+        DELETE p;
+     */
 
     // "2022-07-09 10:52" -> long timestamp
     private static long getTimestamp(String time){
@@ -250,6 +257,13 @@ public class FileReadTests {
 
     public static void main(String[] args) {
         System.out.println(getTimestamp("2022-07-09 10:52"));
+    }
+
+    @Test
+    public void neo4jFindTest(){
+        Long userId = 1930195272489353216L;
+        Optional<UserFeatureNeo4jDo> userResult = userFeatureRepository.findByUserId(userId);
+        userResult.ifPresent(userFeatureNeo4jDo -> System.out.println("userResult = " + userFeatureNeo4jDo.toJsonString()));
     }
 
 }
