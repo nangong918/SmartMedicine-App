@@ -67,9 +67,12 @@ public class PostStorageServiceImpl implements PostStorageService {
         }
     }
 
+    // TODO 测试此处，存在问题
     @Override
     public void storePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList) {
         if (CollectionUtils.isEmpty(featureList)){
+            log.warn("存储帖子特征失败：帖子特征为空, postId:{}, postTitle:{}",
+                    postAo.getId(), postAo.getTitle());
             return;
         }
         PostNeo4jDo postNeo4jDo = postConverter.toNeo4jDo(postAo);
@@ -152,6 +155,7 @@ public class PostStorageServiceImpl implements PostStorageService {
         if (!symptomsDoList.isEmpty()){
             postTransactionService.createRelationPostWithSymptoms(postNeo4jDo, symptomsDoList);
         }
+        log.info("存储帖子特征成功：postId:{}, postTitle:{}", postAo.getId(), postAo.getTitle());
     }
 
     @Override

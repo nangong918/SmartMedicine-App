@@ -1,8 +1,10 @@
 package files;
 
 import cn.hutool.core.util.IdUtil;
+import com.czy.api.domain.Do.neo4j.ProducersDo;
 import com.czy.api.domain.Do.neo4j.TestNeo4jDo;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
+import com.czy.api.mapper.ProducersRepository;
 import com.czy.api.mapper.TestRepository;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.imports.ImportsApplication;
@@ -260,10 +262,19 @@ public class FileReadTests {
     }
 
     @Test
-    public void neo4jFindTest(){
+    public void neo4jFindUserTest(){
         Long userId = 1930195272489353216L;
         Optional<UserFeatureNeo4jDo> userResult = userFeatureRepository.findByUserId(userId);
         userResult.ifPresent(userFeatureNeo4jDo -> System.out.println("userResult = " + userFeatureNeo4jDo.toJsonString()));
+    }
+
+    @Autowired
+    private ProducersRepository producersRepository;
+
+    @Test
+    public void neo4jFindEntityTest(){
+        ProducersDo existingProducers = producersRepository.findByName("新");
+        System.out.println("existingProducers = " + existingProducers.toJsonString());
     }
 
 }
