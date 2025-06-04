@@ -16,6 +16,7 @@
         <include refid="doColumns"/>
         )
         VALUES (
+            #{id},
             #{fileName},
             #{uploadTimestamp},
             #{userId},
@@ -29,14 +30,15 @@
         <include refid="doColumns"/>
         )
         VALUES
-        <foreach collection="list" item="do" separator=",">
+        <foreach collection="list" item="item" separator=",">
             (
-            #{do.fileName},
-            #{do.uploadTimestamp},
-            #{do.userId},
-            #{do.fileStorageName},
-            #{do.fileSize},
-            #{do.bucketName}
+            #{item.id},
+            #{item.fileName},
+            #{item.uploadTimestamp},
+            #{item.userId},
+            #{item.fileStorageName},
+            #{item.fileSize},
+            #{item.bucketName}
             )
         </foreach>
     </insert>
