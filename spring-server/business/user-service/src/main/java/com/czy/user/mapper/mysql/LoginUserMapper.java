@@ -20,7 +20,7 @@ public interface LoginUserMapper {
     int getLoginUserCount(String phone);
 
     // 增
-    int insertLoginUser(@Param("do") LoginUserDo loginUserDo);
+    int insertLoginUser(LoginUserDo loginUserDo);
 
     // 删
     int deleteLoginUser(Integer id);

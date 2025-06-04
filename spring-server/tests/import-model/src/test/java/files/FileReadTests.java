@@ -3,8 +3,6 @@ package files;
 import cn.hutool.core.util.IdUtil;
 import com.czy.api.domain.Do.neo4j.TestNeo4jDo;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
-import com.czy.api.domain.Do.user.LoginUserDo;
-import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.mapper.TestRepository;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.imports.ImportsApplication;
@@ -12,8 +10,6 @@ import com.czy.imports.domain.Do.ArticleDo;
 import com.czy.imports.domain.ao.AuthorAo;
 import com.czy.imports.manager.CrawlerDataManager;
 import com.czy.imports.manager.FileReadManager;
-import com.czy.imports.mapper.LoginUserMapper;
-import com.czy.imports.mapperEs.UserEsMapper;
 import com.czy.imports.service.ImportAuthorService;
 import domain.FileOptionResult;
 import domain.SuccessFile;
@@ -25,7 +21,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -89,10 +87,10 @@ public class FileReadTests {
         System.out.println(result.toJsonString());
     }
 
-    @Autowired
-    private LoginUserMapper loginUserMapper;
-    @Autowired
-    private UserEsMapper userEsMapper;
+//    @Autowired
+//    private LoginUserMapper loginUserMapper;
+//    @Autowired
+//    private UserEsMapper userEsMapper;
     @Autowired
     private UserFeatureRepository userFeatureRepository;
 
@@ -105,14 +103,14 @@ public class FileReadTests {
                 "test",
                 102524534L
         );
-        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount("test");
-        System.out.println(loginUserDo.toJsonString());
-        List<UserDo> userDos = userEsMapper.findByUserNameContaining("test");
-        for (UserDo userDo : userDos) {
-            System.out.println(userDo.toJsonString());
-        }
-        UserFeatureNeo4jDo userFeatureNeo4jDo = userFeatureRepository.findByAccount("test");
-        System.out.println(userFeatureNeo4jDo.toJsonString());
+//        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount("test");
+//        System.out.println(loginUserDo.toJsonString());
+//        List<UserDo> userDos = userEsMapper.findByUserNameContaining("test");
+//        for (UserDo userDo : userDos) {
+//            System.out.println(userDo.toJsonString());
+//        }
+//        UserFeatureNeo4jDo userFeatureNeo4jDo = userFeatureRepository.findByAccount("test");
+//        System.out.println(userFeatureNeo4jDo.toJsonString());
     }
 
     @Test
@@ -124,8 +122,10 @@ public class FileReadTests {
         userFeatureRepository.save(userFeatureNeo4jDo);
         System.out.println("userFeatureNeo4jDo = " + userFeatureNeo4jDo.toJsonString());
 
-        UserFeatureNeo4jDo userFeatureNeo4jDo1 = userFeatureRepository.findByName("test");
-        System.out.println(userFeatureNeo4jDo1.toJsonString());
+        Optional<UserFeatureNeo4jDo> result = userFeatureRepository.findByName("test");
+        result.ifPresent(neo4jDo ->
+                System.out.println("neo4jDo = " + neo4jDo.toJsonString())
+        );
     }
 
     @Autowired
@@ -158,6 +158,8 @@ public class FileReadTests {
      * 1.上传file（头像 + 文章）到minIO的oss + mysql的oss_info
      * 2.创建user信息存储到login_user;es;neo4j
      * 3.创建post信息，mysql存储到post_info和post_files；postDetail->mongodb;postTitle->es
+     * 用nacos + dubbo调用方法。
+     * TODO user - post的发布关系
      */
     @Test
     public void singleDataImportTest(){
@@ -168,6 +170,7 @@ public class FileReadTests {
         for (AuthorAo user : userNames){
             if (user != null && user.getArticleDos().size() < currentNum){
                 minUser = user;
+                currentNum = user.getArticleDos().size();
             }
         }
         if (minUser == null){
@@ -188,7 +191,7 @@ public class FileReadTests {
         // 2. 上传postFileList
         // 2.1 获取postFileList
         List<ArticleDo> articleDos = minUser.getArticleDos();
-        List<Long> postFileIds = new ArrayList<>();
+        List<List<Long>> postFilesIds = new ArrayList<>(articleDos.size());
         for (ArticleDo articleDo : articleDos){
             String articleImagePath = articleDo.getArticleImagePath();
             if (StringUtils.hasText(articleImagePath)){
@@ -197,20 +200,56 @@ public class FileReadTests {
                         testPostBucketName
                 );
                 if (!result.getSuccessFiles().isEmpty()){
-                    postFileIds = result.getSuccessFiles().stream()
+                    List<Long> postFileIds = result.getSuccessFiles().stream()
                             .map(SuccessFile::getFileId)
                             .collect(Collectors.toList());
+                    postFilesIds.add(postFileIds);
                 }
+                else {
+                    postFilesIds.add(new ArrayList<>());
+                }
+            }
+            else {
+                postFilesIds.add(new ArrayList<>());
             }
         }
 
         // 3.创建user
-        importAuthorService.createUser(
+        long userId = importAuthorService.createUser(
                 minUser.getAuthorInfoAo().getUserName(),
                 minUser.getUserAccount(),
                 String.valueOf(startTestPhone),
                 authorImageId
         );
+
+        // 4.创建post
+        for (int i = 0; i < articleDos.size(); i++){
+            ArticleDo articleDo = articleDos.get(i);
+            importAuthorService.createPost(
+                    articleDo.getTitle(),
+                    articleDo.getContent(),
+                    getTimestamp(articleDo.getTime()),
+                    postFilesIds.get(i),
+                    userId
+            );
+        }
+
+    }
+
+    // "2022-07-09 10:52" -> long timestamp
+    private static long getTimestamp(String time){
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date date = simpleDateFormat.parse(time);
+            return date.getTime();
+        }
+        catch (Exception e){
+            return 0L;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getTimestamp("2022-07-09 10:52"));
     }
 
 }

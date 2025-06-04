@@ -1,23 +1,19 @@
 package com.czy.post.service.impl;
 
+import com.czy.api.api.user.UserService;
 import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.converter.domain.post.PostConverter;
-import com.czy.api.domain.Do.neo4j.ChecksDo;
-import com.czy.api.domain.Do.neo4j.DepartmentsDo;
-import com.czy.api.domain.Do.neo4j.DiseaseDo;
-import com.czy.api.domain.Do.neo4j.DrugsDo;
-import com.czy.api.domain.Do.neo4j.FoodsDo;
-import com.czy.api.domain.Do.neo4j.ProducersDo;
-import com.czy.api.domain.Do.neo4j.RecipesDo;
-import com.czy.api.domain.Do.neo4j.SymptomsDo;
+import com.czy.api.domain.Do.neo4j.*;
+import com.czy.api.domain.Do.neo4j.rels.UserPublishPostRelation;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
-import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.PostRepository;
+import com.czy.api.mapper.UserFeatureRepository;
+import com.czy.api.mapper.rels.UserPublishPostRelationRepository;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
@@ -25,11 +21,13 @@ import com.czy.post.service.PostStorageService;
 import com.czy.post.service.PostTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -46,6 +44,10 @@ public class PostStorageServiceImpl implements PostStorageService {
     private final PostConverter postConverter;
     private final PostFilesMapper postFilesMapper;
     private final PostRepository postRepository;
+    private final UserPublishPostRelationRepository userPublishPostRelationRepository;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private UserService userService;
+    private final UserFeatureRepository userFeatureRepository;
     @Override
     public void storePostContentToDatabase(PostAo postAo) {
         postTransactionService.storePostToDatabase(postAo);
@@ -150,6 +152,16 @@ public class PostStorageServiceImpl implements PostStorageService {
         if (!symptomsDoList.isEmpty()){
             postTransactionService.createRelationPostWithSymptoms(postNeo4jDo, symptomsDoList);
         }
+    }
+
+    @Override
+    public void storePostAuthorRelationToNeo4j(PostAo postAo, Long userId){
+        UserPublishPostRelation userPublishPostRelation = new UserPublishPostRelation();
+        Optional<UserFeatureNeo4jDo> userResult = userFeatureRepository.findByUserId(userId);
+        userResult.ifPresent(userPublishPostRelation::setUser);
+        Optional<PostNeo4jDo> postResult = postRepository.findByPostId(postAo.getId());
+        postResult.ifPresent(userPublishPostRelation::setPost);
+        userPublishPostRelationRepository.save(userPublishPostRelation);
     }
 
     @Override

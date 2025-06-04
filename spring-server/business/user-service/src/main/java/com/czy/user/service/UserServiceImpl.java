@@ -1,7 +1,13 @@
 package com.czy.user.service;
 
+import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.user.UserService;
+import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
+import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
+import com.czy.api.mapper.UserFeatureRepository;
+import com.czy.user.mapper.es.UserEsMapper;
+import com.czy.user.mapper.mysql.LoginUserMapper;
 import com.czy.user.mapper.mysql.UserMapper;
 import com.czy.user.service.transactional.UserStorageService;
 import exception.AppException;
@@ -32,7 +38,10 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
+    private final LoginUserMapper loginUserMapper;
+    private final UserEsMapper userEsMapper;
     private final UserStorageService userStorageService;
+    private final UserFeatureRepository userFeatureRepository;
 
     @Override
     public Integer checkAccountExist(String userAccount) {
@@ -152,5 +161,46 @@ public class UserServiceImpl implements UserService {
     // 名字不合法 限制最大长度为12，最小长度为6
     private static boolean isNameValid(String userName) {
         return StringUtils.hasText(userName) && userName.length() <= 12 && userName.length() >= 6;
+    }
+
+
+    @Override
+    public Long registerUser(String userName, String account, String password, String phone, Long fileId) {
+        long userId = IdUtil.getSnowflakeNextId();
+        LoginUserDo loginUserDo = new LoginUserDo();
+        loginUserDo.setId(userId);
+        loginUserDo.setUserName(userName);
+        loginUserDo.setAccount(account);
+        loginUserDo.setPassword(password);
+        loginUserDo.setPhone(phone);
+        loginUserDo.setPermission(1);
+        loginUserDo.setRegisterTime(System.currentTimeMillis());
+        loginUserDo.setLastOnlineTime(loginUserDo.getRegisterTime());
+        loginUserDo.setAvatarFileId(fileId);
+
+        // 存储到mysql
+        loginUserMapper.insertLoginUser(loginUserDo);
+
+        // 基本信息 es + mysql
+        UserDo userDo = new UserDo();
+        userDo.setId(userId);
+        userDo.setUserName(userName);
+        userDo.setAccount(account);
+        userDo.setPhone(phone);
+        userDo.setAvatarFileId(fileId);
+        userDo.setRegisterTime(loginUserDo.getRegisterTime());
+        userDo.setLastOnlineTime(loginUserDo.getRegisterTime());
+
+        // 存储 es
+//        userMapper.insertUserInfo(userDo);
+        userEsMapper.save(userDo);
+
+        // 存储到neo4j
+        UserFeatureNeo4jDo userFeatureNeo4jDo = new UserFeatureNeo4jDo();
+        userFeatureNeo4jDo.setUserId(userId);
+        userFeatureNeo4jDo.setName(userName);
+        userFeatureNeo4jDo.setAccount(account);
+        userFeatureRepository.save(userFeatureNeo4jDo);
+        return userId;
     }
 }

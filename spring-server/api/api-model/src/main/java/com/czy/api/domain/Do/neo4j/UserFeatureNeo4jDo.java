@@ -18,7 +18,7 @@ public class UserFeatureNeo4jDo extends BaseNeo4jDo implements BaseBean {
     // nodeLabel
     public static final String nodeLabel = "user";
     @Property("user_id")
-    private String userId;
+    private Long userId;
     @Property("account")
     private String account;
     @Override

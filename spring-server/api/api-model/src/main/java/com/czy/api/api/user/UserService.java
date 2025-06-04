@@ -27,4 +27,15 @@ public interface UserService {
     List<Long> getUserIdListByAccountList(List<String> userAccountList);
     // List<userId> -> List<userAccount>
     List<String> getUserAccountListByUserIdList(List<Long> userIdList);
+
+    /**
+     * 注册用户
+     * @param userName  用户名
+     * @param account   账号
+     * @param password  密码
+     * @param phone     手机号
+     * @param fileId    头像文件Id
+     * @return          用户Id
+     */
+    Long registerUser(String userName, String account, String password, String phone, Long fileId);
 }

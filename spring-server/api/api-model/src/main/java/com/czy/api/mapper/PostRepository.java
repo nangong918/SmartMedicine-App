@@ -16,6 +16,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -45,6 +46,9 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
 
     PostNeo4jDo findByTitle(String title);
     PostNeo4jDo findByName(String name);
+    @Query( "MATCH (n:post) " +
+            "WHERE n.post_id = $postId RETURN n")
+    Optional<PostNeo4jDo> findByPostId(Long postId);
 
 
     // 使用 MERGE 来避免重复关系：而不是使用CREATE
