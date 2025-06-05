@@ -1,6 +1,7 @@
 package com.utils.mvc.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.czy.api.domain.ao.oss.FileAo;
 import com.utils.mvc.service.MinIOService;
 import com.utils.mvc.utils.MinIOUtils;
 import domain.ErrorFile;
@@ -34,6 +35,47 @@ import java.util.List;
 public class MinIOServiceImpl implements MinIOService {
 
     private final MinIOUtils minIOUtils;
+
+    @Override
+    public FileOptionResult uploadLoadFiles(List<FileAo> filesAo, String bucketName){
+        // 内部包含检查是否已经存在的逻辑
+        FileOptionResult fileOptionResult = new FileOptionResult();
+        List<SuccessFile> successFiles = new ArrayList<>();
+        List<ErrorFile> errorFiles = new ArrayList<>();
+
+        try {
+            minIOUtils.createBucket(bucketName);
+        } catch (Exception e) {
+            log.error("创建存储桶失败", e);
+            throw new OssException("创建存储桶失败");
+        }
+
+        for (FileAo fileAo : filesAo){
+            if (fileAo == null || !StringUtils.hasText(fileAo.getFilePath())){
+                continue;
+            }
+            String fileStorageMame = IdUtil.getSnowflakeNextId() + "_" + fileAo.getFileName();
+            try {
+                ObjectWriteResponse response = minIOUtils.uploadLocalFile(
+                        bucketName,
+                        fileStorageMame,
+                        fileAo.getFilePath()
+                );
+                if (response != null){
+                    long fileId = IdUtil.getSnowflakeNextId();
+                    successFiles.add(new SuccessFile(fileAo.getFileName(), fileStorageMame, fileAo.getFileSize(), fileId));
+                }
+            } catch (Exception e){
+                log.error("上传文件失败", e);
+                errorFiles.add(new ErrorFile(fileAo.getFileName(), "[上传失败]"));
+            }
+        }
+
+        // 添加fileId
+        fileOptionResult.setErrorFiles(errorFiles);
+        fileOptionResult.setSuccessFiles(successFiles);
+        return fileOptionResult;
+    }
 
     @Override
     public FileOptionResult uploadFiles(List<MultipartFile> files, Long userId, String bucketName) {

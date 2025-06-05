@@ -5,6 +5,7 @@ import com.czy.api.api.user.UserService;
 import com.czy.api.constant.imports.ImportsConstant;
 import com.czy.api.constant.oss.FileConstant;
 import com.czy.api.domain.Do.oss.OssFileDo;
+import com.czy.api.domain.ao.oss.FileAo;
 import com.czy.imports.domain.Do.ArticleDo;
 import com.czy.imports.domain.ao.AuthorAo;
 import com.czy.imports.manager.CrawlerDataManager;
@@ -48,9 +49,17 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
     @Override
     public FileOptionResult uploadFiles(String filePath, String bucketName) {
         File file = new File(filePath);
-        List<File> files = new ArrayList<>();
-        files.add(file);
-        FileOptionResult result = minIOService.uploadFiles(files, bucketName);
+//        List<File> files = new ArrayList<>();
+//        files.add(file);
+//        FileOptionResult result = minIOService.uploadFiles(files, bucketName);
+
+        List<FileAo> fileAos = new ArrayList<>();
+        FileAo fileAo = new FileAo();
+        fileAo.setFilePath(filePath);
+        fileAo.setFileName(file.getName());
+        fileAo.setFileSize(file.length());
+        fileAos.add(fileAo);
+        FileOptionResult result = minIOService.uploadLoadFiles(fileAos, bucketName);
 
         // 存储到数据库
         List<SuccessFile> successFiles = result.getSuccessFiles();

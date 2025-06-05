@@ -1,6 +1,7 @@
 package com.utils.mvc.service;
 
 
+import com.czy.api.domain.ao.oss.FileAo;
 import domain.FileOptionResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,4 +33,6 @@ public interface MinIOService {
      * @return                ErrorFileList
      */
     FileOptionResult uploadFiles(List<File> files, String bucketName);
+
+    FileOptionResult uploadLoadFiles(List<FileAo> fileAos, String bucketName);
 }

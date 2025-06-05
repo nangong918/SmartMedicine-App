@@ -275,7 +275,7 @@ public class MinIOUtils {
      * @param objectName 对象名称
      * @param fileName   本地文件路径
      */
-    public ObjectWriteResponse uploadFile(String bucketName, String objectName,
+    public ObjectWriteResponse uploadLocalFile(String bucketName, String objectName,
                                           String fileName) throws Exception {
         return minioClient.uploadObject(
                 UploadObjectArgs.builder()
