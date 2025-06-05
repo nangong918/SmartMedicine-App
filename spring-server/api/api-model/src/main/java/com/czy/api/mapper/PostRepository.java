@@ -55,12 +55,33 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
     Optional<PostNeo4jDo> findByPostId(@Param("postId") Long postId);
 
 
-    // 使用 MERGE 来避免重复关系：而不是使用CREATE
-    @Query("MATCH (p:post) WHERE p.name = $postName " +
-            "MATCH (d:`${targetLabel}`) WHERE d.name = $targetName " +  // 使用反引号和占位符
-            "MERGE (p)-[:`${relationType}`]->(d)")                    // 动态关系类型
+    // 失败，全部改用 org.neo4j.ogm.session.Session session;
+    @Query("MATCH (p:post) WHERE p.post_name = $postName " +
+            "MATCH (d:`#{#targetLabel}`) WHERE d.name = $targetName " +
+            "MERGE (p)-[r:`#{#relationType}`]->(d)")                 // 动态关系类型
     void createDynamicRelationship(
             @Param("postName") String postName,
+            @Param("targetLabel") String targetLabel,
+            @Param("targetName") String targetName,
+            @Param("relationType") String relationType
+    );
+
+    default String buildDynamicRelationshipCql(
+            String postName,
+            String targetLabel,
+            String targetName,
+            String relationType) {
+        return "MATCH (p:post) WHERE p.name = '" + postName + "' " +
+                "MATCH (d:" + targetLabel + ") WHERE d.name = '" + targetName + "' " +
+                "MERGE (p)-[r:" + relationType + "]->(d)";
+    }
+
+    // 使用 MERGE 来避免重复关系：而不是使用CREATE
+    @Query("MATCH (p:post) WHERE p.post_id = $postId " +
+            "MATCH (d:`${targetLabel}`) WHERE d.name = $targetName " +
+            "MERGE (p)-[:`${relationType}`]->(d)")
+    void createDynamicRelationshipByPostId(
+            @Param("postId") String postId,
             @Param("targetLabel") String targetLabel,
             @Param("targetName") String targetName,
             @Param("relationType") String relationType

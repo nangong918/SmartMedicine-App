@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,6 +46,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
     private final PostDetailEsMapper postDetailEsMapper;
     private final PostDetailMongoMapper postDetailMongoMapper;
     private final PostConverter postConverter;
+    private final org.neo4j.ogm.session.Session neo4jSession;
 
     @Transactional(rollbackFor = StorageException.class)
     @Override
@@ -94,9 +96,11 @@ public class PostTransactionServiceImpl implements PostTransactionService {
                         PostRepository.RELS_POST_DISEASES,
                         post.getName(),
                         disease.getName());
-                postRepository.createDynamicRelationship(
+                String cql = postRepository.buildDynamicRelationshipCql(
                         post.getName(), DiseaseDo.nodeLabel,
                         disease.getName(), PostRepository.RELS_POST_DISEASES);
+                log.info("Diseases 关系创建 cql: {}", cql);
+                neo4jSession.query(cql, new HashMap<>());
             }
             else {
                 log.warn("neo4j未查找结果：DiseaseDo：{}", disease.toJsonString());
@@ -109,9 +113,10 @@ public class PostTransactionServiceImpl implements PostTransactionService {
         for (ChecksDo checks : dos) {
             ChecksDo existingChecks = checksRepository.findByName(checks.getName());
             if (existingChecks != null) {
-                postRepository.createDynamicRelationship(
+                String cql = postRepository.buildDynamicRelationshipCql(
                         post.getName(), ChecksDo.nodeLabel,
                         checks.getName(), PostRepository.RELS_POST_CHECKS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
@@ -121,9 +126,10 @@ public class PostTransactionServiceImpl implements PostTransactionService {
         for (DepartmentsDo departments : dos) {
             DepartmentsDo existingDepartments = departmentsRepository.findByName(departments.getName());
             if (existingDepartments != null) {
-                postRepository.createDynamicRelationship(
+                String cql = postRepository.buildDynamicRelationshipCql(
                         post.getName(), DepartmentsDo.nodeLabel,
                         departments.getName(), PostRepository.RELS_POST_DEPARTMENTS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
@@ -133,9 +139,10 @@ public class PostTransactionServiceImpl implements PostTransactionService {
         for (DrugsDo drugs : dos) {
             DrugsDo existingDrugs = drugsRepository.findByName(drugs.getName());
             if (existingDrugs != null) {
-                postRepository.createDynamicRelationship(
+                String cql = postRepository.buildDynamicRelationshipCql(
                         post.getName(), DrugsDo.nodeLabel,
                         drugs.getName(), PostRepository.RELS_POST_DRUGS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
@@ -145,9 +152,10 @@ public class PostTransactionServiceImpl implements PostTransactionService {
         for (FoodsDo foods : dos) {
             FoodsDo existingFoods = foodsRepository.findByName(foods.getName());
             if (existingFoods != null) {
-                postRepository.createDynamicRelationship(
+                String cql = postRepository.buildDynamicRelationshipCql(
                         post.getName(), FoodsDo.nodeLabel,
                         foods.getName(), PostRepository.RELS_POST_FOODS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
@@ -157,9 +165,10 @@ public class PostTransactionServiceImpl implements PostTransactionService {
         for (ProducersDo producers : dos) {
             ProducersDo existingProducers = producersRepository.findByName(producers.getName());
             if (existingProducers != null) {
-                postRepository.createDynamicRelationship(
+                String cql = postRepository.buildDynamicRelationshipCql(
                         post.getName(), ProducersDo.nodeLabel,
                         producers.getName(), PostRepository.RELS_POST_PRODUCERS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
@@ -169,9 +178,10 @@ public class PostTransactionServiceImpl implements PostTransactionService {
         for (RecipesDo recipes : dos) {
             RecipesDo existingRecipes = recipesRepository.findByName(recipes.getName());
             if (existingRecipes != null) {
-                postRepository.createDynamicRelationship(
+                String cql = postRepository.buildDynamicRelationshipCql(
                         post.getName(), RecipesDo.nodeLabel,
                         recipes.getName(), PostRepository.RELS_POST_RECIPES);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
@@ -181,9 +191,10 @@ public class PostTransactionServiceImpl implements PostTransactionService {
         for (SymptomsDo symptoms : dos) {
             SymptomsDo existingSymptoms = symptomsRepository.findByName(symptoms.getName());
             if (existingSymptoms != null) {
-                postRepository.createDynamicRelationship(
+                String cql = postRepository.buildDynamicRelationshipCql(
                         post.getName(), SymptomsDo.nodeLabel,
                         symptoms.getName(), PostRepository.RELS_POST_SYMPTOMS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }

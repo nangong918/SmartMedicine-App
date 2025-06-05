@@ -1,6 +1,7 @@
 package files;
 
 import cn.hutool.core.util.IdUtil;
+import com.czy.api.domain.Do.neo4j.DiseaseDo;
 import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.Do.neo4j.ProducersDo;
 import com.czy.api.domain.Do.neo4j.TestNeo4jDo;
@@ -28,6 +29,7 @@ import org.springframework.util.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -388,6 +390,100 @@ public class FileReadTests {
         else {
             log.info("未找到关系");
         }
+    }
+
+    @Test
+    public void neo4jDirectCreateDynamicRelationshipTest2(){
+         /*
+            MATCH (p:post) WHERE p.name = '高血压的危险因素有哪些？'
+            MATCH (d:疾病) WHERE d.name = '高血压'
+            MERGE (p)-[:`post_diseases`]->(d)
+
+            MATCH (p:疾病) WHERE p.name = '高血压'
+            RETURN p
+         */
+        postRepository.createDynamicRelationship(
+                "高血压的危险因素有哪些？",
+                DiseaseDo.nodeLabel,
+                "高血压",
+                PostRepository.RELS_POST_DISEASES
+        );
+
+        Optional<List<Map<String, Object>>> relationshipResult = postRepository.findDynamicRelationship(PostRepository.RELS_POST_DISEASES);
+        if (relationshipResult.isPresent()){
+            log.info("找到关系");
+            for (Map<String, Object> map : relationshipResult.get()) {
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    System.out.println("entry.getKey() = " + entry.getKey());
+                    System.out.println("entry.getValue() = " + entry.getValue());
+                }
+            }
+        }
+        else {
+            log.info("未找到关系");
+        }
+    }
+
+    @Autowired
+    private org.neo4j.ogm.session.Session session;
+
+    // 成功
+    @Test
+    public void neo4jDirectCreateDynamicRelationshipTest3(){
+        /*
+        MATCH (p:post)-[r:post_diseases]->(d:疾病)
+                 WHERE p.name = '高血压的危险因素有哪些？' AND d.name = '高血压'
+                 DELETE r
+         */
+        String cql = "MATCH (p:post) WHERE p.name = '高血压的危险因素有哪些？' " +
+                "            MATCH (d:疾病) WHERE d.name = '高血压' " +
+                "            MERGE (p)-[:`post_diseases`]->(d)";
+
+        // 执行 CQL
+        Map<String, Object> parameters = new HashMap<>();
+        // 如果需要绑定参数，可以在此添加
+
+        session.query(cql, parameters);
+    }
+
+    /*
+        删除neo4j数据 (实体和关系)
+        MATCH (u:user)
+        DETACH DELETE u;
+        MATCH (p:post)
+        DETACH DELETE p;
+     */
+    @Test
+    public void neo4jDirectCreateDynamicRelationshipTest4(){
+        /*
+        MATCH (p:post)-[r:post_diseases]->(d:疾病)
+                 WHERE p.name = '高血压的危险因素有哪些？' AND d.name = '高血压'
+                 DELETE r
+         */
+//        String cql = "MATCH (p:post) WHERE p.name = '高血压的危险因素有哪些？' " +
+//                "            MATCH (d:疾病) WHERE d.name = '高血压' " +
+//                "            MERGE (p)-[:`post_diseases`]->(d)";
+
+        String cql = postRepository.buildDynamicRelationshipCql(
+                "高血压的危险因素有哪些？",
+                DiseaseDo.nodeLabel,
+                "高血压",
+                PostRepository.RELS_POST_DISEASES
+        );
+
+        // cql = MATCH (p:post) WHERE p.name = '高血压的危险因素有哪些？'
+        //          MATCH (d:疾病) WHERE d.name = '高血压'
+        //          MERGE (p)-[r:post_diseases]->(d)
+        log.info("cql = {}", cql);
+        // cql: MATCH (p:post) WHERE p.name = '高血压的危险因素有哪些？'
+        //          MATCH (d:疾病) WHERE d.name = '高血压'
+        //          MERGE (p)-[r:post_diseases]->(d)
+
+        // 执行 CQL
+        Map<String, Object> parameters = new HashMap<>();
+        // 如果需要绑定参数，可以在此添加
+
+        session.query(cql, parameters);
     }
 
 }
