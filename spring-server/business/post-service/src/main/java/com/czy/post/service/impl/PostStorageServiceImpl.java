@@ -76,7 +76,16 @@ public class PostStorageServiceImpl implements PostStorageService {
             return;
         }
         PostNeo4jDo postNeo4jDo = postConverter.toNeo4jDo(postAo);
+        log.info("开始存储帖子特征: {}", postNeo4jDo.toJsonString());
         postRepository.save(postNeo4jDo);
+        Optional<PostNeo4jDo> findResult = postRepository.findByPostId(postAo.getId());
+        if (findResult.isPresent()){
+            log.info("存储帖子特征成功: {}", findResult.get().toJsonString());
+        }
+        else {
+            log.warn("存储帖子特征失败, postId:{}, postTitle:{}", postAo.getId(), postAo.getTitle());
+        }
+
         List<ChecksDo> checksDoList = new ArrayList<>();
         List<DepartmentsDo> departmentsDoList = new ArrayList<>();
         List<DiseaseDo> diseasesDoList = new ArrayList<>();

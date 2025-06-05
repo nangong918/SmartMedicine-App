@@ -1,9 +1,11 @@
 package files;
 
 import cn.hutool.core.util.IdUtil;
+import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.Do.neo4j.ProducersDo;
 import com.czy.api.domain.Do.neo4j.TestNeo4jDo;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
+import com.czy.api.mapper.PostRepository;
 import com.czy.api.mapper.ProducersRepository;
 import com.czy.api.mapper.TestRepository;
 import com.czy.api.mapper.UserFeatureRepository;
@@ -275,6 +277,26 @@ public class FileReadTests {
     public void neo4jFindEntityTest(){
         ProducersDo existingProducers = producersRepository.findByName("新");
         System.out.println("existingProducers = " + existingProducers.toJsonString());
+    }
+
+    @Autowired
+    private PostRepository postRepository;
+
+    @Test
+    public void neo4jStorePostTest(){
+        PostNeo4jDo postNeo4jDo = new PostNeo4jDo();
+        postNeo4jDo.setName("test");
+        long id = IdUtil.getSnowflakeNextId();
+        postNeo4jDo.setPostId(id);
+        postNeo4jDo.setTitle("test");
+        postNeo4jDo.setLabel("test-label");
+
+        System.out.println("postNeo4jDo = " + postNeo4jDo.toJsonString());
+
+        postRepository.save(postNeo4jDo);
+
+        Optional<PostNeo4jDo> findResult = postRepository.findByPostId(id);
+        findResult.ifPresent(neo4jDo -> System.out.println("findResult = " + neo4jDo.toJsonString()));
     }
 
 }

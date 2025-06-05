@@ -18,7 +18,7 @@ public class PostNeo4jDo extends BaseNeo4jDo implements BaseBean {
     // nodeLabel
     public static final String NODE_LABEL = "post";
     @Property("post_id")
-    private String postId;
+    private Long postId;
     @Property("title")
     private String title;
     @Property("label")
