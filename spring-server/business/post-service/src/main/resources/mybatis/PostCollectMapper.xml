@@ -4,9 +4,9 @@
 <mapper namespace="com.czy.post.mapper.mysql.PostCollectMapper">
 
     <sql id="doDoColumns">
-        id,
+        (id,
         post_id,
-        collect_folder_id
+        collect_folder_id)
     </sql>
     <insert id="savePostCollect">
         INSERT INTO post_collect
