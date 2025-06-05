@@ -118,6 +118,7 @@ public class MinIOServiceImpl implements MinIOService {
                 while (data != -1) {
                     data = inputStream.read();
                 }
+                fileName = IdUtil.getSnowflakeNextId() + "_" + fileName;
                 ObjectWriteResponse response = minIOUtils.uploadFile(
                         bucketName,
                         fileName,

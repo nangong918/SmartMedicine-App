@@ -3,6 +3,7 @@ package com.czy.imports.service.impl;
 import com.czy.api.api.post.PostImportService;
 import com.czy.api.api.user.UserService;
 import com.czy.api.constant.imports.ImportsConstant;
+import com.czy.api.constant.oss.FileConstant;
 import com.czy.api.domain.Do.oss.OssFileDo;
 import com.czy.imports.domain.Do.ArticleDo;
 import com.czy.imports.domain.ao.AuthorAo;
@@ -109,7 +110,7 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         if (StringUtils.hasText(authorImagePath)){
             FileOptionResult result = uploadFiles(
                     authorImagePath,
-                    ImportsConstant.AUTHOR_IMAGE_BUCKET_NAME
+                    FileConstant.USER_AVATAR_BUCKET
             );
             if (!result.getSuccessFiles().isEmpty()){
                 // 默认取第0个
@@ -129,7 +130,7 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
             if (StringUtils.hasText(articleImagePath)){
                 FileOptionResult result = uploadFiles(
                         articleImagePath,
-                        ImportsConstant.POST_IMAGE_BUCKET_NAME
+                        FileConstant.POST_FILE_BUCKET
                 );
                 if (!result.getSuccessFiles().isEmpty()){
                     List<Long> postFileIds = result.getSuccessFiles().stream()

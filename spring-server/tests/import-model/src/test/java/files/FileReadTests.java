@@ -1,6 +1,7 @@
 package files;
 
 import cn.hutool.core.util.IdUtil;
+import com.czy.api.api.oss.OssService;
 import com.czy.api.domain.Do.neo4j.DiseaseDo;
 import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.Do.neo4j.ProducersDo;
@@ -19,6 +20,7 @@ import com.czy.imports.service.ImportAuthorService;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -486,4 +488,21 @@ public class FileReadTests {
         session.query(cql, parameters);
     }
 
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private OssService ossService;
+
+    @Test
+    public void ossTest(){
+        List<Long> fileIdList = new ArrayList<>();
+        fileIdList.add(1930555106921340928L);
+        fileIdList.add(1930555108963966976L);
+        fileIdList.add(1930555109890908160L);
+        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIdList);
+        log.info("fileUrls = {}", fileUrls);
+    }
+
+    @Test
+    public void ossTest2(){
+
+    }
 }
