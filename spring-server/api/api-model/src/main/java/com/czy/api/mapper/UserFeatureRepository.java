@@ -74,8 +74,8 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
 //            "RETURN r")
 //    UserPostRelation createUserPostRelation(@Param("userId") Long userId,
 //                                            @Param("postId") Long postId);
-    @Query("MATCH (u:user {id: $userId}) " +
-            "MATCH (p:post {id: $postId}) " +
+    @Query("MATCH (u:user) WHERE u.user_id = $userId" +
+            "MATCH (p:post) WHERE p.post_id = $postId" +
             "MERGE (u)-[r:user_post]->(p) " +
             "ON CREATE SET r.clickTimes = 1, " +
             "r.implicitScore = 0.0, " +
@@ -89,7 +89,7 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
 
     // update user-post RELS
     @Query("MATCH (u:user)-[r:user_post]->(p:post) " +
-            "WHERE u.id = $userId AND p.id = $postId " +
+            "WHERE u.user_id = $userId AND p.post_id = $postId " +
             "SET r.clickTimes = $clickTimes, " +
             "r.implicitScore = $implicitScore, " +
             "r.explicitScore = $explicitScore, " +
@@ -100,7 +100,7 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
                                @Param("implicitScore") Double implicitScore,
                                @Param("explicitScore") Double explicitScore);
 
-    @Query("MATCH (u:user) WHERE u.id = $userId " +
+    @Query("MATCH (u:user) WHERE u.user_id = $userId " +
             "MATCH (d:`${targetLabel}`) WHERE d.name = $targetName " +
             "MERGE (u)-[r:`${relationType}`]->(d) " +
             "ON CREATE SET r.clickTimes = 1, " +
@@ -115,7 +115,7 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
                                       @Param("relationType") String relationType);
 
     @Query("MATCH (u:user)-[r:`${relationType}`]->(d:`${targetLabel}`) " +
-            "WHERE u.id = $userId AND d.name = $targetName " +
+            "WHERE u.user_id = $userId AND d.name = $targetName " +
             "SET r.implicitScore = $implicitScore, " +
             "r.explicitScore = $explicitScore, " +
             "r.lastUpdateTimestamp = datetime()")
@@ -140,7 +140,7 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
      */
     @Query(
             // 避免MATCH (u:user {id: $userId}), (d:`${targetLabel}` {name: $targetName}) 这样可能会导致不必要的笛卡尔积计算 **
-            "MATCH (u:user {id: $userId}) " +
+            "MATCH (u:user) WHERE u.user_id = $userId" +
             "MATCH (d:`${targetLabel}` {name: $targetName}) " +
             "MERGE (u)-[r:`${relationType}`]->(d) " +
             "ON CREATE SET " +
@@ -177,7 +177,7 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
      * @param explicitScore
      */
     @Query(
-            "MATCH (u:user {id: $userId}) " +
+            "MATCH (u:user) WHERE u.user_id = $userId" +
                     "MATCH (d:post {id: $postId}) " +
                     "MERGE (u)-[r:user_post]->(d) " +
                     "ON CREATE SET " +
@@ -206,7 +206,7 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
 
     // 修改查询方法
     @Query("MATCH (u:user)-[r:`${relationType}`]->(d:`${targetLabel}`) " +
-            "WHERE u.id = $userId AND d.name = $targetName " +
+            "WHERE u.user_id = $userId AND d.name = $targetName " +
             "RETURN {implicitScore: r.implicitScore, explicitScore: r.explicitScore}")
     Optional<Map<String, Double>> findUserEntityPostRelation(@Param("userId") Long userId,
                                                              @Param("targetLabel") String targetLabel,
@@ -214,7 +214,7 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
                                                              @Param("relationType") String relationType);
 
     @Query("MATCH (u:user)-[r:`${relationType}`]->(d:`${targetLabel}`) " +
-            "WHERE u.id = $userId AND d.name = $targetName " +
+            "WHERE u.user_id = $userId AND d.name = $targetName " +
             "RETURN {clickTimes: r.clickTimes, implicitScore: r.implicitScore, explicitScore: r.explicitScore}")
     Optional<Map<String, Object>> findUserEntityPostRelationScoreAo(@Param("userId") Long userId,
                                                              @Param("targetLabel") String targetLabel,
@@ -223,27 +223,27 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
 
     // 查询用户和帖子的关系
     @Query("MATCH (u:user)-[r:user_post]->(p:post) " +
-            "WHERE u.id = $userId AND p.id = $postId " +
+            "WHERE u.user_id = $userId AND p.id = $postId " +
             "RETURN r")
     Optional<UserPostRelation> findUserPostRelation(@Param("userId") Long userId,
                                                     @Param("postId") Long postId);
 
     // 查询用户的所有帖子关系
     @Query("MATCH (u:user)-[r:user_post]->(p:post) " +
-            "WHERE u.id = $userId " +
+            "WHERE u.user_id = $userId " +
             "RETURN r ORDER BY r.clickTimes DESC")
     List<UserPostRelation> findAllUserPostRelations(@Param("userId") Long userId);
 
     // 删除特定关系
     @Query("MATCH (u:user)-[r:user_post]->(p:post) " +
-            "WHERE u.id = $userId AND p.id = $postId " +
+            "WHERE u.user_id = $userId AND p.id = $postId " +
             "DELETE r")
     void deleteUserPostRelation(@Param("userId") Long userId,
                                 @Param("postId") Long postId);
 
     // 设置关系score
     @Query("MATCH (u:user)-[r:user_post]->(p:post) " +
-            "WHERE u.id = $userId AND p.id = $postId " +
+            "WHERE u.user_id = $userId AND p.id = $postId " +
             "SET r.score = $score")
     void setUserPostRelationClickTimes(@Param("userId") Long userId,
                                   @Param("postId") Long postId,
@@ -268,7 +268,7 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
     void deletePostWithRelations(@Param("userName") String userName);
 
     // 根据 ID 删除 user 与其他全部节点的关系
-    @Query("MATCH (p:user) WHERE id(p) = $userId " +
+    @Query("MATCH (p:user) WHERE p.user_id = $userId " +
             "MATCH (p)-[r]->() " +
             "DELETE r " +  // 删除与其他节点的关系
             "DELETE p")    // 删除该 user 节点
@@ -277,56 +277,56 @@ public interface UserFeatureRepository extends Neo4jRepository<UserFeatureNeo4jD
     // 根据 userId 查找 user 与其他全部节点的关系
     // 疾病
     @Query("MATCH (p:user)-[:user_association]->(d:疾病) " +
-            "WHERE id(p) = $userId RETURN d")
+            "WHERE p.user_id = $userId RETURN d")
     List<DiseaseDo> findDiseasesByPostId(Long userId);
 
     // 检查
     @Query("MATCH (p:user)-[:user_checks]->(c:检查) " +
-            "WHERE id(p) = $userId RETURN c")
+            "WHERE p.user_id = $userId RETURN c")
     List<ChecksDo> findChecksByPostId(Long userId);
 
     // 科室
     @Query("MATCH (p:user)-[:user_department]->(d:科室) " +
-            "WHERE id(p) = $userId RETURN d")
+            "WHERE p.user_id = $userId RETURN d")
     List<DepartmentsDo> findDepartmentsByPostId(Long userId);
 
     // 药品
     @Query("MATCH (p:user)-[:user_drug]->(d:药品) " +
-            "WHERE id(p) = $userId RETURN d")
+            "WHERE p.user_id = $userId RETURN d")
     List<DrugsDo> findDrugsByPostId(Long userId);
 
     // 食物
     @Query("MATCH (p:user)-[:user_food]->(f:食物) " +
-            "WHERE id(p) = $userId RETURN f")
+            "WHERE p.user_id = $userId RETURN f")
     List<FoodsDo> findFoodsByPostId(Long userId);
 
     // producers
     @Query("MATCH (p:user)-[:user_producers]->(s:药企) " +
-            "WHERE id(p) = $userId RETURN s")
+            "WHERE p.user_id = $userId RETURN s")
     List<ProducersDo> findProducersByPostId(Long userId);
 
     // recipes
     @Query("MATCH (p:user)-[:user_recipes]->(r:菜谱) " +
-            "WHERE id(p) = $userId RETURN r")
+            "WHERE p.user_id = $userId RETURN r")
     List<RecipesDo> findRecipesByPostId(Long userId);
 
     // 症状
     @Query("MATCH (p:user)-[:user_symptom]->(s:症状) " +
-            "WHERE id(p) = $userId RETURN s")
+            "WHERE p.user_id = $userId RETURN s")
     List<SymptomsDo> findSymptomsByPostId(Long userId);
 
     // post
     @Query("MATCH (p:user)-[:user_post]->(p:post) " +
-            "WHERE id(p) = $userId RETURN p")
+            "WHERE p.user_id = $userId RETURN p")
     List<PostNeo4jDo> findPostsByPostId(Long userId);
 
     // post_label
     @Query("MATCH (p:user)-[:user_post_label]->(l:post_label) " +
-            "WHERE id(p) = $userId RETURN l")
+            "WHERE p.user_id = $userId RETURN l")
     List<PostLabelNeo4jDo> findPostLabelsByPostId(Long userId);
 
     /// user 画像构建 -> （带有权重的entity集合）
-    @Query("MATCH (u:user {id:`${userId}`)-[r:`${relationType}`]->(e:`${entityType}`) " +
+    @Query("MATCH (u:user {user_id:`${userId}`)-[r:`${relationType}`]->(e:`${entityType}`) " +
             "RETURN " +
             "e.name AS name, " +
             "r.clickTimes AS clickTimes, " +
