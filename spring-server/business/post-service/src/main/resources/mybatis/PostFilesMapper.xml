@@ -3,9 +3,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.czy.post.mapper.mysql.PostFilesMapper">
     <sql id="doDoColumns">
-        id,
+        (id,
         post_id,
-        file_id
+        file_id)
     </sql>
     <insert id="insertPostFilesDo" parameterType="com.czy.api.domain.Do.post.post.PostFilesDo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO post_files

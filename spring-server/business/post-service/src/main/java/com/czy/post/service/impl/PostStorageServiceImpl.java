@@ -55,35 +55,34 @@ public class PostStorageServiceImpl implements PostStorageService {
 
     @Override
     public void storePostInfoToDatabase(PostAo postAo) {
-        PostInfoDo postDetailDo = postConverter.toInfoDo(postAo);
-        postInfoMapper.insertPostInfoDo(postDetailDo);
+        PostInfoDo postInfoDo = postConverter.toInfoDo(postAo);
+        if (postInfoDo == null){
+            return;
+        }
+        log.info("开始存储帖子信息: {}", postInfoDo.toJsonString());
+        postInfoMapper.insertPostInfoDo(postInfoDo);
     }
 
     @Override
     public void storePostFilesToDatabase(PostAo postAo) {
         List<PostFilesDo> postFilesDoList = postConverter.toPostFilesList(postAo);
         if (!CollectionUtils.isEmpty(postFilesDoList)){
+            log.info("开始存储帖子文件: {}", postFilesDoList.get(0).toJsonString());
             postFilesMapper.insertPostFilesDoList(postFilesDoList);
         }
     }
 
-    // TODO 测试此处，存在问题
+    // TODO 测试此处，存在问题 post 和 entity的关系未存储
     @Override
     public void storePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList) {
+        PostNeo4jDo postNeo4jDo = postConverter.toNeo4jDo(postAo);
+        log.info("开始存储帖子特征: {}", postNeo4jDo.toJsonString());
+        postRepository.save(postNeo4jDo);
+
         if (CollectionUtils.isEmpty(featureList)){
             log.warn("存储帖子特征失败：帖子特征为空, postId:{}, postTitle:{}",
                     postAo.getId(), postAo.getTitle());
             return;
-        }
-        PostNeo4jDo postNeo4jDo = postConverter.toNeo4jDo(postAo);
-        log.info("开始存储帖子特征: {}", postNeo4jDo.toJsonString());
-        postRepository.save(postNeo4jDo);
-        Optional<PostNeo4jDo> findResult = postRepository.findByPostId(postAo.getId());
-        if (findResult.isPresent()){
-            log.info("存储帖子特征成功: {}", findResult.get().toJsonString());
-        }
-        else {
-            log.warn("存储帖子特征失败, postId:{}, postTitle:{}", postAo.getId(), postAo.getTitle());
         }
 
         List<ChecksDo> checksDoList = new ArrayList<>();

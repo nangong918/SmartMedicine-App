@@ -3,21 +3,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.czy.post.mapper.mysql.PostInfoMapper">
     <sql id="doDoColumns">
-        id,
+        (id,
         author_id,
         release_timestamp,
+        title,
         like_count,
         collect_count,
         comment_count,
-        forward_count
+        forward_count)
     </sql>
     <insert id="insertPostInfoDo">
         INSERT INTO post_info
         <include refid="doDoColumns"/>
         VALUES
         (#{id}, #{authorId},
-         #{releaseTimestamp}, #{likeCount},
-         #{collectCount}, #{commentCount}, #{forwardCount})
+         #{releaseTimestamp}, #{title},
+         #{likeCount}, #{collectCount}, #{commentCount}, #{forwardCount})
     </insert>
     <insert id="insertPostInfoDoList">
         INSERT INTO post_info
