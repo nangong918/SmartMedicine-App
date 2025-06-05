@@ -20,4 +20,7 @@ public interface ImportAuthorService {
     void createPost(String title, String content, Long publishTime, List<Long> fileIdList, Long userId);
 
     // 4.导入评论
+
+    // 统一导入
+    void importAllData();
 }

@@ -156,9 +156,9 @@ dubbo:
       name: dubbo # 协议名称
       port: -1 # 协议端口，-1 表示自增端口，从 20880 开始
   consumer:
-    timeout: 300000  # 设置消费者超时时间为 5 分钟
+    timeout: 3000000  # 设置消费者超时时间为 50 分钟
   provider:
-    timeout: 300000
+    timeout: 3000000  # 设置消费者超时时间为 50 分钟
   # Dubbo 服务注册中心配置，对应 RegistryConfig 类
   registry:
     address: spring-cloud://127.0.0.1:8848 # 指定 Dubbo 服务注册中心的地址
