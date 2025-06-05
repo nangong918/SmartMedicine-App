@@ -16,6 +16,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -45,10 +46,10 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
 
     @Query( "MATCH (n:post) " +
             "WHERE n.title = $title RETURN n")
-    PostNeo4jDo findByTitle(@Param("title") String title);
+    Optional<PostNeo4jDo> findByTitle(@Param("title") String title);
     @Query( "MATCH (n:post) " +
             "WHERE n.name = $name RETURN n")
-    PostNeo4jDo findByName(@Param("name") String name);
+    Optional<PostNeo4jDo> findByName(@Param("name") String name);
     @Query( "MATCH (n:post) " +
             "WHERE n.post_id = $postId RETURN n")
     Optional<PostNeo4jDo> findByPostId(@Param("postId") Long postId);
@@ -65,6 +66,11 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
             @Param("relationType") String relationType
     );
 
+    // 查找动态关系
+    @Query("MATCH (p:post)-[r]->(d) " +
+            "WHERE type(r) = $relationType " +
+            "RETURN p.name as post_name, d.name as target_name")
+    Optional<List<Map<String, Object>>> findDynamicRelationship(@Param("relationType") String relationType);
     // 删除某条关系
     @Query("MATCH (p:post)-[r:`${relationType}`]->(d:`${targetLabel}`) " +
             "WHERE p.name = $postName AND d.name = $targetName " +

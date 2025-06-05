@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -240,11 +241,11 @@ public class FileReadTests {
 
     }
     /*
-        删除neo4j数据
+        删除neo4j数据 (实体和关系)
         MATCH (u:user)
-        DELETE u;
+        DETACH DELETE u;
         MATCH (p:post)
-        DELETE p;
+        DETACH DELETE p;
      */
 
     // "2022-07-09 10:52" -> long timestamp
@@ -297,6 +298,96 @@ public class FileReadTests {
 
         Optional<PostNeo4jDo> findResult = postRepository.findByPostId(id);
         findResult.ifPresent(neo4jDo -> System.out.println("findResult = " + neo4jDo.toJsonString()));
+    }
+
+    private static final String TEST_POST_RELS = "test-rels";
+
+    /*
+    MATCH (t:test {account: 'test11'}), (p:post {name: 'post-test关系测试'})
+    CREATE (t)-[:`test-rels`]->(p);
+
+    MATCH (t:test {account: 'test11'}), (p:post {name: 'post-test关系测试'})
+    MERGE (t)-[:`test-rels`]->(p);
+
+    MATCH (t:test {account: 'test11'})-[r:`test-rels`]->(p:post {name: 'post-test关系测试'})
+    DELETE r;
+
+    MATCH (p:post) WHERE p.name = 'post-test关系测试'
+    MATCH (d:test) WHERE d.name = 'test11'
+    MERGE (p)-[:`test-rels`]->(d)
+     */
+    @Test
+    public void neo4jCreateDynamicRelationshipTest(){
+        Optional<TestNeo4jDo> result = testRepository.findByAccount("test11");
+        if (result.isPresent()){
+            TestNeo4jDo resultDo = result.get();
+            PostNeo4jDo post = new PostNeo4jDo();
+            post.setName("post-test关系测试");
+            post.setTitle("post-test关系测试");
+            post.setLabel("post-test关系测试");
+            post.setPostId(IdUtil.getSnowflakeNextId());
+            Optional<PostNeo4jDo> postResult = postRepository.findByTitle(post.getTitle());
+            if (postResult.isPresent()){
+                post = postResult.get();
+                log.info("已存在同名的post: {}", post.toJsonString());
+            }
+            else {
+                postRepository.save(post);
+                log.info("已保存post: {}", post.toJsonString());
+            }
+            /*
+                MATCH (p:post) WHERE p.name = 'post-test关系测试'
+                MATCH (d:test) WHERE d.name = 'test11'
+                MERGE (p)-[:`test-rels`]->(d)
+             */
+            postRepository.createDynamicRelationship(
+                    post.getName(),
+                    TestNeo4jDo.nodeLabel, resultDo.getAccount(), TEST_POST_RELS
+            );
+
+            Optional<List<Map<String, Object>>> relationshipResult = postRepository.findDynamicRelationship(TEST_POST_RELS);
+            if (relationshipResult.isPresent()){
+                log.info("找到关系");
+                for (Map<String, Object> map : relationshipResult.get()) {
+                    for (Map.Entry<String, Object> entry : map.entrySet()) {
+                        System.out.println("entry.getKey() = " + entry.getKey());
+                        System.out.println("entry.getValue() = " + entry.getValue());
+                    }
+                }
+            }
+            else {
+                log.info("未找到关系");
+            }
+        }
+    }
+
+    @Test
+    public void neo4jDirectCreateDynamicRelationshipTest(){
+         /*
+            MATCH (p:post) WHERE p.name = 'post-test关系测试'
+            MATCH (d:test) WHERE d.name = 'test11'
+            MERGE (p)-[:`test-rels`]->(d)
+         */
+        postRepository.createDynamicRelationship(
+                "post-test关系测试",
+                "test",
+                "test11",
+                "test-rels"
+        );
+
+        Optional<List<Map<String, Object>>> relationshipResult = postRepository.findDynamicRelationship(TEST_POST_RELS);
+        if (relationshipResult.isPresent()){
+            log.info("找到关系");
+            for (Map<String, Object> map : relationshipResult.get()) {
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    System.out.println("entry.getKey() = " + entry.getKey());
+                    System.out.println("entry.getValue() = " + entry.getValue());
+                }
+            }
+        }
+        else {
+            log.info("未找到关系");
+        }
     }
 
 }

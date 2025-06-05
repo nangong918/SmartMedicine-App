@@ -89,9 +89,17 @@ public class PostTransactionServiceImpl implements PostTransactionService {
             // 确保疾病实体已存在于数据库中
             DiseaseDo existingDisease = diseaseRepository.findByName(disease.getName());
             if (existingDisease != null) {
+                log.info("neo4j查找结果：DiseaseDo：{}", existingDisease.toJsonString());
+                log.info("开始创建关系：{}, post_name: {}, disease_name: {}",
+                        PostRepository.RELS_POST_DISEASES,
+                        post.getName(),
+                        disease.getName());
                 postRepository.createDynamicRelationship(
                         post.getName(), DiseaseDo.nodeLabel,
                         disease.getName(), PostRepository.RELS_POST_DISEASES);
+            }
+            else {
+                log.warn("neo4j未查找结果：DiseaseDo：{}", disease.toJsonString());
             }
         }
     }
