@@ -2,10 +2,15 @@ package com.czy.post.front.impl;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user.UserService;
+import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.user.UserDo;
+import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.vo.CommentVo;
 import com.czy.api.domain.vo.PostPreviewVo;
+import com.czy.api.domain.vo.PostVo;
 import com.czy.post.front.PostFrontService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -15,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -121,6 +127,80 @@ public class PostFrontServiceImpl implements PostFrontService {
         }
 
         return postPreviewVos;
+    }
+
+    @Override
+    public PostVo postAoToPostVo(@NonNull PostAo postAo) {
+        PostVo postVo = new PostVo();
+        // 所属info
+        postVo.postId = postAo.getId();
+
+        // file
+        postVo.postImgUrls = ossService.getFileUrlsByFileIds(postAo.getFileIds());
+
+        // author
+        postVo.authorId = postAo.getAuthorId();
+        UserDo userDo = userService.getUserById(postAo.getAuthorId());
+        if (userDo != null){
+            postVo.authorName = userDo.getUserName();
+            Long avatarFileId = userDo.getAvatarFileId();
+            if (avatarFileId != null){
+                List<Long> avatarFileIdList = new ArrayList<>();
+                avatarFileIdList.add(avatarFileId);
+                postVo.authorAvatarUrl = ossService.getFileUrlsByFileIds(avatarFileIdList).get(0);
+            }
+        }
+
+        // 内容
+        postVo.postTitle = postAo.getTitle();
+        postVo.postContent = postAo.getContent();
+        postVo.postPublishTimestamp = postAo.getReleaseTimestamp();
+
+        // 数据
+        postVo.likeNum = PostVo.numToString(postAo.getLikeCount());
+        postVo.collectNum = PostVo.numToString(postAo.getCollectCount());
+        postVo.commentNum = PostVo.numToString(postAo.getCommentCount());
+        postVo.readNum = PostVo.numToString(postAo.getReadCount());
+        postVo.forwardNum = PostVo.numToString(postAo.getForwardCount());
+
+        // user属性 TODO
+//        postVo.isLike = postAo.getLikeCount() > 0;
+//        postVo.isCollect = postAo.getCollectCount() > 0;
+//        postVo.isDislike = postAo.getDislikeCount() > 0;
+
+        return postVo;
+    }
+
+    @Override
+    public List<CommentVo> getCommentVosByPostCommentDos(List<PostCommentDo> postCommentDos) {
+        return postCommentDos.stream()
+                .map(this::getCommentVo)
+                .collect(Collectors.toList());
+    }
+
+    private CommentVo getCommentVo(PostCommentDo postCommentDo) {
+        CommentVo commentVo = new CommentVo();
+        commentVo.commentId = postCommentDo.getId();
+        commentVo.replyCommentId = postCommentDo.getReplyCommentId();
+        commentVo.postId = postCommentDo.getPostId();
+
+        commentVo.content = postCommentDo.getContent();
+        commentVo.commentTimestamp = postCommentDo.getTimestamp();
+
+        commentVo.commenterId = postCommentDo.getCommenterId();
+
+        UserDo userDo = userService.getUserById(postCommentDo.getCommenterId());
+        if (userDo != null){
+            commentVo.commentName = userDo.getUserName();
+            Long avatarFileId = userDo.getAvatarFileId();
+            if (avatarFileId != null){
+                List<Long> avatarFileIdList = new ArrayList<>();
+                avatarFileIdList.add(avatarFileId);
+                commentVo.commentAvatarUrl = ossService.getFileUrlsByFileIds(avatarFileIdList).get(0);
+            }
+        }
+
+        return commentVo;
     }
 
 }

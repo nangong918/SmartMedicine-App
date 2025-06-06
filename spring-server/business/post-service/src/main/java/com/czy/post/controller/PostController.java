@@ -297,7 +297,7 @@ public class PostController {
         }
 
         PostAo postAo = postService.findPostById(postId);
-        if (postAo == null){
+        if (postAo == null || postAo.getId() == null){
             String warningMessage = String.format("帖子不存在，postId: %s", postId);
             return BaseResponse.LogBackError(warningMessage, log);
         }
@@ -308,8 +308,8 @@ public class PostController {
 
         SinglePostResponse singlePostResponse = new SinglePostResponse();
         // 转换为vo
-        PostVo postVo = postService.postAoToPostVo(postAo);
-        List<CommentVo> commentVos = postService.getCommentVosByPostCommentDos(postCommentList);
+        PostVo postVo = postFrontService.postAoToPostVo(postAo);
+        List<CommentVo> commentVos = postFrontService.getCommentVosByPostCommentDos(postCommentList);
         singlePostResponse.postVo = postVo;
         singlePostResponse.commentVos = commentVos;
         return BaseResponse.getResponseEntitySuccess(singlePostResponse);
