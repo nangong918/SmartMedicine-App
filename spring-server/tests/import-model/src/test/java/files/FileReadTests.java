@@ -528,29 +528,31 @@ public class FileReadTests {
 
     @Test
     public void clearAllTestData(){
-        // 清除cql
-        String cql = "        MATCH (u:user)\n" +
-                "        DETACH DELETE u;\n" +
-                "        MATCH (p:post)\n" +
-                "        DETACH DELETE p;";
-        session.query(cql, new HashMap<>());
+        // 清除 CQL (不能批量执行)
+        String cqlUser = "MATCH (u:user) DETACH DELETE u;";
+        String cqlPost = "MATCH (p:post) DETACH DELETE p;";
 
-        // 清除mysql
-        String sql =
-                "START TRANSACTION;\n" +
-                "DELETE FROM login_user;\n" +
-                "DELETE FROM oss_file;\n" +
-                "DELETE FROM post_files;\n" +
-                "DELETE FROM post_info;\n" +
-                "COMMIT;";
-        jdbcTemplate.execute(sql);
+        session.query(cqlUser, new HashMap<>());
+        session.query(cqlPost, new HashMap<>());
+        System.out.println("neo4j清除完成");
+
+        // 清除 MySQL（不能批量执行）
+        jdbcTemplate.execute("START TRANSACTION;");
+        jdbcTemplate.execute("DELETE FROM login_user;");
+        jdbcTemplate.execute("DELETE FROM oss_file;");
+        jdbcTemplate.execute("DELETE FROM post_files;");
+        jdbcTemplate.execute("DELETE FROM post_info;");
+        jdbcTemplate.execute("COMMIT;");
+        System.out.println("mysql清除完成");
 
         // 删除mongoDB数据
         postDetailMongoMapper.deleteAllPostDetails();
+        log.info("mongoDB清除完成");
 
         // 删除elastic search数据
         postDetailEsMapper.deleteAll();
         userEsMapper.deleteAll();
+        log.info("elastic search清除完成");
 
         // 删除minIO数据
         try {
@@ -559,6 +561,7 @@ public class FileReadTests {
         } catch (Exception e){
             log.error("Error deleting bucket all in MinIO", e);
         }
+        log.info("minIO清除完成");
 
     }
 }
