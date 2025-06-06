@@ -16,7 +16,11 @@ import com.czy.imports.domain.Do.ArticleDo;
 import com.czy.imports.domain.ao.AuthorAo;
 import com.czy.imports.manager.CrawlerDataManager;
 import com.czy.imports.manager.FileReadManager;
+import com.czy.imports.mapper.PostDetailMongoMapper;
+import com.czy.imports.mapperEs.PostDetailEsMapper;
+import com.czy.imports.mapperEs.UserEsMapper;
 import com.czy.imports.service.ImportAuthorService;
+import com.utils.mvc.service.MinIOService;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +28,7 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -503,6 +508,57 @@ public class FileReadTests {
 
     @Test
     public void ossTest2(){
+
+    }
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private PostDetailMongoMapper postDetailMongoMapper;
+
+    @Autowired
+    private PostDetailEsMapper postDetailEsMapper;
+
+    @Autowired
+    private UserEsMapper userEsMapper;
+
+    @Autowired
+    private MinIOService minIOService;
+
+    @Test
+    public void clearAllTestData(){
+        // 清除cql
+        String cql = "        MATCH (u:user)\n" +
+                "        DETACH DELETE u;\n" +
+                "        MATCH (p:post)\n" +
+                "        DETACH DELETE p;";
+        session.query(cql, new HashMap<>());
+
+        // 清除mysql
+        String sql =
+                "START TRANSACTION;\n" +
+                "DELETE FROM login_user;\n" +
+                "DELETE FROM oss_file;\n" +
+                "DELETE FROM post_files;\n" +
+                "DELETE FROM post_info;\n" +
+                "COMMIT;";
+        jdbcTemplate.execute(sql);
+
+        // 删除mongoDB数据
+        postDetailMongoMapper.deleteAllPostDetails();
+
+        // 删除elastic search数据
+        postDetailEsMapper.deleteAll();
+        userEsMapper.deleteAll();
+
+        // 删除minIO数据
+        try {
+            minIOService.deleteBucketAll(testAuthorBucketName);
+            minIOService.deleteBucketAll(testPostBucketName);
+        } catch (Exception e){
+            log.error("Error deleting bucket all in MinIO", e);
+        }
 
     }
 }

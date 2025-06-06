@@ -116,6 +116,24 @@ public class MinIOUtils {
         minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
     }
 
+    public void removeBucketAll(String bucketName) throws Exception{
+        // 列出存储桶中的所有对象并删除
+        Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
+                .bucket(bucketName)
+                .build());
+
+        for (Result<Item> result : results) {
+            Item item = result.get();  // 获取 Item 对象
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(item.objectName())
+                    .build());
+        }
+
+        // 删除存储桶
+        removeBucket(bucketName);
+    }
+
 
     /**
      * 判断文件是否存在

@@ -78,6 +78,11 @@ public class MinIOServiceImpl implements MinIOService {
     }
 
     @Override
+    public void deleteBucketAll(String bucketName) throws Exception{
+        minIOUtils.removeBucketAll(bucketName);
+    }
+
+    @Override
     public FileOptionResult uploadFiles(List<MultipartFile> files, Long userId, String bucketName) {
         // 内部包含检查是否已经存在的逻辑
         FileOptionResult fileOptionResult = new FileOptionResult();
