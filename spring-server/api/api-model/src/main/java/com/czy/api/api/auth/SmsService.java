@@ -1,4 +1,4 @@
-package com.czy.api.api.sms;
+package com.czy.api.api.auth;
 
 
 import exception.AppException;

@@ -1,7 +1,7 @@
 package com.czy.auth.service;
 
 
-import com.czy.api.api.sms.SmsService;
+import com.czy.api.api.auth.SmsService;
 import com.czy.auth.constant.SmsConstant;
 import com.czy.springUtils.debug.DebugConfig;
 import com.czy.springUtils.service.RedisManagerService;

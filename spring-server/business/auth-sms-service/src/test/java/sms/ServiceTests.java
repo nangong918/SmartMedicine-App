@@ -1,7 +1,7 @@
 package sms;
 
 
-import com.czy.api.api.sms.SmsService;
+import com.czy.api.api.auth.SmsService;
 import com.czy.auth.AuthSmsServiceApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
