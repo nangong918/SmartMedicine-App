@@ -2,9 +2,8 @@
 2.netty-socket                  10000-10009
 3.oss-service                   10010-10019
 4.auth-sms-service              10020-10029
-6.user-service                  10040-10049
+6.user-relationship-service     10040-10049
 7.message-service               10050-10059
-6.relationship-service          10060-10069
 7.post-service                  10070-10079
 8.logging-service               10080-10089
 9.feature-service               10090-10099

@@ -139,7 +139,7 @@ dubbo:
     address: spring-cloud://127.0.0.1:8848 # 指定 Dubbo 服务注册中心的地址
   # Spring Cloud Alibaba Dubbo 专属配置项，对应 DubboCloudProperties 类
   cloud:
-    subscribed-services: user-service # 设置订阅的应用列表，默认为 * 订阅所有应用。
+    subscribed-services: user-relationship-service # 设置订阅的应用列表，默认为 * 订阅所有应用。
   #============ oss：minIO
 minio:
   endpoint: "http://127.0.0.1:9000" # minIO 服务器地址

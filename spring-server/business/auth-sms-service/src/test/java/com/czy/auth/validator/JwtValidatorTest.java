@@ -1,7 +1,7 @@
 package com.czy.auth.validator;
 
 import com.czy.api.constant.auth.JwtConstant;
-import com.czy.api.constant.user.UserConstant;
+import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.auth.utils.JwtGenerator;
 import com.czy.auth.utils.JwtValidUtil;

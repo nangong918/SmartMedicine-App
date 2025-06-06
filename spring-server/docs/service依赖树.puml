@@ -8,30 +8,25 @@ package "Base" {
 }
 
 package "Business" {
-    [user-service]
+    [user-relationship-service]
     [auth-sms-service]
     [message-service]
-    [relationship-service]
     [post-service]
     [recommend-service]
     [search-service]
     [feature-service]
 
-    [message-service] --> [user-service]
-    [message-service] --> [relationship-service]
+    [message-service] --> [user-relationship-service]
     [message-service] -[#0000FF]--> [oss-service]
     [message-service] -[#0000FF]--> [netty-socket]
 
-    [relationship-service] --> [user-service]
+    [user-relationship-service] --> [auth-sms-service]
 
-    [user-service] --> [auth-sms-service]
-
-    [post-service] --> [user-service]
+    [post-service] --> [user-relationship-service]
     [post-service] -[#0000FF]--> [oss-service]
 
-    [recommend-service] --> [user-service]
+    [recommend-service] --> [user-relationship-service]
     [recommend-service] --> [post-service]
-    [recommend-service] --> [relationship-service]
 }
 
 package "Gateway" {

@@ -2,7 +2,7 @@ package com.czy.post.service.impl;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostSearchService;
-import com.czy.api.api.user.UserService;
+import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.es.FieldAnalyzer;
 import com.czy.api.constant.search.SearchConstant;
 import com.czy.api.converter.domain.post.PostConverter;

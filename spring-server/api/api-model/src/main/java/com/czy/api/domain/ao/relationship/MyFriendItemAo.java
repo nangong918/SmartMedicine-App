@@ -1,7 +1,7 @@
 package com.czy.api.domain.ao.relationship;
 
 
-import com.czy.api.constant.relationship.ListAddOrDeleteStatusEnum;
+import com.czy.api.constant.user_relationship.ListAddOrDeleteStatusEnum;
 import com.czy.api.domain.entity.UserViewEntity;
 import json.BaseBean;
 

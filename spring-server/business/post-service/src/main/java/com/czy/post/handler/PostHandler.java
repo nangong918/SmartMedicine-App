@@ -1,6 +1,6 @@
 package com.czy.post.handler;
 
-import com.czy.api.api.user.UserService;
+import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.feature.PostOperation;
 import com.czy.api.constant.netty.NettyOptionEnum;
 import com.czy.api.constant.netty.NettyResponseStatuesEnum;

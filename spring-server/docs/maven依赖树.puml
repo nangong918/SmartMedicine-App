@@ -45,9 +45,8 @@ package "offline" {
 
 package "Business" {
     [auth-sms-service]
-    [user-service]
+    [user-relationship-service]
     [message-service]
-    [relationship-service]
     [post-service]
     [search-service]
     [feature-service]
@@ -60,8 +59,8 @@ package "Business" {
     [auth-sms-service] --> [SpringWebfluxUtils]
     [auth-sms-service] --> [api-model]
 
-    [user-service] --> [SpringWebfluxUtils]
-    [user-service] --> [api-model]
+    [user-relationship-service] --> [SpringWebfluxUtils]
+    [user-relationship-service] --> [api-model]
 
     [message-service] --> [SpringMvcUtils]
     [message-service] --> [api-model]

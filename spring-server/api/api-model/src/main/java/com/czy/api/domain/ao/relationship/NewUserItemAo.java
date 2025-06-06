@@ -1,6 +1,6 @@
 package com.czy.api.domain.ao.relationship;
 
-import com.czy.api.constant.relationship.newUserGroup.AddSourceEnum;
+import com.czy.api.constant.user_relationship.newUserGroup.AddSourceEnum;
 import com.czy.api.domain.entity.ChatEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import json.BaseBean;

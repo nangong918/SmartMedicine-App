@@ -1,7 +1,7 @@
 package com.czy.auth.utils;
 
 import com.czy.api.constant.auth.JwtConstant;
-import com.czy.api.constant.user.UserConstant;
+import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import org.junit.jupiter.api.Test;
 

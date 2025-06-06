@@ -274,9 +274,12 @@ netty和message需要联合前端测试（netty环境只有Android前端能实�
 Todo：
 Android前端随便搞搞得了，重心不在Android
 1. 各个模块内部的搜索引擎：
-    1. user-service：账号like搜索，名称分词搜索
+    1. user-relationship-service：账号like搜索，名称分词搜索
     2. (先完成2)message-service：es搜索：a，b用户之间的聊天记录；a用户自己的全部相关聊天记录
     3. 搜索历史记录存储Redis
+    4. 创建群聊
+    5. 群会话，群消息
+    6. 群管理
 2. 消息记录迁移：mongoDB
     1. 构建完整的mongoDB增删改查
     2. 了解为什么消息记录要存储再mongo而不是MySQL
@@ -290,12 +293,8 @@ Android前端随便搞搞得了，重心不在Android
 5. social-service
     1. 热门帖子
     2. 个性推荐帖子
-6. relationship-service：
-    1. 创建群聊
-    2. 群会话，群消息
-    3. 群管理
-7. p2p-service：
+6. p2p-service：
     1. WebRtc视频通话
-8. live-service
+7. live-service
     1. RTMP直播
        **(Android相关放在最后)**
