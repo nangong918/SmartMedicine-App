@@ -38,4 +38,6 @@ public interface UserService {
      * @return          用户Id
      */
     Long registerUser(String userName, String account, String password, String phone, Long fileId);
+
+    List<UserDo> getUserByIds(List<Long> authorIds);
 }

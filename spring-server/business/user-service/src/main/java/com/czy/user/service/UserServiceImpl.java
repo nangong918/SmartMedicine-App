@@ -204,4 +204,12 @@ public class UserServiceImpl implements UserService {
         userFeatureRepository.save(userFeatureNeo4jDo);
         return userId;
     }
+
+    @Override
+    public List<UserDo> getUserByIds(List<Long> authorIds) {
+        if (CollectionUtils.isEmpty(authorIds)){
+            return new ArrayList<>();
+        }
+        return userMapper.getUserListByIdList(authorIds);
+    }
 }

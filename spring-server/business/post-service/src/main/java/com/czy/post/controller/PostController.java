@@ -16,10 +16,12 @@ import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
+import com.czy.api.domain.dto.http.request.GetPostPreviewListRequest;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import com.czy.api.domain.dto.http.response.*;
 import com.czy.api.domain.vo.CommentVo;
+import com.czy.api.domain.vo.PostPreviewVo;
 import com.czy.api.domain.vo.PostVo;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
@@ -45,6 +47,7 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -219,7 +222,8 @@ public class PostController {
      * @param request   List<Long> postIds
      * @return      List<PostInfoAo> postInfoAos;
      */
-    @PostMapping("/getPostInfoList")
+    @Deprecated
+    @PostMapping("/getPostInfoList/deprecated")
     public Mono<BaseResponse<GetPostInfoListResponse>>
     getPosts(@Valid @RequestBody GetPostInfoListRequest request){
         List<Long> postIds = request.getPostIds();
@@ -230,6 +234,81 @@ public class PostController {
         GetPostInfoListResponse getPostResponse = new GetPostInfoListResponse();
         getPostResponse.setPostInfoAos(postAoList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
+    }
+
+    @PostMapping("/getPostInfoList")
+    public Mono<BaseResponse<GetPostPreviewListResponse>>
+    getPostsNew(@Valid @RequestBody GetPostPreviewListRequest request){
+        List<Long> postIds = request.getPostIds();
+        if (CollectionUtils.isEmpty(postIds)){
+            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+        }
+        List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
+        if (CollectionUtils.isEmpty(postAoList)){
+            return Mono.just(BaseResponse.getResponseEntitySuccess(new GetPostPreviewListResponse()));
+        }
+        List<Long> fileIds = postAoList.stream()
+                .map(PostInfoAo::getFileId)
+                .collect(Collectors.toList());
+        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+        List<Long> authorIds = postAoList.stream()
+                .map(PostInfoAo::getAuthorId)
+                .collect(Collectors.toList());
+        List<UserDo> userDoList = new ArrayList<>();
+        for (Long authorId : authorIds){
+            if (authorId == null){
+                userDoList.add(null);
+                continue;
+            }
+            UserDo userDo = userService.getUserById(authorId);
+            userDoList.add(userDo);
+        }
+        List<Long> userImgIds = new ArrayList<>();
+        for (UserDo userDo : userDoList){
+            if (userDo == null){
+                userImgIds.add(null);
+                continue;
+            }
+            userImgIds.add(userDo.getAvatarFileId());
+        }
+        List<String> userImgUrls = ossService.getFileUrlsByFileIds(userImgIds);
+        List<PostPreviewVo> postPreviewVos = new ArrayList<>();
+        for (int i = 0; i < postAoList.size(); i++){
+            PostInfoAo postInfoAo = postAoList.get(i);
+            PostPreviewVo postPreviewVo = new PostPreviewVo();
+            postPreviewVo.setPostId(postInfoAo.getId());
+            postPreviewVo.setPostImgUrl(fileUrls.get(i));
+            postPreviewVo.setPostTitle(postInfoAo.getTitle());
+            postPreviewVo.setAuthorId(postInfoAo.getAuthorId());
+            String authorName = null;
+            if (!CollectionUtils.isEmpty(userDoList)){
+                authorName = Optional.ofNullable(userDoList.get(i))
+                        .map(UserDo::getUserName)
+                        .orElse(null);
+            }
+            postPreviewVo.setAuthorName(
+                    authorName
+            );
+            String url = null;
+            if (!CollectionUtils.isEmpty(userImgUrls)){
+                url = userImgUrls.get(i);
+            }
+            postPreviewVo.setAuthorAvatarUrl(
+                    url
+            );
+            postPreviewVo.setLikeNum(PostPreviewVo.numToString(postInfoAo.getLikeCount()));
+            postPreviewVo.setCollectNum(PostPreviewVo.numToString(postInfoAo.getCollectCount()));
+            postPreviewVo.setCommentNum(PostPreviewVo.numToString(postInfoAo.getCommentCount()));
+//            postPreviewVo.setReadNum(PostPreviewVo.numToString(postInfoAo.getReadCount()));
+            postPreviewVo.setForwardNum(PostPreviewVo.numToString(postInfoAo.getForwardCount()));
+            postPreviewVo.setPostPublishTimestamp(postInfoAo.getReleaseTimestamp());
+
+            postPreviewVos.add(postPreviewVo);
+        }
+        GetPostPreviewListResponse response = new GetPostPreviewListResponse();
+        response.setPostPreviewVos(postPreviewVos);
+
+        return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 
     // 如何从各种数据查询List<postId>的逻辑在postSearchService中
