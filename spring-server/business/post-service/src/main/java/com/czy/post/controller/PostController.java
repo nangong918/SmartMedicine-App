@@ -16,11 +16,19 @@ import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
+import com.czy.api.domain.dto.http.request.GetPostPreviewListRequest;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
-import com.czy.api.domain.dto.http.response.*;
+import com.czy.api.domain.dto.http.response.GetPostCommentsResponse;
+import com.czy.api.domain.dto.http.response.GetPostInfoListResponse;
+import com.czy.api.domain.dto.http.response.GetPostPreviewListResponse;
+import com.czy.api.domain.dto.http.response.GetPostResponse;
+import com.czy.api.domain.dto.http.response.PostPublishResponse;
+import com.czy.api.domain.dto.http.response.SinglePostResponse;
 import com.czy.api.domain.vo.CommentVo;
+import com.czy.api.domain.vo.PostPreviewVo;
 import com.czy.api.domain.vo.PostVo;
+import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
 import com.utils.mvc.redisson.RedissonClusterLock;
@@ -69,6 +77,7 @@ public class PostController {
     private OssService ossService;
     private final PostNerService postNerService;
     private final PostSearchService postSearchService;
+    private final PostFrontService postFrontService;
 
     // 发布post
     /**
@@ -219,7 +228,8 @@ public class PostController {
      * @param request   List<Long> postIds
      * @return      List<PostInfoAo> postInfoAos;
      */
-    @PostMapping("/getPostInfoList")
+    @Deprecated
+    @PostMapping("/getPostInfoList/deprecated")
     public Mono<BaseResponse<GetPostInfoListResponse>>
     getPosts(@Valid @RequestBody GetPostInfoListRequest request){
         List<Long> postIds = request.getPostIds();
@@ -230,6 +240,27 @@ public class PostController {
         GetPostInfoListResponse getPostResponse = new GetPostInfoListResponse();
         getPostResponse.setPostInfoAos(postAoList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
+    }
+
+    @PostMapping("/getPostInfoList")
+    public Mono<BaseResponse<GetPostPreviewListResponse>>
+    getPostsNew(@Valid @RequestBody GetPostPreviewListRequest request){
+        List<Long> postIds = request.getPostIds();
+        if (CollectionUtils.isEmpty(postIds)){
+            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+        }
+        List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
+
+        if (CollectionUtils.isEmpty(postAoList)){
+            return Mono.just(BaseResponse.getResponseEntitySuccess(new GetPostPreviewListResponse()));
+        }
+
+        List<PostPreviewVo> postPreviewVos = postFrontService.toPostPreviewVoList(postAoList);
+
+        GetPostPreviewListResponse response = new GetPostPreviewListResponse();
+        response.setPostPreviewVos(postPreviewVos);
+
+        return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 
     // 如何从各种数据查询List<postId>的逻辑在postSearchService中
@@ -266,7 +297,7 @@ public class PostController {
         }
 
         PostAo postAo = postService.findPostById(postId);
-        if (postAo == null){
+        if (postAo == null || postAo.getId() == null){
             String warningMessage = String.format("帖子不存在，postId: %s", postId);
             return BaseResponse.LogBackError(warningMessage, log);
         }
@@ -277,8 +308,8 @@ public class PostController {
 
         SinglePostResponse singlePostResponse = new SinglePostResponse();
         // 转换为vo
-        PostVo postVo = postService.postAoToPostVo(postAo);
-        List<CommentVo> commentVos = postService.getCommentVosByPostCommentDos(postCommentList);
+        PostVo postVo = postFrontService.postAoToPostVo(postAo);
+        List<CommentVo> commentVos = postFrontService.getCommentVosByPostCommentDos(postCommentList);
         singlePostResponse.postVo = postVo;
         singlePostResponse.commentVos = commentVos;
         return BaseResponse.getResponseEntitySuccess(singlePostResponse);

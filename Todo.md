@@ -100,90 +100,6 @@ Neo4j：
 1. 分析模型，查询资料，看Hugging Face，找是否存再最新的可替代方案。
 
 ### big-data
-
-#### TODO：
-
-1. 看完视频，梳理可执行方案
-
-写一份python的requirements.txt
-
-推荐系统中的user向量是来自于user-item矩阵，还是来自于user-attribute矩阵。
-我现在是能明确通过nlp技术获取到item的attribute，并且也有item-attribute矩阵。
-并且user-item矩阵总是及其稀疏的
-
-
-user-attribute矩阵
-user-item矩阵
-item-attribute矩阵
-
-user偏好数据收集使用user-item
-然后后续生成user-attribute矩阵
-推荐流程：
-user-attribute矩阵的top-k 召回
-然后通过user-item矩阵过滤
-当结果小于20就进行attribute相似图谱推荐
-
-我现在有个问题想要请教你，帮我设计搜索系统，
-现在是这样的，我有一张及其完善的知识图谱，我能通过实体快速找到相似实体，也就是attribute，
-但是这个实体不一定有对应的item，因为item是用户发布的或者我爬取的，
-不知道怎么存储实体和item的关系，
-我现在的需求是在neo4j搜索阶段就要知道这个实体是否有对应的item，没有就不返回这个实体。
-因为都不存在对应的item，我也就没有必要进行相似度计算了。
-因为我的相似度计算是这样的：
-@Query("MATCH (d1:疾病 {name: $diseaseName})-[:has_symptom|recommand_drug|do_eat|not_eat|acompany_with]-(neighbor1) " +
-"WITH d1, collect(id(neighbor1)) AS neighbors1 " +
-"MATCH (d2:疾病)-[:has_symptom|recommand_drug|do_eat|not_eat|acompany_with]-(neighbor2) " +
-"WHERE d2 <> d1 " +
-"WITH d1, d2, neighbors1, collect(id(neighbor2)) AS neighbors2 " +
-"WITH d1, d2, neighbors1, neighbors2, " +
-"     [id IN neighbors1 WHERE id IN neighbors2] AS commonNeighbors " +
-"WITH d1, d2, commonNeighbors, " +
-"     size(neighbors1) + size(neighbors2) - size(commonNeighbors) AS allNeighborsCount " +
-"RETURN d2.name AS diseaseName, " +
-"       size(commonNeighbors) AS commonNeighborsCount, " +
-"       allNeighborsCount, " +
-"       CASE allNeighborsCount " +
-"           WHEN 0 THEN 0.0 " +
-"           ELSE size(commonNeighbors) * 1.0 / allNeighborsCount " +
-"       END AS similarityScore " +
-"ORDER BY similarityScore DESC " +
-"LIMIT 10")
-List<Map<String, Object>> findTopSimilarDiseasesByNeighbor(@Param("diseaseName") String diseaseName);
-@Query("MATCH (d1:疾病 {name: $name})-[:has_symptom|acompany_with|has_common_drug|recommand_drug|do_eat|not_eat|need_check|cure_department]->(related1), " +
-"(d2:疾病)-[:has_symptom|acompany_with|has_common_drug|recommand_drug|do_eat|not_eat|need_check|cure_department]->(related2) " +
-"WHERE d2.name <> $name " +
-"WITH d2, collect(id(related1)) AS ids1, collect(id(related2)) AS ids2 " +
-"WITH d2, ids1, ids2, " +
-"  [id IN ids1 WHERE id IN ids2] AS intersection " +
-"RETURN d2.name AS diseaseName, " +
-"       CASE size(ids1) + size(ids2) " +
-"           WHEN 0 THEN 0.0 " +
-"           ELSE size(intersection) * 1.0 / (size(ids1) + size(ids2)) " +
-"       END AS jaccardIndex " +
-"ORDER BY jaccardIndex DESC " +
-"LIMIT 10")
-List<Map<String, Object>> findTopSimilarDiseasesByJaccard(@Param("name") String name);
-很明显相似度计算要消耗大量资源，
-现在不能等计算完返回实体list再去item-attribute矩阵中找item是否存在
-我应该怎么存储？
-我现在是这样的，attitude存在知识图谱neo4j，
-item内容存放在mongoDB，item和attitude的关系不知道存在哪里
-
-因为我的item都是帖子嘛，特征也全都是帖子标题和内容提取出来的。
-我现在在想，能不能将item直接存入知识图谱，存储属性有：id，title，和attitude的关系，内容不存储太大了肯定存在mongo。
-这样的话不仅能快速找到item的特征，也能直接筛选特征是否有存在关系的item
-
-* 数据业务很重要，存在数据缺失。
-* 1.知识图谱并不代表整个post系统
-* 2.需要记录知识图谱和post的关系表？
-* 3.user向量构建
-* 知识图谱，加入user，item
-* 现在的需求：
-* 1.需要找到一个实体是否和任何user/item相关
-
-* 图数据库的关系转为特征向量，然后存在向量数据库，快速查找：TransE、TransH
-
-
 1. 构建Neo4j全部实体
 2. 构建Neo4j的post和user实体
 * 
@@ -240,11 +156,66 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 近线层 (StarRocks / ClickHouse)
 在线层 (Elasticsearch + Redis)
 
-TODO 批量将post和user导入数据库的脚本；
-发布时间要随机的最近三十天的时间戳
 
 验收标准：
 1. 正常发布帖子
 2. 正常浏览帖子
 3. 正常推荐
 4. 行为特征上传
+
+
+
+#### 排期
+##### 跑通阶段
+* 数据导入到数据库：
+  * 3天
+  * 6月4~6
+* 帖子发布测试
+  * 3天
+  * 6月7~10
+* App获取帖子联调
+  * 3天
+  * 6月11~13
+* App行为上传I（浏览帖子 + 点赞等）
+  * 3天
+  * 6月16~6月18
+* 在线层推荐
+  * 2天
+  * 6月19~20
+* App搜索帖子
+  * 3天
+  * 6月21~24
+* 收藏帖子
+  * 2天
+  * 6月25~26
+* 评论帖子
+  * 3天
+  * 6月27~7月1
+* 转发帖子
+  * 1天
+  * 7月2
+* App行为上传II（搜索帖子，收藏帖子，转发帖子，评论帖子）
+  * 3天
+  * 7月3~7月5
+
+##### 重构+细化
+* spring学习 + service绘图 + service重新设计
+* 合并service
+  * 合并部分分布式微服务，避免内存溢出。
+  * JVM调参，避免内存爆炸
+* 单元测试
+  * java-learning技术可行性测试
+  * java-learning测试代码迁移
+  * 测试点文档测试
+  * 接口链路调用测试
+
+##### 最终功能补充
+* 商品购物
+* 语音视频通话
+* 群组+直播
+* 医疗预测
+* 用药提醒
+* AI问诊
+* 后台管理
+
+##### JMeter压测

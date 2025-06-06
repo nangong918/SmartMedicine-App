@@ -22,18 +22,18 @@ public class PostAo {
     // content；not null
     private String content;
     // releaseTimestamp；not null
-    private Long releaseTimestamp;
+    private Long releaseTimestamp = System.currentTimeMillis();
 
     // 阅读数；not null TODO
-    private Long readCount;
+    private Long readCount = 0L;
     // 点赞数；not null
-    private Long likeCount;
+    private Long likeCount = 0L;
     // 收藏数；not null
-    private Long collectCount;
+    private Long collectCount = 0L;
     // 评论数；not null
-    private Long commentCount;
+    private Long commentCount = 0L;
     // 转发数量
-    private Long forwardCount;
+    private Long forwardCount = 0L;
 
     // post特征
     private List<PostNerResult> nerResults = new ArrayList<>();

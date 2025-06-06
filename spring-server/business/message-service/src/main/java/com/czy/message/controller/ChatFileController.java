@@ -5,11 +5,11 @@ import com.czy.api.api.user.UserService;
 import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.ResponseMessageType;
+import com.czy.api.constant.oss.FileConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.response.UserImageResponse;
 import com.czy.message.component.RabbitMqSender;
-import com.czy.message.config.FileConfig;
 import com.utils.mvc.service.MinIOService;
 import domain.FileOptionResult;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ import java.util.List;
 @RequestMapping(MessageConstant.ChatFile_CONTROLLER)
 public class ChatFileController {
 
-    private final String messageFileBucket = FileConfig.MESSAGE_IMAGE_BUCKET;
+    private final String messageFileBucket = FileConstant.MESSAGE_IMAGE_BUCKET;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)

@@ -8,7 +8,7 @@ import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.PostOssResponse;
-import com.czy.post.config.FileConfig;
+import com.czy.api.constant.oss.FileConstant;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import com.utils.mvc.service.MinIOService;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(PostConstant.POST_FILE_CONTROLLER)
 public class PostFileController {
-    private final String postFileBucket = FileConfig.POST_FILE_BUCKET;
+    private final String postFileBucket = FileConstant.POST_FILE_BUCKET;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)

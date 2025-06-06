@@ -18,7 +18,10 @@ import java.util.Map;
 public interface SymptomsRepository extends Neo4jRepository<SymptomsDo, Long> {
     String CQL_USER_SYMPTOMS = UserFeatureRepository.RELS_USER_SYMPTOMS + "|" + PostRepository.RELS_POST_SYMPTOMS + "|has_symptom|acompany_with";
 
-    SymptomsDo findByName(String name);
+    @Query("MATCH (n:症状) " +
+            "WHERE n.name = $name " +
+            "RETURN n")
+    SymptomsDo findByName(@Param("name")String name);
 
     /**
      * 根据症状名称

@@ -1,10 +1,12 @@
 package com.czy.oss.controller;
 
 import com.czy.api.api.oss.OssService;
+import com.czy.api.constant.oss.OssConstant;
+import com.czy.api.domain.dto.http.request.GetFilesUrlByIdRequest;
+import com.czy.api.domain.dto.http.request.GetFilesUrlByNameRequest;
+import domain.ErrorFile;
 import domain.FileOptionResult;
 import exception.OssException;
-import com.czy.api.constant.oss.OssConstant;
-import domain.ErrorFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -12,6 +14,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -143,11 +146,25 @@ public class OssController {
         }
     }
 
-    @GetMapping("/getFileUrlByFileIds")
+    @PostMapping("/getFileUrlByFileIds")
     public List<String> getFileUrlByFileIds(
-            @RequestParam("fileIds") List<Long> fileIds) {
+            @RequestBody GetFilesUrlByIdRequest request) {
         try {
-            return ossService.getFileUrlsByFileIds(fileIds);
+            return ossService.getFileUrlsByFileIds(request.getFileIds());
+        } catch (Exception e){
+            log.warn("获取文件地址失败", e);
+            return null;
+        }
+    }
+
+    @PostMapping("/getFileUrlByFileNames")
+    public List<String> getFileUrlByFileNames(
+            @RequestBody GetFilesUrlByNameRequest request) {
+        try {
+            return ossService.getFileUrlsByBucketNameAndFileNames(
+                    request.getBucketName(),
+                    request.getFileNames()
+            );
         } catch (Exception e){
             log.warn("获取文件地址失败", e);
             return null;

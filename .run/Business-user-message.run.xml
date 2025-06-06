@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Business-user-message" type="CompoundRunConfigurationType">
+    <toRun name="MessageServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="RelationshipApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="UserServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

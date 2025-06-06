@@ -26,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -52,10 +53,8 @@ public class FeatureStorageServiceImpl implements FeatureStorageService {
     private PostFeatureService postFeatureService;
 
     private void saveUserRelation(UserFeatureNeo4jDo user) {
-        UserFeatureNeo4jDo findUserDo = userFeatureRepository.findByName(user.getName());
-        if (findUserDo == null){
-            userFeatureRepository.save(user);
-        }
+        Optional<UserFeatureNeo4jDo> result = userFeatureRepository.findByName(user.getName());
+        result.ifPresent(userFeatureRepository::save);
     }
 
     @Override

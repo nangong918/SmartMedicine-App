@@ -2,32 +2,37 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.czy.post.mapper.mysql.PostInfoMapper">
-    <sql id="doDoColumns">
+    <sql id="doColumns">
         id,
         author_id,
         release_timestamp,
+        title,
         like_count,
         collect_count,
         comment_count,
         forward_count
     </sql>
+
+    <sql id="insertDoColumns">
+        (<include refid="doColumns"/>)
+    </sql>
+    
     <insert id="insertPostInfoDo">
         INSERT INTO post_info
-        <include refid="doDoColumns"/>
+        <include refid="insertDoColumns"/>
         VALUES
         (#{id}, #{authorId},
-         #{releaseTimestamp}, #{likeCount},
-         #{collectCount}, #{commentCount}, #{forwardCount})
+         #{releaseTimestamp}, #{title},
+         #{likeCount}, #{collectCount}, #{commentCount}, #{forwardCount})
     </insert>
     <insert id="insertPostInfoDoList">
         INSERT INTO post_info
-        <include refid="doDoColumns"/>
+        <include refid="insertDoColumns"/>
         VALUES
         <foreach collection="list" item="item" index="index" open="(" separator="),(" close=")">
             #{item.id}, #{item.authorId},
-            #{item.releaseTimestamp}, #{item.likeCount},
-            #{item.collectCount}, #{item.commentCount},
-            #{forwardCount}
+            #{item.releaseTimestamp}, #{item.title}
+            #{item.likeCount}, #{item.collectCount}, #{item.commentCount}, #{forwardCount}
         </foreach>
     </insert>
     <update id="updatePostInfoDo">
@@ -35,6 +40,7 @@
         SET
         author_id = #{authorId},
         release_timestamp = #{releaseTimestamp},
+        title = #{title},
         like_count = #{likeCount},
         collect_count = #{collectCount},
         comment_count = #{commentCount},
@@ -46,13 +52,13 @@
     </delete>
     <select id="getPostInfoDoById" resultType="com.czy.api.domain.Do.post.post.PostInfoDo">
         SELECT
-        <include refid="doDoColumns"/>
+        <include refid="doColumns"/>
         FROM post_info
         WHERE id = #{id}
     </select>
     <select id="getPostInfoDoListByIdList" resultType="com.czy.api.domain.Do.post.post.PostInfoDo">
         SELECT
-        <include refid="doDoColumns"/>
+        <include refid="doColumns"/>
         FROM post_info
         WHERE id IN
         <foreach collection="list" item="item" index="index" open="(" separator="," close=")">

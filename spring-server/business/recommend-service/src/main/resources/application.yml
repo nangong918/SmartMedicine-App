@@ -1,7 +1,6 @@
 # 端口号 10000-20000
 port:
-  min: 10000
-  max: 20000
+  range: 10110-10119
 #-------------------------server Setting-------------------------
 
 server:
@@ -62,7 +61,11 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848 # Nacos 服务器地址
-
+  #============ oss：minIO
+minio:
+  endpoint: "http://127.0.0.1:9000" # minIO 服务器地址
+  access-key: "minioadmin"  # minIO 用户名
+  secret-key: "minioadmin"  # minIO 密码
 # Dubbo 配置项，对应 DubboConfigurationProperties 类
 dubbo:
   scan:

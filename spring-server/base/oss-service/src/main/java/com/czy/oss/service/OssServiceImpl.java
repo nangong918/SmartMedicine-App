@@ -6,13 +6,12 @@ import com.czy.api.domain.Do.oss.OssFileDo;
 import com.czy.api.domain.ao.oss.FileNameAo;
 import com.czy.oss.mapper.OssMapper;
 import com.utils.mvc.service.MinIOService;
-import domain.ErrorFile;
 import com.utils.mvc.utils.MinIOUtils;
+import domain.ErrorFile;
 import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import exception.OssException;
-import io.minio.ObjectWriteResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -220,6 +219,16 @@ public class OssServiceImpl implements OssService {
     }
 
     @Override
+    public List<String> getFileUrlsByBucketNameAndFileNames(String bucketName, List<String> fileNames) {
+        List<String> fileUrls = new LinkedList<>();
+        for (String fileName : fileNames){
+            String url = getFileUrl(bucketName, fileName);
+            fileUrls.add(url);
+        }
+        return fileUrls;
+    }
+
+    @Override
     public List<String> getFileUrlsByFileIds(List<Long> fileIds) {
         List<String> fileUrls = new LinkedList<>();
         for (Long fileId : fileIds){
@@ -237,6 +246,11 @@ public class OssServiceImpl implements OssService {
         if (ossFileDo != null){
             String bucketName = ossFileDo.getBucketName();
             String fileStorageName = ossFileDo.getFileStorageName();
+            log.info("bucketName:{}, fileId: {}, fileStorageName:{}",
+                    bucketName,
+                    ossFileDo.getId(),
+                    fileStorageName
+            );
             String url = getFileUrl(bucketName, fileStorageName);
             fileUrls.add(url);
         }

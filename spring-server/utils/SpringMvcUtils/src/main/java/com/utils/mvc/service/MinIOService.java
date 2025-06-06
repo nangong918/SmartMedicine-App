@@ -1,9 +1,11 @@
 package com.utils.mvc.service;
 
 
+import com.czy.api.domain.ao.oss.FileAo;
 import domain.FileOptionResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -23,4 +25,16 @@ public interface MinIOService {
 
     // fileName + userId 生成 fileStorageName
     String getFileStorageName(Long userId, String fileName);
+
+    /**
+     *  上传文件List
+     * @param files          文件List
+     * @param bucketName     bucketName
+     * @return                ErrorFileList
+     */
+    FileOptionResult uploadFiles(List<File> files, String bucketName);
+
+    FileOptionResult uploadLoadFiles(List<FileAo> fileAos, String bucketName);
+
+    void deleteBucketAll(String bucketName) throws Exception;
 }

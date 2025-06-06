@@ -234,6 +234,16 @@ public class MainApplication extends Application {
 
     public void setUserLoginInfoAo(UserLoginInfoAo userLoginInfoAo){
         this.userLoginInfoAo = userLoginInfoAo;
+        try {
+            // SharePreferences
+            SharedPreferences sp = SecuritySharedPreferencesUtils.getSecuritySharedPreferences(
+                    UserModel.USER_INFO_FILE_NAME,
+                    this
+            );
+            userLoginInfoAo.saveToSharePreferences(sp);
+        } catch (Exception e) {
+            Log.e(TAG, "setUserLoginInfoAo error", e);
+        }
     }
 
     //==========messageList

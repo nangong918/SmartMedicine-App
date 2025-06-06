@@ -150,7 +150,7 @@ public interface PostConverter {
         PostNeo4jDo postNeo4jDo = new PostNeo4jDo();
         postNeo4jDo.setName(postAo.getTitle());
         postNeo4jDo.setTitle(postAo.getTitle());
-        postNeo4jDo.setId(postAo.getId());
+        postNeo4jDo.setPostId(postAo.getId());
         return postNeo4jDo;
     }
 }
