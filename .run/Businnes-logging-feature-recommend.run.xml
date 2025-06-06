@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Businnes-logging-feature-recommend" type="CompoundRunConfigurationType">
+    <toRun name="FeatureServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="LoggingServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="OfflineRecommendApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="RecommendServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="SearchApplication" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -116,6 +116,24 @@ public class MinIOUtils {
         minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
     }
 
+    public void removeBucketAll(String bucketName) throws Exception{
+        // 列出存储桶中的所有对象并删除
+        Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
+                .bucket(bucketName)
+                .build());
+
+        for (Result<Item> result : results) {
+            Item item = result.get();  // 获取 Item 对象
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(item.objectName())
+                    .build());
+        }
+
+        // 删除存储桶
+        removeBucket(bucketName);
+    }
+
 
     /**
      * 判断文件是否存在
@@ -275,7 +293,7 @@ public class MinIOUtils {
      * @param objectName 对象名称
      * @param fileName   本地文件路径
      */
-    public ObjectWriteResponse uploadFile(String bucketName, String objectName,
+    public ObjectWriteResponse uploadLocalFile(String bucketName, String objectName,
                                           String fileName) throws Exception {
         return minioClient.uploadObject(
                 UploadObjectArgs.builder()
@@ -450,5 +468,25 @@ public class MinIOUtils {
     public String getUtf8ByURLDecoder(String str) throws UnsupportedEncodingException {
         String url = str.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
         return URLDecoder.decode(url, "UTF-8");
+    }
+
+    /**
+     * inputStream上传文件
+     * @param bucketName        bucket名称
+     * @param inputStream       文件流
+     * @param objectName        文件名称
+     * @param contentType       文件类型
+     * @return                  文件上传结果
+     * @throws Exception        Minio异常
+     */
+    public ObjectWriteResponse uploadFile(String bucketName, InputStream inputStream,
+                                          String objectName, String contentType) throws Exception {
+        return minioClient.putObject(
+                PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(objectName)
+                        .contentType(contentType)
+                        .stream(inputStream, inputStream.available(), -1)
+                        .build());
     }
 }

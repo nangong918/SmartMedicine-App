@@ -1,5 +1,6 @@
 package com.czy.api.domain.Do.post.post;
 
+import json.BaseBean;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -10,7 +11,7 @@ import org.springframework.data.annotation.Id;
  * 存放在MySQL
  */
 @Data
-public class PostInfoDo {
+public class PostInfoDo implements BaseBean {
     // id；postDetails的id与postInfo的id一致
     @Id
     private Long id;

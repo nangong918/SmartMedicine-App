@@ -19,11 +19,13 @@ public class LoginUserDo implements BaseBean {
     private String password;
     private String phone;
     @Schema(description = "用户权限等级:[user:1][Admin:2]", type = "integer", example = "1")
-    private Integer permission;
+    private Integer permission = 1;
     // register_time
     @Schema(description = "注册时间", type = "long", example = "1643676800")
     private Long registerTime;
     // last_online_time
     @Schema(description = "最后登录时间", type = "long", example = "1643676800")
     private Long lastOnlineTime;
+    @Schema(description = "头像FileId，需要转为url：https://www.baidu.com/img/bd_logo1.png", type = "string", example = "31341241")
+    private Long avatarFileId;
 }

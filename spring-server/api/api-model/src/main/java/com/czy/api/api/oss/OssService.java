@@ -109,6 +109,8 @@ public interface OssService {
      */
     List<String> getFileUrlsByUserIdAndFileNames(Long userId, List<String> fileNames);
 
+    List<String> getFileUrlsByBucketNameAndFileNames(String bucketName, List<String> fileNames);
+
     /**
      * 通过fileIds获取图片List<Url>
      * @param fileIds           文件idList

@@ -2,20 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.czy.post.mapper.mysql.PostFilesMapper">
-    <sql id="doDoColumns">
+    <sql id="doColumns">
         id,
         post_id,
         file_id
     </sql>
+    <sql id="insertDoColumns">
+        (<include refid="doColumns"/>)
+    </sql>
     <insert id="insertPostFilesDo" parameterType="com.czy.api.domain.Do.post.post.PostFilesDo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO post_files
-        <include refid="doDoColumns"/>
+        <include refid="insertDoColumns"/>
         VALUES
         (#{id}, #{postId}, #{fileId})
     </insert>
     <insert id="insertPostFilesDoList">
         INSERT INTO post_files
-        <include refid="doDoColumns"/>
+        <include refid="insertDoColumns"/>
         VALUES
         <foreach collection="list" item="item" index="index" open="(" separator="),(" close=")">
             #{item.id}, #{item.postId}, #{item.fileId}
@@ -55,13 +58,13 @@
     </delete>
     <select id="getPostFilesDoListByPostId" resultType="com.czy.api.domain.Do.post.post.PostFilesDo">
         SELECT
-        <include refid="doDoColumns"/>
+        <include refid="doColumns"/>
         FROM post_files
         WHERE post_id = #{postId}
     </select>
     <select id="getPostFilesDoById" resultType="com.czy.api.domain.Do.post.post.PostFilesDo">
         SELECT
-        <include refid="doDoColumns"/>
+        <include refid="doColumns"/>
         FROM post_files
         WHERE id = #{id}
     </select>

@@ -11,11 +11,14 @@
         file_size,
         bucket_name
     </sql>
+    <sql id="insertDoColumns">
+        (<include refid="doColumns"/>)
+    </sql>
     <insert id="insert" parameterType="com.czy.api.domain.Do.oss.OssFileDo" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO oss_file(
-        <include refid="doColumns"/>
-        )
+        INSERT INTO oss_file
+        <include refid="insertDoColumns"/>
         VALUES (
+            #{id},
             #{fileName},
             #{uploadTimestamp},
             #{userId},
@@ -25,18 +28,18 @@
         )
     </insert>
     <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO oss_file (
-        <include refid="doColumns"/>
-        )
+        INSERT INTO oss_file
+        <include refid="insertDoColumns"/>
         VALUES
-        <foreach collection="list" item="do" separator=",">
+        <foreach collection="list" item="item" separator=",">
             (
-            #{do.fileName},
-            #{do.uploadTimestamp},
-            #{do.userId},
-            #{do.fileStorageName},
-            #{do.fileSize},
-            #{do.bucketName}
+            #{item.id},
+            #{item.fileName},
+            #{item.uploadTimestamp},
+            #{item.userId},
+            #{item.fileStorageName},
+            #{item.fileSize},
+            #{item.bucketName}
             )
         </foreach>
     </insert>

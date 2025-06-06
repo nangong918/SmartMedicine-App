@@ -3,7 +3,7 @@ package com.czy.api.domain.Do.user;
 import json.BaseBean;
 import lombok.Data;
 import org.neo4j.ogm.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Field;
+import org.neo4j.ogm.annotation.Property;
 
 /**
  * @author 13225
@@ -12,10 +12,10 @@ import org.springframework.data.elasticsearch.annotations.Field;
 @Data
 public class UserNeo4jDo implements BaseBean {
     @Id
-    @Field("id")
+    @Property("id")
     private Long id;
-    @Field("account")
+    @Property("account")
     private String account;
-    @Field("name")
+    @Property("name")
     private String name;
 }

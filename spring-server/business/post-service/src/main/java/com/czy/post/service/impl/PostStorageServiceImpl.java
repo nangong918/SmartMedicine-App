@@ -1,23 +1,19 @@
 package com.czy.post.service.impl;
 
+import com.czy.api.api.user.UserService;
 import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.converter.domain.post.PostConverter;
-import com.czy.api.domain.Do.neo4j.ChecksDo;
-import com.czy.api.domain.Do.neo4j.DepartmentsDo;
-import com.czy.api.domain.Do.neo4j.DiseaseDo;
-import com.czy.api.domain.Do.neo4j.DrugsDo;
-import com.czy.api.domain.Do.neo4j.FoodsDo;
-import com.czy.api.domain.Do.neo4j.ProducersDo;
-import com.czy.api.domain.Do.neo4j.RecipesDo;
-import com.czy.api.domain.Do.neo4j.SymptomsDo;
+import com.czy.api.domain.Do.neo4j.*;
+import com.czy.api.domain.Do.neo4j.rels.UserPublishPostRelation;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
-import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.PostRepository;
+import com.czy.api.mapper.UserFeatureRepository;
+import com.czy.api.mapper.rels.UserPublishPostRelationRepository;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
@@ -25,11 +21,13 @@ import com.czy.post.service.PostStorageService;
 import com.czy.post.service.PostTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -46,6 +44,10 @@ public class PostStorageServiceImpl implements PostStorageService {
     private final PostConverter postConverter;
     private final PostFilesMapper postFilesMapper;
     private final PostRepository postRepository;
+    private final UserPublishPostRelationRepository userPublishPostRelationRepository;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private UserService userService;
+    private final UserFeatureRepository userFeatureRepository;
     @Override
     public void storePostContentToDatabase(PostAo postAo) {
         postTransactionService.storePostToDatabase(postAo);
@@ -53,24 +55,36 @@ public class PostStorageServiceImpl implements PostStorageService {
 
     @Override
     public void storePostInfoToDatabase(PostAo postAo) {
-        PostInfoDo postDetailDo = postConverter.toInfoDo(postAo);
-        postInfoMapper.insertPostInfoDo(postDetailDo);
+        PostInfoDo postInfoDo = postConverter.toInfoDo(postAo);
+        if (postInfoDo == null){
+            return;
+        }
+        log.info("开始存储帖子信息: {}", postInfoDo.toJsonString());
+        postInfoMapper.insertPostInfoDo(postInfoDo);
     }
 
     @Override
     public void storePostFilesToDatabase(PostAo postAo) {
         List<PostFilesDo> postFilesDoList = postConverter.toPostFilesList(postAo);
         if (!CollectionUtils.isEmpty(postFilesDoList)){
+            log.info("开始存储帖子文件: {}", postFilesDoList.get(0).toJsonString());
             postFilesMapper.insertPostFilesDoList(postFilesDoList);
         }
     }
 
+    // TODO 测试此处，存在问题 post 和 entity的关系未存储
     @Override
     public void storePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList) {
+        PostNeo4jDo postNeo4jDo = postConverter.toNeo4jDo(postAo);
+        log.info("开始存储帖子特征: {}", postNeo4jDo.toJsonString());
+        postRepository.save(postNeo4jDo);
+
         if (CollectionUtils.isEmpty(featureList)){
+            log.warn("存储帖子特征失败：帖子特征为空, postId:{}, postTitle:{}",
+                    postAo.getId(), postAo.getTitle());
             return;
         }
-        PostNeo4jDo postNeo4jDo = postConverter.toNeo4jDo(postAo);
+
         List<ChecksDo> checksDoList = new ArrayList<>();
         List<DepartmentsDo> departmentsDoList = new ArrayList<>();
         List<DiseaseDo> diseasesDoList = new ArrayList<>();
@@ -150,6 +164,17 @@ public class PostStorageServiceImpl implements PostStorageService {
         if (!symptomsDoList.isEmpty()){
             postTransactionService.createRelationPostWithSymptoms(postNeo4jDo, symptomsDoList);
         }
+        log.info("存储帖子特征成功：postId:{}, postTitle:{}", postAo.getId(), postAo.getTitle());
+    }
+
+    @Override
+    public void storePostAuthorRelationToNeo4j(PostAo postAo, Long userId){
+        UserPublishPostRelation userPublishPostRelation = new UserPublishPostRelation();
+        Optional<UserFeatureNeo4jDo> userResult = userFeatureRepository.findByUserId(userId);
+        userResult.ifPresent(userPublishPostRelation::setUser);
+        Optional<PostNeo4jDo> postResult = postRepository.findByPostId(postAo.getId());
+        postResult.ifPresent(userPublishPostRelation::setPost);
+        userPublishPostRelationRepository.save(userPublishPostRelation);
     }
 
     @Override
@@ -208,19 +233,26 @@ public class PostStorageServiceImpl implements PostStorageService {
         if (CollectionUtils.isEmpty(idList)){
             return new ArrayList<>();
         }
-        List<PostInfoAo> postInfoAoList = new ArrayList<>();
-        List<PostInfoDo> postInfoDoList = postInfoMapper.getPostInfoDoListByIdList(idList);
-        assert idList.size() == postInfoDoList.size();
+        List<PostInfoAo> postInfoAoList = new ArrayList<>(idList.size());
+        List<PostInfoDo> postInfoDoList = new ArrayList<>(idList.size());
+        for (Long postId : idList){
+            PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(postId);
+            postInfoDoList.add(postInfoDo);
+        }
+//        List<PostInfoDo> postInfoDoList = postInfoMapper.getPostInfoDoListByIdList(idList);
+
         for (int i = 0; i < idList.size(); i++){
             PostInfoDo postInfoDo = postInfoDoList.get(i);
             PostInfoAo ao = postConverter.postInfoDoToAo(postInfoDo);
-            Long postId = postInfoDo.getId();
-            List<PostFilesDo> postFilesDoList = postFilesMapper.getPostFilesDoListByPostId(postId);
-            // 存在可能帖子没图片的情况
-            if (!CollectionUtils.isEmpty(postFilesDoList)){
-                PostFilesDo postFilesDo = postFilesDoList.get(0);
-                Long fileId = postFilesDo.getFileId();
-                ao.setFileId(fileId);
+            if (postInfoDo != null){
+                Long postId = postInfoDo.getId();
+                List<PostFilesDo> postFilesDoList = postFilesMapper.getPostFilesDoListByPostId(postId);
+                // 存在可能帖子没图片的情况
+                if (!CollectionUtils.isEmpty(postFilesDoList)){
+                    PostFilesDo postFilesDo = postFilesDoList.get(0);
+                    Long fileId = postFilesDo.getFileId();
+                    ao.setFileId(fileId);
+                }
             }
             postInfoAoList.add(ao);
         }

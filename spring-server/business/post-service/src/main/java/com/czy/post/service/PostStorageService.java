@@ -18,6 +18,9 @@ public interface PostStorageService {
     void storePostFilesToDatabase(PostAo postAo);
     // 特征存储到neo4j
     void storePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList);
+
+    void storePostAuthorRelationToNeo4j(PostAo postAo, Long userId);
+
     // 更新post的特征到neo4j
     void updatePostFeatureToNeo4j(PostAo postAo, List<PostNerResult> featureList);
     // 删除post在neo4j的全部特征

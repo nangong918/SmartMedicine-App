@@ -6,7 +6,7 @@ import json.BaseBean;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.springframework.data.elasticsearch.annotations.Field;
+import org.neo4j.ogm.annotation.Property;
 
 import java.util.List;
 
@@ -20,29 +20,29 @@ import java.util.List;
 public class DiseaseDo extends BaseNeo4jDo implements BaseBean {
     // nodeLabel
     public static final String nodeLabel = "疾病";
-    @Field("desc")
+    @Property("desc")
     private String desc; // 疾病描述
-    @Field("prevent")
+    @Property("prevent")
     private String prevent; // 预防措施
-    @Field("cause")
+    @Property("cause")
     private String cause; // 病因
-    @Field("easy_get")
+    @Property("easy_get")
     private String easyGet; // 易感染人群
-    @Field("cure_department")
+    @Property("cure_department")
     private List<String> cureDepartment; // 治疗科室
-    @Field("cure_way")
+    @Property("cure_way")
     private List<String> cureWay; // 治疗方式
-    @Field("cure_lasttime")
+    @Property("cure_lasttime")
     private String cureLastTime; // 治疗时长
-    @Field("symptom")
+    @Property("symptom")
     private String symptom; // 症状
 
 
 
 
-    @Field("get_prob")
+    @Property("get_prob")
     private String getProb; // 感染概率
-    @Field("cured_prob")
+    @Property("cured_prob")
     private String curedProb; // 治愈概率
 
     @Override

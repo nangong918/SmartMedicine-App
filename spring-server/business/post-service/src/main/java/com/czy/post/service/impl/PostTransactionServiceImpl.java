@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,6 +46,7 @@ public class PostTransactionServiceImpl implements PostTransactionService {
     private final PostDetailEsMapper postDetailEsMapper;
     private final PostDetailMongoMapper postDetailMongoMapper;
     private final PostConverter postConverter;
+    private final org.neo4j.ogm.session.Session neo4jSession;
 
     @Transactional(rollbackFor = StorageException.class)
     @Override
@@ -84,108 +86,115 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Override
     public void createRelationPostWithDiseases(PostNeo4jDo post, List<DiseaseDo> dos) {
-        // 保存 PostDo 实体
-        PostNeo4jDo savedPost = postRepository.save(post);
-
         // 保存与疾病的关系
         for (DiseaseDo disease : dos) {
             // 确保疾病实体已存在于数据库中
             DiseaseDo existingDisease = diseaseRepository.findByName(disease.getName());
             if (existingDisease != null) {
-                postRepository.createDynamicRelationship(
-                        savedPost.getName(), DiseaseDo.nodeLabel,
+                log.info("neo4j查找结果：DiseaseDo：{}", existingDisease.toJsonString());
+                log.info("开始创建关系：{}, post_name: {}, disease_name: {}",
+                        PostRepository.RELS_POST_DISEASES,
+                        post.getName(),
+                        disease.getName());
+                String cql = postRepository.buildDynamicRelationshipCql(
+                        post.getName(), DiseaseDo.nodeLabel,
                         disease.getName(), PostRepository.RELS_POST_DISEASES);
+                log.info("Diseases 关系创建 cql: {}", cql);
+                neo4jSession.query(cql, new HashMap<>());
+            }
+            else {
+                log.warn("neo4j未查找结果：DiseaseDo：{}", disease.toJsonString());
             }
         }
     }
 
     @Override
     public void createRelationPostWithChecks(PostNeo4jDo post, List<ChecksDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (ChecksDo checks : dos) {
             ChecksDo existingChecks = checksRepository.findByName(checks.getName());
             if (existingChecks != null) {
-                postRepository.createDynamicRelationship(
-                        savedPost.getName(), ChecksDo.nodeLabel,
+                String cql = postRepository.buildDynamicRelationshipCql(
+                        post.getName(), ChecksDo.nodeLabel,
                         checks.getName(), PostRepository.RELS_POST_CHECKS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
 
     @Override
     public void createRelationPostWithDepartments(PostNeo4jDo post, List<DepartmentsDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (DepartmentsDo departments : dos) {
             DepartmentsDo existingDepartments = departmentsRepository.findByName(departments.getName());
             if (existingDepartments != null) {
-                postRepository.createDynamicRelationship(
-                        savedPost.getName(), DepartmentsDo.nodeLabel,
+                String cql = postRepository.buildDynamicRelationshipCql(
+                        post.getName(), DepartmentsDo.nodeLabel,
                         departments.getName(), PostRepository.RELS_POST_DEPARTMENTS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
 
     @Override
     public void createRelationPostWithDrugs(PostNeo4jDo post, List<DrugsDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (DrugsDo drugs : dos) {
             DrugsDo existingDrugs = drugsRepository.findByName(drugs.getName());
             if (existingDrugs != null) {
-                postRepository.createDynamicRelationship(
-                        savedPost.getName(), DrugsDo.nodeLabel,
+                String cql = postRepository.buildDynamicRelationshipCql(
+                        post.getName(), DrugsDo.nodeLabel,
                         drugs.getName(), PostRepository.RELS_POST_DRUGS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
 
     @Override
     public void createRelationPostWithFoods(PostNeo4jDo post, List<FoodsDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (FoodsDo foods : dos) {
             FoodsDo existingFoods = foodsRepository.findByName(foods.getName());
             if (existingFoods != null) {
-                postRepository.createDynamicRelationship(
-                        savedPost.getName(), FoodsDo.nodeLabel,
+                String cql = postRepository.buildDynamicRelationshipCql(
+                        post.getName(), FoodsDo.nodeLabel,
                         foods.getName(), PostRepository.RELS_POST_FOODS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
 
     @Override
     public void createRelationPostWithProducers(PostNeo4jDo post, List<ProducersDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (ProducersDo producers : dos) {
             ProducersDo existingProducers = producersRepository.findByName(producers.getName());
             if (existingProducers != null) {
-                postRepository.createDynamicRelationship(
-                        savedPost.getName(), ProducersDo.nodeLabel,
+                String cql = postRepository.buildDynamicRelationshipCql(
+                        post.getName(), ProducersDo.nodeLabel,
                         producers.getName(), PostRepository.RELS_POST_PRODUCERS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
 
     @Override
     public void createRelationPostWithRecipes(PostNeo4jDo post, List<RecipesDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (RecipesDo recipes : dos) {
             RecipesDo existingRecipes = recipesRepository.findByName(recipes.getName());
             if (existingRecipes != null) {
-                postRepository.createDynamicRelationship(
-                        savedPost.getName(), RecipesDo.nodeLabel,
+                String cql = postRepository.buildDynamicRelationshipCql(
+                        post.getName(), RecipesDo.nodeLabel,
                         recipes.getName(), PostRepository.RELS_POST_RECIPES);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }
 
     @Override
     public void createRelationPostWithSymptoms(PostNeo4jDo post, List<SymptomsDo> dos) {
-        PostNeo4jDo savedPost = postRepository.save(post);
         for (SymptomsDo symptoms : dos) {
             SymptomsDo existingSymptoms = symptomsRepository.findByName(symptoms.getName());
             if (existingSymptoms != null) {
-                postRepository.createDynamicRelationship(
-                        savedPost.getName(), SymptomsDo.nodeLabel,
+                String cql = postRepository.buildDynamicRelationshipCql(
+                        post.getName(), SymptomsDo.nodeLabel,
                         symptoms.getName(), PostRepository.RELS_POST_SYMPTOMS);
+                neo4jSession.query(cql, new HashMap<>());
             }
         }
     }

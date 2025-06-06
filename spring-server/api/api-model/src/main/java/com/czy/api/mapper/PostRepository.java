@@ -16,6 +16,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -42,15 +44,21 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
     // post_label
     String RELS_POST_POST_LABEL = "post_post_label";
 
+    @Query( "MATCH (n:post) " +
+            "WHERE n.title = $title RETURN n")
+    Optional<PostNeo4jDo> findByTitle(@Param("title") String title);
+    @Query( "MATCH (n:post) " +
+            "WHERE n.name = $name RETURN n")
+    Optional<PostNeo4jDo> findByName(@Param("name") String name);
+    @Query( "MATCH (n:post) " +
+            "WHERE n.post_id = $postId RETURN n")
+    Optional<PostNeo4jDo> findByPostId(@Param("postId") Long postId);
 
-    PostNeo4jDo findByTitle(String title);
-    PostNeo4jDo findByName(String name);
 
-
-    // 使用 MERGE 来避免重复关系：而不是使用CREATE
-    @Query("MATCH (p:post) WHERE p.name = $postName " +
-            "MATCH (d:`${targetLabel}`) WHERE d.name = $targetName " +  // 使用反引号和占位符
-            "MERGE (p)-[:`${relationType}`]->(d)")                    // 动态关系类型
+    // 失败，全部改用 org.neo4j.ogm.session.Session session;
+    @Query("MATCH (p:post) WHERE p.post_name = $postName " +
+            "MATCH (d:`#{#targetLabel}`) WHERE d.name = $targetName " +
+            "MERGE (p)-[r:`#{#relationType}`]->(d)")                 // 动态关系类型
     void createDynamicRelationship(
             @Param("postName") String postName,
             @Param("targetLabel") String targetLabel,
@@ -58,6 +66,32 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
             @Param("relationType") String relationType
     );
 
+    default String buildDynamicRelationshipCql(
+            String postName,
+            String targetLabel,
+            String targetName,
+            String relationType) {
+        return "MATCH (p:post) WHERE p.name = '" + postName + "' " +
+                "MATCH (d:" + targetLabel + ") WHERE d.name = '" + targetName + "' " +
+                "MERGE (p)-[r:" + relationType + "]->(d)";
+    }
+
+    // 使用 MERGE 来避免重复关系：而不是使用CREATE
+    @Query("MATCH (p:post) WHERE p.post_id = $postId " +
+            "MATCH (d:`${targetLabel}`) WHERE d.name = $targetName " +
+            "MERGE (p)-[:`${relationType}`]->(d)")
+    void createDynamicRelationshipByPostId(
+            @Param("postId") String postId,
+            @Param("targetLabel") String targetLabel,
+            @Param("targetName") String targetName,
+            @Param("relationType") String relationType
+    );
+
+    // 查找动态关系
+    @Query("MATCH (p:post)-[r]->(d) " +
+            "WHERE type(r) = $relationType " +
+            "RETURN p.name as post_name, d.name as target_name")
+    Optional<List<Map<String, Object>>> findDynamicRelationship(@Param("relationType") String relationType);
     // 删除某条关系
     @Query("MATCH (p:post)-[r:`${relationType}`]->(d:`${targetLabel}`) " +
             "WHERE p.name = $postName AND d.name = $targetName " +
@@ -77,7 +111,7 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
     void deletePostWithRelations(@Param("postName") String postName);
 
     // 根据 ID 删除 post 与其他全部节点的关系
-    @Query("MATCH (p:post) WHERE id(p) = $postId " +
+    @Query("MATCH (p:post) WHERE p.post_id = $postId " +
             "MATCH (p)-[r]->() " +
             "DELETE r " +  // 删除与其他节点的关系
             "DELETE p")    // 删除该 post 节点
@@ -94,41 +128,41 @@ public interface PostRepository extends Neo4jRepository<PostNeo4jDo, Long> {
 
     // DiseasesDo
     @Query("MATCH (p:post)-[:post_association]->(d:疾病) " +
-            "WHERE id(p) = $postId RETURN d")
-    List<DiseaseDo> findDiseasesByPostId(Long postId);
+            "WHERE p.post_id = $postId RETURN d")
+    List<DiseaseDo> findDiseasesByPostId(@Param("postId") Long postId);
 
     // CheckDo
     @Query("MATCH (p:post)-[:post_checks]->(d:检查) " +
-            "WHERE id(p) = $postId RETURN d")
-    List<ChecksDo> findChecksByPostId(Long postId);
+            "WHERE p.post_id = $postId RETURN d")
+    List<ChecksDo> findChecksByPostId(@Param("postId") Long postId);
 
     // DepartmentsDo
     @Query("MATCH (p:post)-[:post_departments]->(d:科室) " +
-            "WHERE id(p) = $postId RETURN d")
-    List<DepartmentsDo> findDepartmentsByPostId(Long postId);
+            "WHERE p.post_id = $postId RETURN d")
+    List<DepartmentsDo> findDepartmentsByPostId(@Param("postId") Long postId);
 
     // DrugsDo
     @Query("MATCH (p:post)-[:post_drugs]->(d:药品) " +
-            "WHERE id(p) = $postId RETURN d")
-    List<DrugsDo> findDrugsByPostId(Long postId);
+            "WHERE p.post_id = $postId RETURN d")
+    List<DrugsDo> findDrugsByPostId(@Param("postId") Long postId);
 
     // FoodsDo
     @Query("MATCH (p:post)-[:post_foods]->(d:食物) " +
-            "WHERE id(p) = $postId RETURN d")
-    List<FoodsDo> findFoodsByPostId(Long postId);
+            "WHERE p.post_id = $postId RETURN d")
+    List<FoodsDo> findFoodsByPostId(@Param("postId") Long postId);
 
     // ProducersDo
     @Query("MATCH (p:post)-[:post_producers]->(d:药企) " +
-            "WHERE id(p) = $postId RETURN d")
-    List<ProducersDo> findProducersByPostId(Long postId);
+            "WHERE p.post_id = $postId RETURN d")
+    List<ProducersDo> findProducersByPostId(@Param("postId") Long postId);
 
     // RecipesDo
     @Query("MATCH (p:post)-[:post_recipes]->(d:菜谱) " +
-            "WHERE id(p) = $postId RETURN d")
-    List<RecipesDo> findRecipesByPostId(Long postId);
+            "WHERE p.post_id = $postId RETURN d")
+    List<RecipesDo> findRecipesByPostId(@Param("postId") Long postId);
 
     // SymptomsDo
     @Query("MATCH (p:post)-[:post_symptoms]->(d:症状) " +
-            "WHERE id(p) = $postId RETURN d")
-    List<SymptomsDo> findSymptomsByPostId(Long postId);
+            "WHERE p.post_id = $postId RETURN d")
+    List<SymptomsDo> findSymptomsByPostId(@Param("postId") Long postId);
 }

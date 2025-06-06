@@ -12,13 +12,33 @@
         register_time,
         last_online_time
     </sql>
-    <insert id="insertLoginUser">
-        INSERT INTO login_user(user_name, account, password,
-                               phone, permission, register_time,
-                               last_online_time)
-        VALUES (#{do.userName}, #{do.account}, #{do.password},
-                #{do.phone}, #{do.permission}, #{do.registerTime},
-                #{do.lastOnlineTime})
+    <insert id="insertLoginUser" parameterType="com.czy.api.domain.Do.user.LoginUserDo">
+        INSERT INTO login_user (
+        id,
+        user_name,
+        account,
+        password,
+        phone,
+        permission,
+        register_time,
+        last_online_time
+        <if test="avatarFileId != null">,
+            avatar_file_id
+        </if>
+        )
+        VALUES (
+        #{id},
+        #{userName},
+        #{account},
+        #{password},
+        #{phone},
+        #{permission},
+        #{registerTime},
+        #{lastOnlineTime}
+        <if test="avatarFileId != null">,
+            #{avatarFileId}
+        </if>
+        )
     </insert>
     <update id="updateLoginUser">
         UPDATE login_user

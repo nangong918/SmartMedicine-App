@@ -19,7 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
                 // 扫描本模块
                 "com.czy.recommend",
                 // 扫描工具类
-                "com.utils.webflux.handler"
+                "com.utils.mvc"
         },
         // 排除
         exclude = {}

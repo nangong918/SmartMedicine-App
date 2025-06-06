@@ -16,7 +16,7 @@ public interface PostFilesMapper {
     // 单个插入
     Long insertPostFilesDo(PostFilesDo postInfoDo);
     // 批量插入
-    List<Long> insertPostFilesDoList(List<PostFilesDo> postInfoDoList);
+    int insertPostFilesDoList(List<PostFilesDo> postInfoDoList);
 
     // 删除
     // 单个删除
