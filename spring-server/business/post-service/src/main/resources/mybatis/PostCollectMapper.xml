@@ -3,14 +3,17 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.czy.post.mapper.mysql.PostCollectMapper">
 
-    <sql id="doDoColumns">
-        (id,
+    <sql id="doColumns">
+        id,
         post_id,
-        collect_folder_id)
+        collect_folder_id
+    </sql>
+    <sql id="insertDoColumns">
+        (<include refid="doColumns"/>)
     </sql>
     <insert id="savePostCollect">
         INSERT INTO post_collect
-        <include refid="doDoColumns"/>
+        <include refid="insertDoColumns"/>
         VALUES
         (#{id}, #{postId}, #{collectFolderId})
     </insert>
@@ -34,21 +37,21 @@
     </delete>
     <select id="findPostCollectById" resultType="com.czy.api.domain.Do.post.collect.PostCollectDo">
         SELECT
-        <include refid="doDoColumns"/>
+        <include refid="doColumns"/>
         FROM post_collect
         WHERE id = #{id}
     </select>
     <select id="findPostCollectsByCollectFolderId"
             resultType="com.czy.api.domain.Do.post.collect.PostCollectDo">
         SELECT
-        <include refid="doDoColumns"/>
+        <include refid="doColumns"/>
         FROM post_collect
         WHERE collect_folder_id = #{collectFolderId}
     </select>
     <select id="findPostCollectByPostIdAndFolderId"
             resultType="com.czy.api.domain.Do.post.collect.PostCollectDo">
         SELECT
-        <include refid="doDoColumns"/>
+        <include refid="doColumns"/>
         FROM post_collect
         WHERE post_id = #{postId}
           AND collect_folder_id = #{collectFolderId}

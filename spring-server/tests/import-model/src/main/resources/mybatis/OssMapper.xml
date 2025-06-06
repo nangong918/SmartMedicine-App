@@ -11,10 +11,12 @@
         file_size,
         bucket_name
     </sql>
+    <sql id="insertDoColumns">
+        (<include refid="doColumns"/>)
+    </sql>
     <insert id="insert" parameterType="com.czy.api.domain.Do.oss.OssFileDo" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO oss_file(
-        <include refid="doColumns"/>
-        )
+        INSERT INTO oss_file
+        <include refid="insertDoColumns"/>
         VALUES (
             #{id},
             #{fileName},
@@ -26,9 +28,8 @@
         )
     </insert>
     <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO oss_file (
-        <include refid="doColumns"/>
-        )
+        INSERT INTO oss_file
+        <include refid="insertDoColumns"/>
         VALUES
         <foreach collection="list" item="item" separator=",">
             (
