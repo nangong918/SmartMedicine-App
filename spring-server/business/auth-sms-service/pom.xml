@@ -3,11 +3,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sms-service</artifactId>
-    <description>sms service:
-        负责短信功能，短信接口限制。
-        1.短信发送
-        2.短信验证
+    <artifactId>auth-sms-service</artifactId>
+    <description>auth service:
+        认证模块
+        1.Jwt认证
+        2.token生成
+        3.token校验
+        4.短信发送
+        5.短信校验
     </description>
 
     <parent>

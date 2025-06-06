@@ -9,11 +9,18 @@ server:
   # 优雅关闭
   shutdown: graceful
 
+sms:
+  constant:
+    phone-length: 11
+    code-length: 6
+    phone-prefix: "1"
+    sms-code-expire-time: 300 # 验证码过期时间，单位：秒 60L * 5
+
 #-------------------------spring Setting-------------------------
 spring:
   #============ name
   application:
-    name: auth-service
+    name: auth-sms-service
   #============ International i18n (国际化)
   messages:
     # @value
@@ -58,3 +65,10 @@ dubbo:
   # Spring Cloud Alibaba Dubbo 专属配置项，对应 DubboCloudProperties 类
   cloud:
     subscribed-services: '' # 设置订阅的应用列表，默认为 * 订阅所有应用。
+
+  #-------------------------debug-------------------------
+debug:
+  access-token-check: true
+  all-log: false
+  vcode-check: false
+  debug: false

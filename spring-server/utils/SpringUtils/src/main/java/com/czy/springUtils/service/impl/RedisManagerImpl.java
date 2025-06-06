@@ -46,7 +46,6 @@ public class RedisManagerImpl implements RedisManagerService {
         return new RedisClusterLock(type + "_" + key, redisTemplate);
     }
 
-    // TODO
     @Override
     public RedisClusterLock createLock(String type, String key, long expireTime) {
         return null;

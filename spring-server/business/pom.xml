@@ -16,10 +16,9 @@
     <modules>
 <!--        <module>../SpringUtils</module>-->
         <module>user-service</module>
-        <module>sms-service</module>
         <module>message-service</module>
         <module>relationship-service</module>
-        <module>auth-service</module>
+        <module>auth-sms-service</module>
         <module>post-service</module>
         <module>recommend-service</module>
         <module>search-service</module>

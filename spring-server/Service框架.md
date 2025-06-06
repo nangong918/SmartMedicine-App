@@ -21,7 +21,7 @@
 拆分服务：
 1. 网关层（gateway）
     * 职责：
-        * 统一入口，负责请求路由、分布式分配、负载均衡、限流、鉴权[auth-service]
+        * 统一入口，负责请求路由、分布式分配、负载均衡、限流、鉴权[auth-sms-service]
         * 负责对数据进行加解密[考虑中]
     * 技术选型：
         * Spring Cloud Gateway、Nginx，Nacos，Zookeeper
@@ -32,7 +32,7 @@
         * 对后端响应体加密，交给传输层
         * 对长连接的消息加解密
     * 关于拆分：可能要选择为依赖，因为消息队列降低速度，所以选择为依赖。使用地方为网关层（解密交给服务，返回进行加密）长连接层。
-2. 权限（auth-service）
+2. 权限（auth-sms-service）
     * 职责：
         * 用户认证、授权、令牌管理
     * 技术选型：
@@ -82,7 +82,7 @@
     * 职责：
         * 负责用户/群组的关系和会话
     * 技术选型：
-        * MySQL、Redis（缓存）、AOP（权限验证 auth-service）
+        * MySQL、Redis（缓存）、AOP（权限验证 auth-sms-service）
     * 功能：
         * 用户关系管理
         * 用户会话管理
@@ -118,7 +118,7 @@
     * 职责：
         * 负责朋友圈的帖子的发布、删除、评论、点赞。
     * 技术选型：
-        * MySQL（所属关系）、Redis（缓存）、MongoDB（内容）、AOP（权限验证 auth-service）
+        * MySQL（所属关系）、Redis（缓存）、MongoDB（内容）、AOP（权限验证 auth-sms-service）
     * 功能：
         * 发布、删除、评论、点赞
         * 朋友的朋友圈列表
@@ -217,7 +217,7 @@ netty和message需要联合前端测试（netty环境只有Android前端能实�
     * 排序算法实现排序
     * TODO：elasticsearch学习 + 搜索引擎service的搭建 + 搜索算法utils + 排序算法utils
 2. 补充
-    1. auth-service：
+    1. auth-sms-service：
         * Spring Security + OAuth2，JWT 认证
         * AOP鉴权（用于群管理权限验证）
     2. oss-service：
@@ -228,7 +228,7 @@ netty和message需要联合前端测试（netty环境只有Android前端能实�
         * 优化聊天记录存储逻辑：mongoDB + MySQL
 3. 群组功能
     * 群会话
-    * 群创建（事务@Transaction），群权限（AOP [auth-service]）
+    * 群创建（事务@Transaction），群权限（AOP [auth-sms-service]）
 4. 通话功能
     * 单点视频通话（p2p-service）：Netty/WebRTC
     * 群聊视频通话（live-service）：RTMP + FFmpeg

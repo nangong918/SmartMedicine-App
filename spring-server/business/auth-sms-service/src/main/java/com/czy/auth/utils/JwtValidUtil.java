@@ -18,7 +18,8 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author 13225
  * @date 2025/1/7 15:35
- * TODO 目前JWT不够安全，只有公钥没有私钥，userId作为加密值过于简单
+ * 目前JWT不够安全，只有公钥没有私钥，userId作为加密值过于简单
+ * Jwt不能踢人
  */
 public class JwtValidUtil {
 

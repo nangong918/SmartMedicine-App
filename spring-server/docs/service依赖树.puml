@@ -9,8 +9,7 @@ package "Base" {
 
 package "Business" {
     [user-service]
-    [auth-service]
-    [sms-service]
+    [auth-sms-service]
     [message-service]
     [relationship-service]
     [post-service]
@@ -25,8 +24,7 @@ package "Business" {
 
     [relationship-service] --> [user-service]
 
-    [user-service] --> [auth-service]
-    [user-service] --> [sms-service]
+    [user-service] --> [auth-sms-service]
 
     [post-service] --> [user-service]
     [post-service] -[#0000FF]--> [oss-service]
@@ -39,7 +37,7 @@ package "Business" {
 package "Gateway" {
     [gateways]
 
-    [gateways] --> [auth-service]
+    [gateways] --> [auth-sms-service]
 }
 
 @enduml

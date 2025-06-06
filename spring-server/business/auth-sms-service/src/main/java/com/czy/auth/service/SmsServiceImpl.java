@@ -1,16 +1,14 @@
-package com.czy.sms.service;
-
-
+package com.czy.auth.service;
 
 
 import com.czy.api.api.sms.SmsService;
-import com.czy.sms.constant.SmsConstant;
+import com.czy.auth.constant.SmsConstant;
 import com.czy.springUtils.debug.DebugConfig;
 import com.czy.springUtils.service.RedisManagerService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 /**
@@ -19,7 +17,7 @@ import org.springframework.util.StringUtils;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Component
+@Service
 @org.apache.dubbo.config.annotation.Service(protocol = "dubbo", version = "1.0.0")
 public class SmsServiceImpl implements SmsService {
 

@@ -1,4 +1,4 @@
-package com.czy.sms.constant;
+package com.czy.auth.constant;
 
 import lombok.Getter;
 import lombok.Setter;

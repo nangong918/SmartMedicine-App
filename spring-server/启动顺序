@@ -1,8 +1,7 @@
 1.nacos                         8848
 2.netty-socket                  10000-10009
 3.oss-service                   10010-10019
-4.auth-service                  10020-10029
-5.sms-service                   10030-10039
+4.auth-sms-service              10020-10029
 6.user-service                  10040-10049
 7.message-service               10050-10059
 6.relationship-service          10060-10069

@@ -1,7 +1,7 @@
 package service;
 
 
-import com.czy.auth.AuthServiceApplication;
+import com.czy.auth.AuthSmsServiceApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 
 @Slf4j
-@SpringBootTest(classes = AuthServiceApplication.class)
+@SpringBootTest(classes = AuthSmsServiceApplication.class)
 @TestPropertySource("classpath:application.properties")
 public class ServiceTests {
 

@@ -2,7 +2,7 @@ package sms;
 
 
 import com.czy.api.api.sms.SmsService;
-import com.czy.sms.SmsServiceApplication;
+import com.czy.auth.AuthSmsServiceApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 
 @Slf4j
-@SpringBootTest(classes = SmsServiceApplication.class)
+@SpringBootTest(classes = AuthSmsServiceApplication.class)
 public class ServiceTests {
 
     @Test

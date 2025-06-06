@@ -1,8 +1,7 @@
-package com.czy.sms;
+package com.czy.auth;
 
 import com.czy.springUtils.debug.DebugConfig;
 import com.czy.springUtils.start.PortApplicationContextInitializer;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,18 +17,17 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
                 // 扫描api模块
                 "com.czy.api",
                 // 扫描本模块
-                "com.czy.sms",
+                "com.czy.auth",
                 // 扫描工具类
-                "com.utils.webflux.handler",
-                // springUtils
-                "com.czy.springUtils"
+                "com.czy.springUtils",
+                "com.utils.webflux.handler"
         },
         // 排除
         exclude = {}
 )
-public class SmsServiceApplication {
+public class AuthSmsServiceApplication {
     public static void main(String[] args) {
-        new SpringApplicationBuilder(SmsServiceApplication.class)
+        new SpringApplicationBuilder(AuthSmsServiceApplication.class)
                 .initializers(new PortApplicationContextInitializer())
                 .run(args);
     }

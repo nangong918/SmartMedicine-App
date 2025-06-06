@@ -120,7 +120,7 @@ dubbo:
     address: spring-cloud://127.0.0.1:8848 # 指定 Dubbo 服务注册中心的地址
   # Spring Cloud Alibaba Dubbo 专属配置项，对应 DubboCloudProperties 类
   cloud:
-    subscribed-services: auth-service,sms-service # 设置订阅的应用列表，默认为 * 订阅所有应用。
+    subscribed-services: auth-sms-service # 设置订阅的应用列表，默认为 * 订阅所有应用。
 
 #-------------------------Mybatis-plus setting-------------------------
 
