@@ -233,19 +233,26 @@ public class PostStorageServiceImpl implements PostStorageService {
         if (CollectionUtils.isEmpty(idList)){
             return new ArrayList<>();
         }
-        List<PostInfoAo> postInfoAoList = new ArrayList<>();
-        List<PostInfoDo> postInfoDoList = postInfoMapper.getPostInfoDoListByIdList(idList);
-        assert idList.size() == postInfoDoList.size();
+        List<PostInfoAo> postInfoAoList = new ArrayList<>(idList.size());
+        List<PostInfoDo> postInfoDoList = new ArrayList<>(idList.size());
+        for (Long postId : idList){
+            PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(postId);
+            postInfoDoList.add(postInfoDo);
+        }
+//        List<PostInfoDo> postInfoDoList = postInfoMapper.getPostInfoDoListByIdList(idList);
+
         for (int i = 0; i < idList.size(); i++){
             PostInfoDo postInfoDo = postInfoDoList.get(i);
             PostInfoAo ao = postConverter.postInfoDoToAo(postInfoDo);
-            Long postId = postInfoDo.getId();
-            List<PostFilesDo> postFilesDoList = postFilesMapper.getPostFilesDoListByPostId(postId);
-            // 存在可能帖子没图片的情况
-            if (!CollectionUtils.isEmpty(postFilesDoList)){
-                PostFilesDo postFilesDo = postFilesDoList.get(0);
-                Long fileId = postFilesDo.getFileId();
-                ao.setFileId(fileId);
+            if (postInfoDo != null){
+                Long postId = postInfoDo.getId();
+                List<PostFilesDo> postFilesDoList = postFilesMapper.getPostFilesDoListByPostId(postId);
+                // 存在可能帖子没图片的情况
+                if (!CollectionUtils.isEmpty(postFilesDoList)){
+                    PostFilesDo postFilesDo = postFilesDoList.get(0);
+                    Long fileId = postFilesDo.getFileId();
+                    ao.setFileId(fileId);
+                }
             }
             postInfoAoList.add(ao);
         }
