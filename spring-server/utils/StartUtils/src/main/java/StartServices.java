@@ -17,7 +17,7 @@ public class StartServices {
 
     private static void startServices(){
         // 1. 设置相对路径（从当前目录的Spring子目录开始）
-        String servicePath = "business/auth-service/src/main/java/com/czy/auth/AuthServiceApplication.java";
+        String servicePath = "business/auth-sms-service/src/main/java/com/czy/auth/AuthServiceApplication.java";
         File serviceDir = new File(servicePath);
         // 2. 验证路径是否存在
         if (!serviceDir.exists()) {

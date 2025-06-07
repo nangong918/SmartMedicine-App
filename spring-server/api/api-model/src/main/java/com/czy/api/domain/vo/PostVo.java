@@ -3,12 +3,13 @@ package com.czy.api.domain.vo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Data
-public class PostVo {
+public class PostVo implements Serializable {
 
     // postId
     public Long postId = null;

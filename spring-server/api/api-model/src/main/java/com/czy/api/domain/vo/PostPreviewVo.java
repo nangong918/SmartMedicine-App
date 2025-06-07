@@ -2,13 +2,15 @@ package com.czy.api.domain.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/6/6 11:49
  * Post预览vo
  */
 @Data
-public class PostPreviewVo {
+public class PostPreviewVo implements Serializable {
     // postId
     public Long postId = null;
 

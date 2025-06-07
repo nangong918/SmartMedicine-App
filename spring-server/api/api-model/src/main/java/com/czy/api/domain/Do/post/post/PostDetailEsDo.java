@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
  * @author 13225
@@ -21,7 +21,7 @@ import java.util.List;
         refreshInterval = "-1" // 刷新间隔
 )
 @Data
-public class PostDetailEsDo {
+public class PostDetailEsDo implements Serializable {
     // id；postDetails的id与postInfo的id一致
     @Id
     private Long id;

@@ -1,11 +1,12 @@
 package com.czy.api.domain.ao.post;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+
+import java.io.Serializable;
 
 
 @Data
-public class PostCommentAo {
+public class PostCommentAo implements Serializable {
     // 所属帖子id；not null （索引）
     private Long postId;
     // 此评论回复的评论id（索引）；null able（null就是直接回复帖子；是一级评论）

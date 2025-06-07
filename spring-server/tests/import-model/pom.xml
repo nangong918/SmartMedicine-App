@@ -70,7 +70,7 @@
 <!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>com.business</groupId>-->
-<!--            <artifactId>user-service</artifactId>-->
+<!--            <artifactId>user-relationship-service</artifactId>-->
 <!--            <version>1.0.0-SNAPSHOT</version>-->
 <!--            <scope>compile</scope>-->
 <!--        </dependency>-->

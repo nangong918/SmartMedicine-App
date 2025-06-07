@@ -3,9 +3,8 @@ package com.czy.message.service;
 
 
 
-import cn.hutool.core.util.ObjectUtil;
 import com.czy.api.api.oss.OssService;
-import com.czy.api.api.user.UserService;
+import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.MessageTypeEnum;
 import com.czy.api.constant.message.ChatConstant;
 import com.czy.api.constant.message.MessageConstant;
@@ -22,7 +21,6 @@ import com.czy.springUtils.service.RedisService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

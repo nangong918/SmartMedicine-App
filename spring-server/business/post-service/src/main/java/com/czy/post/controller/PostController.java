@@ -3,7 +3,7 @@ package com.czy.post.controller;
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
-import com.czy.api.api.user.UserService;
+import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.converter.domain.post.PostConverter;

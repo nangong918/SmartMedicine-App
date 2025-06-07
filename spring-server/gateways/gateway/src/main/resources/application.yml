@@ -51,7 +51,7 @@ spring:
 
 #        # ip
 #        - id: ip-user
-#          uri: lb://user-service
+#          uri: lb://user-relationship-service
 #          predicates:
 #            - Path=/login/passwordRegisterUser
 #            - Path=/login/passwordLoginUser
@@ -59,11 +59,11 @@ spring:
 #            - Path=/login/smsLoginUser
 #          filters:
 #            - name: Ip
-#            - StripPrefix=1       # 去掉第一个路径段(/user-service) 因为uri内会配置 lb://user-service
+#            - StripPrefix=1       # 去掉第一个路径段(/user-relationship-service) 因为uri内会配置 lb://user-relationship-service
 #
 ##         jwt
 #        - id: jwt-user
-#          uri: lb://user-service
+#          uri: lb://user-relationship-service
 #          predicates:
 #            - Path=/login/passwordResetUserPassword
 #          filters:
@@ -91,7 +91,7 @@ spring:
           enabled: false # 关闭Nacos服务发现，因为它会优先网关直接转发，从而使得网关的过滤器失效
           url-expression: "'lb://' + serviceId" # 路由的目标地址的表达式，默认为 "'lb://' + serviceId" ;lb://' 表示 负载均衡
           # "'lb://' + serviceId" Spring EL 表达式，将从注册中心获得到的服务列表，每一个服务的名字对应 serviceId，最终使用 Spring EL 表达式进行格式化。
-          # 如果服务的spring.application.id=user-service；那么请求地址就是 http://localhost:8888/user-service/user/get?id=1
+          # 如果服务的spring.application.id=user-relationship-service；那么请求地址就是 http://localhost:8888/user-relationship-service/user/get?id=1
     # Nacos 作为服务发现
     nacos:
       discovery:
@@ -117,4 +117,4 @@ dubbo:
     address: spring-cloud://127.0.0.1:8848 # 指定 Dubbo 服务注册中心的地址
   # Spring Cloud Alibaba Dubbo 专属配置项，对应 DubboCloudProperties 类
   cloud:
-    subscribed-services: auth-service # 设置订阅的应用列表，默认为 * 订阅所有应用。
+    subscribed-services: auth-sms-service # 设置订阅的应用列表，默认为 * 订阅所有应用。

@@ -1,7 +1,7 @@
 package com.czy.api.domain.dto.socket.response;
 
 
-import com.czy.api.constant.relationship.newUserGroup.ApplyStatusEnum;
+import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
 import com.czy.api.domain.dto.base.BaseResponseData;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -169,7 +169,10 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 ##### 跑通阶段
 * 数据导入到数据库：
   * 3天
-  * 6月4~6
+  * 6月4~6 （调用代码，进行导入数据库测试）
+  * 获取postList
+  * 获取postDetail信息测试
+  * 搜索post测试
 * 帖子发布测试
   * 3天
   * 6月7~10
@@ -199,7 +202,13 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 7月3~7月5
 
 ##### 重构+细化
-* spring学习 + service绘图 + service重新设计
+* spring学习
+  * 大麦
+* service绘图
+  * netty-socket
+  * oss
+* service重新设计
+  * 合并auth和sms
 * 合并service
   * 合并部分分布式微服务，避免内存溢出。
   * JVM调参，避免内存爆炸

@@ -3,7 +3,7 @@ package com.czy.message.handler;
 
 import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.oss.OssService;
-import com.czy.api.api.user.UserService;
+import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.MessageTypeEnum;
 import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.RequestMessageType;
@@ -29,7 +29,6 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
