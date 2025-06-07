@@ -2,8 +2,10 @@ package com.czy.api.domain.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class CommentVo {
+public class CommentVo implements Serializable {
     // comment 所属相关
     public Long commentId = null;
     public Long replyCommentId = null;

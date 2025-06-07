@@ -5,6 +5,8 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
+import com.czy.api.domain.vo.PostPreviewVo;
+import com.czy.api.domain.vo.PostVo;
 
 import java.util.List;
 
@@ -53,4 +55,8 @@ public interface PostSearchService {
      * @return            帖子信息
      */
     List<PostInfoUrlAo> getPostInfoUrlAos(List<Long> postIds);
+
+    // 对外提供转换方法
+    List<PostPreviewVo> getPostPreviewVosByIds(List<Long> postIds);
+    PostVo getPostVoById(Long postId);
 }

@@ -26,6 +26,7 @@ import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.api.domain.dto.python.MedicalPredictionResponse;
 import com.czy.api.domain.dto.python.NlpSearchResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
+import com.czy.api.domain.vo.PostPreviewVo;
 import com.czy.search.component.KafkaSender;
 import com.czy.search.config.SearchTestConfig;
 import com.czy.search.service.FuzzySearchService;
@@ -47,9 +48,11 @@ import org.springframework.web.client.RestTemplate;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -137,21 +140,29 @@ public class SearchController {
         Map<Integer, List<Long>> postIdListMap = new HashMap<>();
         if (response.getData() != null && response.getData() instanceof PostSearchResultAo){
             PostSearchResultAo postSearchResultAo = (PostSearchResultAo) response.getData();
-            List<Long> likePostList = Optional.ofNullable(postSearchResultAo.getLikePostList())
+            List<Long> likePostList = Optional.ofNullable(postSearchResultAo.getLikePostPreviewVoList())
                     .filter(l -> !CollectionUtils.isEmpty(l))
-                    .map(l -> l.stream().map(PostInfoUrlAo::getId).collect(Collectors.toList()))
+                    .map(l -> l.stream()
+                            .map(PostPreviewVo::getPostId)
+                            .collect(Collectors.toList()))
                     .orElse(new ArrayList<>());
-            List<Long> tokenizedPostList = Optional.ofNullable(postSearchResultAo.getTokenizedPostList())
+            List<Long> tokenizedPostList = Optional.ofNullable(postSearchResultAo.getTokenizedPostPreviewVoList())
                     .filter(l -> !CollectionUtils.isEmpty(l))
-                    .map(l -> l.stream().map(PostInfoUrlAo::getId).collect(Collectors.toList()))
+                    .map(l -> l.stream()
+                            .map(PostPreviewVo::getPostId)
+                            .collect(Collectors.toList()))
                     .orElse(new ArrayList<>());
-            List<Long> similarPostList = Optional.ofNullable(postSearchResultAo.getSimilarPostList())
+            List<Long> similarPostList = Optional.ofNullable(postSearchResultAo.getSimilarPostPreviewVoList())
                     .filter(l -> !CollectionUtils.isEmpty(l))
-                    .map(l -> l.stream().map(PostInfoUrlAo::getId).collect(Collectors.toList()))
+                    .map(l -> l.stream()
+                            .map(PostPreviewVo::getPostId)
+                            .collect(Collectors.toList()))
                     .orElse(new ArrayList<>());
-            List<Long> recommendPostList = Optional.ofNullable(postSearchResultAo.getRecommendPostList())
+            List<Long> recommendPostList = Optional.ofNullable(postSearchResultAo.getRecommendPostPreviewVoList())
                     .filter(l -> !CollectionUtils.isEmpty(l))
-                    .map(l -> l.stream().map(PostInfoUrlAo::getId).collect(Collectors.toList()))
+                    .map(l -> l.stream()
+                            .map(PostPreviewVo::getPostId)
+                            .collect(Collectors.toList()))
                     .orElse(new ArrayList<>());
             postIdListMap.put(SearchLevel.ONE.getCode(), likePostList);
             postIdListMap.put(SearchLevel.TWO.getCode(), tokenizedPostList);
@@ -272,12 +283,17 @@ public class SearchController {
         PostSearchResultAo postSearchResultAo = new PostSearchResultAo();
 
         // 0~1级搜索 到此处说明sentence本身就是title，所以likeTitle传递sentence;
+        long startTime1 = System.currentTimeMillis();
         List<Long> likePostIdList = fuzzySearchService.likeSearch(sentence);
         if (searchTestConfig.isDebug){
             log.info("0~1级搜索 likePostIdList:{}", likePostIdList);
+            //0~1级搜索 耗时:16
+            log.info("0~1级搜索 耗时:{}", System.currentTimeMillis() - startTime1);
         }
+
         // 2级搜索 搜索：AcTree匹配实体 + ElasticSearch搜索;
         // 缓存结结果，避免后续搜索调用两次
+        long startTime2 = System.currentTimeMillis();
         List<PostNerResult> nerResults = postNerService.getPostNerResults(sentence);
         if (searchTestConfig.isDebug){
             log.info("句子的ner识别结果 nerResults:{}", nerResults);
@@ -285,26 +301,63 @@ public class SearchController {
         List<Long> tokenizedPostIdList = fuzzySearchService.tokenizedSearch(sentence);
         if (searchTestConfig.isDebug){
             log.info("2级搜索 tokenizedPostIdList:{}", tokenizedPostIdList);
+            // 2级搜索 耗时:17
+            log.info("2级搜索 耗时:{}", System.currentTimeMillis() - startTime2);
         }
 
         // 3级搜索：neo4j规则集 + es查询 + user context vector排序;
+        long startTime3 = System.currentTimeMillis();
         List<Long> neo4jRulePostIdList = fuzzySearchService.neo4jRuleSearch(nerResults);
         if (searchTestConfig.isDebug){
             log.info("3级搜索 neo4jRulePostIdList:{}", neo4jRulePostIdList);
-        }
-        // 4级搜索：neo4j疾病相似度查询 + user context vector排序;
-        List<Long> similarList = fuzzySearchService.similaritySearch(nerResults);
-        if (searchTestConfig.isDebug){
-            log.info("4级搜索 similarList:{}", similarList);
+            // 3级搜索 耗时:882
+            log.info("3级搜索 耗时:{}", System.currentTimeMillis() - startTime3);
         }
 
-        // 转换 TODO 用转换service层
-        postSearchResultAo.setLikePostList(postSearchService.getPostInfoUrlAos(likePostIdList));
-        postSearchResultAo.setTokenizedPostList(postSearchService.getPostInfoUrlAos(tokenizedPostIdList));
-        postSearchResultAo.setSimilarPostList(postSearchService.getPostInfoUrlAos(similarList));
-        postSearchResultAo.setRecommendPostList(postSearchService.getPostInfoUrlAos(neo4jRulePostIdList));
+        // 4级搜索：neo4j疾病相似度查询 + user context vector排序;
+        long startTime4 = System.currentTimeMillis();
+        List<Long> similarList = new ArrayList<>();
+        if (likePostIdList.isEmpty() && tokenizedPostIdList.isEmpty() && neo4jRulePostIdList.isEmpty()){
+            log.info("4级之前搜索 搜索结果为空，开始调用4级搜索......");
+            similarList = fuzzySearchService.similaritySearch(nerResults);
+            if (searchTestConfig.isDebug){
+                log.info("4级搜索 similarList:{}", similarList);
+                // 4级搜索 耗时:9078        能不使用四级搜索就不使用四级搜索
+                log.info("4级搜索 耗时:{}", System.currentTimeMillis() - startTime4);
+            }
+        }
+
+        // 过滤
+
+        // 过滤4级中3级包含的结果
+        similarList = filterResults(neo4jRulePostIdList, similarList);
+        log.info("过滤4级中3级包含的结果 similarList:{}", similarList);
+        // 过滤3级中2级包含的结果
+        neo4jRulePostIdList = filterResults(tokenizedPostIdList, neo4jRulePostIdList);
+        log.info("过滤3级中2级包含的结果 neo4jRulePostIdList:{}", neo4jRulePostIdList);
+        // 过滤2级中1级包含的结果
+        tokenizedPostIdList = filterResults(likePostIdList, tokenizedPostIdList);
+        log.info("过滤2级中1级包含的结果 tokenizedPostIdList:{}", tokenizedPostIdList);
+
+        // 转换
+        long startTimeChange = System.currentTimeMillis();
+        postSearchResultAo.setLikePostPreviewVoList(postSearchService.getPostPreviewVosByIds(likePostIdList));
+        postSearchResultAo.setTokenizedPostPreviewVoList(postSearchService.getPostPreviewVosByIds(tokenizedPostIdList));
+        postSearchResultAo.setSimilarPostPreviewVoList(postSearchService.getPostPreviewVosByIds(similarList));
+        postSearchResultAo.setRecommendPostPreviewVoList(postSearchService.getPostPreviewVosByIds(neo4jRulePostIdList));
+        if (searchTestConfig.isDebug){
+            // 转换耗时:79
+            log.info("转换耗时:{}", System.currentTimeMillis() - startTimeChange);
+        }
 
         return postSearchResultAo;
+    }
+
+    public List<Long> filterResults(List<Long> previousResults, List<Long> currentResults) {
+        Set<Long> previousResultSet = new HashSet<>(previousResults);
+        return currentResults.stream()
+                .filter(result -> !previousResultSet.contains(result))
+                .collect(Collectors.toList());
     }
 
     // 推荐意图存在争议
