@@ -151,7 +151,7 @@ spring:
 # Dubbo 配置项，对应 DubboConfigurationProperties 类
 dubbo:
   scan:
-    base-packages: com.czy.auth.service # 指定 Dubbo 服务实现类的扫描基准包
+    base-packages: com.czy.feature.service # 指定 Dubbo 服务实现类的扫描基准包
   # Dubbo 服务暴露的协议配置，对应 ProtocolConfig Map
   protocols:
     dubbo:

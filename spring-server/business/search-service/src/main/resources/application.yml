@@ -1,6 +1,12 @@
 # 端口号 10000-20000
 port:
   range: 10120-10129
+
+# debug
+
+search_debug:
+  isDebug: true
+
 #-------------------------server Setting-------------------------
 
 server:
@@ -157,7 +163,7 @@ mybatis-plus:
 # Dubbo 配置项，对应 DubboConfigurationProperties 类
 dubbo:
   scan:
-    base-packages: com.czy.oss.service # 指定 Dubbo 服务实现类的扫描基准包
+    base-packages: com.czy.search.service # 指定 Dubbo 服务实现类的扫描基准包
   # Dubbo 服务暴露的协议配置，对应 ProtocolConfig Map
   protocols:
     dubbo:
