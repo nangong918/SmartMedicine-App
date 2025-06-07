@@ -10,5 +10,9 @@ import lombok.Data;
 public class NlpSearchResponse {
     private Integer code;
     private String message;
+    /**
+     * 类型
+     * @see com.czy.api.constant.search.NlpResultEnum
+     */
     private Integer type;
 }

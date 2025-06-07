@@ -27,6 +27,7 @@ import com.czy.api.domain.dto.python.MedicalPredictionResponse;
 import com.czy.api.domain.dto.python.NlpSearchResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
 import com.czy.search.component.KafkaSender;
+import com.czy.search.config.SearchTestConfig;
 import com.czy.search.service.FuzzySearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,6 +87,7 @@ public class SearchController {
     private DiseasesNeo4jService diseasesNeo4jService;
 
     private final KafkaSender kafkaSender;
+    private final SearchTestConfig searchTestConfig;
     /**
      * 模糊搜索
      * @param request  模糊搜索的句子 + userId（用于userContext特征上下文）
@@ -97,6 +99,17 @@ public class SearchController {
 
         // 提取搜素句子
         String sentence = request.getSentence();
+        Long userId = userService.getIdByAccount(request.getUserAccount());
+
+        log.info("debug状态：{}", searchTestConfig.isDebug);
+        if (searchTestConfig.isDebug){
+            NlpSearchResponse nlpSearchResponse = new NlpSearchResponse();
+            nlpSearchResponse.setCode(200);
+            nlpSearchResponse.setMessage("");
+            nlpSearchResponse.setType(NlpResultEnum.SEARCH.getCode());
+
+            return handleNlpResult(nlpSearchResponse, sentence, userId);
+        }
 
         // python服务处理nlp搜索
         ResponseEntity<NlpSearchResponse> pythonResponseEntity = invokePythonNlpSearch(sentence);
@@ -106,8 +119,6 @@ public class SearchController {
                 .filter(response -> response.getStatusCode().is2xxSuccessful())
                 .map(ResponseEntity::getBody)
                 .orElse(null);
-
-        Long userId = userService.getIdByAccount(request.getUserAccount());
 
         FuzzySearchResponse response = handleNlpResult(nlpSearchResponse, sentence, userId);
 
