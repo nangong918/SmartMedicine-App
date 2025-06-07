@@ -21,4 +21,6 @@ public class RegisterUserRequest extends DeviceInfoRequest {
     private String password;
     private String phone;
     private Integer permission;
+    @NotEmpty(message = "验证码不能为空")
+    private String vcode;
 }

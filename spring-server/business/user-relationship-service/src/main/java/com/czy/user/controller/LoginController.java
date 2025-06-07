@@ -133,6 +133,13 @@ public class LoginController {
     @PostMapping(UserConstant.Password_Register)
     public Mono<BaseResponse<LoginUserRequest>> passwordRegisterUser(@RequestBody @Validated RegisterUserRequest request) {
         String errorMessage = "";
+        String phone = request.getPhone();
+        String code = request.getVcode();
+        boolean checkSms = smsService.checkSms(phone, code);
+        if (!checkSms){
+            errorMessage = "验证码错误";
+            return Mono.just(BaseResponse.LogBackError(errorMessage, log));
+        }
         if (userService.checkAccountExist(request.getAccount()) > 0) {
             errorMessage = "用户账号已存在";
             return Mono.just(BaseResponse.LogBackError(errorMessage, log));
@@ -167,11 +174,18 @@ public class LoginController {
 
     // 重置密码 JWT 校验
     @PostMapping(UserConstant.Reset_Password)
-    public Mono<BaseResponse<LoginUserRequest>> resetUserPassword(@Validated @RequestBody LoginResetPasswordRequest loginResetPasswordDTO) {
+    public Mono<BaseResponse<LoginUserRequest>> resetUserPassword(@Validated @RequestBody LoginResetPasswordRequest request) {
+        String phone = request.getPhone();
+        String code = request.getVcode();
+        boolean checkSms = smsService.checkSms(phone, code);
+        if (!checkSms){
+            String errorMessage = "验证码错误";
+            return Mono.just(BaseResponse.LogBackError(errorMessage, log));
+        }
         LoginUserRequest newUser = loginService.resetUserPasswordByUser(
-                loginResetPasswordDTO.getAccount(),
-                loginResetPasswordDTO.getPassword(),
-                loginResetPasswordDTO.getNewPassword()
+                request.getAccount(),
+                request.getPassword(),
+                request.getNewPassword()
         );
         if (newUser != null) {
             return Mono.just(BaseResponse.getResponseEntitySuccess(newUser));

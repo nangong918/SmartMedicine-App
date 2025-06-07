@@ -20,4 +20,8 @@ public class LoginResetPasswordRequest extends BaseNettyRequest {
     private String password;
     @NotEmpty(message = "用户新密码不能为空")
     private String newPassword;
+    @NotEmpty(message = "手机号不能为空")
+    private String phone;
+    @NotEmpty(message = "验证码不能为空")
+    private String vcode;
 }
