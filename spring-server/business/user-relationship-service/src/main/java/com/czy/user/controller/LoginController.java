@@ -226,8 +226,44 @@ public class LoginController {
         String phone = request.getPhone();
         String code = request.getCode();
         boolean checkSms = smsService.checkSms(phone, code);
-        if (checkSms){
-            UserDo userDo = userService.getUserByPhone(phone);
+        if (!checkSms){
+            String errorMessage = "验证码错误";
+            return Mono.just(BaseResponse.LogBackError(errorMessage, log));
+        }
+        UserDo userDo = userService.getUserByPhone(phone);
+        // 未注册：注册
+        if (userDo == null || userDo.getId() == null){
+            String userName = request.getUserName();
+            if (!StringUtils.hasText(userName)){
+                return Mono.just(BaseResponse.LogBackError("用户名不能为空", log));
+            }
+            String account = request.getSenderId();
+            if (!StringUtils.hasText(account)){
+                return Mono.just(BaseResponse.LogBackError("用户账号不能为空", log));
+            }
+            String password = request.getPassword();
+            if (!StringUtils.hasText(password)){
+                return Mono.just(BaseResponse.LogBackError("用户密码不能为空", log));
+            }
+            // 注册
+            // 返回结果暂时无用
+            LoginUserRequest newUser = loginService.registerUser(
+                    userName,
+                    account,
+                    password
+            );
+            LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo(
+                    account,
+                    request.getUuid(),
+                    UserConstant.JWT_FUNCTION_REGISTER
+            );
+            LoginSignResponse signResponse = loginService.loginUser(loginJwtPayloadAo);
+            if (signResponse != null) {
+                return Mono.just(BaseResponse.getResponseEntitySuccess(signResponse));
+            }
+        }
+        // 注册了：登录
+        else {
             LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo(
                     userDo.getAccount(),
                     request.getUuid(),
@@ -238,6 +274,7 @@ public class LoginController {
                 return Mono.just(BaseResponse.getResponseEntitySuccess(signResponse));
             }
         }
+
         return Mono.just(BaseResponse.LogBackError("短信注册/登录失败", log));
     }
 }

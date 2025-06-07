@@ -17,4 +17,7 @@ public class PhoneLoginRequest extends DeviceInfoRequest {
 
     @NotEmpty(message = "验证码不能为空")
     private String code;
+
+    private String userName;
+    private String password;
 }
