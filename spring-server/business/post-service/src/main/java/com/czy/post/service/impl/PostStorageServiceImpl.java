@@ -1,6 +1,6 @@
 package com.czy.post.service.impl;
 
-import com.czy.api.api.user.UserService;
+import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.converter.domain.post.PostConverter;
 import com.czy.api.domain.Do.neo4j.*;

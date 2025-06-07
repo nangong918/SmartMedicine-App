@@ -16,6 +16,17 @@
 * [gateways](gateways)：网关层:分发;拦截;限流;熔断;日志;功能类似nginx
 * [utils](utils)：工具类:包括java-utils:java的通用工具;spring-utils:spring的通用工具;spring-webflux:reactive工具类;spring-webmvc:mvc工具类;
 
+
+## 微服务拆分介绍
+* [netty-socket](base/netty-socket)
+
+recommend-service
+  在线层
+feature-service
+  近线层
+offline-recommend-service
+  离线层
+
 # 环境配置
 
 # 技术栈

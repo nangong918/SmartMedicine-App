@@ -4,6 +4,8 @@ import json.BaseBean;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/4/16 21:24
@@ -11,7 +13,7 @@ import org.springframework.data.annotation.Id;
  * 存放在MySQL
  */
 @Data
-public class PostInfoDo implements BaseBean {
+public class PostInfoDo implements BaseBean , Serializable {
     // id；postDetails的id与postInfo的id一致
     @Id
     private Long id;

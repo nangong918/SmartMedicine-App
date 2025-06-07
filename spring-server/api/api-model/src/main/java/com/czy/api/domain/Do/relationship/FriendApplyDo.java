@@ -1,7 +1,7 @@
 package com.czy.api.domain.Do.relationship;
 
-import com.czy.api.constant.relationship.newUserGroup.ApplyStatusEnum;
-import com.czy.api.constant.relationship.newUserGroup.HandleStatusEnum;
+import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
+import com.czy.api.constant.user_relationship.newUserGroup.HandleStatusEnum;
 import json.BaseBean;
 import lombok.Data;
 

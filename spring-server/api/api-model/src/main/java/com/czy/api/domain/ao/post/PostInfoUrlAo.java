@@ -2,12 +2,14 @@ package com.czy.api.domain.ao.post;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/4/18 17:24
  */
 @Data
-public class PostInfoUrlAo {
+public class PostInfoUrlAo implements Serializable {
     public Long id;
     // authorId；not null（索引）
     public Long authorId;

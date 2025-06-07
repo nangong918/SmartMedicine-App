@@ -2,7 +2,7 @@ package com.czy.post.service.impl;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostSearchService;
-import com.czy.api.api.user.UserService;
+import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.es.FieldAnalyzer;
 import com.czy.api.constant.search.SearchConstant;
 import com.czy.api.converter.domain.post.PostConverter;
@@ -11,11 +11,15 @@ import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.user.UserDo;
+import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 import com.czy.api.domain.ao.user.AuthorAo;
+import com.czy.api.domain.vo.PostPreviewVo;
+import com.czy.api.domain.vo.PostVo;
 import com.czy.api.mapper.DiseaseRepository;
+import com.czy.post.front.PostFrontService;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
@@ -69,6 +73,7 @@ public class PostSearchServiceImpl implements PostSearchService {
     private OssService ossService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
+    private final PostFrontService postFrontService;
 
     @Override
     public List<Long> searchPostIdsByLikeTitle(String likeTitle) {
@@ -314,5 +319,29 @@ public class PostSearchServiceImpl implements PostSearchService {
             postInfoUrlAos.add(postInfoUrlAo);
         }
         return postInfoUrlAos;
+    }
+
+    @Override
+    public List<PostPreviewVo> getPostPreviewVosByIds(List<Long> postIds) {
+        if (CollectionUtils.isEmpty(postIds)){
+            return new ArrayList<>();
+        }
+        List<PostInfoAo> postInfoAos = findPostInfoList(postIds);
+        if (CollectionUtils.isEmpty(postInfoAos)){
+            return new ArrayList<>();
+        }
+        return postFrontService.toPostPreviewVoList(postInfoAos);
+    }
+
+    @Override
+    public PostVo getPostVoById(Long postId) {
+        if (postId == null){
+            return null;
+        }
+        PostAo postAo = postStorageService.findPostAoById(postId);
+        if (postAo == null || postAo.getId() == null){
+            return null;
+        }
+        return postFrontService.postAoToPostVo(postAo);
     }
 }
