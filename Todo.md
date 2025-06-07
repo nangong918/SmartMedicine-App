@@ -173,9 +173,17 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 获取postList
   * 获取postDetail信息测试
   * 搜索post测试
+* 重构user-service
+  * 4天
+  * 6月7~11
+  * 梳理整套user注册登录逻辑
+  * user 头像存储的两次http请求
+  * 注册user;user信息填写入mysql,elasticsearch,neo4j
 * 帖子发布测试
-  * 3天
-  * 6月7~10
+  * 2天
+  * 6月12~13
+  * 发布post,存入neo4j,mysql,elasticsearch,mongodb
+
 * App获取帖子联调
   * 3天
   * 6月11~13
@@ -207,6 +215,7 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 * service绘图
   * netty-socket
   * oss
+  * auth-sms增加aop的权限层
 * service重新设计
   * 合并auth和sms
 * 合并service
