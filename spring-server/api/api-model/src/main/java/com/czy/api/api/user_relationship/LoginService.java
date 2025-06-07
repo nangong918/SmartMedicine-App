@@ -18,6 +18,8 @@ public interface LoginService {
     // 密码注册 [ip检查]
     LoginUserRequest registerUser(String userName, String account, String password);
 
+    long registerUserV2(String phone, String userName, String account, String password, boolean isHaveImage, String lockPath);
+
     // 密码登录 [ip检查]
     boolean checkPassword(String account, String password);
 

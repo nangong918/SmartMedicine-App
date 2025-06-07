@@ -48,4 +48,8 @@ public class UserConstant {
 
     public static final String JWT_FUNCTION_LOGIN = "login";
     public static final String JWT_FUNCTION_REGISTER = "register";
+    // 默认15秒注册限制时间
+    public static final long USER_CHANGE_KEY_EXPIRE_TIME = 15L;
+    // 注册缓存的redisKey
+    public static final String USER_REGISTER_REDIS_KEY = "user_register:";
 }

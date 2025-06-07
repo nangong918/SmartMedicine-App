@@ -1,19 +1,23 @@
 package com.czy.user.service;
 
 
-import com.czy.api.api.user_relationship.LoginService;
+import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.auth.TokenGeneratorService;
+import com.czy.api.api.user_relationship.LoginService;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.api.domain.ao.auth.LoginTokenAo;
-import com.czy.api.domain.dto.http.response.LoginSignResponse;
 import com.czy.api.domain.dto.http.request.LoginUserRequest;
+import com.czy.api.domain.dto.http.response.LoginSignResponse;
 import com.czy.springUtils.util.EncryptUtil;
 import com.czy.user.mapper.es.UserEsMapper;
 import com.czy.user.mapper.mysql.user.LoginUserMapper;
+import com.utils.mvc.redisson.RedissonClusterLock;
+import com.utils.mvc.redisson.RedissonService;
 import exception.AppException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -40,6 +44,7 @@ public class LoginServiceImpl implements LoginService {
     public static final String defaultPassword = "123456";
     private final LoginUserMapper loginUserMapper;
     private final UserEsMapper userEsMapper;
+    private final RedissonService redissonService;
 
     @Override
     public LoginUserRequest resetUserPasswordByAdmin(String account, String password) throws AppException {
@@ -86,6 +91,74 @@ public class LoginServiceImpl implements LoginService {
         // 存储到ES
         userEsMapper.save(userDo);
         return loginUserRequest;
+    }
+
+    @Override
+    public long registerUserV2(String phone, String userName, String account, String password, boolean isHaveImage, String lockPath) {
+        long userId = IdUtil.getSnowflakeNextId();
+        LoginUserDo loginUserDo = new LoginUserDo();
+        loginUserDo.setId(userId);
+        loginUserDo.setPhone(phone);
+        loginUserDo.setUserName(userName);
+        loginUserDo.setAccount(account);
+        loginUserDo.setPassword(StringUtils.hasText(password) ? password : defaultPassword);
+        // 加密存储
+        loginUserDo.setPassword(EncryptUtil.bcryptEncrypt(loginUserDo.getPassword()));
+        loginUserDo.setRegisterTime(System.currentTimeMillis());
+        loginUserDo.setLastOnlineTime(loginUserDo.getRegisterTime());
+        loginUserDo.setPermission(UserConstant.User_Permission);
+
+        // 无文件的情况
+        if (!isHaveImage){
+            registerWithoutImage(loginUserDo);
+        }
+        else {
+            // 将数据存储到Redis中，等待oss上传完成之后再执行存储数据库操作，避免分布式事务
+            // 1.给用户phone上分布式锁
+            // 此时userId还没确定，所以用phone作为唯一key
+
+            RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
+                    phone,
+                    lockPath,
+                    UserConstant.USER_CHANGE_KEY_EXPIRE_TIME
+            );
+            if (!redissonService.tryLock(redissonClusterLock)){
+                throw new AppException("用户正在注册，请稍等......");
+            }
+
+            // 2.缓存到redis
+            try {
+                registerUserFirst(loginUserDo);
+            } catch (Exception e){
+                if (e instanceof AppException){
+                    // 交给全局或异常处理
+                    throw new AppException(e.getMessage());
+                }
+                else {
+                    log.error("用户注册失败", e);
+                }
+            } finally {
+                redissonService.unlock(redissonClusterLock);
+            }
+        }
+
+        return userId;
+    }
+
+    private void registerUserFirst(@NonNull LoginUserDo loginUserDo) throws Exception{
+        // 由于两次http请求可能都不是一个服务处理的，所以数据需要缓存在redis
+        // redis的存储key是：user_register: + phone
+        // key统一格式：user_register:phone
+        String key = UserConstant.USER_REGISTER_REDIS_KEY + loginUserDo.getPhone();
+        boolean result = redissonService.setObjectByJson(key, loginUserDo, UserConstant.USER_CHANGE_KEY_EXPIRE_TIME);
+        if (!result){
+            log.warn("用户注册失败，account: {}", loginUserDo.getAccount());
+            throw new AppException("用户注册失败");
+        }
+    }
+
+    private void registerWithoutImage(@NonNull LoginUserDo loginUserDo){
+        // TODO 直接存储
     }
 
     @Override
