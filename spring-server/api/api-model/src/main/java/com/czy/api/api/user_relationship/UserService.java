@@ -15,6 +15,7 @@ import java.util.List;
 
 public interface UserService {
     Integer checkAccountExist(String userAccount);
+    Integer checkPhoneExist(String phone);
     Long getIdByAccount(String userAccount);
     UserDo getUserById(Long id);
     List<UserDo> getByUserIds(List<Long> ids);

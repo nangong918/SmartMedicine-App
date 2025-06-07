@@ -1,8 +1,6 @@
 package com.czy.user.controller;
 
 
-
-
 import com.czy.api.api.auth.SmsService;
 import com.czy.api.api.user_relationship.LoginService;
 import com.czy.api.api.user_relationship.UserService;
@@ -16,6 +14,7 @@ import com.czy.api.domain.dto.http.request.PhoneLoginRequest;
 import com.czy.api.domain.dto.http.request.RegisterUserRequest;
 import com.czy.api.domain.dto.http.request.ResetUserInfoRequest;
 import com.czy.api.domain.dto.http.request.SendSmsRequest;
+import com.czy.api.domain.dto.http.response.IsRegisterResponse;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -127,6 +126,19 @@ public class LoginController {
             LoginUserRequest newUser = loginService.resetUserPasswordByAdmin(account, null);
             return Mono.just(BaseResponse.getResponseEntitySuccess(newUser));
         }
+    }
+
+    // 检查手机号是否注册 (频繁调用，可能要ip拦截)
+    @GetMapping(UserConstant.Check_Phone_Is_Register + "/{phone}")
+    public Mono<BaseResponse<IsRegisterResponse>> checkPhoneIsRegister(@PathVariable("phone") String phone) {
+        if (!StringUtils.hasText(phone)){
+            String warningMessage = String.format("手机号不能为空，phone: %s", phone);
+            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+        }
+        IsRegisterResponse response = new IsRegisterResponse();
+        response.setRegister(userService.checkPhoneExist(phone) > 0);
+        response.setPhone(phone);
+        return Mono.just(BaseResponse.getResponseEntitySuccess(response));
     }
 
     // 密码注册

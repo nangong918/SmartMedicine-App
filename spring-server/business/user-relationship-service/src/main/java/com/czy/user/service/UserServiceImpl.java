@@ -49,6 +49,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Integer checkPhoneExist(String phone) {
+        return userMapper.checkPhoneExist(phone);
+    }
+
+    @Override
     public Long getIdByAccount(String userAccount) {
         Long result = userMapper.getIdByAccount(userAccount);
         return result == null ? 0 : result;

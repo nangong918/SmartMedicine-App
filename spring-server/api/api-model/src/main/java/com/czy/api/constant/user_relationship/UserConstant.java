@@ -17,6 +17,7 @@ public class UserConstant {
     public static final String Password_Login = "/passwordLoginUser";
     public static final String Send_Sms = "/sendSms";
     public static final String Sms_Login = "/smsLoginUser";
+    public static final String Check_Phone_Is_Register = "/checkPhoneIsRegister";
     public static final String[] loginIpInterceptedURL = new String[]{
             serviceRoute + Login_CONTROLLER + Password_Register,
             serviceRoute + Login_CONTROLLER + Password_Login,
