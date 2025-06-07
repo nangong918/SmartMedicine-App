@@ -1,4 +1,4 @@
-package com.czy.feature.nearOnlineLayer.service;
+package com.czy.feature.service;
 
 import com.czy.api.api.feature.FeatureRuleService;
 import com.czy.api.domain.ao.feature.ScoreAo;

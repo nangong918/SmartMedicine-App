@@ -1,4 +1,4 @@
-package com.czy.feature.nearOnlineLayer.service;
+package com.czy.feature.service;
 
 import com.czy.api.api.feature.DiseasesNeo4jService;
 import com.czy.api.mapper.DiseaseRepository;

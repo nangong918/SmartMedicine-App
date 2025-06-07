@@ -4,6 +4,7 @@ import com.czy.api.domain.ao.post.PostNerResult;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 
 @org.springframework.data.mongodb.core.mapping.Document("post_detail")
 @Data
-public class PostDetailDo {
+public class PostDetailDo implements Serializable {
     // id；postDetails的id与postInfo的id一致
     @Id
     private Long id;

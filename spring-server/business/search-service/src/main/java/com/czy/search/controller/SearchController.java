@@ -273,18 +273,32 @@ public class SearchController {
 
         // 0~1级搜索 到此处说明sentence本身就是title，所以likeTitle传递sentence;
         List<Long> likePostIdList = fuzzySearchService.likeSearch(sentence);
+        if (searchTestConfig.isDebug){
+            log.info("0~1级搜索 likePostIdList:{}", likePostIdList);
+        }
         // 2级搜索 搜索：AcTree匹配实体 + ElasticSearch搜索;
         // 缓存结结果，避免后续搜索调用两次
         List<PostNerResult> nerResults = postNerService.getPostNerResults(sentence);
+        if (searchTestConfig.isDebug){
+            log.info("句子的ner识别结果 nerResults:{}", nerResults);
+        }
         List<Long> tokenizedPostIdList = fuzzySearchService.tokenizedSearch(sentence);
-
+        if (searchTestConfig.isDebug){
+            log.info("2级搜索 tokenizedPostIdList:{}", tokenizedPostIdList);
+        }
 
         // 3级搜索：neo4j规则集 + es查询 + user context vector排序;
         List<Long> neo4jRulePostIdList = fuzzySearchService.neo4jRuleSearch(nerResults);
+        if (searchTestConfig.isDebug){
+            log.info("3级搜索 neo4jRulePostIdList:{}", neo4jRulePostIdList);
+        }
         // 4级搜索：neo4j疾病相似度查询 + user context vector排序;
         List<Long> similarList = fuzzySearchService.similaritySearch(nerResults);
+        if (searchTestConfig.isDebug){
+            log.info("4级搜索 similarList:{}", similarList);
+        }
 
-        // 转换
+        // 转换 TODO 用转换service层
         postSearchResultAo.setLikePostList(postSearchService.getPostInfoUrlAos(likePostIdList));
         postSearchResultAo.setTokenizedPostList(postSearchService.getPostInfoUrlAos(tokenizedPostIdList));
         postSearchResultAo.setSimilarPostList(postSearchService.getPostInfoUrlAos(similarList));

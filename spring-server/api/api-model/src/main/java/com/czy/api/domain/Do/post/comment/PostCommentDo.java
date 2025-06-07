@@ -3,6 +3,8 @@ package com.czy.api.domain.Do.post.comment;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/4/16 21:31
@@ -10,7 +12,7 @@ import org.springframework.data.annotation.Id;
  */
 @org.springframework.data.mongodb.core.mapping.Document("post_comment")
 @Data
-public class PostCommentDo {
+public class PostCommentDo implements Serializable {
     @Id
     // id；not null
     private Long id;
