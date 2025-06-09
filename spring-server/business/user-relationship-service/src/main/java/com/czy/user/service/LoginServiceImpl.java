@@ -116,7 +116,7 @@ public class LoginServiceImpl implements LoginService {
 
         // 无文件的情况
         if (!isHaveImage){
-            registerWithoutImage(loginUserDo);
+            registerStorageToDatabase(loginUserDo);
         }
         else {
             // 将数据存储到Redis中，等待oss上传完成之后再执行存储数据库操作，避免分布式事务
@@ -164,7 +164,8 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Transactional
-    private void registerWithoutImage(@NonNull LoginUserDo loginUserDo){
+    @Override
+    public void registerStorageToDatabase(@NonNull LoginUserDo loginUserDo){
         /*
         直接存储
             1. user_info -> mysql
@@ -185,6 +186,20 @@ public class LoginServiceImpl implements LoginService {
         // user_node -> neo4j
         UserFeatureNeo4jDo userFeatureNeo4jDo = userConverter.toUserFeatureNeo4jDo_(loginUserDo);
         userFeatureRepository.save(userFeatureNeo4jDo);
+    }
+
+    @Transactional
+    @Override
+    public void updateStorageToDatabase(@NonNull LoginUserDo loginUserDo){
+        // user_info -> mysql
+        loginUserMapper.updateLoginUser(loginUserDo);
+
+        // user_name -> elasticsearch
+        UserDo userDo = userConverter.toUserDo_(loginUserDo);
+        userDo.setAvatarFileId(null);
+        userDo.setRegisterTime(System.currentTimeMillis());
+        userDo.setLastOnlineTime(userDo.getRegisterTime());
+        userEsMapper.save(userDo);
     }
 
     @Override

@@ -13,6 +13,7 @@ public class UserConstant {
     public static final String serviceName = "user-relationship-service";
     public static final String serviceRoute = "/" + serviceName;
     public static final String Login_CONTROLLER = "/login";
+    public static final String User_File_CONTROLLER = "/userFile";
     public static final String Password_Register = "/passwordRegisterUser";
     public static final String Password_Login = "/passwordLoginUser";
     public static final String Send_Sms = "/sendSms";
@@ -52,4 +53,7 @@ public class UserConstant {
     public static final long USER_CHANGE_KEY_EXPIRE_TIME = 15L;
     // 注册缓存的redisKey
     public static final String USER_REGISTER_REDIS_KEY = "user_register:";
+
+    // 文件存储桶
+    public static final String USER_FILE_BUCKET = "user_files_";
 }

@@ -173,6 +173,11 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
+        <!--minIO-->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+        </dependency>
 
         <!-- 自动化配置 Spring Data Elasticsearch -->
         <dependency>

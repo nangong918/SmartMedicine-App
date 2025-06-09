@@ -1,9 +1,12 @@
 package com.czy.api.api.user_relationship;
 
 
+import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
 import com.czy.api.domain.dto.http.request.LoginUserRequest;
+import lombok.NonNull;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author 13225
@@ -19,6 +22,12 @@ public interface LoginService {
     LoginUserRequest registerUser(String userName, String account, String password);
 
     long registerUserV2(String phone, String userName, String account, String password, boolean isHaveImage, String lockPath);
+
+    @Transactional
+    void registerStorageToDatabase(@NonNull LoginUserDo loginUserDo);
+
+    @Transactional
+    void updateStorageToDatabase(@NonNull LoginUserDo loginUserDo);
 
     // 密码登录 [ip检查]
     boolean checkPassword(String account, String password);
