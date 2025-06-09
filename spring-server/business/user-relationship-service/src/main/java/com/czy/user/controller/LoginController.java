@@ -8,12 +8,7 @@ import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.request.LoginResetPasswordRequest;
-import com.czy.api.domain.dto.http.request.LoginUserRequest;
-import com.czy.api.domain.dto.http.request.PhoneLoginRequest;
-import com.czy.api.domain.dto.http.request.RegisterUserRequest;
-import com.czy.api.domain.dto.http.request.ResetUserInfoRequest;
-import com.czy.api.domain.dto.http.request.SendSmsRequest;
+import com.czy.api.domain.dto.http.request.*;
 import com.czy.api.domain.dto.http.response.IsRegisterResponse;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
 import com.czy.api.domain.dto.http.response.UserRegisterResponse;
@@ -23,14 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 登录Controller设计
@@ -112,23 +100,23 @@ public class LoginController {
     // Admin账号重置登录密码
 //    @PreAuthorize("hasRole('SUPER_ADMIN')")
     // Admin账号重置登录密码
-    @GetMapping("/resetUserPassword/{account}")
-    public BaseResponse<LoginUserRequest>
-    resetUserPasswordAdmin(@PathVariable("account") String account) {
-        // Get方法手动验证
-        if (!StringUtils.hasText(account)) {
-            String warningMessage = String.format("用户account不能为空，account: %s", account);
-            return BaseResponse.LogBackError(warningMessage);
-        }
-        else if (userService.checkAccountExist(account) <= 0) {
-            String warningMessage = String.format("用户account不存在，account: %s", account);
-            return BaseResponse.LogBackError(warningMessage);
-        }
-        else {
-            LoginUserRequest newUser = loginService.resetUserPasswordByAdmin(account, null);
-            return BaseResponse.getResponseEntitySuccess(newUser);
-        }
-    }
+//    @GetMapping("/resetUserPassword/{account}")
+//    public BaseResponse<LoginUserRequest>
+//    resetUserPasswordAdmin(@PathVariable("account") String account) {
+//        // Get方法手动验证
+//        if (!StringUtils.hasText(account)) {
+//            String warningMessage = String.format("用户account不能为空，account: %s", account);
+//            return BaseResponse.LogBackError(warningMessage);
+//        }
+//        else if (userService.checkAccountExist(account) <= 0) {
+//            String warningMessage = String.format("用户account不存在，account: %s", account);
+//            return BaseResponse.LogBackError(warningMessage);
+//        }
+//        else {
+//            LoginUserRequest newUser = loginService.resetUserPasswordByAdmin(account, null);
+//            return BaseResponse.getResponseEntitySuccess(newUser);
+//        }
+//    }
 
     // 1.检查手机号是否注册 (频繁调用，可能要ip拦截)
     @GetMapping(UserConstant.Check_Phone_Is_Register + "/{phone}")
@@ -178,133 +166,137 @@ public class LoginController {
     }
 
 
-    // 密码注册
-    @Deprecated
-    @PostMapping(UserConstant.Password_Register + "/deprecated")
-    public Mono<BaseResponse<LoginUserRequest>> passwordRegisterUser(@RequestBody @Validated RegisterUserRequest request) {
-        String errorMessage = "";
-        String phone = request.getPhone();
-        String code = request.getVcode();
-        boolean checkSms = smsService.checkSms(phone, code);
-        if (!checkSms){
-            errorMessage = "验证码错误";
-            return Mono.just(BaseResponse.LogBackError(errorMessage, log));
-        }
-        if (userService.checkAccountExist(request.getAccount()) > 0) {
-            errorMessage = "用户账号已存在";
-            return Mono.just(BaseResponse.LogBackError(errorMessage, log));
-        }
-        else {
-            LoginUserRequest newUser = loginService.registerUser(request.getUserName(), request.getAccount(), request.getPassword());
-            return Mono.just(BaseResponse.getResponseEntitySuccess(newUser));
-        }
-    }
+//    // 密码注册
+//    @Deprecated
+//    @PostMapping(UserConstant.Password_Register + "/deprecated")
+//    public BaseResponse<LoginUserRequest> passwordRegisterUser(@RequestBody @Validated RegisterUserRequest request) {
+//        String errorMessage = "";
+//        String phone = request.getPhone();
+//        String code = request.getVcode();
+//        boolean checkSms = smsService.checkSms(phone, code);
+//        if (!checkSms){
+//            errorMessage = "验证码错误";
+//            return BaseResponse.LogBackError(errorMessage);
+//        }
+//        if (userService.checkAccountExist(request.getAccount()) > 0) {
+//            errorMessage = "用户账号已存在";
+//            return BaseResponse.LogBackError(errorMessage);
+//        }
+//        else {
+//            LoginUserRequest newUser = loginService.registerUser(request.getUserName(), request.getAccount(), request.getPassword());
+//            return BaseResponse.getResponseEntitySuccess(newUser));
+//        }
+//    }
 
 
     // 密码登录
     @PostMapping(UserConstant.Password_Login)
-    public Mono<BaseResponse<LoginSignResponse>> passwordLoginUser(@Validated @RequestBody LoginUserRequest request) {
+    public BaseResponse<LoginSignResponse> passwordLoginUser(@Validated @RequestBody LoginUserRequest request) {
         String userAccount = null;
         if (userService.checkAccountExist(request.getAccount()) > 0) {
             userAccount = request.getAccount();
         }
         else {
             String errorMessage = "用户账号不存在";
-            return Mono.just(BaseResponse.LogBackError(errorMessage, log));
+            return BaseResponse.LogBackError(errorMessage);
         }
         boolean result = loginService.checkPassword(userAccount, request.getPassword());
         if (!result) {
             String errorMessage = "用户密码错误";
-            return Mono.just(BaseResponse.LogBackError(errorMessage, log));
+            return BaseResponse.LogBackError(errorMessage);
         }
         LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo(userAccount, request.getUuid(), UserConstant.JWT_FUNCTION_LOGIN);
         LoginSignResponse LoginSignResponse = loginService.loginUser(loginJwtPayloadAo);
-        return Mono.just(BaseResponse.getResponseEntitySuccess(LoginSignResponse));
+        return BaseResponse.getResponseEntitySuccess(LoginSignResponse);
     }
 
     // jwt重置密码
     @PostMapping(UserConstant.Reset_Password_Jwt)
-    public Mono<BaseResponse<LoginUserRequest>> resetUserPasswordJwt(@Validated @RequestBody LoginResetPasswordRequest request) {
+    public BaseResponse<LoginUserRequest> resetUserPasswordJwt(@Validated @RequestBody LoginResetPasswordRequest request) {
         return handleResetPassword(request);
     }
 
     // vcode重置密码
     @PostMapping(UserConstant.Reset_Password_Vcode)
-    public Mono<BaseResponse<LoginUserRequest>> resetUserPasswordVcode(@Validated @RequestBody LoginResetPasswordRequest request) {
+    public BaseResponse<LoginUserRequest> resetUserPasswordVcode(@Validated @RequestBody LoginResetPasswordRequest request) {
         String phone = request.getPhone();
         String code = request.getVcode();
         boolean checkSms = smsService.checkSms(phone, code);
         if (!checkSms) {
             String errorMessage = "验证码错误";
-            return Mono.just(BaseResponse.LogBackError(errorMessage, log));
+            return BaseResponse.LogBackError(errorMessage);
         }
         return handleResetPassword(request);
     }
 
     // 公共方法处理重置密码逻辑
-    private Mono<BaseResponse<LoginUserRequest>> handleResetPassword(LoginResetPasswordRequest request) {
+    private BaseResponse<LoginUserRequest> handleResetPassword(LoginResetPasswordRequest request) {
         LoginUserRequest newUser = loginService.resetUserPasswordByUser(
                 request.getAccount(),
                 request.getPassword(),
                 request.getNewPassword()
         );
         if (newUser != null) {
-            return Mono.just(BaseResponse.getResponseEntitySuccess(newUser));
+            return BaseResponse.getResponseEntitySuccess(newUser);
         }
-        return Mono.just(BaseResponse.LogBackError("重置密码失败", log));
+        return BaseResponse.LogBackError("重置密码失败");
     }
 
     // 重置userInfo
     @PostMapping(UserConstant.Reset_UserInfo)
-    public Mono<BaseResponse<UserDo>> resetUserInfo(@Validated @RequestBody ResetUserInfoRequest request) {
+    public BaseResponse<UserDo> resetUserInfo(@Validated @RequestBody ResetUserInfoRequest request) {
         UserDo newUser = userService.resetUserInfo(
                 request.getAccount(),
                 request.getUserName(),
                 request.getAvatarFileId()
         );
         if (newUser != null) {
-            return Mono.just(BaseResponse.getResponseEntitySuccess(newUser));
+            return BaseResponse.getResponseEntitySuccess(newUser);
         }
-        return Mono.just(BaseResponse.LogBackError("重置用户信息失败", log));
+        return BaseResponse.LogBackError("重置用户信息失败");
     }
+
+    // 修改userName
+
+    // 修改userAvatarUrl
 
 
     // 发送短信
     @PostMapping(UserConstant.Send_Sms)
-    public Mono<BaseResponse<String>> sendSms(@Validated @RequestBody SendSmsRequest request) {
+    public BaseResponse<String> sendSms(@Validated @RequestBody SendSmsRequest request) {
         if (smsService.sendSms(request.getPhone())) {
-            return Mono.just(BaseResponse.getResponseEntitySuccess(String.format("发送短信成功phone：%s", request.getPhone())));
+            return BaseResponse.getResponseEntitySuccess(String.format("发送短信成功phone：%s", request.getPhone()));
         } else {
-            return Mono.just(BaseResponse.LogBackError("发送短信失败", log));
+            return BaseResponse.LogBackError("发送短信失败");
         }
     }
 
 
     // 短信注册/登录 (取消短信注册，因为需要上传头像信息)
     @PostMapping(UserConstant.Sms_Login)
-    public Mono<BaseResponse<LoginSignResponse>> smsRegisterOrLogin(@Validated @RequestBody PhoneLoginRequest request) {
+    public BaseResponse<LoginSignResponse> smsRegisterOrLogin(@Validated @RequestBody PhoneLoginRequest request) {
         // 直接使用 request，无需手动校验
         String phone = request.getPhone();
         String code = request.getCode();
         boolean checkSms = smsService.checkSms(phone, code);
         if (!checkSms){
             String errorMessage = "验证码错误";
-            return Mono.just(BaseResponse.LogBackError(errorMessage, log));
+            return BaseResponse.LogBackError(errorMessage);
         }
         UserDo userDo = userService.getUserByPhone(phone);
         // 未注册：注册
         if (userDo == null || userDo.getId() == null){
             String userName = request.getUserName();
             if (!StringUtils.hasText(userName)){
-                return Mono.just(BaseResponse.LogBackError("用户名不能为空", log));
+                return BaseResponse.LogBackError("用户名不能为空");
             }
             String account = request.getSenderId();
             if (!StringUtils.hasText(account)){
-                return Mono.just(BaseResponse.LogBackError("用户账号不能为空", log));
+                return BaseResponse.LogBackError("用户账号不能为空");
             }
             String password = request.getPassword();
             if (!StringUtils.hasText(password)){
-                return Mono.just(BaseResponse.LogBackError("用户密码不能为空", log));
+                return BaseResponse.LogBackError("用户密码不能为空");
             }
             // 注册
             // 返回结果暂时无用
@@ -320,7 +312,7 @@ public class LoginController {
             );
             LoginSignResponse signResponse = loginService.loginUser(loginJwtPayloadAo);
             if (signResponse != null) {
-                return Mono.just(BaseResponse.getResponseEntitySuccess(signResponse));
+                return BaseResponse.getResponseEntitySuccess(signResponse);
             }
         }
         // 注册了：登录
@@ -332,10 +324,10 @@ public class LoginController {
             );
             LoginSignResponse signResponse = loginService.loginUser(loginJwtPayloadAo);
             if (signResponse != null) {
-                return Mono.just(BaseResponse.getResponseEntitySuccess(signResponse));
+                return BaseResponse.getResponseEntitySuccess(signResponse);
             }
         }
 
-        return Mono.just(BaseResponse.LogBackError("短信注册/登录失败", log));
+        return BaseResponse.LogBackError("短信注册/登录失败");
     }
 }

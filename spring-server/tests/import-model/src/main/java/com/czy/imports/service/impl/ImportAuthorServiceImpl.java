@@ -83,7 +83,7 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
 
     @Override
     public long createUser(String userName, String account, String phone, Long fileId) {
-        return userService.registerUser(
+        return userService.importUser(
                 userName,
                 account,
                 defaultPassword,
