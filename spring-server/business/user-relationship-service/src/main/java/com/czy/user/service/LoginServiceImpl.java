@@ -5,12 +5,15 @@ import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.auth.TokenGeneratorService;
 import com.czy.api.api.user_relationship.LoginService;
 import com.czy.api.constant.user_relationship.UserConstant;
+import com.czy.api.converter.domain.user.UserConverter;
+import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
 import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.api.domain.ao.auth.LoginTokenAo;
 import com.czy.api.domain.dto.http.request.LoginUserRequest;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
+import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.springUtils.util.EncryptUtil;
 import com.czy.user.mapper.es.UserEsMapper;
 import com.czy.user.mapper.mysql.user.LoginUserMapper;
@@ -23,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 
@@ -45,6 +49,8 @@ public class LoginServiceImpl implements LoginService {
     private final LoginUserMapper loginUserMapper;
     private final UserEsMapper userEsMapper;
     private final RedissonService redissonService;
+    private final UserConverter userConverter;
+    private final UserFeatureRepository userFeatureRepository;
 
     @Override
     public LoginUserRequest resetUserPasswordByAdmin(String account, String password) throws AppException {
@@ -157,8 +163,28 @@ public class LoginServiceImpl implements LoginService {
         }
     }
 
+    @Transactional
     private void registerWithoutImage(@NonNull LoginUserDo loginUserDo){
-        // TODO 直接存储
+        /*
+        直接存储
+            1. user_info -> mysql
+            2. user_name -> elasticsearch
+            3. user_node -> neo4j
+         */
+        ;
+        // user_info -> mysql
+        loginUserMapper.insertLoginUser(loginUserDo);
+
+        // user_name -> elasticsearch
+        UserDo userDo = userConverter.toUserDo_(loginUserDo);
+        userDo.setAvatarFileId(null);
+        userDo.setRegisterTime(System.currentTimeMillis());
+        userDo.setLastOnlineTime(userDo.getRegisterTime());
+        userEsMapper.save(userDo);
+
+        // user_node -> neo4j
+        UserFeatureNeo4jDo userFeatureNeo4jDo = userConverter.toUserFeatureNeo4jDo_(loginUserDo);
+        userFeatureRepository.save(userFeatureNeo4jDo);
     }
 
     @Override
