@@ -222,16 +222,27 @@ public class LoginController {
         return Mono.just(BaseResponse.getResponseEntitySuccess(LoginSignResponse));
     }
 
-    // 重置密码 JWT 校验
-    @PostMapping(UserConstant.Reset_Password)
-    public Mono<BaseResponse<LoginUserRequest>> resetUserPassword(@Validated @RequestBody LoginResetPasswordRequest request) {
+    // jwt重置密码
+    @PostMapping(UserConstant.Reset_Password_Jwt)
+    public Mono<BaseResponse<LoginUserRequest>> resetUserPasswordJwt(@Validated @RequestBody LoginResetPasswordRequest request) {
+        return handleResetPassword(request);
+    }
+
+    // vcode重置密码
+    @PostMapping(UserConstant.Reset_Password_Vcode)
+    public Mono<BaseResponse<LoginUserRequest>> resetUserPasswordVcode(@Validated @RequestBody LoginResetPasswordRequest request) {
         String phone = request.getPhone();
         String code = request.getVcode();
         boolean checkSms = smsService.checkSms(phone, code);
-        if (!checkSms){
+        if (!checkSms) {
             String errorMessage = "验证码错误";
             return Mono.just(BaseResponse.LogBackError(errorMessage, log));
         }
+        return handleResetPassword(request);
+    }
+
+    // 公共方法处理重置密码逻辑
+    private Mono<BaseResponse<LoginUserRequest>> handleResetPassword(LoginResetPasswordRequest request) {
         LoginUserRequest newUser = loginService.resetUserPasswordByUser(
                 request.getAccount(),
                 request.getPassword(),

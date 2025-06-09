@@ -19,19 +19,21 @@ public class UserConstant {
     public static final String Send_Sms = "/sendSms";
     public static final String Sms_Login = "/smsLoginUser";
     public static final String Check_Phone_Is_Register = "/checkPhoneIsRegister";
+    public static final String Reset_Password_Vcode = "/vcode/resetPwd";
     public static final String[] loginIpInterceptedURL = new String[]{
             serviceRoute + Login_CONTROLLER + Password_Register,
             serviceRoute + Login_CONTROLLER + Password_Login,
             serviceRoute + Login_CONTROLLER + Send_Sms,
             serviceRoute + Login_CONTROLLER + Sms_Login,
+            serviceRoute + Login_CONTROLLER + Reset_Password_Vcode,
             TestConstant.Test_CONTROLLER + TestConstant.Temp_Test
     };
 
-    public static final String Reset_Password = "/resetUserPassword";
+    public static final String Reset_Password_Jwt = "/jwt/resetPwd";
     public static final String Reset_UserInfo = "/resetUserInfo";
 
     public static final String[] loginJwtInterceptedURL = new String[]{
-            serviceRoute + Login_CONTROLLER + Reset_Password,
+            serviceRoute + Login_CONTROLLER + Reset_Password_Jwt,
             serviceRoute + Login_CONTROLLER + Reset_UserInfo
     };
 
