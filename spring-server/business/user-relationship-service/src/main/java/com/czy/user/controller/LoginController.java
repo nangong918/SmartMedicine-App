@@ -8,7 +8,12 @@ import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.request.*;
+import com.czy.api.domain.dto.http.request.LoginResetPasswordRequest;
+import com.czy.api.domain.dto.http.request.LoginUserRequest;
+import com.czy.api.domain.dto.http.request.PhoneLoginRequest;
+import com.czy.api.domain.dto.http.request.RegisterUserRequest;
+import com.czy.api.domain.dto.http.request.ResetUserInfoRequest;
+import com.czy.api.domain.dto.http.request.SendSmsRequest;
 import com.czy.api.domain.dto.http.response.IsRegisterResponse;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
 import com.czy.api.domain.dto.http.response.UserRegisterResponse;
@@ -18,7 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 登录Controller设计

@@ -2,9 +2,10 @@
 ### LoginController
 用户的注册，登录相关
 
-* 检查phone是否注册
-* 密码注册（+上传头像到oss）
-* 密码登录
+* 检查phone是否注册                       √
+* 检查account是否注册                     √
+* 密码注册（+上传头像到oss）               √
+* 密码登录                               √
 * 重置密码（登录之后检查jwt）
 * 召回密码（登录之前检查phone + vcode）
 * 修改userName       o

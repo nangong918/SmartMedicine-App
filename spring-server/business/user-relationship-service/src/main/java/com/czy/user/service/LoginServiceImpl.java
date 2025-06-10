@@ -13,10 +13,12 @@ import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.api.domain.ao.auth.LoginTokenAo;
 import com.czy.api.domain.dto.http.request.LoginUserRequest;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
+import com.czy.api.domain.vo.user.UserVo;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.springUtils.util.EncryptUtil;
 import com.czy.user.mapper.es.UserEsMapper;
 import com.czy.user.mapper.mysql.user.LoginUserMapper;
+import com.czy.user.service.front.UserFrontService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import exception.AppException;
@@ -51,6 +53,7 @@ public class LoginServiceImpl implements LoginService {
     private final RedissonService redissonService;
     private final UserConverter userConverter;
     private final UserFeatureRepository userFeatureRepository;
+    private final UserFrontService UserFrontService;
 
     @Override
     public LoginUserRequest resetUserPasswordByAdmin(String account, String password) throws AppException {
@@ -223,8 +226,8 @@ public class LoginServiceImpl implements LoginService {
         LoginSignResponse loginSignResponse = new LoginSignResponse();
         // 告诉前端建立WebSocket连接
         loginSignResponse.setComeConnectWebsocket(true);
-        BeanUtils.copyProperties(loginUserDo, loginSignResponse);
-        loginSignResponse.setUserId(loginUserDo.getId().toString());
+        UserVo userVo = UserFrontService.getUserVoById(loginUserDo.getId());
+        loginSignResponse.setUserVo(userVo);
         try {
             String accessToken = tokenGeneratorService.generateAccessToken(loginJwtPayloadAo);
             String refreshToken = tokenGeneratorService.generateRefreshToken(loginJwtPayloadAo);
