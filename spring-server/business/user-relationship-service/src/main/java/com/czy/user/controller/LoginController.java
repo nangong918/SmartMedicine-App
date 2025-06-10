@@ -132,6 +132,20 @@ public class LoginController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
+    // 2.检查Account是否注册 (频繁调用，可能要ip拦截)
+    @GetMapping(UserConstant.Check_Account_Is_Register)
+    public BaseResponse<IsRegisterResponse>
+    checkAccountIsRegister(@RequestParam("account") String account) {
+        if (!StringUtils.hasText(account)){
+            String warningMessage = String.format("账号不能为空，phone: %s", account);
+            return BaseResponse.LogBackError(warningMessage);
+        }
+        IsRegisterResponse response = new IsRegisterResponse();
+        response.setRegister(userService.checkAccountExist(account) > 0);
+        response.setPhone(account);
+        return BaseResponse.getResponseEntitySuccess(response);
+    }
+
     @PostMapping(UserConstant.Password_Register)
     public BaseResponse<UserRegisterResponse>
     userRegister(@RequestBody @Validated RegisterUserRequest request){
