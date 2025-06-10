@@ -1,16 +1,13 @@
 package com.czy.api.domain.dto.http.response;
 
-import com.czy.api.domain.dto.base.BaseResponseData;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * @author 13225
  * @date 2025/4/21 11:32
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class UserRegisterResponse extends BaseResponseData {
+public class UserRegisterResponse {
     // 雪花id
     public Long snowflakeId;
 }

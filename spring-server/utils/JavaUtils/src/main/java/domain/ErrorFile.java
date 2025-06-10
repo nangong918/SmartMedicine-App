@@ -3,12 +3,14 @@ package domain;
 import json.BaseBean;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/4/18 11:51
  */
 @Data
-public class ErrorFile implements BaseBean {
+public class ErrorFile implements BaseBean, Serializable {
     private String fileName;
     private Long fileId = null;
     private String errorMessage;

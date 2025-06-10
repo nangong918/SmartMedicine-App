@@ -91,7 +91,7 @@ public class MinIOServiceImpl implements MinIOService {
         try {
             minIOUtils.createBucket(bucketName);
         } catch (Exception e) {
-            log.error("创建存储桶失败", e);
+            log.error("创建存储桶失败, bucketName: {}", bucketName, e);
             throw new OssException("创建存储桶失败");
         }
         for (MultipartFile file : files) {

@@ -157,6 +157,7 @@ public class LoginServiceImpl implements LoginService {
         // key统一格式：user_register:phone
         String key = UserConstant.USER_REGISTER_REDIS_KEY + loginUserDo.getPhone();
         boolean result = redissonService.setObjectByJson(key, loginUserDo, UserConstant.USER_CHANGE_KEY_EXPIRE_TIME);
+        log.info("已经将用户信息缓存到Redis，redis-key：{}，存储信息：{}", key, loginUserDo.toJsonString());
         if (!result){
             log.warn("用户注册失败，account: {}", loginUserDo.getAccount());
             throw new AppException("用户注册失败");

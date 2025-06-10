@@ -80,7 +80,7 @@ public class UserFileController {
             return BaseResponse.LogBackError("请输入用户id");
         }
 
-        String userImageBucket = UserConstant.USER_FILE_BUCKET + phone;
+        String userImageBucket = UserConstant.USER_FILE_BUCKET + userId;
         String ossKey = UserConstant.USER_REGISTER_REDIS_KEY + phone;
         String lockPath = UserConstant.Login_CONTROLLER + UserConstant.Password_Register;
 
@@ -132,8 +132,12 @@ public class UserFileController {
 
                 boolean result = finishRegister(userOssResponse);
                 if (!result){
-                    log.warn("处理PostOssResponseEvent失败, userPhone: {}", phone);
+                    log.warn("处理UserOssResponseEvent失败, userPhone: {}", phone);
                     return BaseResponse.LogBackError(errorMsg);
+                }
+                else {
+                    // 删除redis缓存
+                    redissonService.deleteObject(ossKey);
                 }
                 return BaseResponse.getResponseEntitySuccess("上传成功");
             }
@@ -159,13 +163,13 @@ public class UserFileController {
         );
         String fileRedisKey = userOssResponse.getFileRedisKey();
         if (!StringUtils.hasText(fileRedisKey)){
-            log.warn("处理PostOssResponseEvent失败, fileRedisKey为空");
+            log.warn("处理UserOssResponseEvent失败, fileRedisKey为空");
             return false;
         }
         try {
             if (userOssResponse.ossResponseType == OssResponseTypeEnum.SUCCESS.getCode()){
                 try {
-                    LoginUserDo loginUserDo = redissonService.getObjectFromSerializable(fileRedisKey, LoginUserDo.class);
+                    LoginUserDo loginUserDo = redissonService.getObjectFromJson(fileRedisKey, LoginUserDo.class);
                     if (loginUserDo == null || loginUserDo.getId() == null){
                         log.warn("处理userOssResponse失败, loginUserDo为空");
                         return false;

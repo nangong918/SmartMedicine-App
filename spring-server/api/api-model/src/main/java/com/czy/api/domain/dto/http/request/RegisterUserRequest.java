@@ -23,6 +23,7 @@ public class RegisterUserRequest extends DeviceInfoRequest {
     private String account;
     @NotEmpty(message = "用户密码不能为空")
     private String password;
+    @NotEmpty(message = "手机号不能为空")
     private String phone;
     private Integer permission = UserConstant.User_Permission;
     @NotEmpty(message = "验证码不能为空")
