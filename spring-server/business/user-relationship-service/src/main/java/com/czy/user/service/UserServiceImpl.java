@@ -5,17 +5,19 @@ import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
 import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
+import com.czy.api.domain.ao.user.UserInfoAo;
+import com.czy.api.domain.vo.user.UserVo;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.user.mapper.es.UserEsMapper;
 import com.czy.user.mapper.mysql.user.LoginUserMapper;
 import com.czy.user.mapper.mysql.user.UserMapper;
+import com.czy.user.service.front.UserFrontService;
 import com.czy.user.service.transactional.UserStorageService;
-import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService {
     private final UserEsMapper userEsMapper;
     private final UserStorageService userStorageService;
     private final UserFeatureRepository userFeatureRepository;
+    private final UserFrontService userFrontService;
 
     @Override
     public Integer checkAccountExist(String userAccount) {
@@ -98,33 +101,19 @@ public class UserServiceImpl implements UserService {
         return userMapper.getUserByPhone(phone);
     }
 
+    @Transactional
     @Override
-    public UserDo resetUserInfo(String account, String newUserName, Long newAvatarFileId) {
-        if (checkAccountExist(account) <= 0){
-            String errorMsg = String.format("用户account不存在，account: %s", account);
-            log.warn(errorMsg);
-            throw new AppException(errorMsg);
-        }
-        UserDo userDo = getUserByAccount(account);
-        if (!isNameValid(newUserName)){
-            String errorMsg = String.format("用户名不合法，userName: %s", newUserName);
-            log.warn(errorMsg);
-            throw new AppException(errorMsg);
-        }
-        if (userDo != null){
-            userDo.setUserName(newUserName);
-            if (!ObjectUtils.isEmpty(newAvatarFileId)){
-                userDo.setAvatarFileId(newAvatarFileId);
-            }
-            try {
-                userStorageService.saveUserToDataBase(userDo);
-            } catch (Exception e) {
-                log.error("同步更新失败", e);
-                throw new AppException("更新失败", e);
-            }
-            return userDo;
-        }
-        throw new AppException("更新失败");
+    public UserVo resetUserInfo(UserInfoAo userInfoAo) {
+        Long userId = userInfoAo.getUserId();
+        // mysql
+        UserDo userDo = getUserById(userInfoAo.getUserId());
+        userDo.setUserName(userInfoAo.getUsername());
+        userMapper.updateUserInfo(userDo);
+        // elasticsearch
+        userEsMapper.save(userDo);
+        // neo4j (不涉及userName)
+        // 返回更新后的UserVo
+        return userFrontService.getUserVoById(userId);
     }
 
     @Override

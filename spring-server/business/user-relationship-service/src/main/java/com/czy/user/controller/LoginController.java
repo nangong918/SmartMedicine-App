@@ -7,6 +7,7 @@ import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
+import com.czy.api.domain.ao.user.UserInfoAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.LoginResetPasswordRequest;
 import com.czy.api.domain.dto.http.request.LoginUserRequest;
@@ -17,6 +18,7 @@ import com.czy.api.domain.dto.http.request.SendSmsRequest;
 import com.czy.api.domain.dto.http.response.IsRegisterResponse;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
 import com.czy.api.domain.dto.http.response.UserRegisterResponse;
+import com.czy.api.domain.vo.user.UserVo;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -287,11 +289,17 @@ public class LoginController {
 
     // 重置userInfo
     @PostMapping(UserConstant.Reset_UserInfo)
-    public BaseResponse<UserDo> resetUserInfo(@Validated @RequestBody ResetUserInfoRequest request) {
-        UserDo newUser = userService.resetUserInfo(
-                request.getAccount(),
-                request.getUserName(),
-                request.getAvatarFileId()
+    public BaseResponse<UserVo> resetUserInfo(@Validated @RequestBody ResetUserInfoRequest request) {
+        UserDo userDo = userService.getUserByAccount(request.getAccount());
+        if (userDo == null || userDo.getId() == null){
+            return BaseResponse.LogBackError("用户不存在");
+        }
+        UserVo newUser = userService.resetUserInfo(
+                UserInfoAo.builder()
+                        .userId(userDo.getId())
+                        .username(request.getNewUserName())
+                        .account(userDo.getAccount())
+                        .build()
         );
         if (newUser != null) {
             return BaseResponse.getResponseEntitySuccess(newUser);
@@ -300,6 +308,7 @@ public class LoginController {
     }
 
     // 修改userName
+
 
     // 修改userAvatarUrl
 
@@ -320,7 +329,7 @@ public class LoginController {
     public BaseResponse<LoginSignResponse> smsRegisterOrLogin(@Validated @RequestBody PhoneLoginRequest request) {
         // 直接使用 request，无需手动校验
         String phone = request.getPhone();
-        String code = request.getCode();
+        String code = request.getVcode();
         boolean checkSms = smsService.checkSms(phone, code);
         if (!checkSms){
             String errorMessage = "验证码错误";

@@ -1,8 +1,10 @@
 package com.czy.api.api.user_relationship;
 
 
-
 import com.czy.api.domain.Do.user.UserDo;
+import com.czy.api.domain.ao.user.UserInfoAo;
+import com.czy.api.domain.vo.user.UserVo;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -65,7 +67,8 @@ public interface UserService {
      */
     UserDo getUserByPhone(String phone);
     // 重新设置账号的属性[重新设置userName，头像等][调用方需要进行入参非空校验]
-    UserDo resetUserInfo(String account, String newUserName, Long newAvatarFileId);
+    @Transactional
+    UserVo resetUserInfo(UserInfoAo userInfoAo);
     // List<userAccount> -> List<userId>
     List<Long> getUserIdListByAccountList(List<String> userAccountList);
     // List<userId> -> List<userAccount>

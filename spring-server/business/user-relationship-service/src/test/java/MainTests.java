@@ -5,8 +5,10 @@ import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
+import com.czy.api.domain.ao.user.UserInfoAo;
 import com.czy.api.domain.dto.http.request.LoginUserRequest;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
+import com.czy.api.domain.vo.user.UserVo;
 import com.czy.user.UserServiceApplication;
 import com.czy.user.mapper.mysql.user.LoginUserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -99,8 +101,12 @@ public class MainTests {
     // resetUserInfo
     @Test
     public void resetUserInfo() throws Exception {
-        UserDo userDo = userService.resetUserInfo("test_user", "鸦羽天下第一！", 1L);
-        System.out.println("loginUserRequest = " + userDo);
+        UserVo userVo = userService.resetUserInfo(
+                UserInfoAo.builder()
+                        .account("test_user")
+                        .username("yayayay")
+                        .build());
+        System.out.println("loginUserRequest = " + userVo);
     }
 
     @Autowired

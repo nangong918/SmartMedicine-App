@@ -8,7 +8,7 @@
 * 密码登录                               √
 * 重置密码（登录之后检查jwt）              √
 * 召回密码（登录之前检查phone + vcode）    √
-* 修改userName       o
+* 修改userName                           √
 * 修改userAvatarUrl  o
 * 发送短信                               √
 * 短信登录                               √
@@ -16,7 +16,7 @@
 ### UserFileController
 用户文件上传
 
-* 上传用户头像
+* 上传用户头像                            √
 * 更新用户头像
 
 ### UserRelationshipController
