@@ -119,9 +119,9 @@ public class LoginController {
 //    }
 
     // 1.检查手机号是否注册 (频繁调用，可能要ip拦截)
-    @GetMapping(UserConstant.Check_Phone_Is_Register + "/{phone}")
+    @GetMapping(UserConstant.Check_Phone_Is_Register)
     public BaseResponse<IsRegisterResponse>
-    checkPhoneIsRegister(@PathVariable("phone") String phone) {
+    checkPhoneIsRegister(@RequestParam("phone") String phone) {
         if (!StringUtils.hasText(phone)){
             String warningMessage = String.format("手机号不能为空，phone: %s", phone);
             return BaseResponse.LogBackError(warningMessage);
