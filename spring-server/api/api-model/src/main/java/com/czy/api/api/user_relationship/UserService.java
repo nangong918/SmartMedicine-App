@@ -92,4 +92,11 @@ public interface UserService {
      * @return           用户列表
      */
     List<UserDo> getUserByIds(List<Long> authorIds);
+
+    /**
+     * 更新用户头像
+     * @param account   账号
+     * @param lockPath  分布式锁映射
+     */
+    long updateAvatar(String account, String lockPath);
 }

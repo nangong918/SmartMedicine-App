@@ -307,11 +307,6 @@ public class LoginController {
         return BaseResponse.LogBackError("重置用户信息失败");
     }
 
-    // 修改userName
-
-
-    // 修改userAvatarUrl
-
 
     // 发送短信
     @PostMapping(UserConstant.Send_Sms)

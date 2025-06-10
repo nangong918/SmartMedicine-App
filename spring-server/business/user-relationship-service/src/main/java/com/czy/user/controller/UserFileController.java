@@ -6,8 +6,10 @@ import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.LoginUserDo;
+import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.UserOssResponse;
+import com.czy.user.mapper.mysql.user.UserMapper;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import com.utils.mvc.service.MinIOService;
@@ -43,6 +45,7 @@ public class UserFileController {
     private final MinIOService minIOService;
     private final RedissonService redissonService;
     private final LoginService loginService;
+    private final UserMapper userMapper;
 
     // 注册用户的上传头像
     @PostMapping("/registerUser/uploadImg")
@@ -55,13 +58,96 @@ public class UserFileController {
     }
 
     // 修改头像
-    @PostMapping("/updateImage")
+    @PostMapping(UserConstant.Update_Image)
     public BaseResponse<String> updateImage(
             @RequestParam("img") MultipartFile img,
-            @RequestParam("phone") String phone,
             @RequestParam("userId") Long userId
     ) {
-        return handleUpload(img, phone, userId, OssTaskTypeEnum.UPDATE.getCode());
+        String errorMsg = String.format("userId：%s 修改头像失败", userId);
+        int operationType = OssTaskTypeEnum.UPDATE.getCode();
+
+        if (img == null){
+            return BaseResponse.LogBackError("请上传图片");
+        }
+        if (userId == null){
+            return BaseResponse.LogBackError("请输入用户id");
+        }
+
+        String userImageBucket = UserConstant.USER_FILE_BUCKET + userId;
+        String ossKey = UserConstant.USER_REGISTER_REDIS_KEY + userId;
+        String lockPath = UserConstant.User_File_CONTROLLER + UserConstant.Update_Image;
+
+        RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
+                String.valueOf(userId),
+                lockPath,
+                UserConstant.USER_CHANGE_KEY_EXPIRE_TIME
+        );
+
+        if (!redissonService.tryLock(redissonClusterLock)){
+            return BaseResponse.LogBackError("正在修改请勿频繁点击");
+        }
+
+        try {
+            // 幂等
+            List<Long> fileIdList = new ArrayList<>();
+            List<MultipartFile> files = new ArrayList<>(1);
+            files.add(img);
+            files.removeIf(file -> {
+                String fileName = file.getOriginalFilename();
+                Long fileSize = file.getSize();
+                FileIsExistResult result = ossService.checkFileNameExistForResult(userId, fileName, userImageBucket, fileSize);
+                if (result.getIsExist()) {
+                    fileIdList.add(result.getFileId());
+                    return true; // 移除已存在的文件
+                }
+                return false; // 保留文件
+            });
+
+            List<MultipartFile> multipartFiles = new ArrayList<>(1);
+            multipartFiles.add(img);
+            FileOptionResult fileOptionResult = minIOService.uploadFiles(
+                    multipartFiles, userId, userImageBucket);
+            ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, userImageBucket);
+            List<Long> successIds = fileOptionResult.getSuccessFiles()
+                    .stream()
+                    .map(SuccessFile::getFileId)
+                    .collect(Collectors.toList());
+
+            fileIdList.addAll(successIds);
+
+            if (!fileIdList.isEmpty()){
+
+                // 删除之前的文件
+                UserDo userDo = userMapper.getUserById(userId);
+                Long oldFileId = userDo.getAvatarFileId();
+                if (oldFileId != null){
+                    ossService.deleteFileByFileId(oldFileId);
+                }
+
+                // 存储新的记录
+                UserOssResponse userOssResponse = new UserOssResponse();
+                userOssResponse.setUserId(userId);
+                userOssResponse.setFileIds(fileIdList);
+                userOssResponse.setClusterLockPath(lockPath);
+                userOssResponse.setFileRedisKey(ossKey);
+                userOssResponse.setOssResponseType(OssResponseTypeEnum.SUCCESS.getCode());
+                userOssResponse.setOssOperationType(operationType);
+
+                boolean result = finishRegister(userOssResponse);
+                if (!result){
+                    log.warn("处理UserOssResponseEvent失败, userId: {}", userId);
+                    return BaseResponse.LogBackError(errorMsg);
+                }
+                return BaseResponse.getResponseEntitySuccess("修改成功");
+            }
+            else {
+                return BaseResponse.LogBackError(errorMsg);
+            }
+        } catch (Exception e){
+            return BaseResponse.LogBackError(errorMsg);
+        } finally {
+            releaseLock(String.valueOf(userId), lockPath);
+        }
     }
 
     private BaseResponse<String> handleUpload(

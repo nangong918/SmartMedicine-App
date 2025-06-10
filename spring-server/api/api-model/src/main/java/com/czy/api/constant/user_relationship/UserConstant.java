@@ -32,13 +32,13 @@ public class UserConstant {
 
     public static final String Reset_Password_Jwt = "/jwt/resetPwd";
     public static final String Reset_UserInfo = "/resetUserInfo";
-    public static final String Reset_UserAvatar = "/resetUserAvatar";
 
     public static final String[] loginJwtInterceptedURL = new String[]{
             serviceRoute + Login_CONTROLLER + Reset_Password_Jwt,
             serviceRoute + Login_CONTROLLER + Reset_UserInfo,
-            serviceRoute + Login_CONTROLLER + Reset_UserAvatar
     };
+
+    public static final String Update_Image = "/updateImage";
 
     public static final String serviceUri = "lb://" + serviceName;
 
