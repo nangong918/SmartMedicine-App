@@ -143,7 +143,7 @@ public class LoginServiceImpl implements LoginService {
                 else {
                     log.error("用户注册失败", e);
                 }
-            } finally {
+                // 失败才解除分布式锁，因为此处是防止用户频繁点击的。不能用finally解除
                 redissonService.unlock(redissonClusterLock);
             }
         }

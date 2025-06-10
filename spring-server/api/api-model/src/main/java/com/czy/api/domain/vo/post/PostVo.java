@@ -1,4 +1,4 @@
-package com.czy.api.domain.vo;
+package com.czy.api.domain.vo.post;
 
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import lombok.Data;

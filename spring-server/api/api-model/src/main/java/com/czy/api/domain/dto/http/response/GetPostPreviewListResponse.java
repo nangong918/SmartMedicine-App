@@ -1,7 +1,7 @@
 package com.czy.api.domain.dto.http.response;
 
 
-import com.czy.api.domain.vo.PostPreviewVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import lombok.Data;
 
 import java.util.List;

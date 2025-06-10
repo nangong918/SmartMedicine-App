@@ -1,6 +1,6 @@
 package com.czy.api.domain.ao.search;
 
-import com.czy.api.domain.vo.PostPreviewVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import lombok.Data;
 
 import java.util.ArrayList;

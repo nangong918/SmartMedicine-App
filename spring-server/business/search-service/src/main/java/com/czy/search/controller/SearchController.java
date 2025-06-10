@@ -26,7 +26,7 @@ import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.api.domain.dto.python.MedicalPredictionResponse;
 import com.czy.api.domain.dto.python.NlpSearchResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
-import com.czy.api.domain.vo.PostPreviewVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.search.component.KafkaSender;
 import com.czy.search.config.SearchTestConfig;
 import com.czy.search.service.FuzzySearchService;

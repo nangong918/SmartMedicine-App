@@ -3,9 +3,9 @@ package com.czy.post.front;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
-import com.czy.api.domain.vo.CommentVo;
-import com.czy.api.domain.vo.PostPreviewVo;
-import com.czy.api.domain.vo.PostVo;
+import com.czy.api.domain.vo.post.CommentVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
+import com.czy.api.domain.vo.post.PostVo;
 
 import java.util.List;
 
