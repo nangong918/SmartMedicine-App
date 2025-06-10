@@ -12,7 +12,7 @@ import lombok.Data;
 @Schema(description = "用户基本信息")
 @Data
 public class LoginUserDo implements BaseBean {
-    // 非自动生辰id
+    // 非自动生成
     private Long id;
     @Schema(description = "用户名称", type = "string", example = "张三")
     private String userName;

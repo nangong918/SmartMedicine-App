@@ -235,13 +235,17 @@ public class LoginController {
         return BaseResponse.getResponseEntitySuccess(LoginSignResponse);
     }
 
-    // jwt重置密码
+    // jwt重置密码 [登录了，知道密码的场景]
     @PostMapping(UserConstant.Reset_Password_Jwt)
     public BaseResponse<LoginUserRequest> resetUserPasswordJwt(@Validated @RequestBody LoginResetPasswordRequest request) {
+        if (!StringUtils.hasText(request.getPassword())){
+            String errorMessage = "旧密码不能为空";
+            return BaseResponse.LogBackError(errorMessage);
+        }
         return handleResetPassword(request);
     }
 
-    // vcode重置密码
+    // vcode重置密码 [未登录，召回密码的场景]
     @PostMapping(UserConstant.Reset_Password_Vcode)
     public BaseResponse<LoginUserRequest> resetUserPasswordVcode(@Validated @RequestBody LoginResetPasswordRequest request) {
         String phone = request.getPhone();
@@ -256,14 +260,28 @@ public class LoginController {
 
     // 公共方法处理重置密码逻辑
     private BaseResponse<LoginUserRequest> handleResetPassword(LoginResetPasswordRequest request) {
-        LoginUserRequest newUser = loginService.resetUserPasswordByUser(
-                request.getAccount(),
-                request.getPassword(),
-                request.getNewPassword()
-        );
-        if (newUser != null) {
-            return BaseResponse.getResponseEntitySuccess(newUser);
+        // jwt重置密码
+        if (StringUtils.hasText(request.getPassword())){
+            LoginUserRequest newUser = loginService.resetUserPasswordByUser(
+                    request.getAccount(),
+                    request.getPassword(),
+                    request.getNewPassword()
+            );
+            if (newUser != null) {
+                return BaseResponse.getResponseEntitySuccess(newUser);
+            }
         }
+        // vcode找回密码
+        else {
+            LoginUserRequest newUser = loginService.findBackUserPassword(
+                    request.getAccount(),
+                    request.getNewPassword()
+            );
+            if (newUser != null) {
+                return BaseResponse.getResponseEntitySuccess(newUser);
+            }
+        }
+
         return BaseResponse.LogBackError("重置密码失败");
     }
 

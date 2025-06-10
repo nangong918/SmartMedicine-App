@@ -26,7 +26,7 @@ public interface LoginUserMapper {
     int deleteLoginUser(Integer id);
 
     // 改
-    int updateLoginUser(@Param("do") LoginUserDo loginUserDo);
+    int updateLoginUser(LoginUserDo loginUserDo);
 
     // 查:id,account,count(account)
     LoginUserDo getLoginUser(Integer id);

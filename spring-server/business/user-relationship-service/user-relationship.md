@@ -6,12 +6,12 @@
 * 检查account是否注册                     √
 * 密码注册（+上传头像到oss）               √
 * 密码登录                               √
-* 重置密码（登录之后检查jwt）
-* 召回密码（登录之前检查phone + vcode）
+* 重置密码（登录之后检查jwt）              √
+* 召回密码（登录之前检查phone + vcode）    √
 * 修改userName       o
 * 修改userAvatarUrl  o
-* 发送短信
-* 短信登录
+* 发送短信                               √
+* 短信登录                               √
 
 ### UserFileController
 用户文件上传

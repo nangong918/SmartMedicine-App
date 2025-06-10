@@ -38,6 +38,9 @@ public interface LoginService {
     // 重置密码 [ip检查,signToken检查]
     LoginUserRequest resetUserPasswordByUser(String account, String password, String newPassword);
 
+    // 找回密码
+    LoginUserRequest findBackUserPassword(String account, String password);
+
     // permission查询
     Integer getPermission(Integer userId);
 }

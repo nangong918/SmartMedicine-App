@@ -43,26 +43,26 @@
     <update id="updateLoginUser">
         UPDATE login_user
         <set>
-            <if test="do.userName != null">
-                user_name = #{do.userName},
+            <if test="userName != null">
+                user_name = #{userName},
             </if>
-            <if test="do.account != null">
-                account = #{do.account},
+            <if test="account != null">
+                account = #{account},
             </if>
-            <if test="do.password != null">
-                password = #{do.password},
+            <if test="password != null">
+                password = #{password},
             </if>
-            <if test="do.phone != null">
-                phone = #{do.phone},
+            <if test="phone != null">
+                phone = #{phone},
             </if>
-            <if test="do.permission != null">
-                permission = #{do.permission},
+            <if test="permission != null">
+                permission = #{permission},
             </if>
-            <if test="do.registerTime != null">
-                register_time = #{do.registerTime},
+            <if test="registerTime != null">
+                register_time = #{registerTime},
             </if>
-            <if test="do.lastOnlineTime != null">
-                last_online_time = #{do.lastOnlineTime},
+            <if test="lastOnlineTime != null">
+                last_online_time = #{lastOnlineTime},
             </if>
         </set>
         WHERE id = #{id}

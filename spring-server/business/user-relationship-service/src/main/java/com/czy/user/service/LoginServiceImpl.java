@@ -57,12 +57,12 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public LoginUserRequest resetUserPasswordByAdmin(String account, String password) throws AppException {
-        LoginUserDo loginUserDO = loginUserMapper.getLoginUserByAccount(account);
-        if (loginUserDO != null){
-            loginUserDO.setPassword(password == null ? defaultPassword : password);
-            loginUserMapper.updateLoginUser(loginUserDO);
+        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount(account);
+        if (loginUserDo != null && loginUserDo.getId() != null){
+            loginUserDo.setPassword(password == null ? defaultPassword : password);
+            loginUserMapper.updateLoginUser(loginUserDo);
             LoginUserRequest newLoginUserRequest = new LoginUserRequest();
-            BeanUtils.copyProperties(loginUserDO, newLoginUserRequest);
+            BeanUtils.copyProperties(loginUserDo, newLoginUserRequest);
             return newLoginUserRequest;
         }
         else {
@@ -249,20 +249,26 @@ public class LoginServiceImpl implements LoginService {
             throw new AppException(errorMsg);
         }
         else {
-            LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount(account);
-            if (loginUserDo != null){
-                String encryptedNewPassword = EncryptUtil.bcryptEncrypt(newPassword);
-                loginUserDo.setPassword(encryptedNewPassword);
-                loginUserMapper.updateLoginUser(loginUserDo);
-                LoginUserRequest newLoginUserRequest = new LoginUserRequest();
-                BeanUtils.copyProperties(loginUserDo, newLoginUserRequest);
-                return newLoginUserRequest;
-            }
-            else {
-                String errorMsg = String.format("用户account不存在，account: %s", account);
-                log.warn(errorMsg);
-                throw new AppException(errorMsg);
-            }
+            return findBackUserPassword(account, newPassword);
+        }
+    }
+
+    @Override
+    public LoginUserRequest findBackUserPassword(String account, String newPassword) {
+        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount(account);
+        if (loginUserDo != null && loginUserDo.getId() != null){
+            String encryptedNewPassword = EncryptUtil.bcryptEncrypt(newPassword);
+            loginUserDo.setPassword(encryptedNewPassword);
+            log.info("重置密码的userId为：{}", loginUserDo.getId());
+            loginUserMapper.updateLoginUser(loginUserDo);
+            LoginUserRequest newLoginUserRequest = new LoginUserRequest();
+            BeanUtils.copyProperties(loginUserDo, newLoginUserRequest);
+            return newLoginUserRequest;
+        }
+        else {
+            String errorMsg = String.format("用户account不存在，account: %s", account);
+            log.warn(errorMsg);
+            throw new AppException(errorMsg);
         }
     }
 
