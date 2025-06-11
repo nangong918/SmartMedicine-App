@@ -273,7 +273,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Integer getPermission(Integer userId) {
+    public Integer getPermission(Long userId) {
         try {
             return (userId != null) ? loginUserMapper.getLoginUser(userId).getPermission() : null;
         } catch (Exception e) {

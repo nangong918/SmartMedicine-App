@@ -46,7 +46,7 @@ public class MainTests {
     @Test
     public void checkAccountExist() throws Exception {
         String account = "1231231412";
-        Integer id = loginUserMapper.getIdByAccount(account);
+        Long id = loginUserMapper.getIdByAccount(account);
         if (id == null) {
             String warningMessage = String.format("用户account不存在，account: %s", account);
             log.warn(warningMessage);
@@ -66,7 +66,7 @@ public class MainTests {
     @Test
     public void sqlTest(){
         // getLoginUser
-        LoginUserDo loginUserDo = loginUserMapper.getLoginUser(12);
+        LoginUserDo loginUserDo = loginUserMapper.getLoginUser(12L);
         System.out.println("loginUserDo = " + loginUserDo);
     }
 

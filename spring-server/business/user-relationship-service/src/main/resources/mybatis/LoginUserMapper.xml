@@ -10,7 +10,8 @@
         permission,
         phone,
         register_time,
-        last_online_time
+        last_online_time,
+        avatarFileId
     </sql>
     <insert id="insertLoginUser" parameterType="com.czy.api.domain.Do.user.LoginUserDo">
         INSERT INTO login_user (
@@ -21,7 +22,7 @@
         phone,
         permission,
         register_time,
-        last_online_time
+        last_online_time,
         <if test="avatarFileId != null">,
             avatar_file_id
         </if>
@@ -34,7 +35,7 @@
         #{phone},
         #{permission},
         #{registerTime},
-        #{lastOnlineTime}
+        #{lastOnlineTime},
         <if test="avatarFileId != null">,
             #{avatarFileId}
         </if>
@@ -64,6 +65,9 @@
             <if test="lastOnlineTime != null">
                 last_online_time = #{lastOnlineTime},
             </if>
+            <if test="avatarFileId != null">
+                avatar_file_id = #{avatarFileId},
+            </if>
         </set>
         WHERE id = #{id}
     </update>
@@ -83,7 +87,7 @@
     </select>
     <select id="getLoginUserByAccount" resultType="com.czy.api.domain.Do.user.LoginUserDo">
         SELECT
-            id, user_name, account, password, phone, permission, register_time, last_online_time
+            <include refid="LoginUserDoColumns"/>
         FROM login_user
         WHERE account = #{account}
     </select>
@@ -106,7 +110,7 @@
             </if>
         </where>
     </select>
-    <select id="getIdByAccount" resultType="java.lang.Integer">
+    <select id="getIdByAccount" resultType="java.lang.Long">
         SELECT id
         FROM login_user
         WHERE account = #{account}

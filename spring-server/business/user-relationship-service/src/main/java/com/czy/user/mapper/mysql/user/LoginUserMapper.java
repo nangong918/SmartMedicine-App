@@ -23,19 +23,19 @@ public interface LoginUserMapper {
     int insertLoginUser(LoginUserDo loginUserDo);
 
     // 删
-    int deleteLoginUser(Integer id);
+    int deleteLoginUser(Long id);
 
     // 改
     int updateLoginUser(LoginUserDo loginUserDo);
 
     // 查:id,account,count(account)
-    LoginUserDo getLoginUser(Integer id);
+    LoginUserDo getLoginUser(Long id);
     LoginUserDo getLoginUserByAccount(String account);
     LoginUserDo getLoginUserByPhone(String phone);
     int getLoginUserCountByAccount(String account);
 
     // 根据account获取Id
-    Integer getIdByAccount(String account);
+    Long getIdByAccount(String account);
 
     // login
     void setLastOnlineTime(

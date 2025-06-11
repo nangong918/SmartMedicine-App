@@ -9,7 +9,10 @@ import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.UserOssResponse;
+import com.czy.api.domain.vo.user.UserVo;
+import com.czy.user.mapper.mysql.user.LoginUserMapper;
 import com.czy.user.mapper.mysql.user.UserMapper;
+import com.czy.user.service.front.UserFrontService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
 import com.utils.mvc.service.MinIOService;
@@ -46,6 +49,8 @@ public class UserFileController {
     private final RedissonService redissonService;
     private final LoginService loginService;
     private final UserMapper userMapper;
+    private final LoginUserMapper loginUserMapper;
+    private final UserFrontService userFrontService;
 
     // 注册用户的上传头像
     @PostMapping("/registerUser/uploadImg")
@@ -59,7 +64,7 @@ public class UserFileController {
 
     // 修改头像
     @PostMapping(UserConstant.Update_Image)
-    public BaseResponse<String> updateImage(
+    public BaseResponse<UserVo> updateImage(
             @RequestParam("img") MultipartFile img,
             @RequestParam("userId") Long userId
     ) {
@@ -133,12 +138,13 @@ public class UserFileController {
                 userOssResponse.setOssResponseType(OssResponseTypeEnum.SUCCESS.getCode());
                 userOssResponse.setOssOperationType(operationType);
 
-                boolean result = finishRegister(userOssResponse);
+                boolean result = finishUpdate(userOssResponse);
                 if (!result){
                     log.warn("处理UserOssResponseEvent失败, userId: {}", userId);
                     return BaseResponse.LogBackError(errorMsg);
                 }
-                return BaseResponse.getResponseEntitySuccess("修改成功");
+                UserVo userVo = userFrontService.getUserVoById(userId);
+                return BaseResponse.getResponseEntitySuccess(userVo);
             }
             else {
                 return BaseResponse.LogBackError(errorMsg);
@@ -240,13 +246,6 @@ public class UserFileController {
         String clusterLockPath = userOssResponse.getClusterLockPath();
         String phone = userOssResponse.getPhone();
 
-        RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
-                // 此处正确，因为上锁也是使用phone
-                // 使用phone 1.是因为为了避免用户在执行的过程中修改了userAccount
-                // 2.是因为oss服务使用的就是phone
-                phone,
-                clusterLockPath
-        );
         String fileRedisKey = userOssResponse.getFileRedisKey();
         if (!StringUtils.hasText(fileRedisKey)){
             log.warn("处理UserOssResponseEvent失败, fileRedisKey为空");
@@ -293,7 +292,22 @@ public class UserFileController {
         return false;
     }
 
-
+    private boolean finishUpdate(UserOssResponse userOssResponse){
+        try {
+            LoginUserDo loginUserDo = loginUserMapper.getLoginUser(userOssResponse.getUserId());
+            loginUserDo.setAvatarFileId(userOssResponse.getFileIds().get(0));
+            if (userOssResponse.ossResponseType == OssResponseTypeEnum.SUCCESS.getCode()){
+                if (OssTaskTypeEnum.UPDATE.getCode() == userOssResponse.getOssOperationType()){
+                    // 存储到userService
+                    loginService.updateStorageToDatabase(loginUserDo);
+                    return true;
+                }
+            }
+        } catch (Exception e){
+            log.error("上传头像失败", e);
+        }
+        return false;
+    }
 
     /**
      * 解除分布式锁

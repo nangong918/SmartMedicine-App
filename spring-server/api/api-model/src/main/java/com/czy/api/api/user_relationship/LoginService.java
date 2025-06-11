@@ -42,5 +42,5 @@ public interface LoginService {
     LoginUserRequest findBackUserPassword(String account, String password);
 
     // permission查询
-    Integer getPermission(Integer userId);
+    Integer getPermission(Long userId);
 }
