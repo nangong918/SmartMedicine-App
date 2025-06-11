@@ -100,15 +100,16 @@ public class PostController {
         long snowflakeId;
         // 查询用户是否存在
         UserDo userDo = userService.getUserByAccount(request.getSenderId());
-        if (userDo == null){
+        if (userDo == null || userDo.getId() == null){
             String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
             return Mono.just(BaseResponse.LogBackError(warningMessage, log));
         }
         PostAo postAo = postConverter.requestToAo(request, userDo.getId());
-        // 审核
+        // 审核 目前只有防止刷帖；没有自然语言审核
         if (!postService.isLegalPost(postAo)) {
             return Mono.just(BaseResponse.LogBackError("帖子内容不合规，请修改"));
         }
+        // 自然语言标签分析 + 标签存储 todo 4大基本分区
         // 不需要上传文件的情况
         if (!request.getIsHaveFiles()){
             snowflakeId = postService.releasePostWithoutFile(postAo);
@@ -130,8 +131,9 @@ public class PostController {
             }
             // 2.缓存到redis
             // 2.1特征提取
-            // 使用知识图谱实体 + AcTree进行特征提取
+            // 使用知识图谱实体 + AcTree进行知识图谱特征提取
             List<PostNerResult> resultList = postNerService.getPostNerResults(postAo.getTitle());
+            // acTree 进行Topic特征提取 todo
             postAo.setNerResults(resultList);
             // 特征存储在mongodb；mysql不适合存储非结构化数据
             // redis + 生成雪花id
@@ -145,6 +147,7 @@ public class PostController {
                     // 交给全局或异常处理
                     throw new AppException(e.getMessage());
                 }
+                log.error("发布文章异常", e);
                 return Mono.just(BaseResponse.LogBackError(e.getMessage(), log));
             }
             // key统一格式：post_publish_key:snowflakeId（注意是snowflakeId不是userAccount或者userName）
