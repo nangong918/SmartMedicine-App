@@ -7,6 +7,7 @@ import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
+import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.UserOssResponse;
 import com.czy.api.domain.vo.user.UserVo;
@@ -22,6 +23,7 @@ import domain.SuccessFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,7 +81,6 @@ public class UserFileController {
         }
 
         String userImageBucket = UserConstant.USER_FILE_BUCKET + userId;
-        String ossKey = UserConstant.USER_REGISTER_REDIS_KEY + userId;
         String lockPath = UserConstant.User_File_CONTROLLER + UserConstant.Update_Image;
 
         RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
@@ -92,68 +93,96 @@ public class UserFileController {
             return BaseResponse.LogBackError("正在修改请勿频繁点击");
         }
 
+        /*
+          幂等性：
+          1.判断：userId + fileName + bucketName + fileSize共同判断
+          2.输入格式：List<FileIsExistAo>
+          3.返回格式：List<FileIsExistResult>
+          4.上传格式：List<MultipartFile>, List<FileIsExistResult> （不适用Map，但是要求两者要一一对应）
+          5.上传结果格式：FileOptionResult
+         */
         try {
-            // 幂等
-            List<Long> fileIdList = new ArrayList<>();
             List<MultipartFile> files = new ArrayList<>(1);
+            List<FileIsExistAo> fileIsExistAos = new ArrayList<>(1);
             files.add(img);
-            files.removeIf(file -> {
+            for (MultipartFile file : files){
                 String fileName = file.getOriginalFilename();
                 Long fileSize = file.getSize();
-                FileIsExistResult result = ossService.checkFileNameExistForResult(userId, fileName, userImageBucket, fileSize);
-                if (result.getIsExist()) {
-                    fileIdList.add(result.getFileId());
-                    return true; // 移除已存在的文件
-                }
-                return false; // 保留文件
-            });
 
-            List<MultipartFile> multipartFiles = new ArrayList<>(1);
-            multipartFiles.add(img);
-            FileOptionResult fileOptionResult = minIOService.uploadFiles(
-                    multipartFiles, userId, userImageBucket);
+                FileIsExistAo fileIsExistAo = new FileIsExistAo();
+                fileIsExistAo.setFileName(fileName);
+                fileIsExistAo.setFileSize(fileSize);
+                fileIsExistAo.setUserId(userId);
+                fileIsExistAo.setBucketName(userImageBucket);
+
+                fileIsExistAos.add(fileIsExistAo);
+            }
+            // 幂等性结果
+            List<FileIsExistResult> results = ossService.checkFilesExistForResult(fileIsExistAos);
+
+            // 上传到minIO
+            FileOptionResult fileOptionResult = minIOService.uploadFilesWithIdempotent(
+                    files,
+                    results,
+                    userImageBucket,
+                    userId
+            );
+
+            // 上传记录数据到mysql
             ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, userImageBucket);
+
+            // 获取成功ID
             List<Long> successIds = fileOptionResult.getSuccessFiles()
                     .stream()
                     .map(SuccessFile::getFileId)
                     .collect(Collectors.toList());
 
-            fileIdList.addAll(successIds);
+            // 进行mysql需改userVo
+            if (!CollectionUtils.isEmpty(successIds)){
+                Long newFileId = successIds.get(0);
 
-            if (!fileIdList.isEmpty()){
-
-                // 删除之前的文件
+                // 查找原先的记录
                 UserDo userDo = userMapper.getUserById(userId);
                 Long oldFileId = userDo.getAvatarFileId();
-                if (oldFileId != null){
-                    ossService.deleteFileByFileId(oldFileId);
-                }
 
-                // 存储新的记录
-                UserOssResponse userOssResponse = new UserOssResponse();
-                userOssResponse.setUserId(userId);
-                userOssResponse.setFileIds(fileIdList);
-                userOssResponse.setClusterLockPath(lockPath);
-                userOssResponse.setFileRedisKey(ossKey);
-                userOssResponse.setOssResponseType(OssResponseTypeEnum.SUCCESS.getCode());
-                userOssResponse.setOssOperationType(operationType);
-
-                boolean result = finishUpdate(userOssResponse);
-                if (!result){
-                    log.warn("处理UserOssResponseEvent失败, userId: {}", userId);
-                    return BaseResponse.LogBackError(errorMsg);
+                // 重复上传检查
+                if (newFileId.equals(oldFileId)){
+                    log.info("用户{}上传的图片和之前上传的图片相同", userId);
+                    UserVo userVo = userFrontService.getUserVoById(userId);
+                    return BaseResponse.getResponseEntitySuccess(userVo);
                 }
-                UserVo userVo = userFrontService.getUserVoById(userId);
-                return BaseResponse.getResponseEntitySuccess(userVo);
-            }
-            else {
-                return BaseResponse.LogBackError(errorMsg);
+                else {
+                    // 先删除原来不需要的文件
+                    if (oldFileId != null){
+                        ossService.deleteFileByFileId(oldFileId);
+                        log.info("用户:{}删除了之前上传的图片:{}", userId, oldFileId);
+                    }
+
+                    // 存储新的记录
+                    UserOssResponse userOssResponse = new UserOssResponse();
+                    userOssResponse.setUserId(userId);
+                    userOssResponse.setFileIds(successIds);
+                    userOssResponse.setClusterLockPath(lockPath);
+                    userOssResponse.setOssResponseType(OssResponseTypeEnum.SUCCESS.getCode());
+                    userOssResponse.setOssOperationType(operationType);
+
+                    boolean result = finishUpdate(userOssResponse);
+                    if (!result){
+                        errorMsg = String.format("上传头像成功，但是更新user: %s 头像信息失败", userId);
+                        log.warn(errorMsg);
+                        return BaseResponse.LogBackError(errorMsg);
+                    }
+                    UserVo userVo = userFrontService.getUserVoById(userId);
+                    return BaseResponse.getResponseEntitySuccess(userVo);
+                }
             }
         } catch (Exception e){
+            log.error(errorMsg, e);
             return BaseResponse.LogBackError(errorMsg);
         } finally {
             releaseLock(String.valueOf(userId), lockPath);
         }
+        return BaseResponse.LogBackError(errorMsg);
     }
 
     private BaseResponse<String> handleUpload(

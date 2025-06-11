@@ -11,7 +11,7 @@
         phone,
         register_time,
         last_online_time,
-        avatarFileId
+        avatar_file_id
     </sql>
     <insert id="insertLoginUser" parameterType="com.czy.api.domain.Do.user.LoginUserDo">
         INSERT INTO login_user (

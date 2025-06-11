@@ -129,7 +129,7 @@
         WHERE user_id = #{userId}
         AND bucket_name = #{bucketName}
     </select>
-    <select id="getByFileStorageNameAndBucketName" resultType="com.czy.api.domain.Do.oss.OssFileDo">
+    <select id="getByFileStorageNameBucketNameFileSize" resultType="com.czy.api.domain.Do.oss.OssFileDo">
         SELECT
         <include refid="doColumns"/>
         FROM oss_file
@@ -137,6 +137,20 @@
             user_id = #{userId}
           AND file_name = #{fileName}
           AND bucket_name = #{bucketName}
+          AND file_size = #{fileSize}
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+    <select id="getByFileStorageNameAndBucketName" resultType="com.czy.api.domain.Do.oss.OssFileDo">
+        SELECT
+        <include refid="doColumns"/>
+        FROM oss_file
+        WHERE
+        user_id = #{userId}
+        AND file_name = #{fileName}
+        AND bucket_name = #{bucketName}
+        ORDER BY id DESC
+        LIMIT 1
     </select>
     <select id="checkFileExist" resultType="java.lang.Boolean">
         SELECT

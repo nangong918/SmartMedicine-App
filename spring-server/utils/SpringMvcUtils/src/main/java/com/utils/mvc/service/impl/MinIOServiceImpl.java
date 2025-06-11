@@ -5,6 +5,7 @@ import com.czy.api.domain.ao.oss.FileAo;
 import com.utils.mvc.service.MinIOService;
 import com.utils.mvc.utils.MinIOUtils;
 import domain.ErrorFile;
+import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import exception.OssException;
@@ -120,6 +121,80 @@ public class MinIOServiceImpl implements MinIOService {
 
         fileOptionResult.setErrorFiles(errorFiles);
         fileOptionResult.setSuccessFiles(successFiles);
+        return fileOptionResult;
+    }
+
+    @Override
+    public FileOptionResult uploadFilesWithIdempotent
+            (List<MultipartFile> files, List<FileIsExistResult> fileIsExistResults, String bucketName, Long userId){
+        // 内部包含检查是否已经存在的逻辑
+        FileOptionResult fileOptionResult = new FileOptionResult();
+        List<SuccessFile> successFiles = new ArrayList<>();
+        List<ErrorFile> errorFiles = new ArrayList<>();
+        // 入参检查
+        if (files.isEmpty()){
+            return fileOptionResult;
+        }
+        if (files.size() != fileIsExistResults.size()){
+            log.warn("文件数量与文件是否存在结果数量不一致，请检查入参");
+            return fileOptionResult;
+        }
+        // 检查、创建存储桶
+        try {
+            minIOUtils.createBucket(bucketName);
+        } catch (Exception e) {
+            log.error("创建存储桶失败, bucketName: {}", bucketName, e);
+            throw new OssException("创建存储桶失败");
+        }
+        for (int i = 0; i < files.size(); i++){
+            // 对文件本身检查
+            MultipartFile multipartFile = files.get(i);
+            if (multipartFile == null){
+                errorFiles.add(new ErrorFile("", "[文件不能为空]"));
+                continue;
+            }
+            String fileName = multipartFile.getOriginalFilename();
+            if (fileName == null) {
+                errorFiles.add(new ErrorFile("", "[文件名不能为空]"));
+                continue;
+            }
+
+            // 幂等性检查
+            FileIsExistResult fileIsExistResult = fileIsExistResults.get(i);
+            if (fileIsExistResult.getIsExist()){
+                SuccessFile successFile = new SuccessFile();
+                successFile.setFileId(fileIsExistResult.getFileId());
+                String fileStorageName = getFileStorageName(userId, fileName);
+                successFile.setFileName(fileStorageName);
+                successFile.setFileSize(multipartFile.getSize());
+                // 存在就添加
+                successFiles.add(successFile);
+                log.info("文件已存在，文件名：{}", fileStorageName);
+                continue;
+            }
+
+            // 非幂等上传
+            try {
+                String fileStorageName = getFileStorageName(userId, fileName);
+                ObjectWriteResponse response = minIOUtils.uploadFile(
+                        bucketName, multipartFile, fileStorageName, multipartFile.getContentType());
+                if (response != null){
+                    long fileId = IdUtil.getSnowflakeNextId();
+                    successFiles.add(new SuccessFile(fileName, fileStorageName, multipartFile.getSize(), fileId));
+                }
+                else {
+                    errorFiles.add(new ErrorFile(fileName, "minIOUtils.uploadFile上传无结果"));
+                }
+            } catch (Exception e) {
+                log.error("上传文件失败", e);
+                errorFiles.add(new ErrorFile(fileName, "[上传失败]"));
+            }
+        }
+
+        // 添加
+        fileOptionResult.setErrorFiles(errorFiles);
+        fileOptionResult.setSuccessFiles(successFiles);
+
         return fileOptionResult;
     }
 

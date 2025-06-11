@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 public class FileIsExistResult implements BaseBean, Serializable {
     // 是否存在？
-    public Boolean isExist;
+    public Boolean isExist = false;
     // 如果存再找到id
-    public Long fileId;
+    public Long fileId = null;
 }

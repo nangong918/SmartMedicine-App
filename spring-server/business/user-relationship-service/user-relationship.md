@@ -17,7 +17,7 @@
 用户文件上传
 
 * 上传用户头像                            √
-* 更新用户头像
+* 更新用户头像                            √
 
 ### UserRelationshipController
 用户关系
