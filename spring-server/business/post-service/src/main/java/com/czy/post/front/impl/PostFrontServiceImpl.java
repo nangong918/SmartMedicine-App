@@ -10,6 +10,7 @@ import com.czy.api.domain.vo.post.CommentVo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 import com.czy.post.front.PostFrontService;
+import com.czy.post.service.PostService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ public class PostFrontServiceImpl implements PostFrontService {
     private OssService ossService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
+    private final PostService postService;
 
     @Override
     public List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList){
@@ -169,6 +171,15 @@ public class PostFrontServiceImpl implements PostFrontService {
 //        postVo.isDislike = postAo.getDislikeCount() > 0;
 
         return postVo;
+    }
+
+    @Override
+    public PostVo getPostVo(Long postId) {
+        PostAo postAo = postService.findPostById(postId);
+        if (postAo != null && postAo.getId() != null){
+            return postAoToPostVo(postAo);
+        }
+        return null;
     }
 
     @Override

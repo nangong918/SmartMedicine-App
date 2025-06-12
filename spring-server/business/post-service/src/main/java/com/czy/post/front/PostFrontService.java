@@ -25,6 +25,8 @@ public interface PostFrontService {
     // PostAo -> PostVo
     PostVo postAoToPostVo(PostAo postAo);
 
+    PostVo getPostVo(Long postId);
+
     // List<PostCommentDo> -> List<CommentVo>
     List<CommentVo> getCommentVosByPostCommentDos(List<PostCommentDo> postCommentDos);
 }

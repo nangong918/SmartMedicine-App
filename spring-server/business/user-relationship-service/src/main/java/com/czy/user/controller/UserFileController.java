@@ -56,7 +56,7 @@ public class UserFileController {
 
     // 注册用户的上传头像
     @PostMapping("/registerUser/uploadImg")
-    public BaseResponse<String> registerUserUploadImg(
+    public BaseResponse<UserVo> registerUserUploadImg(
             @RequestParam("img") MultipartFile img,
             @RequestParam("phone") String phone,
             @RequestParam("userId") Long userId
@@ -117,14 +117,16 @@ public class UserFileController {
                     // 删除redis缓存
                     redissonService.deleteObject(ossKey);
                 }
-                return BaseResponse.getResponseEntitySuccess("上传成功");
+                UserVo userVo = userFrontService.getUserVoById(userId);
+                return BaseResponse.getResponseEntitySuccess(userVo);
             }
             else {
                 return BaseResponse.LogBackError(errorMsg);
             }
         } catch (Exception e){
-            releaseLock(phone, lockPath);
             return BaseResponse.LogBackError(errorMsg);
+        } finally {
+            releaseLock(phone, lockPath);
         }
     }
 

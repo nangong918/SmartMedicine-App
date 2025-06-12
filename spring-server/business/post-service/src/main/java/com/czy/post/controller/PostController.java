@@ -79,7 +79,7 @@ public class PostController {
     private final PostSearchService postSearchService;
     private final PostFrontService postFrontService;
 
-    // 发布post
+    // 发布post todo 整合为一个service，不在controller做复杂逻辑
     /**
      * 发布post分为2个http，第一个http需要对post的文本信息进行基本的检查
      * 第一步缓存 + 获取雪花id，此处是第一步
