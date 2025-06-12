@@ -83,31 +83,29 @@ public class PostServiceImpl implements PostService {
         long publishId = IdUtil.getSnowflakeNextId();
         // redis的存储key是：post_publish_key: + 发布id
         // key统一格式：post_publish_key:snowflakeId（注意是snowflakeId不是userAccount或者userName）
-        String key = PostConstant.POST_PUBLISH_KEY + publishId;
-        boolean result = redissonService.setObjectByJson(key, postAo, PostConstant.POST_CHANGE_KEY_EXPIRE_TIME);
+        String ossKey = PostConstant.POST_PUBLISH_KEY + publishId;
+        postAo.setId(publishId);
+        boolean result = redissonService.setObjectByJson(ossKey, postAo, PostConstant.POST_CHANGE_KEY_EXPIRE_TIME);
         if (!result){
             log.warn("Post上传到Redis失败，authorId：{}", postAo.getAuthorId());
             throw new AppException("post上传到服务端失败");
+        }
+        else {
+            log.info("Post上传到Redis成功，authorId：{}, ossKey: {}", postAo.getAuthorId(), ossKey);
         }
         return publishId;
     }
 
     @Override
     public void releasePostAfterOss(@NonNull PostAo postAo) {
-        // 异步存储
-        globalTaskExecutor.execute(() -> {
-            // es + mongo 同步事务存储
-            postStorageService.storePostContentToDatabase(postAo);
-            // neo4j
-            postStorageService.storePostFeatureToNeo4j(postAo, postAo.getNerResults());
-        });
-        // 异步存储
-        globalTaskExecutor.execute(() -> {
-            // mysql
-            postStorageService.storePostInfoToDatabase(postAo);
-            // files
-            postStorageService.storePostFilesToDatabase(postAo);
-        });
+        // es + mongo 同步事务存储
+        postStorageService.storePostContentToDatabase(postAo);
+        // neo4j
+        postStorageService.storePostFeatureToNeo4j(postAo, postAo.getNerResults());
+        // mysql
+        postStorageService.storePostInfoToDatabase(postAo);
+        // files
+        postStorageService.storePostFilesToDatabase(postAo);
     }
 
     @Override
@@ -170,15 +168,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void updatePostAfterOss(@NonNull PostAo postAo) {
-        globalTaskExecutor.execute(() -> {
-            // es + mongo 同步事务存储
-            postStorageService.updatePostContentToDatabase(postAo);
-        });
-        globalTaskExecutor.execute(() -> {
-            // mysql
-            postStorageService.updatePostInfoToDatabase(postAo);
-            postStorageService.updatePostFilesToDatabase(postAo);
-        });
+        // es + mongo 同步事务存储
+        postStorageService.updatePostContentToDatabase(postAo);
+        // mysql
+        postStorageService.updatePostInfoToDatabase(postAo);
+        postStorageService.updatePostFilesToDatabase(postAo);
     }
 
     @Override

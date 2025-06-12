@@ -2,6 +2,7 @@ package com.czy.post.controller;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.constant.oss.FileConstant;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.post.PostConstant;
@@ -11,7 +12,6 @@ import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.PostOssResponse;
-import com.czy.api.constant.oss.FileConstant;
 import com.czy.api.domain.vo.post.PostVo;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostService;
@@ -60,13 +60,13 @@ public class PostFileController {
 
 
     /**
-     * 上传帖子files
+     * 上传帖子files，直接http返回，不用netty
      * @param files         需要上传的文件
      * @param postId        第一次http获取的雪花id，此雪花id为postId也是publishId
      * @param userId        用户Id
      * @return              上传结果
      */
-    @PostMapping("/uploadPost")
+    @PostMapping("/uploadPost/immediately")
     public BaseResponse<PostVo> uploadPostFiles(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("postId") Long postId,
@@ -98,9 +98,7 @@ public class PostFileController {
             return BaseResponse.LogBackError(String.format("请检查[postId:%s]的内容是否正确盛传", postId));
         }
 
-        List<Long> fileIdList = new ArrayList<>();
-
-                /*
+        /*
           幂等性：
           1.判断：userId + fileName + bucketName + fileSize共同判断
           2.输入格式：List<FileIsExistAo>
@@ -150,7 +148,7 @@ public class PostFileController {
                 postOssResponse.setUserAccount(userDo.getAccount());
                 postOssResponse.setServiceId(PostConstant.serviceName);
                 postOssResponse.setPublishId(postId);
-                postOssResponse.setFileIds(fileIdList);
+                postOssResponse.setFileIds(successIds);
                 postOssResponse.setFileRedisKey(ossKey);
                 postOssResponse.setClusterLockPath(lockPath);
                 postOssResponse.setOssResponseType(OssResponseTypeEnum.SUCCESS.getCode());
@@ -158,7 +156,7 @@ public class PostFileController {
 
                 boolean result = handleUpload(postOssResponse);
                 if (!result){
-                    return BaseResponse.LogBackError("上传文件失败");
+                    return BaseResponse.LogBackError("上传文件到数据库失败");
                 }
                 PostVo postVo = postFrontService.getPostVo(postId);
                 return BaseResponse.getResponseEntitySuccess(postVo);
@@ -175,12 +173,15 @@ public class PostFileController {
     private boolean handleUpload(PostOssResponse postOssResponse){
         String fileRedisKey = postOssResponse.getFileRedisKey();
         try {
-            PostAo postAo = redissonService.getObjectFromSerializable(fileRedisKey, PostAo.class);
+            PostAo postAo = redissonService.getObjectFromJson(fileRedisKey, PostAo.class);
             if (postAo == null){
                 log.error("获取redis失败，postAo == null，fileRedisKey: {}", fileRedisKey);
                 return false;
             }
-            // 关联文件ids和postId
+            else {
+                log.info("开始处理上传文件，fileRedisKey: {}, postAo: {}", fileRedisKey, postAo.toJsonString());
+            }
+            // 关联FileIds和postId
             postAo.setFileIds(postOssResponse.getFileIds());
             if (OssTaskTypeEnum.ADD.getCode() == postOssResponse.ossOperationType){
                 // 发布成功之后，将post的消息存储到数据库中
@@ -196,6 +197,23 @@ public class PostFileController {
         }
         return true;
     }
+
+    /**
+     * 上传帖子files,netty返回
+     * @param files         需要上传的文件
+     * @param postId        第一次http获取的雪花id，此雪花id为postId也是publishId
+     * @param userId        用户Id
+     * @return              提示
+     */
+    @PostMapping("/uploadPost/netty")
+    public BaseResponse<String> uploadPostFilesNetty(
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("postId") Long postId,
+            @RequestParam("userId") Long userId){
+        // TODO 待完善
+        return BaseResponse.LogBackError("开发中");
+    }
+
 
     //    // 关联postId 和 fileIdList
     //    void recordPostIdAndFileIdList(Long postId, List<Long> fileIdList);

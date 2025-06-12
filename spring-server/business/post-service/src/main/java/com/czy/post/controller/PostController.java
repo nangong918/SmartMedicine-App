@@ -125,19 +125,19 @@ public class PostController {
                     PostConstant.Post_CONTROLLER + PostConstant.POST_PUBLISH_FIRST,
                     PostConstant.POST_CHANGE_KEY_EXPIRE_TIME
             );
-            if (!redissonService.tryLock(redissonClusterLock)){
-                String warningMessage = String.format("用户正在发布帖子，请稍后再试，account: %s", request.getSenderId());
-                return Mono.just(BaseResponse.LogBackError(warningMessage, log));
-            }
-            // 2.缓存到redis
-            // 2.1特征提取
-            // 使用知识图谱实体 + AcTree进行知识图谱特征提取
-            List<PostNerResult> resultList = postNerService.getPostNerResults(postAo.getTitle());
-            // acTree 进行Topic特征提取 todo
-            postAo.setNerResults(resultList);
-            // 特征存储在mongodb；mysql不适合存储非结构化数据
-            // redis + 生成雪花id
+//            if (!redissonService.tryLock(redissonClusterLock)){
+//                String warningMessage = String.format("用户正在发布帖子，请稍后再试，account: %s", request.getSenderId());
+//                return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+//            }
             try {
+                // 2.缓存到redis
+                // 2.1特征提取
+                // 使用知识图谱实体 + AcTree进行知识图谱特征提取
+                List<PostNerResult> resultList = postNerService.getPostNerResults(postAo.getTitle());
+                // acTree 进行Topic特征提取 todo
+                postAo.setNerResults(resultList);
+                // 特征存储在mongodb；mysql不适合存储非结构化数据
+                // redis + 生成雪花id
                 // 2.2存储到redis并生成雪花id返回
                 snowflakeId = postService.releasePostFirst(postAo);
             } catch (Exception e) {

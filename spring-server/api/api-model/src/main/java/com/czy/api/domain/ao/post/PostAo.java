@@ -1,5 +1,6 @@
 package com.czy.api.domain.ao.post;
 
+import json.BaseBean;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,7 +12,7 @@ import java.util.List;
  * @date 2025/4/18 17:24
  */
 @Data
-public class PostAo implements Serializable {
+public class PostAo implements Serializable, BaseBean {
     private Long id;
     // authorId；not null（索引）
     private Long authorId;
