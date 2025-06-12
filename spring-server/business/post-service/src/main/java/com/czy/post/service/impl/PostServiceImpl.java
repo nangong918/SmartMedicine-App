@@ -3,12 +3,8 @@ package com.czy.post.service.impl;
 import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.UserService;
-import com.czy.api.constant.netty.NettyConstants;
-import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.constant.post.PostConstant;
-import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
-import com.czy.api.domain.entity.event.Message;
 import com.czy.post.component.RabbitMqSender;
 import com.czy.post.service.PostFileService;
 import com.czy.post.service.PostService;
@@ -22,11 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author 13225
@@ -122,37 +115,16 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePost(Long postId, Long userId) {
         PostAo postAo = postStorageService.findPostAoById(postId);
-        String toFront = "删除成功";
+        if (postAo == null || postAo.getId() == null){
+            throw new AppException(String.format("帖子:%s不存在", postId));
+        }
+        // 删除涉及的文件
         FileOptionResult fileOptionResult = postFileService.deleteFileByPostAo(postAo);
         if (!fileOptionResult.getErrorFiles().isEmpty()){
-            toFront = String.format("删除成功，但是存在失败的文件：%s", fileOptionResult.getErrorFiles());
             log.warn("用户:{}删除帖子:{}失败，存在失败的文件：{}", userId, postId, fileOptionResult.getErrorFiles());
         }
         // 懒得写分布式删除了，原理跟发布一样。
         postStorageService.deletePostContentFromDatabase(postId);
-        // 不在此处删除mysql，因为oss还需要查询具体数据，删除oss之后再删除mysql
-//        postStorageService.deletePostInfoFromDatabase(postId);
-        // 消息队列通知，异步删除oss
-//        OssTask ossTask = new OssTask();
-//        ossTask.setOssFileId(postId);
-//        ossTask.setUserId(userId);
-//        ossTask.setOssTaskType(OssTaskTypeEnum.DELETE.getCode());
-//        // 消息队列异步告诉oss删除
-//        rabbitMqSender.pushToOss(ossTask);
-        // 消息队列告诉前端删除结果
-        UserDo userDo = userService.getUserById(userId);
-        if (userDo != null && StringUtils.hasText(userDo.getAccount())){
-            Message message = new Message();
-            message.setSenderId(NettyConstants.SERVER_ID);
-            message.setReceiverId(userDo.getAccount());
-            message.setTimestamp(System.currentTimeMillis());
-            message.setType(ResponseMessageType.Oss.DELETE_FILE);
-            Map<String, String> data = new HashMap<>();
-            data.put("message", toFront);
-            message.setData(data);
-
-            rabbitMqSender.push(message);
-        }
     }
 
     @Override

@@ -165,7 +165,7 @@ public class PostController {
             return BaseResponse.LogBackError("参数错误");
         }
         postService.deletePost(postId, userId);
-        return BaseResponse.getResponseEntitySuccess("删除申请已提交，请等待");
+        return BaseResponse.getResponseEntitySuccess("删除成功");
     }
 
     // 修改post
