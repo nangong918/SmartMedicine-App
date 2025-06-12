@@ -48,7 +48,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -95,19 +94,19 @@ public class PostController {
      * AcTree的速度很快，可以对全文进行实体检测大概是10ms
      */
     @PostMapping(PostConstant.POST_PUBLISH_FIRST)
-    public Mono<BaseResponse<PostPublishResponse>>
+    public BaseResponse<PostPublishResponse>
     postPublishFirst(@Valid @RequestBody PostPublishRequest request){
         long snowflakeId;
         // 查询用户是否存在
         UserDo userDo = userService.getUserByAccount(request.getSenderId());
         if (userDo == null || userDo.getId() == null){
             String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+            return BaseResponse.LogBackError(warningMessage);
         }
         PostAo postAo = postConverter.requestToAo(request, userDo.getId());
         // 审核 目前只有防止刷帖；没有自然语言审核
         if (!postService.isLegalPost(postAo)) {
-            return Mono.just(BaseResponse.LogBackError("帖子内容不合规，请修改"));
+            return BaseResponse.LogBackError("帖子内容不合规，请修改");
         }
         // 自然语言标签分析 + 标签存储 todo 4大基本分区
         // 不需要上传文件的情况
@@ -125,10 +124,10 @@ public class PostController {
                     PostConstant.Post_CONTROLLER + PostConstant.POST_PUBLISH_FIRST,
                     PostConstant.POST_CHANGE_KEY_EXPIRE_TIME
             );
-//            if (!redissonService.tryLock(redissonClusterLock)){
-//                String warningMessage = String.format("用户正在发布帖子，请稍后再试，account: %s", request.getSenderId());
-//                return Mono.just(BaseResponse.LogBackError(warningMessage, log));
-//            }
+            if (!redissonService.tryLock(redissonClusterLock)){
+                String warningMessage = String.format("用户正在发布帖子，请稍后再试，account: %s", request.getSenderId());
+                return BaseResponse.LogBackError(warningMessage);
+            }
             try {
                 // 2.缓存到redis
                 // 2.1特征提取
@@ -148,52 +147,52 @@ public class PostController {
                     throw new AppException(e.getMessage());
                 }
                 log.error("发布文章异常", e);
-                return Mono.just(BaseResponse.LogBackError(e.getMessage(), log));
+                return BaseResponse.LogBackError(e.getMessage());
             }
             // key统一格式：post_publish_key:snowflakeId（注意是snowflakeId不是userAccount或者userName）
         }
         PostPublishResponse response = new PostPublishResponse();
         response.setSnowflakeId(snowflakeId);
-        return Mono.just(BaseResponse.getResponseEntitySuccess(response));
+        return BaseResponse.getResponseEntitySuccess(response);
     }
 
     // 删除post
     @DeleteMapping("/postDelete")
-    public Mono<BaseResponse<String>> deletePost(
+    public BaseResponse<String> deletePost(
             @RequestParam Long postId,
             @RequestParam Long userId) {
         if (postId == null || userId == null){
-            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+            return BaseResponse.LogBackError("参数错误");
         }
         postService.deletePost(postId, userId);
-        return Mono.just(BaseResponse.getResponseEntitySuccess("删除申请已提交，请等待"));
+        return BaseResponse.getResponseEntitySuccess("删除申请已提交，请等待");
     }
 
     // 修改post
     // 只修改内容
     @PostMapping("/postUpdate")
-    public Mono<BaseResponse<String>>
+    public BaseResponse<String>
     updatePost(@Valid @RequestBody PostUpdateRequest request){
         UserDo userDo = userService.getUserByAccount(request.getSenderId());
         if (userDo == null){
             String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+            return BaseResponse.LogBackError(warningMessage);
         }
         PostAo postAo = postConverter.updateRequestToAo(request, userDo.getId());
         postAo.setId(request.getPostId());
         postService.updatePostInfoAndContent(postAo);
-        return Mono.just(BaseResponse.getResponseEntitySuccess("修改成功"));
+        return BaseResponse.getResponseEntitySuccess("修改成功");
     }
 
     // 修改了全部
     @PostMapping(PostConstant.POST_UPDATE_ALL)
-    public Mono<BaseResponse<String>>
+    public BaseResponse<String>
     updatePostAll(@Valid @RequestBody PostUpdateRequest request){
         // 1.给用户id上分布式锁
         UserDo userDo = userService.getUserByAccount(request.getSenderId());
         if (userDo == null){
             String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+            return BaseResponse.LogBackError(warningMessage);
         }
         // 获取分布式锁
         RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
@@ -203,7 +202,7 @@ public class PostController {
         );
         if (!redissonService.tryLock(redissonClusterLock)){
             String warningMessage = String.format("用户正在修改帖子，请稍后再试，account: %s", request.getSenderId());
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+            return BaseResponse.LogBackError(warningMessage);
         }
         // try-catch优先级高于全局异常
         try {
@@ -218,7 +217,7 @@ public class PostController {
             }
         }
 
-        return Mono.just(BaseResponse.getResponseEntitySuccess("修改申请已提交，请等待"));
+        return BaseResponse.getResponseEntitySuccess("修改申请已提交，请等待");
     }
 
     /**
@@ -233,29 +232,29 @@ public class PostController {
      */
     @Deprecated
     @PostMapping("/getPostInfoList/deprecated")
-    public Mono<BaseResponse<GetPostInfoListResponse>>
+    public BaseResponse<GetPostInfoListResponse>
     getPosts(@Valid @RequestBody GetPostInfoListRequest request){
         List<Long> postIds = request.getPostIds();
         if (CollectionUtils.isEmpty(postIds)){
-            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+            return BaseResponse.LogBackError("参数错误");
         }
         List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
         GetPostInfoListResponse getPostResponse = new GetPostInfoListResponse();
         getPostResponse.setPostInfoAos(postAoList);
-        return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
+        return BaseResponse.getResponseEntitySuccess(getPostResponse);
     }
 
     @PostMapping("/getPostInfoList")
-    public Mono<BaseResponse<GetPostPreviewListResponse>>
+    public BaseResponse<GetPostPreviewListResponse>
     getPostsNew(@Valid @RequestBody GetPostPreviewListRequest request){
         List<Long> postIds = request.getPostIds();
         if (CollectionUtils.isEmpty(postIds)){
-            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+            return BaseResponse.LogBackError("参数错误");
         }
         List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
 
         if (CollectionUtils.isEmpty(postAoList)){
-            return Mono.just(BaseResponse.getResponseEntitySuccess(new GetPostPreviewListResponse()));
+            return BaseResponse.getResponseEntitySuccess(new GetPostPreviewListResponse());
         }
 
         List<PostPreviewVo> postPreviewVos = postFrontService.toPostPreviewVoList(postAoList);
@@ -263,23 +262,23 @@ public class PostController {
         GetPostPreviewListResponse response = new GetPostPreviewListResponse();
         response.setPostPreviewVos(postPreviewVos);
 
-        return Mono.just(BaseResponse.getResponseEntitySuccess(response));
+        return BaseResponse.getResponseEntitySuccess(response);
     }
 
     // 如何从各种数据查询List<postId>的逻辑在postSearchService中
     // get Post
     @Deprecated
     @GetMapping("/getPost/deprecated")
-    public Mono<BaseResponse<GetPostResponse>>
+    public BaseResponse<GetPostResponse>
     getPost(@RequestParam Long postId,
             @RequestParam Integer pageNum){
         if (ObjectUtils.isEmpty(postId)){
-            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+            return BaseResponse.LogBackError("参数错误");
         }
         PostAo postAo = postService.findPostById(postId);
         if (postAo == null){
             String warningMessage = String.format("帖子不存在，postId: %s", postId);
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+            return BaseResponse.LogBackError(warningMessage);
         }
         if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
             pageNum = 1;
@@ -288,7 +287,7 @@ public class PostController {
         GetPostResponse getPostResponse = new GetPostResponse();
         getPostResponse.setPostAo(postAo);
         getPostResponse.setPostCommentList(postCommentList);
-        return Mono.just(BaseResponse.getResponseEntitySuccess(getPostResponse));
+        return BaseResponse.getResponseEntitySuccess(getPostResponse);
     }
 
     @GetMapping("/getPost")
@@ -296,13 +295,13 @@ public class PostController {
     getPostNew(@RequestParam Long postId,
             @RequestParam Integer pageNum){
         if (ObjectUtils.isEmpty(postId)){
-            return BaseResponse.LogBackError("参数错误", log);
+            return BaseResponse.LogBackError("参数错误");
         }
 
         PostAo postAo = postService.findPostById(postId);
         if (postAo == null || postAo.getId() == null){
             String warningMessage = String.format("帖子不存在，postId: %s", postId);
-            return BaseResponse.LogBackError(warningMessage, log);
+            return BaseResponse.LogBackError(warningMessage);
         }
         if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
             pageNum = 1;
@@ -320,7 +319,7 @@ public class PostController {
 
     // 获取下拉一级评论（pageNum）
     @GetMapping("/getPostLevel1Comments")
-    public Mono<BaseResponse<GetPostCommentsResponse>>
+    public BaseResponse<GetPostCommentsResponse>
     getPostLevel1Comments(@RequestParam Long postId,
                     @RequestParam Integer pageSize,
                     @RequestParam Integer pageNum){
@@ -329,7 +328,7 @@ public class PostController {
 
     // 获取二级评论（commentId + pageNum）
     @GetMapping("/getPostLevel2Comments")
-    public Mono<BaseResponse<GetPostCommentsResponse>>
+    public BaseResponse<GetPostCommentsResponse>
     getPostLevel2Comments(@RequestParam Long postId,
                     @RequestParam Long leve1commentId,
                     @RequestParam Integer pageSize,
@@ -337,20 +336,20 @@ public class PostController {
         return getPostComments(postId, leve1commentId, pageSize, pageNum);
     }
 
-    private Mono<BaseResponse<GetPostCommentsResponse>> getPostComments(
+    private BaseResponse<GetPostCommentsResponse> getPostComments(
             Long postId,
             Long leve1commentId,
             Integer pageSize,
             Integer pageNum) {
         if (postId == null) {
-            return Mono.just(BaseResponse.LogBackError("参数错误", log));
+            return BaseResponse.LogBackError("参数错误");
         }
 
         if (leve1commentId != null) {
             PostCommentDo postCommentDo = postCommentService.getPostCommentById(leve1commentId);
             if (postCommentDo == null) {
                 String warningMessage = String.format("评论不存在，commentId: %s", leve1commentId);
-                return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+                return BaseResponse.LogBackError(warningMessage);
             }
         }
 
@@ -379,6 +378,6 @@ public class PostController {
             getPostCommentsResponse.setPostCommentDtosList(postCommentDtoList);
         }
 
-        return Mono.just(BaseResponse.getResponseEntitySuccess(getPostCommentsResponse));
+        return BaseResponse.getResponseEntitySuccess(getPostCommentsResponse);
     }
 }
