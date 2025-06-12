@@ -173,6 +173,8 @@ public class PostServiceImpl implements PostService {
         // mysql
         postStorageService.updatePostInfoToDatabase(postAo);
         postStorageService.updatePostFilesToDatabase(postAo);
+        // neo4j
+        postStorageService.storePostFeatureToNeo4j(postAo, postAo.getNerResults());
     }
 
     @Override
@@ -185,6 +187,9 @@ public class PostServiceImpl implements PostService {
     @Override
     public void updatePostInfo(PostAo postAo) {
         postStorageService.updatePostInfoToDatabase(postAo);
+        postStorageService.updatePostContentToDatabase(postAo);
+        // neo4j
+        postStorageService.storePostFeatureToNeo4j(postAo, postAo.getNerResults());
     }
 
     @Override
