@@ -185,10 +185,22 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 2天
   * 6月12~13
   * 发布post,存入neo4j,mysql,elasticsearch,mongodb
+  * 完成python功能:自然语言标签分析
+  * 支持上传视频(断点续传)
 
+* App消息长连接
+  * 学习Mq -> 重构Mq (记录笔记,不能白开发,留下笔记)
+    * 学习       2天 (16~17)
+    * 重构Mq测试  1天 (18)
+  * 重构netty,message,user服务的handler
+    * 4天 (19~23)
+  * 构建App
+    * 3天
+  * 共8天
+  * 6月13~23
 * App获取帖子联调
-  * 3天
-  * 6月11~13
+  * url存储在redis重构
+  * redis学习
 * App行为上传I（浏览帖子 + 点赞等）
   * 3天
   * 6月16~6月18
@@ -198,10 +210,10 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 * App搜索帖子
   * 3天
   * 6月21~24
-* 收藏帖子
+* 收藏帖子 (简化:取消创建帖子收藏夹)
   * 2天
   * 6月25~26
-* 评论帖子
+* 评论帖子 (优先)
   * 3天
   * 6月27~7月1
 * 转发帖子
@@ -228,6 +240,13 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * java-learning测试代码迁移
   * 测试点文档测试
   * 接口链路调用测试
+* 中间件
+  * Mq
+    * 学习并重新设计RabbitMq和Kafka
+    * 重构netty-mq,user-mq,message-mq
+    * 前端编写, 用前端测试netty
+    * 1.学习mq,2.重构netty,3.编写前端
+
 
 ##### 最终功能补充 (不要着急写新功能,在当前系统未重构优化完成之间,禁止开发新功能)
 * AI问诊
@@ -239,3 +258,34 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 * 后台管理
 
 ##### JMeter压测
+
+
+
+##### 临时note
+项目mq重构
+1. 使用json
+2. netty-socket尝试重构为微服务集群
+3. 尝试使用netty或者虚拟线程来改造提高请求的速度 (netty的http封装就是webflux;暂时不添加)
+4. 重构netty-socket;使其能分布式部署
+
+
+
+我现在需要重构netty-socket服务,这个服务是我专门用来管理netty和前端长连接的服务.
+这个服务可以理解为类似网络层中的物理层或者数据链路层,对数据无感知,
+对于前端使用netty长连接.对于后端,使用rabbitmq来发送消息.
+当然现在的netty代码我已经设计好了,需要你帮我重构rabbitmq.
+用户之间的消息需要交给message-service,post-service,user-relationship-service和logging-service
+其中logging-service是日志收集,用的是kafka.数据丢失也没关系.
+message-service处理用户间聊天消息:
+聊天消息包括:文本,图片,语音,视频,单聊,群聊等.需要你创建交换机并交给对应的队列.订阅模式是Topic模式.
+保证消息可靠:幂等性,持久化,死信队列和重发机制.
+post-service处理帖子消息:
+帖子消息包括:点赞,评论等
+同样也是交换机 + Topic模式
+也要保证消息可靠性
+user-relationship-service是用户之间的添加好友,删除,拉黑等
+同样也是交换机 + Topic模式
+也要保证消息可靠性
+所有的队列都要在netty-socket微服务创建,因为这个服务会最先启动,需要在它的config创建好其他微服务的队列和交换机.
+并且还要考虑到netty-socket启动多实例的情况,避免队列和交换机重复创建.
+还要考虑创建队列合理性,避免一个队列消息过多而消息堆积.
