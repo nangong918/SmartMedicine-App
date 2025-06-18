@@ -1,4 +1,4 @@
-package com.czy.user.component;
+package com.czy.user.mq.sender;
 
 
 import com.czy.api.constant.mq.RelationshipMqConstant;

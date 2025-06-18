@@ -21,7 +21,7 @@ import com.czy.api.domain.entity.MessageEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.RelationshipDelete;
-import com.czy.user.component.RabbitMqSender;
+import com.czy.user.mq.sender.RabbitMqSender;
 import com.czy.user.mapper.mysql.relation.FriendApplyMapper;
 import com.czy.user.mapper.mysql.relation.UserFriendMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;

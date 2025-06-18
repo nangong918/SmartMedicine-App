@@ -1,4 +1,4 @@
-package com.czy.netty.component;
+package com.czy.netty.mq.sender;
 
 import com.czy.api.constant.mq.SocketMessageMqConstant;
 import com.czy.api.domain.entity.event.Message;

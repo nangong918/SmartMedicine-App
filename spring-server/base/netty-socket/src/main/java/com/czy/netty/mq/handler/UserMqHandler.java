@@ -1,4 +1,4 @@
-package com.czy.netty.mqHandler;
+package com.czy.netty.mq.handler;
 
 
 import com.czy.api.constant.mq.SocketMessageMqConstant;

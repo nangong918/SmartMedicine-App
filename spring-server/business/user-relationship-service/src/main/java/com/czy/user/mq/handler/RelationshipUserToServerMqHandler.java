@@ -1,12 +1,14 @@
-package com.czy.user.mqHandler;
+package com.czy.user.mq.handler;
 
 
+import com.czy.api.constant.netty.MqConstants;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.event.MessageRouteEvent;
 import com.czy.user.component.RelationshipEventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -45,6 +47,7 @@ import javax.validation.Valid;
 )*/
 @RequiredArgsConstructor
 //@RabbitListener(queues = SocketMessageMqConstant.USER_RECEIVE_QUEUE)
+@RabbitListener(queues = MqConstants.RelationshipQueue.RELATIONSHIP_TO_SERVICE_QUEUE)
 @Component
 public class RelationshipUserToServerMqHandler {
 

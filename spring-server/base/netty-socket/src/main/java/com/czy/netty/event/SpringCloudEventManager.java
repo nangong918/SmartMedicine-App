@@ -8,7 +8,7 @@ import com.czy.api.converter.base.MessageConverter;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.model.RequestBodyProto;
 import com.czy.netty.channel.ChannelManager;
-import com.czy.netty.component.RabbitMqSender;
+import com.czy.netty.mq.sender.RabbitMqSender;
 import io.netty.channel.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
