@@ -1,14 +1,12 @@
 package com.czy.user.mqHandler;
 
 
-import com.czy.api.constant.mq.SocketMessageMqConstant;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.event.MessageRouteEvent;
 import com.czy.user.component.RelationshipEventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -22,9 +20,32 @@ import javax.validation.Valid;
  */
 
 @Slf4j
+/* 取消使用注解创建消息队列，
+    原因：1.需要微服务启动才能创建消息队列，容易出现其他需要消息队列的微服务缺失微服务而无法启动.
+         2.注解创建是静态的，无法通过nacos等热部署修改配置
+ */
+/*@RabbitListener(
+        bindings = @QueueBinding(
+                value = @Queue(
+                        name = MqConstants.RelationshipQueue.RELATIONSHIP_TO_SERVICE_QUEUE,
+                        // 持久化
+                        durable = "true",
+                        // 惰性队列
+                        arguments = @Argument(name = "x-queue-mode", value = "lazy")
+                ),
+                exchange = @Exchange(
+                        // .topic.exchange
+                        value = MqConstants.Exchange.RELATIONSHIP_EXCHANGE,
+                        // 此处一定要制定交换机的类型
+                        type = ExchangeTypes.TOPIC
+                ),
+                // 路由键；就是"china.#"
+                key = (MqConstants.MessageQueue.Routing.TO_SERVICE_ROUTING + ".#")
+        )
+)*/
 @RequiredArgsConstructor
+//@RabbitListener(queues = SocketMessageMqConstant.USER_RECEIVE_QUEUE)
 @Component
-@RabbitListener(queues = SocketMessageMqConstant.USER_RECEIVE_QUEUE)
 public class RelationshipUserToServerMqHandler {
 
     private final ApplicationContext applicationContext;
