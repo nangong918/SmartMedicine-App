@@ -1,7 +1,9 @@
-package com.czy.oss.mqHandler;
+package com.czy.oss.mq.handler;
 
-import com.czy.api.constant.mq.PostMqConstant;
+import com.czy.api.constant.netty.MqConstants;
+import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.OssTask;
+import com.czy.api.domain.entity.event.event.MessageRouteEvent;
 import com.czy.api.domain.entity.event.event.OssTaskEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +22,7 @@ import javax.validation.Valid;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-@RabbitListener(queues = PostMqConstant.SERVICE_TO_OSS_QUEUE)
+@RabbitListener(queues = MqConstants.OssQueue.OSS_TO_SERVICE_QUEUE)
 public class PostMqHandler {
 
     private final ApplicationContext applicationContext;
@@ -28,6 +30,11 @@ public class PostMqHandler {
     @RabbitHandler
     public void handleMessage(@Valid OssTask ossTask) {
         applicationContext.publishEvent(new OssTaskEvent(ossTask));
+    }
+
+    @RabbitHandler
+    public void handleMessage(@Valid Message message){
+        applicationContext.publishEvent(new MessageRouteEvent(message));
     }
 
 }
