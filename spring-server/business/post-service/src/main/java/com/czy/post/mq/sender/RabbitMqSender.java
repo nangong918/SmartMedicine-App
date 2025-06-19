@@ -1,9 +1,8 @@
-package com.czy.post.component;
+package com.czy.post.mq.sender;
 
 
-import com.czy.api.constant.mq.PostMqConstant;
-import com.czy.api.constant.mq.SocketMessageMqConstant;
 import com.czy.api.constant.netty.MessageTypeTranslator;
+import com.czy.api.constant.netty.MqConstants;
 import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.converter.base.BaseResponseConverter;
 import com.czy.api.domain.dto.base.BaseResponseData;
@@ -24,19 +23,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitMqSender {
 
-    private final RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitJsonTemplate;
     private final BaseResponseConverter baseResponseConverter;
 
     public void pushToOss(OssTask ossTask){
-        rabbitTemplate.convertAndSend(PostMqConstant.SERVICE_TO_OSS_QUEUE, ossTask);
+        rabbitJsonTemplate.convertAndSend(
+                MqConstants.Exchange.OSS_EXCHANGE,
+                MqConstants.OssQueue.Routing.TO_SERVICE_ROUTING,
+                ossTask
+        );
     }
 
     public void push(Message message){
         if (message == null){
             return;
         }
-        rabbitTemplate.convertAndSend(
-                SocketMessageMqConstant.USER_RECEIVE_QUEUE,
+        rabbitJsonTemplate.convertAndSend(
+                MqConstants.Exchange.POST_EXCHANGE,
+                MqConstants.PostQueue.Routing.TO_SOCKET_ROUTING,
                 message);
     }
 
@@ -51,9 +55,7 @@ public class RabbitMqSender {
         if (ResponseMessageType.NULL.equals(message.getType())){
             return;
         }
-        rabbitTemplate.convertAndSend(
-                SocketMessageMqConstant.USER_RECEIVE_QUEUE,
-                message);
+        push(message);
     }
     
 }

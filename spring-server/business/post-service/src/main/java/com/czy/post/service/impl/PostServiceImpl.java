@@ -5,7 +5,7 @@ import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.ao.post.PostAo;
-import com.czy.post.component.RabbitMqSender;
+import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.service.PostFileService;
 import com.czy.post.service.PostService;
 import com.czy.post.service.PostStorageService;

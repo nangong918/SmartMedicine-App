@@ -24,7 +24,7 @@ import com.czy.api.domain.dto.socket.response.PostLikeResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionCommentPost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionOperatePost;
 import com.czy.post.component.KafkaSender;
-import com.czy.post.component.RabbitMqSender;
+import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.handler.api.PostApi;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostHandleService;
