@@ -17,7 +17,7 @@ import com.czy.api.domain.dto.socket.request.HandleAddedUserRequest;
 import com.czy.api.domain.dto.socket.response.DeleteUserResponse;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.springUtils.annotation.HandlerType;
-import com.czy.user.mq.sender.RabbitMqSender;
+import com.czy.user.mq.sender.ToSocketMqSender;
 import com.czy.user.handler.api.FriendApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,7 @@ public class FriendHandler implements FriendApi {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserRelationshipService userRelationshipService;
     private final AddUserConverter addUserConverter;
-    private final RabbitMqSender rabbitMqSender;
+    private final ToSocketMqSender toSocketMqSender;
     private final HandleAddUserConverter handleAddUserConverter;
 
     @Override
@@ -70,7 +70,7 @@ public class FriendHandler implements FriendApi {
         // 构建Message
         Message msg = response.getToMessage();
         // 推送消息
-        rabbitMqSender.push(msg);
+        toSocketMqSender.push(msg);
 
         // 添加到MySQL持久化
         AddUserAo addUserAo = addUserConverter.requestToAo(request);
@@ -113,7 +113,7 @@ public class FriendHandler implements FriendApi {
         Message respMsg = response.getMessageByResponse();
 
         // 推送
-        rabbitMqSender.push(respMsg);
+        toSocketMqSender.push(respMsg);
     }
 
     @Override
@@ -126,6 +126,6 @@ public class FriendHandler implements FriendApi {
         log.info("处理加好友的响应: {}", (msg != null));
 
         // 推送消息
-        rabbitMqSender.push(msg);
+        toSocketMqSender.push(msg);
     }
 }

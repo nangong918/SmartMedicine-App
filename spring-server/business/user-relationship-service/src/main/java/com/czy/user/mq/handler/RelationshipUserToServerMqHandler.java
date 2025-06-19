@@ -4,16 +4,18 @@ package com.czy.user.mq.handler;
 import com.czy.api.constant.netty.MqConstants;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.event.MessageRouteEvent;
-import com.czy.user.component.RelationshipEventManager;
+import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.context.ApplicationContext;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 /**
  * @author 13225
@@ -52,34 +54,26 @@ import javax.validation.Valid;
 public class RelationshipUserToServerMqHandler {
 
     private final ApplicationContext applicationContext;
-    private final RelationshipEventManager<Message> eventManager;
 
     @RabbitHandler
-    public void handleMessage(@Valid Message userReceivedMessage) {
-        // 事件驱动处理消息
-        boolean isToThisServiceMessage = checkIsToThisServiceMessage(userReceivedMessage.getType());
-        if (isToThisServiceMessage){
-            // 第一份交给消息路由
-            applicationContext.publishEvent(new MessageRouteEvent(userReceivedMessage));
-        }
-        // 第二份交给大数据平台 (大数据平台自己去监听)
-//        applicationContext.publishEvent(new BigDataEvent(userReceivedMessage));
-    }
+    public void handleMessage(@Valid Message message,
+                              Channel channel,
+                              @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
 
-
-    private boolean checkIsToThisServiceMessage(String messageType){
-        if (!StringUtils.hasText(messageType)){
-            return false;
-        }
-        boolean isToThisServiceMessage = false;
-        for (String handlers : eventManager.getMessageHandlers()){
-            if (messageType.equals(handlers)){
-                isToThisServiceMessage = true;
-                break;
+        // 发送方对mq进行分工，现在无需在此确认是否是发送给本微服务的
+        applicationContext.publishEvent(new MessageRouteEvent(message));
+        try {
+            if (channel.isOpen()){
+                channel.basicAck(deliveryTag, false);
             }
+            else {
+                log.warn("频道关闭，无法确认消息");
+            }
+        } catch (IOException e) {
+            log.error("消息确认接收失败", e);
         }
-        return isToThisServiceMessage;
     }
+
 }
 /**
  * 关于事件驱动架构设计：

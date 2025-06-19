@@ -21,7 +21,7 @@ import com.czy.api.domain.entity.MessageEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.RelationshipDelete;
-import com.czy.user.mq.sender.RabbitMqSender;
+import com.czy.user.mq.sender.ToSocketMqSender;
 import com.czy.user.mapper.mysql.relation.FriendApplyMapper;
 import com.czy.user.mapper.mysql.relation.UserFriendMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -54,7 +54,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     private final UserFriendMapper userFriendMapper;
     private final SearchFriendApplyConverter searchFriendApplyConverter;
     private final NewUserItemConverter newUserItemConverter;
-    private final RabbitMqSender rabbitMqSender;
+    private final ToSocketMqSender toSocketMqSender;
 
     // Dubbo远程调用User服务
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
@@ -412,7 +412,13 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
             RelationshipDelete relationshipDelete = new RelationshipDelete();
             relationshipDelete.setSenderId(userFriendDo.getUserId());
             relationshipDelete.setReceiverId(userFriendDo.getFriendId());
-            rabbitMqSender.push(relationshipDelete);
+            String userAccount = userService.getUserById(userFriendDo.getUserId()).getAccount();
+            String friendAccount = userService.getUserById(userFriendDo.getFriendId()).getAccount();
+            Message deleeteMessage = new Message();
+            deleeteMessage.setType(ResponseMessageType.Friend.DELETED_FRIEND);
+            deleeteMessage.setSenderId(userAccount);
+            deleeteMessage.setReceiverId(friendAccount);
+            toSocketMqSender.push(deleeteMessage);
         }
     }
 
