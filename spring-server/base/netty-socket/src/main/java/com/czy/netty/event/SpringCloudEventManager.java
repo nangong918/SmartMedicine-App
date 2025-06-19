@@ -8,7 +8,9 @@ import com.czy.api.converter.base.MessageConverter;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.model.RequestBodyProto;
 import com.czy.netty.channel.ChannelManager;
-import com.czy.netty.mq.sender.RabbitMqSender;
+//import com.czy.netty.mq.sender.RabbitMqSender;
+import com.czy.netty.component.ToClientMessageSender;
+import com.czy.netty.mq.sender.ToServiceMqSender;
 import io.netty.channel.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +27,11 @@ import org.springframework.util.StringUtils;
 @Component
 public class SpringCloudEventManager {
 
-    private final RabbitMqSender rabbitMqSender;
+//    private final RabbitMqSender rabbitMqSender;
+    private final ToServiceMqSender toServiceMqSender;
     private final MessageConverter messageConverter;
     private final ChannelManager channelManager;
+    private final ToClientMessageSender toClientMessageSender;
 
     public void process(Channel channel, RequestBodyProto.RequestBody request){
         // 校验channel
@@ -53,8 +57,10 @@ public class SpringCloudEventManager {
                 channelManager.unRegister(userAccount);
             }
         }
-        // RemoteEvent发送给其他实例
+
+        // 消息广播
         if (channel.isActive()){
+            // 发送给前端的消息
             // ToService
             if (request.getType().contains(RequestMessageType.ToServer.root)){
                 // ping
@@ -66,13 +72,15 @@ public class SpringCloudEventManager {
                     pong.setReceiverId(request.getSenderId());
                     pong.setSenderId(NettyConstants.SERVER_ID);
 
-                    rabbitMqSender.sendToMessageService(pong);
+                    // 发送给前端
+                    toClientMessageSender.pushToClient(pong);
                     return;
                 }
             }
-            // 其他
+
+            // 其他：分类mq发送微服务的消息
             Message message = messageConverter.requestBodyToMessage(request);
-            rabbitMqSender.sendToMessageService(message);
+            toServiceMqSender.sendToService(message);
         }
     }
 

@@ -1,3 +1,4 @@
+/*
 package com.czy.netty.mq.sender;
 
 import com.czy.api.constant.mq.SocketMessageMqConstant;
@@ -7,10 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
+*/
 /**
  * @author 13225
  * @date 2025/4/1 13:59
- */
+ *//*
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,10 +22,12 @@ public class RabbitMqSender {
 
     private final RabbitTemplate rabbitTemplate;
 
-    /**
+    */
+/**
      * 发送消息到消息服务（message-service等）
      * @param message   消息
-     */
+     *//*
+
     public void sendToMessageService(Message message){
         if (message == null){
             return;
@@ -33,3 +38,4 @@ public class RabbitMqSender {
     }
     
 }
+*/

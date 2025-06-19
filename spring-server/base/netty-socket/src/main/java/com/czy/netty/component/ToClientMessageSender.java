@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class MessageSender {
+public class ToClientMessageSender {
 
     private final BaseResponseConverter baseResponseConverter;
     private final ChannelManager channelManager;

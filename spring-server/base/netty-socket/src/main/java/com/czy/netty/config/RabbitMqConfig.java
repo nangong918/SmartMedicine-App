@@ -1,3 +1,4 @@
+/*
 package com.czy.netty.config;
 
 import com.czy.api.constant.mq.SocketMessageMqConstant;
@@ -10,6 +11,7 @@ import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+*/
 /**
  * @author 13225
  * @date 2025/3/31 18:16
@@ -18,7 +20,8 @@ import org.springframework.context.annotation.Configuration;
  * 关于RabbitMqListener使用之后是否还需要ApplicationEventListener：
  *  仍然需要使用，RabbitMq在服务级别，通知给服务。
  *  服务收到消息继续通知给各个组件就用ApplicationEventListener
- */
+ *//*
+
 
 @Configuration
 public class RabbitMqConfig {
@@ -60,3 +63,4 @@ public class RabbitMqConfig {
                 false); // autoDelete: 是否自动删除
     }
 }
+*/

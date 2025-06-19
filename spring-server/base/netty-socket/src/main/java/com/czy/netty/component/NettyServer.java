@@ -1,4 +1,4 @@
-package com.czy.netty.service;
+package com.czy.netty.component;
 
 
 

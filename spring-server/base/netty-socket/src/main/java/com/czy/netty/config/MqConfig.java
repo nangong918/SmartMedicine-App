@@ -80,6 +80,7 @@ public class MqConfig {
     @Bean
     public Queue messageToSocketQueue() {
         Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", MqConstants.MessageQueue.message_ttl); // 消息过期时间 3 分钟
         args.put("x-dead-letter-exchange", MqConstants.Exchange.DEAD_LETTER_EXCHANGE); // 对应的死信交换机
         args.put("x-dead-letter-routing-key", MqConstants.DeadLetterQueue.MESSAGE_DEAD_LETTER_QUEUE); // 对应的死信路由键
 
@@ -99,6 +100,7 @@ public class MqConfig {
     @Bean
     public Queue messageToServiceQueue() {
         Map<String, Object> args = new HashMap<>();
+        args.put("x-message-ttl", MqConstants.MessageQueue.message_ttl); // 消息过期时间 3 分钟
         args.put("x-dead-letter-exchange", MqConstants.Exchange.DEAD_LETTER_EXCHANGE); // 对应的死信交换机
         args.put("x-dead-letter-routing-key", MqConstants.DeadLetterQueue.MESSAGE_DEAD_LETTER_QUEUE); // 对应的死信路由键
 

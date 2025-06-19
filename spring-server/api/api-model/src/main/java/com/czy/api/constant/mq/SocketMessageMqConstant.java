@@ -1,9 +1,12 @@
+/*
 package com.czy.api.constant.mq;
 
+*/
 /**
  * @author 13225
  * @date 2025/3/31 18:04
- */
+ *//*
+
 public class SocketMessageMqConstant {
 
 //    // 系统级别消息
@@ -24,3 +27,4 @@ public class SocketMessageMqConstant {
     // 为每个队列定义死信交换机
     public static final String DEAD_LETTER_EXCHANGE = "socket.dead.letter.exchange";
 }
+*/
