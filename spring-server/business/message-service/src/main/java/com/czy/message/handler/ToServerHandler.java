@@ -9,7 +9,7 @@ import com.czy.api.domain.dto.socket.request.HaveReadMessageRequest;
 import com.czy.api.domain.dto.socket.response.HaveReadMessageResponse;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.springUtils.annotation.HandlerType;
-import com.czy.message.component.RabbitMqSender;
+import com.czy.message.mq.sender.RabbitMqSender;
 import com.czy.message.handler.api.ToServiceApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +29,7 @@ public class ToServerHandler implements ToServiceApi {
     private final ChatService chatService;
 
     // ping -> pong [方法废弃：在netty sdk中完成]
+    @Deprecated
     public void handlePing(Message ping){
         Message pong = new Message(ping);
         String pongType = MessageTypeTranslator.translate(ping.getType());

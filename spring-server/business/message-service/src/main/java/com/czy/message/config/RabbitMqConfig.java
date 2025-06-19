@@ -1,12 +1,8 @@
 package com.czy.message.config;
 
-import com.czy.api.constant.mq.SocketMessageMqConstant;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.ExchangeBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,75 +19,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMqConfig {
 
-    // 创建死信交换机
+    /// RabbitMq配置
+    // 使用Json序列化替代默认的序列化方式
     @Bean
-    public DirectExchange deadLetterExchange() {
-        return ExchangeBuilder.directExchange(SocketMessageMqConstant.DEAD_LETTER_EXCHANGE)
-                .durable(true)
-                .build();
+    public Jackson2JsonMessageConverter messageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 
-    // 创建死信队列
-    @Bean
-    public Queue deadLetterQueue() {
-        return QueueBuilder.durable(SocketMessageMqConstant.DEAD_LETTER_QUEUE)
-                .build();
+    // 配置Json格式消息发送
+    @Bean("rabbitJsonTemplate")
+    public RabbitTemplate rabbitJsonTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate template = new RabbitTemplate(connectionFactory);
+        template.setMessageConverter(messageConverter()); // 设置 JSON 转换器
+        template.setChannelTransacted(true); // 确保事务处理
+        return template;
     }
-
-    // 绑定死信队列到交换机
-    @Bean
-    public Binding deadLetterBinding() {
-        return BindingBuilder.bind(deadLetterQueue())
-                .to(deadLetterExchange())
-                .with(SocketMessageMqConstant.DEAD_LETTER_QUEUE);
-    }
-
-    // 创建系统发送队列
-/*    @Bean
-    public Queue systemSendQueue() {
-//        return QueueBuilder.durable(SocketMessageMqConstant.SYSTEM_SEND_QUEUE)
-//                .withArgument("x-dead-letter-exchange", SocketMessageMqConstant.DEAD_LETTER_EXCHANGE)
-//                .withArgument("x-dead-letter-routing-key", SocketMessageMqConstant.DEAD_LETTER_QUEUE)
-//                .build();
-        return new Queue(SocketMessageMqConstant.SYSTEM_SEND_QUEUE, // Queue 名字
-                false, // durable: 是否持久化
-                false, // exclusive: 是否排它
-                true); // autoDelete: 是否自动删除
-    }*/
-
-    // 创建系统接收队列
-//    @Bean
-//    public Queue systemReceiveQueue() {
-////        return QueueBuilder.durable(SocketMessageMqConstant.SYSTEM_RECEIVE_QUEUE)
-////                .build();
-//        return new Queue(SocketMessageMqConstant.SYSTEM_RECEIVE_QUEUE, // Queue 名字
-//                false, // durable: 是否持久化
-//                false, // exclusive: 是否排它
-//                true); // autoDelete: 是否自动删除
-//    }
-
-    // 创建用户发送队列
-    @Bean
-    public Queue userSendQueue() {
-//        return QueueBuilder.durable(SocketMessageMqConstant.USER_SEND_QUEUE)
-//                .withArgument("x-dead-letter-exchange", SocketMessageMqConstant.DEAD_LETTER_EXCHANGE)
-//                .withArgument("x-dead-letter-routing-key", SocketMessageMqConstant.DEAD_LETTER_QUEUE)
-//                .build();
-        return new Queue(SocketMessageMqConstant.USER_SEND_QUEUE, // Queue 名字
-                true, // durable: 是否持久化
-                false, // exclusive: 是否排它
-                false); // autoDelete: 是否自动删除
-    }
-
-    // 创建用户接收队列
-    @Bean
-    public Queue userReceiveQueue() {
-//        return QueueBuilder.durable(SocketMessageMqConstant.USER_RECEIVE_QUEUE)
-//                .build();
-        return new Queue(SocketMessageMqConstant.USER_RECEIVE_QUEUE, // Queue 名字
-                true, // durable: 是否持久化
-                false, // exclusive: 是否排它
-                false); // autoDelete: 是否自动删除
-    }
-    // TODO 死信队列支持
 }

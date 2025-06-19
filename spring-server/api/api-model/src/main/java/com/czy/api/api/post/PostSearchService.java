@@ -5,8 +5,8 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
-import com.czy.api.domain.vo.PostPreviewVo;
-import com.czy.api.domain.vo.PostVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
+import com.czy.api.domain.vo.post.PostVo;
 
 import java.util.List;
 

@@ -19,6 +19,9 @@ public interface UserMapper {
      * @return              0:不存在，>1：存在
      */
     Integer checkAccountExist(String userAccount);
+
+    Integer checkPhoneExist(String phone);
+
     /**
      * 根据账号获取id
      * @param account

@@ -8,7 +8,7 @@ import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.PostOssResponse;
 import com.czy.api.domain.entity.event.event.PostOssResponseEvent;
-import com.czy.post.component.RabbitMqSender;
+import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.service.PostService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;

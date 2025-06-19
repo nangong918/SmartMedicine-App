@@ -3,6 +3,7 @@ package com.czy.oss.service;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.domain.Do.oss.OssFileDo;
+import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.ao.oss.FileNameAo;
 import com.czy.oss.mapper.OssMapper;
 import com.utils.mvc.service.MinIOService;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,6 +80,28 @@ public class OssServiceImpl implements OssService {
         if (isExist){
             OssFileDo ossFileDo = ossMapper.getByFileStorageNameAndBucketName(userId, fileName, bucketName);
             result.setFileId(ossFileDo.getId());
+        }
+        return result;
+    }
+
+    @Override
+    public List<FileIsExistResult> checkFilesExistForResult(List<FileIsExistAo> fileIsExistAos){
+        if (CollectionUtils.isEmpty(fileIsExistAos)){
+            return new ArrayList<>();
+        }
+        List<FileIsExistResult> result = new ArrayList<>(fileIsExistAos.size());
+        for (FileIsExistAo fileIsExistAo : fileIsExistAos){
+            FileIsExistResult fileIsExistResult = new FileIsExistResult();
+            OssFileDo ossFileDo = ossMapper.getByFileStorageNameBucketNameFileSize(
+                    fileIsExistAo.getUserId(), fileIsExistAo.getFileName(),
+                    fileIsExistAo.getBucketName(), fileIsExistAo.getFileSize()
+            );
+            boolean isExist = ossFileDo != null && ossFileDo.getId() != null;
+            fileIsExistResult.setIsExist(isExist);
+            if (isExist){
+                fileIsExistResult.setFileId(ossFileDo.getId());
+            }
+            result.add(fileIsExistResult);
         }
         return result;
     }
@@ -160,6 +184,12 @@ public class OssServiceImpl implements OssService {
             ossFileDo.setUploadTimestamp(System.currentTimeMillis());
             // 已经设置了id
             if (successFile.getFileId() != null){
+                // 检查id是否已经上传，避免重复上传
+                OssFileDo checkExistFileDo = ossMapper.getById(successFile.getFileId());
+                if (checkExistFileDo != null && checkExistFileDo.getId() != null){
+                    log.info("文件已经存在，id为：{}", checkExistFileDo.getId());
+                    continue;
+                }
                 ossFileDo.setId(successFile.getFileId());
                 // 插入
                 Long fileId = ossMapper.insert(ossFileDo);

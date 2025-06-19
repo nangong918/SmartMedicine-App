@@ -37,7 +37,7 @@ import java.util.List;
 @RequestMapping(RelationshipConstant.Relationship_CONTROLLER)
 public class UserRelationshipController {
 //    private final LoginService loginService;
-//    private final RabbitMqSender clusterEventsPusher;
+//    private final ToSocketMqSender clusterEventsPusher;
     private final UserRelationshipService userRelationshipService;
 
     /**

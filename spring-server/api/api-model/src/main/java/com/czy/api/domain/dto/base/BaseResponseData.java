@@ -3,6 +3,7 @@ package com.czy.api.domain.dto.base;
 import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.converter.base.BaseResponseConverter;
 import com.czy.api.domain.entity.event.Message;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +65,8 @@ public class BaseResponseData extends BaseRequestData {
         this.setTimestamp(request.getTimestamp());
     }
 
+    // 导出为Message的方法，需要JsonIgnore，否则会序列化错误
+    @JsonIgnore
     public Message getMessageByResponse() {
         return BaseResponseConverter.INSTANCE.getMessage(this);
     }

@@ -59,7 +59,7 @@ public class PostStorageServiceImpl implements PostStorageService {
         if (postInfoDo == null){
             return;
         }
-        log.info("开始存储帖子信息: {}", postInfoDo.toJsonString());
+        log.info("开始存储帖子信息到MySQL: {}", postInfoDo.toJsonString());
         postInfoMapper.insertPostInfoDo(postInfoDo);
     }
 
@@ -67,7 +67,7 @@ public class PostStorageServiceImpl implements PostStorageService {
     public void storePostFilesToDatabase(PostAo postAo) {
         List<PostFilesDo> postFilesDoList = postConverter.toPostFilesList(postAo);
         if (!CollectionUtils.isEmpty(postFilesDoList)){
-            log.info("开始存储帖子文件: {}", postFilesDoList.get(0).toJsonString());
+            log.info("开始存储帖子文件数据到Mysql: {}", postFilesDoList.get(0).toJsonString());
             postFilesMapper.insertPostFilesDoList(postFilesDoList);
         }
     }

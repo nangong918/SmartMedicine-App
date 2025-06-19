@@ -5,7 +5,7 @@
 
   <!--Maven 会将其视为 jar 类型，但对于父 POM，应该将其设置为 pom-->
   <packaging>pom</packaging>
-  <artifactId>Spring</artifactId>
+  <artifactId>spring-server</artifactId>
   <name>Spring</name>
   <groupId>com.spring</groupId>
   <version>1.0.0-SNAPSHOT</version>

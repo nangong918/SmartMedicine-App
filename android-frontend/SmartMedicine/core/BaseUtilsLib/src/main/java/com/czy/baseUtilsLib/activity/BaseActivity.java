@@ -95,14 +95,14 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
         // 隐藏顶部栏
         StatusBarUtil.setHideStatusBar(this);*/
 
-        // 设置状态栏透明
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-
-        // 隐藏状态栏 （时间wifi等信息）
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_FULLSCREEN);
+        // 设置状态栏透明 （设置下面会让layout无法适应下拉列表放着输入框遮挡）
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//
+//        // 隐藏状态栏 （时间wifi等信息）
+//        View decorView = getWindow().getDecorView();
+//        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+//                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+//                View.SYSTEM_UI_FLAG_FULLSCREEN);
 
         EdgeToEdge.enable(this);
 

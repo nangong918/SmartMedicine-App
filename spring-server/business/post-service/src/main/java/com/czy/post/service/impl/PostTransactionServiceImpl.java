@@ -25,6 +25,8 @@ import com.czy.api.mapper.RecipesRepository;
 import com.czy.api.mapper.SymptomsRepository;
 import com.czy.post.mapper.es.PostDetailEsMapper;
 import com.czy.post.mapper.mongo.PostDetailMongoMapper;
+import com.czy.post.mapper.mysql.PostFilesMapper;
+import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.service.PostTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,8 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     private final PostDetailEsMapper postDetailEsMapper;
     private final PostDetailMongoMapper postDetailMongoMapper;
+    private final PostInfoMapper postInfoMapper;
+    private final PostFilesMapper postFilesMapper;
     private final PostConverter postConverter;
     private final org.neo4j.ogm.session.Session neo4jSession;
 
@@ -60,9 +64,11 @@ public class PostTransactionServiceImpl implements PostTransactionService {
 
     @Transactional(rollbackFor = StorageException.class)
     @Override
-    public void deletePostContentById(Long id) {
-        postDetailEsMapper.deleteById(id);
-        postDetailMongoMapper.deletePostDetailById(id);
+    public void deletePostContentById(Long postId) {
+        postDetailEsMapper.deleteById(postId);
+        postDetailMongoMapper.deletePostDetailById(postId);
+        postInfoMapper.deletePostInfoDoById(postId);
+        postFilesMapper.deletePostFilesDoByPostId(postId);
     }
 
     @Transactional(rollbackFor = StorageException.class)

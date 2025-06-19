@@ -43,6 +43,14 @@ public interface OssMapper {
     List<OssFileDo> getByUserId(Long userId);
 
     // 根据fileStorageName + bucketName 查询
+    OssFileDo getByFileStorageNameBucketNameFileSize(
+            @Param("userId") Long userId,
+            @Param("fileName") String fileName,
+            @Param("bucketName") String bucketName,
+            @Param("fileSize") Long fileSize
+    );
+
+    // 根据fileStorageName + bucketName 查询
     OssFileDo getByFileStorageNameAndBucketName(
             @Param("userId") Long userId,
             @Param("fileName") String fileName,

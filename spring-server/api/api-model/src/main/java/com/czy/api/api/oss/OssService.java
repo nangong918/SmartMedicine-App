@@ -1,6 +1,7 @@
 package com.czy.api.api.oss;
 
 import com.czy.api.domain.Do.oss.OssFileDo;
+import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.ao.oss.FileNameAo;
 import domain.ErrorFile;
 import domain.FileIsExistResult;
@@ -52,6 +53,9 @@ public interface OssService {
     Long checkFileIdempotentAndBackId(Long userId, String fileName, Long fileSize);
     // 检查文件是否存再，返回result
     FileIsExistResult checkFileNameExistForResult(Long userId, String fileName, String bucketName, Long fileSize);
+
+    List<FileIsExistResult> checkFilesExistForResult(List<FileIsExistAo> fileIsExistAos);
+
     /**
      * 检查文件名是否存在？（非幂等性）
      * @param userId            用户id

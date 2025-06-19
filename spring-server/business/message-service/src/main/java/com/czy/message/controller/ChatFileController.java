@@ -9,7 +9,7 @@ import com.czy.api.constant.oss.FileConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.response.UserImageResponse;
-import com.czy.message.component.RabbitMqSender;
+import com.czy.message.mq.sender.RabbitMqSender;
 import com.utils.mvc.service.MinIOService;
 import domain.FileOptionResult;
 import lombok.RequiredArgsConstructor;

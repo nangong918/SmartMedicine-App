@@ -65,6 +65,11 @@
         FROM login_user
         WHERE account = #{account}
     </select>
+    <select id="checkPhoneExist" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM login_user
+        WHERE phone = #{phone}
+    </select>
     <select id="getUserByPhone" resultType="com.czy.api.domain.Do.user.UserDo">
         SELECT
             <include refid="UserDoColumns"/>

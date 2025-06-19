@@ -1,0 +1,49 @@
+package com.czy.message.mq.handler;
+
+import com.czy.api.constant.netty.MqConstants;
+import com.czy.api.domain.entity.event.Message;
+import com.czy.message.component.MessageEventManager;
+import com.rabbitmq.client.Channel;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.stereotype.Component;
+
+import javax.validation.Valid;
+import java.io.IOException;
+
+/**
+ * @author 13225
+ * @date 2025/6/19 17:08
+ */
+@Slf4j
+@RequiredArgsConstructor
+@RabbitListener(queues = MqConstants.MessageQueue.MESSAGE_TO_SERVICE_QUEUE)
+@Component
+public class MessageMqHandler {
+
+    private final MessageEventManager<Message> messageMessageEventManager;
+
+
+    @RabbitHandler
+    public void handleMessage(@Valid Message message,
+                              Channel channel,
+                              @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
+        messageMessageEventManager.process(message);
+        // 确认机制
+        try {
+            if (channel.isOpen()){
+                channel.basicAck(deliveryTag, false);
+            }
+            else {
+                log.warn("频道关闭，无法确认消息");
+            }
+        } catch (IOException e) {
+            log.error("消息确认接收失败", e);
+        }
+    }
+
+}

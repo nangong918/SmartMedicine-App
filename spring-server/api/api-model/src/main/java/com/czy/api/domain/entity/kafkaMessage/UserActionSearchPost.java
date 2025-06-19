@@ -17,8 +17,6 @@ import java.util.Map;
 @Data
 public class UserActionSearchPost extends UserActionMessage {
 
-    public static final String TOPIC = "USER_ACTION_SEARCH_POST";
-
     private Map<Integer, List<Long>> levelsPostIdMap = new HashMap<>();
     private Map<Integer, List<PostNerResult>> levelsPostEntityScoreMap = new HashMap<>();
     private Map<Integer, List<Integer>> levelsPostLabelScoreMap = new HashMap<>();

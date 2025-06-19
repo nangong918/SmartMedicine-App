@@ -2,6 +2,7 @@ package com.utils.mvc.service;
 
 
 import com.czy.api.domain.ao.oss.FileAo;
+import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,17 @@ public interface MinIOService {
      * @return                  ErrorFileList
      */
     FileOptionResult uploadFiles(List<MultipartFile> files, Long userId, String bucketName);
+
+    /**
+     * 包含幂等性的上传
+     * @param files                 文件List
+     * @param fileIsExistResults    文件是否已经存在
+     * @param bucketName            bucketName
+     * @param userId                userId
+     * @return                      FileOptionResult
+     */
+    FileOptionResult uploadFilesWithIdempotent
+            (List<MultipartFile> files, List<FileIsExistResult> fileIsExistResults, String bucketName, Long userId);
 
     // fileName + userId 生成 fileStorageName
     String getFileStorageName(Long userId, String fileName);

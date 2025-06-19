@@ -85,6 +85,9 @@ public interface PostConverter {
             if (!CollectionUtils.isEmpty(postDetailDo.getNerResults())){
                 postAo.setNerResults(postDetailDo.getNerResults());
             }
+            if (postDetailDo.getId() != null){
+                postAo.setId(postInfoDo.getId());
+            }
         }
         if (postInfoDo != null){
             postAo.setAuthorId(postInfoDo.getAuthorId());

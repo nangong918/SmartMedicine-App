@@ -10,7 +10,8 @@
         permission,
         phone,
         register_time,
-        last_online_time
+        last_online_time,
+        avatar_file_id
     </sql>
     <insert id="insertLoginUser" parameterType="com.czy.api.domain.Do.user.LoginUserDo">
         INSERT INTO login_user (
@@ -21,7 +22,7 @@
         phone,
         permission,
         register_time,
-        last_online_time
+        last_online_time,
         <if test="avatarFileId != null">,
             avatar_file_id
         </if>
@@ -34,7 +35,7 @@
         #{phone},
         #{permission},
         #{registerTime},
-        #{lastOnlineTime}
+        #{lastOnlineTime},
         <if test="avatarFileId != null">,
             #{avatarFileId}
         </if>
@@ -43,26 +44,29 @@
     <update id="updateLoginUser">
         UPDATE login_user
         <set>
-            <if test="do.userName != null">
-                user_name = #{do.userName},
+            <if test="userName != null">
+                user_name = #{userName},
             </if>
-            <if test="do.account != null">
-                account = #{do.account},
+            <if test="account != null">
+                account = #{account},
             </if>
-            <if test="do.password != null">
-                password = #{do.password},
+            <if test="password != null">
+                password = #{password},
             </if>
-            <if test="do.phone != null">
-                phone = #{do.phone},
+            <if test="phone != null">
+                phone = #{phone},
             </if>
-            <if test="do.permission != null">
-                permission = #{do.permission},
+            <if test="permission != null">
+                permission = #{permission},
             </if>
-            <if test="do.registerTime != null">
-                register_time = #{do.registerTime},
+            <if test="registerTime != null">
+                register_time = #{registerTime},
             </if>
-            <if test="do.lastOnlineTime != null">
-                last_online_time = #{do.lastOnlineTime},
+            <if test="lastOnlineTime != null">
+                last_online_time = #{lastOnlineTime},
+            </if>
+            <if test="avatarFileId != null">
+                avatar_file_id = #{avatarFileId},
             </if>
         </set>
         WHERE id = #{id}
@@ -83,7 +87,7 @@
     </select>
     <select id="getLoginUserByAccount" resultType="com.czy.api.domain.Do.user.LoginUserDo">
         SELECT
-            id, user_name, account, password, phone, permission, register_time, last_online_time
+            <include refid="LoginUserDoColumns"/>
         FROM login_user
         WHERE account = #{account}
     </select>
@@ -106,7 +110,7 @@
             </if>
         </where>
     </select>
-    <select id="getIdByAccount" resultType="java.lang.Integer">
+    <select id="getIdByAccount" resultType="java.lang.Long">
         SELECT id
         FROM login_user
         WHERE account = #{account}

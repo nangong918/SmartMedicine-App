@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author 13225
@@ -22,4 +23,8 @@ public class PostPublishRequest extends BaseNettyRequest {
     public String content;
     @NotNull(message = "是否包含文件判断值不能为空")
     public Boolean isHaveFiles;
+    // topic Todo 话题标签，在neo4j中单独属于
+    public List<String> topics;
+    // label todo 分类标签，在neo4j中单独属于
+    public List<String> labels;
 }

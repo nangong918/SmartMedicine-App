@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 /**
  * @author 13225
  * @date 2025/4/2 14:57
+ * 有点多此一举， mq本身就是事件.
+ * relationShip这个留着，其他微服务的全部删掉
  */
 @Slf4j
 @RequiredArgsConstructor

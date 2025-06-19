@@ -24,6 +24,11 @@ public interface PostFilesMapper {
     // 批量删除
     void deletePostFilesDoByIdList(List<Long> idList);
 
+    // 通过post_id删除
+    void deletePostFilesDoByPostId(Long postId);
+    // 通过post_id批量删除
+    void deletePostFilesDoByPostIdList(List<Long> postIdList);
+
     // 更新
     void updatePostFilesDoById(PostFilesDo postInfoDo);
     // 更新postId的文件ids

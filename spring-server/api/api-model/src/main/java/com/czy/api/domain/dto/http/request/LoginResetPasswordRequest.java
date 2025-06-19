@@ -16,8 +16,11 @@ import javax.validation.constraints.NotEmpty;
 public class LoginResetPasswordRequest extends BaseNettyRequest {
     @NotEmpty(message = "用户账号不能为空")
     private String account;
-    @NotEmpty(message = "用户密码不能为空")
     private String password;
     @NotEmpty(message = "用户新密码不能为空")
     private String newPassword;
+    @NotEmpty(message = "手机号不能为空")
+    private String phone;
+    @NotEmpty(message = "验证码不能为空")
+    private String vcode;
 }
