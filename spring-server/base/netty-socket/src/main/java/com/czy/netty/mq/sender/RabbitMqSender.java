@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitMqSender {
 
-    private final RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitJsonTemplate;
 
     */
 /**
@@ -32,7 +32,7 @@ public class RabbitMqSender {
         if (message == null){
             return;
         }
-        rabbitTemplate.convertAndSend(
+        rabbitJsonTemplate.convertAndSend(
                 SocketMessageMqConstant.USER_SEND_QUEUE,
                 message);
     }

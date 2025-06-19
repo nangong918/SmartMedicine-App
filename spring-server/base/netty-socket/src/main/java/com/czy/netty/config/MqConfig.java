@@ -248,6 +248,24 @@ public class MqConfig {
 
     ///  死信
 
+    // message
+    @Bean
+    public Queue messageDeadLetterQueue(){
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-queue-mode", "lazy"); // 设置为惰性队列
+
+        return new Queue(MqConstants.DeadLetterQueue.MESSAGE_DEAD_LETTER_QUEUE,
+                true, false, false, args);
+    }
+
+    @Bean
+    public Binding bindingMessageDeadLetterQueue() {
+        return BindingBuilder.bind(messageDeadLetterQueue())
+                .to(deadLetterExchange())
+                .with(MqConstants.DeadLetterQueue.Routing.MESSAGE_DEAD_LETTER_ROUTING); // 绑定死信队列的路由键
+    }
+
+    // relationship
     @Bean
     public Queue relationshipDeadLetterQueue(){
         Map<String, Object> args = new HashMap<>();
@@ -262,6 +280,40 @@ public class MqConfig {
         return BindingBuilder.bind(relationshipDeadLetterQueue())
                 .to(deadLetterExchange())
                 .with(MqConstants.DeadLetterQueue.Routing.RELATIONSHIP_DEAD_LETTER_ROUTING); // 绑定死信队列的路由键
+    }
+
+    // post
+    @Bean
+    public Queue postDeadLetterQueue(){
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-queue-mode", "lazy"); // 设置为惰性队列
+
+        return new Queue(MqConstants.DeadLetterQueue.POST_DEAD_LETTER_QUEUE,
+                true, false, false, args);
+    }
+
+    @Bean
+    public Binding bindingPostDeadLetterQueue() {
+        return BindingBuilder.bind(postDeadLetterQueue())
+                .to(deadLetterExchange())
+                .with(MqConstants.DeadLetterQueue.Routing.POST_DEAD_LETTER_ROUTING); // 绑定死信队列的路由键
+    }
+
+    // oss
+    @Bean
+    public Queue ossDeadLetterQueue(){
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-queue-mode", "lazy"); // 设置为惰性队列
+
+        return new Queue(MqConstants.DeadLetterQueue.OSS_DEAD_LETTER_QUEUE,
+                true, false, false, args);
+    }
+
+    @Bean
+    public Binding bindingOssDeadLetterQueue() {
+        return BindingBuilder.bind(ossDeadLetterQueue())
+                .to(deadLetterExchange())
+                .with(MqConstants.DeadLetterQueue.Routing.OSS_DEAD_LETTER_ROUTING); // 绑定死信队列的路由键
     }
 
 }
