@@ -2,6 +2,7 @@ package com.czy.post.handler;
 
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.feature.PostOperation;
+import com.czy.api.constant.netty.KafkaConstant;
 import com.czy.api.constant.netty.NettyOptionEnum;
 import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.constant.netty.RequestMessageType;
@@ -140,7 +141,7 @@ public class PostHandler implements PostApi{
         userActionOperatePost.setOperateType(operateType);
 
         try {
-            kafkaSender.sendUserActionMessage(userActionOperatePost, UserActionOperatePost.TOPIC);
+            kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
         } catch (Exception e) {
             log.error("用户显性行为Kafka传输异常：[收藏] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
         }
@@ -270,7 +271,7 @@ public class PostHandler implements PostApi{
         userActionCommentPost.setPostId(request.getPostId());
         userActionCommentPost.setComment(request.getContent());
         try {
-            kafkaSender.sendUserActionMessage(userActionCommentPost, UserActionCommentPost.TOPIC);
+            kafkaSender.sendUserActionMessage(userActionCommentPost, KafkaConstant.Topic.Comment);
         } catch (Exception e){
             log.error("用户显性行为Kafka传输异常：[评论] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
         }
@@ -344,7 +345,7 @@ public class PostHandler implements PostApi{
         userActionOperatePost.setOperateType(operateType);
 
         try {
-            kafkaSender.sendUserActionMessage(userActionOperatePost, UserActionOperatePost.TOPIC);
+            kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
         } catch (Exception e){
             log.error("用户显性行为Kafka传输异常：[转发] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
         }
@@ -414,7 +415,7 @@ public class PostHandler implements PostApi{
         userActionOperatePost.setOperateType(operateType);
 
         try {
-            kafkaSender.sendUserActionMessage(userActionOperatePost, UserActionOperatePost.TOPIC);
+            kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
         } catch (Exception e){
             log.error("用户显性行为Kafka传输异常：[点赞] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
         }
@@ -467,7 +468,7 @@ public class PostHandler implements PostApi{
         userActionOperatePost.setOperateType(operateType);
 
         try {
-            kafkaSender.sendUserActionMessage(userActionOperatePost, UserActionOperatePost.TOPIC);
+            kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
         } catch (Exception e){
             log.error("用户显性行为Kafka传输异常：[点赞] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
         }

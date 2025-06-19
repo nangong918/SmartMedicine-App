@@ -1,8 +1,8 @@
-package com.czy.logging.mqHander.kafka;
+package com.czy.logging.mq;
 
 import com.czy.api.api.feature.NlpService;
-import com.czy.api.constant.feature.FeatureKafkaConstant;
 import com.czy.api.constant.feature.PostOperation;
+import com.czy.api.constant.netty.KafkaConstant;
 import com.czy.api.domain.ao.feature.CommentEmotionAo;
 import com.czy.api.domain.entity.kafkaMessage.UserActionCommentPost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionOperatePost;
@@ -30,8 +30,8 @@ public class UserActionKafkaHandler {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private NlpService nlpService;
 
-    @KafkaListener(topics = UserActionCommentPost.TOPIC,
-    groupId = FeatureKafkaConstant.GROUP_ID + UserActionCommentPost.TOPIC)
+    @KafkaListener(topics = KafkaConstant.Topic.Comment,
+    groupId = KafkaConstant.GroupId.Feature_Explicit + KafkaConstant.Topic.Comment)
     public void handleUserActionCommentPost(UserActionCommentPost message) {
         if (!debugConfig.isRecordUserAccount()){
             return;
@@ -49,8 +49,8 @@ public class UserActionKafkaHandler {
         );
     }
 
-    @KafkaListener(topics = UserActionOperatePost.TOPIC,
-    groupId = FeatureKafkaConstant.GROUP_ID + UserActionOperatePost.TOPIC)
+    @KafkaListener(topics = KafkaConstant.Topic.Post_Operation,
+    groupId = KafkaConstant.GroupId.Feature_Explicit + KafkaConstant.Topic.Post_Operation)
     public void handleUserActionOperatePost(UserActionOperatePost message) {
         if (!debugConfig.isRecordUserAccount()){
             return;
@@ -66,8 +66,8 @@ public class UserActionKafkaHandler {
         );
     }
 
-    @KafkaListener(topics = UserActionSearchPost.TOPIC,
-    groupId = FeatureKafkaConstant.GROUP_ID + UserActionSearchPost.TOPIC)
+    @KafkaListener(topics = KafkaConstant.Topic.Search,
+    groupId = KafkaConstant.GroupId.Feature_Explicit + KafkaConstant.Topic.Search)
     public void handleUserActionSearchPost(UserActionSearchPost message) {
         if (!debugConfig.isRecordUserAccount()){
             return;

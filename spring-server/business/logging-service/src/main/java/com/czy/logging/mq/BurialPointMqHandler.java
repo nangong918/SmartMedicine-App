@@ -1,4 +1,5 @@
-package com.czy.logging.mqHander.rabbitmq;
+/*
+package com.czy.logging.mq;
 
 import com.czy.api.constant.mq.SocketMessageMqConstant;
 import com.czy.api.domain.entity.event.Message;
@@ -14,10 +15,12 @@ import org.springframework.util.StringUtils;
 
 import javax.validation.Valid;
 
+*/
 /**
  * @author 13225
  * @date 2025/5/23 16:47
- */
+ *//*
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -54,3 +57,4 @@ public class BurialPointMqHandler {
     }
 
 }
+*/

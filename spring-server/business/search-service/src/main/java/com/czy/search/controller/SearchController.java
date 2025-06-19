@@ -5,6 +5,7 @@ import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user_relationship.UserHealthDataService;
 import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.constant.netty.KafkaConstant;
 import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.constant.search.FuzzySearchResponseEnum;
 import com.czy.api.constant.search.NlpResultEnum;
@@ -174,7 +175,7 @@ public class SearchController {
             userActionSearchPost.setId(userId);
             userActionSearchPost.setLevelsPostIdMap(postIdListMap);
             try {
-                kafkaSender.sendUserActionMessage(userActionSearchPost, UserActionSearchPost.TOPIC);
+                kafkaSender.sendUserActionMessage(userActionSearchPost, KafkaConstant.Topic.Search);
             } catch (Exception e) {
                 log.error("用户显性行为Kafka传输异常：[搜索] [userId:{}]", userId, e);
             }

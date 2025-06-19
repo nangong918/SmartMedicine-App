@@ -192,7 +192,7 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 学习Mq -> 重构Mq (记录笔记,不能白开发,留下笔记)
     * 学习       2天 (16~17)
     * 重构Mq测试  1天 (18)
-  * 重构netty,message,user服务的handler
+  * 重构netty,message,user服务的handler;logging服务的kafka-handler;netty的kafka-sender
     * 4天 (19~23)
   * 构建App
     * 3天
