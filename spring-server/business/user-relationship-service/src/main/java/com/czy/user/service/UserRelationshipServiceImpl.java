@@ -3,6 +3,7 @@ package com.czy.user.service;
 import com.czy.api.api.user_relationship.UserRelationshipService;
 import com.czy.api.api.user_relationship.UserSearchService;
 import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.constant.user_relationship.ListAddOrDeleteStatusEnum;
 import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
@@ -12,7 +13,11 @@ import com.czy.api.converter.domain.relationship.SearchFriendApplyConverter;
 import com.czy.api.domain.Do.relationship.FriendApplyDo;
 import com.czy.api.domain.Do.relationship.UserFriendDo;
 import com.czy.api.domain.Do.user.UserDo;
-import com.czy.api.domain.ao.relationship.*;
+import com.czy.api.domain.ao.relationship.AddUserAo;
+import com.czy.api.domain.ao.relationship.HandleAddedMeAo;
+import com.czy.api.domain.ao.relationship.MyFriendItemAo;
+import com.czy.api.domain.ao.relationship.NewUserItemAo;
+import com.czy.api.domain.ao.relationship.SearchFriendApplyAo;
 import com.czy.api.domain.bo.relationship.NewUserItemBo;
 import com.czy.api.domain.bo.relationship.SearchFriendApplyBo;
 import com.czy.api.domain.dto.socket.response.HandleAddUserResponse;
@@ -20,10 +25,9 @@ import com.czy.api.domain.entity.ChatEntity;
 import com.czy.api.domain.entity.MessageEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.api.domain.entity.event.RelationshipDelete;
-import com.czy.user.mq.sender.ToSocketMqSender;
 import com.czy.user.mapper.mysql.relation.FriendApplyMapper;
 import com.czy.user.mapper.mysql.relation.UserFriendMapper;
+import com.czy.user.mq.sender.ToSocketMqSender;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.AppException;
@@ -409,16 +413,14 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         if (userFriendDo != null){
             userFriendMapper.deleteUserFriend(userFriendDo);
 
-            RelationshipDelete relationshipDelete = new RelationshipDelete();
-            relationshipDelete.setSenderId(userFriendDo.getUserId());
-            relationshipDelete.setReceiverId(userFriendDo.getFriendId());
             String userAccount = userService.getUserById(userFriendDo.getUserId()).getAccount();
             String friendAccount = userService.getUserById(userFriendDo.getFriendId()).getAccount();
-            Message deleeteMessage = new Message();
-            deleeteMessage.setType(ResponseMessageType.Friend.DELETED_FRIEND);
-            deleeteMessage.setSenderId(userAccount);
-            deleeteMessage.setReceiverId(friendAccount);
-            toSocketMqSender.push(deleeteMessage);
+            Message deleteMessage = new Message();
+            deleteMessage.setType(RequestMessageType.Chat.DELETE_ALL_MESSAGE);
+            deleteMessage.setSenderId(userAccount);
+            deleteMessage.setReceiverId(friendAccount);
+            // dubbo会循环调用，此处必须用mq
+            toSocketMqSender.push(deleteMessage);
         }
     }
 

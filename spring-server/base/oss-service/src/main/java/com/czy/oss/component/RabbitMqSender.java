@@ -16,6 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitMqSender {
 
-    private final RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitJsonTemplate;
     
 }

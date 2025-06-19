@@ -4,13 +4,11 @@ package com.czy.message.controller;
 
 
 import com.czy.api.constant.message.MessageConstant;
-import com.czy.api.constant.netty.MessageTypeTranslator;
-import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.converter.base.MessageConverter;
 import com.czy.api.domain.dto.http.base.BaseNettyRequest;
 import com.czy.api.domain.dto.http.response.ResponseEntity;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.message.component.RabbitMqSender;
+import com.czy.message.mq.sender.RabbitMqSender;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;

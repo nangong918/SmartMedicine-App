@@ -2,6 +2,7 @@ package com.czy.message.handler;
 
 
 import cn.hutool.core.util.IdUtil;
+import com.czy.api.api.message.ChatService;
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.MessageTypeEnum;
@@ -12,16 +13,17 @@ import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.bo.message.UserChatLastMessageBo;
 import com.czy.api.domain.dto.base.BaseRequestData;
+import com.czy.api.domain.dto.http.request.DeleteAllMessageRequest;
 import com.czy.api.domain.dto.http.request.SendImageRequest;
 import com.czy.api.domain.dto.http.request.SendTextDataRequest;
 import com.czy.api.domain.dto.http.response.UploadFileResponse;
 import com.czy.api.domain.dto.http.response.UserImageResponse;
 import com.czy.api.domain.dto.http.response.UserTextDataResponse;
-import com.czy.springUtils.annotation.HandlerType;
-import com.czy.message.component.RabbitMqSender;
 import com.czy.message.handler.api.ChatApi;
-import com.czy.api.api.message.ChatService;
+import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
+import com.czy.message.mq.sender.RabbitMqSender;
 import com.czy.message.queue.ChatMessageQueue;
+import com.czy.springUtils.annotation.HandlerType;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +53,7 @@ public class ChatHandler implements ChatApi {
     private final RabbitMqSender rabbitMqSender;
     private final ChatService chatService;
     private final ChatMessageQueue chatMessageQueue;
+    private final UserChatMessageMongoMapper userChatMessageMongoMapper;
     @Override
     public void sendTextMessageToUser(SendTextDataRequest request) {
         UserChatLastMessageBo bo = getUserChatLastMessageBo(request, request.getContent(), MessageTypeEnum.text.code);
@@ -182,6 +185,16 @@ public class ChatHandler implements ChatApi {
 //
 //        // 消息推送 不用type转换，type转换在pusher中
 //        rabbitMqSender.push(response);
+    }
+
+    @Override
+    public void deleteAllMessage(DeleteAllMessageRequest request) {
+        UserDo senderDo = userService.getUserByAccount(request.getSenderId());
+        UserDo receiverDo = userService.getUserByAccount(request.getReceiverId());
+        userChatMessageMongoMapper.deleteAllMessages(
+                senderDo.getId(),
+                receiverDo.getId()
+        );
     }
 
     // 获得 UserChatLastMessageBo
