@@ -23,6 +23,8 @@ public class ToServiceMqSender {
 
     // 以JSON发送
     private final RabbitTemplate rabbitJsonTemplate;
+    // 确认发布的rabbitTemplate
+    private final RabbitTemplate confirmRabbitJsonTemplate;
 
     public void sendToService(Message message){
         if (message == null){
@@ -44,6 +46,8 @@ public class ToServiceMqSender {
                 case MqConstants.OssQueue.ID:
                     sendToOssService(message);
                     break;
+                case MqConstants.TO_SERVICE:
+//                    log.info("前端发送给server的消息，无需处理");
                 default:
                     break;
             }
@@ -53,13 +57,13 @@ public class ToServiceMqSender {
         }
     }
 
-    private void sendToDeathLetterQueue(Message message, String deathRouting){
-        // 发送到死信队列
-        rabbitJsonTemplate.convertAndSend(
-                MqConstants.Exchange.DEAD_LETTER_EXCHANGE,
-                deathRouting,
-                message);
-    }
+//    private void sendToDeathLetterQueue(Message message, String deathRouting){
+//        // 发送到死信队列
+//        rabbitJsonTemplate.convertAndSend(
+//                MqConstants.Exchange.DEAD_LETTER_EXCHANGE,
+//                deathRouting,
+//                message);
+//    }
 
     private void messageNoAckLog(Message message){
         log.error("message消息未确认，消息发送者：{}，消息接收者：{}", message.getSenderId(), message.getReceiverId());
@@ -67,20 +71,8 @@ public class ToServiceMqSender {
 
     // message service(实时可靠消息)要求快速和高可靠。采用非惰性 + 发布确认 + 接收确认 + message ttl + 消息持久化
     private void sendToMessageService(Message message){
-        // 设置确认回调
-        rabbitJsonTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            if (!ack) {
-                messageNoAckLog(message);
-                message.getData().put("cause", cause);
-                // 发送到死信队列
-                sendToDeathLetterQueue(message,
-                        MqConstants.DeadLetterQueue.Routing.MESSAGE_DEAD_LETTER_ROUTING
-                );
-            }
-        });
-
         // 发送消息
-        rabbitJsonTemplate.convertAndSend(
+        confirmRabbitJsonTemplate.convertAndSend(
                 // 交换机
                 MqConstants.Exchange.MESSAGE_EXCHANGE,
                 // 路由键
@@ -111,20 +103,8 @@ public class ToServiceMqSender {
 
     // relationship service(可靠消息)要求非快速，高可靠。采用惰性队列 + 发布确认 + 接收确认 + message ttl + 消息持久化
     private void sendToRelationshipService(Message message){
-        // 设置确认回调
-        rabbitJsonTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            if (!ack) {
-                messageNoAckLog(message);
-                message.getData().put("cause", cause);
-                // 发送到死信队列
-                sendToDeathLetterQueue(message,
-                        MqConstants.DeadLetterQueue.Routing.RELATIONSHIP_DEAD_LETTER_ROUTING
-                );
-            }
-        });
-
         // 发送消息
-        rabbitJsonTemplate.convertAndSend(
+        confirmRabbitJsonTemplate.convertAndSend(
                 // 交换机
                 MqConstants.Exchange.RELATIONSHIP_EXCHANGE,
                 // 路由键

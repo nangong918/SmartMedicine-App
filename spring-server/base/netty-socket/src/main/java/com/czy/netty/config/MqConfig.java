@@ -1,6 +1,8 @@
 package com.czy.netty.config;
 
 import com.czy.api.constant.netty.MqConstants;
+import com.czy.api.domain.entity.event.Message;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -20,6 +22,7 @@ import java.util.Map;
  * @date 2025/6/13 17:32
  * 全部的Ma相关Bean都在此创建，微服务启动的时候消息队列缺失的问题。
  */
+@Slf4j
 @Configuration
 @EnableRabbit
 public class MqConfig {
@@ -37,6 +40,21 @@ public class MqConfig {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(messageConverter()); // 设置 JSON 转换器
         template.setChannelTransacted(true); // 确保事务处理
+        return template;
+    }
+
+    // 确认发布template
+    @Bean("confirmRabbitJsonTemplate")
+    public RabbitTemplate confirmRabbitJsonTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate template = new RabbitTemplate(connectionFactory);
+        template.setMessageConverter(messageConverter()); // 设置 JSON 转换器
+        template.setChannelTransacted(true); // 确保事务处理
+        // 设置确认回调
+        template.setConfirmCallback((correlationData, ack, cause) -> {
+            if (!ack) {
+                log.error("消息发送失败: {}", cause);
+            }
+        });
         return template;
     }
 
@@ -316,4 +334,7 @@ public class MqConfig {
                 .with(MqConstants.DeadLetterQueue.Routing.OSS_DEAD_LETTER_ROUTING); // 绑定死信队列的路由键
     }
 
+    private void messageNoAckLog(Message message){
+        log.error("message消息未确认，消息发送者：{}，消息接收者：{}", message.getSenderId(), message.getReceiverId());
+    }
 }

@@ -206,5 +206,7 @@ public interface MqConstants {
 //        String POST_DLX_QUEUE = "socket" + R.POST + QUEUE_KEY;
 //        String RELATION_DLX_QUEUE = "socket" + R.RELATION + QUEUE_KEY;
 //        String OSS_DLX_QUEUE = "socket" + R.OSS + QUEUE_KEY;
+
+        String TO_SERVER = "to-server";
     }
 }

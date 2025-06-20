@@ -41,6 +41,12 @@ public class NettyMessageServiceImpl implements NettyMessageService {
         else if (type.contains(RequestMessageType.Oss.root)){
             return MqConstants.OssQueue.ID;
         }
+
+        else if (type.contains(RequestMessageType.Connect.root)
+         || type.contains(RequestMessageType.ToServer.root)){
+            return MqConstants.TO_SERVICE;
+        }
+
         return null;
     }
 
