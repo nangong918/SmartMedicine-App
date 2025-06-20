@@ -194,10 +194,20 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
     * 重构Mq测试  1天 (18)
   * 重构netty,message,user服务的handler;logging服务的kafka-handler;netty的kafka-sender
     * 4天 (19~23)
-  * 构建App
-    * 3天
-  * 共8天
-  * 6月13~23
+      * 重构Spring + 构建测试App
+* App聊天
+  * 好友相关 3天 (24~26)
+    * 添加,删除好友
+    * 好友列表
+  * 聊天相关 3天 (27~7月1)
+    * 发送文本消息
+    * 发送图片消息
+  * 学习查询分页,学习数据库分库分表 4天(2~5)
+  * 聊天记录相关 5天 (7~11)
+    * 临时聊天记录列表
+    * 单个好友分页聊天记录
+    * 关键词ElasticSearch查询聊天记录
+    * 聊天记录存储的分库分表设计
 * App获取帖子联调
   * url存储在redis重构
   * redis学习
