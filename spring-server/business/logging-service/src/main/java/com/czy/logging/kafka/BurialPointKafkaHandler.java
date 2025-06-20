@@ -1,4 +1,4 @@
-package com.czy.logging.mq;
+package com.czy.logging.kafka;
 
 import com.czy.api.constant.netty.KafkaConstant;
 import com.czy.api.domain.entity.event.Message;

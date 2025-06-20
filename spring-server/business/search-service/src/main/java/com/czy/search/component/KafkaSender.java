@@ -1,12 +1,11 @@
 package com.czy.search.component;
 
+import com.czy.api.constant.netty.KafkaConstant;
+import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author 13225
@@ -17,10 +16,10 @@ import java.util.concurrent.ExecutionException;
 @Component
 public class KafkaSender {
 
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<Object, Object> kafkaTemplate;
 
-    public SendResult<String, Object> sendUserActionMessage(Object message, String topic) throws ExecutionException, InterruptedException {
-        return kafkaTemplate.send(topic, message).get();
+    public void sendSearchAction(UserActionSearchPost message){
+        kafkaTemplate.send(KafkaConstant.Topic.Search, message);
     }
 
 }

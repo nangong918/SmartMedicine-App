@@ -193,8 +193,12 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
     * 学习       2天 (16~17)
     * 重构Mq测试  1天 (18)
   * 重构netty,message,user服务的handler;logging服务的kafka-handler;netty的kafka-sender
-    * 4天 (19~23)
+    * 4天 (19~23): 启动App测试Netty,调整通过一个mq再修改其他的mq
       * 重构Spring + 构建测试App
+      * Kafka:netty的post行为,埋点;
+      * Kafka:搜索行为
+      * Kafka:发布帖子行为
+      * Kafka:帖子评论行为
 * App聊天
   * 好友相关 3天 (24~26)
     * 添加,删除好友
