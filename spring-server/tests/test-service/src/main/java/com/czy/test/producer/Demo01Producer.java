@@ -15,11 +15,12 @@ public class Demo01Producer {
     @Resource
     private KafkaTemplate<Object, Object> kafkaTemplate;
 
-    public SendResult syncSend(Integer id) throws ExecutionException, InterruptedException {
+    public SendResult<Object, Object> syncSend(Integer id) throws ExecutionException, InterruptedException {
         // 创建 Demo01Message 消息
         Demo01Message message = new Demo01Message();
         message.setId(id);
-        // 同步发送消息
+
+        // 同步发送消息，并指定键的类型（可以是 null 或其他类型）
         return kafkaTemplate.send(Demo01Message.TOPIC, message).get();
     }
 
