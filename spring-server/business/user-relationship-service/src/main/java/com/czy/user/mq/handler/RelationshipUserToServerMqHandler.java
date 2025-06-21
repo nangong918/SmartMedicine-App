@@ -7,6 +7,11 @@ import com.czy.api.domain.entity.event.event.MessageRouteEvent;
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.rabbit.annotation.Argument;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
@@ -24,32 +29,35 @@ import java.io.IOException;
  */
 
 @Slf4j
-/* 取消使用注解创建消息队列，
-    原因：1.需要微服务启动才能创建消息队列，容易出现其他需要消息队列的微服务缺失微服务而无法启动.
-         2.注解创建是静态的，无法通过nacos等热部署修改配置
- */
-/*@RabbitListener(
+@RequiredArgsConstructor
+//@RabbitListener(queues = SocketMessageMqConstant.USER_RECEIVE_QUEUE)
+//@RabbitListener(queues = MqConstants.RelationshipQueue.RELATIONSHIP_TO_SERVICE_QUEUE)
+@RabbitListener(
         bindings = @QueueBinding(
                 value = @Queue(
                         name = MqConstants.RelationshipQueue.RELATIONSHIP_TO_SERVICE_QUEUE,
-                        // 持久化
+                        // 持久化队列
                         durable = "true",
-                        // 惰性队列
-                        arguments = @Argument(name = "x-queue-mode", value = "lazy")
+                        // 排他队列
+                        exclusive = "false",
+                        // 自动删除：消息队列，需要高可靠
+                        autoDelete = "false",
+                        arguments = {
+                                // 惰性队列
+                                @Argument(name = "x-queue-mode", value = "Lazy"),
+                                @Argument(name = "x-message-ttl", value = MqConstants.RelationshipQueue.message_ttl_str, type = "java.lang.Integer"),
+                                @Argument(name = "x-dead-letter-exchange", value = MqConstants.Exchange.DEAD_LETTER_EXCHANGE),
+                                @Argument(name = "x-dead-letter-routing-key", value = MqConstants.DeadLetterQueue.RELATIONSHIP_DEAD_LETTER_QUEUE)
+                        }
                 ),
                 exchange = @Exchange(
-                        // .topic.exchange
                         value = MqConstants.Exchange.RELATIONSHIP_EXCHANGE,
-                        // 此处一定要制定交换机的类型
-                        type = ExchangeTypes.TOPIC
+                        type = ExchangeTypes.TOPIC,
+                        durable = "true"  // 持久化交换机
                 ),
-                // 路由键；就是"china.#"
-                key = (MqConstants.MessageQueue.Routing.TO_SERVICE_ROUTING + ".#")
+                key = MqConstants.RelationshipQueue.Routing.TO_SERVICE_ROUTING
         )
-)*/
-@RequiredArgsConstructor
-//@RabbitListener(queues = SocketMessageMqConstant.USER_RECEIVE_QUEUE)
-@RabbitListener(queues = MqConstants.RelationshipQueue.RELATIONSHIP_TO_SERVICE_QUEUE)
+)
 @Component
 public class RelationshipUserToServerMqHandler {
 

@@ -103,6 +103,8 @@ public interface MqConstants {
         String ID = ".post";
         Long message_ttl = 10 * 60 * 1000L;
         Integer message_max_length = 1000_000;
+        String message_ttl_str = "600000";
+        String max_length_str = "1000000";
 
         interface Routing {
             String TO_SOCKET_ROUTING = TO_SOCKET + ID;
@@ -126,6 +128,9 @@ public interface MqConstants {
         String ID = ".relationship";
         Long message_ttl = 10 * 60 * 1000L;
         Object message_max_length = 1000_000;
+        String message_ttl_str = "600000";
+        String max_length_str = "1000000";
+
 
         interface Routing {
             String TO_SOCKET_ROUTING = TO_SOCKET + ID;
@@ -152,8 +157,11 @@ public interface MqConstants {
     interface OssQueue {
 //        String OSS_QUEUE = "socket.oss.queue";
         String ID = ".oss";
-        Long message_ttl = 10 * 60 * 1000L;
-        Object message_max_length = 1000_000;
+        Long message_ttl = 10 * 1000L;
+        Integer message_max_length = 1000;
+        String message_ttl_str = "10000";
+        String max_length_str = "1000";
+
         interface Routing {
             String TO_SOCKET_ROUTING = TO_SOCKET + ID;
             String TO_SERVICE_ROUTING = TO_SERVICE + ID;
@@ -182,6 +190,8 @@ public interface MqConstants {
      */
     interface DeadLetterQueue {
         String ID = ".dead_letter";
+        String message_ttl_str = "60000";
+
         interface Routing{
             String MESSAGE_DEAD_LETTER_ROUTING = MessageQueue.ID + ID;
             String POST_DEAD_LETTER_ROUTING = PostQueue.ID + ID;

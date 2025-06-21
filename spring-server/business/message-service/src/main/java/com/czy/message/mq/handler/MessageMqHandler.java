@@ -26,7 +26,12 @@ import java.io.IOException;
         bindings = @QueueBinding(
                 value = @Queue(
                         name = MqConstants.MessageQueue.MESSAGE_TO_SERVICE_QUEUE,
-                        durable = "true",  // 持久化队列
+                        // 持久化队列
+                        durable = "true",
+                        // 排他队列
+                        exclusive = "false",
+                        // 自动删除：消息队列，需要高可靠
+                        autoDelete = "false",
                         arguments = {
                                 @Argument(name = "x-message-ttl", value = MqConstants.MessageQueue.message_ttl_str, type = "java.lang.Integer"),
                                 @Argument(name = "x-dead-letter-exchange", value = MqConstants.Exchange.DEAD_LETTER_EXCHANGE),
