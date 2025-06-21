@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ToSocketMqSender {
 
-    private final RabbitTemplate rabbitJsonTemplate;
+    private final RabbitTemplate confirmRabbitJsonTemplate;
     private final BaseResponseConverter baseResponseConverter;
 
     // relationship service(可靠消息)要求非快速，高可靠。采用惰性队列 + 发布确认 + 接收确认 + message ttl + 消息持久化
@@ -31,19 +31,9 @@ public class ToSocketMqSender {
         if (message == null){
             return;
         }
-        // 设置确认回调
-        rabbitJsonTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            if (!ack) {
-                messageNoAckLog(message);
-                message.getData().put("cause", cause);
-                // 发送到死信队列
-                sendToDeathLetterQueue(message
-                );
-            }
-        });
 
         // 发送消息
-        rabbitJsonTemplate.convertAndSend(
+        confirmRabbitJsonTemplate.convertAndSend(
                 // 交换机
                 MqConstants.Exchange.RELATIONSHIP_EXCHANGE,
                 // 路由键
@@ -72,19 +62,6 @@ public class ToSocketMqSender {
 
         push(message);
     }
-
-    private void messageNoAckLog(Message message){
-        log.error("message消息未确认，消息发送者：{}，消息接收者：{}", message.getSenderId(), message.getReceiverId());
-    }
-
-    private void sendToDeathLetterQueue(Message message){
-        // 发送到死信队列
-        rabbitJsonTemplate.convertAndSend(
-                MqConstants.Exchange.DEAD_LETTER_EXCHANGE,
-                MqConstants.DeadLetterQueue.Routing.RELATIONSHIP_DEAD_LETTER_ROUTING,
-                message);
-    }
-
 
     
 }

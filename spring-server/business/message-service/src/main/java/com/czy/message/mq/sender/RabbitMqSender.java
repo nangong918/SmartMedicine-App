@@ -22,25 +22,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitMqSender {
 
-    private final RabbitTemplate rabbitJsonTemplate;
+    private final RabbitTemplate confirmRabbitJsonTemplate;
     private final BaseResponseConverter baseResponseConverter;
 
     public void push(Message message){
         if (message == null){
             return;
         }
-        // 发布确认
-        rabbitJsonTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            if (!ack) {
-                messageNoAckLog(message);
-                message.getData().put("cause", cause);
-                // 发送到死信队列
-                sendToDeathLetterQueue(message
-                );
-            }
-        });
 
-        rabbitJsonTemplate.convertAndSend(
+        confirmRabbitJsonTemplate.convertAndSend(
                 MqConstants.Exchange.MESSAGE_EXCHANGE,
                 MqConstants.MessageQueue.Routing.TO_SOCKET_ROUTING,
                 message,
@@ -50,18 +40,6 @@ public class RabbitMqSender {
                             .setDeliveryMode(MessageDeliveryMode.PERSISTENT);
                     return messagePostProcessor;
                 });
-    }
-
-    private void messageNoAckLog(Message message){
-        log.error("message消息未确认，消息发送者：{}，消息接收者：{}", message.getSenderId(), message.getReceiverId());
-    }
-
-    private void sendToDeathLetterQueue(Message message){
-        // 发送到死信队列
-        rabbitJsonTemplate.convertAndSend(
-                MqConstants.Exchange.DEAD_LETTER_EXCHANGE,
-                MqConstants.DeadLetterQueue.Routing.MESSAGE_DEAD_LETTER_ROUTING,
-                message);
     }
 
     /**
