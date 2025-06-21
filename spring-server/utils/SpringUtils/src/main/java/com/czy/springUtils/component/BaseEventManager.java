@@ -5,10 +5,7 @@ import com.czy.springUtils.annotation.HandlerType;
 import com.czy.springUtils.annotation.MessageType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +45,10 @@ public abstract class BaseEventManager <T> {
 //        }
 //    }
 
+    /**
+     *  postConstruct
+     * @param handlerBeans  待处理的handler
+     */
     protected void initEventManager(List<Object> handlerBeans){
         for (Object handler : handlerBeans) {
             HandlerType handlerType = handler.getClass().getAnnotation(HandlerType.class);
@@ -55,6 +56,7 @@ public abstract class BaseEventManager <T> {
                 messageHandlers.add(handlerType.value());
                 handlers.put(handlerType.value(), handler);
                 cacheAnnotatedMethods(handler.getClass());
+                log.info("初始化Message处理类: [handlerType: {}, handlerClass: {}]", handlerType.value(), handler.getClass());
             }
         }
     }
@@ -80,6 +82,7 @@ public abstract class BaseEventManager <T> {
                 MessageType annotation = method.getAnnotation(MessageType.class);
                 if (annotation != null) {
                     methodCache.put(annotation.value(), method);
+                    log.info("缓存标注了 @MessageType 的方法: [messageType: {}, method: {}, desc: {}]", annotation.value(), method, annotation.desc());
                 }
             }
         }
@@ -89,6 +92,7 @@ public abstract class BaseEventManager <T> {
 
     /**
      * 根据消息类型找到对应的 Handler
+     * 反射的invoke方法需要handler和request，也就是接口和入参
      */
     protected Object findHandlerByMessageType(String messageType) {
         for (Map.Entry<String, Object> entry : handlers.entrySet()) {
@@ -99,6 +103,3 @@ public abstract class BaseEventManager <T> {
         return null;
     }
 }
-/**
- * 将消息转为需要的类型
- */
