@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -80,7 +81,14 @@ public class BaseResponseData extends BaseRequestData implements ToDataMap{
     @JsonIgnore
     public Message getMessageByResponse() {
         Message message = BaseResponseConverter.INSTANCE.getMessage(this);
-        message.getData().putAll(toDataMap());
+        Map<String, String> data = toDataMap();
+        // 设置非空的data，如果data中存在空，会造成rabbitMq反序列化失败，从而消息堆积
+        if (data != null){
+            Map<String, String> notNullData = data.entrySet().stream()
+                    .filter(entry -> entry.getValue() != null) // 过滤掉值为 null 的条目
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            message.getData().putAll(notNullData);
+        }
         return message;
     }
 }

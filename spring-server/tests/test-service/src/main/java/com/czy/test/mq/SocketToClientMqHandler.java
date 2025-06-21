@@ -1,3 +1,4 @@
+/*
 package com.czy.test.mq;
 
 
@@ -14,10 +15,12 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 
+*/
 /**
  * @author 13225
  * @date 2025/6/18 18:28
- */
+ *//*
+
 @Slf4j
 
 @RequiredArgsConstructor
@@ -56,3 +59,4 @@ public class SocketToClientMqHandler {
 
     
 }
+*/

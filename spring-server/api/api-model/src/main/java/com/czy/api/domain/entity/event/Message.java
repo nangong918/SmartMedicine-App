@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -45,7 +46,15 @@ public class Message implements BaseBean {
         this.senderId = message.getSenderId();
         this.receiverId = message.getReceiverId();
         this.type = message.getType();
-        this.data = new HashMap<>(message.getData());
+        if (message.getData() != null){
+            this.data = message.getData().entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue() != null) // 过滤掉值为 null 的条目
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+        else {
+            this.data = new HashMap<>();
+        }
         this.timestamp = message.getTimestamp();
     }
 
