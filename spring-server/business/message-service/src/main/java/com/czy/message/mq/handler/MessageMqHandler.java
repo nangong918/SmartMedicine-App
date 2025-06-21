@@ -3,17 +3,16 @@ package com.czy.message.mq.handler;
 import com.czy.api.constant.netty.MqConstants;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.message.component.MessageEventManager;
-import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
-import org.springframework.amqp.rabbit.annotation.*;
-import org.springframework.amqp.support.AmqpHeaders;
-import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.amqp.rabbit.annotation.Argument;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-
-import javax.validation.Valid;
-import java.io.IOException;
 
 /**
  * @author 13225
@@ -52,22 +51,31 @@ public class MessageMqHandler {
     private final MessageEventManager<Message> messageMessageEventManager;
 
 
+//    @RabbitHandler
+//    public void handleMessage(@Valid Message message,
+//                              Channel channel,
+//                              @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
+//        messageMessageEventManager.process(message);
+//        // 确认机制
+//        try {
+//            if (channel.isOpen()){
+//                channel.basicAck(deliveryTag, false);
+//            }
+//            else {
+//                log.warn("频道关闭，无法确认消息");
+//            }
+//        } catch (IOException e) {
+//            log.error("消息确认接收失败", e);
+//        }
+//    }
+
     @RabbitHandler
-    public void handleMessage(@Valid Message message,
-                              Channel channel,
-                              @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
-        messageMessageEventManager.process(message);
-        // 确认机制
-        try {
-            if (channel.isOpen()){
-                channel.basicAck(deliveryTag, false);
-            }
-            else {
-                log.warn("频道关闭，无法确认消息");
-            }
-        } catch (IOException e) {
-            log.error("消息确认接收失败", e);
+    public void handleMessage(Message message){
+        if (message == null){
+            log.warn("接收到空消息");
         }
+        messageMessageEventManager.process(message);
     }
+
 
 }

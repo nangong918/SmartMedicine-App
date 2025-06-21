@@ -23,8 +23,8 @@ public class ToServiceMqSender {
 
     // 以JSON发送
     private final RabbitTemplate rabbitJsonTemplate;
-    // 确认发布的rabbitTemplate
-    private final RabbitTemplate confirmRabbitJsonTemplate;
+//    // 确认发布的rabbitTemplate
+//    private final RabbitTemplate confirmRabbitJsonTemplate;
 
     public void sendToService(Message message){
         if (message == null){
@@ -72,7 +72,22 @@ public class ToServiceMqSender {
     // message service(实时可靠消息)要求快速和高可靠。采用非惰性 + 发布确认 + 接收确认 + message ttl + 消息持久化
     private void sendToMessageService(Message message){
         // 发送消息
-        confirmRabbitJsonTemplate.convertAndSend(
+//        confirmRabbitJsonTemplate.convertAndSend(
+//                // 交换机
+//                MqConstants.Exchange.MESSAGE_EXCHANGE,
+//                // 路由键
+//                MqConstants.MessageQueue.Routing.TO_SERVICE_ROUTING,
+//                // 消息
+//                message,
+//                // 消息持久化
+//                messagePostProcessor -> {
+//                    messagePostProcessor.getMessageProperties()
+//                            .setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+//                    return messagePostProcessor;
+//                }
+//        );
+
+        rabbitJsonTemplate.convertAndSend(
                 // 交换机
                 MqConstants.Exchange.MESSAGE_EXCHANGE,
                 // 路由键
@@ -104,7 +119,22 @@ public class ToServiceMqSender {
     // relationship service(可靠消息)要求非快速，高可靠。采用惰性队列 + 发布确认 + 接收确认 + message ttl + 消息持久化
     private void sendToRelationshipService(Message message){
         // 发送消息
-        confirmRabbitJsonTemplate.convertAndSend(
+//        confirmRabbitJsonTemplate.convertAndSend(
+//                // 交换机
+//                MqConstants.Exchange.RELATIONSHIP_EXCHANGE,
+//                // 路由键
+//                MqConstants.RelationshipQueue.Routing.TO_SERVICE_ROUTING,
+//                // 消息
+//                message,
+//                // 消息持久化
+//                messagePostProcessor -> {
+//                    messagePostProcessor.getMessageProperties()
+//                            .setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+//                    return messagePostProcessor;
+//                }
+//        );
+
+        rabbitJsonTemplate.convertAndSend(
                 // 交换机
                 MqConstants.Exchange.RELATIONSHIP_EXCHANGE,
                 // 路由键

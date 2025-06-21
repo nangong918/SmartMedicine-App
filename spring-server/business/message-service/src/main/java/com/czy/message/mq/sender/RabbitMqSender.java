@@ -22,7 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitMqSender {
 
-    private final RabbitTemplate confirmRabbitJsonTemplate;
+//    private final RabbitTemplate confirmRabbitJsonTemplate;
+    private final RabbitTemplate rabbitJsonTemplate;
     private final BaseResponseConverter baseResponseConverter;
 
     public void push(Message message){
@@ -30,7 +31,7 @@ public class RabbitMqSender {
             return;
         }
 
-        confirmRabbitJsonTemplate.convertAndSend(
+        rabbitJsonTemplate.convertAndSend(
                 MqConstants.Exchange.MESSAGE_EXCHANGE,
                 MqConstants.MessageQueue.Routing.TO_SOCKET_ROUTING,
                 message,

@@ -30,7 +30,7 @@ public class MqConfig {
     public RabbitTemplate rabbitJsonTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(messageConverter()); // 设置 JSON 转换器
-        template.setChannelTransacted(true); // 确保事务处理
+//        template.setChannelTransacted(true); // 确保事务处理
         return template;
     }
 
