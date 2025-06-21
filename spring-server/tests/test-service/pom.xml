@@ -96,6 +96,18 @@
             <artifactId>mapstruct-processor</artifactId>
         </dependency>
 
+        <!-- RabbitMq -->
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+        </dependency>
+
+        <!-- 实现对 RabbitMQ amqp 的自动化配置 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
         <!-- 实现对 JSON 的自动化配置 -->
         <!-- 因为，Kafka 对复杂对象的 Message 序列化时，我们会使用到 JSON -->
         <!--
