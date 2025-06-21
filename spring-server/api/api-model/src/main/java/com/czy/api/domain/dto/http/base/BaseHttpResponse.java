@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @Slf4j
 @Data
-public class BaseNettyResponse {
+public class BaseHttpResponse {
     public String code = "200";
     public String message = "";
     public String senderId = "";
@@ -23,16 +23,16 @@ public class BaseNettyResponse {
     public Long timestamp = System.currentTimeMillis();
     public Map<String, String> data = new HashMap<>();
 
-    public BaseNettyResponse() {
+    public BaseHttpResponse() {
     }
 
-    public BaseNettyResponse(String senderId, String receiverId, String type) {
+    public BaseHttpResponse(String senderId, String receiverId, String type) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.type = type;
     }
 
-    public BaseNettyResponse(String code, String message, String senderId, String receiverId, String type) {
+    public BaseHttpResponse(String code, String message, String senderId, String receiverId, String type) {
         this.code = code;
         this.message = message;
         this.senderId = senderId;

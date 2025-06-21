@@ -5,6 +5,8 @@ import com.czy.api.domain.dto.base.BaseResponseData;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Map;
+
 /**
  * @author 13225
  * @date 2025/3/3 19:08
@@ -32,4 +34,19 @@ public class HandleAddUserResponse extends BaseResponseData {
     public String handlerName;
     // 用户头像
     public Long handlerAvatarFileId;
+
+    @Override
+    public Map<String, String> toDataMap() {
+        Map<String, String> map = super.toDataMap();
+        map.put("applyStatus", String.valueOf(applyStatus));
+        map.put("handleStatus", String.valueOf(handleStatus));
+        map.put("isBlack", String.valueOf(isBlack));
+        map.put("applyAccount", applyAccount);
+        map.put("handlerAccount", handlerAccount);
+
+        map.put("additionalContent", additionalContent);
+        map.put("handlerName", handlerName);
+        map.put("handlerAvatarFileId", String.valueOf(handlerAvatarFileId));
+        return map;
+    }
 }

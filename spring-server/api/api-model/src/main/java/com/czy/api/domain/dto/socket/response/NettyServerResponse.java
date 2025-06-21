@@ -2,15 +2,14 @@ package com.czy.api.domain.dto.socket.response;
 
 import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.NettyResponseStatuesEnum;
-import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.domain.dto.base.BaseRequestData;
 import com.czy.api.domain.dto.base.BaseResponseData;
-import com.czy.api.domain.dto.http.base.BaseNettyRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 /**
  * @author 13225
@@ -32,6 +31,12 @@ public class NettyServerResponse extends BaseResponseData {
         super.setSenderId(NettyConstants.SERVER_ID);
         super.setReceiverId(request.getSenderId());
         super.setTimestamp(String.valueOf(request.getTimestamp()));
+    }
+
+    @Override
+    public Map<String, String> toDataMap() {
+        Map<String, String> map = super.toDataMap();
+        return map;
     }
 
 

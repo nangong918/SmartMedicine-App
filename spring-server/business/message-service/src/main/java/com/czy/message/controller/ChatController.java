@@ -15,7 +15,7 @@ import com.czy.api.domain.ao.message.FetchUserMessageAo;
 import com.czy.api.domain.bo.message.UserChatLastMessageBo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
 import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.base.BaseNettyRequest;
+import com.czy.api.domain.dto.http.base.BaseHttpRequest;
 import com.czy.api.domain.dto.http.request.FetchUserMessageRequest;
 import com.czy.api.domain.dto.http.request.FetchUserMessageResponse;
 import com.czy.api.domain.dto.http.request.KeywordChatHistoryRequest;
@@ -139,7 +139,7 @@ public class ChatController {
      */
     @PostMapping("/getUserNewMessage")
     public Mono<BaseResponse<UserNewMessageResponse>>
-    getUserNewMessage(@Valid @RequestBody BaseNettyRequest request) {
+    getUserNewMessage(@Valid @RequestBody BaseHttpRequest request) {
         // 获取用户的最新消息List
         List<UserChatLastMessageBo> lastMessageList = chatService.getUserAllChatMessage(request.getSenderId());
         // 封装响应

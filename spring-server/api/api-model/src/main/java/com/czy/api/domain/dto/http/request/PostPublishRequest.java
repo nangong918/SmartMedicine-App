@@ -1,6 +1,6 @@
 package com.czy.api.domain.dto.http.request;
 
-import com.czy.api.domain.dto.http.base.BaseNettyRequest;
+import com.czy.api.domain.dto.http.base.BaseHttpRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,7 +14,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PostPublishRequest extends BaseNettyRequest {
+public class PostPublishRequest extends BaseHttpRequest {
     // title；not null
     @NotEmpty(message = "标题不能为空")
     public String title;

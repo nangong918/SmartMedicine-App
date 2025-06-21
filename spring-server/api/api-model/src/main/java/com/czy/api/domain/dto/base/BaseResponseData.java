@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -17,10 +19,12 @@ import java.util.Optional;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class BaseResponseData extends BaseRequestData {
+public class BaseResponseData extends BaseRequestData implements ToDataMap{
+    // 响应结果
     public String code = NettyResponseStatuesEnum.SUCCESS.getCode();
     public String message = NettyResponseStatuesEnum.SUCCESS.getMessage();
 
+    // 提供给Json的无参构造器
     public BaseResponseData(){
 
     }
@@ -36,6 +40,7 @@ public class BaseResponseData extends BaseRequestData {
         );
     }
 
+    // 通过已有的请求体设置响应体
     public void setBaseResponseData(BaseResponseData baseResponseData){
         this.setBaseResponseData(
                 baseResponseData.getCode(),
@@ -65,9 +70,17 @@ public class BaseResponseData extends BaseRequestData {
         this.setTimestamp(request.getTimestamp());
     }
 
+    // 抽象方法，继承者都需要实现将自己的字段设置为dataMap，用于组装Message
+    @JsonIgnore
+    public Map<String, String> toDataMap(){
+        return new HashMap<>();
+    }
+
     // 导出为Message的方法，需要JsonIgnore，否则会序列化错误
     @JsonIgnore
     public Message getMessageByResponse() {
-        return BaseResponseConverter.INSTANCE.getMessage(this);
+        Message message = BaseResponseConverter.INSTANCE.getMessage(this);
+        message.getData().putAll(toDataMap());
+        return message;
     }
 }

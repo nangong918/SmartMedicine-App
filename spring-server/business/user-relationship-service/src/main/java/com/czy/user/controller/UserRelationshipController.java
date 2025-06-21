@@ -9,7 +9,7 @@ import com.czy.api.domain.ao.relationship.MyFriendItemAo;
 import com.czy.api.domain.ao.relationship.NewUserItemAo;
 import com.czy.api.domain.ao.relationship.SearchFriendApplyAo;
 import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.base.BaseNettyRequest;
+import com.czy.api.domain.dto.http.base.BaseHttpRequest;
 import com.czy.api.domain.dto.http.request.GetMyFriendsRequest;
 import com.czy.api.domain.dto.http.request.SearchUserByNameRequest;
 import com.czy.api.domain.dto.http.response.GetAddMeRequestListResponse;
@@ -47,7 +47,7 @@ public class UserRelationshipController {
      */
     @PostMapping(RelationshipConstant.Search_User_ByAccount)
     public Mono<BaseResponse<SearchUserResponse>>
-    searchUserByAccount(@Validated @RequestBody BaseNettyRequest request) {
+    searchUserByAccount(@Validated @RequestBody BaseHttpRequest request) {
         List<SearchFriendApplyAo> searchFriendApplyAoList =
                 userRelationshipService.searchFriend(request.getSenderId(), request.getReceiverId());
         SearchUserResponse searchUser = new SearchUserResponse();
@@ -77,7 +77,7 @@ public class UserRelationshipController {
      */
     @PostMapping(RelationshipConstant.Get_Add_Me_Request_List)
     public Mono<BaseResponse<GetAddMeRequestListResponse>>
-    getAddMeRequestList(@Validated @RequestBody BaseNettyRequest request){
+    getAddMeRequestList(@Validated @RequestBody BaseHttpRequest request){
         String senderAccount = request.getSenderId();
         List<NewUserItemAo> list = userRelationshipService.getAddMeRequestList(senderAccount);
         GetAddMeRequestListResponse response = new GetAddMeRequestListResponse();
@@ -92,7 +92,7 @@ public class UserRelationshipController {
      */
     @PostMapping(RelationshipConstant.Get_Handle_My_Add_User_Response_List)
     public Mono<BaseResponse<GetHandleMyAddUserResponseListResponse>>
-    getHandleMyAddUserResponseList(@Validated @RequestBody BaseNettyRequest request){
+    getHandleMyAddUserResponseList(@Validated @RequestBody BaseHttpRequest request){
         String senderAccount = request.getSenderId();
         List<NewUserItemAo> list = userRelationshipService.getHandleMyAddUserResponseList(senderAccount);
         GetHandleMyAddUserResponseListResponse response = new GetHandleMyAddUserResponseListResponse();
@@ -123,7 +123,7 @@ public class UserRelationshipController {
      */
     @PostMapping(RelationshipConstant.Get_My_Friend_Apply_List)
     public Mono<BaseResponse<Integer>>
-    getMyFriendApplyList(@Validated @RequestBody BaseNettyRequest request){
+    getMyFriendApplyList(@Validated @RequestBody BaseHttpRequest request){
         String senderAccount = request.getSenderId();
 
         // 状态判断：添加我的，我的处理状态是未处理或者空
@@ -190,7 +190,7 @@ public class UserRelationshipController {
     // 取消申请 (废弃：已改为Netty请求)
 //    @PostMapping("/cancelAddUser")
 //    public Mono<ResponseEntity<BaseResponse<Void>>>
-//    cancelAddUser(@Valid @RequestBody BaseNettyRequest request){
+//    cancelAddUser(@Valid @RequestBody BaseHttpRequest request){
 //
 //        // 添加到MySQL持久化
 //        AddUserAo addUserAo = new AddUserAo();

@@ -19,7 +19,7 @@ import java.util.Map;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class BaseNettyRequest extends BaseRequest {
+public class BaseHttpRequest extends BaseRequest {
 
     @NotEmpty(message = "发送者 Account 不能为空")
     public String senderId = "";
@@ -30,11 +30,11 @@ public class BaseNettyRequest extends BaseRequest {
     public Long timestamp = System.currentTimeMillis();
     public Map<String, String> data = new HashMap<>();
 
-    public BaseNettyRequest(){
+    public BaseHttpRequest(){
 
     }
 
-    public BaseNettyRequest(String senderId, String receiverId, String type){
+    public BaseHttpRequest(String senderId, String receiverId, String type){
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.type = type;

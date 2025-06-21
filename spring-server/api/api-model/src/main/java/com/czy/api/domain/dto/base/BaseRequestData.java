@@ -23,6 +23,7 @@ public class BaseRequestData implements BaseBean {
     @NotEmpty(message = "时间戳不能为空")
     public String timestamp;
 
+    // 提供给Json的无参构造器
     public BaseRequestData(){
 
     }
