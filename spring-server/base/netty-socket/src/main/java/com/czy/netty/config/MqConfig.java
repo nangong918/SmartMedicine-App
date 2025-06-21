@@ -1,7 +1,6 @@
 package com.czy.netty.config;
 
 import com.czy.api.constant.netty.MqConstants;
-import com.czy.api.domain.entity.event.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -115,24 +114,24 @@ public class MqConfig {
     }
 
     // 创建message到 Service的队列
-    @Bean
-    public Queue messageToServiceQueue() {
-        Map<String, Object> args = new HashMap<>();
-        args.put("x-message-ttl", MqConstants.MessageQueue.message_ttl); // 消息过期时间 3 分钟
-        args.put("x-dead-letter-exchange", MqConstants.Exchange.DEAD_LETTER_EXCHANGE); // 对应的死信交换机
-        args.put("x-dead-letter-routing-key", MqConstants.DeadLetterQueue.MESSAGE_DEAD_LETTER_QUEUE); // 对应的死信路由键
-
-        return new Queue(
-                MqConstants.MessageQueue.MESSAGE_TO_SERVICE_QUEUE,
-                true, false, false, args);
-    }
+//    @Bean
+//    public Queue messageToServiceQueue() {
+//        Map<String, Object> args = new HashMap<>();
+//        args.put("x-message-ttl", MqConstants.MessageQueue.message_ttl); // 消息过期时间 3 分钟
+//        args.put("x-dead-letter-exchange", MqConstants.Exchange.DEAD_LETTER_EXCHANGE); // 对应的死信交换机
+//        args.put("x-dead-letter-routing-key", MqConstants.DeadLetterQueue.MESSAGE_DEAD_LETTER_QUEUE); // 对应的死信路由键
+//
+//        return new Queue(
+//                MqConstants.MessageQueue.MESSAGE_TO_SERVICE_QUEUE,
+//                true, false, false, args);
+//    }
     // 绑定关系到 Service 的队列到交换机
-    @Bean
-    public Binding bindingMessageToService() {
-        return BindingBuilder.bind(messageToServiceQueue())
-                .to(messageExchange())
-                .with(MqConstants.MessageQueue.Routing.TO_SERVICE_ROUTING); // 绑定消息队列的路由键
-    }
+//    @Bean
+//    public Binding bindingMessageToService() {
+//        return BindingBuilder.bind(messageToServiceQueue())
+//                .to(messageExchange())
+//                .with(MqConstants.MessageQueue.Routing.TO_SERVICE_ROUTING); // 绑定消息队列的路由键
+//    }
 
     // post
     // 创建post到 Socket 的队列
@@ -334,7 +333,4 @@ public class MqConfig {
                 .with(MqConstants.DeadLetterQueue.Routing.OSS_DEAD_LETTER_ROUTING); // 绑定死信队列的路由键
     }
 
-    private void messageNoAckLog(Message message){
-        log.error("message消息未确认，消息发送者：{}，消息接收者：{}", message.getSenderId(), message.getReceiverId());
-    }
 }

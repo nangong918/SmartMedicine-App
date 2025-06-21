@@ -64,7 +64,9 @@ public interface MqConstants {
         String MESSAGE_TO_SOCKET_QUEUE = Routing.TO_SOCKET_ROUTING + QUEUE;
         String MESSAGE_TO_SERVICE_QUEUE = Routing.TO_SERVICE_ROUTING + QUEUE;
 
+
         Long message_ttl = 10 * 60 * 3000L;
+        String message_ttl_str = "1800000";
         Integer message_max_length = 1000_000;
 
         interface Routing{
