@@ -43,8 +43,8 @@ import java.io.IOException;
                         // 自动删除：消息队列，需要高可靠
                         autoDelete = "false",
                         arguments = {
-                                // 惰性队列
-                                @Argument(name = "x-queue-mode", value = "Lazy"),
+                                // 惰性队列 需要RabbitMq 3.6以上
+//                                @Argument(name = "x-queue-mode", value = "Lazy"),
                                 @Argument(name = "x-message-ttl", value = MqConstants.RelationshipQueue.message_ttl_str, type = "java.lang.Integer"),
                                 @Argument(name = "x-dead-letter-exchange", value = MqConstants.Exchange.DEAD_LETTER_EXCHANGE),
                                 @Argument(name = "x-dead-letter-routing-key", value = MqConstants.DeadLetterQueue.RELATIONSHIP_DEAD_LETTER_QUEUE)

@@ -29,8 +29,8 @@ import org.springframework.stereotype.Component;
                         // 自动删除：消息队列，需要高可靠
                         autoDelete = "true",
                         arguments = {
-                                // 惰性队列
-                                @Argument(name = "x-queue-mode", value = "Lazy"),
+                                // 惰性队列 需要RabbitMq 3.6以上
+//                                @Argument(name = "x-queue-mode", value = "Lazy"),
                                 @Argument(name = "x-message-ttl", value = MqConstants.DeadLetterQueue.message_ttl_str, type = "java.lang.Integer")
                         }
                 ),

@@ -39,8 +39,8 @@ import javax.validation.Valid;
                         // 自动删除：通知类型队列
                         autoDelete = "true",
                         arguments = {
-                                // 惰性队列
-                                @Argument(name = "x-queue-mode", value = "Lazy"),
+                                // 惰性队列 需要RabbitMq 3.6以上
+//                                @Argument(name = "x-queue-mode", value = "Lazy"),
                                 @Argument(name = "x-message-ttl", value = MqConstants.OssQueue.message_ttl_str, type = "java.lang.Integer"),
                                 @Argument(name = "x-max-length", value = MqConstants.OssQueue.max_length_str, type = "java.lang.Integer"),
                                 // 无所谓的通知消息不需要死信队列
