@@ -31,6 +31,7 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,6 +57,7 @@ public class ChatHandler implements ChatApi {
     private final UserChatMessageMongoMapper userChatMessageMongoMapper;
     @Override
     public void sendTextMessageToUser(SendTextDataRequest request) {
+        // 将发送的消息转为最新缓存消息存储在redis
         UserChatLastMessageBo bo = getUserChatLastMessageBo(request, request.getContent(), MessageTypeEnum.text.code);
 
         // 缓存到Redis  [存储到Redis不属于存储事务；暂时不考虑数据库-缓存数据一致性]
@@ -70,11 +72,14 @@ public class ChatHandler implements ChatApi {
         UserTextDataResponse response = new UserTextDataResponse();
         response.initResponseByRequest(request);
         // 头像变化自己去查询，不在此处返回
-        if (!userService.checkUserExist(request.getSenderId())){
-            throw new AppException("user not exist");
-        }
+
         UserDo userDo = userService.getUserById(request.getSenderId());
-        response.setAvatarFileId(userDo.getAvatarFileId());
+
+        List<Long> avatarFileIds = new ArrayList<>();
+        avatarFileIds.add(userDo.getAvatarFileId());
+        List<String> avatarUrls = ossService.getFileUrlsByFileIds(avatarFileIds);
+        response.setAvatarUrls(avatarUrls.get(0));
+
         String name = StringUtils.hasText(userDo.getUserName()) ? userDo.getUserName() : userDo.getAccount();
         response.setSenderName(name);
         response.setContent(request.getContent());
@@ -202,7 +207,7 @@ public class ChatHandler implements ChatApi {
         );
     }
 
-    // 获得 UserChatLastMessageBo
+    // 获得 UserChatLastMessageBo 不用区分发送者和接收者，因为发送者的未读消息数量一定是0
     private UserChatLastMessageBo getUserChatLastMessageBo(BaseRequestData request, String content, int msgType) {
         UserChatLastMessageBo bo = new UserChatLastMessageBo();
         UserDo senderDo = userService.getUserById(request.getSenderId());
@@ -217,6 +222,8 @@ public class ChatHandler implements ChatApi {
         bo.setTimestamp(Long.parseLong(request.getTimestamp()));
         String name = StringUtils.hasText(senderDo.getUserName()) ? senderDo.getUserName() : senderDo.getAccount();
         bo.setReceiverName(name);
+
+        // 从redis拿数据
         UserChatLastMessageBo currentBo = chatService.getUserChatMessage(request.getSenderId(), request.getReceiverId());
         int unreadCount = currentBo == null ? 0 : currentBo.unreadCount;
         unreadCount += 1;

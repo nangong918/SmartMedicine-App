@@ -18,8 +18,7 @@ public class UserTextDataResponse extends BaseResponseData implements BaseBean {
     private String title;
     private String content;
     public String senderName;
-    // 当值不为空才更新
-    public Long avatarFileId;
+    public String avatarUrls;
 
     @Override
     public Map<String, String> toDataMap() {
@@ -27,9 +26,7 @@ public class UserTextDataResponse extends BaseResponseData implements BaseBean {
         data.put("title", title);
         data.put("content", content);
         data.put("senderName", senderName);
-        if (avatarFileId != null) {
-            data.put("avatarFileId", avatarFileId.toString());
-        }
+        data.put("avatarFileId", avatarUrls);
         return data;
     }
 }

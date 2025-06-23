@@ -258,6 +258,7 @@ public class OssServiceImpl implements OssService {
         return fileUrls;
     }
 
+    // Todo 改为先redis缓存，redis缓存未命中走minIO
     @Override
     public List<String> getFileUrlsByFileIds(List<Long> fileIds) {
         List<String> fileUrls = new LinkedList<>();
