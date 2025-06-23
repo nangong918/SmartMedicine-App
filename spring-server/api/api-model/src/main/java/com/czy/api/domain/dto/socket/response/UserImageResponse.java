@@ -17,9 +17,10 @@ import java.util.Map;
 @Data
 public class UserImageResponse extends BaseResponseData implements BaseBean {
     public String title;
+    // 用于当前立刻显示
     public String imageUrl;
     public String senderName;
-    // 当值不为空才更新
+    // 用于后续自己去查询
     public Long avatarFileId;
     public Long messageId;
 
