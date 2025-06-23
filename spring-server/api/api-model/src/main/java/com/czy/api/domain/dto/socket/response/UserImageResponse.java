@@ -22,7 +22,7 @@ public class UserImageResponse extends BaseResponseData implements BaseBean {
     public String senderName;
     // 用于后续自己去查询
     public Long avatarFileId;
-    public Long messageId;
+//    public Long messageId;
 
     @Override
     public Map<String, String> toDataMap() {
@@ -31,7 +31,7 @@ public class UserImageResponse extends BaseResponseData implements BaseBean {
         map.put("imageUrl", imageUrl);
         map.put("senderName", senderName);
         map.put("avatarFileId", String.valueOf(avatarFileId));
-        map.put("messageId", String.valueOf(messageId));
+//        map.put("messageId", String.valueOf(messageId));
         return map;
     }
 

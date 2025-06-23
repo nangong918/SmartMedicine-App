@@ -51,7 +51,6 @@ public class ChatFileController {
     public BaseResponse<String> uploadPostFilesAndSendMessage(
             @RequestParam("file") MultipartFile file,
             @RequestParam("fileId") Long fileId,
-            @RequestParam("messageId") Long messageId,
             @RequestParam("senderId") Long senderId,
             @RequestParam("receiverId") Long receiverId
     ){
@@ -126,7 +125,7 @@ public class ChatFileController {
         userImageResponse.setType(ResponseMessageType.Chat.RECEIVE_USER_IMAGE_MESSAGE);
         userImageResponse.setTimestamp(String.valueOf(System.currentTimeMillis()));
         userImageResponse.setAvatarFileId(fileId);
-        userImageResponse.setMessageId(messageId);
+//        userImageResponse.setMessageId(messageId);
         userImageResponse.setImageUrl(urls.get(0));
         userImageResponse.setTitle(NettyConstants.imageMessageTitle);
         userImageResponse.setAvatarFileId(null);
