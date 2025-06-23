@@ -17,7 +17,6 @@ import com.czy.api.domain.dto.http.request.DeleteAllMessageRequest;
 import com.czy.api.domain.dto.http.request.SendImageRequest;
 import com.czy.api.domain.dto.http.request.SendTextDataRequest;
 import com.czy.api.domain.dto.socket.response.UploadFileResponse;
-import com.czy.api.domain.dto.socket.response.UserImageResponse;
 import com.czy.api.domain.dto.socket.response.UserTextDataResponse;
 import com.czy.message.handler.api.ChatApi;
 import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
@@ -32,7 +31,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -108,95 +106,43 @@ public class ChatHandler implements ChatApi {
         if (!userService.checkUserExist(request.getSenderId())){
             throw new AppException("user not exist");
         }
-        Long fileId = ossService.checkFileIdempotentAndBackId(request.getSenderId(), request.getFileName(), request.getFileSize());
-        // 不存在文件
-        if (fileId == null){
-            fileId = IdUtil.getSnowflakeNextId();
-            String fileIdStr = String.valueOf(fileId);
-            // 雪花id（fileId）才是StringContent
 
-            UserChatLastMessageBo bo = getUserChatLastMessageBo(
-                    request, fileIdStr, MessageTypeEnum.image.code
-            );
+        long imageSnowflakeId = IdUtil.getSnowflakeNextId();
+        String fileIdStr = String.valueOf(imageSnowflakeId);
 
-            // 缓存到Redis
-            saveUserChatMessageToRedis(bo);
+        UserChatLastMessageBo bo = getUserChatLastMessageBo(
+                request,
+                fileIdStr,
+                MessageTypeEnum.image.code
+        );
 
-            // 持久化到MySQL
-            UserChatMessageDo userChatMessageDo = getUserChatMessageDo(
-                    request, fileIdStr, MessageTypeEnum.image.code
-            );
-            // 特别单独设置
-            userChatMessageDo.setMsgContent(fileIdStr);
-            // 存储到服务内存的缓存队列
-            chatMessageQueue.addMessage(userChatMessageDo);
+        // 缓存到Redis
+        saveUserChatMessageToRedis(bo);
 
-            // Socket响应
-            // 发送者上传文件
-            UserDo receiverDo = userService.getUserById(request.getReceiverId());
-            UploadFileResponse uploadFileResponse = new UploadFileResponse();
-            uploadFileResponse.setFileId(fileId);
-            uploadFileResponse.setMessageId(userChatMessageDo.getId());
-            uploadFileResponse.setReceiverAccount(receiverDo.getAccount());
-            uploadFileResponse.setSenderId(NettyConstants.SERVER_ID);
-            uploadFileResponse.setReceiverId(request.getSenderId());
-            // 现在上传到oss
-            uploadFileResponse.setType(ResponseMessageType.Oss.UPLOAD_FILE_NOW);
-            uploadFileResponse.setTimestamp(String.valueOf(System.currentTimeMillis()));
-            // 通知发送者
-            rabbitMqSender.push(uploadFileResponse);
+        // 持久化到MySQL
+        UserChatMessageDo userChatMessageDo = getUserChatMessageDo(
+                request, fileIdStr, MessageTypeEnum.image.code
+        );
 
-            // 等待上传，oss mq通知接收者
-            // ChatFile_CONTROLLER/uploadFileSend
-        }
-        // 存在文件
-        else {
-            // 直接把id发给接收者
-            List<Long> fileIds = Collections.singletonList(fileId);
-            String fileIdStr = String.valueOf(fileId);
-            List<String> fileUrl = ossService.getFileUrlsByFileIds(fileIds);
+        // 特别单独设置
+        userChatMessageDo.setMsgContent(fileIdStr);
+        // 存储到服务内存的缓存队列
+        chatMessageQueue.addMessage(userChatMessageDo);
 
-            UserChatLastMessageBo bo = getUserChatLastMessageBo(request, fileIdStr, MessageTypeEnum.image.code);
-
-            // 缓存到Redis
-            saveUserChatMessageToRedis(bo);
-
-            // 持久化到MySQL
-            UserChatMessageDo userChatMessageDo = getUserChatMessageDo(request, fileIdStr, MessageTypeEnum.image.code);
-            // 特别单独设置
-            userChatMessageDo.setMsgContent(fileIdStr);
-            // 存储到服务内存的缓存队列
-            chatMessageQueue.addMessage(userChatMessageDo);
-
-            if (!fileUrl.isEmpty()){
-                UserImageResponse response = new UserImageResponse();
-                response.initResponseByRequest(request);
-                response.setImageUrl(fileUrl.get(0));
-                response.setTitle(NettyConstants.imageMessageTitle);
-                UserDo userDo = userService.getUserById(request.getSenderId());
-                response.setSenderName(userDo.getUserName());
-                response.setAvatarFileId(null);
-                response.setMessageId(userChatMessageDo.getId());
-                // 内部转换
-                rabbitMqSender.push(response);
-            }
-        }
-
-
-        // 响应在发送者oss上传成功之后发送
-//        // Socket响应
-//        // 异步mq的socket响应
-//        UserImageResponse response = new UserImageResponse();
-//        response.initResponseByRequest(request);
-//        UserDo userDo = userService.getUserByAccount(request.getSenderId());
-//        response.setAvatarFileId(userDo.getAvatarFileId());
-//        response.setSenderName(userDo.getUserName());
-//        // 图片消息就是图片名称
-//        response.setImageUrl(request.fileName);
-//        response.setTitle(userDo.getUserName());
-//
-//        // 消息推送 不用type转换，type转换在pusher中
-//        rabbitMqSender.push(response);
+        // Socket响应
+        // 发送者上传文件
+        UserDo receiverDo = userService.getUserById(request.getReceiverId());
+        UploadFileResponse uploadFileResponse = new UploadFileResponse();
+        uploadFileResponse.setFileId(imageSnowflakeId);
+        uploadFileResponse.setMessageId(userChatMessageDo.getId());
+        uploadFileResponse.setReceiverAccount(receiverDo.getAccount());
+        uploadFileResponse.setSenderId(NettyConstants.SERVER_ID);
+        uploadFileResponse.setReceiverId(request.getSenderId());
+        // 现在上传到oss
+        uploadFileResponse.setType(ResponseMessageType.Oss.UPLOAD_FILE_NOW);
+        uploadFileResponse.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        // 通知sender上传文件，上传成功之后再通知receiver
+        rabbitMqSender.push(uploadFileResponse);
     }
 
     @Override
