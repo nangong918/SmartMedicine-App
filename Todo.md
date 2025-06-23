@@ -200,12 +200,14 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
       * Kafka:发布帖子行为
       * Kafka:帖子评论行为
 * App聊天
-  * 好友相关 3天 (24~26)
+  * 重构netty和app服务,将长连接改为userId而不是userAccount 1天(24)
+  * 好友相关 3天 (25~27)
     * 添加,删除好友
     * 好友列表
-  * 聊天相关 3天 (27~7月1)
+  * 聊天相关 3天 (28~7月2)
     * 发送文本消息
     * 发送图片消息
+  * 学习MySQL,MongoDB,ElasticSearch,Neo4j,Hive特性
   * 学习查询分页,学习数据库分库分表 4天(2~5)
   * 聊天记录相关 5天 (7~11)
     * 临时聊天记录列表

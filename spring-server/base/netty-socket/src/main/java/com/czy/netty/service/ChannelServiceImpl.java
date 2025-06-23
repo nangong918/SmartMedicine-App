@@ -5,7 +5,6 @@ import com.czy.netty.channel.ChannelManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 /**
  * @author 13225
@@ -20,18 +19,19 @@ public class ChannelServiceImpl implements ChannelService {
     private final ChannelManager channelManager;
 
     @Override
-    public boolean isOnline(String userAccount) {
-        if (!StringUtils.hasText(userAccount)){
+    public boolean isOnline(Long userId) {
+        if (userId == null){
             return false;
         }
-        return channelManager.checkIsOnline(userAccount);
+        return channelManager.checkIsOnline(userId);
     }
 
     @Override
-    public void forceOffline(String userAccount) {
-        if (!StringUtils.hasText(userAccount)){
+    public void forceOffline(Long userId) {
+        if (userId == null){
+            log.warn("forceOffline::userId is null");
             return;
         }
-        channelManager.unRegister(userAccount);
+        channelManager.unRegister(userId);
     }
 }

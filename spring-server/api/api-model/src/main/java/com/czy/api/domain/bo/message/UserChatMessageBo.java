@@ -23,6 +23,10 @@ public class UserChatMessageBo implements BaseBean, Serializable {
     public String senderAccount;
     // not null;索引
     public String receiverAccount;
+    // not null;索引
+    public Long senderId;
+    //  not null;索引
+     public Long receiverId;
     // not null;时间索引；用于找到某个时间节点前后的另一条消息
     // eg：time < timestamp limit 1
     public Long timestamp;

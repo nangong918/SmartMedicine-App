@@ -12,9 +12,9 @@ import java.io.Serializable;
 @Data
 public class AddUserAo implements Serializable {
     // 不可为空字符串
-    public String applyAccount;
+    public Long applyId;
     // 不可为空字符串
-    public String handlerAccount;
+    public Long handlerId;
     public Long applyTime;
     // 可以null
     public String applyContent;

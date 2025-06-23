@@ -23,7 +23,7 @@ public class NettyConfig {
     /**
      * 维护用户连接
      */
-    private static final ConcurrentMap<String, Channel> userChannels = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Long, Channel> userChannels = new ConcurrentHashMap<>();
 
     @Bean
     public Integer nettyPort() {
@@ -31,7 +31,7 @@ public class NettyConfig {
     }
 
     @Bean
-    public ConcurrentMap<String, Channel> userChannels() {
+    public ConcurrentMap<Long, Channel> userChannels() {
         return userChannels;
     }
 

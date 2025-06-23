@@ -6,8 +6,8 @@ option java_outer_classname="ResponseBodyProto";
 message ResponseBody {
    string code = 1;              // 状态码
    string message = 2;           // 如果状态码非200，从此获取状态消息
-   string senderId = 3;          // 发送者ID
-   string receiverId = 4;        // 接收者ID
+   int64 senderId = 3;          // 发送者ID
+   int64 receiverId = 4;        // 接收者ID
    string type = 5;               // 消息类型 (文本消息，系统，强制下线等等)
    map<string,string> data = 6;  // 数据
    int64 timestamp = 7;          // 时间戳
@@ -18,7 +18,7 @@ message ResponseBody {
  * 介绍：protobuf是一种语言无关、平台无关、可扩展的高效序列化结构（比JSON更高效）
  * 使用方法：
  * 1.导入protobuf坐标，注意版本：protobuf-java；version：3.22.0（3.21.5会出现错误）
- * 2.跳转到所在目录：cd D:\CodeLearning\EasySocial\Spring\basic-facilities\netty-socket\proto
+ * 2.跳转到所在目录：cd D:\CodeLearning\smart-medicine\spring-server\base\netty-socket\proto
  * 3.生成java文件：protoc --java_out=. ResponseBody.proto
  * 4.使用protobuf生成的ChatMessageProto类
  */

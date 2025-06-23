@@ -6,9 +6,12 @@ import com.czy.netty.component.ToClientMessageSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
-import org.springframework.amqp.rabbit.annotation.*;
+import org.springframework.amqp.rabbit.annotation.Argument;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import javax.validation.Valid;
 
@@ -50,9 +53,6 @@ public class SocketToClientMqHandler {
     )
     public void handleMessageMessage(Message message) {
         // 监听到消息校验之后就发送
-        log.info("socketToClient::接收到消息：{}", message.toJsonString());
-        long allTime = System.currentTimeMillis() - message.getTimestamp();
-        log.info("socketToClient::从发送到接受耗时：{}", allTime);
         sendMessage(message);
     }
 
@@ -155,7 +155,7 @@ public class SocketToClientMqHandler {
     }
 
     private void sendMessage(Message message){
-        if (StringUtils.hasText(message.getReceiverId())){
+        if (message.getReceiverId() != null){
             toClientMessageSender.pushToClient(message);
         }
     }

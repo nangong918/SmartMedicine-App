@@ -17,8 +17,8 @@ import java.util.Map;
 public class BaseHttpResponse {
     public String code = "200";
     public String message = "";
-    public String senderId = "";
-    public String receiverId = "";
+    public Long senderId = -1L;
+    public Long receiverId = -1L;
     public String type = "";
     public Long timestamp = System.currentTimeMillis();
     public Map<String, String> data = new HashMap<>();
@@ -26,13 +26,13 @@ public class BaseHttpResponse {
     public BaseHttpResponse() {
     }
 
-    public BaseHttpResponse(String senderId, String receiverId, String type) {
+    public BaseHttpResponse(Long senderId, Long receiverId, String type) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.type = type;
     }
 
-    public BaseHttpResponse(String code, String message, String senderId, String receiverId, String type) {
+    public BaseHttpResponse(String code, String message, Long senderId, Long receiverId, String type) {
         this.code = code;
         this.message = message;
         this.senderId = senderId;

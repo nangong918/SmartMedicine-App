@@ -22,8 +22,8 @@ public class RabbitMqTest {
     public void test() throws Exception {
         for (int i = 0; i < 100; i++){
             Message message = new Message();
-            message.setSenderId("1");
-            message.setReceiverId("2");
+            message.setSenderId(1L);
+            message.setReceiverId(2L);
             message.setType("message");
             Map<String, String> map = new HashMap<>();
             map.put("message", "message" + i);
@@ -36,7 +36,7 @@ public class RabbitMqTest {
             log.info("发送消息：{}", message);
         }
         log.info("发送完毕, 等待接收者接收消息");
-        Thread.sleep(1000L * 5);
+        Thread.sleep(1000 * 60 * 1L);
     }
 
 }

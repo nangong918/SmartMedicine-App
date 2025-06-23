@@ -9,7 +9,8 @@ public interface NettyConstants {
     String PUSH_MESSAGE_INNER_QUEUE = "signal/channel/PUSH_MESSAGE_INNER_QUEUE";
     // 绑定队列
     String BIND_MESSAGE_INNER_QUEUE = "signal/channel/BIND_MESSAGE_INNER_QUEUE";
-    String SERVER_ID = "SERVER_ID";
+    // 主播qq 哈哈哈哈
+    Long SERVER_ID = -1322596900L;
     String MESSAGE_TYPE_HTTP = "messageTypeHttp";
     String imageMessageTitle = "[图片]";
 }

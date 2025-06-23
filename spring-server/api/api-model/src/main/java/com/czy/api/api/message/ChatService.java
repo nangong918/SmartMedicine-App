@@ -16,11 +16,11 @@ import java.util.List;
 public interface ChatService {
 
     // 拉取用户的全部聊天消息(限制1000条，超过就流式传输)：某个用户跟所有用户的1条最新消息List
-    List<UserChatLastMessageBo> getUserAllChatMessage(String senderAccount);
+    List<UserChatLastMessageBo> getUserAllChatMessage(Long senderId);
     // 拉取和某个用户的消息
-    UserChatLastMessageBo getUserChatMessage(String senderAccount, String receiverAccount);
+    UserChatLastMessageBo getUserChatMessage(Long senderId, Long receiverId);
     // 清空某条未读消息的数量
-    void clearUserChatMessageUnreadCount(String senderAccount, String receiverAccount);
+    void clearUserChatMessageUnreadCount(Long senderId, Long receiverId);
     // 拉取用户和某个用户全部聊天消息(分页：一次拉取50条最新聊天消息)
     List<UserChatMessageBo> getUserChatMessage(FetchUserMessageAo fetchUserMessageAo);
     // 单条消息存入Redis

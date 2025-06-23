@@ -12,10 +12,9 @@ import java.util.List;
  */
 @Data
 public class PostOssResponse {
+    // receiverId 用于netty通知前端
     // 用户id
     public Long userId;
-    // userAccount 用于netty通知前端
-    public String userAccount;
     // service id
     public String serviceId;
     // publish的雪花id// postId

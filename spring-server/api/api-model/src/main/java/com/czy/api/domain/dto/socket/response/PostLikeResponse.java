@@ -17,7 +17,7 @@ import java.util.Map;
 public class PostLikeResponse extends NettyOptionResponse {
 
     public Long postId;
-    public String likeUserAccount;
+    public Long likeUserId;
 
     public PostLikeResponse(Long postId){
         super.setType(ResponseMessageType.Post.LIKE_POST);
@@ -28,7 +28,7 @@ public class PostLikeResponse extends NettyOptionResponse {
     public Map<String, String> toDataMap() {
         Map<String, String> dataMap = super.toDataMap();
         dataMap.put("postId", String.valueOf(postId));
-        dataMap.put("likeUserAccount", likeUserAccount);
+        dataMap.put("likeUserAccount", String.valueOf(likeUserId));
         return dataMap;
     }
 }

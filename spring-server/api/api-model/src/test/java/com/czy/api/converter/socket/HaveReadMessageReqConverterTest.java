@@ -14,8 +14,8 @@ class HaveReadMessageReqConverterTest {
     @Test
     void getRequest() {
         RequestBodyProto.RequestBody requestBody = RequestBodyProto.RequestBody.newBuilder()
-                .setSenderId("senderId")
-                .setReceiverId("receiverId")
+                .setSenderId(1L)
+                .setReceiverId(2L)
                 .setType("type")
                 .putData("receiverUserAccount", "receiverUserAccount")
                 .setTimestamp(System.currentTimeMillis())

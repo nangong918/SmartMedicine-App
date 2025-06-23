@@ -73,6 +73,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean checkUserExist(Long userId) {
+        UserDo userDo = userMapper.getUserById(userId);
+        return userDo != null &&
+                userDo.getId() != null &&
+                StringUtils.hasText(userDo.getAccount()) &&
+                StringUtils.hasText(userDo.getPhone());
+    }
+
+    @Override
     public List<UserDo> getByUserIds(List<Long> ids) {
         return userMapper.getUserListByIdList(ids);
     }

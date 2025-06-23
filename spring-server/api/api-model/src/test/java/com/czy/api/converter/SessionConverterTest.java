@@ -14,7 +14,7 @@ class SessionConverterTest {
     @Test
     void getSession() {
         RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setBaseRequestData("13225", "13225", "connect", String.valueOf(System.currentTimeMillis()));
+        registerRequest.setBaseRequestData(13225L, 13225L, "connect", String.valueOf(System.currentTimeMillis()));
         registerRequest.setDeviceId("123456");
         registerRequest.setDeviceName("123456");
         registerRequest.setAppVersion("123456");

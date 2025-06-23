@@ -14,8 +14,8 @@ class DeleteUserReqConverterTest {
     @Test
     void getRequest() {
         RequestBodyProto.RequestBody requestBody = RequestBodyProto.RequestBody.newBuilder()
-                .setSenderId("senderId")
-                .setReceiverId("receiverId")
+                .setSenderId(1L)
+                .setReceiverId(2L)
                 .setType("type")
                 .putData("addUserAccount", "addUserAccount")
                 .putData("myAccount", "myAccount")

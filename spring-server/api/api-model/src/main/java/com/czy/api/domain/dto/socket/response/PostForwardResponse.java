@@ -17,8 +17,8 @@ import java.util.Map;
 public class PostForwardResponse extends NettyOptionResponse {
 
     public Long postId;
-    // receiverId (是Account不是id，因为前端为id无感知)
-    public String senderAccount;
+    // 其实是，receiverId因为就是通知发送者
+    public Long senderId;
     // 转发附带的话
     public String content;
 
@@ -31,7 +31,7 @@ public class PostForwardResponse extends NettyOptionResponse {
     public Map<String, String> toDataMap() {
         Map<String, String> map = super.toDataMap();
         map.put("postId", String.valueOf(postId));
-        map.put("senderAccount", senderAccount);
+        map.put("senderId", String.valueOf(senderId));
         map.put("content", content);
         return map;
     }

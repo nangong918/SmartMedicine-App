@@ -70,7 +70,10 @@ public class ChatHandler implements ChatApi {
         UserTextDataResponse response = new UserTextDataResponse();
         response.initResponseByRequest(request);
         // 头像变化自己去查询，不在此处返回
-        UserDo userDo = userService.getUserByAccount(request.getSenderId());
+        if (!userService.checkUserExist(request.getSenderId())){
+            throw new AppException("user not exist");
+        }
+        UserDo userDo = userService.getUserById(request.getSenderId());
         response.setAvatarFileId(userDo.getAvatarFileId());
         String name = StringUtils.hasText(userDo.getUserName()) ? userDo.getUserName() : userDo.getAccount();
         response.setSenderName(name);
@@ -97,8 +100,10 @@ public class ChatHandler implements ChatApi {
         if (!StringUtils.hasText(request.getFileName()) || request.getFileSize() <= 0){
             throw new AppException("fileName or fileSize is null");
         }
-        UserDo userDo = userService.getUserByAccount(request.getSenderId());
-        Long fileId = ossService.checkFileIdempotentAndBackId(userDo.getId(), request.getFileName(), request.getFileSize());
+        if (!userService.checkUserExist(request.getSenderId())){
+            throw new AppException("user not exist");
+        }
+        Long fileId = ossService.checkFileIdempotentAndBackId(request.getSenderId(), request.getFileName(), request.getFileSize());
         // 不存在文件
         if (fileId == null){
             fileId = IdUtil.getSnowflakeNextId();
@@ -123,10 +128,11 @@ public class ChatHandler implements ChatApi {
 
             // Socket响应
             // 发送者上传文件
+            UserDo receiverDo = userService.getUserById(request.getReceiverId());
             UploadFileResponse uploadFileResponse = new UploadFileResponse();
             uploadFileResponse.setFileId(fileId);
             uploadFileResponse.setMessageId(userChatMessageDo.getId());
-            uploadFileResponse.setReceiverAccount(request.getReceiverId());
+            uploadFileResponse.setReceiverAccount(receiverDo.getAccount());
             uploadFileResponse.setSenderId(NettyConstants.SERVER_ID);
             uploadFileResponse.setReceiverId(request.getSenderId());
             // 现在上传到oss
@@ -162,6 +168,7 @@ public class ChatHandler implements ChatApi {
                 response.initResponseByRequest(request);
                 response.setImageUrl(fileUrl.get(0));
                 response.setTitle(NettyConstants.imageMessageTitle);
+                UserDo userDo = userService.getUserById(request.getSenderId());
                 response.setSenderName(userDo.getUserName());
                 response.setAvatarFileId(null);
                 response.setMessageId(userChatMessageDo.getId());
@@ -189,36 +196,39 @@ public class ChatHandler implements ChatApi {
 
     @Override
     public void deleteAllMessage(DeleteAllMessageRequest request) {
-        UserDo senderDo = userService.getUserByAccount(request.getSenderId());
-        UserDo receiverDo = userService.getUserByAccount(request.getReceiverId());
         userChatMessageMongoMapper.deleteAllMessages(
-                senderDo.getId(),
-                receiverDo.getId()
+                request.getSenderId(),
+                request.getReceiverId()
         );
     }
 
     // 获得 UserChatLastMessageBo
     private UserChatLastMessageBo getUserChatLastMessageBo(BaseRequestData request, String content, int msgType) {
-        UserChatLastMessageBo userChatLastMessageBo = new UserChatLastMessageBo();
-        userChatLastMessageBo.setSenderAccount(request.getSenderId());
-        userChatLastMessageBo.setReceiverAccount(request.getReceiverId());
-        userChatLastMessageBo.setMsgContent(content);
-        userChatLastMessageBo.setTimestamp(Long.parseLong(request.getTimestamp()));
-        UserDo userDo = userService.getUserByAccount(request.getSenderId());
-        String name = StringUtils.hasText(userDo.getUserName()) ? userDo.getUserName() : userDo.getAccount();
-        userChatLastMessageBo.setReceiverName(name);
+        UserChatLastMessageBo bo = new UserChatLastMessageBo();
+        UserDo senderDo = userService.getUserById(request.getSenderId());
+        UserDo receiverDo = userService.getUserById(request.getReceiverId());
+
+        bo.setSenderId(senderDo.getId());
+        bo.setReceiverId(receiverDo.getId());
+        bo.setSenderAccount(senderDo.getAccount());
+        bo.setReceiverAccount(receiverDo.getAccount());
+
+        bo.setMsgContent(content);
+        bo.setTimestamp(Long.parseLong(request.getTimestamp()));
+        String name = StringUtils.hasText(senderDo.getUserName()) ? senderDo.getUserName() : senderDo.getAccount();
+        bo.setReceiverName(name);
         UserChatLastMessageBo currentBo = chatService.getUserChatMessage(request.getSenderId(), request.getReceiverId());
         int unreadCount = currentBo == null ? 0 : currentBo.unreadCount;
         unreadCount += 1;
-        userChatLastMessageBo.setUnreadCount(unreadCount);
-        userChatLastMessageBo.setMsgType(msgType);
-        return userChatLastMessageBo;
+        bo.setUnreadCount(unreadCount);
+        bo.setMsgType(msgType);
+        return bo;
     }
 
     // 缓存到Redis
     private void saveUserChatMessageToRedis(UserChatLastMessageBo bo) {
         // 缓存到Redis
-        UserChatLastMessageBo currentBo = chatService.getUserChatMessage(bo.getSenderAccount(), bo.getReceiverAccount());
+        UserChatLastMessageBo currentBo = chatService.getUserChatMessage(bo.getSenderId(), bo.getReceiverId());
         int unreadCount = currentBo == null ? 0 : currentBo.unreadCount;
         unreadCount += 1;
         bo.setUnreadCount(unreadCount);
@@ -231,13 +241,8 @@ public class ChatHandler implements ChatApi {
         UserChatMessageDo userChatMessageDo = new UserChatMessageDo();
         // 为message生成id
         userChatMessageDo.setId(messageId);
-        Long senderId = userService.getIdByAccount(request.getSenderId());
-        Long receiverId = userService.getIdByAccount(request.getReceiverId());
-        if (senderId == null || receiverId == null){
-            throw new AppException("senderId or receiverId is null");
-        }
-        userChatMessageDo.setSenderId(senderId);
-        userChatMessageDo.setReceiverId(receiverId);
+        userChatMessageDo.setSenderId(request.getSenderId());
+        userChatMessageDo.setReceiverId(request.getReceiverId());
         userChatMessageDo.setMsgContent(content);
         userChatMessageDo.setMsgType(msgType);
         userChatMessageDo.setTimestamp(Long.parseLong(request.getTimestamp()));

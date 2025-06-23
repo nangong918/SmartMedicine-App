@@ -5,6 +5,7 @@ import json.BaseBean;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,10 +19,10 @@ import java.util.stream.Collectors;
 public class Message implements BaseBean {
     // 1.实现Message。2.实现其他类型的Message。3.Message用ProtoBuf序列化
     // 4.Message用MyBatis存入数据库。5.Message用Redis缓存。6.Message用RabbitMQ发送
-    @NotBlank(message = "Sender Account cannot be null or empty")
-    private String senderId;
-    @NotBlank(message = "receiver Account cannot be null or empty")
-    private String receiverId;
+    @NotNull(message = "Sender Id cannot be null or empty")
+    private Long senderId;
+    @NotNull(message = "receiver Id cannot be null or empty")
+    private Long receiverId;
     @NotBlank(message = "Message type cannot be null or empty")
     private String type;
     private Map<String, String> data;
@@ -61,10 +62,10 @@ public class Message implements BaseBean {
     // 非空化
     public void nonNull(){
         if (this.senderId == null){
-            this.senderId = "";
+            this.senderId = -1L;
         }
         if (this.receiverId == null){
-            this.receiverId = "";
+            this.receiverId = -1L;
         }
         if (this.type == null){
             this.type = "";

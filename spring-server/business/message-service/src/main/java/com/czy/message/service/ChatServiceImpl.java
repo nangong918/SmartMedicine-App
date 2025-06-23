@@ -54,12 +54,12 @@ public class ChatServiceImpl implements ChatService {
 
 
     @Override
-    public List<UserChatLastMessageBo> getUserAllChatMessage(String senderAccount) {
+    public List<UserChatLastMessageBo> getUserAllChatMessage(Long senderId) {
         List<UserChatLastMessageBo> messages = new LinkedList<>();
         // 获取所有相关的键 考虑到senderId可能是receiverId
 //        Set<String> keys = redisService.getKeys(MessageConstant.CHAT_MESSAGE_KEY + senderId + ":");
         // 此时的sender是想要查询sender收到的消息；所以sender要作为receiver；所以
-        String checkKey = MessageConstant.CHAT_MESSAGE_KEY + "*:" + senderAccount;
+        String checkKey = MessageConstant.CHAT_MESSAGE_KEY + "*:" + senderId;
         Set<String> keysReceiver = redisService.getKeys(checkKey);
 
         for (String key : keysReceiver) {
@@ -74,14 +74,14 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public UserChatLastMessageBo getUserChatMessage(String senderAccount, String receiverAccount) {
-        String key = MessageConstant.CHAT_MESSAGE_KEY + senderAccount + ":" + receiverAccount + ":";
+    public UserChatLastMessageBo getUserChatMessage(Long senderId, Long receiverId) {
+        String key = MessageConstant.CHAT_MESSAGE_KEY + senderId + ":" + receiverId + ":";
         return redisService.getObject(key, UserChatLastMessageBo.class);
     }
 
     @Override
-    public void clearUserChatMessageUnreadCount(String senderAccount, String receiverAccount) {
-        String key = MessageConstant.CHAT_MESSAGE_KEY + senderAccount + ":" + receiverAccount + ":";
+    public void clearUserChatMessageUnreadCount(Long senderId, Long receiverId) {
+        String key = MessageConstant.CHAT_MESSAGE_KEY + senderId + ":" + receiverId + ":";
         UserChatLastMessageBo bo = redisService.getObject(key, UserChatLastMessageBo.class);
         if (bo != null){
             bo.setUnreadCount(0);

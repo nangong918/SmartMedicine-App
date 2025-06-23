@@ -21,8 +21,8 @@ class MessageConverterTest {
     void requestBodyToMessage() {
         // 创建测试数据
         RequestBodyProto.RequestBody requestBody = RequestBodyProto.RequestBody.newBuilder()
-                .setSenderId("user1")
-                .setReceiverId("user2")
+                .setSenderId(1L)
+                .setReceiverId(2L)
                 .setType("text")
                 .setTimestamp(System.currentTimeMillis())
                 .putData("key1", "value1")
@@ -40,8 +40,8 @@ class MessageConverterTest {
     void responseBodyToMessage() {
         ResponseBodyProto.ResponseBody.Builder builder = ResponseBodyProto.ResponseBody.newBuilder();
         builder.setCode("200");
-        builder.setSenderId("user1");
-        builder.setReceiverId("user2");
+        builder.setSenderId(1L);
+        builder.setReceiverId(2L);
         builder.setType("text");
         builder.setTimestamp(System.currentTimeMillis());
         builder.putData("key1", "value1");
@@ -57,8 +57,8 @@ class MessageConverterTest {
     @Test
     void messageToResponseBody() {
         Message message = new Message();
-        message.setSenderId("user1");
-        message.setReceiverId("user2");
+        message.setSenderId(1L);
+        message.setReceiverId(2L);
         message.setType("text");
         message.setTimestamp(System.currentTimeMillis());
         Map<String, String> data = new HashMap<>();

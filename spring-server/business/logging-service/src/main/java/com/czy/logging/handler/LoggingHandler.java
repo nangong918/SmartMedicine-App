@@ -2,6 +2,7 @@ package com.czy.logging.handler;
 
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.netty.RequestMessageType;
+import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
 import com.czy.api.domain.dto.socket.request.UserBrowseTimeRequest;
 import com.czy.api.domain.dto.socket.request.UserCityLocationRequest;
@@ -38,16 +39,15 @@ public class LoggingHandler implements LoggingApi {
         if (!debugConfig.isRecordUserAccount()){
             return;
         }
-        Long userId;
-        try {
-            userId = getUserId(request.getSenderId());
-        } catch (Exception e){
-            log.error("error: ", e);
+        Long senderId = request.getSenderId();
+
+        if (isUserNotExist(senderId)){
+            log.warn("埋单事件失败::用户:{} 不存在", senderId);
             return;
         }
 
         UserCityLocationInfoAo ao = new UserCityLocationInfoAo();
-        ao.setUserId(userId);
+        ao.setUserId(senderId);
         ao.setCityName(request.getCityName());
         ao.setLatitude(request.getLatitude());
         ao.setLongitude(request.getLongitude());
@@ -64,16 +64,15 @@ public class LoggingHandler implements LoggingApi {
         if (!debugConfig.isRecordUserAccount()){
             return;
         }
-        Long userId;
-        try {
-            userId = getUserId(request.getSenderId());
-        } catch (Exception e){
-            log.error("error: ", e);
+        Long senderId = request.getSenderId();
+
+        if (isUserNotExist(senderId)){
+            log.warn("埋单事件失败::用户:{} 不存在", senderId);
             return;
         }
         try {
             Long timestamp = Long.valueOf(request.getTimestamp());
-            userActionRecordService.clickPost(userId, request.getPostId(), timestamp, timestamp);
+            userActionRecordService.clickPost(senderId, request.getPostId(), timestamp, timestamp);
         } catch (NumberFormatException e){
             log.error("上传点击事件埋点事件失败，时间戳格式错误：", e);
         }
@@ -84,26 +83,23 @@ public class LoggingHandler implements LoggingApi {
         if (!debugConfig.isRecordUserAccount()){
             return;
         }
-        Long userId;
-        try {
-            userId = getUserId(request.getSenderId());
-        } catch (Exception e){
-            log.error("error: ", e);
+        Long senderId = request.getSenderId();
+
+        if (isUserNotExist(senderId)){
+            log.warn("埋单事件失败::用户:{} 不存在", senderId);
             return;
         }
         try {
             Long timestamp = Long.valueOf(request.getTimestamp());
-            userActionRecordService.uploadClickPostAndBrowseTime(userId, request.getPostId(), request.getBrowseDuration(), timestamp);
+            userActionRecordService.uploadClickPostAndBrowseTime(senderId, request.getPostId(), request.getBrowseDuration(), timestamp);
         } catch (NumberFormatException e){
             log.error("上传点击事件埋点事件失败，时间戳格式错误：", e);
         }
     }
 
-    private Long getUserId(String userAccount) throws Exception{
-        Long userId = userService.getIdByAccount(userAccount);
-        if (userId == null){
-            throw new Exception("事件埋点异常, 用户不存在");
-        }
-        return userId;
+    private boolean isUserNotExist(Long userId) {
+        UserDo userDo = userService.getUserById(userId);
+        return userDo == null || userDo.getId() == null;
     }
+
 }

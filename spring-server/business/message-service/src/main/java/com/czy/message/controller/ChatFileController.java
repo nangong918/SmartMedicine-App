@@ -51,12 +51,12 @@ public class ChatFileController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("fileId") Long fileId,
             @RequestParam("messageId") Long messageId,
-            @RequestParam("senderAccount") String senderAccount,
-            @RequestParam("receiverAccount") String receiverAccount
+            @RequestParam("senderId") Long senderId,
+            @RequestParam("receiverId") Long receiverId
     ){
-        UserDo senderDo = userService.getUserByAccount(senderAccount);
-        Long receiverId = userService.getIdByAccount(receiverAccount);
-        if (senderDo == null || senderDo.getId() == null || receiverId == null){
+        UserDo senderDo = userService.getUserById(senderId);
+        UserDo receiverDo = userService.getUserById(receiverId);
+        if (senderDo == null || senderDo.getId() == null || receiverDo == null || receiverDo.getId() == null){
             return BaseResponse.LogBackError("发送者或接收者id错误");
         }
         // messageId还未存储到mongoDb，此处不是查询，而是告诉receiver是哪条消息需要更新
@@ -77,8 +77,8 @@ public class ChatFileController {
             return BaseResponse.LogBackError("fileUrl解析失败");
         }
         UserImageResponse userImageResponse = new UserImageResponse();
-        userImageResponse.setSenderId(senderAccount);
-        userImageResponse.setReceiverId(receiverAccount);
+        userImageResponse.setSenderId(senderId);
+        userImageResponse.setReceiverId(receiverId);
         userImageResponse.setType(ResponseMessageType.Chat.RECEIVE_USER_IMAGE_MESSAGE);
         userImageResponse.setTimestamp(String.valueOf(System.currentTimeMillis()));
 

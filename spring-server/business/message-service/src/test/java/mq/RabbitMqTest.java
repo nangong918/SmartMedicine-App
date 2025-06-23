@@ -26,8 +26,8 @@ public class RabbitMqTest {
         for (int i = 0; i < 100; i++){
 
             SendTextDataRequest request = new SendTextDataRequest();
-            request.senderId = "1";
-            request.receiverId = "2";
+            request.senderId = 1L;
+            request.receiverId = 2L;
             request.type = "message";
             request.setContent("message" + i);
             request.timestamp = String.valueOf(System.currentTimeMillis());
@@ -74,8 +74,8 @@ public class RabbitMqTest {
     public void baseDataResponseTest() throws Exception {
         for (int i = 0; i < 100; i++){
             SendTextDataRequest request = new SendTextDataRequest();
-            request.senderId = "1";
-            request.receiverId = "2";
+            request.senderId = 1L;
+            request.receiverId = 2L;
             request.type = "message";
             request.setContent("message" + i);
             request.timestamp = String.valueOf(System.currentTimeMillis());
@@ -106,8 +106,8 @@ public class RabbitMqTest {
 
     public static void main(String[] args) {
         SendTextDataRequest request = new SendTextDataRequest();
-        request.senderId = "1";
-        request.receiverId = "2";
+        request.senderId = 1L;
+        request.receiverId = 2L;
         request.type = "message";
         request.setContent("message" + 90);
         request.timestamp = String.valueOf(System.currentTimeMillis());

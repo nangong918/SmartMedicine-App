@@ -50,17 +50,14 @@ public class SpringCloudEventManager {
         }
         // 连接相关
         if (request.getType().contains(RequestMessageType.Connect.root)){
-            String userAccount = request.getSenderId();
-            if (!StringUtils.hasText(userAccount)){
-                return;
-            }
+            Long senderId = request.getSenderId();
             // 注册
             if (request.getType().contains(RequestMessageType.Connect.CONNECT)){
-                channelManager.register(userAccount, channel);
+                channelManager.register(senderId, channel);
             }
             // 断开连接
             else if (request.getType().contains(RequestMessageType.Connect.DISCONNECT)){
-                channelManager.unRegister(userAccount);
+                channelManager.unRegister(senderId);
             }
         }
 

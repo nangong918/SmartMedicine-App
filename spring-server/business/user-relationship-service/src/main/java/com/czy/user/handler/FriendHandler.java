@@ -8,6 +8,7 @@ import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
 import com.czy.api.converter.domain.relationship.AddUserConverter;
 import com.czy.api.converter.domain.relationship.HandleAddUserConverter;
+import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.relationship.AddUserAo;
 import com.czy.api.domain.ao.relationship.HandleAddedMeAo;
 import com.czy.api.domain.dto.http.response.AddUserToTargetUserResponse;
@@ -17,13 +18,12 @@ import com.czy.api.domain.dto.socket.request.HandleAddedUserRequest;
 import com.czy.api.domain.dto.socket.response.DeleteUserResponse;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.springUtils.annotation.HandlerType;
-import com.czy.user.mq.sender.ToSocketMqSender;
 import com.czy.user.handler.api.FriendApi;
+import com.czy.user.mq.sender.ToSocketMqSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 /**
  * @author 13225
@@ -47,21 +47,18 @@ public class FriendHandler implements FriendApi {
 
     @Override
     public void addUser(AddUserRequest request) {
-        if (request == null || !StringUtils.hasText(request.getReceiverId())){
+        if (request == null || request.getSenderId() == null || request.getReceiverId() == null){
             return;
         }
-        Long senderId = userService.getIdByAccount(request.getSenderId());
-        Long receiverId = userService.getIdByAccount(request.getReceiverId());
-        if (senderId == null || receiverId == null){
-            return;
-        }
+        UserDo sender = userService.getUserById(request.getSenderId());
+        UserDo receiver = userService.getUserById(request.getReceiverId());
         String chatJsonList = userRelationshipService.getChatListJson(
                 request.getAddContent(),
-                senderId,
-                receiverId,
-                Long.parseLong(request.getTimestamp()),
                 request.getSenderId(),
-                request.getReceiverId()
+                request.getReceiverId(),
+                Long.parseLong(request.getTimestamp()),
+                sender.getAccount(),
+                receiver.getAccount()
         );
         // 转为响应体
         AddUserToTargetUserResponse response = addUserConverter.requestToResponse(request);

@@ -54,7 +54,7 @@ public class BaseResponseData extends BaseRequestData implements ToDataMap{
     }
 
     public void setBaseResponseData(String code, String message,
-                            String senderId, String receiverId, String type, String timestamp){
+                                    Long senderId, Long receiverId, String type, String timestamp){
         this.code = Optional.ofNullable(code).orElse("");
         this.message = Optional.ofNullable(message).orElse("");
         this.setSenderId(senderId);

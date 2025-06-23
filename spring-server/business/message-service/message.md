@@ -20,6 +20,6 @@
 * Ping心跳请求                               o
 * 已读消息
 
-
+# Netty的id从account改为user_id
 # 数据查询: 分页查询
 # 数据存储: 分库分表

@@ -22,8 +22,8 @@ import java.util.Map;
 public class BaseHttpRequest extends BaseRequest {
 
     @NotEmpty(message = "发送者 Account 不能为空")
-    public String senderId = "";
-    public String receiverId = "";
+    public Long senderId = -1L;
+    public Long receiverId = -1L;
     public String type = "";
     @NotNull(message = "时间戳不能为空")
     @Positive(message = "时间戳必须大于零")
@@ -34,7 +34,7 @@ public class BaseHttpRequest extends BaseRequest {
 
     }
 
-    public BaseHttpRequest(String senderId, String receiverId, String type){
+    public BaseHttpRequest(Long senderId, Long receiverId, String type){
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.type = type;

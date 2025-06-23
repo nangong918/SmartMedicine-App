@@ -8,7 +8,6 @@ import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.converter.domain.post.PostConverter;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
-import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
@@ -97,13 +96,7 @@ public class PostController {
     public BaseResponse<PostPublishResponse>
     postPublishFirst(@Valid @RequestBody PostPublishRequest request){
         long snowflakeId;
-        // 查询用户是否存在
-        UserDo userDo = userService.getUserByAccount(request.getSenderId());
-        if (userDo == null || userDo.getId() == null){
-            String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
-            return BaseResponse.LogBackError(warningMessage);
-        }
-        PostAo postAo = postConverter.requestToAo(request, userDo.getId());
+        PostAo postAo = postConverter.requestToAo(request, request.getSenderId());
         // 审核 目前只有防止刷帖；没有自然语言审核
         if (!postService.isLegalPost(postAo)) {
             return BaseResponse.LogBackError("帖子内容不合规，请修改");
@@ -120,7 +113,7 @@ public class PostController {
             // 分布式锁在此上锁，如果出现异常就解锁
             // 解锁在整个流程任何地方出现异常以及结束
             RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
-                    String.valueOf(userDo.getId()),
+                    String.valueOf(request.getSenderId()),
                     PostConstant.Post_CONTROLLER + PostConstant.POST_PUBLISH_FIRST,
                     PostConstant.POST_CHANGE_KEY_EXPIRE_TIME
             );
@@ -173,12 +166,7 @@ public class PostController {
     @PostMapping("/postUpdate")
     public BaseResponse<String>
     updatePost(@Valid @RequestBody PostUpdateRequest request){
-        UserDo userDo = userService.getUserByAccount(request.getSenderId());
-        if (userDo == null){
-            String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
-            return BaseResponse.LogBackError(warningMessage);
-        }
-        PostAo postAo = postConverter.updateRequestToAo(request, userDo.getId());
+        PostAo postAo = postConverter.updateRequestToAo(request, request.getSenderId());
         postAo.setId(request.getPostId());
         postService.updatePostInfoAndContent(postAo);
         return BaseResponse.getResponseEntitySuccess("修改成功");
@@ -189,14 +177,10 @@ public class PostController {
     public BaseResponse<String>
     updatePostAll(@Valid @RequestBody PostUpdateRequest request){
         // 1.给用户id上分布式锁
-        UserDo userDo = userService.getUserByAccount(request.getSenderId());
-        if (userDo == null){
-            String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
-            return BaseResponse.LogBackError(warningMessage);
-        }
+
         // 获取分布式锁
         RedissonClusterLock redissonClusterLock = new RedissonClusterLock(
-                String.valueOf(userDo.getId()),
+                String.valueOf(request.getSenderId()),
                 PostConstant.Post_CONTROLLER + PostConstant.POST_UPDATE_ALL,
                 PostConstant.POST_CHANGE_KEY_EXPIRE_TIME
         );
@@ -206,7 +190,7 @@ public class PostController {
         }
         // try-catch优先级高于全局异常
         try {
-            PostAo postAo = postConverter.updateRequestToAo(request, userDo.getId());
+            PostAo postAo = postConverter.updateRequestToAo(request, request.getSenderId());
             postService.updatePostFirst(postAo, request.getPostId());
         } catch (Exception e){
             // 出现任何异常都直接解除分布式锁

@@ -330,14 +330,21 @@ public class LoginController {
             String errorMessage = "验证码错误";
             return BaseResponse.LogBackError(errorMessage);
         }
+
+        boolean isPhoneRegister = userService.checkPhoneExist(request.getPhone()) > 0;
+//        boolean isAccountRegister = userService.checkAccountExist(request.getAccount()) > 0;
+
         UserDo userDo = userService.getUserByPhone(phone);
         // 未注册：注册
-        if (userDo == null || userDo.getId() == null){
+        if (!isPhoneRegister){
+            return BaseResponse.LogBackError("还未注册请先注册");
+        }
+/*        if (userDo == null || userDo.getId() == null){
             String userName = request.getUserName();
             if (!StringUtils.hasText(userName)){
                 return BaseResponse.LogBackError("用户名不能为空");
             }
-            String account = request.getSenderId();
+            String account = request.getAccount();
             if (!StringUtils.hasText(account)){
                 return BaseResponse.LogBackError("用户账号不能为空");
             }
@@ -361,7 +368,7 @@ public class LoginController {
             if (signResponse != null) {
                 return BaseResponse.getResponseEntitySuccess(signResponse);
             }
-        }
+        }*/
         // 注册了：登录
         else {
             LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo(
