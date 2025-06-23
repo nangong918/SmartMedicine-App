@@ -19,4 +19,5 @@ public class ChatVo {
     // data
     // account
     public String contactAccount;
+    public Long contactId;
 }

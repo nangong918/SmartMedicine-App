@@ -34,7 +34,7 @@ public interface MessageDao {
             "AND receiver_id IN (:senderId, :receiverId) " +
             "AND mid < :lastMessageId " +
             "ORDER BY timestamp DESC LIMIT :limit")
-    List<Integer> loadMessageIdsById(String senderId, String receiverId, int lastMessageId, int limit);
+    List<Integer> loadMessageIdsById(Long senderId, Long receiverId, int lastMessageId, int limit);
 
     /**
      * 查询指定用户之间的消息 ID 列表，根据 timestamp 向前查询
@@ -49,7 +49,7 @@ public interface MessageDao {
             "AND receiver_id IN (:senderId, :receiverId) " +
             "AND timestamp < :lastTimestamp " +
             "ORDER BY timestamp DESC LIMIT :limit")
-    List<Integer> loadMessageIdsByTimestamp(String senderId, String receiverId, long lastTimestamp, int limit);
+    List<Integer> loadMessageIdsByTimestamp(Long senderId, Long receiverId, long lastTimestamp, int limit);
 
     /**
      * 根据消息 ID 列表查询具体消息

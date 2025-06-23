@@ -15,13 +15,13 @@ import com.czy.appcore.netty.IMessageListener;
  */
 interface IMessageService {
     // 连接Socket
-    void connect(in String uid);
+    void connect(in long uid);
 
     // 断开连接
     void disconnect();
 
     // 从新连接
-    void reconnect(in String uid);
+    void reconnect(in long uid);
 
     // 发送消息到服务端
     void sendMessage(in Message message);

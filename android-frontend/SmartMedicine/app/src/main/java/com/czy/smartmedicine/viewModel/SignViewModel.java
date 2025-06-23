@@ -123,7 +123,7 @@ public class SignViewModel extends ViewModel {
                         UserLoginInfoAo userInfo = new UserLoginInfoAo(data.userId, data.account, data.phone, data.userName);
                         MainApplication.getInstance().setUserLoginInfoAo(userInfo);
                         userModel.saveUserInfo(userInfo);
-                        onLoginSuccess(data.comeConnectWebsocket, data.account);
+                        onLoginSuccess(data.comeConnectWebsocket, data.userId);
                     });
         }
         else {
@@ -183,7 +183,7 @@ public class SignViewModel extends ViewModel {
             }
             SendSmsRequest sendSmsRequest = new SendSmsRequest();
             sendSmsRequest.phone = phone;
-            sendSmsRequest.senderId = phone;
+//            sendSmsRequest.senderId = phone;
             // 发送验证码
             doSendSms(
                     sendSmsRequest,
@@ -327,12 +327,12 @@ public class SignViewModel extends ViewModel {
     /**
      * 跳转到MainActivity
      * @param connectWebSocket  是否连接
-     * @param senderAccount     account就是uid?重构响应体，要求响应体由uid
+     * @param senderId
      */
-    public void onLoginSuccess(boolean connectWebSocket, String senderAccount){
+    public void onLoginSuccess(boolean connectWebSocket, Long senderId){
         // 登录成功
         if (connectWebSocket){
-            MainApplication.getInstance().startNettySocketService(senderAccount);
+            MainApplication.getInstance().startNettySocketService(senderId);
         }
 
         // 跳转到MainActivity

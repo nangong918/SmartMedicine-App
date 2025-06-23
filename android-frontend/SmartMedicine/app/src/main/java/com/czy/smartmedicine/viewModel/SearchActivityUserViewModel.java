@@ -20,6 +20,7 @@ import com.czy.dal.constant.newUserGroup.ApplyButtonStatusEnum;
 import com.czy.dal.constant.newUserGroup.ApplyStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleButtonStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleStatusEnum;
+import com.czy.dal.dto.http.request.SearchUserRequest;
 import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.http.request.BaseNettyRequest;
 import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
@@ -262,9 +263,9 @@ public class SearchActivityUserViewModel extends ViewModel {
     // 搜索用户
     public void searchUsers(@NonNull String account){
         Log.i(TAG, "searchUsers: " + account);
-        BaseNettyRequest request = new BaseNettyRequest();
-        request.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
-        request.receiverId = account;
+        SearchUserRequest request = new SearchUserRequest();
+        request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        request.userAccount = account;
         doSearchUsers(request);
     }
 
@@ -293,10 +294,10 @@ public class SearchActivityUserViewModel extends ViewModel {
                     Log.i(TAG, "申请");
                     AddUserRequest addUserRequest = new AddUserRequest();
                     addUserRequest.source = AddSourceEnum.ACCOUNT.code;
-                    addUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
-                    addUserRequest.receiverId = vo.account;
-                    addUserRequest.addUserAccount = addUserRequest.receiverId;
-                    addUserRequest.myAccount = addUserRequest.senderId;
+                    addUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+                    addUserRequest.receiverId = vo.uid;
+//                    addUserRequest.addUserAccount = addUserRequest.receiverId;
+//                    addUserRequest.myAccount = addUserRequest.senderId;
                     addUserRequest.myName = MainApplication.getInstance().getUserLoginInfoAo().userName;
                     addUserRequest.addContent = content;
                     addUserRequest.applyType = ApplyStatusEnum.APPLYING.code;
@@ -307,10 +308,10 @@ public class SearchActivityUserViewModel extends ViewModel {
                     Log.i(TAG, "取消申请");
                     AddUserRequest addUserRequest = new AddUserRequest();
                     addUserRequest.source = AddSourceEnum.ACCOUNT.code;
-                    addUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
-                    addUserRequest.receiverId = vo.account;
-                    addUserRequest.addUserAccount = addUserRequest.receiverId;
-                    addUserRequest.myAccount = addUserRequest.senderId;
+                    addUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+                    addUserRequest.receiverId = vo.uid;
+//                    addUserRequest.addUserAccount = addUserRequest.receiverId;
+//                    addUserRequest.myAccount = addUserRequest.senderId;
                     addUserRequest.myName = MainApplication.getInstance().getUserLoginInfoAo().userName;
                     addUserRequest.applyType = ApplyStatusEnum.NOT_APPLY.code;
                     addUserRequest.addContent = content;
@@ -326,10 +327,10 @@ public class SearchActivityUserViewModel extends ViewModel {
                     Log.i(TAG, "再次申请");
                     AddUserRequest addUserRequest = new AddUserRequest();
                     addUserRequest.source = AddSourceEnum.ACCOUNT.code;
-                    addUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
-                    addUserRequest.receiverId = vo.account;
-                    addUserRequest.addUserAccount = addUserRequest.receiverId;
-                    addUserRequest.myAccount = addUserRequest.senderId;
+                    addUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+                    addUserRequest.receiverId = vo.uid;
+//                    addUserRequest.addUserAccount = addUserRequest.receiverId;
+//                    addUserRequest.myAccount = addUserRequest.senderId;
                     addUserRequest.myName = MainApplication.getInstance().getUserLoginInfoAo().userName;
                     addUserRequest.addContent = content;
                     addUserFriend(addUserRequest, vo.account);
@@ -348,8 +349,8 @@ public class SearchActivityUserViewModel extends ViewModel {
                 if (HandleButtonStatusEnum.AGREE.code == buttonId){
                     Log.i(TAG, "同意");
                     HandleAddedUserRequest handleAddedUserRequest = new HandleAddedUserRequest();
-                    handleAddedUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
-                    handleAddedUserRequest.receiverId = vo.account;
+                    handleAddedUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+                    handleAddedUserRequest.receiverId = vo.uid;
                     handleAddedUserRequest.handleType = HandleStatusEnum.AGREE.code;
                     handleAddedUserRequest.additionalContent = content;
                     doHandleAddUser(handleAddedUserRequest, vo.account);
@@ -358,8 +359,8 @@ public class SearchActivityUserViewModel extends ViewModel {
                 else if (HandleButtonStatusEnum.REFUSED.code == buttonId){
                     Log.i(TAG, "拒绝");
                     HandleAddedUserRequest handleAddedUserRequest = new HandleAddedUserRequest();
-                    handleAddedUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
-                    handleAddedUserRequest.receiverId = vo.account;
+                    handleAddedUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+                    handleAddedUserRequest.receiverId = vo.uid;
                     handleAddedUserRequest.handleType = HandleStatusEnum.REFUSED.code;
                     handleAddedUserRequest.additionalContent = content;
                     doHandleAddUser(handleAddedUserRequest, vo.account);
@@ -378,8 +379,8 @@ public class SearchActivityUserViewModel extends ViewModel {
                 else if (HandleButtonStatusEnum.BLACK.code == buttonId){
                     Log.i(TAG, "拉黑");
                     HandleAddedUserRequest handleAddedUserRequest = new HandleAddedUserRequest();
-                    handleAddedUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
-                    handleAddedUserRequest.receiverId = vo.account;
+                    handleAddedUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+                    handleAddedUserRequest.receiverId = vo.uid;
                     handleAddedUserRequest.handleType = HandleStatusEnum.BLACK.code;
                     handleAddedUserRequest.additionalContent = content;
                     doHandleAddUser(handleAddedUserRequest, vo.account);
@@ -388,8 +389,8 @@ public class SearchActivityUserViewModel extends ViewModel {
                 else if (HandleButtonStatusEnum.UN_BLACK.code == buttonId){
                     Log.i(TAG, "解除拉黑");
                     HandleAddedUserRequest handleAddedUserRequest = new HandleAddedUserRequest();
-                    handleAddedUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
-                    handleAddedUserRequest.receiverId = vo.account;
+                    handleAddedUserRequest.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+                    handleAddedUserRequest.receiverId = vo.uid;
                     handleAddedUserRequest.handleType = HandleStatusEnum.NOT_HANDLE.code;
                     handleAddedUserRequest.additionalContent = content;
                     doHandleAddUser(handleAddedUserRequest, vo.account);

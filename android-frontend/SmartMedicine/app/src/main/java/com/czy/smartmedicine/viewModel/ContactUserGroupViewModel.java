@@ -135,7 +135,7 @@ public class ContactUserGroupViewModel extends ViewModel {
             accountList = new LinkedList<>();
         }
         GetMyFriendsRequest request = new GetMyFriendsRequest();
-        request.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
+        request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
         request.receiverId = Constants.SERVER_ID;
         request.accountList = accountList;
         doGetMyFriendList(request);

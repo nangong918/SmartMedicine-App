@@ -16,6 +16,7 @@ import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.bo.UserChatLastMessageBo;
+import com.czy.dal.constant.Constants;
 import com.czy.dal.dto.http.request.BaseNettyRequest;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.dal.dto.netty.forwardMessage.UserImageResponse;
@@ -115,7 +116,7 @@ public class MessageViewModel extends ViewModel {
         // 更新RecyclerView LiveData 和 DiffUtil
         // 非 contactAccount 作为索引方案
 
-        String contactAccount = response.getSenderId() == null ? "" : response.getSenderId();
+        String contactAccount = response.account == null ? "" : response.account;
         ChatContactItemAo item = new ChatContactItemAo();
         item.contactAccount = contactAccount;
         item.chatContactItemVo.avatarUrlOrUri = response.avatarUrl;
@@ -153,7 +154,7 @@ public class MessageViewModel extends ViewModel {
 
     private void processUserImageResponse(UserImageResponse response) {
         Log.d(TAG, "receiveUserImage: " + response.toJsonString());
-        String contactAccount = response.getSenderId() == null ? "" : response.getSenderId();
+        String contactAccount = response.account == null ? "" : response.account;
         ChatContactItemAo item = new ChatContactItemAo();
         item.contactAccount = contactAccount;
         item.chatContactItemVo.avatarUrlOrUri = response.avatarUrl;
@@ -170,9 +171,9 @@ public class MessageViewModel extends ViewModel {
         if (HttpRequestManager.getIsFirstOpen(MessageFragment.class.getName())){
             BaseNettyRequest request = new BaseNettyRequest();
             request.senderId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
-                            .map(ao -> ao.account)
-                            .orElse("");
-            if (TextUtils.isEmpty(request.senderId)){
+                            .map(ao -> ao.userId)
+                            .orElse(Constants.ERROR_ID);
+            if (Constants.ERROR_ID.equals(request.senderId)){
                 Log.w(TAG, "doGetUserNewMessage: senderId is empty");
                 return;
             }

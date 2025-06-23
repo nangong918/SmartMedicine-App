@@ -266,23 +266,23 @@ public class HomeViewModel extends ViewModel {
 
     // 记录点击（浏览）post事件
     public void recordPostView(Long postId) {
-        String userAccount = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        Long userId = MainApplication.getInstance().getUserLoginInfoAo().userId;
         Long time = System.currentTimeMillis();
         UserClickPostRequest request = new UserClickPostRequest();
         request.receiverId = Constants.SERVER_ID;
         request.postId = postId;
-        request.senderId = userAccount;
+        request.senderId = userId;
         request.timestamp = String.valueOf(time);
         socketMessageSender.uploadClickEvent(request);
     }
 
     // 记录观看时长
     public void recordViewingDuration(long duration, Long postId) {
-        String userAccount = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        Long userId = MainApplication.getInstance().getUserLoginInfoAo().userId;
         Long time = System.currentTimeMillis();
         UserBrowseTimeRequest request = new UserBrowseTimeRequest();
         request.receiverId = Constants.SERVER_ID;
-        request.senderId = userAccount;
+        request.senderId = userId;
         request.timestamp = String.valueOf(time);
         request.postId = postId;
         request.browseDuration = duration;

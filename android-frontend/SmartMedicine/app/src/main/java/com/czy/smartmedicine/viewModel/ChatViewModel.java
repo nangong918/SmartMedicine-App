@@ -22,6 +22,7 @@ import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.bo.UserChatMessageBo;
+import com.czy.dal.constant.Constants;
 import com.czy.dal.constant.MessageTypeEnum;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.dal.dto.netty.forwardMessage.SendImageRequest;
@@ -140,7 +141,7 @@ public class ChatViewModel extends ViewModel {
         request.timestampIndex = timestampIndex;
         request.messageCount = messageCount;
         request.senderAccount = MainApplication.getInstance().getUserLoginInfoAo().account;
-        request.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
+        request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
 
         apiRequestImpl.fetchUserMessage(request
                 , this::handleFetchUserMessage
@@ -164,11 +165,12 @@ public class ChatViewModel extends ViewModel {
     public void sendMessage(){
         String message = chatVo.inputText.getValue();
         String receiverAccount = chatVo.contactAccount;
+        Long receiverId = chatVo.contactId;
         // 用Netty长连接发送消息
         SendTextDataRequest request = new SendTextDataRequest();
         request.setContent(message);
-        request.setSenderId(MainApplication.getInstance().getUserLoginInfoAo().account);
-        request.setReceiverId(receiverAccount);
+        request.setSenderId(MainApplication.getInstance().getUserLoginInfoAo().userId);
+        request.setReceiverId(receiverId);
         request.setTimestamp(String.valueOf(System.currentTimeMillis()));
 
         // 发送消息
@@ -301,8 +303,8 @@ public class ChatViewModel extends ViewModel {
 
         // Socket Send
         SendImageRequest request = new SendImageRequest();
-        request.senderId = MainApplication.getInstance().getUserLoginInfoAo().account;
-        request.receiverId = chatVo.contactAccount;
+        request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        request.receiverId = chatVo.contactId;
         request.timestamp = String.valueOf(listTime);
         request.fileName = fileName + "_" + request.timestamp + fileExtension;
         socketMessageSender.sendImageToUser(request);
@@ -383,7 +385,10 @@ public class ChatViewModel extends ViewModel {
         String receiverAccount = Optional.ofNullable(chatVo)
                 .map(vo -> vo.contactAccount)
                 .orElse("");
-        if (receiverAccount.equals(response.getSenderId())){
+        Long receiverId = Optional.ofNullable(chatVo)
+                .map(vo -> vo.contactId)
+                .orElse(Constants.ERROR_ID);
+        if (receiverId.equals(response.getSenderId())){
             // 根据 message 的 type 执行对应的方法
             receiveMessageApi.receiveUserImage(response);
         }

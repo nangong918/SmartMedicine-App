@@ -108,15 +108,15 @@ public class MainApplication extends Application {
 
     public BaseNettyRequest getBaseNettyRequest(){
         BaseNettyRequest request = new BaseNettyRequest();
-        request.senderId = getUserLoginInfoAo().account;
+        request.senderId = getUserLoginInfoAo().userId;
         request.receiverId = Constants.SERVER_ID;
         request.timestamp = System.currentTimeMillis();
         return request;
     }
 
-    public BaseNettyRequest getBaseNettyRequest(String receiverId){
+    public BaseNettyRequest getBaseNettyRequest(Long receiverId){
         BaseNettyRequest request = new BaseNettyRequest();
-        request.senderId = getUserLoginInfoAo().account;
+        request.senderId = getUserLoginInfoAo().userId;
         request.receiverId = receiverId;
         request.timestamp = System.currentTimeMillis();
         return request;
@@ -169,11 +169,11 @@ public class MainApplication extends Application {
     private NettySocketServiceInitiator nettySocketServiceInitiator;
 
     // 连接WebSocket
-    public void startNettySocketService(String senderAccount){
+    public void startNettySocketService(Long senderId){
         nettySocketServiceInitiator = new NettySocketServiceInitiator();
         nettySocketServiceInitiator.initRemoteService(
                 this,
-                senderAccount,
+                senderId,
                 MainApplication.getMessageListener()
         );
         // 初始化MessageQueue

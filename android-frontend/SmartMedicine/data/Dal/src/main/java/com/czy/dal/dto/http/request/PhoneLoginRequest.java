@@ -11,9 +11,10 @@ public class PhoneLoginRequest extends DeviceRequest{
     }
 
     public PhoneLoginRequest(String phone, String code) {
-        super(phone);
-        Log.d("Intercept", "2BaseNettyRequest: senderId: " + senderId);
-        super.senderId = phone;
+        // 手机号登录的时候没有userId
+//        super(phone);
+//        Log.d("Intercept", "2BaseNettyRequest: senderId: " + senderId);
+//        super.senderId = phone;
         this.code = code;
         this.phone = phone;
     }

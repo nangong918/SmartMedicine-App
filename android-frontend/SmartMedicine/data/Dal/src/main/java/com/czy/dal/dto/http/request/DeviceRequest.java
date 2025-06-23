@@ -9,7 +9,7 @@ public class DeviceRequest extends BaseNettyRequest{
         super();
     }
 
-    public DeviceRequest(String senderId) {
+    public DeviceRequest(Long senderId) {
         super(senderId);
     }
 }

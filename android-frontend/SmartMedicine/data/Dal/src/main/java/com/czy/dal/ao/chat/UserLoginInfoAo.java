@@ -7,20 +7,18 @@ import com.czy.baseUtilsLib.json.BaseBean;
 import com.czy.baseUtilsLib.object.BaseSharedPreferencesBean;
 
 public class UserLoginInfoAo extends BaseSharedPreferencesBean implements BaseBean {
-    public String userId;
+    public Long userId;
     public String account;
     public String phone;
     public String userName;
 
     public UserLoginInfoAo() {}
 
-    public UserLoginInfoAo(String userId, String account, String phone, String userName) {
+    public UserLoginInfoAo(Long userId, String account, String phone, String userName) {
         this.userId = userId;
         this.account = account;
         this.phone = phone;
         this.userName = userName;
-        // 前端不需要保存userId
-        this.userId = account;
     }
 
 //    public void saveToSharePreferences(SharedPreferences sp) {
