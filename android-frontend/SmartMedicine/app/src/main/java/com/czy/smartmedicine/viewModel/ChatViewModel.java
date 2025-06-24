@@ -38,6 +38,7 @@ import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 import com.czy.dal.vo.viewModelVo.chat.ChatVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

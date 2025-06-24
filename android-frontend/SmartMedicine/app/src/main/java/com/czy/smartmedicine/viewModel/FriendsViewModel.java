@@ -3,7 +3,6 @@ package com.czy.smartmedicine.viewModel;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,6 +21,7 @@ import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.fragment.friends.FriendsFragment;
 import com.czy.smartmedicine.manager.HttpRequestManager;
+import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

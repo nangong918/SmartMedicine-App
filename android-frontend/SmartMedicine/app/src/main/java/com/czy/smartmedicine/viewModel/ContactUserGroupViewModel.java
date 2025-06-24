@@ -24,6 +24,7 @@ import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.fragment.friends.ContactUserGroupFragment;
 import com.czy.smartmedicine.manager.HttpRequestManager;
+import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

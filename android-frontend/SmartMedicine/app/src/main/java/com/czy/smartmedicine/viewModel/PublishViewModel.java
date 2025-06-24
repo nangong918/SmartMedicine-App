@@ -2,7 +2,6 @@ package com.czy.smartmedicine.viewModel;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
@@ -15,6 +14,7 @@ import com.czy.dal.dto.http.response.PostPublishResponse;
 import com.czy.dal.vo.viewModelVo.post.PublishPostVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import java.util.ArrayList;
 import java.util.List;

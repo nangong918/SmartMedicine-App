@@ -31,6 +31,7 @@ import com.czy.dal.vo.viewModelVo.newUserGroup.NewUserGroupVo;
 import com.czy.dal.ao.newUser.NewUserItemAo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.utils.ViewModelUtil;
 
 
 import java.util.ArrayList;

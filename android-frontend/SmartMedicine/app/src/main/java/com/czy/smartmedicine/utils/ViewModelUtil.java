@@ -1,4 +1,4 @@
-package com.czy.smartmedicine.viewModel;
+package com.czy.smartmedicine.utils;
 
 import android.content.Context;
 import android.os.Handler;

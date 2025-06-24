@@ -29,6 +29,7 @@ import com.czy.dal.vo.entity.addContact.AddContactItemVo;
 import com.czy.dal.vo.viewModelVo.search.SearchActivityUserVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import java.util.Arrays;
 import java.util.LinkedList;

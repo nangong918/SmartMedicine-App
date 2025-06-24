@@ -7,6 +7,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.vo.viewModelVo.post.PostActivityVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.smartmedicine.utils.ViewModelUtil;
 
 public class PostViewModel extends ViewModel {
 

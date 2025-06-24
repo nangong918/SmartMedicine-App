@@ -38,7 +38,7 @@ import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.appcore.network.api.ApiRequestProvider;
 import com.czy.appcore.network.netty.service.NettySocketService;
 import com.czy.smartmedicine.manager.HttpRequestManager;
-import com.czy.smartmedicine.viewModel.ViewModelUtil;
+import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import java.util.ArrayList;
 import java.util.List;
