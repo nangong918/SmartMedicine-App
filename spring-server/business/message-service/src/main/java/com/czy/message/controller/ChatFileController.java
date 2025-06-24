@@ -17,6 +17,7 @@ import domain.SuccessFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -118,20 +120,32 @@ public class ChatFileController {
             return BaseResponse.LogBackError("fileUrl解析失败");
         }
 
+        List<Long> avatarFileIds = new ArrayList<>();
+        avatarFileIds.add(senderDo.getAvatarFileId());
+        List<String> avatarUrls = ossService.getFileUrlsByFileIds(avatarFileIds);
+
         // 将url打包为响应体发送给接收方：
-        UserImageResponse userImageResponse = new UserImageResponse();
-        userImageResponse.setSenderId(senderId);
-        userImageResponse.setReceiverId(receiverId);
-        userImageResponse.setType(ResponseMessageType.Chat.RECEIVE_USER_IMAGE_MESSAGE);
-        userImageResponse.setTimestamp(String.valueOf(System.currentTimeMillis()));
-        userImageResponse.setAvatarFileId(fileId);
-//        userImageResponse.setMessageId(messageId);
-        userImageResponse.setImageUrl(urls.get(0));
-        userImageResponse.setTitle(NettyConstants.imageMessageTitle);
-        userImageResponse.setAvatarFileId(null);
-        userImageResponse.setSenderName(senderDo.getUserName());
+        UserImageResponse response = new UserImageResponse();
+        response.setSenderId(senderId);
+        response.setReceiverId(receiverId);
+        response.setType(ResponseMessageType.Chat.RECEIVE_USER_IMAGE_MESSAGE);
+        response.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        // image file
+        response.setImageFileId(fileId);
+        response.setImageUrl(urls.get(0));
+        // avatar file
+        response.setAvatarFileId(senderDo.getAvatarFileId());
+        response.setAvatarUrl(
+                Optional.ofNullable(avatarUrls)
+                        .filter(u -> !CollectionUtils.isEmpty(u))
+                        .map(u -> u.get(0))
+                        .orElse(null)
+        );
+//        response.setMessageId(messageId);
+        response.setTitle(NettyConstants.imageMessageTitle);
+        response.setSenderName(senderDo.getUserName());
         // 已经是响应类型，不会内部转换
-        rabbitMqSender.push(userImageResponse);
+        rabbitMqSender.push(response);
 
         return BaseResponse.getResponseEntitySuccess("发送成功");
     }

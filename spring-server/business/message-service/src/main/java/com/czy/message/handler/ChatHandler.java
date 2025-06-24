@@ -28,10 +28,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -76,7 +78,12 @@ public class ChatHandler implements ChatApi {
         List<Long> avatarFileIds = new ArrayList<>();
         avatarFileIds.add(userDo.getAvatarFileId());
         List<String> avatarUrls = ossService.getFileUrlsByFileIds(avatarFileIds);
-        response.setAvatarUrls(avatarUrls.get(0));
+        response.setAvatarUrls(
+                Optional.ofNullable(avatarUrls)
+                        .filter(u -> !CollectionUtils.isEmpty(u))
+                        .map(u -> u.get(0))
+                        .orElse(null)
+        );
 
         String name = StringUtils.hasText(userDo.getUserName()) ? userDo.getUserName() : userDo.getAccount();
         response.setSenderName(name);

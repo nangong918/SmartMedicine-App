@@ -19,7 +19,10 @@ public class UserImageResponse extends BaseResponseData implements BaseBean {
     public String title;
     // 用于当前立刻显示
     public String imageUrl;
+    // 用于后续自己去查询
+    public Long imageFileId;
     public String senderName;
+    public String avatarUrl;
     // 用于后续自己去查询
     public Long avatarFileId;
 //    public Long messageId;
@@ -29,7 +32,9 @@ public class UserImageResponse extends BaseResponseData implements BaseBean {
         Map<String, String> map = super.toDataMap();
         map.put("title", title);
         map.put("imageUrl", imageUrl);
+        map.put("imageFileId", String.valueOf(imageFileId));
         map.put("senderName", senderName);
+        map.put("avatarUrl", avatarUrl);
         map.put("avatarFileId", String.valueOf(avatarFileId));
 //        map.put("messageId", String.valueOf(messageId));
         return map;
