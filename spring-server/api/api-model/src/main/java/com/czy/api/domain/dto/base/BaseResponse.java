@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Data
 public class BaseResponse<T> implements BaseBean, Serializable {
 
-    protected Integer code = 200;
+    protected String code = "200";
     protected String message;
     protected T data; // 泛型字段，用于存放具体的数据
 
@@ -27,7 +27,7 @@ public class BaseResponse<T> implements BaseBean, Serializable {
      * @param data      数据
      */
     public BaseResponse(T data) {
-        this.code = 200;
+        this.code = "200";
         this.message = null;
         this.data = data;
     }
@@ -38,7 +38,7 @@ public class BaseResponse<T> implements BaseBean, Serializable {
      * @param data      数据
      */
     public BaseResponse(String message, T data) {
-        this.code = 200;
+        this.code = "200";
         this.message = message;
         this.data = data;
     }
@@ -49,8 +49,8 @@ public class BaseResponse<T> implements BaseBean, Serializable {
      * @param message   错误信息
      * @param data      数据
      */
-    public BaseResponse(Integer code, String message, T data) {
-        this.code = code == null ? 200 : code;
+    public BaseResponse(String code, String message, T data) {
+        this.code = code == null ? "200" : code;
         this.message = message;
         this.data = data;
     }
@@ -60,7 +60,7 @@ public class BaseResponse<T> implements BaseBean, Serializable {
      * @param message   错误信息
      */
     public BaseResponse(String message) {
-        this.code = 200;
+        this.code = "200";
         this.message = message;
         this.data = null;
     }
@@ -90,42 +90,6 @@ public class BaseResponse<T> implements BaseBean, Serializable {
     }
 
     /**
-     * ResponseEntity<T>失败响应 ; ResponseEntity<T>会直接在Controller层提交响应
-     * @param message   错误信息
-     * @return          ResponseEntity
-     * @param <T>       响应类型
-     */
-    public static <T> ResponseEntity<BaseResponse<T>> getResponseEntityFailMessage(String message) {
-        BaseResponse<T> baseResponse = new BaseResponse<>(404, message, null);
-        return ResponseEntity.status(404).body(baseResponse);
-    }
-
-    /**
-     * ResponseEntity<T>其他响应 ; ResponseEntity<T>会直接在Controller层提交响应
-     * @param code      状态码
-     * @param message   错误信息
-     * @param data      数据
-     * @return          ResponseEntity
-     * @param <T>       响应类型
-     */
-    public static <T> ResponseEntity<BaseResponse<T>> getResponseEntityOther(int code, String message, T data) {
-        BaseResponse<T> baseResponse = new BaseResponse<>(code, message, data);
-        return ResponseEntity.status(code).body(baseResponse);
-    }
-
-    /**
-     * ResponseEntity 失败响应 + 错误日志
-     * @param warningMessage    错误信息
-     * @param log               日志
-     * @return                  ResponseEntity
-     * @param <T>               响应类型
-     */
-    public static <T> ResponseEntity<BaseResponse<T>> LogBackErrorRE(String warningMessage, org.slf4j.Logger log) {
-        log.warn(warningMessage);
-        return BaseResponse.getResponseEntityFailMessage(warningMessage);
-    }
-
-    /**
      * 错误响应 + 错误日志
      * @param warningMessage    错误日志（默认响应给前端的错误信息）
      * @param log               日志
@@ -134,11 +98,11 @@ public class BaseResponse<T> implements BaseBean, Serializable {
      */
     public static <T> BaseResponse<T> LogBackError(String warningMessage, org.slf4j.Logger log) {
         log.warn(warningMessage);
-        return new BaseResponse<>(400, warningMessage, null);
+        return new BaseResponse<>("400", warningMessage, null);
     }
 
     public static <T> BaseResponse<T> LogBackError(String warningMessage) {
-        return new BaseResponse<>(400, warningMessage, null);
+        return new BaseResponse<>("400", warningMessage, null);
     }
 
     // TODO LogBackErrorCode 给前端和后端日志分离，并且单独拆分出 AppException

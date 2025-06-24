@@ -17,6 +17,7 @@ import com.czy.api.domain.dto.http.request.ResetUserInfoRequest;
 import com.czy.api.domain.dto.http.request.SendSmsRequest;
 import com.czy.api.domain.dto.http.response.IsRegisterResponse;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
+import com.czy.api.domain.dto.http.response.SendSmsResponse;
 import com.czy.api.domain.dto.http.response.UserRegisterResponse;
 import com.czy.api.domain.vo.user.UserVo;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -310,9 +311,11 @@ public class LoginController {
 
     // 发送短信
     @PostMapping(UserConstant.Send_Sms)
-    public BaseResponse<String> sendSms(@Validated @RequestBody SendSmsRequest request) {
+    public BaseResponse<SendSmsResponse> sendSms(@Validated @RequestBody SendSmsRequest request) {
         if (smsService.sendSms(request.getPhone())) {
-            return BaseResponse.getResponseEntitySuccess(String.format("发送短信成功phone：%s", request.getPhone()));
+            SendSmsResponse response = new SendSmsResponse();
+            response.setPhone(request.getPhone());
+            return BaseResponse.getResponseEntitySuccess(response);
         } else {
             return BaseResponse.LogBackError("发送短信失败");
         }
