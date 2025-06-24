@@ -15,7 +15,7 @@ public class UserConstant {
     public static final String Login_CONTROLLER = "/login";
     public static final String User_File_CONTROLLER = "/userFile";
     public static final String Password_Register = "/register";
-    public static final String Password_Login = "/passwordLoginUser";
+    public static final String Password_Login = "/pwdLogin";
     public static final String Send_Sms = "/sendSms";
     public static final String Sms_Login = "/smsLoginUser";
     public static final String Check_Phone_Is_Register = "/isPhoneRegistered";

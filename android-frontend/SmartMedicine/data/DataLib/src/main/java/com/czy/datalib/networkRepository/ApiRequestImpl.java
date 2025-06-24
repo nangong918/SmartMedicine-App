@@ -9,6 +9,8 @@ import com.czy.baseUtilsLib.network.OnSuccessCallback;
 import com.czy.baseUtilsLib.network.OnThrowableCallback;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
+import com.czy.dal.dto.http.request.IsRegisterRequest;
+import com.czy.dal.dto.http.request.LoginUserRequest;
 import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
@@ -17,6 +19,7 @@ import com.czy.dal.dto.http.request.SendSmsInfoRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
+import com.czy.dal.dto.http.response.IsRegisterResponse;
 import com.czy.dal.dto.http.response.LoginSignResponse;
 import com.czy.dal.dto.http.response.PostPublishResponse;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
@@ -104,6 +107,32 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                 ),
                 onSuccessCallback,
                 onErrorCallback
+        );
+    }
+
+    //    @POST("/login/isPhoneRegistered")
+    //    Observable<BaseResponse<IsRegisterResponse>> isPhoneRegistered(@Body IsRegisterRequest request);
+    public void isPhoneRegistered(
+            IsRegisterRequest request,
+            OnSuccessCallback<BaseResponse<IsRegisterResponse>> onSuccessCallback,
+            OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.isPhoneRegistered(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST("/login/pwdLogin")
+    //    Observable<BaseResponse<LoginSignResponse>> passwordLogin(@Body LoginUserRequest request);
+    public void passwordLogin(
+            LoginUserRequest request,
+            OnSuccessCallback<BaseResponse<LoginSignResponse>> onSuccessCallback,
+            OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.passwordLogin(request),
+                onSuccessCallback,
+                onThrowableCallback
         );
     }
 

@@ -91,6 +91,11 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
                 ToastUtils.showToast(this, message);
                 return;
             }
+            else if (viewModel.uriAtomicReference == null || viewModel.uriAtomicReference.get() == null){
+                String message = getString(com.czy.customviewlib.R.string.avatarNotSelected);
+                ToastUtils.showToast(this, message);
+                 return;
+            }
 //            else if (Boolean.FALSE.equals(viewModel.registerVo.isPwdAgainConsist.getValue())){
 //                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.pwdAgainNotConsist));
 //                return;

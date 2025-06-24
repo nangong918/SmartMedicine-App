@@ -15,6 +15,8 @@
     <color name="grey_bar_color">#EDEDED</color>
     <color name="origin_text_color">#FFFAA41A</color>
 
+    <color name="clickAble">#3E44FF00</color>
+
     <!--style-->
     <color name="light_blue_10">#E1F5FD</color>
     <color name="light_blue_50">#C0EAFD</color>

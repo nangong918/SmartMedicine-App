@@ -2,7 +2,10 @@ package com.czy.appcore.network.api;
 
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
+import com.czy.dal.dto.http.request.BaseRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
+import com.czy.dal.dto.http.request.IsRegisterRequest;
+import com.czy.dal.dto.http.request.LoginUserRequest;
 import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
@@ -11,6 +14,7 @@ import com.czy.dal.dto.http.request.SendSmsInfoRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
+import com.czy.dal.dto.http.response.IsRegisterResponse;
 import com.czy.dal.dto.http.response.LoginSignResponse;
 import com.czy.dal.dto.http.response.PostPublishResponse;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
@@ -76,6 +80,22 @@ public interface ApiRequest {
             @Part("phone") RequestBody phone,
             @Part("userId") RequestBody userId
     );
+
+    /**
+     * 检查手机号是否已经注册了
+     * @param request   手机号
+     * @return          是否注册了
+     */
+    @POST("/login/isPhoneRegistered")
+    Observable<BaseResponse<IsRegisterResponse>> isPhoneRegistered(@Body IsRegisterRequest request);
+
+    /**
+     * 密码登录
+     * @param request   手机号
+     * @return          登录结果
+     */
+    @POST("/login/pwdLogin")
+    Observable<BaseResponse<LoginSignResponse>> passwordLogin(@Body LoginUserRequest request);
 
     /**
      * 搜索用户

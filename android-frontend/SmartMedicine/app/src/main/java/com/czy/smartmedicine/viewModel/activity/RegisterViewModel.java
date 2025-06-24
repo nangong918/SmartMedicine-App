@@ -62,7 +62,7 @@ public class RegisterViewModel extends ViewModel {
     public RegisterActivityIntentAo intentAo;
     //===========Picture
 
-    public AtomicReference<Uri> uriAtomicReference = new AtomicReference<>();
+    public AtomicReference<Uri> uriAtomicReference = new AtomicReference<>(null);
     public void initVo(RegisterVo registerVo) {
         this.registerVo = registerVo;
         initTimer();
