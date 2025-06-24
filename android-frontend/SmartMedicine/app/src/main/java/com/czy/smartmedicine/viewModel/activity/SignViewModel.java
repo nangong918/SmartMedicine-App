@@ -1,4 +1,4 @@
-package com.czy.smartmedicine.viewModel;
+package com.czy.smartmedicine.viewModel.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;

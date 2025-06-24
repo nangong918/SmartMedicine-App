@@ -20,8 +20,8 @@ import com.czy.dal.vo.viewModelVo.message.MessageVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.ChatActivity;
 import com.czy.smartmedicine.databinding.FragmentMessageBinding;
-import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.MessageViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.fragment.MessageViewModel;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

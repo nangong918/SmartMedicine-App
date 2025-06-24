@@ -14,8 +14,8 @@ import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.vo.viewModelVo.post.PublishPostVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPublishPostBinding;
-import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.PublishViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.activity.PublishViewModel;
 
 public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding> {
 

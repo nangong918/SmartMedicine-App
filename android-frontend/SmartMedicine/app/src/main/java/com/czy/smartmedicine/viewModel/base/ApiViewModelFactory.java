@@ -1,4 +1,4 @@
-package com.czy.smartmedicine.viewModel;
+package com.czy.smartmedicine.viewModel.base;
 
 import android.util.Log;
 

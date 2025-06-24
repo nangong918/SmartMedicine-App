@@ -22,8 +22,8 @@ import com.czy.dal.vo.viewModelVo.contactUserGroup.ContactUserGroupVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.UserBriefActivity;
 import com.czy.smartmedicine.databinding.FragmentContactUserGroupBinding;
-import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.ContactUserGroupViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.activity.ContactUserGroupViewModel;
 
 import java.util.Optional;
 

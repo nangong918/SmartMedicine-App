@@ -13,8 +13,8 @@ import com.czy.dal.vo.entity.addContact.AddContactListVo;
 import com.czy.dal.vo.viewModelVo.newUserGroup.NewUserGroupVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityNewUserGroupBinding;
-import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.NewUserGroupViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.activity.NewUserGroupViewModel;
 
 import java.util.Optional;
 

@@ -30,8 +30,8 @@ import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.NewUserGroupActivity;
 import com.czy.smartmedicine.activity.SearchActivity;
 import com.czy.smartmedicine.databinding.FragmentFriendsBinding;
-import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.FriendsViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.activity.FriendsViewModel;
 
 import java.util.Optional;
 

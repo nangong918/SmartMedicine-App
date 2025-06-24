@@ -17,8 +17,8 @@ import com.czy.dal.constant.SearchEnum;
 import com.czy.dal.vo.viewModelVo.search.SearchActivityUserVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySearchBinding;
-import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.SearchActivityUserViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.activity.SearchActivityUserViewModel;
 
 import java.util.Optional;
 
