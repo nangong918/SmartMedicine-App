@@ -9,6 +9,7 @@ import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.api.domain.ao.user.UserInfoAo;
 import com.czy.api.domain.dto.base.BaseResponse;
+import com.czy.api.domain.dto.http.request.IsRegisterRequest;
 import com.czy.api.domain.dto.http.request.LoginResetPasswordRequest;
 import com.czy.api.domain.dto.http.request.LoginUserRequest;
 import com.czy.api.domain.dto.http.request.PhoneLoginRequest;
@@ -135,14 +136,14 @@ public class LoginController {
     // 1.检查手机号是否注册 (频繁调用，可能要ip拦截)
     @GetMapping(UserConstant.Check_Phone_Is_Register)
     public BaseResponse<IsRegisterResponse>
-    checkPhoneIsRegister(@RequestParam("phone") String phone) {
-        if (!StringUtils.hasText(phone)){
-            String warningMessage = String.format("手机号不能为空，phone: %s", phone);
+    checkPhoneIsRegister(@RequestBody @Validated IsRegisterRequest request) {
+        if (!StringUtils.hasText(request.getPhone())){
+            String warningMessage = String.format("手机号不能为空，phone: %s", request.getPhone());
             return BaseResponse.LogBackError(warningMessage);
         }
         IsRegisterResponse response = new IsRegisterResponse();
-        response.setRegister(userService.checkPhoneExist(phone) > 0);
-        response.setPhone(phone);
+        response.setRegister(userService.checkPhoneExist(request.getPhone()) > 0);
+        response.setPhone(request.getPhone());
         return BaseResponse.getResponseEntitySuccess(response);
     }
 

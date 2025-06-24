@@ -18,7 +18,7 @@ public class UserConstant {
     public static final String Password_Login = "/passwordLoginUser";
     public static final String Send_Sms = "/sendSms";
     public static final String Sms_Login = "/smsLoginUser";
-    public static final String Check_Phone_Is_Register = "/checkPhoneIsRegister";
+    public static final String Check_Phone_Is_Register = "/isPhoneRegistered";
     public static final String Check_Account_Is_Register = "/checkAccountIsRegister";
     public static final String Reset_Password_Vcode = "/vcode/resetPwd";
     public static final String[] loginIpInterceptedURL = new String[]{
