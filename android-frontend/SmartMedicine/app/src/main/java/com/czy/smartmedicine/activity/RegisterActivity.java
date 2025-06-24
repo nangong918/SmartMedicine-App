@@ -3,14 +3,20 @@ package com.czy.smartmedicine.activity;
 
 import android.util.Log;
 
+import com.czy.appcore.network.api.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseActivity;
+import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
+import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.ao.intent.RegisterActivityIntentAo;
+import com.czy.dal.constant.intent.RegisterActivityType;
 import com.czy.dal.vo.fragmentActivity.RegisterVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityRegisterBinding;
 import com.czy.smartmedicine.viewModel.activity.RegisterViewModel;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
@@ -30,6 +36,95 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     @Override
     protected void setListener() {
         super.setListener();
+
+        binding.infoBar.setBack(v -> finish());
+
+        viewModel.onPhoneChanged(binding.edtvPhone, this);
+        viewModel.onVcodeChanged(binding.edtvVcode, this);
+        viewModel.onPasswordInputEnd(binding.edtvPassword, this);
+        viewModel.onConfirmPasswordInputEnd(binding.edtvConfirmPassword, this);
+
+        binding.btnGetVcode.setOnClickListener(v -> {
+            if (Boolean.TRUE.equals(viewModel.registerVo.isPhoneValid.getValue())){
+                NetworkLoadUtils.showDialog(this);
+                viewModel.tryRegisterSendSms(
+                        this,
+                        new SyncRequestCallback() {
+                            @Override
+                            public void onThrowable(Throwable throwable) {
+                                viewModel.countDownTimerUtil.isStartCountDown = new AtomicBoolean(false);
+                                NetworkLoadUtils.dismissDialog();
+                            }
+
+                            @Override
+                            public void onAllRequestSuccess() {
+                                viewModel.countDownTimerUtil.isStartCountDown = new AtomicBoolean(false);
+                                NetworkLoadUtils.dismissDialog();
+                            }
+                        }
+                );
+            }
+        });
+
+        binding.btnConfirm.setOnClickListener(v -> {
+            if (Boolean.FALSE.equals(viewModel.registerVo.isPhoneValid.getValue())){
+                
+                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.please_enter_right_phone));
+                return;
+            }
+            else if (Boolean.FALSE.equals(viewModel.registerVo.isVcodeValid.getValue())){
+                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.please_enter_right_vcode));
+                return;
+            }
+            else if (Boolean.FALSE.equals(viewModel.registerVo.isPwdValid.getValue())){
+                String message = getString(com.czy.customviewlib.R.string.pwdNotLegal);
+                ToastUtils.showToast(this, message);
+                return;
+            }
+//            else if (Boolean.FALSE.equals(viewModel.registerVo.isPwdAgainConsist.getValue())){
+//                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.pwdAgainNotConsist));
+//                return;
+//            }
+            String phone = viewModel.registerVo.phone.getValue();
+            String vcode = viewModel.registerVo.vcode.getValue();
+            String password = viewModel.registerVo.pwd.getValue();
+            String pwdAgain = viewModel.registerVo.pwdAgain.getValue();
+            String userName = viewModel.registerVo.userName.getValue();
+            String account = viewModel.registerVo.account.getValue();
+            if (viewModel.intentAo.activityType == RegisterActivityType.REGISTER.getType()){
+                NetworkLoadUtils.showDialog(this);
+                viewModel.doRegister(
+                        this,
+                        phone,
+                        vcode,
+                        userName,
+                        account,
+                        pwdAgain,
+                        new SyncRequestCallback() {
+                            @Override
+                            public void onThrowable(Throwable throwable) {
+                                NetworkLoadUtils.dismissDialog();
+                            }
+
+                            @Override
+                            public void onAllRequestSuccess() {
+//                                NetworkLoadUtils.dismissDialog();
+                                // 立刻上传选择的头像
+                            }
+                        }
+                );
+            }
+/*            else if (viewModel.intentAo.activityType == RegisterActivityType.RESET_PWD.getType()){
+                viewModel.doResetMemberPwd(
+                        this,
+                        phone,
+                        vcode,
+                        password,
+                        pwdAgain,
+                        this::finish
+                );
+            }*/
+        });
     }
 
     private RegisterViewModel viewModel;

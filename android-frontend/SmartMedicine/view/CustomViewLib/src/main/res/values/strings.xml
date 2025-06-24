@@ -45,4 +45,8 @@
     <string name="avatar_image">头像</string>
     <string name="please_enter_account">账号，若空则使用手机号</string>
     <string name="set_password">设置新密码</string>
+    <string name="please_enter_right_phone">请输入合法的手机号</string>
+    <string name="please_enter_right_vcode">请输入正确的验证码</string>
+    <string name="pwdNotLegal">密码不合法</string>
+    <string name="pwdAgainNotConsist">再次输入的密码不合法</string>
 </resources>

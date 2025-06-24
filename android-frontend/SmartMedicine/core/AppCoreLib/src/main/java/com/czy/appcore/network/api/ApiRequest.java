@@ -3,10 +3,11 @@ package com.czy.appcore.network.api;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
-import com.czy.dal.dto.http.request.PhoneLoginRequest;
+import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
-import com.czy.dal.dto.http.request.SendSmsRequest;
+import com.czy.dal.dto.http.request.RegisterUserRequest;
+import com.czy.dal.dto.http.request.SendSmsInfoRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -16,6 +17,7 @@ import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
+import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
@@ -48,7 +50,7 @@ public interface ApiRequest {
      * @return
      */
     @POST("/login/sendSms")
-    Observable<BaseResponse<SendSmsResponse>> sendSms(@Body SendSmsRequest request);
+    Observable<BaseResponse<SendSmsResponse>> sendSms(@Body SendSmsInfoRequest request);
 
     /**
      * 短信验证码登录
@@ -56,7 +58,15 @@ public interface ApiRequest {
      * @return
      */
     @POST("/login/smsLoginUser")
-    Observable<BaseResponse<LoginSignResponse>> smsLoginUser(@Body PhoneLoginRequest request);
+    Observable<BaseResponse<LoginSignResponse>> smsLoginUser(@Body PhoneLoginInfoRequest request);
+
+    /**
+     * 注册用户
+     * @param request
+     * @return
+     */
+    @POST("/login/register")
+    Observable<BaseResponse<UserRegisterResponse>> register(@Body RegisterUserRequest request);
 
     /**
      * 搜索用户

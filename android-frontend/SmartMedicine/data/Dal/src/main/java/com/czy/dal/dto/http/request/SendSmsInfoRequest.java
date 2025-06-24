@@ -1,13 +1,13 @@
 package com.czy.dal.dto.http.request;
 
-public class SendSmsRequest extends DeviceRequest{
+public class SendSmsInfoRequest extends DeviceInfoRequest {
 
     public String phone;
     public String type;
-    public SendSmsRequest() {
+    public SendSmsInfoRequest() {
     }
 
-    public SendSmsRequest(String phone, String type) {
+    public SendSmsInfoRequest(String phone, String type) {
         this.phone = phone;
         this.type = type;
     }

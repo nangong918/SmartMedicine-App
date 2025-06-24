@@ -21,10 +21,10 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.timer.CountDownTimerUtil;
 import com.czy.baseUtilsLib.timer.CountdownCallback;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
-import com.czy.dal.dto.http.request.SendSmsRequest;
+import com.czy.dal.dto.http.request.SendSmsInfoRequest;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.vo.fragmentActivity.SignVo;
-import com.czy.dal.dto.http.request.PhoneLoginRequest;
+import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.response.LoginSignResponse;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
@@ -78,7 +78,7 @@ public class SignViewModel extends ViewModel {
     //==========发送短息
 
     public void doSendSms(
-            SendSmsRequest sendSmsRequest,
+            SendSmsInfoRequest sendSmsRequest,
             CountDownTimerUtil countDownTimerUtil
     ){
         this.apiRequestImpl.sendSms(
@@ -102,7 +102,7 @@ public class SignViewModel extends ViewModel {
     /**
      * 短信登录
      */
-    public void doSmsLogin(PhoneLoginRequest phoneLoginRequest){
+    public void doSmsLogin(PhoneLoginInfoRequest phoneLoginRequest){
         this.apiRequestImpl.smsLoginUser(
                 phoneLoginRequest,
                 this::handleSmsLogin,
@@ -183,7 +183,7 @@ public class SignViewModel extends ViewModel {
                 MainApplication.getInstance().showGlobalToast(com.czy.customviewlib.R.string.please_enter_the_correct_phone_number);
                 return;
             }
-            SendSmsRequest sendSmsRequest = new SendSmsRequest();
+            SendSmsInfoRequest sendSmsRequest = new SendSmsInfoRequest();
             sendSmsRequest.phone = phone;
 //            sendSmsRequest.senderId = phone;
             // 发送验证码
@@ -303,7 +303,7 @@ public class SignViewModel extends ViewModel {
                     signVo.edtvPhoneTextColor.setValue(com.czy.customviewlib.R.color.red);
                     return;
                 }
-                PhoneLoginRequest phoneLoginRequest = new PhoneLoginRequest(phone, code);
+                PhoneLoginInfoRequest phoneLoginRequest = new PhoneLoginInfoRequest(phone, code);
                 Log.d("Intercept", "1BaseNettyRequest: senderId: " + phone);
 //                phoneLoginRequest.phone = phone;
 //                phoneLoginRequest.code = code;

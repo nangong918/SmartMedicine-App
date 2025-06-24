@@ -8,10 +8,11 @@ import com.czy.baseUtilsLib.network.OnSuccessCallback;
 import com.czy.baseUtilsLib.network.OnThrowableCallback;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
-import com.czy.dal.dto.http.request.PhoneLoginRequest;
+import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
-import com.czy.dal.dto.http.request.SendSmsRequest;
+import com.czy.dal.dto.http.request.RegisterUserRequest;
+import com.czy.dal.dto.http.request.SendSmsInfoRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -21,6 +22,7 @@ import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
+import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
@@ -42,7 +44,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/login/sendSms")
     //    Observable<BaseResponse<String>> sendSms(@Body BaseRequest baseRequest);
-    public void sendSms(SendSmsRequest request,
+    public void sendSms(SendSmsInfoRequest request,
                         OnSuccessCallback<BaseResponse<SendSmsResponse>> onSuccessCallback,
                         OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
@@ -55,11 +57,23 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/login/smsLoginUser")
     //    Observable<BaseResponse<LoginSignResponse>> smsLoginUser(@Body PhoneLoginRequest loginRequest);
-    public void smsLoginUser(PhoneLoginRequest request,
-                            OnSuccessCallback<BaseResponse<LoginSignResponse>> onSuccessCallback,
-                            OnThrowableCallback onThrowableCallback){
+    public void smsLoginUser(PhoneLoginInfoRequest request,
+                             OnSuccessCallback<BaseResponse<LoginSignResponse>> onSuccessCallback,
+                             OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
                 mApi.smsLoginUser(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST("/login/register")
+    //    Observable<BaseResponse<UserRegisterResponse>> register(@Body RegisterUserRequest request);
+    public void register(RegisterUserRequest request,
+                         OnSuccessCallback<BaseResponse<UserRegisterResponse>> onSuccessCallback,
+                         OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.register(request),
                 onSuccessCallback,
                 onThrowableCallback
         );
