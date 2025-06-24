@@ -45,6 +45,8 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         initViewModel();
 
         initRegisterLauncher();
+
+        initDialogPrompt();
     }
 
 
@@ -102,6 +104,14 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
                 startActivity(new Intent(this, TestActivity.class));
             });
         }
+    }
+
+    private void initDialogPrompt() {
+        dialogPrompt = new DialogPrompt(this);
+
+        dialogPrompt.setButtonClickListener(v -> {
+            register();
+        });
     }
 
     private DialogPrompt dialogPrompt;

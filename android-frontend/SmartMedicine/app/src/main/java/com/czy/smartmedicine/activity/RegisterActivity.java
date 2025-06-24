@@ -123,8 +123,9 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
                             @Override
                             public void onAllRequestSuccess() {
-//                                NetworkLoadUtils.dismissDialog();
-                                // 立刻上传选择的头像
+                                NetworkLoadUtils.dismissDialog();
+                                // 注册 + 上传全部成功
+                                finish();
                             }
                         }
                 );

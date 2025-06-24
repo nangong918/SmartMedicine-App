@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.BaseConfig;
@@ -37,6 +38,7 @@ import com.czy.smartmedicine.test.TestConfig;
 import com.czy.smartmedicine.utils.ResponseTool;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.MediaType;
@@ -142,15 +144,15 @@ public class RegisterViewModel extends ViewModel {
         );
     }
 
-    public Long userTempId = null;
-
     private void handleRegisterResponse(BaseResponse<UserRegisterResponse> response, Context context, SyncRequestCallback callback) {
-        this.userTempId = response.getData().snowflakeId;
-        callback.onAllRequestSuccess();
+        if (response.getData().snowflakeId == null){
+            callback.onThrowable(new Throwable("注册失败, id 存在问题"));
+        }
+        uploadAvatar(context, response.getData().snowflakeId, callback);
     }
 
     public void uploadAvatar(Context context,
-                             Long listTime,
+                             Long userId,
                              SyncRequestCallback callback){
         Bitmap bitmap = MainApplication.getInstance().getImageManager().uriToBitmapMediaStore(context, this.uriAtomicReference.get());
         bitmap = MainApplication.getInstance().getImageManager().processImage(bitmap, BaseConfig.BITMAP_MAX_SIZE_AVATAR);
@@ -172,17 +174,29 @@ public class RegisterViewModel extends ViewModel {
 
         MultipartBody.Part filePart = com.czy.baseUtilsLib.file.FileUtil.createMultipartBodyPart(imageFile);
         // 文件名称，方便后端保存
-        String fileName = originalFilename + "_" + userTempId;
+        String phone = Optional.ofNullable(registerVo.phone)
+                        .map(LiveData::getValue)
+                        .orElse("");
         apiRequestImpl.registerUserUploadImg(
                 filePart,
-                RequestBody.create(MediaType.parse("text/plain"), fileName),
-                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(listTime))
-                , this::handleFileUpload
+                RequestBody.create(MediaType.parse("text/plain"), phone),
+                // 前端发送userId的string
+                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(userId))
+                , response -> {
+                    ResponseTool.handleSyncResponseEx(
+                            response,
+                            context,
+                            callback,
+                            this::handleFileUpload
+                    );
+                }
                 , callback::onThrowable
         );
     }
 
-    private void handleFileUpload(BaseResponse<UserVo> userVoBaseResponse) {
+    private void handleFileUpload(BaseResponse<UserVo> userVoBaseResponse, Context context, SyncRequestCallback callback) {
+        // 后面userVo可能有用，目前还未开放，毕竟user的全部vo信息都在这里了
+        callback.onAllRequestSuccess();
     }
 
     //---------------------------logic---------------------------
