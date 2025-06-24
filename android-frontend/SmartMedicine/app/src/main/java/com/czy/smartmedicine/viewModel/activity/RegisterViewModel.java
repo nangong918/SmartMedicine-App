@@ -2,6 +2,8 @@ package com.czy.smartmedicine.viewModel.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -10,6 +12,7 @@ import android.widget.EditText;
 
 import androidx.lifecycle.ViewModel;
 
+import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.utils.OnTextInputEnd;
@@ -26,10 +29,19 @@ import com.czy.dal.dto.http.request.RegisterUserRequest;
 import com.czy.dal.dto.http.request.SendSmsInfoRequest;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
+import com.czy.dal.vo.entity.UserVo;
 import com.czy.dal.vo.fragmentActivity.RegisterVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.test.TestConfig;
 import com.czy.smartmedicine.utils.ResponseTool;
+
+import java.io.File;
+import java.util.concurrent.atomic.AtomicReference;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 
 public class RegisterViewModel extends ViewModel {
@@ -48,7 +60,9 @@ public class RegisterViewModel extends ViewModel {
 
     public RegisterVo registerVo = new RegisterVo();
     public RegisterActivityIntentAo intentAo;
+    //===========Picture
 
+    public AtomicReference<Uri> uriAtomicReference = new AtomicReference<>();
     public void initVo(RegisterVo registerVo) {
         this.registerVo = registerVo;
         initTimer();
@@ -133,6 +147,42 @@ public class RegisterViewModel extends ViewModel {
     private void handleRegisterResponse(BaseResponse<UserRegisterResponse> response, Context context, SyncRequestCallback callback) {
         this.userTempId = response.getData().snowflakeId;
         callback.onAllRequestSuccess();
+    }
+
+    public void uploadAvatar(Context context,
+                             Long listTime,
+                             SyncRequestCallback callback){
+        Bitmap bitmap = MainApplication.getInstance().getImageManager().uriToBitmapMediaStore(context, this.uriAtomicReference.get());
+        bitmap = MainApplication.getInstance().getImageManager().processImage(bitmap, BaseConfig.BITMAP_MAX_SIZE_AVATAR);
+        // Http Send
+        File imageFile = null;
+        // 确保您在这里传入正确的 Uri
+//        Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), imageName));
+        imageFile = MainApplication.getInstance().getImageManager().bitmapToFile(bitmap, uriAtomicReference.get(), context);
+        if (imageFile == null || !imageFile.exists()) {
+            // 处理文件未创建或路径不正确的情况
+            Log.e(TAG, "Image file creation failed");
+            return;
+        }
+        // 获取文件名
+        String originalFilename = imageFile.getName(); // 使用 getName() 获取文件名
+        // 获取文件扩展名
+        String fileExtension = originalFilename.contains(".") ?
+                originalFilename.substring(originalFilename.lastIndexOf(".")) : ""; // 获取扩展名
+
+        MultipartBody.Part filePart = com.czy.baseUtilsLib.file.FileUtil.createMultipartBodyPart(imageFile);
+        // 文件名称，方便后端保存
+        String fileName = originalFilename + "_" + userTempId;
+        apiRequestImpl.registerUserUploadImg(
+                filePart,
+                RequestBody.create(MediaType.parse("text/plain"), fileName),
+                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(listTime))
+                , this::handleFileUpload
+                , callback::onThrowable
+        );
+    }
+
+    private void handleFileUpload(BaseResponse<UserVo> userVoBaseResponse) {
     }
 
     //---------------------------logic---------------------------

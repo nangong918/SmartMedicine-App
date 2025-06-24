@@ -1,11 +1,19 @@
 package com.czy.smartmedicine.activity;
 
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.czy.appcore.network.api.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
+import com.czy.baseUtilsLib.permission.GainPermissionCallback;
+import com.czy.baseUtilsLib.permission.PermissionUtil;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.ao.intent.RegisterActivityIntentAo;
@@ -31,6 +39,8 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
         initIntent();
 
         initViewModel();
+
+        initPictureSelectLauncher();
     }
 
     @Override
@@ -125,7 +135,22 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
                 );
             }*/
         });
+
+        binding.imvgAvatar.setOnClickListener(v -> {
+            PermissionUtil.requestPermissionsX(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, new GainPermissionCallback() {
+                @Override
+                public void allGranted() {
+                    com.czy.baseUtilsLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
+                }
+
+                @Override
+                public void notGranted(String[] notGrantedPermissions) {
+                    ToastUtils.showToastActivity(RegisterActivity.this, "获取权限失败");
+                }
+            });
+        });
     }
+
 
     private RegisterViewModel viewModel;
 
@@ -221,4 +246,23 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
         }
     }
 
+    //===========Picture
+
+    private ActivityResultLauncher<Intent> selectImageLauncher;
+    private void initPictureSelectLauncher(){
+        selectImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Intent data = result.getData();
+                    if (data != null){
+                        Uri imageUri = data.getData();
+                        viewModel.uriAtomicReference.set(imageUri);
+                        Bitmap bitmap = MainApplication.getInstance().getImageManager().uriToBitmapMediaStore(this, imageUri);
+                        if (bitmap != null){
+                            binding.imvgAvatar.setImageBitmap(bitmap);
+                        }
+                    }
+                }
+        );
+    }
 }

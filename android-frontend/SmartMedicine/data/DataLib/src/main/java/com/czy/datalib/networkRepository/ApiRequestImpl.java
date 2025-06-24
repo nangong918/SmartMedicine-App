@@ -2,6 +2,7 @@ package com.czy.datalib.networkRepository;
 
 
 import com.czy.appcore.network.api.ApiRequest;
+import com.czy.appcore.network.api.SyncRequestCallback;
 import com.czy.baseUtilsLib.network.BaseApiRequestImpl;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.OnSuccessCallback;
@@ -28,11 +29,13 @@ import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
+import com.czy.dal.vo.entity.UserVo;
 
 import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.http.Part;
 
 public class ApiRequestImpl extends BaseApiRequestImpl {
 
@@ -76,6 +79,31 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                 mApi.register(request),
                 onSuccessCallback,
                 onThrowableCallback
+        );
+    }
+
+    //    @Multipart
+    //    @POST("/registerUser/uploadImg")
+    //    Observable<BaseResponse<UserVo>> registerUserUploadImg(
+    //            @Part MultipartBody.Part img,
+    //            @Part("phone") RequestBody phone,
+    //            @Part("userId") RequestBody userId
+    //    );
+    public void registerUserUploadImg(
+            MultipartBody.Part img,
+            RequestBody phone,
+            RequestBody userId,
+            OnSuccessCallback<BaseResponse<UserVo>> onSuccessCallback,
+            OnThrowableCallback onErrorCallback
+    ){
+        sendRequestCallback(
+                mApi.registerUserUploadImg(
+                        img,
+                        phone,
+                        userId
+                ),
+                onSuccessCallback,
+                onErrorCallback
         );
     }
 

@@ -23,6 +23,7 @@ import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
+import com.czy.dal.vo.entity.UserVo;
 
 import java.util.List;
 
@@ -67,6 +68,14 @@ public interface ApiRequest {
      */
     @POST("/login/register")
     Observable<BaseResponse<UserRegisterResponse>> register(@Body RegisterUserRequest request);
+
+    @Multipart
+    @POST("/userFile/register")
+    Observable<BaseResponse<UserVo>> registerUserUploadImg(
+            @Part MultipartBody.Part img,
+            @Part("phone") RequestBody phone,
+            @Part("userId") RequestBody userId
+    );
 
     /**
      * 搜索用户

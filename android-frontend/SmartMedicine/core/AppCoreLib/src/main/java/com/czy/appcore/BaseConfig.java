@@ -38,6 +38,8 @@ public class BaseConfig extends com.czy.baseUtilsLib.config.BaseConfig {
 
     // 图片压缩 400 * 400 = 640 KB
     public static final int BITMAP_MAX_SIZE = 400;
+    // 头像最大大小 200 * 200 = 160 KB
+    public static final int BITMAP_MAX_SIZE_AVATAR = 200;
 }
 
 /**
