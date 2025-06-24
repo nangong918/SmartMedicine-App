@@ -19,6 +19,7 @@ import com.czy.dal.dto.http.response.LoginSignResponse;
 import com.czy.dal.dto.http.response.PostPublishResponse;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
+import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
@@ -42,7 +43,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
     //    @POST("/login/sendSms")
     //    Observable<BaseResponse<String>> sendSms(@Body BaseRequest baseRequest);
     public void sendSms(SendSmsRequest request,
-                        OnSuccessCallback<BaseResponse<String>> onSuccessCallback,
+                        OnSuccessCallback<BaseResponse<SendSmsResponse>> onSuccessCallback,
                         OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
                 mApi.sendSms(request),

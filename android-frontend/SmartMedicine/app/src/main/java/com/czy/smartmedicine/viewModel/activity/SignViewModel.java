@@ -22,6 +22,7 @@ import com.czy.baseUtilsLib.timer.CountDownTimerUtil;
 import com.czy.baseUtilsLib.timer.CountdownCallback;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.dto.http.request.SendSmsRequest;
+import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.vo.fragmentActivity.SignVo;
 import com.czy.dal.dto.http.request.PhoneLoginRequest;
 import com.czy.dal.dto.http.response.LoginSignResponse;
@@ -87,7 +88,7 @@ public class SignViewModel extends ViewModel {
         );
     }
 
-    private void handleSendSms(BaseResponse<String> response, CountDownTimerUtil countDownTimerUtil){
+    private void handleSendSms(BaseResponse<SendSmsResponse> response, CountDownTimerUtil countDownTimerUtil){
         if (ViewModelUtil.handleResponse(response)){
             countDownTimerUtil.startCountDown();
         }

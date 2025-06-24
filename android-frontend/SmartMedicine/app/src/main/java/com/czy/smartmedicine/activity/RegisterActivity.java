@@ -1,8 +1,16 @@
 package com.czy.smartmedicine.activity;
 
 
+import android.util.Log;
+
 import com.czy.baseUtilsLib.activity.BaseActivity;
+import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
+import com.czy.dal.ao.intent.RegisterActivityIntentAo;
+import com.czy.dal.vo.fragmentActivity.RegisterVo;
+import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityRegisterBinding;
+import com.czy.smartmedicine.viewModel.activity.RegisterViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
@@ -10,6 +18,112 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
         super(RegisterActivity.class);
     }
 
+    @Override
+    protected void init() {
+        super.init();
 
+        initIntent();
+
+        initViewModel();
+    }
+
+    @Override
+    protected void setListener() {
+        super.setListener();
+    }
+
+    private RegisterViewModel viewModel;
+
+    private RegisterActivityIntentAo intentAo;
+
+    private void initIntent(){
+        try {
+            intentAo = (RegisterActivityIntentAo) getIntent().getSerializableExtra(
+                    RegisterActivityIntentAo.INTENT_KEY
+            );
+        } catch (Exception e){
+            Log.e(TAG, "initIntent error", e);
+            finish();
+        }
+    }
+
+    private void initViewModel(){
+        ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
+        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, RegisterViewModel.class);
+
+        initViewModelVo();
+
+        observeLivedata();
+
+        // 绑定viewModel
+        binding.setViewModel(viewModel);
+        // 设置监听者
+        binding.setLifecycleOwner(this);
+    }
+
+    private void initViewModelVo() {
+        RegisterVo registerVo = new RegisterVo();
+
+        viewModel.intentAo = intentAo;
+        viewModel.registerVo.phone.setValue(intentAo.phone);
+
+        viewModel.initVo(registerVo);
+    }
+
+    private void observeLivedata() {
+        // 观察验证码发送值
+        viewModel.registerVo.vcodeCountDown.observe(this, vcodeCountDown -> {
+            if (vcodeCountDown > 0){
+                String time = vcodeCountDown + "s";
+                binding.btnGetVcode.setText(time);
+            }
+            else {
+                binding.btnGetVcode.setText(getText(com.czy.customviewlib.R.string.get_vcode));
+            }
+            checkConfirmIsEnable();
+        });
+
+        // 观察密码是否合法
+        viewModel.registerVo.isPwdValid.observe(this, isPwdValid -> {
+            checkConfirmIsEnable();
+        });
+
+        // 观察两次密码是否一致
+        viewModel.registerVo.isPwdAgainConsist.observe(this, isPwdAgainConsist -> {
+            checkConfirmIsEnable();
+        });
+
+        // 观察验证码输入
+        viewModel.registerVo.isVcodeValid.observe(this, isVcodeValid -> {
+            checkConfirmIsEnable();
+        });
+
+        // 观察是否可以注册、重置密码
+        viewModel.registerVo.isConfirmBtnEnable.observe(this,
+                isConfirmBtnEnable -> {
+                    binding.btnConfirm.setBackgroundResource(
+                            isConfirmBtnEnable ?
+                                    com.czy.customviewlib.R.drawable.button_selected :
+                                    com.czy.customviewlib.R.drawable.button_not_select
+                    );
+//                    binding.btnConfirm.setClickable(isConfirmBtnEnable);
+                }
+        );
+
+    }
+
+    private void checkConfirmIsEnable(){
+        boolean enable =
+                Boolean.TRUE.equals(viewModel.registerVo.isPhoneValid.getValue())
+                        && Boolean.TRUE.equals(viewModel.registerVo.isVcodeValid.getValue())
+                        && Boolean.TRUE.equals(viewModel.registerVo.isPwdValid.getValue())
+                        && Boolean.TRUE.equals(viewModel.registerVo.isPwdAgainConsist.getValue());
+        if (enable){
+            viewModel.registerVo.isConfirmBtnEnable.setValue(true);
+        }
+        else {
+            viewModel.registerVo.isConfirmBtnEnable.setValue(false);
+        }
+    }
 
 }

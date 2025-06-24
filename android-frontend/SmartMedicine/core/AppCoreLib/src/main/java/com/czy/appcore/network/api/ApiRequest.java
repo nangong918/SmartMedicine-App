@@ -14,6 +14,7 @@ import com.czy.dal.dto.http.response.LoginSignResponse;
 import com.czy.dal.dto.http.response.PostPublishResponse;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
+import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
@@ -47,7 +48,7 @@ public interface ApiRequest {
      * @return
      */
     @POST("/login/sendSms")
-    Observable<BaseResponse<String>> sendSms(@Body SendSmsRequest request);
+    Observable<BaseResponse<SendSmsResponse>> sendSms(@Body SendSmsRequest request);
 
     /**
      * 短信验证码登录
