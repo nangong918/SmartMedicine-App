@@ -17,7 +17,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.bo.UserChatLastMessageBo;
 import com.czy.dal.constant.Constants;
-import com.czy.dal.dto.http.request.BaseNettyRequest;
+import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.dal.dto.netty.forwardMessage.UserImageResponse;
 import com.czy.dal.dto.netty.forwardMessage.UserTextDataResponse;
@@ -170,7 +170,7 @@ public class MessageViewModel extends ViewModel {
     private void initialNetworkRequest(){
         // 首次打开：Http请求
         if (HttpRequestManager.getIsFirstOpen(MessageFragment.class.getName())){
-            BaseNettyRequest request = new BaseNettyRequest();
+            BaseHttpRequest request = new BaseHttpRequest();
             request.senderId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
                             .map(ao -> ao.userId)
                             .orElse(Constants.ERROR_ID);
@@ -197,7 +197,7 @@ public class MessageViewModel extends ViewModel {
 
     //==========主动获取全部好友的最新消息  当且仅当断开重连之后调用此方法
 
-    private void doGetUserNewMessage(BaseNettyRequest request){
+    private void doGetUserNewMessage(BaseHttpRequest request){
         apiRequestImpl.getUserNewMessage(
                 request,
                 this::handleGetUserNewMessage,

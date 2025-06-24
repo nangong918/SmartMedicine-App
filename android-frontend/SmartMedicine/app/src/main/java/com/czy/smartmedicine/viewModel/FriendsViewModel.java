@@ -13,7 +13,7 @@ import com.czy.appcore.network.netty.api.receive.ReceiveAddUserApi;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.constant.Constants;
-import com.czy.dal.dto.http.request.BaseNettyRequest;
+import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.response.AddUserToTargetUserResponse;
 import com.czy.dal.dto.netty.response.HandleAddUserResponse;
 import com.czy.dal.vo.viewModelVo.friends.FriendsVo;
@@ -102,7 +102,7 @@ public class FriendsViewModel extends ViewModel {
     private void initialNetworkRequest(){
         // 首次打开：Http请求
         if (HttpRequestManager.getIsFirstOpen(FriendsFragment.class.getName())){
-            BaseNettyRequest request = new BaseNettyRequest();
+            BaseHttpRequest request = new BaseHttpRequest();
             request.senderId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
                     .map(ao -> ao.userId)
                     .orElse(Constants.ERROR_ID);
@@ -120,7 +120,7 @@ public class FriendsViewModel extends ViewModel {
 
     //==========获取与我相关的添加请求
 
-    private void doGetMyFriendApplyList(BaseNettyRequest request){
+    private void doGetMyFriendApplyList(BaseHttpRequest request){
         apiRequestImpl.getMyFriendApplyList(
                 request,
                 this::handleGetMyFriendApplyList,

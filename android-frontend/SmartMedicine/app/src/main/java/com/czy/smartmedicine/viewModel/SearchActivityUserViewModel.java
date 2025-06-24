@@ -22,7 +22,7 @@ import com.czy.dal.constant.newUserGroup.HandleButtonStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleStatusEnum;
 import com.czy.dal.dto.http.request.SearchUserRequest;
 import com.czy.dal.dto.netty.request.AddUserRequest;
-import com.czy.dal.dto.http.request.BaseNettyRequest;
+import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
@@ -86,7 +86,7 @@ public class SearchActivityUserViewModel extends ViewModel {
     //==========搜索用户
 
     private void doSearchUsers(
-            BaseNettyRequest request) {
+            BaseHttpRequest request) {
         this.apiRequestImpl.searchUsers(
                 request,
                 this::handleSearchUsers,

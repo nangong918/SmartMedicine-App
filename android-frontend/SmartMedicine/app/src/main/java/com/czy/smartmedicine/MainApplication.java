@@ -31,7 +31,7 @@ import com.czy.customviewlib.view.GlobalDialogFragment;
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.constant.Constants;
-import com.czy.dal.dto.http.request.BaseNettyRequest;
+import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.netty.Message;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
@@ -106,16 +106,16 @@ public class MainApplication extends Application {
 
     //==========baseNettyRequest
 
-    public BaseNettyRequest getBaseNettyRequest(){
-        BaseNettyRequest request = new BaseNettyRequest();
+    public BaseHttpRequest getBaseNettyRequest(){
+        BaseHttpRequest request = new BaseHttpRequest();
         request.senderId = getUserLoginInfoAo().userId;
         request.receiverId = Constants.SERVER_ID;
         request.timestamp = System.currentTimeMillis();
         return request;
     }
 
-    public BaseNettyRequest getBaseNettyRequest(Long receiverId){
-        BaseNettyRequest request = new BaseNettyRequest();
+    public BaseHttpRequest getBaseNettyRequest(Long receiverId){
+        BaseHttpRequest request = new BaseHttpRequest();
         request.senderId = getUserLoginInfoAo().userId;
         request.receiverId = receiverId;
         request.timestamp = System.currentTimeMillis();
@@ -244,6 +244,9 @@ public class MainApplication extends Application {
         } catch (Exception e) {
             Log.e(TAG, "setUserLoginInfoAo error", e);
         }
+    }
+
+    public void clearAllSharePreferences() {
     }
 
     //==========messageList

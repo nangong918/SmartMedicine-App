@@ -6,7 +6,7 @@ import com.czy.baseUtilsLib.network.BaseApiRequestImpl;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.OnSuccessCallback;
 import com.czy.baseUtilsLib.network.OnThrowableCallback;
-import com.czy.dal.dto.http.request.BaseNettyRequest;
+import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.request.PhoneLoginRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
@@ -66,7 +66,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/user/searchUser")
     //    Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body BaseNettyRequest request);
-    public void searchUsers(BaseNettyRequest request,
+    public void searchUsers(BaseHttpRequest request,
                             OnSuccessCallback<BaseResponse<SearchUserResponse>> onSuccessCallback,
                             OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
@@ -102,7 +102,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //     @POST("/user/getAddMeRequestList")
     //    Observable<BaseResponse<GetAddMeRequestListResponse>> getAddMeRequestList(@Body BaseNettyRequest request);
-    public void getAddMeRequestList(BaseNettyRequest request,
+    public void getAddMeRequestList(BaseHttpRequest request,
                                     OnSuccessCallback<BaseResponse<GetAddMeRequestListResponse>> onSuccessCallback,
                                     OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
@@ -114,7 +114,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //     @POST("/user/getHandleMyAddUserResponseList")
     //    Observable<BaseResponse<GetHandleMyAddUserResponseListResponse>> getHandleMyAddUserResponseList(@Body BaseNettyRequest request);
-    public void getHandleMyAddUserResponseList(BaseNettyRequest request,
+    public void getHandleMyAddUserResponseList(BaseHttpRequest request,
                                                OnSuccessCallback<BaseResponse<GetHandleMyAddUserResponseListResponse>> onSuccessCallback,
                                                OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
@@ -138,9 +138,9 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/chat/getUserNewMessage")
     //    Observable<BaseResponse<UserNewMessageResponse>> getUserNewMessage(@Body BaseNettyRequest request);
-    public void getUserNewMessage(BaseNettyRequest request,
-                                 OnSuccessCallback<BaseResponse<UserNewMessageResponse>> onSuccessCallback,
-                                 OnThrowableCallback onThrowableCallback){
+    public void getUserNewMessage(BaseHttpRequest request,
+                                  OnSuccessCallback<BaseResponse<UserNewMessageResponse>> onSuccessCallback,
+                                  OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
                 mApi.getUserNewMessage(request),
                 onSuccessCallback,
@@ -162,9 +162,9 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/user/getMyFriendApplyList")
     //    Observable<BaseResponse<Integer>> getMyFriendApplyList(@Body BaseNettyRequest request);
-    public void getMyFriendApplyList(BaseNettyRequest request,
-                                    OnSuccessCallback<BaseResponse<Integer>> onSuccessCallback,
-                                    OnThrowableCallback onThrowableCallback){
+    public void getMyFriendApplyList(BaseHttpRequest request,
+                                     OnSuccessCallback<BaseResponse<Integer>> onSuccessCallback,
+                                     OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
                 mApi.getMyFriendApplyList(request),
                 onSuccessCallback,

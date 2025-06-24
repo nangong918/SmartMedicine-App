@@ -1,7 +1,7 @@
 package com.czy.appcore.network.api;
 
 import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.dal.dto.http.request.BaseNettyRequest;
+import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.request.PhoneLoginRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
@@ -63,7 +63,7 @@ public interface ApiRequest {
      * @return          用户列表
      */
     @POST("/relation/searchUser")
-    Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body BaseNettyRequest request);
+    Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body BaseHttpRequest request);
 
 //    /**
 //     * 添加用户
@@ -87,7 +87,7 @@ public interface ApiRequest {
      * @return          添加我的请求
      */
     @POST("/relation/getAddMeRequestList")
-    Observable<BaseResponse<GetAddMeRequestListResponse>> getAddMeRequestList(@Body BaseNettyRequest request);
+    Observable<BaseResponse<GetAddMeRequestListResponse>> getAddMeRequestList(@Body BaseHttpRequest request);
 
     /**
      * 获取处理我的添加用户请求
@@ -95,7 +95,7 @@ public interface ApiRequest {
      * @return          处理我的添加用户请求
      */
     @POST("/relation/getHandleMyAddUserResponseList")
-    Observable<BaseResponse<GetHandleMyAddUserResponseListResponse>> getHandleMyAddUserResponseList(@Body BaseNettyRequest request);
+    Observable<BaseResponse<GetHandleMyAddUserResponseListResponse>> getHandleMyAddUserResponseList(@Body BaseHttpRequest request);
 
     /**
      * 获取我的全部好友
@@ -112,7 +112,7 @@ public interface ApiRequest {
      * @return  List<用户消息最新一条消息, 未读消息数量>
      */
     @POST("/chat/getUserNewMessage")
-    Observable<BaseResponse<UserNewMessageResponse>> getUserNewMessage(@Body BaseNettyRequest request);
+    Observable<BaseResponse<UserNewMessageResponse>> getUserNewMessage(@Body BaseHttpRequest request);
 
     /**
      * Chat Activity
@@ -129,7 +129,7 @@ public interface ApiRequest {
      * @return          好友申请数量
      */
     @POST("/relation/getMyFriendApplyList")
-    Observable<BaseResponse<Integer>> getMyFriendApplyList(@Body BaseNettyRequest request);
+    Observable<BaseResponse<Integer>> getMyFriendApplyList(@Body BaseHttpRequest request);
 
     /**
      * 上传文件

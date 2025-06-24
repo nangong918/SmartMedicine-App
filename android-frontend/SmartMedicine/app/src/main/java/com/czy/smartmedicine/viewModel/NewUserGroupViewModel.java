@@ -21,7 +21,7 @@ import com.czy.dal.constant.newUserGroup.ApplyStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleButtonStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleStatusEnum;
 import com.czy.dal.dto.netty.request.AddUserRequest;
-import com.czy.dal.dto.http.request.BaseNettyRequest;
+import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
@@ -71,7 +71,7 @@ public class NewUserGroupViewModel extends ViewModel {
 ;
     //==========获取添加我的请求列表
 
-    private void doGetAddMeRequestList(BaseNettyRequest request) {
+    private void doGetAddMeRequestList(BaseHttpRequest request) {
         apiRequestImpl.getAddMeRequestList(
                 request,
                 this::handleGetAddMeRequestList,
@@ -90,7 +90,7 @@ public class NewUserGroupViewModel extends ViewModel {
 
     //==========获取我请求添加的响应结果列表
 
-    private void doGetHandleMyAddUserResponseList(BaseNettyRequest request) {
+    private void doGetHandleMyAddUserResponseList(BaseHttpRequest request) {
         apiRequestImpl.getHandleMyAddUserResponseList(
                 request,
                 this::handleGetHandleMyAddUserResponseList,
@@ -260,7 +260,7 @@ public class NewUserGroupViewModel extends ViewModel {
         newUserItemAoList.clear();
 
         // 请求
-        BaseNettyRequest request = new BaseNettyRequest();
+        BaseHttpRequest request = new BaseHttpRequest();
         request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
 
         // 获取添加我的消息List
