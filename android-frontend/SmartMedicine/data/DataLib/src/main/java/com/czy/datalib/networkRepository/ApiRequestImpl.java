@@ -28,6 +28,7 @@ import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
+import com.czy.dal.dto.netty.response.ChatUploadFileResponse;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
@@ -61,13 +62,13 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
     }
 
 
-    //    @POST("/login/smsLoginUser")
-    //    Observable<BaseResponse<LoginSignResponse>> smsLoginUser(@Body PhoneLoginRequest loginRequest);
-    public void smsLoginUser(PhoneLoginInfoRequest request,
+    //    @POST("/login/smsLogin")
+    //    Observable<BaseResponse<LoginSignResponse>> smsLogin(@Body PhoneLoginRequest loginRequest);
+    public void smsLogin(PhoneLoginInfoRequest request,
                              OnSuccessCallback<BaseResponse<LoginSignResponse>> onSuccessCallback,
                              OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
-                mApi.smsLoginUser(request),
+                mApi.smsLogin(request),
                 onSuccessCallback,
                 onThrowableCallback
         );
@@ -228,6 +229,27 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
         sendRequestCallback(
                 mApi.fetchUserMessage(request),
                 successCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @Multipart
+    //    @POST("/chatFile/uploadAndSend")
+    //    Observable<BaseResponse<ChatUploadFileResponse>> uploadAndSend(
+    //            @Part MultipartBody.Part file,
+    //            @Part("fileId") RequestBody fileId,
+    //            @Part("senderId") RequestBody senderId,
+    //            @Part("receiverId") RequestBody receiverId
+    //    );
+    public void uploadAndSend(MultipartBody.Part file,
+                              RequestBody fileId,
+                              RequestBody senderId,
+                              RequestBody receiverId,
+                              OnSuccessCallback<BaseResponse<ChatUploadFileResponse>> onSuccessCallback,
+                              OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.uploadAndSend(file, fileId, senderId, receiverId),
+                onSuccessCallback,
                 onThrowableCallback
         );
     }

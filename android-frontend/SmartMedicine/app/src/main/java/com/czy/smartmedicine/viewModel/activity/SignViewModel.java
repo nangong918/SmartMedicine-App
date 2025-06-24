@@ -209,7 +209,7 @@ public class SignViewModel extends ViewModel {
      * 短信登录
      *//*
     public void doSmsLogin(PhoneLoginInfoRequest phoneLoginRequest){
-        this.apiRequestImpl.smsLoginUser(
+        this.apiRequestImpl.smsLogin(
                 phoneLoginRequest,
                 this::handleSmsLogin,
                 ViewModelUtil::globalThrowableToast

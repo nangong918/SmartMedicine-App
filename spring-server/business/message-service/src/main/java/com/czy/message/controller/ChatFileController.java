@@ -8,6 +8,7 @@ import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.dto.base.BaseResponse;
+import com.czy.api.domain.dto.http.response.ChatUploadFileResponse;
 import com.czy.api.domain.dto.socket.response.UserImageResponse;
 import com.czy.message.mq.sender.RabbitMqSender;
 import com.utils.mvc.service.MinIOService;
@@ -49,8 +50,8 @@ public class ChatFileController {
     private OssService ossService;
     private final MinIOService minIOService;
     private final RabbitMqSender rabbitMqSender;
-    @PostMapping("/uploadFileSend")
-    public BaseResponse<String> uploadPostFilesAndSendMessage(
+    @PostMapping("/uploadAndSend")
+    public BaseResponse<ChatUploadFileResponse> uploadPostFilesAndSendMessage(
             @RequestParam("file") MultipartFile file,
             @RequestParam("fileId") Long fileId,
             @RequestParam("senderId") Long senderId,
@@ -147,6 +148,10 @@ public class ChatFileController {
         // 已经是响应类型，不会内部转换
         rabbitMqSender.push(response);
 
-        return BaseResponse.getResponseEntitySuccess("发送成功");
+        ChatUploadFileResponse chatUploadFileResponse = new ChatUploadFileResponse();
+        chatUploadFileResponse.setUploadFileId(response.getImageFileId());
+        chatUploadFileResponse.setUploadFileUrl(response.getImageUrl());
+
+        return BaseResponse.getResponseEntitySuccess(chatUploadFileResponse);
     }
 }

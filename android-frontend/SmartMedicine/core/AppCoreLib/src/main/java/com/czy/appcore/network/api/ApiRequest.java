@@ -23,6 +23,7 @@ import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
+import com.czy.dal.dto.netty.response.ChatUploadFileResponse;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
@@ -49,6 +50,8 @@ import retrofit2.http.Query;
  */
 public interface ApiRequest {
 
+    //--------------登录注册--------------
+
     /**
      * 请求发送短信验证码
      * @param request 主要是手机号
@@ -62,8 +65,8 @@ public interface ApiRequest {
      * @param request
      * @return
      */
-    @POST("/login/smsLoginUser")
-    Observable<BaseResponse<LoginSignResponse>> smsLoginUser(@Body PhoneLoginInfoRequest request);
+    @POST("/login/smsLogin")
+    Observable<BaseResponse<LoginSignResponse>> smsLogin(@Body PhoneLoginInfoRequest request);
 
     /**
      * 注册用户
@@ -96,6 +99,8 @@ public interface ApiRequest {
      */
     @POST("/login/pwdLogin")
     Observable<BaseResponse<LoginSignResponse>> passwordLogin(@Body LoginUserRequest request);
+
+    //--------------用户关系--------------
 
     /**
      * 搜索用户
@@ -146,9 +151,19 @@ public interface ApiRequest {
     Observable<BaseResponse<GetMyFriendsResponse>> getMyFriendList(@Body GetMyFriendsRequest request);
 
     /**
+     * 获取与我相关的好友申请数量 [添加我的 + 我添加的]
+     * @param request   用户基本信息
+     * @return          好友申请数量
+     */
+    @POST("/relation/getMyFriendApplyList")
+    Observable<BaseResponse<Integer>> getMyFriendApplyList(@Body BaseHttpRequest request);
+
+    //--------------聊天相关--------------
+
+    /**
      * Message Fragment
      * 拉取用户的全部聊天消息(限制200条，超过就流式传输)：某个用户跟所有用户的1条最新消息List
-     * @param request
+     * @param request   用户基本信息
      * @return  List<用户消息最新一条消息, 未读消息数量>
      */
     @POST("/chat/getUserNewMessage")
@@ -158,18 +173,21 @@ public interface ApiRequest {
      * Chat Activity
      * 拉取用户和某个用户全部聊天消息(分页：一次拉取50条最新聊天消息)
      * @param request 请求获取消息：timestampIndex 消息起始索引；消息条数messageCount（max 200）
-     * @return
+     * @return 获取消息
      */
     @POST("/chat/fetchUserMessage")
     Observable<BaseResponse<FetchUserMessageResponse>> fetchUserMessage(@Body FetchUserMessageRequest request);
 
-    /**
-     * 获取与我相关的好友申请数量 [添加我的 + 我添加的]
-     * @param request   用户基本信息
-     * @return          好友申请数量
-     */
-    @POST("/relation/getMyFriendApplyList")
-    Observable<BaseResponse<Integer>> getMyFriendApplyList(@Body BaseHttpRequest request);
+    @Multipart
+    @POST("/chatFile/uploadAndSend")
+    Observable<BaseResponse<ChatUploadFileResponse>> uploadAndSend(
+            @Part MultipartBody.Part file,
+            @Part("fileId") RequestBody fileId,
+            @Part("senderId") RequestBody senderId,
+            @Part("receiverId") RequestBody receiverId
+    );
+
+    //-------------oss直属文件--------------
 
     /**
      * 上传文件
@@ -194,6 +212,8 @@ public interface ApiRequest {
      */
     @GET("/file/downloadImage")
     Observable<BaseResponse<FileDownloadBytesResponse>> downloadImage(@Query("url") String url);
+
+    //-------------帖子相关--------------
 
     /**
      * 获取推荐帖子列表
