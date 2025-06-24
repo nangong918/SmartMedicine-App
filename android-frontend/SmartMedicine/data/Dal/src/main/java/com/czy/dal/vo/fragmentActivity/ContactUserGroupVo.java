@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModelVo.contactUserGroup;
+package com.czy.dal.vo.fragmentActivity;
 
 import com.czy.dal.vo.entity.contact.ContactListVo;
 

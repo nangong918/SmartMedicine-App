@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.czy.smartmedicine.viewModel.activity.RegisterViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <LinearLayout
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/main"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/white"
+            tools:context=".activity.RegisterActivity">
+
+
+            <com.czy.customviewlib.view.InfoBarView
+                android:id="@+id/infoBar"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imvg_avatar"
+                android:layout_marginTop="20dp"
+                android:layout_width="120dp"
+                android:src="@drawable/add_24px"
+                android:layout_height="120dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginTop="15dp"
+                android:text="@string/avatar_image"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ly_account"
+                android:layout_width="323dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/round_corners_bg_grey"
+                app:layout_goneMarginTop="20dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@mipmap/password"
+                    android:layout_marginStart="18dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtv_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={viewModel.registerVo.account}"
+                    android:layout_marginStart="60dp"
+                    android:hint="@string/please_enter_account"
+                    android:textColorHint="#FFAAAAAA"
+                    android:textColor="#FF000000"
+                    android:textSize="14sp"
+                    android:inputType="textPassword"
+                    android:background="@android:color/transparent"
+                    android:maxLines="1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:hint="密码" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ly_userName"
+                android:layout_width="323dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/round_corners_bg_grey"
+                app:layout_goneMarginTop="20dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@mipmap/password"
+                    android:layout_marginStart="18dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtv_userName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={viewModel.registerVo.userName}"
+                    android:layout_marginStart="60dp"
+                    android:hint="@string/set_password"
+                    android:textColorHint="#FFAAAAAA"
+                    android:textColor="#FF000000"
+                    android:textSize="14sp"
+                    android:inputType="textPassword"
+                    android:background="@android:color/transparent"
+                    android:maxLines="1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:hint="密码" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ly_phone"
+                android:layout_width="323dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/round_corners_bg_grey">
+
+                <TextView
+                    android:id="@+id/tv_prefix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF6965DA"
+                    android:layout_marginStart="18dp"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="+86" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtv_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="60dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/phone_number"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:text="@={viewModel.registerVo.phone}"
+                    android:textColor="#FF000000"
+                    android:textColorHint="#FFAAAAAA"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:hint="手机号码" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_width="323dp"
+                android:layout_height="52dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/ly_vcode"
+                    android:layout_width="248dp"
+                    android:layout_height="52dp"
+
+                    android:background="@drawable/round_corners_bg_grey"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@mipmap/vcode"
+                        android:layout_marginStart="18dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edtv_vcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:hint="验证码"
+                        android:hint="@string/vcode"
+                        android:text="@={viewModel.registerVo.vcode}"
+                        android:background="@android:color/transparent"
+                        android:inputType="number"
+                        android:maxLines="1"
+                        android:textColorHint="#FFAAAAAA"
+                        android:textColor="#FF000000"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginStart="60dp"/>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/btn_get_vcode"
+                    android:layout_width="70dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="3dp"
+                    android:background="@drawable/round_corners_bg_purple"
+                    android:textColor="#FF6965DA"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:text="@string/get_vcode"/>
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ly_password"
+                android:layout_width="323dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/round_corners_bg_grey"
+                app:layout_goneMarginTop="20dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@mipmap/password"
+                    android:layout_marginStart="18dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtv_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={viewModel.registerVo.pwd}"
+                    android:layout_marginStart="60dp"
+                    android:hint="@string/set_password"
+                    android:textColorHint="#FFAAAAAA"
+                    android:textColor="#FF000000"
+                    android:textSize="14sp"
+                    android:inputType="textPassword"
+                    android:background="@android:color/transparent"
+                    android:maxLines="1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:hint="密码" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ly_confirm_password"
+                android:layout_width="323dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/round_corners_bg_grey"
+                app:layout_goneMarginTop="20dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@mipmap/password2"
+                    android:layout_marginStart="18dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtv_confirm_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="60dp"
+                    android:hint="@string/confirm_password"
+                    android:text="@={viewModel.registerVo.pwdAgain}"
+                    android:background="@android:color/transparent"
+                    android:maxLines="1"
+                    android:inputType="textPassword"
+                    android:textColorHint="#FFAAAAAA"
+                    android:textColor="#FF000000"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:hint="再次确认密码" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_confirm"
+                android:layout_width="323dp"
+                android:layout_height="52dp"
+                android:textAllCaps="false"
+                android:layout_marginTop="20dp"
+                tools:text="确认"
+                android:gravity="center"
+                android:text="@string/confirm"
+                android:textColor="#FFFFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/button_selected"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ly_confirm_password" />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</layout>

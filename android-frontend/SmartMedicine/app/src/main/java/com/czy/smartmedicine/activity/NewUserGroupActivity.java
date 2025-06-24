@@ -10,7 +10,7 @@ import com.czy.customviewlib.view.addContact.AddContactAdapter;
 import com.czy.dal.ao.NewUserGroupActivityStartAo;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
 import com.czy.dal.vo.entity.addContact.AddContactListVo;
-import com.czy.dal.vo.viewModelVo.newUserGroup.NewUserGroupVo;
+import com.czy.dal.vo.fragmentActivity.NewUserGroupVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityNewUserGroupBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;

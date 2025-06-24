@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
-import com.czy.dal.vo.viewModelVo.post.PostActivityVo;
+import com.czy.dal.vo.fragmentActivity.post.PostActivityVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 

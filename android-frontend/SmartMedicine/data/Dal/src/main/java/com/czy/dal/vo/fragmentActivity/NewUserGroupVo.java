@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModelVo.newUserGroup;
+package com.czy.dal.vo.fragmentActivity;
 
 import androidx.lifecycle.MutableLiveData;
 

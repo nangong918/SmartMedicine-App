@@ -9,7 +9,7 @@ import android.view.View;
 import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.dal.vo.viewModelVo.sign.SignVo;
+import com.czy.dal.vo.fragmentActivity.SignVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySignBinding;
 import com.czy.smartmedicine.test.TestConfig;
@@ -100,7 +100,6 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
     private void initViewModelVo(){
         // SignVO
         SignVo signVo = new SignVo();
-
         signVo.imgvAgreeImageResource.setValue(com.czy.customviewlib.R.mipmap.circle4);
         signVo.btvGetCodeText.setValue(getString(com.czy.customviewlib.R.string.get_vcode));
         signVo.btvGetCodeBackground.setValue(com.czy.customviewlib.R.drawable.button_grey_not_select);
@@ -112,6 +111,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         signVo.tvPrivacyTextColor.setValue(com.czy.customviewlib.R.color.origin_text_color);
         signVo.edtvPhone.setValue("");
         signVo.edtvCode.setValue("");
+
 
         viewModel.init(signVo);
     }

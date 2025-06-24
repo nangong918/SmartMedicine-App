@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModelVo.friends;
+package com.czy.dal.vo.fragmentActivity;
 
 import androidx.lifecycle.MutableLiveData;
 

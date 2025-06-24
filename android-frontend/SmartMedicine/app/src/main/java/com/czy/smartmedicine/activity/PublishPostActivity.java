@@ -11,7 +11,7 @@ import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.photo.SelectPhotoUtil;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.dal.vo.viewModelVo.post.PublishPostVo;
+import com.czy.dal.vo.fragmentActivity.post.PublishPostVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPublishPostBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;

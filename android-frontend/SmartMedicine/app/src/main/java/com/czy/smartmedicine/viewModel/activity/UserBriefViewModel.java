@@ -3,7 +3,7 @@ package com.czy.smartmedicine.viewModel.activity;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.dal.vo.viewModelVo.userBrief.UserBriefVo;
+import com.czy.dal.vo.fragmentActivity.UserBriefVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 
 public class UserBriefViewModel extends ViewModel {

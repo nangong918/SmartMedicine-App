@@ -24,7 +24,7 @@ import com.czy.dal.constant.SearchEnum;
 import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
 import com.czy.dal.vo.view.mainTop.MainTopBarVo;
-import com.czy.dal.vo.viewModelVo.friends.FriendsVo;
+import com.czy.dal.vo.fragmentActivity.FriendsVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.NewUserGroupActivity;

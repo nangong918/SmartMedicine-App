@@ -7,7 +7,7 @@ import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.ao.userBrief.UserBriefStartAo;
-import com.czy.dal.vo.viewModelVo.userBrief.UserBriefVo;
+import com.czy.dal.vo.fragmentActivity.UserBriefVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityUserBriefBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;

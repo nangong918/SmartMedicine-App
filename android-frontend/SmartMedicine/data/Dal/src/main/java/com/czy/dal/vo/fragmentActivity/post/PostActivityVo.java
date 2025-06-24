@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModelVo.post;
+package com.czy.dal.vo.fragmentActivity.post;
 
 import androidx.lifecycle.MutableLiveData;
 

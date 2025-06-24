@@ -41,4 +41,8 @@
     <string name="article_details">文章详情</string>
     <string name="publish_post_success">发帖成功</string>
     <string name="please_check_your_network">请检查你的网络</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="avatar_image">头像</string>
+    <string name="please_enter_account">账号，若空则使用手机号</string>
+    <string name="set_password">设置新密码</string>
 </resources>

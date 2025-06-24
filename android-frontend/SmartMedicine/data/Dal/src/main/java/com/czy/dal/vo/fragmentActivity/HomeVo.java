@@ -1,4 +1,4 @@
-package com.czy.dal.vo.viewModelVo.home;
+package com.czy.dal.vo.fragmentActivity;
 
 import com.czy.dal.vo.entity.home.PostListVo;
 

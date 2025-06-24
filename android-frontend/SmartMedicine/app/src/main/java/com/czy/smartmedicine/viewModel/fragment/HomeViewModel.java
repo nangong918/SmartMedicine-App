@@ -22,7 +22,7 @@ import com.czy.dal.dto.netty.request.UserBrowseTimeRequest;
 import com.czy.dal.dto.netty.request.UserClickPostRequest;
 import com.czy.dal.vo.entity.home.PostListVo;
 import com.czy.dal.vo.entity.home.PostVo;
-import com.czy.dal.vo.viewModelVo.home.HomeVo;
+import com.czy.dal.vo.fragmentActivity.HomeVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ViewModelUtil;

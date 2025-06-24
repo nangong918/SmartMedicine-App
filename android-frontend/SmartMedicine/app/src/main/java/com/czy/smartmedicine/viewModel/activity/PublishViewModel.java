@@ -11,7 +11,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.response.PostPublishResponse;
-import com.czy.dal.vo.viewModelVo.post.PublishPostVo;
+import com.czy.dal.vo.fragmentActivity.post.PublishPostVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ViewModelUtil;

@@ -26,7 +26,7 @@ import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
-import com.czy.dal.vo.viewModelVo.search.SearchActivityUserVo;
+import com.czy.dal.vo.fragmentActivity.SearchActivityUserVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ViewModelUtil;

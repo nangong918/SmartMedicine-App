@@ -18,7 +18,7 @@ import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.contact.ContactAdapter;
 import com.czy.dal.ao.userBrief.UserBriefStartAo;
 import com.czy.dal.vo.entity.contact.ContactListVo;
-import com.czy.dal.vo.viewModelVo.contactUserGroup.ContactUserGroupVo;
+import com.czy.dal.vo.fragmentActivity.ContactUserGroupVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.UserBriefActivity;
 import com.czy.smartmedicine.databinding.FragmentContactUserGroupBinding;
