@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.czy.dal.constant.Constants;
 
-public class BaseHttpRequest extends BaseRequest{
+public class BaseHttpRequest {
     public Long senderId = Constants.ERROR_ID;
     public Long receiverId = Constants.SERVER_ID;
     public String type = "";
