@@ -124,6 +124,7 @@ public class UserFileController {
                 return BaseResponse.LogBackError(errorMsg);
             }
         } catch (Exception e){
+            log.error("上传文件失败", e);
             return BaseResponse.LogBackError(errorMsg);
         } finally {
             releaseLock(phone, lockPath);
@@ -287,7 +288,7 @@ public class UserFileController {
 //                        return true;
 //                    }
                 } catch (Exception e){
-                    log.error("获取redis失败，fileRedisKey: {}", fileRedisKey);
+                    log.error("获取redis失败，fileRedisKey: {}", fileRedisKey, e);
                 }
             }
         } finally {
