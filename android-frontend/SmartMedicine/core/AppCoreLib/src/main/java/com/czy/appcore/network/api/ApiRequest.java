@@ -78,6 +78,13 @@ public interface ApiRequest {
     @POST(BackEndConstant.USER_RELATION + "/login/register")
     Observable<BaseResponse<UserRegisterResponse>> register(@Body RegisterUserRequest request);
 
+    /**
+     * 注册上传用户头像信息
+     * @param img       头像图片
+     * @param phone     手机号
+     * @param userId    用户id
+     * @return          用户画像
+     */
     @Multipart
     @POST(BackEndConstant.USER_RELATION + "/userFile/register")
     Observable<BaseResponse<UserVo>> registerUserUploadImg(
@@ -182,6 +189,14 @@ public interface ApiRequest {
     @POST(BackEndConstant.MESSAGE + "/chat/fetchUserMessage")
     Observable<BaseResponse<FetchUserMessageResponse>> fetchUserMessage(@Body FetchUserMessageRequest request);
 
+    /**
+     * 聊天发送图片消息的后续上传oss
+     * @param file           文件
+     * @param fileId         文件id
+     * @param senderId       发送者id
+     * @param receiverId     接收者id
+     * @return               上传结果（id + url）
+     */
     @Multipart
     @POST(BackEndConstant.MESSAGE + "/chatFile/uploadAndSend")
     Observable<BaseResponse<ChatUploadFileResponse>> uploadAndSend(

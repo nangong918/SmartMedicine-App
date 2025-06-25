@@ -9,4 +9,5 @@ import lombok.Data;
 @Data
 public class SendSmsResponse {
     public String phone;
+    public String smsType;
 }
