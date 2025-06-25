@@ -41,4 +41,6 @@ public class BaseConfig extends com.czy.baseUtilsLib.config.BaseConfig {
     public static final int BITMAP_MAX_SIZE = 400;
     // 头像最大大小 200 * 200 = 160 KB
     public static final int BITMAP_MAX_SIZE_AVATAR = 200;
+    // 手机号前缀
+    public static String phonePrefix = "+86";
 }

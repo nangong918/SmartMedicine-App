@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
@@ -39,6 +40,8 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
         initIntent();
 
         initViewModel();
+
+        initView();
 
         initPictureSelectLauncher();
     }
@@ -236,6 +239,14 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
                 }
         );
 
+    }
+
+    private void initView(){
+        binding.tvPrefix.setText(BaseConfig.phonePrefix);
+
+        viewModel.registerVo.phone.setValue(viewModel.intentAo.phone);
+        binding.edtvPhone.setText(viewModel.intentAo.phone);
+        viewModel.registerVo.isPhoneValid.setValue(true);
     }
 
     private void checkConfirmIsEnable(){
