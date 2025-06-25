@@ -88,6 +88,7 @@ public interface ApiRequest {
     @Multipart
     @POST(BackEndConstant.USER_RELATION + "/userFile/register")
     Observable<BaseResponse<UserVo>> registerUserUploadImg(
+            // paramName: img
             @Part MultipartBody.Part img,
             @Part("phone") RequestBody phone,
             @Part("userId") RequestBody userId
@@ -219,6 +220,7 @@ public interface ApiRequest {
     @Multipart
     @POST(BackEndConstant.OSS + "/oss/upload")
     Observable<BaseResponse<FileUploadResponse>> fileUpload(
+            // paramName: file
             @Part MultipartBody.Part file,
             @Part("name") RequestBody name,
             @Part("timestamp") RequestBody timestamp

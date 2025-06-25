@@ -287,7 +287,7 @@ public class ChatViewModel extends ViewModel {
         String fileExtension = originalFilename.contains(".") ?
                 originalFilename.substring(originalFilename.lastIndexOf(".")) : ""; // 获取扩展名
 
-        MultipartBody.Part filePart = com.czy.baseUtilsLib.file.FileUtil.createMultipartBodyPart(imageFile);
+        MultipartBody.Part filePart = com.czy.baseUtilsLib.file.FileUtil.createMultipartBodyPart(imageFile, "file");
 
         // 文件名称，方便后端保存
         String fileName = MainApplication.getInstance().getUserLoginInfoAo().account + "_" + chatVo.contactAccount;
