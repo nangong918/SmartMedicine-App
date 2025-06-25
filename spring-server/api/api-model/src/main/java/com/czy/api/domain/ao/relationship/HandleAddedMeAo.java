@@ -13,8 +13,8 @@ import java.io.Serializable;
 @Data
 public class HandleAddedMeAo implements Serializable {
     public Integer handleType;
-    public String applyAccount;
-    public String handlerAccount;
+    public Long applyId;
+    public Long handlerId;
     public Long handleTime;
     public String additionalContent;
 }

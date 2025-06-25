@@ -1,7 +1,6 @@
 package com.czy.message.controller;
 
 
-
 import com.czy.api.api.message.ChatSearchService;
 import com.czy.api.api.message.ChatService;
 import com.czy.api.api.user_relationship.UserService;
@@ -15,7 +14,7 @@ import com.czy.api.domain.ao.message.FetchUserMessageAo;
 import com.czy.api.domain.bo.message.UserChatLastMessageBo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
 import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.base.BaseNettyRequest;
+import com.czy.api.domain.dto.http.base.BaseHttpRequest;
 import com.czy.api.domain.dto.http.request.FetchUserMessageRequest;
 import com.czy.api.domain.dto.http.request.FetchUserMessageResponse;
 import com.czy.api.domain.dto.http.request.KeywordChatHistoryRequest;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -138,14 +136,17 @@ public class ChatController {
      * @return 跟每个用户的最新一条消息
      */
     @PostMapping("/getUserNewMessage")
-    public Mono<BaseResponse<UserNewMessageResponse>>
-    getUserNewMessage(@Valid @RequestBody BaseNettyRequest request) {
+    public BaseResponse<UserNewMessageResponse>
+    getUserNewMessage(@Valid @RequestBody BaseHttpRequest request) {
+        if (!userService.checkUserExist(request.getSenderId())){
+            return BaseResponse.LogBackError("用户不存在");
+        }
         // 获取用户的最新消息List
         List<UserChatLastMessageBo> lastMessageList = chatService.getUserAllChatMessage(request.getSenderId());
         // 封装响应
         UserNewMessageResponse userNewMessageResponse = new UserNewMessageResponse();
         userNewMessageResponse.setLastMessageList(lastMessageList);
-        return Mono.just(BaseResponse.getResponseEntitySuccess(userNewMessageResponse));
+        return BaseResponse.getResponseEntitySuccess(userNewMessageResponse);
     }
 
     /**
@@ -154,7 +155,7 @@ public class ChatController {
      * @return  用户和某个用户全部聊天消息
      */
     @PostMapping("/fetchUserMessage")
-    public Mono<BaseResponse<FetchUserMessageResponse>>
+    public BaseResponse<FetchUserMessageResponse>
     fetchUserMessage(@Valid @RequestBody FetchUserMessageRequest request) {
         // 封装请求 -> Ao
         FetchUserMessageAo fetchUserMessageAo = new FetchUserMessageAo();
@@ -167,7 +168,7 @@ public class ChatController {
         // 封装响应
         FetchUserMessageResponse fetchUserMessageResponse = new FetchUserMessageResponse();
         fetchUserMessageResponse.setMessageList(messageList);
-        return Mono.just(BaseResponse.getResponseEntitySuccess(fetchUserMessageResponse));
+        return BaseResponse.getResponseEntitySuccess(fetchUserMessageResponse);
     }
 
     /**
@@ -176,12 +177,12 @@ public class ChatController {
      * @return          用户的全部keyword聊天记录
      */
     @PostMapping("/getUserKeyChatHistory")
-    public Mono<BaseResponse<FetchUserMessageResponse>>
+    public BaseResponse<FetchUserMessageResponse>
     getUserKeyChatHistory(@Valid @RequestBody KeywordChatHistoryRequest request) {
         UserDo userDo = userService.getUserByAccount(request.getSenderAccount());
         if (userDo == null || userDo.getId() == null) {
             String warningMessage = String.format("用户account不存在，account: %s", request.getSenderAccount());
-            return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+            return BaseResponse.LogBackError(warningMessage);
         }
 
         List<UserChatMessageEsDo> messageEsList;
@@ -196,14 +197,14 @@ public class ChatController {
             UserDo receiverDo = userService.getUserByAccount(request.getReceiverAccount());
             if (receiverDo == null || receiverDo.getId() == null) {
                 String warningMessage = String.format("用户account不存在，account: %s", request.getReceiverAccount());
-                return Mono.just(BaseResponse.LogBackError(warningMessage, log));
+                return BaseResponse.LogBackError(warningMessage);
             }
             messageEsList = chatSearchService.searchUserChatMessageLimit(userDo.getId(), receiverDo.getId(), request.getKeyword(), 20);
         }
 
         List<UserChatMessageDo> messageList = userChatMessageEsConverter.esListToMongoList(messageEsList);
         if (messageList.isEmpty()) {
-            return Mono.just(BaseResponse.getResponseEntitySuccess(new FetchUserMessageResponse()));
+            return BaseResponse.getResponseEntitySuccess(new FetchUserMessageResponse());
         }
         else {
             List<Long> idList = messageList.stream().map(UserChatMessageDo::getId).collect(Collectors.toList());
@@ -218,7 +219,7 @@ public class ChatController {
 
             FetchUserMessageResponse fetchUserMessageResponse = new FetchUserMessageResponse();
             fetchUserMessageResponse.messageList = messageBoList;
-            return Mono.just(BaseResponse.getResponseEntitySuccess(fetchUserMessageResponse));
+            return BaseResponse.getResponseEntitySuccess(fetchUserMessageResponse);
         }
     }
 }

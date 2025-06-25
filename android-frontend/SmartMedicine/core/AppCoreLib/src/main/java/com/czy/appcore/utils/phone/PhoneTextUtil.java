@@ -4,6 +4,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.utils.OnTextInputEnd;
 import com.czy.appcore.utils.TextChangeLegalCallback;
@@ -32,6 +34,38 @@ public class PhoneTextUtil {
                     callback.legal();
                 }
                 else {
+                    callback.illegal();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                onTextInputEnd.onTextEnd(s);
+            }
+        });
+    }
+
+    /**
+     * 给TextView添加手机号合法判断和限制
+     * @param editText      手机号输入框
+     * @param callback      手机号合法和非法回调
+     */
+    public static void addPhoneTextChangeListener(MutableLiveData<String> phoneLd, EditText editText, TextChangeLegalCallback callback, OnTextInputEnd onTextInputEnd){
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                onTextInputEnd.onTextInput(s,start,count,after);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                phoneNumberLengthLimit(s,editText);
+                if(phoneNumberLegitimateJudge(editText.getText().toString())){
+                    phoneLd.setValue(editText.getText().toString());
+                    callback.legal();
+                }
+                else {
+                    phoneLd.setValue(editText.getText().toString());
                     callback.illegal();
                 }
             }

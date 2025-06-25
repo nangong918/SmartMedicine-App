@@ -1,6 +1,6 @@
 package com.czy.api.domain.dto.http.response;
 
-import com.czy.api.domain.dto.base.BaseResponseData;
+import com.czy.api.domain.dto.http.base.BaseHttpResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PostPublishResponse extends BaseResponseData {
+public class PostPublishResponse extends BaseHttpResponse {
     // 雪花id
     public Long snowflakeId;
 }

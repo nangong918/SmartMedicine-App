@@ -15,6 +15,4 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class DeleteAllMessageRequest extends BaseRequestData implements BaseBean {
-    public String senderId;
-    public String receiverId;
 }

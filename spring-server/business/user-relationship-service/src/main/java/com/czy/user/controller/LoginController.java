@@ -9,6 +9,7 @@ import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.api.domain.ao.user.UserInfoAo;
 import com.czy.api.domain.dto.base.BaseResponse;
+import com.czy.api.domain.dto.http.request.IsRegisterRequest;
 import com.czy.api.domain.dto.http.request.LoginResetPasswordRequest;
 import com.czy.api.domain.dto.http.request.LoginUserRequest;
 import com.czy.api.domain.dto.http.request.PhoneLoginRequest;
@@ -17,6 +18,7 @@ import com.czy.api.domain.dto.http.request.ResetUserInfoRequest;
 import com.czy.api.domain.dto.http.request.SendSmsRequest;
 import com.czy.api.domain.dto.http.response.IsRegisterResponse;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
+import com.czy.api.domain.dto.http.response.SendSmsResponse;
 import com.czy.api.domain.dto.http.response.UserRegisterResponse;
 import com.czy.api.domain.vo.user.UserVo;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -132,16 +134,12 @@ public class LoginController {
 //    }
 
     // 1.检查手机号是否注册 (频繁调用，可能要ip拦截)
-    @GetMapping(UserConstant.Check_Phone_Is_Register)
+    @PostMapping(UserConstant.Check_Phone_Is_Register)
     public BaseResponse<IsRegisterResponse>
-    checkPhoneIsRegister(@RequestParam("phone") String phone) {
-        if (!StringUtils.hasText(phone)){
-            String warningMessage = String.format("手机号不能为空，phone: %s", phone);
-            return BaseResponse.LogBackError(warningMessage);
-        }
+    checkPhoneIsRegister(@RequestBody @Validated IsRegisterRequest request) {
         IsRegisterResponse response = new IsRegisterResponse();
-        response.setRegister(userService.checkPhoneExist(phone) > 0);
-        response.setPhone(phone);
+        response.setRegister(userService.checkPhoneExist(request.getPhone()) > 0);
+        response.setPhone(request.getPhone());
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
@@ -310,9 +308,11 @@ public class LoginController {
 
     // 发送短信
     @PostMapping(UserConstant.Send_Sms)
-    public BaseResponse<String> sendSms(@Validated @RequestBody SendSmsRequest request) {
+    public BaseResponse<SendSmsResponse> sendSms(@Validated @RequestBody SendSmsRequest request) {
         if (smsService.sendSms(request.getPhone())) {
-            return BaseResponse.getResponseEntitySuccess(String.format("发送短信成功phone：%s", request.getPhone()));
+            SendSmsResponse response = new SendSmsResponse();
+            response.setPhone(request.getPhone());
+            return BaseResponse.getResponseEntitySuccess(response);
         } else {
             return BaseResponse.LogBackError("发送短信失败");
         }
@@ -330,14 +330,21 @@ public class LoginController {
             String errorMessage = "验证码错误";
             return BaseResponse.LogBackError(errorMessage);
         }
+
+        boolean isPhoneRegister = userService.checkPhoneExist(request.getPhone()) > 0;
+//        boolean isAccountRegister = userService.checkAccountExist(request.getAccount()) > 0;
+
         UserDo userDo = userService.getUserByPhone(phone);
         // 未注册：注册
-        if (userDo == null || userDo.getId() == null){
+        if (!isPhoneRegister){
+            return BaseResponse.LogBackError("还未注册请先注册");
+        }
+/*        if (userDo == null || userDo.getId() == null){
             String userName = request.getUserName();
             if (!StringUtils.hasText(userName)){
                 return BaseResponse.LogBackError("用户名不能为空");
             }
-            String account = request.getSenderId();
+            String account = request.getAccount();
             if (!StringUtils.hasText(account)){
                 return BaseResponse.LogBackError("用户账号不能为空");
             }
@@ -361,7 +368,7 @@ public class LoginController {
             if (signResponse != null) {
                 return BaseResponse.getResponseEntitySuccess(signResponse);
             }
-        }
+        }*/
         // 注册了：登录
         else {
             LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo(

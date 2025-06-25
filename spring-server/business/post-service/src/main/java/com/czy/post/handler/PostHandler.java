@@ -9,7 +9,6 @@ import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
-import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.base.NettyOptionRequest;
 import com.czy.api.domain.dto.socket.request.PostCollectRequest;
@@ -25,8 +24,8 @@ import com.czy.api.domain.dto.socket.response.PostLikeResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionCommentPost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionOperatePost;
 import com.czy.post.component.KafkaSender;
-import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.handler.api.PostApi;
+import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostHandleService;
 import com.czy.post.service.PostService;
@@ -65,7 +64,7 @@ public class PostHandler implements PostApi{
         if (request == null){
             return false;
         }
-        if (!StringUtils.hasText(request.getSenderId())){
+        if (request.getSenderId() == null){
             log.warn("发送者id为空");
             return false;
         }
@@ -92,11 +91,10 @@ public class PostHandler implements PostApi{
         // 收藏帖子
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
             try {
-                UserDo userDo = userService.getUserByAccount(request.getSenderId());
                 Long folderId = request.getFolderId();
                 if (folderId == null || folderId == 0L){
                     // 创建文件夹
-                    folderId = postHandleService.createPostCollectFolder(userDo.getId(), PostConstant.DEFAULT_COLLECT_FOLDER_NAME);
+                    folderId = postHandleService.createPostCollectFolder(request.getSenderId(), PostConstant.DEFAULT_COLLECT_FOLDER_NAME);
                 }
                 postHandleService.postCollect(request.getPostId(), folderId);
                 operateType = PostOperation.COLLECT.getCode();
@@ -135,15 +133,14 @@ public class PostHandler implements PostApi{
         rabbitMqSender.push(nettyServerResponse);
         // kafka -> log -> feature
         UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
-        Long userId = userService.getIdByAccount(request.getSenderId());
-        userActionOperatePost.setUserId(userId);
+        userActionOperatePost.setUserId(request.getSenderId());
         userActionOperatePost.setPostId(request.getPostId());
         userActionOperatePost.setOperateType(operateType);
 
         try {
             kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
         } catch (Exception e) {
-            log.error("用户显性行为Kafka传输异常：[收藏] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
+            log.error("用户显性行为Kafka传输异常：[收藏] [userId:{}] [postId:{}]", request.getSenderId(), request.getPostId(), e);
         }
     }
 
@@ -157,14 +154,10 @@ public class PostHandler implements PostApi{
         // 创建收藏夹
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
             try {
-                UserDo userDo = userService.getUserByAccount(request.getSenderId());
-                if (userDo == null || userDo.getId() == null){
-                    return;
-                }
                 if (!StringUtils.hasText(request.getName())){
                     return;
                 }
-                postHandleService.createPostCollectFolder(userDo.getId(), request.getName());
+                postHandleService.createPostCollectFolder(request.getSenderId(), request.getName());
             } catch (Exception e){
                 isSuccess = NettyResponseStatuesEnum.FAILURE;
             }
@@ -172,15 +165,11 @@ public class PostHandler implements PostApi{
         // 删除收藏夹
         if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
             try {
-                UserDo userDo = userService.getUserByAccount(request.getSenderId());
-                if (userDo == null || userDo.getId() == null){
-                    return;
-                }
                 Long folderId = request.getFolderId();
                 if (folderId == null){
                     return;
                 }
-                postHandleService.deletePostCollectFolder(folderId, userDo.getId());
+                postHandleService.deletePostCollectFolder(folderId, request.getSenderId());
             } catch (Exception e){
                 isSuccess = NettyResponseStatuesEnum.FAILURE;
             }
@@ -188,14 +177,10 @@ public class PostHandler implements PostApi{
         // 更改搜藏夹
         if (request.getOptionCode() == NettyOptionEnum.UPDATE.getCode()){
             try {
-                UserDo userDo = userService.getUserByAccount(request.getSenderId());
-                if (userDo == null || userDo.getId() == null){
-                    return;
-                }
                 if (request.getFolderId() == null || request.getNewName() == null){
                     return;
                 }
-                postHandleService.updatePostCollectFolder(request.getFolderId(), userDo.getId(), request.getNewName());
+                postHandleService.updatePostCollectFolder(request.getFolderId(), request.getSenderId(), request.getNewName());
             } catch (Exception e){
                 isSuccess = NettyResponseStatuesEnum.FAILURE;
             }
@@ -228,11 +213,7 @@ public class PostHandler implements PostApi{
         // 发布评论
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
             try {
-                UserDo userDo = userService.getUserByAccount(request.getSenderId());
-                if (userDo == null || userDo.getId() == null){
-                    return;
-                }
-                PostCommentDo postCommentDo = postCommentConverter.postCommentRequestToPostCommentDo(request, userDo.getId());
+                PostCommentDo postCommentDo = postCommentConverter.postCommentRequestToPostCommentDo(request, request.getSenderId());
                 // TODO 考虑先存在Redis然后定时批量导入，评论这种东西放在Redis就行了
                 postHandleService.postComment(postCommentDo);
                 // 通知作者 + 评论发布者
@@ -266,14 +247,13 @@ public class PostHandler implements PostApi{
 
         // userAction -> kafka -> feature-service
         UserActionCommentPost userActionCommentPost = new UserActionCommentPost();
-        Long userId = userService.getIdByAccount(request.getSenderId());
-        userActionCommentPost.setUserId(userId);
+        userActionCommentPost.setUserId(request.getSenderId());
         userActionCommentPost.setPostId(request.getPostId());
         userActionCommentPost.setComment(request.getContent());
         try {
             kafkaSender.sendUserActionMessage(userActionCommentPost, KafkaConstant.Topic.Comment);
         } catch (Exception e){
-            log.error("用户显性行为Kafka传输异常：[评论] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
+            log.error("用户显性行为Kafka传输异常：[评论] [userId:{}] [postId:{}]", request.getSenderId(), request.getPostId(), e);
         }
     }
 
@@ -283,11 +263,7 @@ public class PostHandler implements PostApi{
         if (postAo == null || postAo.getAuthorId() == null){
             return;
         }
-        UserDo authorDo = userService.getUserById(postAo.getAuthorId());
-        if (authorDo == null || !StringUtils.hasText(authorDo.getAccount())){
-            return;
-        }
-        postCommentResponse.setReceiverId(authorDo.getAccount());
+        postCommentResponse.setReceiverId(postAo.getAuthorId());
         rabbitMqSender.push(postCommentResponse);
     }
 
@@ -298,11 +274,7 @@ public class PostHandler implements PostApi{
             if (postCommenterDo == null || postCommenterDo.getCommenterId() == null){
                 return;
             }
-            UserDo commenterDo = userService.getUserById(postCommenterDo.getCommenterId());
-            if (commenterDo == null || !StringUtils.hasText(commenterDo.getAccount())){
-                return;
-            }
-            postCommentResponse.setReceiverId(commenterDo.getAccount());
+            postCommentResponse.setReceiverId(postCommenterDo.getCommenterId());
             rabbitMqSender.push(postCommentResponse);
         }
     }
@@ -312,21 +284,14 @@ public class PostHandler implements PostApi{
         NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
         Integer operateType = PostOperation.NULL.getCode();
         try {
-            UserDo senderDo = userService.getUserByAccount(request.getSenderId());
-            UserDo receiverDo = userService.getUserByAccount(request.getReceiverId());
-            if (senderDo == null || receiverDo == null){
-                String warningMessage = String.format("用户不存在，sender: %s; receiver: %s", request.getSenderId(), request.getReceiverId());
-                log.warn(warningMessage);
-                return;
-            }
             // 数据库操作
             postHandleService.postForward(request.getPostId());
             // netty通知前端 内部会设置发送id是serverId
             PostForwardResponse postForwardResponse = new PostForwardResponse(request.getPostId());
             postForwardResponse.setContent(request.getContent());
-            postForwardResponse.setSenderAccount(request.getSenderId());
+            postForwardResponse.setSenderId(request.getSenderId());
             // 对前端的receiverId不信任，可能是SERVER_ID，设置为ToUserAccount
-            postForwardResponse.setReceiverId(request.getToUserAccount());
+            postForwardResponse.setReceiverId(request.getToUserId());
             rabbitMqSender.push(postForwardResponse);
             operateType = PostOperation.FORWARD.getCode();
         } catch (Exception e){
@@ -339,15 +304,14 @@ public class PostHandler implements PostApi{
         rabbitMqSender.push(nettyServerResponse);
         // userAction -> kafka -> feature-service
         UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
-        Long userId = userService.getIdByAccount(request.getSenderId());
-        userActionOperatePost.setUserId(userId);
+        userActionOperatePost.setUserId(request.getSenderId());
         userActionOperatePost.setPostId(request.getPostId());
         userActionOperatePost.setOperateType(operateType);
 
         try {
             kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
         } catch (Exception e){
-            log.error("用户显性行为Kafka传输异常：[转发] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
+            log.error("用户显性行为Kafka传输异常：[转发] [userId:{}] [postId:{}]", request.getSenderId(), request.getPostId(), e);
         }
     }
 
@@ -360,34 +324,19 @@ public class PostHandler implements PostApi{
         if (!isOptionLegal){
             return;
         }
-        UserDo userDo = userService.getUserByAccount(request.getSenderId());
-        if (userDo == null){
-            String warningMessage = String.format("用户不存在，account: %s", request.getSenderId());
-            log.warn(warningMessage);
-            isSuccess = NettyResponseStatuesEnum.FAILURE;
-            // netty通知前端 内部会设置发送id是serverId
-            NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
-            // Mq -> user
-            rabbitMqSender.push(nettyServerResponse);
-            return;
-        }
         // 点赞
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
             try {
                 // 数据库增加
-                postHandleService.postLike(request.getPostId(), userDo.getId());
+                postHandleService.postLike(request.getPostId(), request.getSenderId());
                 // 通知作者
                 PostAo postAo = postService.findPostById(request.getPostId());
                 if (postAo == null || postAo.getAuthorId() == null){
                     return;
                 }
-                UserDo authorDo = userService.getUserById(postAo.getAuthorId());
-                if (authorDo == null || !StringUtils.hasText(authorDo.getAccount())){
-                    return;
-                }
                 PostLikeResponse postLikeResponse = new PostLikeResponse(request.getPostId());
-                postLikeResponse.setLikeUserAccount(request.getSenderId());
-                postLikeResponse.setReceiverId(authorDo.getAccount());
+                postLikeResponse.setLikeUserId(request.getSenderId());
+                postLikeResponse.setReceiverId(postAo.getAuthorId());
                 rabbitMqSender.push(postLikeResponse);
                 operateType = PostOperation.LIKE.getCode();
             } catch (Exception e){
@@ -397,7 +346,7 @@ public class PostHandler implements PostApi{
         // 取消点赞
         if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
             try {
-                postHandleService.deletePostLike(request.getPostId(), userDo.getId());
+                postHandleService.deletePostLike(request.getPostId(), request.getSenderId());
                 operateType = PostOperation.CANCEL_LIKE.getCode();
             } catch (Exception e){
                 isSuccess = NettyResponseStatuesEnum.FAILURE;
@@ -409,15 +358,14 @@ public class PostHandler implements PostApi{
         rabbitMqSender.push(nettyServerResponse);
         // userAction -> kafka -> feature-service
         UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
-        Long userId = userService.getIdByAccount(request.getSenderId());
-        userActionOperatePost.setUserId(userId);
+        userActionOperatePost.setUserId(request.getSenderId());
         userActionOperatePost.setPostId(request.getPostId());
         userActionOperatePost.setOperateType(operateType);
 
         try {
             kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
         } catch (Exception e){
-            log.error("用户显性行为Kafka传输异常：[点赞] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
+            log.error("用户显性行为Kafka传输异常：[点赞] [userId:{}] [postId:{}]", request.getSenderId(), request.getPostId(), e);
         }
     }
 
@@ -428,24 +376,19 @@ public class PostHandler implements PostApi{
         if (!isOptionLegal){
             return;
         }
-        UserDo userDo = userService.getUserByAccount(request.getSenderId());
         // 不感兴趣
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
             try {
                 // 数据库增加
-                postHandleService.postNotInterested(request.getPostId(), userDo.getId());
+                postHandleService.postNotInterested(request.getPostId(), request.getSenderId());
                 // 通知作者
                 PostAo postAo = postService.findPostById(request.getPostId());
                 if (postAo == null || postAo.getAuthorId() == null){
                     return;
                 }
-                UserDo authorDo = userService.getUserById(postAo.getAuthorId());
-                if (authorDo == null || !StringUtils.hasText(authorDo.getAccount())){
-                    return;
-                }
                 PostLikeResponse postLikeResponse = new PostLikeResponse(request.getPostId());
-                postLikeResponse.setLikeUserAccount(request.getSenderId());
-                postLikeResponse.setReceiverId(authorDo.getAccount());
+                postLikeResponse.setLikeUserId(request.getSenderId());
+                postLikeResponse.setReceiverId(postAo.getAuthorId());
                 rabbitMqSender.push(postLikeResponse);
                 operateType = PostOperation.NOT_INTERESTED.getCode();
             } catch (Exception ignored){
@@ -454,7 +397,7 @@ public class PostHandler implements PostApi{
         // 取消不感兴趣
         if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
             try {
-                postHandleService.deletePostNotInterested(request.getPostId(), userDo.getId());
+                postHandleService.deletePostNotInterested(request.getPostId(), request.getSenderId());
                 operateType = PostOperation.CANCEL_NOT_INTERESTED.getCode();
             } catch (Exception ignored){
             }
@@ -462,15 +405,13 @@ public class PostHandler implements PostApi{
 
         // userAction -> kafka -> feature-service
         UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
-        Long userId = userService.getIdByAccount(request.getSenderId());
-        userActionOperatePost.setUserId(userId);
-        userActionOperatePost.setPostId(request.getPostId());
+        userActionOperatePost.setPostId(request.getSenderId());
         userActionOperatePost.setOperateType(operateType);
 
         try {
             kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
         } catch (Exception e){
-            log.error("用户显性行为Kafka传输异常：[点赞] [userId:{}] [postId:{}]", userId, request.getPostId(), e);
+            log.error("用户显性行为Kafka传输异常：[点赞] [userId:{}] [postId:{}]", request.getSenderId(), request.getPostId(), e);
         }
     }
 }

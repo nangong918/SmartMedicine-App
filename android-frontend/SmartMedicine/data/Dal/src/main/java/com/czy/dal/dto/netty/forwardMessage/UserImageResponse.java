@@ -12,6 +12,7 @@ import com.czy.dal.dto.netty.base.BaseResponseData;
 
 public class UserImageResponse extends BaseResponseData implements BaseBean {
     public String title;
+    public String account;
     public String imageUrl;
     public String senderName;
     // 当值不为空才更新

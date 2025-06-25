@@ -56,7 +56,7 @@ public class NettySocketManager {
     private ConnectNettyCallback connectNettyCallback;
     private String host;
     private int port;
-    private String userId;
+    private Long userId;
     private final ResponseBodyHandler responseBodyHandler;
     private ScheduledExecutorService executorService;
     private final NettyConnectChangeCallback connectChangeCallback;
@@ -100,8 +100,8 @@ public class NettySocketManager {
 //        }
     }
 
-    public void setUserId(String userId){
-        if (TextUtils.isEmpty(userId)){
+    public void setUserId(Long userId){
+        if (userId == null || Constants.ERROR_ID.equals(userId)){
             Log.w(TAG, "init::userId is empty");
             this.connectNettyCallback.onConnectFailure("User ID is empty");
             return;
@@ -235,7 +235,7 @@ public class NettySocketManager {
     }
 
     // 重新连接
-    public void reconnect(String uid) {
+    public void reconnect(Long uid) {
         this.userId = uid;
         // 先断开连接
         disconnect();

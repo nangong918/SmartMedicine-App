@@ -55,7 +55,7 @@ public class UserFileController {
     private final UserFrontService userFrontService;
 
     // 注册用户的上传头像
-    @PostMapping("/registerUser/uploadImg")
+    @PostMapping("/register")
     public BaseResponse<UserVo> registerUserUploadImg(
             @RequestParam("img") MultipartFile img,
             @RequestParam("phone") String phone,

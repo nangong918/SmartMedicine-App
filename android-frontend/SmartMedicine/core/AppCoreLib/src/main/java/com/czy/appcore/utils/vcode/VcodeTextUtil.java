@@ -4,6 +4,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.utils.OnTextInputEnd;
 import com.czy.appcore.utils.TextChangeLegalCallback;
@@ -25,6 +27,34 @@ public class VcodeTextUtil {
                     callback.legal();
                 }
                 else {
+                    callback.illegal();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                onTextInputEnd.onTextEnd(s);
+            }
+        });
+    }
+
+    public static void addPhoneTextChangeListener(MutableLiveData<String> vcodeLd, EditText editText, TextChangeLegalCallback callback, OnTextInputEnd onTextInputEnd){
+        editText.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                onTextInputEnd.onTextInput(s,start,count,after);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                vcodeLengthLimit(s,editText);
+                if(vcodeLegitimateJudge(editText.getText().toString())){
+                    vcodeLd.setValue(editText.getText().toString());
+                    callback.legal();
+                }
+                else {
+                    vcodeLd.setValue(editText.getText().toString());
                     callback.illegal();
                 }
             }

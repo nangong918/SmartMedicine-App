@@ -6,6 +6,7 @@ package com.czy.api.constant.netty;
  */
 public interface KafkaConstant {
 
+    String KAFKA_TOPIC = "kafka-topic";
 
     interface GroupId{
         // 隐性特征：Point埋点

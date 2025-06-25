@@ -146,8 +146,8 @@ public class NettySocketService extends Service {
 
     public class NettySocketServiceBinder extends IMessageService.Stub {
         @Override
-        public void connect(String uid) throws RemoteException {
-            if(TextUtils.isEmpty(uid)){
+        public void connect(long uid) throws RemoteException {
+            if(Constants.ERROR_ID.equals(uid)){
                 Log.w(TAG, "connect::uid is empty");
                 return;
             }
@@ -162,7 +162,7 @@ public class NettySocketService extends Service {
         }
 
         @Override
-        public void reconnect(String uid) throws RemoteException {
+        public void reconnect(long uid) throws RemoteException {
             nettySocketManager.reconnect(uid);
         }
 

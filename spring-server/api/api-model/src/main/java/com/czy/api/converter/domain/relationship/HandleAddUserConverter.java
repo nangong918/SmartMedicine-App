@@ -18,9 +18,9 @@ public interface HandleAddUserConverter {
     // request -> ao
     @Mapping(target = "handleType", source = "handleType")
     // 接收方是申请人
-    @Mapping(target = "applyAccount", source = "receiverId")
+    @Mapping(target = "applyId", source = "receiverId")
     // 请求方是处理人
-    @Mapping(target = "handlerAccount", source = "senderId")
+    @Mapping(target = "handlerId", source = "senderId")
     @Mapping(target = "additionalContent", source = "additionalContent")
     HandleAddedMeAo requestToAo_(HandleAddedUserRequest request);
 

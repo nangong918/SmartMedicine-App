@@ -9,6 +9,7 @@ import com.czy.appcore.BaseConfig;
 import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.dal.constant.Constants;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityStartBinding;
 
@@ -67,16 +68,16 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
         }
     }
 
-    private String userAccount = null;
+    private Long userId = null;
 
     // 检查是否未登录 ;后面改为验证refreshToken
     private boolean checkIsNotLogin(){
-        userAccount = Optional.ofNullable(MainApplication.getInstance())
+        userId = Optional.ofNullable(MainApplication.getInstance())
                 .map(MainApplication::getUserLoginInfoAo)
-                .map(ao -> ao.account)
+                .map(ao -> ao.userId)
                 .orElse(null);
-        Log.i(TAG, "检查是否未登录::userAccount: " + userAccount);
-        return TextUtils.isEmpty(userAccount);
+        Log.i(TAG, "检查是否未登录::userId: " + userId);
+        return userId != null && !Constants.ERROR_ID.equals(userId);
     }
 
     // 跳转页面
@@ -88,9 +89,9 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
         }
         else {
             try {
-                assert userAccount != null;
+                assert userId != null;
                 // 启用登录长连接
-                MainApplication.getInstance().startNettySocketService(userAccount);
+                MainApplication.getInstance().startNettySocketService(userId);
                 Intent intent = new Intent(StartActivity.this, MainActivity.class);
                 ActivityLaunchUtils.launchNewTask(this, intent, null);
                 finish();

@@ -1,15 +1,13 @@
 package com.czy.netty.channel;
 
 
-
-import com.czy.netty.constant.ChannelAttr;
 import com.czy.api.domain.entity.model.ResponseBodyProto;
+import com.czy.netty.constant.ChannelAttr;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.util.concurrent.ConcurrentMap;
 
@@ -23,48 +21,51 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class ChannelManager {
 
-    private final ConcurrentMap<String, Channel> userChannels;
+    private final ConcurrentMap<Long, Channel> userChannels;
     private final boolean isDebug;
 
     /**
      * 注册channel
-     * @param senderAccount 发送者Account
+     * @param senderId 发送者的userId
      * @param channel       channel
      */
-    public void register(String senderAccount, Channel channel) {
+    public void register(Long senderId, Channel channel) {
         if (channel == null){
             log.error("register::channel is null");
             return;
         }
-        if (senderAccount == null){
-            log.warn("senderAccount is null");
+        if (senderId == null){
+            log.warn("senderId is null");
             return;
         }
 
-        channel.attr(ChannelAttr.UID).set(senderAccount);
-        userChannels.put(senderAccount, channel);
+        channel.attr(ChannelAttr.UID).set(senderId);
+        userChannels.put(senderId, channel);
 
-        log.info("Client registered: [senderAccount:{}]", senderAccount);
+        log.info("Client registered: [senderId:{}]", senderId);
     }
 
     /**
      * 移除channel
-     * @param senderAccount 发送者Account
+     * @param senderId 发送者userId
      */
-    public void unRegister(String senderAccount) {
-        if (!StringUtils.hasText(senderAccount)){
-            log.error("unRegister::senderAccount is null");
+    public void unRegister(Long senderId) {
+        if (senderId == null){
+            log.error("unRegister::senderId is null");
             return;
         }
 
-        Channel channel = userChannels.get(senderAccount);
+        Channel channel = userChannels.get(senderId);
         if (channel != null/* && channel.isActive()*/) {
+            if (!channel.isActive()){
+                log.warn("channel is not active");
+            }
             channel.close();
-            userChannels.remove(senderAccount);
-            log.info("Client unregistered: [senderAccount:{}]", senderAccount);
+            userChannels.remove(senderId);
+            log.info("Client unregistered: [senderId:{}]", senderId);
         }
         else {
-            log.info("unRegister::channel is null or channel is not active");
+            log.warn("unRegister::channel is null");
         }
     }
 
@@ -73,11 +74,11 @@ public class ChannelManager {
      * @param ctx   channel上下文
      */
     public void channelInactive(ChannelHandlerContext ctx){
-        String userAccount = ctx.channel().attr(ChannelAttr.UID).get();
+        Long userId = ctx.channel().attr(ChannelAttr.UID).get();
         // 移除失效的连接
-        if (userAccount != null) {
+        if (userId != null) {
             // 移除失效的连接，并删除会话
-            userChannels.remove(userAccount);
+            userChannels.remove(userId);
         }
         log.info("Client disconnected: {}, UID: {}",
                 ctx.channel().remoteAddress(),
@@ -86,12 +87,12 @@ public class ChannelManager {
 
     /**
      * 给客户端推送消息
-     * @param receiverAccount   接收者Account
+     * @param receiverId   接收者userId
      * @param responseBody      消息体
      */
-    public void pushToClient(String receiverAccount, ResponseBodyProto.ResponseBody responseBody) {
-        if (!StringUtils.hasText(receiverAccount)){
-            log.warn("push::receiverAccount is null");
+    public void pushToClient(Long receiverId, ResponseBodyProto.ResponseBody responseBody) {
+        if (receiverId == null){
+            log.warn("push::receiverId is null");
             return;
         }
         if (responseBody == null){
@@ -101,27 +102,31 @@ public class ChannelManager {
         if (isDebug){
             log.info("Debug::responseBody: {}", responseBody);
         }
-        Channel channel = userChannels.get(receiverAccount);
-        if (channel != null && channel.isActive()) {
+        Channel channel = userChannels.get(receiverId);
+        if (channel == null){
+            log.warn("给[receiverId:{}]消息推送失败，原因：channel是空", receiverId);
+            return;
+        }
+        if (channel.isActive()) {
             try {
                 channel.writeAndFlush(responseBody);
             } catch (Exception e){
-                log.error("给[receiverAccount:{}]消息推送失败", receiverAccount, e);
+                log.error("给[receiverId:{}]消息推送失败", receiverId, e);
             }
         }
         else {
-            log.warn("给[receiverAccount:{}]消息推送失败，原因：channel是空或者channel未激活", receiverAccount);
+            log.warn("给[receiverId:{}]消息推送失败，原因：channel未激活", receiverId);
         }
     }
 
     /**
      * 检查用户是否在线
-     * @param userAccount   用户Account
+     * @param userId   用户Account
      * @return  用户是否在线
      */
-    public boolean checkIsOnline(String userAccount) {
-        if (userChannels.containsKey(userAccount)){
-            Channel channel = userChannels.get(userAccount);
+    public boolean checkIsOnline(Long userId) {
+        if (userChannels.containsKey(userId)){
+            Channel channel = userChannels.get(userId);
             return channel != null && channel.isActive();
         }
         return false;

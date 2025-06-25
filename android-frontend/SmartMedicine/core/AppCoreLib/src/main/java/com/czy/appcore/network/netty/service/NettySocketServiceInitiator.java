@@ -24,7 +24,7 @@ public class NettySocketServiceInitiator {
     private IMessageListener messageListener;
     private SocketMessageSender socketMessageSender;
 
-    public void initRemoteService(Context context, String senderAccount, @NonNull IMessageListener listener) {
+    public void initRemoteService(Context context, Long senderId, @NonNull IMessageListener listener) {
         this.messageListener = listener;
 
         // 发送连接消息
@@ -32,17 +32,17 @@ public class NettySocketServiceInitiator {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 messageService = IMessageService.Stub.asInterface(service);
-                initSocketMessageSender(senderAccount);
+                initSocketMessageSender(senderId);
                 try {
                     messageService.registerListener(messageListener);
                     isBound = true;
                     Message message = new Message();
-                    message.senderId = senderAccount;
+                    message.senderId = senderId;
                     message.receiverId = Constants.SERVER_ID;
                     message.type = RequestMessageType.Connect.CONNECT;
                     Log.i(NettySocketService.TAG, "new message.senderId: " + message.senderId);
                     // 发送连接消息
-                    messageService.connect(senderAccount);
+                    messageService.connect(senderId);
 //                    messageService.sendMessage(message);
                 } catch (RemoteException e) {
                     Log.e(NettySocketService.TAG, "onServiceConnected: ", e);
@@ -87,7 +87,7 @@ public class NettySocketServiceInitiator {
         }
     }
 
-    private void initSocketMessageSender(String uid) {
+    private void initSocketMessageSender(Long uid) {
         socketMessageSender = new SocketMessageSender(
                 uid,
                 getMessageService()

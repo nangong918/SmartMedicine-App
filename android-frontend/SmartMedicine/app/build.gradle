@@ -88,6 +88,9 @@ dependencies {
     // 下拉刷新
     implementation libs.swiperefreshlayout
 
+    // MultiDexApplication
+    implementation libs.multidex
+
     /**
      * 自定义Module
      * 基本依赖关系：

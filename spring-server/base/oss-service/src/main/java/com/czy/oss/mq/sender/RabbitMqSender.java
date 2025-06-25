@@ -38,14 +38,15 @@ public class RabbitMqSender {
 
     /**
      * 转换并发送
-     * @param baseResponseData      响应数据
+     * @param t     继承BaseResponseData的t
      */
-    public void push(BaseResponseData baseResponseData){
-        Message message = baseResponseConverter.getMessage(baseResponseData);
-        message.setType(MessageTypeTranslator.translateClean(baseResponseData.getType()));
+    public <T extends  BaseResponseData> void push(T t){
+        Message message = t.getMessageByResponse();
+        message.setType(MessageTypeTranslator.translateClean(t.getType()));
         if (ResponseMessageType.NULL.equals(message.getType())){
             return;
         }
+
         push(message);
     }
 }

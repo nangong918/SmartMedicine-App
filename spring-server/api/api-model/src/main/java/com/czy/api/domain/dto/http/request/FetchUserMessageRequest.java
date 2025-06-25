@@ -1,7 +1,7 @@
 package com.czy.api.domain.dto.http.request;
 
 
-import com.czy.api.domain.dto.http.base.BaseNettyRequest;
+import com.czy.api.domain.dto.http.base.BaseHttpRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class FetchUserMessageRequest extends BaseNettyRequest {
+public class FetchUserMessageRequest extends BaseHttpRequest {
     public String senderAccount;
     public String receiverAccount;
     // 用于查询消息记录的起始索引

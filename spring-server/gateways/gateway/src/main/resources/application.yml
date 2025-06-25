@@ -56,7 +56,7 @@ spring:
 #            - Path=/login/passwordRegisterUser
 #            - Path=/login/passwordLoginUser
 #            - Path=/login/sendSms
-#            - Path=/login/smsLoginUser
+#            - Path=/login/smsLogin
 #          filters:
 #            - name: Ip
 #            - StripPrefix=1       # 去掉第一个路径段(/user-relationship-service) 因为uri内会配置 lb://user-relationship-service

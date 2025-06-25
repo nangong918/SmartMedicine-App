@@ -30,15 +30,16 @@ import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.customviewlib.view.GlobalDialogFragment;
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
+import com.czy.dal.ao.login.LoginTokenAo;
 import com.czy.dal.constant.Constants;
-import com.czy.dal.dto.http.request.BaseNettyRequest;
+import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.netty.Message;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.appcore.network.api.ApiRequestProvider;
 import com.czy.appcore.network.netty.service.NettySocketService;
 import com.czy.smartmedicine.manager.HttpRequestManager;
-import com.czy.smartmedicine.viewModel.ViewModelUtil;
+import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,17 +107,17 @@ public class MainApplication extends Application {
 
     //==========baseNettyRequest
 
-    public BaseNettyRequest getBaseNettyRequest(){
-        BaseNettyRequest request = new BaseNettyRequest();
-        request.senderId = getUserLoginInfoAo().account;
+    public BaseHttpRequest getBaseNettyRequest(){
+        BaseHttpRequest request = new BaseHttpRequest();
+        request.senderId = getUserLoginInfoAo().userId;
         request.receiverId = Constants.SERVER_ID;
         request.timestamp = System.currentTimeMillis();
         return request;
     }
 
-    public BaseNettyRequest getBaseNettyRequest(String receiverId){
-        BaseNettyRequest request = new BaseNettyRequest();
-        request.senderId = getUserLoginInfoAo().account;
+    public BaseHttpRequest getBaseNettyRequest(Long receiverId){
+        BaseHttpRequest request = new BaseHttpRequest();
+        request.senderId = getUserLoginInfoAo().userId;
         request.receiverId = receiverId;
         request.timestamp = System.currentTimeMillis();
         return request;
@@ -169,11 +170,11 @@ public class MainApplication extends Application {
     private NettySocketServiceInitiator nettySocketServiceInitiator;
 
     // 连接WebSocket
-    public void startNettySocketService(String senderAccount){
+    public void startNettySocketService(Long senderId){
         nettySocketServiceInitiator = new NettySocketServiceInitiator();
         nettySocketServiceInitiator.initRemoteService(
                 this,
-                senderAccount,
+                senderId,
                 MainApplication.getMessageListener()
         );
         // 初始化MessageQueue
@@ -244,6 +245,19 @@ public class MainApplication extends Application {
         } catch (Exception e) {
             Log.e(TAG, "setUserLoginInfoAo error", e);
         }
+    }
+
+    public void clearAllSharePreferences() {
+    }
+
+    private LoginTokenAo loginTokenAo;
+
+    public LoginTokenAo getLoginTokenAo() {
+        return loginTokenAo;
+    }
+
+    public void setLoginTokenAo(LoginTokenAo loginTokenAo) {
+        this.loginTokenAo = loginTokenAo;
     }
 
     //==========messageList
@@ -382,5 +396,6 @@ public class MainApplication extends Application {
     public void onTerminate() {
         super.onTerminate();
     }
+
 
 }

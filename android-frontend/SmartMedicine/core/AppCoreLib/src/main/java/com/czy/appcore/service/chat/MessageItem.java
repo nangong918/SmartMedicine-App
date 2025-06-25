@@ -8,8 +8,8 @@ import com.czy.dal.dto.netty.forwardMessage.UserTextDataResponse;
 import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 
 public class MessageItem{
-    public String senderId;
-    public String receiverId;
+    public Long senderId;
+    public Long receiverId;
     public String content;
     public Integer messageType;
     public Long timestamp;
@@ -27,8 +27,8 @@ public class MessageItem{
         MessageItem messageItem = new MessageItem();
         messageItem.content = userChatMessageBo.msgContent;
         messageItem.messageType = userChatMessageBo.msgType;
-        messageItem.receiverId = userChatMessageBo.receiverAccount;
-        messageItem.senderId = userChatMessageBo.senderAccount;
+        messageItem.receiverId = userChatMessageBo.receiverId;
+        messageItem.senderId = userChatMessageBo.senderId;
         messageItem.timestamp = userChatMessageBo.timestamp;
         return messageItem;
     }

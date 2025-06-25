@@ -53,7 +53,7 @@ public class SocketMessageQueue {
     public void sendMessage(Message message, String messageType) {
         currentMap.computeIfAbsent(messageType, k -> new ArrayList<>()).add(message);
         // 存储到消息缓存
-        chatListMessagesMap.put(message.receiverId, message);
+        chatListMessagesMap.put(String.valueOf(message.receiverId), message);
         checkAndPersist(messageType);
     }
 
@@ -76,7 +76,7 @@ public class SocketMessageQueue {
      * @param messageType 消息类型
      * @return 属于用户的消息列表
      */
-    public List<Message> getMessagesForUser(String userId, String messageType) {
+    public List<Message> getMessagesForUser(Long userId, String messageType) {
         List<Message> userMessages = new ArrayList<>();
         List<Message> messages = currentMap.get(messageType);
         if (messages != null) {
@@ -137,7 +137,7 @@ public class SocketMessageQueue {
     }
 
     // ChatActivity的消息；MessageListActivity的消息
-    // ConcurrentHashMap<userId,Message> 专门存储ChatList界面的消息
+    // ConcurrentHashMap<userId, Message> 专门存储ChatList界面的消息
     private final Map<String, Message> chatListMessagesMap = new ConcurrentHashMap<>();
 
     // 发送的时候存储，消息接收的时候存储，然后ChatListActivity启动的时候调用获取消息

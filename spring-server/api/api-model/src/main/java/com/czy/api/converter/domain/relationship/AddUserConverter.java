@@ -20,8 +20,8 @@ public interface AddUserConverter {
     AddUserConverter INSTANCE = Mappers.getMapper(AddUserConverter.class);
 
     // request -> ao
-    @Mapping(target = "applyAccount", source = "senderId")
-    @Mapping(target = "handlerAccount", source = "receiverId")
+    @Mapping(target = "applyId", source = "senderId")
+    @Mapping(target = "handlerId", source = "receiverId")
     @Mapping(target = "applyContent", constant = "addContent")
     @Mapping(target = "source", source = "source")
     @Mapping(target = "applyStatus", source = "applyType")
@@ -51,8 +51,8 @@ public interface AddUserConverter {
     }
 
     // deleteRequest -> ao
-    @Mapping(target = "applyAccount", source = "senderId")
-    @Mapping(target = "handlerAccount", source = "receiverId")
+    @Mapping(target = "applyId", source = "senderId")
+    @Mapping(target = "handlerId", source = "receiverId")
     @Mapping(target = "applyStatus", ignore = true)
     AddUserAo deleteRequestToAo_(DeleteUserRequest request);
 

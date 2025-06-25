@@ -24,7 +24,7 @@ public final class ResponseBodyProto {
      * <code>string code = 1;</code>
      * @return The code.
      */
-    String getCode();
+    java.lang.String getCode();
     /**
      * <pre>
      * 状态码
@@ -44,7 +44,7 @@ public final class ResponseBodyProto {
      * <code>string message = 2;</code>
      * @return The message.
      */
-    String getMessage();
+    java.lang.String getMessage();
     /**
      * <pre>
      * 如果状态码非200，从此获取状态消息
@@ -61,40 +61,20 @@ public final class ResponseBodyProto {
      * 发送者ID
      * </pre>
      *
-     * <code>string senderId = 3;</code>
+     * <code>int64 senderId = 3;</code>
      * @return The senderId.
      */
-    String getSenderId();
-    /**
-     * <pre>
-     * 发送者ID
-     * </pre>
-     *
-     * <code>string senderId = 3;</code>
-     * @return The bytes for senderId.
-     */
-    com.google.protobuf.ByteString
-        getSenderIdBytes();
+    long getSenderId();
 
     /**
      * <pre>
      * 接收者ID
      * </pre>
      *
-     * <code>string receiverId = 4;</code>
+     * <code>int64 receiverId = 4;</code>
      * @return The receiverId.
      */
-    String getReceiverId();
-    /**
-     * <pre>
-     * 接收者ID
-     * </pre>
-     *
-     * <code>string receiverId = 4;</code>
-     * @return The bytes for receiverId.
-     */
-    com.google.protobuf.ByteString
-        getReceiverIdBytes();
+    long getReceiverId();
 
     /**
      * <pre>
@@ -104,7 +84,7 @@ public final class ResponseBodyProto {
      * <code>string type = 5;</code>
      * @return The type.
      */
-    String getType();
+    java.lang.String getType();
     /**
      * <pre>
      * 消息类型 (文本消息，系统，强制下线等等)
@@ -132,12 +112,12 @@ public final class ResponseBodyProto {
      * <code>map&lt;string, string&gt; data = 6;</code>
      */
     boolean containsData(
-        String key);
+        java.lang.String key);
     /**
      * Use {@link #getDataMap()} instead.
      */
-    @Deprecated
-    java.util.Map<String, String>
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, java.lang.String>
     getData();
     /**
      * <pre>
@@ -146,7 +126,7 @@ public final class ResponseBodyProto {
      *
      * <code>map&lt;string, string&gt; data = 6;</code>
      */
-    java.util.Map<String, String>
+    java.util.Map<java.lang.String, java.lang.String>
     getDataMap();
     /**
      * <pre>
@@ -157,10 +137,10 @@ public final class ResponseBodyProto {
      */
 
     /* nullable */
-String getDataOrDefault(
-        String key,
+java.lang.String getDataOrDefault(
+        java.lang.String key,
         /* nullable */
-String defaultValue);
+java.lang.String defaultValue);
     /**
      * <pre>
      * 数据
@@ -169,8 +149,8 @@ String defaultValue);
      * <code>map&lt;string, string&gt; data = 6;</code>
      */
 
-    String getDataOrThrow(
-        String key);
+    java.lang.String getDataOrThrow(
+        java.lang.String key);
 
     /**
      * <pre>
@@ -197,19 +177,17 @@ String defaultValue);
     private ResponseBody() {
       code_ = "";
       message_ = "";
-      senderId_ = "";
-      receiverId_ = "";
       type_ = "";
     }
 
-    @Override
+    @java.lang.Override
     @SuppressWarnings({"unused"})
-    protected Object newInstance(
+    protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
       return new ResponseBody();
     }
 
-    @Override
+    @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
       return this.unknownFields;
@@ -220,7 +198,7 @@ String defaultValue);
     }
 
     @SuppressWarnings({"rawtypes"})
-    @Override
+    @java.lang.Override
     protected com.google.protobuf.MapField internalGetMapField(
         int number) {
       switch (number) {
@@ -231,16 +209,16 @@ String defaultValue);
               "Invalid map field number: " + number);
       }
     }
-    @Override
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return ResponseBodyProto.internal_static_ResponseBody_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              ResponseBody.class, Builder.class);
+              ResponseBodyProto.ResponseBody.class, ResponseBodyProto.ResponseBody.Builder.class);
     }
 
     public static final int CODE_FIELD_NUMBER = 1;
-    private volatile Object code_;
+    private volatile java.lang.Object code_;
     /**
      * <pre>
      * 状态码
@@ -249,15 +227,15 @@ String defaultValue);
      * <code>string code = 1;</code>
      * @return The code.
      */
-    @Override
-    public String getCode() {
-      Object ref = code_;
-      if (ref instanceof String) {
-        return (String) ref;
+    @java.lang.Override
+    public java.lang.String getCode() {
+      java.lang.Object ref = code_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
+        java.lang.String s = bs.toStringUtf8();
         code_ = s;
         return s;
       }
@@ -270,14 +248,14 @@ String defaultValue);
      * <code>string code = 1;</code>
      * @return The bytes for code.
      */
-    @Override
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getCodeBytes() {
-      Object ref = code_;
-      if (ref instanceof String) {
+      java.lang.Object ref = code_;
+      if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
+                (java.lang.String) ref);
         code_ = b;
         return b;
       } else {
@@ -286,7 +264,7 @@ String defaultValue);
     }
 
     public static final int MESSAGE_FIELD_NUMBER = 2;
-    private volatile Object message_;
+    private volatile java.lang.Object message_;
     /**
      * <pre>
      * 如果状态码非200，从此获取状态消息
@@ -295,15 +273,15 @@ String defaultValue);
      * <code>string message = 2;</code>
      * @return The message.
      */
-    @Override
-    public String getMessage() {
-      Object ref = message_;
-      if (ref instanceof String) {
-        return (String) ref;
+    @java.lang.Override
+    public java.lang.String getMessage() {
+      java.lang.Object ref = message_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
+        java.lang.String s = bs.toStringUtf8();
         message_ = s;
         return s;
       }
@@ -316,14 +294,14 @@ String defaultValue);
      * <code>string message = 2;</code>
      * @return The bytes for message.
      */
-    @Override
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getMessageBytes() {
-      Object ref = message_;
-      if (ref instanceof String) {
+      java.lang.Object ref = message_;
+      if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
+                (java.lang.String) ref);
         message_ = b;
         return b;
       } else {
@@ -332,99 +310,37 @@ String defaultValue);
     }
 
     public static final int SENDERID_FIELD_NUMBER = 3;
-    private volatile Object senderId_;
+    private long senderId_;
     /**
      * <pre>
      * 发送者ID
      * </pre>
      *
-     * <code>string senderId = 3;</code>
+     * <code>int64 senderId = 3;</code>
      * @return The senderId.
      */
-    @Override
-    public String getSenderId() {
-      Object ref = senderId_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        senderId_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * 发送者ID
-     * </pre>
-     *
-     * <code>string senderId = 3;</code>
-     * @return The bytes for senderId.
-     */
-    @Override
-    public com.google.protobuf.ByteString
-        getSenderIdBytes() {
-      Object ref = senderId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
-        senderId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    @java.lang.Override
+    public long getSenderId() {
+      return senderId_;
     }
 
     public static final int RECEIVERID_FIELD_NUMBER = 4;
-    private volatile Object receiverId_;
+    private long receiverId_;
     /**
      * <pre>
      * 接收者ID
      * </pre>
      *
-     * <code>string receiverId = 4;</code>
+     * <code>int64 receiverId = 4;</code>
      * @return The receiverId.
      */
-    @Override
-    public String getReceiverId() {
-      Object ref = receiverId_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        receiverId_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * 接收者ID
-     * </pre>
-     *
-     * <code>string receiverId = 4;</code>
-     * @return The bytes for receiverId.
-     */
-    @Override
-    public com.google.protobuf.ByteString
-        getReceiverIdBytes() {
-      Object ref = receiverId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
-        receiverId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    @java.lang.Override
+    public long getReceiverId() {
+      return receiverId_;
     }
 
     public static final int TYPE_FIELD_NUMBER = 5;
-    private volatile Object type_;
+    private volatile java.lang.Object type_;
     /**
      * <pre>
      * 消息类型 (文本消息，系统，强制下线等等)
@@ -433,15 +349,15 @@ String defaultValue);
      * <code>string type = 5;</code>
      * @return The type.
      */
-    @Override
-    public String getType() {
-      Object ref = type_;
-      if (ref instanceof String) {
-        return (String) ref;
+    @java.lang.Override
+    public java.lang.String getType() {
+      java.lang.Object ref = type_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
+        java.lang.String s = bs.toStringUtf8();
         type_ = s;
         return s;
       }
@@ -454,14 +370,14 @@ String defaultValue);
      * <code>string type = 5;</code>
      * @return The bytes for type.
      */
-    @Override
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getTypeBytes() {
-      Object ref = type_;
-      if (ref instanceof String) {
+      java.lang.Object ref = type_;
+      if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
+                (java.lang.String) ref);
         type_ = b;
         return b;
       } else {
@@ -472,9 +388,9 @@ String defaultValue);
     public static final int DATA_FIELD_NUMBER = 6;
     private static final class DataDefaultEntryHolder {
       static final com.google.protobuf.MapEntry<
-          String, String> defaultEntry =
+          java.lang.String, java.lang.String> defaultEntry =
               com.google.protobuf.MapEntry
-              .<String, String>newDefaultInstance(
+              .<java.lang.String, java.lang.String>newDefaultInstance(
                   ResponseBodyProto.internal_static_ResponseBody_DataEntry_descriptor, 
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
@@ -482,8 +398,8 @@ String defaultValue);
                   "");
     }
     private com.google.protobuf.MapField<
-        String, String> data_;
-    private com.google.protobuf.MapField<String, String>
+        java.lang.String, java.lang.String> data_;
+    private com.google.protobuf.MapField<java.lang.String, java.lang.String>
     internalGetData() {
       if (data_ == null) {
         return com.google.protobuf.MapField.emptyMapField(
@@ -503,18 +419,18 @@ String defaultValue);
      * <code>map&lt;string, string&gt; data = 6;</code>
      */
 
-    @Override
+    @java.lang.Override
     public boolean containsData(
-        String key) {
+        java.lang.String key) {
       if (key == null) { throw new NullPointerException("map key"); }
       return internalGetData().getMap().containsKey(key);
     }
     /**
      * Use {@link #getDataMap()} instead.
      */
-    @Override
-    @Deprecated
-    public java.util.Map<String, String> getData() {
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.String> getData() {
       return getDataMap();
     }
     /**
@@ -524,9 +440,9 @@ String defaultValue);
      *
      * <code>map&lt;string, string&gt; data = 6;</code>
      */
-    @Override
+    @java.lang.Override
 
-    public java.util.Map<String, String> getDataMap() {
+    public java.util.Map<java.lang.String, java.lang.String> getDataMap() {
       return internalGetData().getMap();
     }
     /**
@@ -536,13 +452,13 @@ String defaultValue);
      *
      * <code>map&lt;string, string&gt; data = 6;</code>
      */
-    @Override
+    @java.lang.Override
 
-    public String getDataOrDefault(
-        String key,
-        String defaultValue) {
+    public java.lang.String getDataOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue) {
       if (key == null) { throw new NullPointerException("map key"); }
-      java.util.Map<String, String> map =
+      java.util.Map<java.lang.String, java.lang.String> map =
           internalGetData().getMap();
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
@@ -553,15 +469,15 @@ String defaultValue);
      *
      * <code>map&lt;string, string&gt; data = 6;</code>
      */
-    @Override
+    @java.lang.Override
 
-    public String getDataOrThrow(
-        String key) {
+    public java.lang.String getDataOrThrow(
+        java.lang.String key) {
       if (key == null) { throw new NullPointerException("map key"); }
-      java.util.Map<String, String> map =
+      java.util.Map<java.lang.String, java.lang.String> map =
           internalGetData().getMap();
       if (!map.containsKey(key)) {
-        throw new IllegalArgumentException();
+        throw new java.lang.IllegalArgumentException();
       }
       return map.get(key);
     }
@@ -576,13 +492,13 @@ String defaultValue);
      * <code>int64 timestamp = 7;</code>
      * @return The timestamp.
      */
-    @Override
+    @java.lang.Override
     public long getTimestamp() {
       return timestamp_;
     }
 
     private byte memoizedIsInitialized = -1;
-    @Override
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -592,7 +508,7 @@ String defaultValue);
       return true;
     }
 
-    @Override
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(code_)) {
@@ -601,11 +517,11 @@ String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(message_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, message_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(senderId_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, senderId_);
+      if (senderId_ != 0L) {
+        output.writeInt64(3, senderId_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiverId_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, receiverId_);
+      if (receiverId_ != 0L) {
+        output.writeInt64(4, receiverId_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(type_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, type_);
@@ -622,7 +538,7 @@ String defaultValue);
       getUnknownFields().writeTo(output);
     }
 
-    @Override
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -634,18 +550,20 @@ String defaultValue);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(message_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, message_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(senderId_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, senderId_);
+      if (senderId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(3, senderId_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiverId_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, receiverId_);
+      if (receiverId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(4, receiverId_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(type_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, type_);
       }
-      for (java.util.Map.Entry<String, String> entry
+      for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
            : internalGetData().getMap().entrySet()) {
-        com.google.protobuf.MapEntry<String, String>
+        com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
         data__ = DataDefaultEntryHolder.defaultEntry.newBuilderForType()
             .setKey(entry.getKey())
             .setValue(entry.getValue())
@@ -662,24 +580,24 @@ String defaultValue);
       return size;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof ResponseBody)) {
+      if (!(obj instanceof ResponseBodyProto.ResponseBody)) {
         return super.equals(obj);
       }
-      ResponseBody other = (ResponseBody) obj;
+      ResponseBodyProto.ResponseBody other = (ResponseBodyProto.ResponseBody) obj;
 
       if (!getCode()
           .equals(other.getCode())) return false;
       if (!getMessage()
           .equals(other.getMessage())) return false;
-      if (!getSenderId()
-          .equals(other.getSenderId())) return false;
-      if (!getReceiverId()
-          .equals(other.getReceiverId())) return false;
+      if (getSenderId()
+          != other.getSenderId()) return false;
+      if (getReceiverId()
+          != other.getReceiverId()) return false;
       if (!getType()
           .equals(other.getType())) return false;
       if (!internalGetData().equals(
@@ -690,7 +608,7 @@ String defaultValue);
       return true;
     }
 
-    @Override
+    @java.lang.Override
     public int hashCode() {
       if (memoizedHashCode != 0) {
         return memoizedHashCode;
@@ -702,9 +620,11 @@ String defaultValue);
       hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
       hash = (53 * hash) + getMessage().hashCode();
       hash = (37 * hash) + SENDERID_FIELD_NUMBER;
-      hash = (53 * hash) + getSenderId().hashCode();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getSenderId());
       hash = (37 * hash) + RECEIVERID_FIELD_NUMBER;
-      hash = (53 * hash) + getReceiverId().hashCode();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getReceiverId());
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
       hash = (53 * hash) + getType().hashCode();
       if (!internalGetData().getMap().isEmpty()) {
@@ -719,69 +639,69 @@ String defaultValue);
       return hash;
     }
 
-    public static ResponseBody parseFrom(
+    public static ResponseBodyProto.ResponseBody parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ResponseBody parseFrom(
+    public static ResponseBodyProto.ResponseBody parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ResponseBody parseFrom(
+    public static ResponseBodyProto.ResponseBody parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ResponseBody parseFrom(
+    public static ResponseBodyProto.ResponseBody parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ResponseBody parseFrom(byte[] data)
+    public static ResponseBodyProto.ResponseBody parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ResponseBody parseFrom(
+    public static ResponseBodyProto.ResponseBody parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ResponseBody parseFrom(java.io.InputStream input)
+    public static ResponseBodyProto.ResponseBody parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static ResponseBody parseFrom(
+    public static ResponseBodyProto.ResponseBody parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ResponseBody parseDelimitedFrom(java.io.InputStream input)
+    public static ResponseBodyProto.ResponseBody parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static ResponseBody parseDelimitedFrom(
+    public static ResponseBodyProto.ResponseBody parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ResponseBody parseFrom(
+    public static ResponseBodyProto.ResponseBody parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static ResponseBody parseFrom(
+    public static ResponseBodyProto.ResponseBody parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -789,21 +709,21 @@ String defaultValue);
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    @Override
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(ResponseBody prototype) {
+    public static Builder newBuilder(ResponseBodyProto.ResponseBody prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
-    @Override
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
     }
 
-    @Override
+    @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
@@ -815,7 +735,7 @@ String defaultValue);
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:ResponseBody)
-        ResponseBodyOrBuilder {
+        ResponseBodyProto.ResponseBodyOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return ResponseBodyProto.internal_static_ResponseBody_descriptor;
@@ -843,12 +763,12 @@ String defaultValue);
                 "Invalid map field number: " + number);
         }
       }
-      @Override
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return ResponseBodyProto.internal_static_ResponseBody_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                ResponseBody.class, Builder.class);
+                ResponseBodyProto.ResponseBody.class, ResponseBodyProto.ResponseBody.Builder.class);
       }
 
       // Construct using ResponseBodyProto.ResponseBody.newBuilder()
@@ -861,16 +781,16 @@ String defaultValue);
         super(parent);
 
       }
-      @Override
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         code_ = "";
 
         message_ = "";
 
-        senderId_ = "";
+        senderId_ = 0L;
 
-        receiverId_ = "";
+        receiverId_ = 0L;
 
         type_ = "";
 
@@ -880,29 +800,29 @@ String defaultValue);
         return this;
       }
 
-      @Override
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return ResponseBodyProto.internal_static_ResponseBody_descriptor;
       }
 
-      @Override
-      public ResponseBody getDefaultInstanceForType() {
-        return ResponseBody.getDefaultInstance();
+      @java.lang.Override
+      public ResponseBodyProto.ResponseBody getDefaultInstanceForType() {
+        return ResponseBodyProto.ResponseBody.getDefaultInstance();
       }
 
-      @Override
-      public ResponseBody build() {
-        ResponseBody result = buildPartial();
+      @java.lang.Override
+      public ResponseBodyProto.ResponseBody build() {
+        ResponseBodyProto.ResponseBody result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      @Override
-      public ResponseBody buildPartial() {
-        ResponseBody result = new ResponseBody(this);
+      @java.lang.Override
+      public ResponseBodyProto.ResponseBody buildPartial() {
+        ResponseBodyProto.ResponseBody result = new ResponseBodyProto.ResponseBody(this);
         int from_bitField0_ = bitField0_;
         result.code_ = code_;
         result.message_ = message_;
@@ -916,50 +836,50 @@ String defaultValue);
         return result;
       }
 
-      @Override
+      @java.lang.Override
       public Builder clone() {
         return super.clone();
       }
-      @Override
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.setField(field, value);
       }
-      @Override
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return super.clearField(field);
       }
-      @Override
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return super.clearOneof(oneof);
       }
-      @Override
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return super.setRepeatedField(field, index, value);
       }
-      @Override
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.addRepeatedField(field, value);
       }
-      @Override
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof ResponseBody) {
-          return mergeFrom((ResponseBody)other);
+        if (other instanceof ResponseBodyProto.ResponseBody) {
+          return mergeFrom((ResponseBodyProto.ResponseBody)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(ResponseBody other) {
-        if (other == ResponseBody.getDefaultInstance()) return this;
+      public Builder mergeFrom(ResponseBodyProto.ResponseBody other) {
+        if (other == ResponseBodyProto.ResponseBody.getDefaultInstance()) return this;
         if (!other.getCode().isEmpty()) {
           code_ = other.code_;
           onChanged();
@@ -968,13 +888,11 @@ String defaultValue);
           message_ = other.message_;
           onChanged();
         }
-        if (!other.getSenderId().isEmpty()) {
-          senderId_ = other.senderId_;
-          onChanged();
+        if (other.getSenderId() != 0L) {
+          setSenderId(other.getSenderId());
         }
-        if (!other.getReceiverId().isEmpty()) {
-          receiverId_ = other.receiverId_;
-          onChanged();
+        if (other.getReceiverId() != 0L) {
+          setReceiverId(other.getReceiverId());
         }
         if (!other.getType().isEmpty()) {
           type_ = other.type_;
@@ -990,18 +908,18 @@ String defaultValue);
         return this;
       }
 
-      @Override
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
-      @Override
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         if (extensionRegistry == null) {
-          throw new NullPointerException();
+          throw new java.lang.NullPointerException();
         }
         try {
           boolean done = false;
@@ -1021,23 +939,23 @@ String defaultValue);
 
                 break;
               } // case 18
-              case 26: {
-                senderId_ = input.readStringRequireUtf8();
+              case 24: {
+                senderId_ = input.readInt64();
 
                 break;
-              } // case 26
-              case 34: {
-                receiverId_ = input.readStringRequireUtf8();
+              } // case 24
+              case 32: {
+                receiverId_ = input.readInt64();
 
                 break;
-              } // case 34
+              } // case 32
               case 42: {
                 type_ = input.readStringRequireUtf8();
 
                 break;
               } // case 42
               case 50: {
-                com.google.protobuf.MapEntry<String, String>
+                com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
                 data__ = input.readMessage(
                     DataDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
                 internalGetMutableData().getMutableMap().put(
@@ -1066,7 +984,7 @@ String defaultValue);
       }
       private int bitField0_;
 
-      private Object code_ = "";
+      private java.lang.Object code_ = "";
       /**
        * <pre>
        * 状态码
@@ -1075,16 +993,16 @@ String defaultValue);
        * <code>string code = 1;</code>
        * @return The code.
        */
-      public String getCode() {
-        Object ref = code_;
-        if (!(ref instanceof String)) {
+      public java.lang.String getCode() {
+        java.lang.Object ref = code_;
+        if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
+          java.lang.String s = bs.toStringUtf8();
           code_ = s;
           return s;
         } else {
-          return (String) ref;
+          return (java.lang.String) ref;
         }
       }
       /**
@@ -1097,11 +1015,11 @@ String defaultValue);
        */
       public com.google.protobuf.ByteString
           getCodeBytes() {
-        Object ref = code_;
+        java.lang.Object ref = code_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
+                  (java.lang.String) ref);
           code_ = b;
           return b;
         } else {
@@ -1118,7 +1036,7 @@ String defaultValue);
        * @return This builder for chaining.
        */
       public Builder setCode(
-          String value) {
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -1162,7 +1080,7 @@ String defaultValue);
         return this;
       }
 
-      private Object message_ = "";
+      private java.lang.Object message_ = "";
       /**
        * <pre>
        * 如果状态码非200，从此获取状态消息
@@ -1171,16 +1089,16 @@ String defaultValue);
        * <code>string message = 2;</code>
        * @return The message.
        */
-      public String getMessage() {
-        Object ref = message_;
-        if (!(ref instanceof String)) {
+      public java.lang.String getMessage() {
+        java.lang.Object ref = message_;
+        if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
+          java.lang.String s = bs.toStringUtf8();
           message_ = s;
           return s;
         } else {
-          return (String) ref;
+          return (java.lang.String) ref;
         }
       }
       /**
@@ -1193,11 +1111,11 @@ String defaultValue);
        */
       public com.google.protobuf.ByteString
           getMessageBytes() {
-        Object ref = message_;
+        java.lang.Object ref = message_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
+                  (java.lang.String) ref);
           message_ = b;
           return b;
         } else {
@@ -1214,7 +1132,7 @@ String defaultValue);
        * @return This builder for chaining.
        */
       public Builder setMessage(
-          String value) {
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -1258,63 +1176,30 @@ String defaultValue);
         return this;
       }
 
-      private Object senderId_ = "";
+      private long senderId_ ;
       /**
        * <pre>
        * 发送者ID
        * </pre>
        *
-       * <code>string senderId = 3;</code>
+       * <code>int64 senderId = 3;</code>
        * @return The senderId.
        */
-      public String getSenderId() {
-        Object ref = senderId_;
-        if (!(ref instanceof String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
-          senderId_ = s;
-          return s;
-        } else {
-          return (String) ref;
-        }
+      @java.lang.Override
+      public long getSenderId() {
+        return senderId_;
       }
       /**
        * <pre>
        * 发送者ID
        * </pre>
        *
-       * <code>string senderId = 3;</code>
-       * @return The bytes for senderId.
-       */
-      public com.google.protobuf.ByteString
-          getSenderIdBytes() {
-        Object ref = senderId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
-          senderId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * 发送者ID
-       * </pre>
-       *
-       * <code>string senderId = 3;</code>
+       * <code>int64 senderId = 3;</code>
        * @param value The senderId to set.
        * @return This builder for chaining.
        */
-      public Builder setSenderId(
-          String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      public Builder setSenderId(long value) {
+        
         senderId_ = value;
         onChanged();
         return this;
@@ -1324,93 +1209,40 @@ String defaultValue);
        * 发送者ID
        * </pre>
        *
-       * <code>string senderId = 3;</code>
+       * <code>int64 senderId = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearSenderId() {
         
-        senderId_ = getDefaultInstance().getSenderId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * 发送者ID
-       * </pre>
-       *
-       * <code>string senderId = 3;</code>
-       * @param value The bytes for senderId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setSenderIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        senderId_ = value;
+        senderId_ = 0L;
         onChanged();
         return this;
       }
 
-      private Object receiverId_ = "";
+      private long receiverId_ ;
       /**
        * <pre>
        * 接收者ID
        * </pre>
        *
-       * <code>string receiverId = 4;</code>
+       * <code>int64 receiverId = 4;</code>
        * @return The receiverId.
        */
-      public String getReceiverId() {
-        Object ref = receiverId_;
-        if (!(ref instanceof String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
-          receiverId_ = s;
-          return s;
-        } else {
-          return (String) ref;
-        }
+      @java.lang.Override
+      public long getReceiverId() {
+        return receiverId_;
       }
       /**
        * <pre>
        * 接收者ID
        * </pre>
        *
-       * <code>string receiverId = 4;</code>
-       * @return The bytes for receiverId.
-       */
-      public com.google.protobuf.ByteString
-          getReceiverIdBytes() {
-        Object ref = receiverId_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
-          receiverId_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * 接收者ID
-       * </pre>
-       *
-       * <code>string receiverId = 4;</code>
+       * <code>int64 receiverId = 4;</code>
        * @param value The receiverId to set.
        * @return This builder for chaining.
        */
-      public Builder setReceiverId(
-          String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      public Builder setReceiverId(long value) {
+        
         receiverId_ = value;
         onChanged();
         return this;
@@ -1420,37 +1252,17 @@ String defaultValue);
        * 接收者ID
        * </pre>
        *
-       * <code>string receiverId = 4;</code>
+       * <code>int64 receiverId = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearReceiverId() {
         
-        receiverId_ = getDefaultInstance().getReceiverId();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * 接收者ID
-       * </pre>
-       *
-       * <code>string receiverId = 4;</code>
-       * @param value The bytes for receiverId to set.
-       * @return This builder for chaining.
-       */
-      public Builder setReceiverIdBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        receiverId_ = value;
+        receiverId_ = 0L;
         onChanged();
         return this;
       }
 
-      private Object type_ = "";
+      private java.lang.Object type_ = "";
       /**
        * <pre>
        * 消息类型 (文本消息，系统，强制下线等等)
@@ -1459,16 +1271,16 @@ String defaultValue);
        * <code>string type = 5;</code>
        * @return The type.
        */
-      public String getType() {
-        Object ref = type_;
-        if (!(ref instanceof String)) {
+      public java.lang.String getType() {
+        java.lang.Object ref = type_;
+        if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
+          java.lang.String s = bs.toStringUtf8();
           type_ = s;
           return s;
         } else {
-          return (String) ref;
+          return (java.lang.String) ref;
         }
       }
       /**
@@ -1481,11 +1293,11 @@ String defaultValue);
        */
       public com.google.protobuf.ByteString
           getTypeBytes() {
-        Object ref = type_;
+        java.lang.Object ref = type_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
+                  (java.lang.String) ref);
           type_ = b;
           return b;
         } else {
@@ -1502,7 +1314,7 @@ String defaultValue);
        * @return This builder for chaining.
        */
       public Builder setType(
-          String value) {
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -1547,8 +1359,8 @@ String defaultValue);
       }
 
       private com.google.protobuf.MapField<
-          String, String> data_;
-      private com.google.protobuf.MapField<String, String>
+          java.lang.String, java.lang.String> data_;
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
       internalGetData() {
         if (data_ == null) {
           return com.google.protobuf.MapField.emptyMapField(
@@ -1556,7 +1368,7 @@ String defaultValue);
         }
         return data_;
       }
-      private com.google.protobuf.MapField<String, String>
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
       internalGetMutableData() {
         onChanged();;
         if (data_ == null) {
@@ -1580,18 +1392,18 @@ String defaultValue);
        * <code>map&lt;string, string&gt; data = 6;</code>
        */
 
-      @Override
+      @java.lang.Override
       public boolean containsData(
-          String key) {
+          java.lang.String key) {
         if (key == null) { throw new NullPointerException("map key"); }
         return internalGetData().getMap().containsKey(key);
       }
       /**
        * Use {@link #getDataMap()} instead.
        */
-      @Override
-      @Deprecated
-      public java.util.Map<String, String> getData() {
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String> getData() {
         return getDataMap();
       }
       /**
@@ -1601,9 +1413,9 @@ String defaultValue);
        *
        * <code>map&lt;string, string&gt; data = 6;</code>
        */
-      @Override
+      @java.lang.Override
 
-      public java.util.Map<String, String> getDataMap() {
+      public java.util.Map<java.lang.String, java.lang.String> getDataMap() {
         return internalGetData().getMap();
       }
       /**
@@ -1613,13 +1425,13 @@ String defaultValue);
        *
        * <code>map&lt;string, string&gt; data = 6;</code>
        */
-      @Override
+      @java.lang.Override
 
-      public String getDataOrDefault(
-          String key,
-          String defaultValue) {
+      public java.lang.String getDataOrDefault(
+          java.lang.String key,
+          java.lang.String defaultValue) {
         if (key == null) { throw new NullPointerException("map key"); }
-        java.util.Map<String, String> map =
+        java.util.Map<java.lang.String, java.lang.String> map =
             internalGetData().getMap();
         return map.containsKey(key) ? map.get(key) : defaultValue;
       }
@@ -1630,15 +1442,15 @@ String defaultValue);
        *
        * <code>map&lt;string, string&gt; data = 6;</code>
        */
-      @Override
+      @java.lang.Override
 
-      public String getDataOrThrow(
-          String key) {
+      public java.lang.String getDataOrThrow(
+          java.lang.String key) {
         if (key == null) { throw new NullPointerException("map key"); }
-        java.util.Map<String, String> map =
+        java.util.Map<java.lang.String, java.lang.String> map =
             internalGetData().getMap();
         if (!map.containsKey(key)) {
-          throw new IllegalArgumentException();
+          throw new java.lang.IllegalArgumentException();
         }
         return map.get(key);
       }
@@ -1657,7 +1469,7 @@ String defaultValue);
        */
 
       public Builder removeData(
-          String key) {
+          java.lang.String key) {
         if (key == null) { throw new NullPointerException("map key"); }
         internalGetMutableData().getMutableMap()
             .remove(key);
@@ -1666,8 +1478,8 @@ String defaultValue);
       /**
        * Use alternate mutation accessors instead.
        */
-      @Deprecated
-      public java.util.Map<String, String>
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String>
       getMutableData() {
         return internalGetMutableData().getMutableMap();
       }
@@ -1679,8 +1491,8 @@ String defaultValue);
        * <code>map&lt;string, string&gt; data = 6;</code>
        */
       public Builder putData(
-          String key,
-          String value) {
+          java.lang.String key,
+          java.lang.String value) {
         if (key == null) { throw new NullPointerException("map key"); }
         if (value == null) {
   throw new NullPointerException("map value");
@@ -1699,7 +1511,7 @@ String defaultValue);
        */
 
       public Builder putAllData(
-          java.util.Map<String, String> values) {
+          java.util.Map<java.lang.String, java.lang.String> values) {
         internalGetMutableData().getMutableMap()
             .putAll(values);
         return this;
@@ -1714,7 +1526,7 @@ String defaultValue);
        * <code>int64 timestamp = 7;</code>
        * @return The timestamp.
        */
-      @Override
+      @java.lang.Override
       public long getTimestamp() {
         return timestamp_;
       }
@@ -1747,13 +1559,13 @@ String defaultValue);
         onChanged();
         return this;
       }
-      @Override
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFields(unknownFields);
       }
 
-      @Override
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
@@ -1764,18 +1576,18 @@ String defaultValue);
     }
 
     // @@protoc_insertion_point(class_scope:ResponseBody)
-    private static final ResponseBody DEFAULT_INSTANCE;
+    private static final ResponseBodyProto.ResponseBody DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new ResponseBody();
+      DEFAULT_INSTANCE = new ResponseBodyProto.ResponseBody();
     }
 
-    public static ResponseBody getDefaultInstance() {
+    public static ResponseBodyProto.ResponseBody getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
     private static final com.google.protobuf.Parser<ResponseBody>
         PARSER = new com.google.protobuf.AbstractParser<ResponseBody>() {
-      @Override
+      @java.lang.Override
       public ResponseBody parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1799,13 +1611,13 @@ String defaultValue);
       return PARSER;
     }
 
-    @Override
+    @java.lang.Override
     public com.google.protobuf.Parser<ResponseBody> getParserForType() {
       return PARSER;
     }
 
-    @Override
-    public ResponseBody getDefaultInstanceForType() {
+    @java.lang.Override
+    public ResponseBodyProto.ResponseBody getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1829,10 +1641,10 @@ String defaultValue);
   private static  com.google.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
-    String[] descriptorData = {
+    java.lang.String[] descriptorData = {
       "\n\022ResponseBody.proto\"\310\001\n\014ResponseBody\022\014\n" +
       "\004code\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\020\n\010senderId" +
-      "\030\003 \001(\t\022\022\n\nreceiverId\030\004 \001(\t\022\014\n\004type\030\005 \001(\t" +
+      "\030\003 \001(\003\022\022\n\nreceiverId\030\004 \001(\003\022\014\n\004type\030\005 \001(\t" +
       "\022%\n\004data\030\006 \003(\0132\027.ResponseBody.DataEntry\022" +
       "\021\n\ttimestamp\030\007 \001(\003\032+\n\tDataEntry\022\013\n\003key\030\001" +
       " \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001B\023B\021ResponseBodyP" +
@@ -1847,13 +1659,13 @@ String defaultValue);
     internal_static_ResponseBody_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ResponseBody_descriptor,
-        new String[] { "Code", "Message", "SenderId", "ReceiverId", "Type", "Data", "Timestamp", });
+        new java.lang.String[] { "Code", "Message", "SenderId", "ReceiverId", "Type", "Data", "Timestamp", });
     internal_static_ResponseBody_DataEntry_descriptor =
       internal_static_ResponseBody_descriptor.getNestedTypes().get(0);
     internal_static_ResponseBody_DataEntry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ResponseBody_DataEntry_descriptor,
-        new String[] { "Key", "Value", });
+        new java.lang.String[] { "Key", "Value", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

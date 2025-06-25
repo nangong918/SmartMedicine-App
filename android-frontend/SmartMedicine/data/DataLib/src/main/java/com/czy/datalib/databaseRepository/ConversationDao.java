@@ -28,7 +28,7 @@ public interface ConversationDao {
     @Query("SELECT * FROM conversation " +
             "WHERE sender_id = :userId " +
             "OR receiver_id = :userId ORDER BY timestamp DESC")
-    List<ConversationDo> loadConversationsByUserId(String userId);
+    List<ConversationDo> loadConversationsByUserId(Long userId);
 
 
     /**
@@ -42,7 +42,7 @@ public interface ConversationDao {
             "OR receiver_id = :userId " +
             "ORDER BY timestamp DESC " +
             "LIMIT :limit")
-    List<ConversationDo> loadConversationsByUserIdWithLimit(String userId, int limit);
+    List<ConversationDo> loadConversationsByUserIdWithLimit(Long userId, int limit);
 
     /**
      * 根据对话 ID 删除对话记录
@@ -59,7 +59,7 @@ public interface ConversationDao {
     @Query("DELETE FROM conversation WHERE " +
             "sender_id = :userId " +
             "OR receiver_id = :userId")
-    void deleteAllByUserId(String userId);
+    void deleteAllByUserId(Long userId);
 
     /**
      * 更新对话记录

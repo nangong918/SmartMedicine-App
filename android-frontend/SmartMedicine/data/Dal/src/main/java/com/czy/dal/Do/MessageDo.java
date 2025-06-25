@@ -12,9 +12,9 @@ public class MessageDo implements BaseBean {
     @ColumnInfo(name = "mid")
     public int mid;
     @ColumnInfo(name = "sender_id")
-    public String senderId;
+    public Long senderId;
     @ColumnInfo(name = "receiver_id")
-    public String receiverId;
+    public Long receiverId;
     @ColumnInfo(name = "message_type")
     public String messageType;
     @ColumnInfo(name = "timestamp", index = true) // 添加索引

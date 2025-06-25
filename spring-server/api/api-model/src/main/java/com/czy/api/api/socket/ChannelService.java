@@ -7,8 +7,8 @@ package com.czy.api.api.socket;
 public interface ChannelService {
 
     // 查询是否在线
-    boolean isOnline(String userAccount);
+    boolean isOnline(Long userId);
 
     // 强制下线请求
-    void forceOffline(String userAccount);
+    void forceOffline(Long userId);
 }

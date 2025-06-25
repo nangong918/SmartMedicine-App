@@ -5,8 +5,10 @@ import json.BaseBean;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -17,10 +19,10 @@ import java.util.Map;
 public class Message implements BaseBean {
     // 1.实现Message。2.实现其他类型的Message。3.Message用ProtoBuf序列化
     // 4.Message用MyBatis存入数据库。5.Message用Redis缓存。6.Message用RabbitMQ发送
-    @NotBlank(message = "Sender Account cannot be null or empty")
-    private String senderId;
-    @NotBlank(message = "receiver Account cannot be null or empty")
-    private String receiverId;
+    @NotNull(message = "Sender Id cannot be null or empty")
+    private Long senderId;
+    @NotNull(message = "receiver Id cannot be null or empty")
+    private Long receiverId;
     @NotBlank(message = "Message type cannot be null or empty")
     private String type;
     private Map<String, String> data;
@@ -45,17 +47,25 @@ public class Message implements BaseBean {
         this.senderId = message.getSenderId();
         this.receiverId = message.getReceiverId();
         this.type = message.getType();
-        this.data = new HashMap<>(message.getData());
+        if (message.getData() != null){
+            this.data = message.getData().entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue() != null) // 过滤掉值为 null 的条目
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+        else {
+            this.data = new HashMap<>();
+        }
         this.timestamp = message.getTimestamp();
     }
 
     // 非空化
     public void nonNull(){
         if (this.senderId == null){
-            this.senderId = "";
+            this.senderId = -1L;
         }
         if (this.receiverId == null){
-            this.receiverId = "";
+            this.receiverId = -1L;
         }
         if (this.type == null){
             this.type = "";

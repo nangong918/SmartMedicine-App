@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.czy.smartmedicine.viewModel.ChatViewModel" />
+            type="com.czy.smartmedicine.viewModel.activity.ChatViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

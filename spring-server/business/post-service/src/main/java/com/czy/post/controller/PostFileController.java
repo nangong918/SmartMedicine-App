@@ -146,7 +146,7 @@ public class PostFileController {
             if (!CollectionUtils.isEmpty(successIds)){
                 PostOssResponse postOssResponse = new PostOssResponse();
                 postOssResponse.setUserId(userId);
-                postOssResponse.setUserAccount(userDo.getAccount());
+//                postOssResponse.setUserAccount(userDo.getAccount());
                 postOssResponse.setServiceId(PostConstant.serviceName);
                 postOssResponse.setPublishId(postId);
                 postOssResponse.setFileIds(successIds);

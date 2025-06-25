@@ -14,8 +14,8 @@ class HandleAddUserResConverterTest {
     @Test
     void getMessage() {
         BaseResponseData baseResponseData = new BaseResponseData();
-        baseResponseData.setSenderId("senderId");
-        baseResponseData.setReceiverId("receiverId");
+        baseResponseData.setSenderId(1L);
+        baseResponseData.setReceiverId(2L);
         baseResponseData.setType("type");
         baseResponseData.setTimestamp(String.valueOf(System.currentTimeMillis()));
         baseResponseData.setCode("200");

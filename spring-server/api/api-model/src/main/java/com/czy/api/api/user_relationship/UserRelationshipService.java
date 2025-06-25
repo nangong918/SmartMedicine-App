@@ -53,28 +53,28 @@ public interface UserRelationshipService {
 
     /**
      * 获取好友列表
-     * @param senderAccount
+     * @param senderId
      * @return
      */
-    List<UserViewEntity> getFriendList(String senderAccount);
+    List<UserViewEntity> getFriendList(Long senderId);
 
     // 获取我被别人加的好友请求列表
-    List<NewUserItemAo> getAddMeRequestList(String handlerAccount);
+    List<NewUserItemAo> getAddMeRequestList(Long handlerId);
 
     // 获取我加别人的好友列表
-    List<NewUserItemAo> getHandleMyAddUserResponseList(String senderAccount);
+    List<NewUserItemAo> getHandleMyAddUserResponseList(Long senderId);
 
     /**
      * 获取我加别人的好友列表
-     * @param senderAccount
+     * @param senderId
      * @return
      */
-    List<MyFriendItemAo> getMyFriendList(String senderAccount);
+    List<MyFriendItemAo> getMyFriendList(Long senderId);
 
-    // 搜索好友及其添加状态
-    List<SearchFriendApplyAo> searchFriend(String applyAccount, String handlerAccount);
+    // 通过账号搜索好友及其添加状态
+    List<SearchFriendApplyAo> searchFriend(Long applyId, String handlerAccount);
     // 根据用户名搜索好友
-    List<SearchFriendApplyAo> searchFriendByName(String applyAccount, String handlerUserName);
+    List<SearchFriendApplyAo> searchFriendByName(Long applyId, String handlerUserName);
 
     void updateApplyStatus(AddUserAo addUserAo);
 

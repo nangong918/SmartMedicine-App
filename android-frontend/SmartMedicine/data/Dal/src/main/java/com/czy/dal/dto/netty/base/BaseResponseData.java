@@ -41,7 +41,7 @@ public class BaseResponseData extends BaseRequestData {
     }
 
     public void setBaseResponseData(String code, String message,
-                                    String senderId, String receiverId, String type, String timestamp){
+                                    Long senderId, Long receiverId, String type, String timestamp){
         this.code = code;
         this.message = message;
         this.setSenderId(senderId);

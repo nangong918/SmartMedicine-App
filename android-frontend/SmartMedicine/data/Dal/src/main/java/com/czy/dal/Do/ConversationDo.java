@@ -13,9 +13,9 @@ public class ConversationDo {
     public long conversationId; // 自增的对话 ID
 
     @ColumnInfo(name = "sender_id")
-    public String senderId; // 用户 ID
+    public Long senderId; // 用户 ID
     @ColumnInfo(name = "receiver_id", index = true)
-    public String receiverId;// 收信人 ID
+    public Long receiverId;// 收信人 ID
     @ColumnInfo(name = "last_message_id")
     public int lastMessageId; // 消息 ID，关联到 MessageDo 表
     @ColumnInfo(name = "timestamp")

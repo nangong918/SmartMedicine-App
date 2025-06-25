@@ -14,7 +14,6 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(SpringRunner.class)
@@ -32,11 +31,11 @@ public class Demo01ProducerTest {
     @Test
     public void testSyncSend() throws ExecutionException, InterruptedException {
         int id = (int) (System.currentTimeMillis() / 1000);
-        SendResult result = demo01Producer.syncSend(id);
+        // 发送消息并获取结果
+        SendResult<Object, Object> result = demo01Producer.syncSend(id);
         logger.info("[testSyncSend][发送编号：[{}] 发送结果：[{}]]", id, result);
 
-        // 阻塞等待，保证消费
-        new CountDownLatch(1).await();
+        Thread.sleep(4000L);
     }
 
     @Test
@@ -57,7 +56,7 @@ public class Demo01ProducerTest {
         });
 
         // 阻塞等待，保证消费
-        new CountDownLatch(1).await();
+        Thread.sleep(4000L);
     }
 //
 //    @Test

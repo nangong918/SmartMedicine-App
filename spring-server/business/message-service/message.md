@@ -11,11 +11,15 @@
 
 # NettyHandler
 ### ChatApi
-* 发送文本消息
+* 发送文本消息                                √
 * 发送图片消息
 ### ConnectApi
 * 用户连接
 * 用户断开连接
 ### ToServiceApi
-* Ping心跳请求
+* Ping心跳请求                               o
 * 已读消息
+
+# Netty的id从account改为user_id
+# 数据查询: 分页查询
+# 数据存储: 分库分表

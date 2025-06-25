@@ -82,9 +82,9 @@ public class EventManager<T> extends BaseEventManager<Message> {
             return;
         }
         try {
-            // 获取方法的第二个参数类型（即请求参数类型）
+            // 获取方法的第1个参数类型（即请求参数类型）(做出修改，方法不持有channel，所以第二个参数改为第一个参数)
             // 获取目标方法的参数类型
-            Class<?> parameterType = targetMethod.getParameterTypes()[1];
+            Class<?> parameterType = targetMethod.getParameterTypes()[0];
             // 检查 parameterType 是否是 BaseRequestData 或其子类
             if (BaseRequestData.class.isAssignableFrom(parameterType)) {
                 // 进行安全转换

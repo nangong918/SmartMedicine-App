@@ -22,11 +22,11 @@ import com.czy.customviewlib.view.chatMessage.ChatMessageAdapter;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.constant.MessageTypeEnum;
 import com.czy.dal.vo.entity.message.ChatMessageItemVo;
-import com.czy.dal.vo.viewModelVo.chat.ChatVo;
+import com.czy.dal.vo.fragmentActivity.chat.ChatVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityChatBinding;
-import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.ChatViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.activity.ChatViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

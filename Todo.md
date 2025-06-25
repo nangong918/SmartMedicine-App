@@ -193,11 +193,27 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
     * 学习       2天 (16~17)
     * 重构Mq测试  1天 (18)
   * 重构netty,message,user服务的handler;logging服务的kafka-handler;netty的kafka-sender
-    * 4天 (19~23)
-  * 构建App
-    * 3天
-  * 共8天
-  * 6月13~23
+    * 4天 (19~23): 启动App测试Netty,调整通过一个mq再修改其他的mq
+      * 重构Spring + 构建测试App
+      * Kafka:netty的post行为,埋点;
+      * Kafka:搜索行为
+      * Kafka:发布帖子行为
+      * Kafka:帖子评论行为
+* App聊天
+  * 重构netty和app服务,将长连接改为userId而不是userAccount 1天(24)
+  * 好友相关 3天 (25~27)
+    * 添加,删除好友
+    * 好友列表
+  * 聊天相关 3天 (28~7月2)
+    * 发送文本消息
+    * 发送图片消息
+  * 学习MySQL,MongoDB,ElasticSearch,Neo4j,Hive特性
+  * 学习查询分页,学习数据库分库分表 4天(2~5)
+  * 聊天记录相关 5天 (7~11)
+    * 临时聊天记录列表
+    * 单个好友分页聊天记录
+    * 关键词ElasticSearch查询聊天记录
+    * 聊天记录存储的分库分表设计
 * App获取帖子联调
   * url存储在redis重构
   * redis学习
@@ -249,10 +265,10 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 
 
 ##### 最终功能补充 (不要着急写新功能,在当前系统未重构优化完成之间,禁止开发新功能)
-* AI问诊
+* 商品购物 (联合推荐系统 + 大麦的pay系统) [一般的公司都有支付系统,此功能至少实现]
 * 用药提醒
 * 医疗预测
-* 商品购物 (联合推荐系统 + 大麦的pay系统)
+* AI问诊
 * 语音视频通话
 * 群组+直播
 * 后台管理
@@ -269,23 +285,15 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 4. 重构netty-socket;使其能分布式部署
 
 
-
-我现在需要重构netty-socket服务,这个服务是我专门用来管理netty和前端长连接的服务.
-这个服务可以理解为类似网络层中的物理层或者数据链路层,对数据无感知,
-对于前端使用netty长连接.对于后端,使用rabbitmq来发送消息.
-当然现在的netty代码我已经设计好了,需要你帮我重构rabbitmq.
-用户之间的消息需要交给message-service,post-service,user-relationship-service和logging-service
-其中logging-service是日志收集,用的是kafka.数据丢失也没关系.
-message-service处理用户间聊天消息:
-聊天消息包括:文本,图片,语音,视频,单聊,群聊等.需要你创建交换机并交给对应的队列.订阅模式是Topic模式.
-保证消息可靠:幂等性,持久化,死信队列和重发机制.
-post-service处理帖子消息:
-帖子消息包括:点赞,评论等
-同样也是交换机 + Topic模式
-也要保证消息可靠性
-user-relationship-service是用户之间的添加好友,删除,拉黑等
-同样也是交换机 + Topic模式
-也要保证消息可靠性
-所有的队列都要在netty-socket微服务创建,因为这个服务会最先启动,需要在它的config创建好其他微服务的队列和交换机.
-并且还要考虑到netty-socket启动多实例的情况,避免队列和交换机重复创建.
-还要考虑创建队列合理性,避免一个队列消息过多而消息堆积.
+先跑通再优化
+优化点:
+1. mysql,mongodb,elasticsearch分库分页分表,数据库连接池,用户聊天记录存储优化.
+2. sql优化
+3. 缓存结构优化: redis; jvm
+4. 消息队列mq优化: kafka,rabbitmq,rocketmq
+5. 网关结构优化: nginx; spring-cloud-gateway
+6. 线程优化:线程,线程池,定时任务
+7. 网络优化:netty(分布式netty集群); webflux
+8. oss优化, url存储在redis中,并且redis.ttl < oss.ttl
+9. 搜索,排序算法优化.
+10. 微服务分布式优化:集群,均衡负载,分布式锁,分布式事务,链路,服务注册,服务发现,服务熔断,服务限流

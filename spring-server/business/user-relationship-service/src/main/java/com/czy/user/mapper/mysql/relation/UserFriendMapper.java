@@ -35,10 +35,10 @@ public interface UserFriendMapper {
     List<UserViewEntity> getUserFriendsViewByAccount(String userAccount);
 
     // 通过userId查询用户好友的全部好友及其view信息
-    List<UserViewEntity> getUserFriendsViewByUserId(int userId);
+    List<UserViewEntity> getUserFriendsViewByUserId(Long userId);
 
     // 查询用户的好友数量
-    int getUserFriendsCount(int userId);
+    int getUserFriendsCount(Long userId);
 
     // 查询两个用户是否是好友
     int isFriend(@Param("userId") Long userId, @Param("friendId") Long friendId);

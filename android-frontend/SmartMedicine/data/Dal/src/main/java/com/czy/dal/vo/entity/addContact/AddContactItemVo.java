@@ -32,6 +32,8 @@ public class AddContactItemVo {
     public String name = "";
     // 账号
     public String account = "";
+    // id
+    public Long uid;
     // 添加状态
     public AddUserStatusAo addUserStatusAo = new AddUserStatusAo();
     // AddContactItemVo(对方)是被添加的

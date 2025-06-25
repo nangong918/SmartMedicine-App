@@ -14,7 +14,8 @@ import javax.validation.constraints.NotEmpty;
 public class PhoneLoginRequest extends DeviceInfoRequest {
     @NotEmpty(message = "手机号不能为空")
     private String phone;
-
+    @NotEmpty(message = "用户账号不能为空")
+    private String account;
     @NotEmpty(message = "验证码不能为空")
     private String vcode;
 

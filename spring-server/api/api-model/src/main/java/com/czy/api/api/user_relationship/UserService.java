@@ -42,6 +42,7 @@ public interface UserService {
      * @return      用户
      */
     UserDo getUserById(Long id);
+    boolean checkUserExist(Long userId);
     /**
      * 根据id获取用户
      * @param ids   id列表

@@ -2,7 +2,7 @@ package com.czy.api.domain.dto.http.response;
 
 
 
-import com.czy.api.domain.dto.http.base.BaseNettyResponse;
+import com.czy.api.domain.dto.http.base.BaseHttpResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class AddUserToTargetUserResponse extends BaseNettyResponse {
+public class AddUserToTargetUserResponse extends BaseHttpResponse {
     // 申请者名称
     public String appliedUserName;
     // 头像uri

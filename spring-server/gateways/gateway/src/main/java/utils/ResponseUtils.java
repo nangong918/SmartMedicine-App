@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 public class ResponseUtils {
 
     public static Mono<Void> setErrorResponse(ServerWebExchange exchange, String errorMessage) {
-        BaseResponse<Void> responseJson = new BaseResponse<>(HttpStatus.FORBIDDEN.value(), errorMessage, null);
+        BaseResponse<Void> responseJson = new BaseResponse<>(HttpStatus.FORBIDDEN.getReasonPhrase(), errorMessage, null);
         exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
         exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
         String jsonResponse = JSON.toJSONString(responseJson);
