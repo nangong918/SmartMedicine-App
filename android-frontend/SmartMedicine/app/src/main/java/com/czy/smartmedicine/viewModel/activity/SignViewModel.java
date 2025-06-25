@@ -1,11 +1,9 @@
 package com.czy.smartmedicine.viewModel.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -15,42 +13,28 @@ import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.api.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.appcore.service.UserModel;
 import com.czy.appcore.utils.OnTextInputEnd;
 import com.czy.appcore.utils.TextChangeLegalCallback;
 import com.czy.appcore.utils.phone.PhoneTextUtil;
 import com.czy.appcore.utils.vcode.VcodeTextUtil;
-import com.czy.baseUtilsLib.callback.OnFinish;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.permission.GainPermissionCallback;
 import com.czy.baseUtilsLib.permission.PermissionUtil;
-import com.czy.baseUtilsLib.timer.CountDownTimerUtil;
-import com.czy.baseUtilsLib.timer.CountdownCallback;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.login.LoginTokenAo;
 import com.czy.dal.constant.Constants;
-import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
-import com.czy.dal.dto.http.request.SendSmsInfoRequest;
 import com.czy.dal.dto.http.response.IsRegisterResponse;
-import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.vo.fragmentActivity.SignVo;
-import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.response.LoginSignResponse;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.R;
 import com.czy.smartmedicine.activity.MainActivity;
-import com.czy.smartmedicine.test.TestConfig;
-import com.czy.smartmedicine.utils.ResponseTool;
-import com.czy.smartmedicine.utils.ViewModelUtil;
 
-import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author 13225

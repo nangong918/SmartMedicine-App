@@ -27,7 +27,7 @@ import com.czy.baseUtilsLib.timer.CountDownTimerUtil;
 import com.czy.baseUtilsLib.timer.CountdownCallback;
 import com.czy.dal.ao.intent.RegisterActivityIntentAo;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
-import com.czy.dal.dto.http.request.SendSmsInfoRequest;
+import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.vo.entity.UserVo;
@@ -85,7 +85,7 @@ public class RegisterViewModel extends ViewModel {
     }
 
     private void doSendSms(Context context, String phone, String type, SyncRequestCallback callback){
-        SendSmsInfoRequest request = new SendSmsInfoRequest(phone, type);
+        SendSmsRequest request = new SendSmsRequest(phone, type);
         apiRequestImpl.sendSms(
                 request,
                 response -> {

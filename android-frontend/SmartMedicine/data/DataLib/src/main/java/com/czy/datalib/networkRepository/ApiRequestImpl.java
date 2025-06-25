@@ -2,7 +2,6 @@ package com.czy.datalib.networkRepository;
 
 
 import com.czy.appcore.network.api.ApiRequest;
-import com.czy.appcore.network.api.SyncRequestCallback;
 import com.czy.baseUtilsLib.network.BaseApiRequestImpl;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.OnSuccessCallback;
@@ -15,7 +14,7 @@ import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
-import com.czy.dal.dto.http.request.SendSmsInfoRequest;
+import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -39,7 +38,6 @@ import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.http.Part;
 
 public class ApiRequestImpl extends BaseApiRequestImpl {
 
@@ -51,7 +49,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/login/sendSms")
     //    Observable<BaseResponse<String>> sendSms(@Body BaseRequest baseRequest);
-    public void sendSms(SendSmsInfoRequest request,
+    public void sendSms(SendSmsRequest request,
                         OnSuccessCallback<BaseResponse<SendSmsResponse>> onSuccessCallback,
                         OnThrowableCallback onThrowableCallback){
         sendRequestCallback(

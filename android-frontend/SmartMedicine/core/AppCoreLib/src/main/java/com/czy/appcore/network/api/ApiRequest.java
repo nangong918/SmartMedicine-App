@@ -3,7 +3,6 @@ package com.czy.appcore.network.api;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.constant.backEnd.BackEndConstant;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
-import com.czy.dal.dto.http.request.BaseRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
@@ -11,7 +10,7 @@ import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
-import com.czy.dal.dto.http.request.SendSmsInfoRequest;
+import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -61,7 +60,7 @@ public interface ApiRequest {
      * @return
      */
     @POST(BackEndConstant.USER_RELATION + "/login/sendSms")
-    Observable<BaseResponse<SendSmsResponse>> sendSms(@Body SendSmsInfoRequest request);
+    Observable<BaseResponse<SendSmsResponse>> sendSms(@Body SendSmsRequest request);
 
     /**
      * 短信验证码登录
