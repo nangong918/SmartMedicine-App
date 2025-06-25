@@ -12,8 +12,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class UserActionOperatePost extends UserActionMessage {
 
-    public static final String TOPIC = "USER_ACTION_OPERATE_POST";
-
     private Long postId;
     private Integer operateType;
 }

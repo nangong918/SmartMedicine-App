@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.loader.content.CursorLoader;
@@ -206,9 +207,9 @@ public class FileUtil {
      * @param file  文件
      * @return MultipartBody.Part
      */
-    public static MultipartBody.Part createMultipartBodyPart(File file) {
+    public static MultipartBody.Part createMultipartBodyPart(File file, @NonNull String fileRequestParamName) {
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        return MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+        return MultipartBody.Part.createFormData(fileRequestParamName, file.getName(), requestFile);
     }
 
     /**

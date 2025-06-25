@@ -2,6 +2,7 @@ package com.czy.smartmedicine.activity;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.czy.appcore.network.netty.api.receive.ReceiveMessageApi;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.dal.constant.Constants;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.dal.dto.netty.forwardMessage.SendTextDataRequest;
 import com.czy.dal.dto.netty.forwardMessage.UserImageResponse;
@@ -50,8 +52,11 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
         super.setListener();
 
         binding.btnInit.setOnClickListener(v -> {
-            String sendId = binding.etSenderId.getText().toString();
-            if (TextUtils.isEmpty(sendId)){
+            Long sendId = Optional.ofNullable(binding.etSenderId.getText())
+                    .map(Editable::toString)
+                    .map(Long::parseLong)
+                    .orElse(Constants.ERROR_ID);
+            if (Constants.ERROR_ID.equals(sendId)){
                 ToastUtils.showToastActivity(this, "请输入发送者id");
                 return;
             }
@@ -60,15 +65,22 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
         });
 
         binding.btnSend.setOnClickListener(v -> {
-            String senderId = binding.etSenderId.getText().toString();
-            String receiveId = binding.etReceiverId.getText().toString();
-            Log.i("Socket", "senderId: " + senderId + " receiveId: " + receiveId);
+            Long senderId = Optional.ofNullable(binding.etSenderId.getText())
+                    .map(Editable::toString)
+                    .map(Long::parseLong)
+                    .orElse(Constants.ERROR_ID);
+
+            Long receiverId = Optional.ofNullable(binding.etReceiverId.getText())
+                    .map(Editable::toString)
+                    .map(Long::parseLong)
+                    .orElse(Constants.ERROR_ID);
+            Log.i("Socket", "senderId: " + senderId + " receiverId: " + receiverId);
             String content = binding.etMessage.getText().toString();
 
             SendTextDataRequest sendTextDataRequest = new SendTextDataRequest();
             sendTextDataRequest.setContent(content);
             sendTextDataRequest.setSenderId(senderId);
-            sendTextDataRequest.setReceiverId(receiveId);
+            sendTextDataRequest.setReceiverId(receiverId);
 
             try {
                 Optional.ofNullable(MainApplication.getInstance())

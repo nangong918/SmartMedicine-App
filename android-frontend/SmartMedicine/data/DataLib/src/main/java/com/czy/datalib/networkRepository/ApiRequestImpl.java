@@ -6,25 +6,33 @@ import com.czy.baseUtilsLib.network.BaseApiRequestImpl;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.OnSuccessCallback;
 import com.czy.baseUtilsLib.network.OnThrowableCallback;
-import com.czy.dal.dto.http.request.BaseNettyRequest;
+import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
-import com.czy.dal.dto.http.request.PhoneLoginRequest;
+import com.czy.dal.dto.http.request.IsRegisterRequest;
+import com.czy.dal.dto.http.request.LoginUserRequest;
+import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
+import com.czy.dal.dto.http.request.RegisterUserRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
+import com.czy.dal.dto.http.response.IsRegisterResponse;
 import com.czy.dal.dto.http.response.LoginSignResponse;
 import com.czy.dal.dto.http.response.PostPublishResponse;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
+import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
+import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
+import com.czy.dal.dto.netty.response.ChatUploadFileResponse;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
+import com.czy.dal.vo.entity.UserVo;
 
 import java.util.List;
 
@@ -42,7 +50,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
     //    @POST("/login/sendSms")
     //    Observable<BaseResponse<String>> sendSms(@Body BaseRequest baseRequest);
     public void sendSms(SendSmsRequest request,
-                        OnSuccessCallback<BaseResponse<String>> onSuccessCallback,
+                        OnSuccessCallback<BaseResponse<SendSmsResponse>> onSuccessCallback,
                         OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
                 mApi.sendSms(request),
@@ -52,13 +60,76 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
     }
 
 
-    //    @POST("/login/smsLoginUser")
-    //    Observable<BaseResponse<LoginSignResponse>> smsLoginUser(@Body PhoneLoginRequest loginRequest);
-    public void smsLoginUser(PhoneLoginRequest request,
-                            OnSuccessCallback<BaseResponse<LoginSignResponse>> onSuccessCallback,
-                            OnThrowableCallback onThrowableCallback){
+    //    @POST("/login/smsLogin")
+    //    Observable<BaseResponse<LoginSignResponse>> smsLogin(@Body PhoneLoginRequest loginRequest);
+    public void smsLogin(PhoneLoginInfoRequest request,
+                             OnSuccessCallback<BaseResponse<LoginSignResponse>> onSuccessCallback,
+                             OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
-                mApi.smsLoginUser(request),
+                mApi.smsLogin(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST("/login/register")
+    //    Observable<BaseResponse<UserRegisterResponse>> register(@Body RegisterUserRequest request);
+    public void register(RegisterUserRequest request,
+                         OnSuccessCallback<BaseResponse<UserRegisterResponse>> onSuccessCallback,
+                         OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.register(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @Multipart
+    //    @POST("/registerUser/uploadImg")
+    //    Observable<BaseResponse<UserVo>> registerUserUploadImg(
+    //            @Part MultipartBody.Part img,
+    //            @Part("phone") RequestBody phone,
+    //            @Part("userId") RequestBody userId
+    //    );
+    public void registerUserUploadImg(
+            MultipartBody.Part img,
+            RequestBody phone,
+            RequestBody userId,
+            OnSuccessCallback<BaseResponse<UserVo>> onSuccessCallback,
+            OnThrowableCallback onErrorCallback
+    ){
+        sendRequestCallback(
+                mApi.registerUserUploadImg(
+                        img,
+                        phone,
+                        userId
+                ),
+                onSuccessCallback,
+                onErrorCallback
+        );
+    }
+
+    //    @POST("/login/isPhoneRegistered")
+    //    Observable<BaseResponse<IsRegisterResponse>> isPhoneRegistered(@Body IsRegisterRequest request);
+    public void isPhoneRegistered(
+            IsRegisterRequest request,
+            OnSuccessCallback<BaseResponse<IsRegisterResponse>> onSuccessCallback,
+            OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.isPhoneRegistered(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST("/login/pwdLogin")
+    //    Observable<BaseResponse<LoginSignResponse>> passwordLogin(@Body LoginUserRequest request);
+    public void passwordLogin(
+            LoginUserRequest request,
+            OnSuccessCallback<BaseResponse<LoginSignResponse>> onSuccessCallback,
+            OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.passwordLogin(request),
                 onSuccessCallback,
                 onThrowableCallback
         );
@@ -66,7 +137,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/user/searchUser")
     //    Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body BaseNettyRequest request);
-    public void searchUsers(BaseNettyRequest request,
+    public void searchUsers(BaseHttpRequest request,
                             OnSuccessCallback<BaseResponse<SearchUserResponse>> onSuccessCallback,
                             OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
@@ -102,7 +173,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //     @POST("/user/getAddMeRequestList")
     //    Observable<BaseResponse<GetAddMeRequestListResponse>> getAddMeRequestList(@Body BaseNettyRequest request);
-    public void getAddMeRequestList(BaseNettyRequest request,
+    public void getAddMeRequestList(BaseHttpRequest request,
                                     OnSuccessCallback<BaseResponse<GetAddMeRequestListResponse>> onSuccessCallback,
                                     OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
@@ -114,7 +185,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //     @POST("/user/getHandleMyAddUserResponseList")
     //    Observable<BaseResponse<GetHandleMyAddUserResponseListResponse>> getHandleMyAddUserResponseList(@Body BaseNettyRequest request);
-    public void getHandleMyAddUserResponseList(BaseNettyRequest request,
+    public void getHandleMyAddUserResponseList(BaseHttpRequest request,
                                                OnSuccessCallback<BaseResponse<GetHandleMyAddUserResponseListResponse>> onSuccessCallback,
                                                OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
@@ -138,9 +209,9 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/chat/getUserNewMessage")
     //    Observable<BaseResponse<UserNewMessageResponse>> getUserNewMessage(@Body BaseNettyRequest request);
-    public void getUserNewMessage(BaseNettyRequest request,
-                                 OnSuccessCallback<BaseResponse<UserNewMessageResponse>> onSuccessCallback,
-                                 OnThrowableCallback onThrowableCallback){
+    public void getUserNewMessage(BaseHttpRequest request,
+                                  OnSuccessCallback<BaseResponse<UserNewMessageResponse>> onSuccessCallback,
+                                  OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
                 mApi.getUserNewMessage(request),
                 onSuccessCallback,
@@ -160,11 +231,32 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
         );
     }
 
+    //    @Multipart
+    //    @POST("/chatFile/uploadAndSend")
+    //    Observable<BaseResponse<ChatUploadFileResponse>> uploadAndSend(
+    //            @Part MultipartBody.Part file,
+    //            @Part("fileId") RequestBody fileId,
+    //            @Part("senderId") RequestBody senderId,
+    //            @Part("receiverId") RequestBody receiverId
+    //    );
+    public void uploadAndSend(MultipartBody.Part file,
+                              RequestBody fileId,
+                              RequestBody senderId,
+                              RequestBody receiverId,
+                              OnSuccessCallback<BaseResponse<ChatUploadFileResponse>> onSuccessCallback,
+                              OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.uploadAndSend(file, fileId, senderId, receiverId),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
     //    @POST("/user/getMyFriendApplyList")
     //    Observable<BaseResponse<Integer>> getMyFriendApplyList(@Body BaseNettyRequest request);
-    public void getMyFriendApplyList(BaseNettyRequest request,
-                                    OnSuccessCallback<BaseResponse<Integer>> onSuccessCallback,
-                                    OnThrowableCallback onThrowableCallback){
+    public void getMyFriendApplyList(BaseHttpRequest request,
+                                     OnSuccessCallback<BaseResponse<Integer>> onSuccessCallback,
+                                     OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
                 mApi.getMyFriendApplyList(request),
                 onSuccessCallback,

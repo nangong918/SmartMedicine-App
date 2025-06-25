@@ -16,12 +16,12 @@ import com.czy.customviewlib.view.chatCard.ChatContactAdapter;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.vo.entity.message.ChatContactListVo;
-import com.czy.dal.vo.viewModelVo.message.MessageVo;
+import com.czy.dal.vo.fragmentActivity.MessageVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.ChatActivity;
 import com.czy.smartmedicine.databinding.FragmentMessageBinding;
-import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.MessageViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.fragment.MessageViewModel;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

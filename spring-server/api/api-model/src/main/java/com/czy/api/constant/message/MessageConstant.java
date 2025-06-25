@@ -14,4 +14,11 @@ public class MessageConstant {
     public static final String ChatFile_CONTROLLER = "/chatFile";
     public static final String WebRTC_CONTROLLER = "/webrtc";
     public static final String serviceUri = "lb://" + serviceName;
+
+    public static final Long CHAT_MESSAGE_EXPIRE_TIME = 60 * 60 * 24 * 7L;
+    public static final int MAX_RECENT_MESSAGE_COUNT = 200;
+    public static final int MAX_SEARCH_MESSAGE_LIMIT = 50;
+
+    // 文件存储桶
+    public static final String MESSAGE_FILE_BUCKET = "chat-files-";
 }

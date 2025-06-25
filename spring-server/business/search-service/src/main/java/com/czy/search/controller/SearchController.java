@@ -26,7 +26,7 @@ import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.api.domain.dto.python.MedicalPredictionResponse;
 import com.czy.api.domain.dto.python.NlpSearchResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
-import com.czy.api.domain.vo.PostPreviewVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.search.component.KafkaSender;
 import com.czy.search.config.SearchTestConfig;
 import com.czy.search.service.FuzzySearchService;
@@ -174,7 +174,7 @@ public class SearchController {
             userActionSearchPost.setId(userId);
             userActionSearchPost.setLevelsPostIdMap(postIdListMap);
             try {
-                kafkaSender.sendUserActionMessage(userActionSearchPost, UserActionSearchPost.TOPIC);
+                kafkaSender.sendSearchAction(userActionSearchPost);
             } catch (Exception e) {
                 log.error("用户显性行为Kafka传输异常：[搜索] [userId:{}]", userId, e);
             }

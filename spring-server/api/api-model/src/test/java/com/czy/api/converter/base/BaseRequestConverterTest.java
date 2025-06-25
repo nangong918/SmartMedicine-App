@@ -16,8 +16,8 @@ class BaseRequestConverterTest {
     @Test
     void getBaseRequestData() {
         RequestBodyProto.RequestBody requestBody = RequestBodyProto.RequestBody.newBuilder()
-                .setSenderId("senderId")
-                .setReceiverId("receiverId")
+                .setSenderId(1L)
+                .setReceiverId(2L)
                 .setType("type")
                 .putData("addUserAccount", "addUserAccount")
                 .putData("myAccount", "myAccount")
@@ -38,8 +38,8 @@ class BaseRequestConverterTest {
     @Test
     void getDataMap() {
         BaseRequestData baseRequestData = new BaseRequestData();
-        baseRequestData.setSenderId("senderId");
-        baseRequestData.setReceiverId("receiverId");
+        baseRequestData.setSenderId(1L);
+        baseRequestData.setReceiverId(2L);
         baseRequestData.setType("type");
         baseRequestData.setTimestamp(String.valueOf(System.currentTimeMillis()));
 

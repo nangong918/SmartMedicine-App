@@ -37,9 +37,9 @@ public class ServiceTests {
     private AddUserAo getAddUserAo(int applyStatus){
         AddUserAo addUserAo = new AddUserAo();
         // 26
-        addUserAo.applyAccount = "test_sender";
+        addUserAo.applyId = 1L;
         // 27
-        addUserAo.handlerAccount = "test_receiver";
+        addUserAo.handlerId = 2L;
         addUserAo.applyTime = System.currentTimeMillis();
         addUserAo.applyContent = "test_applyContent";
         addUserAo.source = 1;
@@ -50,9 +50,9 @@ public class ServiceTests {
     private HandleAddedMeAo getHandleAddedMeAo(int handleType){
         HandleAddedMeAo handleAddedMeAo = new HandleAddedMeAo();
         // 26
-        handleAddedMeAo.applyAccount = "test_sender";
+        handleAddedMeAo.applyId = 1L;
         // 27
-        handleAddedMeAo.handlerAccount = "test_receiver";
+        handleAddedMeAo.handlerId = 2L;
         handleAddedMeAo.handleTime = System.currentTimeMillis();
         handleAddedMeAo.additionalContent = "test_back_additionalContent";
         handleAddedMeAo.handleType = handleType;
@@ -79,9 +79,9 @@ public class ServiceTests {
     // getFriendList
     @Test
     public void getFriendList() {
-        String senderAccount = "test_sender";
+        Long senderId = 1L;
         // 获取好友列表
-        List<UserViewEntity> userViewEntities = service.getFriendList(senderAccount);
+        List<UserViewEntity> userViewEntities = service.getFriendList(senderId);
         System.out.println("userViewEntities: ");
         if (!CollectionUtils.isEmpty(userViewEntities)){
             userViewEntities.forEach(item -> {
@@ -95,7 +95,7 @@ public class ServiceTests {
     public void getAddMeRequestList() {
         String handlerAccount = "test_receiver";
 
-        List<NewUserItemAo> newUserItemAos = service.getAddMeRequestList(handlerAccount);
+        List<NewUserItemAo> newUserItemAos = service.getAddMeRequestList(1L);
         if (!CollectionUtils.isEmpty(newUserItemAos)){
             newUserItemAos.forEach(item -> {
                 System.out.println("item = " + item.toJsonString());
@@ -107,7 +107,7 @@ public class ServiceTests {
     @Test
     public void getHandleMyAddUserResponseList() {
         String senderAccount = "test_sender";
-        List<NewUserItemAo> newUserItemAos = service.getHandleMyAddUserResponseList(senderAccount);
+        List<NewUserItemAo> newUserItemAos = service.getHandleMyAddUserResponseList(1L);
         if (!CollectionUtils.isEmpty(newUserItemAos)){
             newUserItemAos.forEach(item -> {
                 System.out.println("item = " + item.toJsonString());
@@ -119,7 +119,7 @@ public class ServiceTests {
     @Test
     public void getMyFriendList() {
         String senderAccount = "test_sender";
-        List<MyFriendItemAo> myFriendItemAos = service.getMyFriendList(senderAccount);
+        List<MyFriendItemAo> myFriendItemAos = service.getMyFriendList(1L);
         if (!CollectionUtils.isEmpty(myFriendItemAos)){
             myFriendItemAos.forEach(item -> {
                 System.out.println("item = " + item.toJsonString());
@@ -133,7 +133,7 @@ public class ServiceTests {
         String applyAccount = "test_sender";
         // 模糊内容
         String handlerAccount = "eceive";
-        List<SearchFriendApplyAo> searchFriendApplyAos = service.searchFriend(applyAccount, handlerAccount);
+        List<SearchFriendApplyAo> searchFriendApplyAos = service.searchFriend(1L, handlerAccount);
         if (!CollectionUtils.isEmpty(searchFriendApplyAos)){
             searchFriendApplyAos.forEach(item -> {
                 System.out.println("item = " + item.toJsonString());

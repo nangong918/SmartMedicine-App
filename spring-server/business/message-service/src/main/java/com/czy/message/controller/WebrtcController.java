@@ -4,13 +4,11 @@ package com.czy.message.controller;
 
 
 import com.czy.api.constant.message.MessageConstant;
-import com.czy.api.constant.netty.MessageTypeTranslator;
-import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.converter.base.MessageConverter;
-import com.czy.api.domain.dto.http.base.BaseNettyRequest;
+import com.czy.api.domain.dto.http.base.BaseHttpRequest;
 import com.czy.api.domain.dto.http.response.ResponseEntity;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.message.component.RabbitMqSender;
+import com.czy.message.mq.sender.RabbitMqSender;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -42,7 +40,7 @@ public class WebrtcController {
 	@ApiOperation(httpMethod = "POST", value = "发起单人语音通话")
 	@ApiImplicitParam(name = "receiverId", value = "对方用户ID", paramType = "query",  dataTypeClass = Long.class)
 	@PostMapping(value = {"/voice"})
-	public Mono<ResponseEntity<Void>> voice(@Valid @RequestBody BaseNettyRequest request) {
+	public Mono<ResponseEntity<Void>> voice(@Valid @RequestBody BaseHttpRequest request) {
 
 		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
 		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
@@ -55,7 +53,7 @@ public class WebrtcController {
 	@ApiOperation(httpMethod = "POST", value = "发起单人视频通话")
 	@ApiImplicitParam(name = "receiverId", value = "对方用户ID", paramType = "query",  dataTypeClass = Long.class)
 	@PostMapping(value =  {"/video"})
-	public Mono<ResponseEntity<Void>> video(@Valid @RequestBody BaseNettyRequest request) {
+	public Mono<ResponseEntity<Void>> video(@Valid @RequestBody BaseHttpRequest request) {
 
 		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
 		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
@@ -67,7 +65,7 @@ public class WebrtcController {
 	@ApiOperation(httpMethod = "POST", value = "接受通话")
 	@ApiImplicitParam(name = "receiverId", value = "对方用户ID", paramType = "query",  dataTypeClass = Long.class)
 	@PostMapping(value =  {"/accept"})
-	public Mono<ResponseEntity<Void>> accept(@Valid @RequestBody BaseNettyRequest request) {
+	public Mono<ResponseEntity<Void>> accept(@Valid @RequestBody BaseHttpRequest request) {
 		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
 		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
 		rabbitMqSender.push(message);
@@ -78,7 +76,7 @@ public class WebrtcController {
 	@ApiOperation(httpMethod = "POST", value = "拒绝通话")
 	@ApiImplicitParam(name = "receiverId", value = "对方用户ID", paramType = "query",  dataTypeClass = Long.class)
 	@PostMapping(value =  {"/reject"})
-	public Mono<ResponseEntity<Void>> reject(@Valid @RequestBody BaseNettyRequest request) {
+	public Mono<ResponseEntity<Void>> reject(@Valid @RequestBody BaseHttpRequest request) {
 
 		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
 		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
@@ -90,7 +88,7 @@ public class WebrtcController {
 	@ApiOperation(httpMethod = "POST", value = "挂断通话")
 	@ApiImplicitParam(name = "receiverId", value = "对方用户ID", paramType = "query",  dataTypeClass = Long.class)
 	@PostMapping(value =  {"/hangup"})
-	public Mono<ResponseEntity<Void>> hangup(@Valid @RequestBody BaseNettyRequest request) {
+	public Mono<ResponseEntity<Void>> hangup(@Valid @RequestBody BaseHttpRequest request) {
 
 		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
 		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);
@@ -102,7 +100,7 @@ public class WebrtcController {
 	@ApiOperation(httpMethod = "POST", value = "取消呼叫")
 	@ApiImplicitParam(name = "receiverId", value = "对方用户ID", paramType = "query",  dataTypeClass = Long.class)
 	@PostMapping(value =  {"/cancel"})
-	public Mono<ResponseEntity<Void>> cancel(@Valid @RequestBody BaseNettyRequest request) {
+	public Mono<ResponseEntity<Void>> cancel(@Valid @RequestBody BaseHttpRequest request) {
 
 		// 内部包含：message.setType(MessageTypeTranslator.translateClean(request.getType()));
 		Message message = messageConverter.baseNettyRequestToMessageAndTranslate(request);

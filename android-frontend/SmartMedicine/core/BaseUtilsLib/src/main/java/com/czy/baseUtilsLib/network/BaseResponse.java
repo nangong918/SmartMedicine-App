@@ -13,18 +13,18 @@ import java.io.Serializable;
 public class BaseResponse<T> implements BaseBean, Serializable {
 
     // 泛型字段，用于存放具体的数据
-    protected Integer code;
+    protected String code;
     protected String message;
     protected T data;
 
     public BaseResponse() {
     }
 
-    public Integer getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

@@ -40,20 +40,20 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
 
     private final IMessageService messageService;
 //    private final Channel channel;
-    private String senderId;
+    private Long senderId;
 
-    public SocketMessageSender(@NonNull String senderId, @NonNull IMessageService messageService) {
+    public SocketMessageSender(@NonNull Long senderId, @NonNull IMessageService messageService) {
 //        this.channel = channel;
         this.senderId = senderId;
         this.messageService = messageService;
         Log.d("Socket", "init::SocketMessageSender: " + senderId);
     }
 
-    private void resetSenderId(String senderId){
+    private void resetSenderId(Long senderId){
         this.senderId = senderId;
     }
 
-    private Message getRequestBody(Object request, String receiverId){
+    private Message getRequestBody(Object request, Long receiverId){
         Map<String, String> dataMap = new HashMap<>();
         try {
             dataMap = BeanUtil.beanToStrMap(request);
@@ -91,7 +91,7 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
         }
     }
 
-    private void sendRequest(Object request, String receiverId, String methodName){
+    private void sendRequest(Object request, Long receiverId, String methodName){
         Message message = getRequestBody(request, receiverId);
         super.setMessageTypeFromAnnotation(message, methodName);
         sendRequest(message);

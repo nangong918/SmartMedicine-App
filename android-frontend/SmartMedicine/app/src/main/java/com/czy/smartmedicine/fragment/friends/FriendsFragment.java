@@ -24,14 +24,14 @@ import com.czy.dal.constant.SearchEnum;
 import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
 import com.czy.dal.vo.view.mainTop.MainTopBarVo;
-import com.czy.dal.vo.viewModelVo.friends.FriendsVo;
+import com.czy.dal.vo.fragmentActivity.FriendsVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.NewUserGroupActivity;
 import com.czy.smartmedicine.activity.SearchActivity;
 import com.czy.smartmedicine.databinding.FragmentFriendsBinding;
-import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.FriendsViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.activity.FriendsViewModel;
 
 import java.util.Optional;
 

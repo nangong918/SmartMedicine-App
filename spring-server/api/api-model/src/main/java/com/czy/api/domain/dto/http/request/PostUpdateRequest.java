@@ -1,6 +1,6 @@
 package com.czy.api.domain.dto.http.request;
 
-import com.czy.api.domain.dto.http.base.BaseNettyRequest;
+import com.czy.api.domain.dto.http.base.BaseHttpRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PostUpdateRequest extends BaseNettyRequest {
+public class PostUpdateRequest extends BaseHttpRequest {
     // title；not null
     @NotNull(message = "标题不能为空")
     public String title;

@@ -8,7 +8,7 @@ import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.PostOssResponse;
 import com.czy.api.domain.entity.event.event.PostOssResponseEvent;
-import com.czy.post.component.RabbitMqSender;
+import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.service.PostService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
@@ -94,11 +94,11 @@ public class OssResponseEventListener implements ApplicationListener<PostOssResp
             if (!result){
                 log.error("删除redis失败，fileRedisKey: {}", fileRedisKey);
             }
-            if (StringUtils.hasText(serverToFrontend) && StringUtils.hasText(postOssResponse.getUserAccount())){
+            if (StringUtils.hasText(serverToFrontend) && postOssResponse.getUserId() != null){
                 // 发送消息给前端
                 Message message = new Message();
                 message.setSenderId(NettyConstants.SERVER_ID);
-                message.setReceiverId(postOssResponse.getUserAccount());
+                message.setReceiverId(postOssResponse.getUserId());
                 message.setTimestamp(System.currentTimeMillis());
                 message.setType(ResponseMessageType.Oss.UPLOAD_FILE);
                 rabbitMqSender.push(message);

@@ -3,7 +3,7 @@ package com.czy.api.converter.base;
 
 import com.czy.api.constant.netty.MessageTypeTranslator;
 import com.czy.api.domain.dto.base.BaseRequestData;
-import com.czy.api.domain.dto.http.base.BaseNettyRequest;
+import com.czy.api.domain.dto.http.base.BaseHttpRequest;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.model.RequestBodyProto;
 import com.czy.api.domain.entity.model.ResponseBodyProto;
@@ -76,8 +76,8 @@ public interface MessageConverter {
         return message;
     }
 
-    // BaseNettyRequest -> Message
-    default Message baseNettyRequestToMessage(BaseNettyRequest request) {
+    // BaseHttpRequest -> Message
+    default Message baseNettyRequestToMessage(BaseHttpRequest request) {
         Message message = new Message();
         message.setSenderId(request.getSenderId());
         message.setReceiverId(request.getReceiverId());
@@ -87,7 +87,7 @@ public interface MessageConverter {
         return message;
     }
 
-    default Message baseNettyRequestToMessageAndTranslate(BaseNettyRequest request) {
+    default Message baseNettyRequestToMessageAndTranslate(BaseHttpRequest request) {
         Message message = new Message();
         message.setSenderId(request.getSenderId());
         message.setReceiverId(request.getReceiverId());

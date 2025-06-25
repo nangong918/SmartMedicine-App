@@ -25,8 +25,8 @@ import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.PostActivity;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
-import com.czy.smartmedicine.viewModel.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.HomeViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.viewModel.fragment.HomeViewModel;
 
 import java.util.Optional;
 

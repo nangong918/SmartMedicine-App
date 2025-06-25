@@ -25,24 +25,24 @@ public class BaseRequestData implements BaseBean {
 
     private static final String TAG = BaseRequestData.class.getSimpleName();
 
-    public String senderId;
-    public String receiverId;
+    public Long senderId;
+    public Long receiverId;
     public String type;
     public String timestamp = String.valueOf(System.currentTimeMillis());
 
-    public String getSenderId() {
+    public Long getSenderId() {
         return senderId;
     }
 
-    public void setSenderId(String senderId) {
+    public void setSenderId(Long senderId) {
         this.senderId = senderId;
     }
 
-    public String getReceiverId() {
+    public Long getReceiverId() {
         return receiverId;
     }
 
-    public void setReceiverId(String receiverId) {
+    public void setReceiverId(Long receiverId) {
         this.receiverId = receiverId;
     }
 

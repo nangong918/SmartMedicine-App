@@ -5,8 +5,10 @@ import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
+import com.czy.api.domain.ao.user.UserInfoAo;
 import com.czy.api.domain.dto.http.request.LoginUserRequest;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
+import com.czy.api.domain.vo.user.UserVo;
 import com.czy.user.UserServiceApplication;
 import com.czy.user.mapper.mysql.user.LoginUserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +46,7 @@ public class MainTests {
     @Test
     public void checkAccountExist() throws Exception {
         String account = "1231231412";
-        Integer id = loginUserMapper.getIdByAccount(account);
+        Long id = loginUserMapper.getIdByAccount(account);
         if (id == null) {
             String warningMessage = String.format("用户account不存在，account: %s", account);
             log.warn(warningMessage);
@@ -64,7 +66,7 @@ public class MainTests {
     @Test
     public void sqlTest(){
         // getLoginUser
-        LoginUserDo loginUserDo = loginUserMapper.getLoginUser(12);
+        LoginUserDo loginUserDo = loginUserMapper.getLoginUser(12L);
         System.out.println("loginUserDo = " + loginUserDo);
     }
 
@@ -99,8 +101,12 @@ public class MainTests {
     // resetUserInfo
     @Test
     public void resetUserInfo() throws Exception {
-        UserDo userDo = userService.resetUserInfo("test_user", "鸦羽天下第一！", 1L);
-        System.out.println("loginUserRequest = " + userDo);
+        UserVo userVo = userService.resetUserInfo(
+                UserInfoAo.builder()
+                        .account("test_user")
+                        .username("yayayay")
+                        .build());
+        System.out.println("loginUserRequest = " + userVo);
     }
 
     @Autowired

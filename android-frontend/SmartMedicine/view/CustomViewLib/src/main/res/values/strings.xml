@@ -40,4 +40,22 @@
     <string name="title">标题</string>
     <string name="article_details">文章详情</string>
     <string name="publish_post_success">发帖成功</string>
+    <string name="please_check_your_network">请检查你的网络</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="avatar_image">头像</string>
+    <string name="please_enter_account">账号，若空则使用手机号</string>
+    <string name="set_password">设置新密码</string>
+    <string name="please_enter_right_phone">请输入合法的手机号</string>
+    <string name="please_enter_right_vcode">请输入正确的验证码</string>
+    <string name="pwdNotLegal">密码不合法</string>
+    <string name="pwdAgainNotConsist">再次输入的密码不合法</string>
+    <string name="avatarNotSelected">请选择一张图片作为头像上传</string>
+    <string name="go_register">去注册</string>
+    <string name="forget_pwd">忘记密码</string>
+    <string name="password">密码</string>
+    <string name="please_register_first">请先注册</string>
+    <string name="please_agree_privacy_and_agreement">请先同意隐私协议</string>
+    <string name="sign_not_register_prompt">手机号码未注册</string>
+    <string name="sign_not_register_prompt2">请先注册您的号码</string>
+    <string name="please_give_permission">请给予权限</string>
 </resources>

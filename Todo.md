@@ -163,7 +163,9 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 3. 正常推荐
 4. 行为特征上传
 
-
+##### 在家梳理
+梳理user-relationship-service；作流程图
+参考《大麦》看看是否存在优化空间
 
 #### 排期
 ##### 跑通阶段
@@ -173,12 +175,48 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 获取postList
   * 获取postDetail信息测试
   * 搜索post测试
+* 重构user-service
+  * 4天
+  * 6月7~11
+  * 梳理整套user注册登录逻辑
+  * user 头像存储的两次http请求
+  * 注册user;user信息填写入mysql,elasticsearch,neo4j
 * 帖子发布测试
-  * 3天
-  * 6月7~10
+  * 2天
+  * 6月12~13
+  * 发布post,存入neo4j,mysql,elasticsearch,mongodb
+  * 完成python功能:自然语言标签分析
+  * 支持上传视频(断点续传)
+
+* App消息长连接
+  * 学习Mq -> 重构Mq (记录笔记,不能白开发,留下笔记)
+    * 学习       2天 (16~17)
+    * 重构Mq测试  1天 (18)
+  * 重构netty,message,user服务的handler;logging服务的kafka-handler;netty的kafka-sender
+    * 4天 (19~23): 启动App测试Netty,调整通过一个mq再修改其他的mq
+      * 重构Spring + 构建测试App
+      * Kafka:netty的post行为,埋点;
+      * Kafka:搜索行为
+      * Kafka:发布帖子行为
+      * Kafka:帖子评论行为
+* App聊天
+  * 重构netty和app服务,将长连接改为userId而不是userAccount 1天(24)
+  * 好友相关 3天 (25~27)
+    * 添加,删除好友
+    * 好友列表
+  * 聊天相关 3天 (28~7月2)
+    * 发送文本消息
+    * 发送图片消息
+  * 学习MySQL,MongoDB,ElasticSearch,Neo4j,Hive特性
+  * 学习查询分页,学习数据库分库分表 4天(2~5)
+  * 聊天记录相关 5天 (7~11)
+    * 临时聊天记录列表
+    * 单个好友分页聊天记录
+    * 关键词ElasticSearch查询聊天记录
+    * 聊天记录存储的分库分表设计
 * App获取帖子联调
-  * 3天
-  * 6月11~13
+  * url存储在redis重构
+  * redis学习
 * App行为上传I（浏览帖子 + 点赞等）
   * 3天
   * 6月16~6月18
@@ -188,10 +226,10 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 * App搜索帖子
   * 3天
   * 6月21~24
-* 收藏帖子
+* 收藏帖子 (简化:取消创建帖子收藏夹)
   * 2天
   * 6月25~26
-* 评论帖子
+* 评论帖子 (优先)
   * 3天
   * 6月27~7月1
 * 转发帖子
@@ -207,6 +245,7 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 * service绘图
   * netty-socket
   * oss
+  * auth-sms增加aop的权限层
 * service重新设计
   * 合并auth和sms
 * 合并service
@@ -217,14 +256,44 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * java-learning测试代码迁移
   * 测试点文档测试
   * 接口链路调用测试
+* 中间件
+  * Mq
+    * 学习并重新设计RabbitMq和Kafka
+    * 重构netty-mq,user-mq,message-mq
+    * 前端编写, 用前端测试netty
+    * 1.学习mq,2.重构netty,3.编写前端
 
-##### 最终功能补充
-* 商品购物
+
+##### 最终功能补充 (不要着急写新功能,在当前系统未重构优化完成之间,禁止开发新功能)
+* 商品购物 (联合推荐系统 + 大麦的pay系统) [一般的公司都有支付系统,此功能至少实现]
+* 用药提醒
+* 医疗预测
+* AI问诊
 * 语音视频通话
 * 群组+直播
-* 医疗预测
-* 用药提醒
-* AI问诊
 * 后台管理
 
 ##### JMeter压测
+
+
+
+##### 临时note
+项目mq重构
+1. 使用json
+2. netty-socket尝试重构为微服务集群
+3. 尝试使用netty或者虚拟线程来改造提高请求的速度 (netty的http封装就是webflux;暂时不添加)
+4. 重构netty-socket;使其能分布式部署
+
+
+先跑通再优化
+优化点:
+1. mysql,mongodb,elasticsearch分库分页分表,数据库连接池,用户聊天记录存储优化.
+2. sql优化
+3. 缓存结构优化: redis; jvm
+4. 消息队列mq优化: kafka,rabbitmq,rocketmq
+5. 网关结构优化: nginx; spring-cloud-gateway
+6. 线程优化:线程,线程池,定时任务
+7. 网络优化:netty(分布式netty集群); webflux
+8. oss优化, url存储在redis中,并且redis.ttl < oss.ttl
+9. 搜索,排序算法优化.
+10. 微服务分布式优化:集群,均衡负载,分布式锁,分布式事务,链路,服务注册,服务发现,服务熔断,服务限流

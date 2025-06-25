@@ -2,14 +2,16 @@ package com.czy.user.controller;
 
 
 import com.czy.api.api.user_relationship.UserRelationshipService;
+import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.user_relationship.RelationshipConstant;
 import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
 import com.czy.api.constant.user_relationship.newUserGroup.HandleStatusEnum;
+import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.relationship.MyFriendItemAo;
 import com.czy.api.domain.ao.relationship.NewUserItemAo;
 import com.czy.api.domain.ao.relationship.SearchFriendApplyAo;
 import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.base.BaseNettyRequest;
+import com.czy.api.domain.dto.http.base.BaseHttpRequest;
 import com.czy.api.domain.dto.http.request.GetMyFriendsRequest;
 import com.czy.api.domain.dto.http.request.SearchUserByNameRequest;
 import com.czy.api.domain.dto.http.response.GetAddMeRequestListResponse;
@@ -37,8 +39,9 @@ import java.util.List;
 @RequestMapping(RelationshipConstant.Relationship_CONTROLLER)
 public class UserRelationshipController {
 //    private final LoginService loginService;
-//    private final RabbitMqSender clusterEventsPusher;
+//    private final ToSocketMqSender clusterEventsPusher;
     private final UserRelationshipService userRelationshipService;
+    private final UserService userService;
 
     /**
      * like模糊搜索用户
@@ -47,9 +50,10 @@ public class UserRelationshipController {
      */
     @PostMapping(RelationshipConstant.Search_User_ByAccount)
     public Mono<BaseResponse<SearchUserResponse>>
-    searchUserByAccount(@Validated @RequestBody BaseNettyRequest request) {
+    searchUserByAccount(@Validated @RequestBody BaseHttpRequest request) {
+        UserDo receiverDo = userService.getUserById(request.getReceiverId());
         List<SearchFriendApplyAo> searchFriendApplyAoList =
-                userRelationshipService.searchFriend(request.getSenderId(), request.getReceiverId());
+                userRelationshipService.searchFriend(request.getSenderId(), receiverDo.getAccount());
         SearchUserResponse searchUser = new SearchUserResponse();
         searchUser.setUserList(searchFriendApplyAoList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(searchUser));
@@ -64,7 +68,7 @@ public class UserRelationshipController {
     public Mono<BaseResponse<SearchUserResponse>>
     searchUserByName(@Validated @RequestBody SearchUserByNameRequest request) {
         List<SearchFriendApplyAo> searchFriendApplyAoList =
-                userRelationshipService.searchFriendByName(request.getSenderId(), request.getReceiverId());
+                userRelationshipService.searchFriendByName(request.getSenderId(), request.getUserName());
         SearchUserResponse searchUser = new SearchUserResponse();
         searchUser.setUserList(searchFriendApplyAoList);
         return Mono.just(BaseResponse.getResponseEntitySuccess(searchUser));
@@ -77,9 +81,8 @@ public class UserRelationshipController {
      */
     @PostMapping(RelationshipConstant.Get_Add_Me_Request_List)
     public Mono<BaseResponse<GetAddMeRequestListResponse>>
-    getAddMeRequestList(@Validated @RequestBody BaseNettyRequest request){
-        String senderAccount = request.getSenderId();
-        List<NewUserItemAo> list = userRelationshipService.getAddMeRequestList(senderAccount);
+    getAddMeRequestList(@Validated @RequestBody BaseHttpRequest request){
+        List<NewUserItemAo> list = userRelationshipService.getAddMeRequestList(request.getSenderId());
         GetAddMeRequestListResponse response = new GetAddMeRequestListResponse();
         response.setAddMeRequestList(list);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
@@ -92,9 +95,8 @@ public class UserRelationshipController {
      */
     @PostMapping(RelationshipConstant.Get_Handle_My_Add_User_Response_List)
     public Mono<BaseResponse<GetHandleMyAddUserResponseListResponse>>
-    getHandleMyAddUserResponseList(@Validated @RequestBody BaseNettyRequest request){
-        String senderAccount = request.getSenderId();
-        List<NewUserItemAo> list = userRelationshipService.getHandleMyAddUserResponseList(senderAccount);
+    getHandleMyAddUserResponseList(@Validated @RequestBody BaseHttpRequest request){
+        List<NewUserItemAo> list = userRelationshipService.getHandleMyAddUserResponseList(request.getSenderId());
         GetHandleMyAddUserResponseListResponse response = new GetHandleMyAddUserResponseListResponse();
         response.setHandleMyAddUserResponseList(list);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
@@ -108,8 +110,7 @@ public class UserRelationshipController {
     @PostMapping(RelationshipConstant.Get_My_Friend_List)
     public Mono<BaseResponse<GetMyFriendsResponse>>
     getMyFriendList(@Validated @RequestBody GetMyFriendsRequest request){
-        String senderId = request.getSenderId();
-        List<MyFriendItemAo> list = userRelationshipService.getMyFriendList(senderId);
+        List<MyFriendItemAo> list = userRelationshipService.getMyFriendList(request.getSenderId());
         GetMyFriendsResponse response = new GetMyFriendsResponse();
         response.setAddMeRequestList(list);
         return Mono.just(BaseResponse.getResponseEntitySuccess(response));
@@ -123,12 +124,10 @@ public class UserRelationshipController {
      */
     @PostMapping(RelationshipConstant.Get_My_Friend_Apply_List)
     public Mono<BaseResponse<Integer>>
-    getMyFriendApplyList(@Validated @RequestBody BaseNettyRequest request){
-        String senderAccount = request.getSenderId();
-
+    getMyFriendApplyList(@Validated @RequestBody BaseHttpRequest request){
         // 状态判断：添加我的，我的处理状态是未处理或者空
         int response = 0;
-        List<NewUserItemAo> addMeList = userRelationshipService.getAddMeRequestList(senderAccount);
+        List<NewUserItemAo> addMeList = userRelationshipService.getAddMeRequestList(request.getSenderId());
 //        List<NewUserItemAo> myAddList = userService.getHandleMyAddUserResponseList(senderId);
 //        Integer response = addMeList.size() + myAddList.size();
 
@@ -190,7 +189,7 @@ public class UserRelationshipController {
     // 取消申请 (废弃：已改为Netty请求)
 //    @PostMapping("/cancelAddUser")
 //    public Mono<ResponseEntity<BaseResponse<Void>>>
-//    cancelAddUser(@Valid @RequestBody BaseNettyRequest request){
+//    cancelAddUser(@Valid @RequestBody BaseHttpRequest request){
 //
 //        // 添加到MySQL持久化
 //        AddUserAo addUserAo = new AddUserAo();

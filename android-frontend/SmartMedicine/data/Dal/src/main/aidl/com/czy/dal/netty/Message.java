@@ -19,8 +19,8 @@ public class Message implements Parcelable, BaseBean {
 
     public String code;
     public String message;
-    public String senderId;
-    public String receiverId;
+    public Long senderId;
+    public Long receiverId;
     public String type;
     public Map<String, String> data;
     public Long timestamp;
@@ -29,8 +29,8 @@ public class Message implements Parcelable, BaseBean {
     public Message(){
         this.code = "";
         this.message = "";
-        this.senderId = "";
-        this.receiverId = "";
+        this.senderId = -1L;
+        this.receiverId = -1L;
         this.type = "";
         this.data = new HashMap<>();
         this.timestamp = System.currentTimeMillis();
@@ -38,7 +38,7 @@ public class Message implements Parcelable, BaseBean {
 
     // Java 构造器
     // Request Message
-    public Message(String senderId, String receiverId, String type, Map<String, String> data, Long timestamp) {
+    public Message(Long senderId, Long receiverId, String type, Map<String, String> data, Long timestamp) {
         this.code = "";
         this.message = "";
         this.senderId = senderId;
@@ -61,7 +61,7 @@ public class Message implements Parcelable, BaseBean {
     }
 
     // Response Message
-    public Message(String code, String message, String senderId, String receiverId, String type, Map<String, String> data, Long timestamp) {
+    public Message(String code, String message, Long senderId, Long receiverId, String type, Map<String, String> data, Long timestamp) {
         this.code = code;
         this.message = message;
         this.senderId = senderId;
@@ -91,8 +91,8 @@ public class Message implements Parcelable, BaseBean {
         Log.i("NettySocketService", "readFromParcel::");
         code = in.readString();
         message = in.readString();
-        senderId = in.readString();
-        receiverId = in.readString();
+        senderId = in.readLong();
+        receiverId = in.readLong();
         type = in.readString();
 
         // 反序列化Map
@@ -147,8 +147,8 @@ public class Message implements Parcelable, BaseBean {
         // 基础字段
         dest.writeString(code);
         dest.writeString(message);
-        dest.writeString(senderId);
-        dest.writeString(receiverId);
+        dest.writeLong(senderId);
+        dest.writeLong(receiverId);
         dest.writeString(type);
 
         // 序列化Map（需要处理null）
@@ -215,7 +215,7 @@ public class Message implements Parcelable, BaseBean {
     }
 
     // object(request) -> message
-    public static Message getRequestBody(Object request, String senderId, String receiverId, String type){
+    public static Message getRequestBody(Object request, Long senderId, Long receiverId, String type){
         Map<String, String> dataMap = new HashMap<>();
         try {
             dataMap = BeanUtil.beanToStrMap(request);
@@ -236,7 +236,7 @@ public class Message implements Parcelable, BaseBean {
     }
 
     // object(response) -> message
-    public static Message getResponseBody(Object response, String senderId, String receiverId, String type){
+    public static Message getResponseBody(Object response, Long senderId, Long receiverId, String type){
         Map<String, String> dataMap = new HashMap<>();
         try {
             dataMap = BeanUtil.beanToStrMap(response);

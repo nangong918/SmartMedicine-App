@@ -56,6 +56,15 @@
             #{item}
         </foreach>
     </delete>
+    <delete id="deletePostFilesDoByPostId">
+        DELETE FROM post_files WHERE post_id = #{postId}
+    </delete>
+    <delete id="deletePostFilesDoByPostIdList">
+        DELETE FROM post_files WHERE post_id IN
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
     <select id="getPostFilesDoListByPostId" resultType="com.czy.api.domain.Do.post.post.PostFilesDo">
         SELECT
         <include refid="doColumns"/>
