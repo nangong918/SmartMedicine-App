@@ -23,7 +23,9 @@ import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
+import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
+import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.netty.response.ChatUploadFileResponse;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
@@ -111,21 +113,23 @@ public interface ApiRequest {
     @POST(BackEndConstant.USER_RELATION + "/relation/searchUser")
     Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body BaseHttpRequest request);
 
-//    /**
-//     * 添加用户
-//     * @param request    添加的用户信息
-//     * @return                  添加的用户信息
-//     */
-//    @POST("/user/addUser")
-//    Observable<BaseResponse<Void>> addUserFriend(@Body AddUserRequest request);
-//
-//    /**
-//     * 处理添加用户
-//     * @param request   处理添加用户的请求
-//     * @return          处理添加用户的响应
-//     */
-//    @POST("/user/handleAddedUser")
-//    Observable<BaseResponse<Void>> handleAddedUser(@Body HandleAddedUserRequest request);
+    /**
+     * 添加用户
+     * @param request    添加的用户信息
+     * @return                  添加的用户信息
+     */
+    @Deprecated // 改为netty了
+    @POST("/user/addUser")
+    Observable<BaseResponse<Void>> addUserFriend(@Body AddUserRequest request);
+
+    /**
+     * 处理添加用户
+     * @param request   处理添加用户的请求
+     * @return          处理添加用户的响应
+     */
+    @Deprecated // 改为netty了
+    @POST("/user/handleAddedUser")
+    Observable<BaseResponse<Void>> handleAddedUser(@Body HandleAddedUserRequest request);
 
     /**
      * 获取添加我的请求
@@ -261,22 +265,3 @@ public interface ApiRequest {
             @Part("userAccount") String userAccount
     );
 }
-// 1.重构响应 -> 在Friend和Message中显示 -> ChatList发送消息
-// 消息前后端持久化策略
-// 图片，文件，语音，视频传输
-// 2.WebRTC 语音视频通话；通话请求Http请求
-// 推文，动态发布
-// 推荐算法
-
-/**
- * 何时开始重构？
- * 1.添加好友，发送消息，语音视频通话；
- * 2.图片文件，语音，视频传输； -> 存储策略；大数据传输策略
- * findJob：看大公司，思考必要
- * 3.推文，动态发布；
- * 4.推荐算法；
- *
- * 接口重构从前端开始重构；因为前端需要什么 就是后端的需求，后端拿到需求再开始设计
- *
- * 需求查资料，给出解决方案
- */
