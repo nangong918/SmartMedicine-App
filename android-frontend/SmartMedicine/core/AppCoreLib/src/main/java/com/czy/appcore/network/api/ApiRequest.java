@@ -1,6 +1,7 @@
 package com.czy.appcore.network.api;
 
 import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.dal.constant.backEnd.BackEndConstant;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.BaseRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
@@ -57,7 +58,7 @@ public interface ApiRequest {
      * @param request 主要是手机号
      * @return
      */
-    @POST("/login/sendSms")
+    @POST(BackEndConstant.USER_RELATION + "/login/sendSms")
     Observable<BaseResponse<SendSmsResponse>> sendSms(@Body SendSmsInfoRequest request);
 
     /**
@@ -65,7 +66,7 @@ public interface ApiRequest {
      * @param request
      * @return
      */
-    @POST("/login/smsLogin")
+    @POST(BackEndConstant.USER_RELATION + "/login/smsLogin")
     Observable<BaseResponse<LoginSignResponse>> smsLogin(@Body PhoneLoginInfoRequest request);
 
     /**
@@ -73,11 +74,11 @@ public interface ApiRequest {
      * @param request
      * @return
      */
-    @POST("/login/register")
+    @POST(BackEndConstant.USER_RELATION + "/login/register")
     Observable<BaseResponse<UserRegisterResponse>> register(@Body RegisterUserRequest request);
 
     @Multipart
-    @POST("/userFile/register")
+    @POST(BackEndConstant.USER_RELATION + "/userFile/register")
     Observable<BaseResponse<UserVo>> registerUserUploadImg(
             @Part MultipartBody.Part img,
             @Part("phone") RequestBody phone,
@@ -89,7 +90,7 @@ public interface ApiRequest {
      * @param request   手机号
      * @return          是否注册了
      */
-    @POST("/login/isPhoneRegistered")
+    @POST(BackEndConstant.USER_RELATION + "/login/isPhoneRegistered")
     Observable<BaseResponse<IsRegisterResponse>> isPhoneRegistered(@Body IsRegisterRequest request);
 
     /**
@@ -97,7 +98,7 @@ public interface ApiRequest {
      * @param request   手机号
      * @return          登录结果
      */
-    @POST("/login/pwdLogin")
+    @POST(BackEndConstant.USER_RELATION + "/login/pwdLogin")
     Observable<BaseResponse<LoginSignResponse>> passwordLogin(@Body LoginUserRequest request);
 
     //--------------用户关系--------------
@@ -107,7 +108,7 @@ public interface ApiRequest {
      * @param request   账号
      * @return          用户列表
      */
-    @POST("/relation/searchUser")
+    @POST(BackEndConstant.USER_RELATION + "/relation/searchUser")
     Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body BaseHttpRequest request);
 
 //    /**
@@ -131,7 +132,7 @@ public interface ApiRequest {
      * @param request   用户基本信息
      * @return          添加我的请求
      */
-    @POST("/relation/getAddMeRequestList")
+    @POST(BackEndConstant.USER_RELATION + "/relation/getAddMeRequestList")
     Observable<BaseResponse<GetAddMeRequestListResponse>> getAddMeRequestList(@Body BaseHttpRequest request);
 
     /**
@@ -139,7 +140,7 @@ public interface ApiRequest {
      * @param request   用户基本信息
      * @return          处理我的添加用户请求
      */
-    @POST("/relation/getHandleMyAddUserResponseList")
+    @POST(BackEndConstant.USER_RELATION + "/relation/getHandleMyAddUserResponseList")
     Observable<BaseResponse<GetHandleMyAddUserResponseListResponse>> getHandleMyAddUserResponseList(@Body BaseHttpRequest request);
 
     /**
@@ -147,7 +148,7 @@ public interface ApiRequest {
      * @param request   用户基本信息
      * @return          好友列表
      */
-    @POST("/relation/getMyFriendList")
+    @POST(BackEndConstant.USER_RELATION + "/relation/getMyFriendList")
     Observable<BaseResponse<GetMyFriendsResponse>> getMyFriendList(@Body GetMyFriendsRequest request);
 
     /**
@@ -155,7 +156,7 @@ public interface ApiRequest {
      * @param request   用户基本信息
      * @return          好友申请数量
      */
-    @POST("/relation/getMyFriendApplyList")
+    @POST(BackEndConstant.USER_RELATION + "/relation/getMyFriendApplyList")
     Observable<BaseResponse<Integer>> getMyFriendApplyList(@Body BaseHttpRequest request);
 
     //--------------聊天相关--------------
@@ -166,7 +167,7 @@ public interface ApiRequest {
      * @param request   用户基本信息
      * @return  List<用户消息最新一条消息, 未读消息数量>
      */
-    @POST("/chat/getUserNewMessage")
+    @POST(BackEndConstant.MESSAGE + "/chat/getUserNewMessage")
     Observable<BaseResponse<UserNewMessageResponse>> getUserNewMessage(@Body BaseHttpRequest request);
 
     /**
@@ -175,11 +176,11 @@ public interface ApiRequest {
      * @param request 请求获取消息：timestampIndex 消息起始索引；消息条数messageCount（max 200）
      * @return 获取消息
      */
-    @POST("/chat/fetchUserMessage")
+    @POST(BackEndConstant.MESSAGE + "/chat/fetchUserMessage")
     Observable<BaseResponse<FetchUserMessageResponse>> fetchUserMessage(@Body FetchUserMessageRequest request);
 
     @Multipart
-    @POST("/chatFile/uploadAndSend")
+    @POST(BackEndConstant.MESSAGE + "/chatFile/uploadAndSend")
     Observable<BaseResponse<ChatUploadFileResponse>> uploadAndSend(
             @Part MultipartBody.Part file,
             @Part("fileId") RequestBody fileId,
@@ -198,7 +199,7 @@ public interface ApiRequest {
      */
     //@Part 注解用于标识 Multipart 请求体的一部分,这里的 file 就是文件部分
     @Multipart
-    @POST("/file/uploadImage")
+    @POST(BackEndConstant.OSS + "/oss/upload")
     Observable<BaseResponse<FileUploadResponse>> fileUpload(
             @Part MultipartBody.Part file,
             @Part("name") RequestBody name,
@@ -210,7 +211,8 @@ public interface ApiRequest {
      * @param url   url
      * @return      文件下载响应
      */
-    @GET("/file/downloadImage")
+    @Deprecated
+    @GET(BackEndConstant.OSS + "/oss/downloadImage")
     Observable<BaseResponse<FileDownloadBytesResponse>> downloadImage(@Query("url") String url);
 
     //-------------帖子相关--------------
@@ -220,7 +222,7 @@ public interface ApiRequest {
      * @param request   请求
      * @return          推荐帖子
      */
-    @POST("/recommend/getPost")
+    @POST(BackEndConstant.RECOMMEND + "/recommend/getPost")
     Observable<BaseResponse<RecommendPostResponse>> getRecommendPosts(@Body RecommendPostRequest request);
 
     /**
@@ -229,7 +231,7 @@ public interface ApiRequest {
      * @param pageNum   页码
      * @return          帖子
      */
-    @GET("/post/getPost")
+    @GET(BackEndConstant.POST + "/post/getPost")
     Observable<BaseResponse<SinglePostResponse>> getSinglePost(
             @Query("postId") Long postId,
             @Query("pageNum") Long pageNum
@@ -240,7 +242,7 @@ public interface ApiRequest {
      * @param request   请求
      * @return  发布帖子
      */
-    @POST("/post/postPublishFirst")
+    @POST(BackEndConstant.POST + "/post/postPublishFirst")
     Observable<BaseResponse<PostPublishResponse>> postPublishFirst(
             @Body PostPublishRequest request
     );
@@ -252,7 +254,7 @@ public interface ApiRequest {
      * @param userAccount   用户账号
      * @return              发布帖子
      */
-    @POST("/postFile/uploadPost")
+    @POST(BackEndConstant.POST + "/postFile/uploadPost")
     Observable<BaseResponse<String>> uploadPostFile(
             @Part List<MultipartBody.Part> files,
             @Part("postId") Long postId,

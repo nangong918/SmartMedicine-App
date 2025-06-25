@@ -137,10 +137,6 @@ public class LoginController {
     @PostMapping(UserConstant.Check_Phone_Is_Register)
     public BaseResponse<IsRegisterResponse>
     checkPhoneIsRegister(@RequestBody @Validated IsRegisterRequest request) {
-        if (!StringUtils.hasText(request.getPhone())){
-            String warningMessage = String.format("手机号不能为空，phone: %s", request.getPhone());
-            return BaseResponse.LogBackError(warningMessage);
-        }
         IsRegisterResponse response = new IsRegisterResponse();
         response.setRegister(userService.checkPhoneExist(request.getPhone()) > 0);
         response.setPhone(request.getPhone());
