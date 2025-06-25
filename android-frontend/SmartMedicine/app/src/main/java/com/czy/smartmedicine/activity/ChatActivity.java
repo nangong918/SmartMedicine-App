@@ -65,7 +65,10 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
         });
 
         binding.smSendMessage.setImgClickListener(v -> {
-            PermissionUtil.requestPermissionsX(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, new GainPermissionCallback() {
+            PermissionUtil.requestPermissionsX(this, new String[]{
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, new GainPermissionCallback() {
                 @Override
                 public void allGranted() {
                     com.czy.baseUtilsLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
