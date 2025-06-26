@@ -15,7 +15,7 @@ public class AppException extends RuntimeException{
     /**
      * 错误码
      */
-    private String errCode;
+    private String errCode = "ServiceWarn";
     /**
      * 状态码 [不赋值默认200]
      */

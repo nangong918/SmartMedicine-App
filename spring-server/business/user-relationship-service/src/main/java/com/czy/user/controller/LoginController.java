@@ -21,6 +21,9 @@ import com.czy.api.domain.dto.http.response.LoginSignResponse;
 import com.czy.api.domain.dto.http.response.SendSmsResponse;
 import com.czy.api.domain.dto.http.response.UserRegisterResponse;
 import com.czy.api.domain.vo.user.UserVo;
+import com.czy.api.exception.AuthSmsExceptions;
+import com.czy.api.exception.CommonExceptions;
+import com.czy.api.exception.UserExceptions;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +31,9 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -137,6 +138,11 @@ public class LoginController {
     @PostMapping(UserConstant.Check_Phone_Is_Register)
     public BaseResponse<IsRegisterResponse>
     checkPhoneIsRegister(@RequestBody @Validated IsRegisterRequest request) {
+        if (!StringUtils.hasText(request.getPhone())){
+            return BaseResponse.LogBackError(
+                    UserExceptions.USER_INFO_ERROR
+            );
+        }
         IsRegisterResponse response = new IsRegisterResponse();
         response.setRegister(userService.checkPhoneExist(request.getPhone()) > 0);
         response.setPhone(request.getPhone());
@@ -144,16 +150,17 @@ public class LoginController {
     }
 
     // 2.检查Account是否注册 (频繁调用，可能要ip拦截)
-    @GetMapping(UserConstant.Check_Account_Is_Register)
+    @PostMapping(UserConstant.Check_Account_Is_Register)
     public BaseResponse<IsRegisterResponse>
-    checkAccountIsRegister(@RequestParam("account") String account) {
-        if (!StringUtils.hasText(account)){
-            String warningMessage = String.format("账号不能为空，phone: %s", account);
-            return BaseResponse.LogBackError(warningMessage);
+    checkAccountIsRegister(IsRegisterRequest request) {
+        if (!StringUtils.hasText(request.getAccount())){
+            return BaseResponse.LogBackError(
+                    UserExceptions.USER_INFO_ERROR
+            );
         }
         IsRegisterResponse response = new IsRegisterResponse();
-        response.setRegister(userService.checkAccountExist(account) > 0);
-        response.setPhone(account);
+        response.setRegister(userService.checkAccountExist(request.getAccount()) > 0);
+        response.setAccount(request.getAccount());
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
@@ -165,16 +172,13 @@ public class LoginController {
         String code = request.getVcode();
         boolean checkSms = smsService.checkSms(phone, code);
         if (!checkSms){
-            errorMessage = "验证码错误";
-            return BaseResponse.LogBackError(errorMessage);
+            return BaseResponse.LogBackError(AuthSmsExceptions.VCODE_ERROR);
         }
         if (userService.checkPhoneExist(phone) > 0){
-            errorMessage = "手机号已注册";
-            return BaseResponse.LogBackError(errorMessage);
+            return BaseResponse.LogBackError(UserExceptions.PHONE_REGISTERED);
         }
         if (userService.checkAccountExist(request.getAccount()) > 0){
-            errorMessage = "用户账号已存在";
-            return BaseResponse.LogBackError(errorMessage);
+            return BaseResponse.LogBackError(UserExceptions.ACCOUNT_REGISTERED);
         }
         String lockPath = UserConstant.Login_CONTROLLER + UserConstant.Password_Register;
         long userId = loginService.registerUserV2(
@@ -219,13 +223,11 @@ public class LoginController {
     public BaseResponse<LoginSignResponse> passwordLoginUser(@Validated @RequestBody LoginUserRequest request) {
         String phone = request.getPhone();
         if (!(userService.checkPhoneExist(phone) > 0)) {
-            String errorMessage = "用户账号不存在";
-            return BaseResponse.LogBackError(errorMessage);
+            return BaseResponse.LogBackError(UserExceptions.ACCOUNT_NOT_EXIST);
         }
         boolean result = loginService.checkAccountPassword(phone, request.getPassword());
         if (!result) {
-            String errorMessage = "用户密码错误";
-            return BaseResponse.LogBackError(errorMessage);
+            return BaseResponse.LogBackError(UserExceptions.PASSWORD_ERROR);
         }
         UserDo userDo = userService.getUserByPhone(phone);
         LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo(
@@ -243,8 +245,7 @@ public class LoginController {
     @PostMapping(UserConstant.Reset_Password_Jwt)
     public BaseResponse<LoginUserRequest> resetUserPasswordJwt(@Validated @RequestBody LoginResetPasswordRequest request) {
         if (!StringUtils.hasText(request.getPassword())){
-            String errorMessage = "旧密码不能为空";
-            return BaseResponse.LogBackError(errorMessage);
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
         return handleResetPassword(request);
     }
@@ -256,8 +257,7 @@ public class LoginController {
         String code = request.getVcode();
         boolean checkSms = smsService.checkSms(phone, code);
         if (!checkSms) {
-            String errorMessage = "验证码错误";
-            return BaseResponse.LogBackError(errorMessage);
+            return BaseResponse.LogBackError(AuthSmsExceptions.VCODE_ERROR);
         }
         return handleResetPassword(request);
     }
@@ -286,7 +286,7 @@ public class LoginController {
             }
         }
 
-        return BaseResponse.LogBackError("重置密码失败");
+        return BaseResponse.LogBackError(UserExceptions.RESET_PASSWORD_FAIL);
     }
 
     // 重置userInfo
@@ -294,7 +294,7 @@ public class LoginController {
     public BaseResponse<UserVo> resetUserInfo(@Validated @RequestBody ResetUserInfoRequest request) {
         UserDo userDo = userService.getUserByAccount(request.getAccount());
         if (userDo == null || userDo.getId() == null){
-            return BaseResponse.LogBackError("用户不存在");
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
         }
         UserVo newUser = userService.resetUserInfo(
                 UserInfoAo.builder()
@@ -306,7 +306,7 @@ public class LoginController {
         if (newUser != null) {
             return BaseResponse.getResponseEntitySuccess(newUser);
         }
-        return BaseResponse.LogBackError("重置用户信息失败");
+        return BaseResponse.LogBackError(UserExceptions.RESET_USER_INFO_FAIL);
     }
 
 
@@ -317,8 +317,9 @@ public class LoginController {
             SendSmsResponse response = new SendSmsResponse();
             response.setPhone(request.getPhone());
             return BaseResponse.getResponseEntitySuccess(response);
-        } else {
-            return BaseResponse.LogBackError("发送短信失败");
+        }
+        else {
+            return BaseResponse.LogBackError(AuthSmsExceptions.SEND_SMS_FAIL);
         }
     }
 
@@ -331,8 +332,7 @@ public class LoginController {
         String code = request.getVcode();
         boolean checkSms = smsService.checkSms(phone, code);
         if (!checkSms){
-            String errorMessage = "验证码错误";
-            return BaseResponse.LogBackError(errorMessage);
+            return BaseResponse.LogBackError(AuthSmsExceptions.VCODE_ERROR);
         }
 
         boolean isPhoneRegister = userService.checkPhoneExist(request.getPhone()) > 0;
@@ -341,7 +341,7 @@ public class LoginController {
         UserDo userDo = userService.getUserByPhone(phone);
         // 未注册：注册
         if (!isPhoneRegister){
-            return BaseResponse.LogBackError("还未注册请先注册");
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
         }
 /*        if (userDo == null || userDo.getId() == null){
             String userName = request.getUserName();
@@ -388,6 +388,6 @@ public class LoginController {
             }
         }
 
-        return BaseResponse.LogBackError("短信注册/登录失败");
+        return BaseResponse.LogBackError(UserExceptions.LOGIN_FAIL);
     }
 }

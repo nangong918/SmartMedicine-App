@@ -138,8 +138,8 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         NetworkLoadUtils.showDialog(this);
         viewModel.doSign(
                 this,
-                viewModel.signVo.pwd.getValue(),
                 viewModel.signVo.phone.getValue(),
+                viewModel.signVo.pwd.getValue(),
                 new SyncRequestCallback() {
                         @Override
                         public void onThrowable(Throwable throwable) {

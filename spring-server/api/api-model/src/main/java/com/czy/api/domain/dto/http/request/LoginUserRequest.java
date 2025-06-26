@@ -17,7 +17,7 @@ public class LoginUserRequest extends DeviceInfoRequest {
     private String account;
     @NotEmpty(message = "用户密码不能为空")
     private String password;
-    @NotEmpty(message = "用户账号不能为空")
+    @NotEmpty(message = "用户手机号不能为空")
     private String phone;
     private Integer permission;
 }
