@@ -210,7 +210,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public boolean checkPassword(String account, String password) {
+    public boolean checkAccountPassword(String account, String password) {
         LoginUserDo loginUserDo = checkAccountExist(account);
 
         if (!EncryptUtil.bcryptVerify(password, loginUserDo.getPassword())){
@@ -221,10 +221,22 @@ public class LoginServiceImpl implements LoginService {
         return true;
     }
 
+    @Override
+    public boolean checkPhonePassword(String phone, String password) {
+        LoginUserDo loginUserDo = checkPhoneExist(phone);
+
+        if (!EncryptUtil.bcryptVerify(password, loginUserDo.getPassword())){
+            String errorMsg = String.format("用户password错误，phone: %s", phone);
+            log.warn(errorMsg);
+            throw new AppException(errorMsg);
+        }
+        return true;
+    }
+
     // 返回accessToken
     @Override
     public LoginSignResponse loginUser(LoginJwtPayloadAo loginJwtPayloadAo) {
-        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount(loginJwtPayloadAo.getUserAccount());
+        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount(loginJwtPayloadAo.getAccount());
         // 生成accessToken
         LoginSignResponse loginSignResponse = new LoginSignResponse();
         // 告诉前端建立WebSocket连接
@@ -288,6 +300,16 @@ public class LoginServiceImpl implements LoginService {
         LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount(account);
         if (loginUserDo == null){
             String errorMsg = String.format("用户account不存在，account: %s", account);
+            log.warn(errorMsg);
+            throw new AppException(errorMsg);
+        }
+        return loginUserDo;
+    }
+
+    private LoginUserDo checkPhoneExist(String phone) {
+        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByPhone(phone);
+        if (loginUserDo == null){
+            String errorMsg = String.format("用户phone不存在，phone: %s", phone);
             log.warn(errorMsg);
             throw new AppException(errorMsg);
         }

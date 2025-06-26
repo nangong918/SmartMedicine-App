@@ -297,3 +297,10 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 8. oss优化, url存储在redis中,并且redis.ttl < oss.ttl
 9. 搜索,排序算法优化.
 10. 微服务分布式优化:集群,均衡负载,分布式锁,分布式事务,链路,服务注册,服务发现,服务熔断,服务限流
+
+##### 问题
+尝试解决Redis RDB问题:
+`1160:M 26 Jun 2025 11:18:11.079 * 1 changes in 3600 seconds. Saving...
+1160:M 26 Jun 2025 11:18:11.123 * Background saving started by pid 10054
+10054:C 26 Jun 2025 11:18:11.128 # Failed opening the RDB file dump.rdb (in server root dir /Redis) for saving: No error
+1160:M 26 Jun 2025 11:18:11.253 # Background saving error`

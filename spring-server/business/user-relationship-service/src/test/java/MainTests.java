@@ -82,7 +82,7 @@ public class MainTests {
         // 纳贡same
         String account = "1231231412";
         String password = "123456";
-        boolean checkPassword = loginService.checkPassword(account, password);
+        boolean checkPassword = loginService.checkAccountPassword(account, password);
         System.out.println("checkPassword = " + checkPassword);
     }
 
@@ -90,7 +90,12 @@ public class MainTests {
     @Test
     public void loginUser() throws Exception {
         // Dubbo传输的对象必须需要进行序列化
-        LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo("1231231412", "1231231412", UserConstant.JWT_FUNCTION_LOGIN);
+        LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo(
+                1L,
+                "13225",
+                "13225",
+                "123456",
+                UserConstant.JWT_FUNCTION_LOGIN);
         LoginSignResponse loginUserRequest = loginService.loginUser(loginJwtPayloadAo);
         System.out.println("loginUserRequest = " + loginUserRequest);
     }

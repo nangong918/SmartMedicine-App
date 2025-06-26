@@ -217,20 +217,24 @@ public class LoginController {
     // 密码登录
     @PostMapping(UserConstant.Password_Login)
     public BaseResponse<LoginSignResponse> passwordLoginUser(@Validated @RequestBody LoginUserRequest request) {
-        String userAccount = null;
-        if (userService.checkAccountExist(request.getAccount()) > 0) {
-            userAccount = request.getAccount();
-        }
-        else {
+        String phone = request.getPhone();
+        if (!(userService.checkPhoneExist(phone) > 0)) {
             String errorMessage = "用户账号不存在";
             return BaseResponse.LogBackError(errorMessage);
         }
-        boolean result = loginService.checkPassword(userAccount, request.getPassword());
+        boolean result = loginService.checkAccountPassword(phone, request.getPassword());
         if (!result) {
             String errorMessage = "用户密码错误";
             return BaseResponse.LogBackError(errorMessage);
         }
-        LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo(userAccount, request.getUuid(), UserConstant.JWT_FUNCTION_LOGIN);
+        UserDo userDo = userService.getUserByPhone(phone);
+        LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo(
+                userDo.getId(),
+                phone,
+                userDo.getAccount(),
+                request.getUuid(),
+                UserConstant.JWT_FUNCTION_LOGIN
+        );
         LoginSignResponse LoginSignResponse = loginService.loginUser(loginJwtPayloadAo);
         return BaseResponse.getResponseEntitySuccess(LoginSignResponse);
     }
@@ -372,6 +376,8 @@ public class LoginController {
         // 注册了：登录
         else {
             LoginJwtPayloadAo loginJwtPayloadAo = new LoginJwtPayloadAo(
+                    userDo.getId(),
+                    phone,
                     userDo.getAccount(),
                     request.getUuid(),
                     UserConstant.JWT_FUNCTION_REGISTER
