@@ -238,7 +238,7 @@ public class MainApplication extends Application {
         try {
             // SharePreferences
             SharedPreferences sp = SecuritySharedPreferencesUtils.getSecuritySharedPreferences(
-                    UserModel.USER_INFO_FILE_NAME,
+                    UserLoginInfoAo.class.getName(),
                     this
             );
             userLoginInfoAo.saveToSharePreferences(sp);
@@ -253,6 +253,19 @@ public class MainApplication extends Application {
     private LoginTokenAo loginTokenAo;
 
     public LoginTokenAo getLoginTokenAo() {
+        if (loginTokenAo == null){
+            loginTokenAo = new LoginTokenAo();
+            try {
+                // SharePreferences
+                SharedPreferences sp = SecuritySharedPreferencesUtils.getSecuritySharedPreferences(
+                        LoginTokenAo.class.getName(),
+                        this
+                );
+                loginTokenAo.getFromSharePreferences(sp);
+            } catch (Exception e) {
+                Log.e(TAG, "getUserLoginInfoAo error", e);
+            }
+        }
         return loginTokenAo;
     }
 

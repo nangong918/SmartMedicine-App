@@ -3,6 +3,7 @@ package com.czy.smartmedicine.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -141,6 +142,8 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
                         @Override
                         public void onThrowable(Throwable throwable) {
                             NetworkLoadUtils.dismissDialog();
+                            ToastUtils.showToastActivity(SignActivity.this, throwable.getMessage());
+                            Log.w(TAG, "onThrowable: " + throwable);
                         }
 
                         @Override
