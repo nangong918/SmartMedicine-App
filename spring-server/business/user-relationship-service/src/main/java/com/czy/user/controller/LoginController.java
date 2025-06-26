@@ -225,7 +225,7 @@ public class LoginController {
         if (!(userService.checkPhoneExist(phone) > 0)) {
             return BaseResponse.LogBackError(UserExceptions.ACCOUNT_NOT_EXIST);
         }
-        boolean result = loginService.checkAccountPassword(phone, request.getPassword());
+        boolean result = loginService.checkPhonePassword(phone, request.getPassword());
         if (!result) {
             return BaseResponse.LogBackError(UserExceptions.PASSWORD_ERROR);
         }

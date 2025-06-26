@@ -4,8 +4,6 @@ package com.czy.smartmedicine.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.View;
-import android.widget.Toast;
-
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -21,11 +19,10 @@ import com.czy.dal.ao.intent.RegisterActivityIntentAo;
 import com.czy.dal.constant.intent.RegisterActivityType;
 import com.czy.dal.vo.fragmentActivity.SignVo;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.R;
 import com.czy.smartmedicine.databinding.ActivitySignBinding;
 import com.czy.smartmedicine.test.TestConfig;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.SignViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 /**
  *  @author 13225
