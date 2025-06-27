@@ -142,6 +142,7 @@ public class SignViewModel extends ViewModel {
     }
 
     private void handleLogin(BaseResponse<LoginSignResponse> response, Context context, SyncRequestCallback callback){
+        // 数据解析
         LoginSignResponse loginSignResponse = response.getData();
         Long userId = Optional.ofNullable(loginSignResponse)
                 .map(re -> re.userVo)
@@ -187,6 +188,9 @@ public class SignViewModel extends ViewModel {
         Log.i(TAG, "存储结果::userLoginInfoAo: " + userLoginInfoAo.toJsonString());
         loginTokenAo = MainApplication.getInstance().getLoginTokenAo();
         Log.i(TAG, "存储结果::loginTokenAo: " + loginTokenAo.toJsonString());
+
+        // 长连接
+        MainApplication.getInstance().startNettySocketService(userLoginInfoAo.userId);
 
         // runnable
         callback.onAllRequestSuccess();
