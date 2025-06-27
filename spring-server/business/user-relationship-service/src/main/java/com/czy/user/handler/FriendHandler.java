@@ -35,10 +35,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class FriendHandler implements FriendApi {
 
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private LoginService loginService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private UserService userService;
+    private final LoginService loginService;
+    private final UserService userService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserRelationshipService userRelationshipService;
     private final AddUserConverter addUserConverter;
