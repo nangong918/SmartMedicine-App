@@ -14,6 +14,7 @@ import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
+import com.czy.dal.dto.http.request.SearchUserRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
@@ -137,7 +138,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/user/searchUser")
     //    Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body BaseNettyRequest request);
-    public void searchUsers(BaseHttpRequest request,
+    public void searchUsers(SearchUserRequest request,
                             OnSuccessCallback<BaseResponse<SearchUserResponse>> onSuccessCallback,
                             OnThrowableCallback onThrowableCallback){
         sendRequestCallback(

@@ -10,9 +10,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
+import com.czy.appcore.service.AddUserStateHandler;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.OnPositionItemButtonContentClick;
-import com.czy.appcore.service.AddUserStateHandler;
 import com.czy.dal.ao.newUser.AddUserStatusAo;
 import com.czy.dal.ao.newUser.SearchFriendApplyAo;
 import com.czy.dal.constant.newUserGroup.AddSourceEnum;
@@ -21,10 +21,9 @@ import com.czy.dal.constant.newUserGroup.ApplyStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleButtonStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleStatusEnum;
 import com.czy.dal.dto.http.request.SearchUserRequest;
-import com.czy.dal.dto.netty.request.AddUserRequest;
-import com.czy.dal.dto.http.request.BaseHttpRequest;
-import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.http.response.SearchUserResponse;
+import com.czy.dal.dto.netty.request.AddUserRequest;
+import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
 import com.czy.dal.vo.fragmentActivity.SearchActivityUserVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
@@ -86,7 +85,7 @@ public class SearchActivityUserViewModel extends ViewModel {
     //==========搜索用户
 
     private void doSearchUsers(
-            BaseHttpRequest request) {
+            SearchUserRequest request) {
         this.apiRequestImpl.searchUsers(
                 request,
                 this::handleSearchUsers,
@@ -266,7 +265,7 @@ public class SearchActivityUserViewModel extends ViewModel {
         Log.i(TAG, "searchUsers: " + account);
         SearchUserRequest request = new SearchUserRequest();
         request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
-        request.userAccount = account;
+        request.userData = account;
         doSearchUsers(request);
     }
 

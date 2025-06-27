@@ -11,6 +11,7 @@ import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
+import com.czy.dal.dto.http.request.SearchUserRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
@@ -119,7 +120,7 @@ public interface ApiRequest {
      * @return          用户列表
      */
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.USER_RELATION + "/relation/searchUser")
-    Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body BaseHttpRequest request);
+    Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body SearchUserRequest request);
 
     /**
      * 添加用户
