@@ -23,6 +23,8 @@ public enum GatewayExceptions implements ExceptionEnums{
     REFRESH_TOKEN_EXPIRED("Gateway_10006", "refreshToken过期，请重新登录"),
     // refreshToken无效
     REFRESH_TOKEN_INVALID("Gateway_10007", "refreshToken无效"),
+    // IP 访问过于频繁
+    IP_ACCESS_TOO_FREQUENTLY("Gateway_10008", "IP 访问过于频繁"),
     ;
 
     private final String code;

@@ -11,7 +11,8 @@ public enum CommonExceptions implements ExceptionEnums{
 
     // 参数错误
     PARAM_ERROR("C_10001", "参数错误、不全"),
-
+    // 系统异常 (与前端无关系的熊异常)
+    SYSTEM_ERROR("C_10002", "系统异常"),
     ;
 
     private final String code;
