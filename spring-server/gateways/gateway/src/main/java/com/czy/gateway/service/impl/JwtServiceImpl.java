@@ -4,6 +4,7 @@ import com.czy.api.api.auth.TokenGeneratorService;
 import com.czy.api.api.auth.TokenValidatorService;
 import com.czy.api.constant.auth.JwtConstant;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
+import com.czy.api.exception.GatewayExceptions;
 import com.czy.gateway.service.JwtService;
 import jwt.TokenStatue;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +35,7 @@ public class JwtServiceImpl implements JwtService {
                 JwtConstant.ACCESS_TOKEN_NAME
         );
         if (!StringUtils.hasText(accessToken)) {
-            log.warn("accessToken为空");
-            return ResponseUtils.setErrorResponse(exchange, "accessToken为空");
+            return ResponseUtils.setErrorResponse(exchange, GatewayExceptions.ACCESS_TOKEN_EMPTY);
         }
 
         return Mono.fromCallable(() -> tokenValidatorService.checkTokenStatus(
@@ -56,15 +56,14 @@ public class JwtServiceImpl implements JwtService {
         }
         else {
             log.warn("accessToken无效");
-            return ResponseUtils.setErrorResponse(exchange, "accessToken无效");
+            return ResponseUtils.setErrorResponse(exchange, GatewayExceptions.ACCESS_TOKEN_INVALID);
         }
     }
 
 
     private Mono<Void> handleRefreshToken(ServerWebExchange exchange, GatewayFilterChain chain, String refreshToken) {
         if (!StringUtils.hasText(refreshToken)) {
-            log.warn("refreshToken为空");
-            return ResponseUtils.setErrorResponse(exchange, "refreshToken为空");
+            return ResponseUtils.setErrorResponse(exchange, GatewayExceptions.REFRESH_TOKEN_EMPTY);
         }
 
         return Mono.fromCallable(() -> tokenValidatorService.checkTokenStatus(refreshToken, JwtConstant.REFRESH_TOKEN_GENERATE_KEY))
@@ -84,24 +83,24 @@ public class JwtServiceImpl implements JwtService {
                             if (payloadAo == null) {
                                 return ResponseUtils.setErrorResponse(
                                         exchange,
-                                        "accessToken失效且refreshToken解析失败无法获得JwtPayload"
+                                        GatewayExceptions.ACCESS_TOKEN_EXPIRED_AND_REFRESH_TOKEN_INVALID
                                 );
                             }
                             String newAccessToken;
                             try {
                                 newAccessToken = tokenGeneratorService.generateAccessToken(payloadAo);
                             } catch (Exception e) {
-                                return ResponseUtils.setErrorResponse(exchange, "accessToken验证出现异常");
+                                return ResponseUtils.setErrorResponse(exchange, GatewayExceptions.ACCESS_TOKEN_VERIFY_ERROR);
                             }
                             exchange.getResponse().getHeaders().set(JwtConstant.ACCESS_TOKEN_NAME, newAccessToken);
                             return chain.filter(exchange);
                         });
                     } else if (TokenStatue.EFFECTIVE.equals(refreshStatus)) {
                         log.warn("refreshToken过期，请重新登录");
-                        return ResponseUtils.setErrorResponse(exchange, "refreshToken过期，请重新登录");
+                        return ResponseUtils.setErrorResponse(exchange, GatewayExceptions.REFRESH_TOKEN_EXPIRED);
                     } else {
                         log.warn("refreshToken无效");
-                        return ResponseUtils.setErrorResponse(exchange, "refreshToken无效");
+                        return ResponseUtils.setErrorResponse(exchange, GatewayExceptions.REFRESH_TOKEN_INVALID);
                     }
                 });
     }
