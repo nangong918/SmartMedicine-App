@@ -22,7 +22,6 @@ import com.czy.appcore.network.netty.api.SocketApiResponseHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.network.netty.queue.SocketMessageQueue;
 import com.czy.appcore.network.netty.service.NettySocketServiceInitiator;
-import com.czy.appcore.service.UserModel;
 import com.czy.baseUtilsLib.file.SecuritySharedPreferencesUtils;
 import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.network.BaseResponse;
@@ -214,7 +213,7 @@ public class MainApplication extends Application {
             try {
                 // SharePreferences
                 SharedPreferences sp = SecuritySharedPreferencesUtils.getSecuritySharedPreferences(
-                        UserModel.USER_INFO_FILE_NAME,
+                        UserLoginInfoAo.class.getName(),
                         this
                 );
                 userLoginInfoAo.getFromSharePreferences(sp);
@@ -226,11 +225,11 @@ public class MainApplication extends Application {
     }
 
     public void clearUserLoginInfoAo(){
-        userLoginInfoAo = null;
+        this.userLoginInfoAo = null;
         try {
             // SharePreferences
             SecuritySharedPreferencesUtils.clearSecuritySharedPreferences(
-                    UserModel.USER_INFO_FILE_NAME,
+                    UserLoginInfoAo.class.getName(),
                     this
             );
         } catch (Exception e) {
@@ -253,6 +252,8 @@ public class MainApplication extends Application {
     }
 
     public void clearAllSharePreferences() {
+        clearLoginTokenAo();
+        clearUserLoginInfoAo();
     }
 
     private LoginTokenAo loginTokenAo;
@@ -276,6 +277,29 @@ public class MainApplication extends Application {
 
     public void setLoginTokenAo(LoginTokenAo loginTokenAo) {
         this.loginTokenAo = loginTokenAo;
+        try {
+            // SharePreferences
+            SharedPreferences sp = SecuritySharedPreferencesUtils.getSecuritySharedPreferences(
+                    LoginTokenAo.class.getName(),
+                    this
+            );
+            loginTokenAo.saveToSharePreferences(sp);
+        } catch (Exception e) {
+            Log.e(TAG, "setUserLoginInfoAo error", e);
+        }
+    }
+
+    public void clearLoginTokenAo(){
+        this.loginTokenAo = null;
+        try {
+            // SharePreferences
+            SecuritySharedPreferencesUtils.clearSecuritySharedPreferences(
+                    LoginTokenAo.class.getName(),
+                    this
+            );
+        } catch (Exception e) {
+            Log.e(TAG, "clearLoginTokenAo error", e);
+        }
     }
 
     //==========messageList
