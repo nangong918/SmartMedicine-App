@@ -4,8 +4,8 @@ package com.czy.smartmedicine.utils;
 
 import android.util.Log;
 
-import com.czy.appcore.network.api.AsyncRequestCallback;
-import com.czy.appcore.network.api.SyncAllRequestFinish;
+import com.czy.appcore.network.api.handle.AsyncRequestCallback;
+import com.czy.appcore.network.api.handle.SyncAllRequestFinish;
 
 import java.util.ArrayList;
 import java.util.List;

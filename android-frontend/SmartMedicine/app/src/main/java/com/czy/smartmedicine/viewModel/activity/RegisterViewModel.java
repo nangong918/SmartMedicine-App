@@ -14,7 +14,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.BaseConfig;
-import com.czy.appcore.network.api.SyncRequestCallback;
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.utils.OnTextInputEnd;
 import com.czy.appcore.utils.TextChangeLegalCallback;

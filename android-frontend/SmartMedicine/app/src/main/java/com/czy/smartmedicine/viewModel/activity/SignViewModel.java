@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModel;
 
-import com.czy.appcore.network.api.SyncRequestCallback;
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.utils.OnTextInputEnd;
 import com.czy.appcore.utils.TextChangeLegalCallback;
@@ -188,6 +188,9 @@ public class SignViewModel extends ViewModel {
         Log.i(TAG, "存储结果::userLoginInfoAo: " + userLoginInfoAo.toJsonString());
         loginTokenAo = MainApplication.getInstance().getLoginTokenAo();
         Log.i(TAG, "存储结果::loginTokenAo: " + loginTokenAo.toJsonString());
+
+        // 设置accessToken和refreshToken到拦截器
+        MainApplication.setToken();
 
         // 长连接
         MainApplication.getInstance().startNettySocketService(userLoginInfoAo.userId);

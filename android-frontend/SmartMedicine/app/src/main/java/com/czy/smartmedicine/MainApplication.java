@@ -17,7 +17,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.netty.IMessageListener;
-import com.czy.appcore.network.api.ApiRequest;
+import com.czy.appcore.network.api.api.ApiRequest;
 import com.czy.appcore.network.netty.api.SocketApiResponseHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.network.netty.queue.SocketMessageQueue;
@@ -36,7 +36,7 @@ import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.netty.Message;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
-import com.czy.appcore.network.api.ApiRequestProvider;
+import com.czy.appcore.network.api.api.ApiRequestProvider;
 import com.czy.appcore.network.netty.service.NettySocketService;
 import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.czy.smartmedicine.utils.ViewModelUtil;
@@ -93,6 +93,11 @@ public class MainApplication extends Application {
             apiRequestInstance = ApiRequestProvider.getApiRequest();
         }
         return apiRequestInstance;
+    }
+
+    public static void setToken(){
+        LoginTokenAo loginTokenAo = MainApplication.getInstance().getLoginTokenAo();
+        ApiRequestProvider.getAuthInterceptor(loginTokenAo).setLoginTokenAo(loginTokenAo);
     }
 
     // 请求接口实现

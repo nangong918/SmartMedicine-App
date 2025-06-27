@@ -43,4 +43,7 @@ public class BaseConfig extends com.czy.baseUtilsLib.config.BaseConfig {
     public static final int BITMAP_MAX_SIZE_AVATAR = 200;
     // 手机号前缀
     public static String phonePrefix = "+86";
+
+    // 请求是否加认证token前缀 最后要在拦截器检查去掉; 定义一些不像url的命名避免出现与后端路由重合
+    public static final String AUTH_TOKEN_PREFIX = "has-0!0-token";
 }

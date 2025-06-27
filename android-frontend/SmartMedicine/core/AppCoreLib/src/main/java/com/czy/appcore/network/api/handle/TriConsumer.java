@@ -1,4 +1,4 @@
-package com.czy.appcore.network.api;
+package com.czy.appcore.network.api.handle;
 
 @FunctionalInterface
 public interface TriConsumer<T, U, V> {

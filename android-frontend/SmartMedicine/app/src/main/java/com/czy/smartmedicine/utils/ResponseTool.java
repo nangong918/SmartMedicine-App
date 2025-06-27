@@ -6,10 +6,10 @@ import android.widget.Toast;
 
 
 import com.czy.appcore.CodeConstant;
-import com.czy.appcore.network.api.AsyncRequestCallback;
-import com.czy.appcore.network.api.FourConsumer;
-import com.czy.appcore.network.api.SyncRequestCallback;
-import com.czy.appcore.network.api.TriConsumer;
+import com.czy.appcore.network.api.handle.AsyncRequestCallback;
+import com.czy.appcore.network.api.handle.FourConsumer;
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
+import com.czy.appcore.network.api.handle.TriConsumer;
 import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.ResponseUtil;

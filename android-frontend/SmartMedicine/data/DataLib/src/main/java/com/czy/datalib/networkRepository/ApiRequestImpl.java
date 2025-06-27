@@ -1,7 +1,7 @@
 package com.czy.datalib.networkRepository;
 
 
-import com.czy.appcore.network.api.ApiRequest;
+import com.czy.appcore.network.api.api.ApiRequest;
 import com.czy.baseUtilsLib.network.BaseApiRequestImpl;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.OnSuccessCallback;
