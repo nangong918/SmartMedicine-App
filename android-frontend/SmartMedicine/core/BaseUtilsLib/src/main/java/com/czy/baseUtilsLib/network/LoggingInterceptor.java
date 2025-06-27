@@ -1,7 +1,6 @@
 package com.czy.baseUtilsLib.network;
 
 
-
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,7 +8,7 @@ import androidx.annotation.NonNull;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import com.czy.baseUtilsLib.debug.DebugMyUtil;
+
 import java.io.IOException;
 
 import okhttp3.Headers;
@@ -24,7 +23,7 @@ public class LoggingInterceptor implements Interceptor {
 
     private static final String TAG = Interceptor.class.getSimpleName();
 
-    private boolean isShowHeader = false;
+    private boolean isShowHeader = true;
 
     public LoggingInterceptor(){
     }

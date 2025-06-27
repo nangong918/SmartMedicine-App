@@ -2,7 +2,6 @@ package com.czy.smartmedicine.activity;
 
 
 import android.content.Intent;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.czy.appcore.BaseConfig;
@@ -78,10 +77,11 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
                 .map(ao -> ao.userId)
                 .orElse(null);
         LoginTokenAo loginTokenAo = MainApplication.getInstance().getLoginTokenAo();
-        Log.i(TAG, "检查是否未登录::userId: " + userId);
-        return userId != null &&
-                !Constants.ERROR_ID.equals(userId) &&
-                !loginTokenAo.isEmpty();
+        Log.i(TAG, "检查是否未登录::userId: " + userId + "\nloginTokenAo: " + loginTokenAo.toJsonString());
+        return userId == null ||
+                userId == 0L ||
+                Constants.ERROR_ID.equals(userId) ||
+                loginTokenAo.isEmpty();
     }
 
     // 跳转页面

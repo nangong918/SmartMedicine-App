@@ -32,7 +32,6 @@ public class AuthInterceptor implements Interceptor {
         String url = originalRequest.url().toString();
 
         // 检查 URL 是否包含 "/has-0!0-token"
-        // 检查 URL 是否包含 "/has--token"
         if (url.contains(BaseConfig.AUTH_TOKEN_PREFIX)) {
             // 构建新的 URL，去掉 "/has--token"
             String newUrl = url.replace(BaseConfig.AUTH_TOKEN_PREFIX, "");
