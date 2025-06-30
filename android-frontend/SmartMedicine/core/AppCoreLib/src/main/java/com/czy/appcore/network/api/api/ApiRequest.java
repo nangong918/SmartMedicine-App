@@ -282,4 +282,11 @@ public interface ApiRequest {
             @Part("postId") Long postId,
             @Part("userAccount") String userAccount
     );
+
+    //--------------Test--------------
+
+    @POST("/oss/uploadTest")
+    Observable<BaseResponse<String>> uploadImageTest(
+            MultipartBody.Part file
+    );
 }

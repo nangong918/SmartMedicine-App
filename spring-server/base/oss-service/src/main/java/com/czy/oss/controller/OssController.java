@@ -77,9 +77,9 @@ public class OssController {
     @PostMapping("/uploadTest")
     public String uploadTest(
             @RequestParam("file") MultipartFile file) {
-        List<MultipartFile> fileList = new ArrayList<>();
-        fileList.add(file);
-        FileOptionResult result = minIOService.uploadMultipartFiles(fileList, globalOssBucket);
+        List<MultipartFile> files = new ArrayList<>();
+        files.add(file);
+        FileOptionResult result = minIOService.uploadMultipartFiles(files, globalOssBucket);
 
         if (!ObjectUtils.isEmpty(result.getErrorFiles())){
             StringBuilder sb = new StringBuilder();

@@ -37,8 +37,11 @@ import com.czy.dal.vo.entity.UserVo;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 public class ApiRequestImpl extends BaseApiRequestImpl {
 
@@ -354,6 +357,23 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                                OnThrowableCallback onThrowableCallback){
         this.sendRequestCallback(
                 mApi.uploadPostFile(files, postId, userAccount),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+
+    //--------------Test--------------
+
+    //    @POST("/oss/uploadTest")
+    //    Observable<BaseResponse<String>> uploadImageTest(
+    //            MultipartBody.Part file
+    //    );
+    public void uploadImageTest(MultipartBody.Part file,
+                                OnSuccessCallback<BaseResponse<String>> onSuccessCallback,
+                                OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.uploadImageTest(file),
                 onSuccessCallback,
                 onThrowableCallback
         );
