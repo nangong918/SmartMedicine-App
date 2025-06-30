@@ -48,7 +48,7 @@ public class UserRelationshipController {
     private final UserService userService;
 
     /**
-     * like模糊搜索用户       TODO 需要重构：1.封装图片返回基本类型：{url, id}; 添加user头像的图片基本类型返回
+     * like模糊搜索用户
      * @param request   请求体，包含senderId和receiverId；其中receiverId是模糊的account
      * @return List搜索结果。之所以是list是因为模糊搜索可能出现一系列匹配
      */

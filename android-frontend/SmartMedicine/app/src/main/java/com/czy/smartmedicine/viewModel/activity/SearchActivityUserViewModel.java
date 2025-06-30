@@ -67,7 +67,11 @@ public class SearchActivityUserViewModel extends ViewModel {
                                 AddContactItemVo itemVo = new AddContactItemVo();
                                 itemVo.account = (u.account);
                                 itemVo.name = (u.userName);
-                                itemVo.avatarUrlOrUri = (u.avatarUri);
+                                itemVo.avatarUrlOrUri = (
+                                        Optional.ofNullable(u.fileResAo)
+                                                .map(f -> f.fileUrl)
+                                                .orElse(null)
+                                        );
                                 // 通过返回的ao直接设置状态
                                 Integer[] handleButtonState = AddUserStateHandler.getApplyStateButton(u.addUserStatusAo);
                                 Log.i(TAG, "handleSearchUsers: " + Arrays.toString(handleButtonState));

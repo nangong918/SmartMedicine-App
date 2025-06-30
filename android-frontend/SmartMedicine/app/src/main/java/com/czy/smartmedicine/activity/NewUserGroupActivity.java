@@ -7,7 +7,7 @@ import android.util.Log;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.addContact.AddContactAdapter;
-import com.czy.dal.ao.NewUserGroupActivityStartAo;
+import com.czy.dal.ao.intent.NewUserGroupActivityIntentAo;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
 import com.czy.dal.vo.entity.addContact.AddContactListVo;
 import com.czy.dal.vo.fragmentActivity.NewUserGroupVo;
@@ -45,23 +45,23 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
 
     //-----------------------Intent Data-----------------------
 
-    private NewUserGroupActivityStartAo newUserGroupActivityStartAo = null;
+    private NewUserGroupActivityIntentAo newUserGroupActivityIntentAo = null;
 
     private void initIntentData() {
         // 获取传递的对象
         try {
             Intent intent = getIntent();
             Optional.ofNullable(intent)
-                    .map(i -> (NewUserGroupActivityStartAo)i.getSerializableExtra(NewUserGroupActivityStartAo.class.getName()))
+                    .map(i -> (NewUserGroupActivityIntentAo)i.getSerializableExtra(NewUserGroupActivityIntentAo.class.getName()))
                     .ifPresent(ao -> {
-                        this.newUserGroupActivityStartAo = ao;
+                        this.newUserGroupActivityIntentAo = ao;
                         handleUserGroupEnum(ao.userGroupEnum);
                     });
         } catch (Exception e) {
             Log.e(TAG, "initIntentData::getSerializableExtra Error: ", e);
             finish();
         }
-        if (newUserGroupActivityStartAo == null) {
+        if (newUserGroupActivityIntentAo == null) {
             Log.e(TAG, "initIntentData::newUserGroupActivityStartAo is null");
             finish();
         }
@@ -120,7 +120,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
     private void initViewModelVo(){
         NewUserGroupVo newUserGroupVo = new NewUserGroupVo();
         // 是否为User界面 如果为 null 或不等于 USER，默认设置为 true
-        newUserGroupVo.isUserNotGroup = Optional.ofNullable(newUserGroupActivityStartAo)
+        newUserGroupVo.isUserNotGroup = Optional.ofNullable(newUserGroupActivityIntentAo)
                 .map(ao -> ao.userGroupEnum)
                 .map(userGroupEnum -> userGroupEnum.equals(UserGroupEnum.USER))
                 .orElse(true);

@@ -1,12 +1,15 @@
 package com.czy.dal.ao.newUser;
 
 
+import com.czy.dal.ao.FileResAo;
+
 /**
  * @author 13225
  * @date 2025/2/27 22:18
  */
 public class SearchFriendApplyAo {
 
+    public Long userId;
     public String account;
     public String userName;
     public String phone;
@@ -18,8 +21,8 @@ public class SearchFriendApplyAo {
     public Integer source;
     // 聊天列表 (JSON 格式)
     public String chatList;
-    // 头像uri
-    public String avatarUri;
+    // 头像FileResAo (核心：url，id)
+    public FileResAo fileResAo = new FileResAo();
     // 默认设置为不是好友，所以状态是申请
     public AddUserStatusAo addUserStatusAo = new AddUserStatusAo();
 
