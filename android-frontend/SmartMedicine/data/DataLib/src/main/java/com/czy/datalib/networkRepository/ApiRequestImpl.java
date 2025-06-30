@@ -365,9 +365,10 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //--------------Test--------------
 
-    //    @POST("/oss/uploadTest")
+    //    @Multipart
+    //    @POST(BackEndConstant.OSS + "/oss/uploadTest")
     //    Observable<BaseResponse<String>> uploadImageTest(
-    //            MultipartBody.Part file
+    //            @Part MultipartBody.Part file
     //    );
     public void uploadImageTest(MultipartBody.Part file,
                                 OnSuccessCallback<BaseResponse<String>> onSuccessCallback,
