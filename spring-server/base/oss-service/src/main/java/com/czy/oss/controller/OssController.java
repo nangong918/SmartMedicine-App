@@ -11,13 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -73,7 +67,7 @@ public class OssController {
     }
 
     @GetMapping("/downloadByStorageName")
-    public void download(
+    public void downloadByName(
             @RequestParam("fileStorageName") String fileStorageName,
             @RequestParam("userId") Long userId,
             HttpServletResponse response) {
@@ -87,6 +81,29 @@ public class OssController {
         // 设置响应内容类型和头部
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; fileStorageName=\"" + fileStorageName + "\"");
+
+        // 将 MinIO 文件流拷贝到 HTTP 响应
+        try {
+            IOUtils.copy(stream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException e) {
+            log.error("MinIO 文件流拷贝到 HTTP 响应失败", e);
+        }
+    }
+
+    @GetMapping("/downloadById")
+    public void downloadById(
+            @RequestParam("fileId") Long fileId,
+            HttpServletResponse response) {
+        if (fileId == null){
+            return;
+        }
+
+        InputStream stream = ossService.downloadFileByFileId(fileId);
+
+        // 设置响应内容类型和头部
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; fileId=\"" + fileId + "\"");
 
         // 将 MinIO 文件流拷贝到 HTTP 响应
         try {

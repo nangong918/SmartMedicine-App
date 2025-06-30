@@ -218,7 +218,26 @@ public class OssServiceImpl implements OssService {
     @Override
     public InputStream downloadFileByFileName(Long userId, String fileName) {
         OssFileDo ossFileDo = ossMapper.getByFileNameAndUserId(userId, fileName);
-        if (ossFileDo != null){
+        if (ossFileDo != null && ossFileDo.getId() != null){
+
+            try{
+                boolean isBucketExist = minIOUtils.bucketExists(ossFileDo.getBucketName());
+                if (!isBucketExist){
+                    throw new OssException("存储桶不存在");
+                }
+                return minIOUtils.getObject(ossFileDo.getBucketName(), ossFileDo.getFileStorageName());
+            } catch (Exception e){
+                log.warn("下载文件失败", e);
+                throw new OssException("下载文件失败");
+            }
+        }
+        throw new OssException("文件不存在");
+    }
+
+    @Override
+    public InputStream downloadFileByFileId(Long fileId) {
+        OssFileDo ossFileDo = ossMapper.getById(fileId);
+        if (ossFileDo != null && ossFileDo.getId() != null){
 
             try{
                 boolean isBucketExist = minIOUtils.bucketExists(ossFileDo.getBucketName());

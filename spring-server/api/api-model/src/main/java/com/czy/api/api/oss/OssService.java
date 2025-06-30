@@ -106,6 +106,13 @@ public interface OssService {
     InputStream downloadFileByFileName(Long userId, String fileName);
 
     /**
+     * 通过fileId下载
+     * @param fileId            文件id
+     * @return                  InputStream
+     */
+    InputStream downloadFileByFileId(Long fileId);
+
+    /**
      * 通过List<filename>获取图片List<Url>
      * @param userId            用户id
      * @param fileNames         文件名List
