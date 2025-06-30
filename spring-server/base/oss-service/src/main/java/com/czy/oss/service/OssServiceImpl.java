@@ -292,6 +292,11 @@ public class OssServiceImpl implements OssService {
         return fileUrls;
     }
 
+    @Override
+    public String getFileUrlsByFileStorageName(String fileStorageName, String bucketName) {
+        return getFileUrl(bucketName, fileStorageName);
+    }
+
     private void addUrlToList(List<String> fileUrls, OssFileDo ossFileDo){
         if (ossFileDo != null){
             String bucketName = ossFileDo.getBucketName();

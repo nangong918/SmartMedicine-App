@@ -46,6 +46,8 @@ public interface MinIOService {
      */
     FileOptionResult uploadFiles(List<File> files, String bucketName);
 
+    FileOptionResult uploadMultipartFiles(List<MultipartFile> files, String bucketName);
+
     FileOptionResult uploadLoadFiles(List<FileAo> fileAos, String bucketName);
 
     void deleteBucketAll(String bucketName) throws Exception;

@@ -130,6 +130,13 @@ public interface OssService {
      */
     List<String> getFileUrlsByFileIds(List<Long> fileIds);
 
+
+    /**
+     * 测试：用FileStorageName获取图片Url
+     * @return url
+     */
+    String getFileUrlsByFileStorageName(String fileStorageName, String bucketName);
+
     // 删除文件 fileStorageName
     boolean deleteFileByStorageName(Long userId, String fileStorageName, String bucketName);
 

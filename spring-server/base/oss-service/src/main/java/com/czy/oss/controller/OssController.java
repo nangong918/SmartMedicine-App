@@ -2,8 +2,14 @@ package com.czy.oss.controller;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.constant.oss.OssConstant;
+import com.czy.api.domain.Do.oss.OssFileDo;
+import com.czy.api.domain.ao.oss.FileResAo;
+import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.GetFilesUrlByIdRequest;
 import com.czy.api.domain.dto.http.request.GetFilesUrlByNameRequest;
+import com.czy.api.domain.dto.http.response.FileDownloadResponse;
+import com.czy.api.exception.OssExceptions;
+import com.utils.mvc.service.MinIOService;
 import domain.ErrorFile;
 import domain.FileOptionResult;
 import exception.OssException;
@@ -36,6 +42,7 @@ public class OssController {
     // 需要符合Amazon S3 存储桶命名规则
     private final String globalOssBucket;
     private final OssService ossService;
+    private final MinIOService minIOService;
 
     /**
      * 上传文件
@@ -64,6 +71,40 @@ public class OssController {
         else {
             return "上传成功";
         }
+    }
+
+    // test
+    @PostMapping("/uploadTest")
+    public String uploadTest(
+            @RequestParam("file") MultipartFile file) {
+        List<MultipartFile> fileList = new ArrayList<>();
+        fileList.add(file);
+        FileOptionResult result = minIOService.uploadMultipartFiles(fileList, globalOssBucket);
+
+        if (!ObjectUtils.isEmpty(result.getErrorFiles())){
+            StringBuilder sb = new StringBuilder();
+            sb.append("上传失败的文件：\n");
+            log.warn("存在上传失败的文件");
+            for (ErrorFile errorFile : result.getErrorFiles()) {
+                sb.append(errorFile.getFileName()).append(": ").append(errorFile.getErrorMessage()).append(";\n");
+            }
+            return sb.toString();
+        }
+        else {
+            return "上传成功";
+        }
+    }
+
+    // test
+    @PostMapping("/downloadTest")
+    public BaseResponse<FileDownloadResponse>
+    downloadTest(@RequestParam("fileStorageName") String fileStorageName) {
+        String url = ossService.getFileUrlsByFileStorageName(fileStorageName, globalOssBucket);
+        FileDownloadResponse fileDownloadResponse = new FileDownloadResponse();
+        FileResAo fileResAo = new FileResAo();
+        fileResAo.setFileUrl(url);
+        fileDownloadResponse.setFileResAo(fileResAo);
+        return BaseResponse.getResponseEntitySuccess(fileDownloadResponse);
     }
 
     @GetMapping("/downloadByStorageName")
@@ -112,6 +153,32 @@ public class OssController {
         } catch (IOException e) {
             log.error("MinIO 文件流拷贝到 HTTP 响应失败", e);
         }
+    }
+
+    @GetMapping("/getFileUrlById")
+    public BaseResponse<FileDownloadResponse> getFileUrlById(
+            @RequestParam("fileId") Long fileId) {
+
+        if (fileId == null){
+            return BaseResponse.LogBackError(OssExceptions.FILE_NOT_EXIST);
+        }
+
+        OssFileDo ossFileDo = ossService.getFileInfoByFileId(fileId);
+        if (ossFileDo == null || ossFileDo.getId() == null){
+            return BaseResponse.LogBackError(OssExceptions.FILE_NOT_EXIST);
+        }
+
+        List<Long> fileIds = new ArrayList<>();
+        fileIds.add(fileId);
+        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+
+        FileResAo fileResAo = new FileResAo();
+        fileResAo.setFileId(fileId);
+        fileResAo.setFileUrl(fileUrls.get(0));
+
+        FileDownloadResponse fileDownloadResponse = new FileDownloadResponse();
+        fileDownloadResponse.setFileResAo(fileResAo);
+        return BaseResponse.getResponseEntitySuccess(fileDownloadResponse);
     }
 
     // downloadByFileName
