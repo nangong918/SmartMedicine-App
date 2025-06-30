@@ -1,5 +1,6 @@
 package com.czy.api.domain.ao.relationship;
 
+import com.czy.api.domain.ao.oss.FileResAo;
 import json.BaseBean;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import lombok.Data;
 @Data
 public class SearchFriendApplyAo implements BaseBean {
 
+    public Long userId;
     public String account;
     public String userName;
     public String phone;
@@ -21,8 +23,8 @@ public class SearchFriendApplyAo implements BaseBean {
     public Integer source;
     // 聊天列表 (JSON 格式)
     public String chatList;
-    // 头像uri
-    public Long avatarFileId;
+    // 头像FileResAo (核心：url，id)
+    public FileResAo fileResAo = new FileResAo();
     // 默认设置为不是好友，所以状态是申请
     public AddUserStatusAo addUserStatusAo = new AddUserStatusAo();
 

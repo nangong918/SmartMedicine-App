@@ -53,6 +53,7 @@
     <!--  LEFT JOIN保存左边表没记录的SQL  -->
     <select id="fuzzySearchHandlerByApplyAccount" resultType="com.czy.api.domain.bo.relationship.SearchFriendApplyBo">
         SELECT
+            lu.id AS userId,
             lu.account AS account,
             lu.user_name AS userName,
             lu.phone AS phone,
@@ -76,6 +77,7 @@
     </select>
     <select id="getHandleMyAddUserResponseList" resultType="com.czy.api.domain.bo.relationship.NewUserItemBo">
         SELECT
+            lh.id AS userId,
             lh.user_name AS userName,  -- 用户名称
             lh.phone AS applyPhone,  -- 申请人的电话
             lh.avatar_file_id AS avatarFileId,  -- 申请人的头像 URL
