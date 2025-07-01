@@ -24,6 +24,8 @@ public interface MinIOService {
      */
     FileOptionResult uploadFiles(List<MultipartFile> files, Long userId, String bucketName);
 
+    FileOptionResult uploadImages(List<MultipartFile> files, Long userId, String bucketName);
+
     /**
      * 包含幂等性的上传
      * @param files                 文件List
@@ -51,4 +53,6 @@ public interface MinIOService {
     FileOptionResult uploadLoadFiles(List<FileAo> fileAos, String bucketName);
 
     void deleteBucketAll(String bucketName) throws Exception;
+
+    FileOptionResult uploadMultipartImageFiles(List<MultipartFile> files, String bucketName);
 }

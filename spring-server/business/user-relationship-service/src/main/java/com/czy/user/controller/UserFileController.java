@@ -88,7 +88,7 @@ public class UserFileController {
         try {
             List<MultipartFile> multipartFiles = new ArrayList<>(1);
             multipartFiles.add(img);
-            FileOptionResult fileOptionResult = minIOService.uploadFiles(
+            FileOptionResult fileOptionResult = minIOService.uploadImages(
                     multipartFiles, userId, userImageBucket);
             ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, userImageBucket);
             List<Long> successIds = fileOptionResult.getSuccessFiles()

@@ -20,10 +20,12 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 
@@ -76,10 +78,22 @@ public class OssController {
     // test
     @PostMapping("/uploadTest")
     public String uploadTest(
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request) {
         List<MultipartFile> files = new ArrayList<>();
+        // 打印请求头
+        Enumeration<String> headerNames = request.getHeaderNames();
+        StringBuilder headers = new StringBuilder("请求头:\n");
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            String headerValue = request.getHeader(headerName);
+            headers.append(headerName).append(": ").append(headerValue).append("\n");
+        }
+        log.info("请求头内容：{}", headers);
+
+
         files.add(file);
-        FileOptionResult result = minIOService.uploadMultipartFiles(files, globalOssBucket);
+        FileOptionResult result = minIOService.uploadMultipartImageFiles(files, globalOssBucket);
 
         if (!ObjectUtils.isEmpty(result.getErrorFiles())){
             StringBuilder sb = new StringBuilder();
