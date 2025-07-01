@@ -441,15 +441,7 @@ public class MinIOUtils {
                 .object(objectName)
                 .build();
 
-        String presignedUrl = minioClient.getPresignedObjectUrl(args);
-
-        // 获取服务器的 IP 地址
-        String serverIp = getServerIp();
-        if (serverIp != null) {
-            presignedUrl = presignedUrl.replace("127.0.0.1", serverIp);
-        }
-
-        return presignedUrl;
+        return minioClient.getPresignedObjectUrl(args);
     }
 
     private String getServerIp() {
@@ -464,8 +456,9 @@ public class MinIOUtils {
 
     /**
      * 获得文件外链,失效时间默认是7天
-     * 存在问题：现在返回的形式是：http://127.0.0.1:9000/xxx 的形式, 这个地址是本机地址，前端无法使用，需要获取本机的ip地址替换127.0.0.1
-     * 可以考虑使用Nginx反向代理 TODO 先暂时使用IP替换，后面再使用Nginx反向代理
+     * 存在问题：现在返回的形式是：http://127.0.0.1:9000/xxx 的形式, 可以考虑使用Nginx反向代理，当然也可也使用Spring Cloud Gateway的反向代理
+     * minIO的url一般是静态的，并且要求快速，抗住大量qps
+     * TODO 使用Nginx反向代理
      * @param bucketName    存储桶
      * @param objectName    文件名
      * @return url
@@ -477,16 +470,7 @@ public class MinIOUtils {
                 .object(objectName)
                 .method(Method.GET).build();
 
-
-        String presignedUrl = minioClient.getPresignedObjectUrl(args);
-
-        // 获取服务器的 IP 地址
-        String serverIp = getServerIp();
-        if (serverIp != null) {
-            presignedUrl = presignedUrl.replace("127.0.0.1", serverIp);
-        }
-
-        return presignedUrl;
+        return minioClient.getPresignedObjectUrl(args);
     }
 
     /**
