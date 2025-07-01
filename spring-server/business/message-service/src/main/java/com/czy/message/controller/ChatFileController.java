@@ -103,7 +103,8 @@ public class ChatFileController {
                 files,
                 results,
                 chatPostImageBucket,
-                senderId
+                senderId,
+                true
         );
 
         // 上传记录数据到mysql

@@ -101,8 +101,8 @@ public class MinIOServiceImpl implements MinIOService {
                 errorFiles.add(new ErrorFile("", "[文件不能为空]"));
                 continue;
             }
-            String fileName = file.getOriginalFilename();
-            if (fileName == null) {
+            String fileName = IdUtil.getSnowflakeNextId() + "_" + file.getOriginalFilename();
+            if (file.getOriginalFilename() == null) {
                 errorFiles.add(new ErrorFile("", "[文件名不能为空]"));
                 continue;
             }
@@ -142,8 +142,8 @@ public class MinIOServiceImpl implements MinIOService {
                 errorFiles.add(new ErrorFile("", "[文件不能为空]"));
                 continue;
             }
-            String fileName = file.getOriginalFilename();
-            if (fileName == null) {
+            String fileName = IdUtil.getSnowflakeNextId() + "_" + file.getOriginalFilename();
+            if (file.getOriginalFilename() == null) {
                 errorFiles.add(new ErrorFile("", "[文件名不能为空]"));
                 continue;
             }
@@ -173,7 +173,7 @@ public class MinIOServiceImpl implements MinIOService {
 
     @Override
     public FileOptionResult uploadFilesWithIdempotent
-            (List<MultipartFile> files, List<FileIsExistResult> fileIsExistResults, String bucketName, Long userId){
+            (List<MultipartFile> files, List<FileIsExistResult> fileIsExistResults, String bucketName, Long userId, boolean isImage){
         // 内部包含检查是否已经存在的逻辑
         FileOptionResult fileOptionResult = new FileOptionResult();
         List<SuccessFile> successFiles = new ArrayList<>();
@@ -200,8 +200,8 @@ public class MinIOServiceImpl implements MinIOService {
                 errorFiles.add(new ErrorFile("", "[文件不能为空]"));
                 continue;
             }
-            String fileName = multipartFile.getOriginalFilename();
-            if (fileName == null) {
+            String fileName = IdUtil.getSnowflakeNextId() + "_" + multipartFile.getOriginalFilename();
+            if (multipartFile.getOriginalFilename() == null) {
                 errorFiles.add(new ErrorFile("", "[文件名不能为空]"));
                 continue;
             }
@@ -223,8 +223,15 @@ public class MinIOServiceImpl implements MinIOService {
             // 非幂等上传
             try {
                 String fileStorageName = getFileStorageName(userId, fileName);
-                ObjectWriteResponse response = minIOUtils.uploadFile(
-                        bucketName, multipartFile, fileStorageName, multipartFile.getContentType());
+                ObjectWriteResponse response;
+                if (isImage){
+                    response = minIOUtils.uploadFile(
+                            bucketName, multipartFile, fileStorageName, ViewContentTypeEnum.getContentType(fileName));
+                }
+                else {
+                    response = minIOUtils.uploadFile(
+                            bucketName, multipartFile, fileStorageName, multipartFile.getContentType());
+                }
                 if (response != null){
                     long fileId = IdUtil.getSnowflakeNextId();
                     successFiles.add(new SuccessFile(fileName, fileStorageName, multipartFile.getSize(), fileId));

@@ -192,7 +192,8 @@ public class UserFileController {
                     files,
                     results,
                     userImageBucket,
-                    userId
+                    userId,
+                    true
             );
 
             // 上传记录数据到mysql

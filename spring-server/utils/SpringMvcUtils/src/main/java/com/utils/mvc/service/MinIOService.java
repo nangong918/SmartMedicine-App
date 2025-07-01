@@ -35,7 +35,7 @@ public interface MinIOService {
      * @return                      FileOptionResult
      */
     FileOptionResult uploadFilesWithIdempotent
-            (List<MultipartFile> files, List<FileIsExistResult> fileIsExistResults, String bucketName, Long userId);
+            (List<MultipartFile> files, List<FileIsExistResult> fileIsExistResults, String bucketName, Long userId, boolean isImage);
 
     // fileName + userId 生成 fileStorageName
     String getFileStorageName(Long userId, String fileName);
