@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -439,14 +440,34 @@ public class MinIOUtils {
                 .bucket(bucketName)
                 .object(objectName)
                 .build();
-        return minioClient.getPresignedObjectUrl(args);
+
+        String presignedUrl = minioClient.getPresignedObjectUrl(args);
+
+        // 获取服务器的 IP 地址
+        String serverIp = getServerIp();
+        if (serverIp != null) {
+            presignedUrl = presignedUrl.replace("127.0.0.1", serverIp);
+        }
+
+        return presignedUrl;
+    }
+
+    private String getServerIp() {
+        try {
+            InetAddress addr = InetAddress.getLocalHost();
+            return addr.getHostAddress(); // 返回本机 IP 地址
+        } catch (Exception e) {
+            log.warn("获取本机IP地址失败", e);
+            return null;
+        }
     }
 
     /**
      * 获得文件外链,失效时间默认是7天
-     *
-     * @param bucketName
-     * @param objectName
+     * 存在问题：现在返回的形式是：http://127.0.0.1:9000/xxx 的形式, 这个地址是本机地址，前端无法使用，需要获取本机的ip地址替换127.0.0.1
+     * 可以考虑使用Nginx反向代理 TODO 先暂时使用IP替换，后面再使用Nginx反向代理
+     * @param bucketName    存储桶
+     * @param objectName    文件名
      * @return url
      * @throws Exception
      */
@@ -455,7 +476,17 @@ public class MinIOUtils {
                 .bucket(bucketName)
                 .object(objectName)
                 .method(Method.GET).build();
-        return minioClient.getPresignedObjectUrl(args);
+
+
+        String presignedUrl = minioClient.getPresignedObjectUrl(args);
+
+        // 获取服务器的 IP 地址
+        String serverIp = getServerIp();
+        if (serverIp != null) {
+            presignedUrl = presignedUrl.replace("127.0.0.1", serverIp);
+        }
+
+        return presignedUrl;
     }
 
     /**
