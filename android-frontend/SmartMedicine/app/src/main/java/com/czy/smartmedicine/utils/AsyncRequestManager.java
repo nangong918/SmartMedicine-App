@@ -5,26 +5,26 @@ package com.czy.smartmedicine.utils;
 import android.util.Log;
 
 import com.czy.appcore.network.api.handle.AsyncRequestCallback;
-import com.czy.appcore.network.api.handle.SyncAllRequestFinish;
+import com.czy.appcore.network.api.handle.WaitAllRequestFinishCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 同步请求管理者
+ * 异步请求的同步管理者
  * 需要初始化SyncAllRequestFinish
  */
-public class SyncRequestManager {
-    private static final String TAG = SyncRequestManager.class.getName();
+public class AsyncRequestManager {
+    private static final String TAG = AsyncRequestManager.class.getName();
 
     private int allRequestCount = 0;
     private final AtomicInteger requestFinishCount;
     private final List<Throwable> errorList;
     private final AsyncRequestCallback asyncRequestCallback;
-    private SyncAllRequestFinish syncAllRequestFinish;
+    private WaitAllRequestFinishCallback waitAllRequestFinishCallback;
 
-    public SyncRequestManager(int allRequestCount){
+    public AsyncRequestManager(int allRequestCount){
         if (allRequestCount <= 0){
             throw new IllegalArgumentException("allRequestCount must > 0");
         }
@@ -48,8 +48,8 @@ public class SyncRequestManager {
         };
     }
 
-    public void setSyncAllRequestFinish(SyncAllRequestFinish syncAllRequestFinish){
-        this.syncAllRequestFinish = syncAllRequestFinish;
+    public void setSyncAllRequestFinish(WaitAllRequestFinishCallback waitAllRequestFinishCallback){
+        this.waitAllRequestFinishCallback = waitAllRequestFinishCallback;
     }
 
     public synchronized int getFinishCount(){
@@ -63,8 +63,8 @@ public class SyncRequestManager {
 
     private synchronized void checkFinish(int currentFinishCount){
         if (currentFinishCount >= allRequestCount){
-            if (this.syncAllRequestFinish != null){
-                this.syncAllRequestFinish.allFinish(errorList.isEmpty());
+            if (this.waitAllRequestFinishCallback != null){
+                this.waitAllRequestFinishCallback.allFinish(errorList.isEmpty());
                 if (!errorList.isEmpty()){
                     for (Throwable throwable : errorList){
                         if (throwable != null){

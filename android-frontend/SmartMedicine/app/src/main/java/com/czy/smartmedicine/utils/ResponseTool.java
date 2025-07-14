@@ -22,6 +22,13 @@ import java.util.function.BiConsumer;
 
 public abstract class ResponseTool extends ResponseUtil {
 
+    /**
+     * 基础响应处理
+     * @param response   响应
+     * @param context   上下文
+     * @return          处理结果
+     * @param <T>       响应数据类型
+     */
     public static <T> boolean handleResponse(BaseResponse<T> response, Context context){
         if(response != null && response.getCode() != null){
             boolean needLoginAgain = false;
@@ -59,6 +66,14 @@ public abstract class ResponseTool extends ResponseUtil {
         }
     }
 
+    /**
+     * 基础链式同步响应处理
+     * @param response      响应
+     * @param context       上下文
+     * @param callback      回调
+     * @return              处理结果
+     * @param <T>           响应数据类型
+     */
     public static <T> boolean handleSyncResponse(BaseResponse<T> response, Context context, AsyncRequestCallback callback){
         boolean result = handleResponse(response, context);
         if (result){
@@ -70,6 +85,14 @@ public abstract class ResponseTool extends ResponseUtil {
         return result;
     }
 
+    /**
+     * 基础并发同步响应处理
+     * @param response      响应
+     * @param context       上下文
+     * @param callback      并发回调
+     * @param handler       处理方法
+     * @param <T>           响应数据类型
+     */
     public static <T> void handleAsyncResponseEx(
             BaseResponse<T> response,
             Context context,
@@ -80,6 +103,57 @@ public abstract class ResponseTool extends ResponseUtil {
         if (result) {
             handler.accept(response, context);
             callback.onSingleRequestSuccess();
+        } else {
+            callback.onThrowable(new Throwable(AsyncRequestCallback.RESPONSE_BASE_ERROR));
+        }
+    }
+
+    /**
+     * 带参数的并发同步响应处理
+     * @param response      响应
+     * @param context       上下文
+     * @param param         参数
+     * @param callback      并发回调
+     * @param handler       处理方法
+     * @param <T>           响应数据类型
+     */
+    public static <T> void handleAsyncResponseEx(
+            BaseResponse<T> response,
+            Context context,
+            Object param,
+            AsyncRequestCallback callback,
+            TriConsumer<BaseResponse<T>, Context, Object> handler) {
+
+        boolean result = handleResponse(response, context);
+        if (result) {
+            handler.accept(response, context, param);
+            callback.onSingleRequestSuccess();
+        } else {
+            callback.onThrowable(new Throwable(AsyncRequestCallback.RESPONSE_BASE_ERROR));
+        }
+    }
+
+    /**
+     * 手动控制响应结果的带参数的并发同步响应处理
+     * @param response      响应
+     * @param context       上下文
+     * @param param         参数
+     * @param callback      并发回调
+     * @param handler       处理方法
+     * @param <T>           响应数据类型
+     */
+    public static <T> void handleAsyncResponseEx(
+            BaseResponse<T> response,
+            Context context,
+            Object param,
+            AsyncRequestCallback callback,
+            FourConsumer<BaseResponse<T>, Context, AsyncRequestCallback, Object> handler) {
+
+        boolean result = handleResponse(response, context);
+        if (result) {
+            handler.accept(response, context, callback, param);
+            // 此处改为手动回调
+//            callback.onSingleRequestSuccess();
         } else {
             callback.onThrowable(new Throwable(AsyncRequestCallback.RESPONSE_BASE_ERROR));
         }
@@ -110,7 +184,7 @@ public abstract class ResponseTool extends ResponseUtil {
 
         boolean result = handleResponse(response, context);
         if (result) {
-            handler.accept(response, context, callback, param); // 传递三个参数
+            handler.accept(response, context, callback, param); // 传递4个参数
             // 同步调用需要在最后一个请求成功后手动调用
 //        callback.onAllRequestSuccess();
         } else {
