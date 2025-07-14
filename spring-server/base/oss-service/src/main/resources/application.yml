@@ -131,7 +131,7 @@ dubbo:
     subscribed-services: '' # 设置订阅的应用列表，默认为 * 订阅所有应用。
   #============ oss：minIO
 minio:
-  endpoint: "http://127.0.0.1:9000" # minIO 服务器地址
+  endpoint: "http://oss-minio" # minIO 服务器地址
   access-key: "minioadmin"  # minIO 用户名
   secret-key: "minioadmin"  # minIO 密码
   #============ file
