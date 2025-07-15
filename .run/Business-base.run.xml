@@ -1,7 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Business-base" type="CompoundRunConfigurationType">
-    <toRun name="AuthServiceApplication" type="SpringBootApplicationConfigurationType" />
-    <toRun name="SmsServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="AuthSmsServiceApplication" type="Application" />
     <method v="2" />
   </configuration>
 </component>

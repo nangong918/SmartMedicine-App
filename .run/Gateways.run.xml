@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Gateways" type="CompoundRunConfigurationType">
-    <toRun name="GatewayApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="GatewayApplication" type="Application" />
     <method v="2" />
   </configuration>
 </component>
