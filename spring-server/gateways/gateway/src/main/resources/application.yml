@@ -52,6 +52,7 @@ spring:
         - id: minio
           uri: http://127.0.0.1:9000  # 目标地址
           predicates:
+            # oss 的minIO就配置为oss-minio不要改了
             - Path=/oss-minio/**  # 匹配路径
           filters:
             - StripPrefix=1  # 删除前缀

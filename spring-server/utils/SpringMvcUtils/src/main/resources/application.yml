@@ -20,3 +20,11 @@ spring:
         max-idle: 5         # 最大空闲连接数
         max-wait: 1         # 最小空闲连接数
         min-idle: 200       # 连接池最大阻塞等待时间（使用负值表示没有限制）
+  #============ oss：minIO
+minio:
+  endpoint: "http://127.0.0.1:9000" # minIO 服务器地址
+  access-key: "minioadmin"  # minIO 用户名
+  secret-key: "minioadmin"  # minIO 密码
+  gateway-port: 8888        # 代理minio的网关端口号
+  minio-url: "/oss-minio"
+  is-use-gateway: true

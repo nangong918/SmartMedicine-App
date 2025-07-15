@@ -35,7 +35,12 @@ import java.util.stream.Collectors;
 public class MinIOUtils {
     @Resource
     private MinioClient minioClient;
-
+    @Resource
+    private String endpoint;
+    @Resource
+    private String gatewayAgentUrl;
+    @Resource
+    private boolean isUseGateway;
     private Integer imgSize = 100 * 1024 * 1024; //100M
 
     private Integer fileSize = 1024 * 1024 * 1024; //1G
@@ -456,10 +461,7 @@ public class MinIOUtils {
 
     /**
      * 获得文件外链,失效时间默认是7天
-     * 存在问题：现在返回的形式是：http://127.0.0.1:9000/xxx 的形式, 可以考虑使用Nginx反向代理，当然也可也使用Spring Cloud Gateway的反向代理
-     * minIO的url一般是静态的，并且要求快速，抗住大量qps
-     * <p>
-     * 上面思路撤销，因为minIO本来就可以实现反向代理。nginx用来生成DNS域名算了
+     * https://127.0.0.1:9000/xxx -> https://ip:8888/oss-mimio/xxx
      * @param bucketName    存储桶
      * @param objectName    文件名
      * @return url
@@ -471,7 +473,14 @@ public class MinIOUtils {
                 .object(objectName)
                 .method(Method.GET).build();
 
-        return minioClient.getPresignedObjectUrl(args);
+        String url = minioClient.getPresignedObjectUrl(args);
+
+        if (isUseGateway){
+            return url.replace(endpoint, gatewayAgentUrl);
+        }
+        else {
+            return url;
+        }
     }
 
     /**

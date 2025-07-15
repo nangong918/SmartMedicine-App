@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.InetAddress;
+
 @Configuration
 public class MinIOConfiguration {
 
@@ -17,6 +19,15 @@ public class MinIOConfiguration {
     @Value("${minio.secret-key}")
     private String secretKey;
 
+    @Value("${minio.gateway-port}")
+    private String gatewayPort;
+
+    @Value("${minio.minio-url}")
+    private String minioUrl;
+
+    @Value("${minio.is-use-gateway}")
+    private boolean isUseGateway;
+
     @Bean
     public MinioClient minioClient() {
         // 创建 MinioClient 客户端
@@ -24,6 +35,16 @@ public class MinIOConfiguration {
                 .endpoint(endpoint)
                 .credentials(accessKey, secretKey)
                 .build();
+    }
+
+    @Bean
+    public String getGatewayAgentUrl() throws Exception {
+        // 获取本机IP
+        InetAddress inetAddress = InetAddress.getLocalHost();
+        String ip = inetAddress.getHostAddress();
+
+        // http可能是http或者https
+        return ip + ":" + gatewayPort + minioUrl;
     }
 
     @Bean
