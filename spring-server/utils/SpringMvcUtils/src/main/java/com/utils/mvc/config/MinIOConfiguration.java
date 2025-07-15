@@ -34,7 +34,7 @@ public class MinIOConfiguration {
 //    @Bean
 //    public MinioClient minioClient() {
 //        // Minio 配置。实际项目中，定义到 application.yml 配置文件中
-//        String endpoint = "http://oss-minio";
+//        String endpoint = "http://127.0.0.1:9000";
 //        String accessKey = "minioadmin";
 //        String secretKey = "minioadmin";
 //

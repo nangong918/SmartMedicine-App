@@ -48,6 +48,13 @@ spring:
             - Path=/test
           filters:
             - StripPrefix=1 # 删除前缀，对应 StripPrefixFilter
+        # minio
+        - id: minio
+          uri: http://127.0.0.1:9000  # 目标地址
+          predicates:
+            - Path=/oss-minio/**  # 匹配路径
+          filters:
+            - StripPrefix=1  # 删除前缀
 
 #        # ip
 #        - id: ip-user
