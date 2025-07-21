@@ -21,6 +21,8 @@ import java.net.UnknownHostException;
  * 一般是http://localhost:8888/api/users -> http://xxx
  * 只有localhost:8888，路由到这个服务的才能转为域名。
  * 场景更适合使用Nginx而不是Spring Cloud Gateway。
+ * 经过研究，nginx反向代理实现dns -> ip + port形式需要配置本机hosts文件，过于复杂，暂时不配置。
+ * 参考：<a href="https://blog.csdn.net/zxd1435513775/article/details/102508463">...</a>
  */
 
 @Slf4j
