@@ -6,9 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
 import org.springframework.core.env.Environment;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.InetAddress;
@@ -18,11 +17,15 @@ import java.net.UnknownHostException;
 /**
  * @author 13225
  * @date 2025/7/21 16:39
+ * 失败的代码：Spring Cloud Gateway 本身是用于路由和转发请求的，通常情况下，它不直接处理域名到 IP 的映射。
+ * 一般是http://localhost:8888/api/users -> http://xxx
+ * 只有localhost:8888，路由到这个服务的才能转为域名。
+ * 场景更适合使用Nginx而不是Spring Cloud Gateway。
  */
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+//@Component
 public class IpToDnsGlobalFilter implements GlobalFilter, Ordered {
 
     private final Environment environment;
