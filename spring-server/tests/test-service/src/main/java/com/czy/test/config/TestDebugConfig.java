@@ -17,13 +17,13 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "test.debug")
 public class TestDebugConfig {
-    private boolean debug = false;
+    private boolean useGatewayProxy = false;
     private String address = "127.0.0.1";
 
     @Override
     public String toString() {
         return "TestDebugConfig{" +
-                "debug=" + debug +
+                "useGatewayProxy=" + useGatewayProxy +
                 ", address='" + address + '\'' +
                 '}';
     }

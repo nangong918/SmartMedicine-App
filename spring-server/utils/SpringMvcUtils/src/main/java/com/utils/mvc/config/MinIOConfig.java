@@ -36,7 +36,7 @@ public class MinIOConfig {
     /**
      * 是否使用gateway代理；如果不适用则需要使用nginx反向代理。否则会出现前端无法访问后端网域而导致生成的url无法呗访问
      */
-    private boolean isUseGateway;
+    private boolean useGatewayProxy;
     /**
      * 如果使用gateway代理，则gateway的地址需要配置;eg: 8888则默认就是 -> http://localhost:8888
      */
@@ -95,7 +95,7 @@ public class MinIOConfig {
                 "endpoint='" + endpoint + '\'' +
                 ", accessKey='" + accessKey + '\'' +
                 ", secretKey='" + secretKey + '\'' +
-                ", isUseGateway=" + isUseGateway +
+                ", useGatewayProxy=" + useGatewayProxy +
                 ", gatewayPort='" + gatewayPort + '\'' +
                 ", minioUrl='" + minioUrl + '\'' +
                 '}';
