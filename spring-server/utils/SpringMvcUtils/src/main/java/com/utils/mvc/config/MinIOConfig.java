@@ -89,4 +89,15 @@ public class MinIOConfig {
 //                .build();
 //    }
 
+    @Override
+    public String toString() {
+        return "MinIOConfig{" +
+                "endpoint='" + endpoint + '\'' +
+                ", accessKey='" + accessKey + '\'' +
+                ", secretKey='" + secretKey + '\'' +
+                ", isUseGateway=" + isUseGateway +
+                ", gatewayPort='" + gatewayPort + '\'' +
+                ", minioUrl='" + minioUrl + '\'' +
+                '}';
+    }
 }

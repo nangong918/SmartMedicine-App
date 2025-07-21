@@ -134,6 +134,10 @@ minio:
   endpoint: "http://127.0.0.1:9000" # minIO 服务器地址
   access-key: "minioadmin"  # minIO 用户名
   secret-key: "minioadmin"  # minIO 密码
+  #============ minio 代理
+  is-use-gateway: true
+  gateway-port: 8888        # 代理minio的网关端口号
+  minio-url: "/oss-minio"
   #============ file
 file:
   upload:
