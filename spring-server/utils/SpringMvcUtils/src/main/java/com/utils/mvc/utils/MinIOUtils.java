@@ -1,5 +1,6 @@
 package com.utils.mvc.utils;
 
+import com.utils.mvc.config.MinIOConfig;
 import io.minio.*;
 import io.minio.errors.MinioException;
 import io.minio.http.Method;
@@ -8,11 +9,11 @@ import io.minio.messages.DeleteError;
 import io.minio.messages.DeleteObject;
 import io.minio.messages.Item;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -33,14 +34,16 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class MinIOUtils {
-    @Resource
-    private MinioClient minioClient;
-    @Resource
-    private String endpoint;
-    @Resource
-    private String gatewayAgentUrl;
-    @Resource
-    private boolean isUseGateway;
+    @Autowired
+    private MinIOConfig minIOConfig;
+//    @Resource
+//    private MinioClient minioClient;
+//    @Resource
+//    private String endpoint;
+//    @Resource
+//    private String gatewayAgentUrl;
+//    @Resource
+//    private boolean isUseGateway;
     private Integer imgSize = 100 * 1024 * 1024; //100M
 
     private Integer fileSize = 1024 * 1024 * 1024; //1G
@@ -54,7 +57,7 @@ public class MinIOUtils {
      */
     public void createBucket(String bucketName) throws Exception {
         if (!bucketExists(bucketName)) {
-            minioClient.makeBucket(MakeBucketArgs.builder()
+            minIOConfig.minioClient().makeBucket(MakeBucketArgs.builder()
                     .bucket(bucketName)
                     .build());
         }
@@ -67,7 +70,7 @@ public class MinIOUtils {
      * @throws Exception
      */
     public boolean bucketExists(String bucketName) throws Exception {
-        return minioClient.bucketExists(BucketExistsArgs.builder()
+        return minIOConfig.minioClient().bucketExists(BucketExistsArgs.builder()
                 .bucket(bucketName)
                 .build());
     }
@@ -81,8 +84,7 @@ public class MinIOUtils {
      * @throws Exception
      */
     public String getBucketPolicy(String bucketName) throws Exception {
-        return minioClient
-                .getBucketPolicy(
+        return minIOConfig.minioClient().getBucketPolicy(
                         GetBucketPolicyArgs
                                 .builder()
                                 .bucket(bucketName)
@@ -97,7 +99,7 @@ public class MinIOUtils {
      * @throws Exception
      */
     public List<Bucket> getAllBuckets() throws Exception {
-        return minioClient.listBuckets();
+        return minIOConfig.minioClient().listBuckets();
     }
 
 
@@ -119,18 +121,18 @@ public class MinIOUtils {
      * @throws Exception
      */
     public void removeBucket(String bucketName) throws Exception {
-        minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
+        minIOConfig.minioClient().removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
     }
 
     public void removeBucketAll(String bucketName) throws Exception{
         // 列出存储桶中的所有对象并删除
-        Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
+        Iterable<Result<Item>> results = minIOConfig.minioClient().listObjects(ListObjectsArgs.builder()
                 .bucket(bucketName)
                 .build());
 
         for (Result<Item> result : results) {
             Item item = result.get();  // 获取 Item 对象
-            minioClient.removeObject(RemoveObjectArgs.builder()
+            minIOConfig.minioClient().removeObject(RemoveObjectArgs.builder()
                     .bucket(bucketName)
                     .object(item.objectName())
                     .build());
@@ -151,7 +153,7 @@ public class MinIOUtils {
     public boolean isObjectExist(String bucketName, String objectName) {
         boolean exist = true;
         try {
-            minioClient.statObject(StatObjectArgs.builder()
+            minIOConfig.minioClient().statObject(StatObjectArgs.builder()
                     .bucket(bucketName)
                     .object(objectName)
                     .build());
@@ -172,7 +174,7 @@ public class MinIOUtils {
     public boolean isFolderExist(String bucketName, String objectName) {
         boolean exist = false;
         try {
-            Iterable<Result<Item>> results = minioClient.listObjects(
+            Iterable<Result<Item>> results = minIOConfig.minioClient().listObjects(
                     ListObjectsArgs.builder()
                             .bucket(bucketName)
                             .prefix(objectName)
@@ -204,7 +206,7 @@ public class MinIOUtils {
                                             String prefix,
                                             boolean recursive) throws Exception {
         List<Item> list = new ArrayList<>();
-        Iterable<Result<Item>> objectsIterator = minioClient.listObjects(
+        Iterable<Result<Item>> objectsIterator = minIOConfig.minioClient().listObjects(
                 ListObjectsArgs.builder()
                         .bucket(bucketName)
                         .prefix(prefix)
@@ -227,7 +229,7 @@ public class MinIOUtils {
      * @return 二进制流
      */
     public InputStream getObject(String bucketName, String objectName) throws Exception {
-        return minioClient.getObject(GetObjectArgs.builder()
+        return minIOConfig.minioClient().getObject(GetObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
                 .build());
@@ -243,7 +245,7 @@ public class MinIOUtils {
      * @return 二进制流
      */
     public InputStream getObject(String bucketName, String objectName, long offset, long length) throws Exception {
-        return minioClient.getObject(
+        return minIOConfig.minioClient().getObject(
                 GetObjectArgs.builder()
                         .bucket(bucketName)
                         .object(objectName)
@@ -262,7 +264,7 @@ public class MinIOUtils {
      */
     public Iterable<Result<Item>> listObjects(String bucketName, String prefix,
                                               boolean recursive) {
-        return minioClient.listObjects(
+        return minIOConfig.minioClient().listObjects(
                 ListObjectsArgs.builder()
                         .bucket(bucketName)
                         .prefix(prefix)
@@ -283,7 +285,7 @@ public class MinIOUtils {
     public ObjectWriteResponse uploadFile(String bucketName, MultipartFile file,
                                           String objectName, String contentType) throws Exception {
         InputStream inputStream = file.getInputStream();
-        return minioClient.putObject(
+        return minIOConfig.minioClient().putObject(
                 PutObjectArgs.builder()
                         .bucket(bucketName)
                         .object(objectName)
@@ -301,7 +303,7 @@ public class MinIOUtils {
      */
     public ObjectWriteResponse uploadLocalFile(String bucketName, String objectName,
                                           String fileName) throws Exception {
-        return minioClient.uploadObject(
+        return minIOConfig.minioClient().uploadObject(
                 UploadObjectArgs.builder()
                         .bucket(bucketName)
                         .object(objectName)
@@ -317,7 +319,7 @@ public class MinIOUtils {
      * @param inputStream 文件流
      */
     public ObjectWriteResponse uploadFile(String bucketName, String objectName, InputStream inputStream) throws Exception {
-        return minioClient.putObject(
+        return minIOConfig.minioClient().putObject(
                 PutObjectArgs.builder()
                         .bucket(bucketName)
                         .object(objectName)
@@ -332,7 +334,7 @@ public class MinIOUtils {
      * @param objectName 目录路径
      */
     public ObjectWriteResponse createDir(String bucketName, String objectName) throws Exception {
-        return minioClient.putObject(
+        return minIOConfig.minioClient().putObject(
                 PutObjectArgs.builder()
                         .bucket(bucketName)
                         .object(objectName)
@@ -347,7 +349,7 @@ public class MinIOUtils {
      * @param objectName 文件名称
      */
     public String getFileStatusInfo(String bucketName, String objectName) throws Exception {
-        return minioClient.statObject(
+        return minIOConfig.minioClient().statObject(
                 StatObjectArgs.builder()
                         .bucket(bucketName)
                         .object(objectName)
@@ -364,7 +366,7 @@ public class MinIOUtils {
      */
     public ObjectWriteResponse copyFile(String bucketName, String objectName,
                                         String srcBucketName, String srcObjectName) throws Exception {
-        return minioClient.copyObject(
+        return minIOConfig.minioClient().copyObject(
                 CopyObjectArgs.builder()
                         .source(CopySource.builder()
                                 .bucket(bucketName)
@@ -382,7 +384,7 @@ public class MinIOUtils {
      * @param objectName 文件名称
      */
     public void removeFile(String bucketName, String objectName) throws Exception {
-        minioClient.removeObject(
+        minIOConfig.minioClient().removeObject(
                 RemoveObjectArgs.builder()
                         .bucket(bucketName)
                         .object(objectName)
@@ -409,7 +411,7 @@ public class MinIOUtils {
                     .collect(Collectors.toList());
 
             Iterable<Result<DeleteError>> results =
-                    minioClient.removeObjects(
+                    minIOConfig.minioClient().removeObjects(
                             RemoveObjectsArgs.builder()
                                     .bucket(bucketName)
                                     .objects(deleteObjects)
@@ -446,7 +448,7 @@ public class MinIOUtils {
                 .object(objectName)
                 .build();
 
-        return minioClient.getPresignedObjectUrl(args);
+        return minIOConfig.minioClient().getPresignedObjectUrl(args);
     }
 
     private String getServerIp() {
@@ -473,10 +475,10 @@ public class MinIOUtils {
                 .object(objectName)
                 .method(Method.GET).build();
 
-        String url = minioClient.getPresignedObjectUrl(args);
+        String url = minIOConfig.minioClient().getPresignedObjectUrl(args);
 
-        if (isUseGateway){
-            return url.replace(endpoint, gatewayAgentUrl);
+        if (minIOConfig.isUseGateway()){
+            return url.replace(minIOConfig.getEndpoint(), minIOConfig.minioGatewayAgentUrl());
         }
         else {
             return url;
@@ -506,7 +508,7 @@ public class MinIOUtils {
      */
     public ObjectWriteResponse uploadFile(String bucketName, InputStream inputStream,
                                           String objectName, String contentType) throws Exception {
-        return minioClient.putObject(
+        return minIOConfig.minioClient().putObject(
                 PutObjectArgs.builder()
                         .bucket(bucketName)
                         .object(objectName)
