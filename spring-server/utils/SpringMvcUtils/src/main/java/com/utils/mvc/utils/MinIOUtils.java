@@ -477,7 +477,7 @@ public class MinIOUtils {
 
         String url = minIOConfig.minioClient().getPresignedObjectUrl(args);
 
-        if (minIOConfig.isUseGateway()){
+        if (minIOConfig.isUseGatewayProxy()){
             return url.replace(minIOConfig.getEndpoint(), minIOConfig.minioGatewayAgentUrl());
         }
         else {
