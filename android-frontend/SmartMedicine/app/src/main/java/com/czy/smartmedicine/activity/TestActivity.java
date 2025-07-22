@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 
 import com.czy.appcore.network.netty.api.receive.ReceiveMessageApi;
 import com.czy.baseUtilsLib.activity.BaseActivity;
+import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.baseUtilsLib.permission.GainPermissionCallback;
 import com.czy.baseUtilsLib.permission.PermissionUtil;
 import com.czy.baseUtilsLib.ui.ToastUtils;
@@ -129,6 +130,15 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
 
         binding.btnUpload.setOnClickListener(v -> {
             viewModel.uploadImageTest(this);
+        });
+
+        binding.btnLoad.setOnClickListener(v -> {
+            String url = Optional.ofNullable(binding.etUrl.getText())
+                    .map(Editable::toString)
+                    .orElse("");
+            if (!TextUtils.isEmpty(url)){
+                ImageLoadUtil.loadImageViewByUrl(url, binding.imgvLoadImage);
+            }
         });
     }
 
