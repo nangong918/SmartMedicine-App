@@ -1,5 +1,6 @@
 package com.czy.api.exception;
 
+import exception.ExceptionEnums;
 import lombok.Getter;
 
 /**
@@ -7,7 +8,7 @@ import lombok.Getter;
  * @date 2025/6/26 17:22
  */
 @Getter
-public enum OssExceptions implements ExceptionEnums{
+public enum OssExceptions implements ExceptionEnums {
 
     // 文件不存在
     FILE_NOT_EXIST("O_10001", "文件不存在"),

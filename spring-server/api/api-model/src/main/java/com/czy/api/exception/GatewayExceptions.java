@@ -1,5 +1,6 @@
 package com.czy.api.exception;
 
+import exception.ExceptionEnums;
 import lombok.Getter;
 
 /**
@@ -7,7 +8,7 @@ import lombok.Getter;
  * @date 2025/6/26 17:22
  */
 @Getter
-public enum GatewayExceptions implements ExceptionEnums{
+public enum GatewayExceptions implements ExceptionEnums {
 
     // accessToken为空
     ACCESS_TOKEN_EMPTY("Gateway_10001", "accessToken为空"),
@@ -25,6 +26,10 @@ public enum GatewayExceptions implements ExceptionEnums{
     REFRESH_TOKEN_INVALID("Gateway_10007", "refreshToken无效"),
     // IP 访问过于频繁
     IP_ACCESS_TOO_FREQUENTLY("Gateway_10008", "IP 访问过于频繁"),
+    // 用户ID异常
+    USER_ID_ERROR("Gateway_10009", "用户ID异常"),
+    // token和userId不匹配
+    TOKEN_USER_ID_NOT_MATCH("Gateway_10010", "token和userId不匹配"),
     ;
 
     private final String code;

@@ -1,7 +1,7 @@
 package com.czy.api.domain.dto.base;
 
 
-import com.czy.api.exception.ExceptionEnums;
+import exception.ExceptionEnums;
 import exception.AppException;
 import json.BaseBean;
 import lombok.Data;

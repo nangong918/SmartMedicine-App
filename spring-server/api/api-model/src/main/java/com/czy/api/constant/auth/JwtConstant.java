@@ -8,6 +8,7 @@ public class JwtConstant {
     // name
     public static final String ACCESS_TOKEN_NAME = "accessToken";
     public static final String REFRESH_TOKEN_NAME = "refreshToken";
+    public static final String USER_ID_HEADER_NAME = "userId";
     // 暂时使用固定的key
     public static final String ACCESS_TOKEN_GENERATE_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs1yJVl/C+hhteyXhk/xO\n" +
             "ai3qF1Mi+5AHzDZArjC+F3CjyZ8CoQzyft2LvImujGF8JdNN5d0V0xvVX0wSDJ4P\n" +

@@ -108,7 +108,7 @@ spring:
         server-addr: 127.0.0.1:8848
   #-------------------------debug-------------------------
 debug:
-  access-token-check: true
+  access-token-check: false
   all-log: false
   vcode-check: false
   debug: false

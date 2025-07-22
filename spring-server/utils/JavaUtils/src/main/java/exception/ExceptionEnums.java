@@ -1,4 +1,4 @@
-package com.czy.api.exception;
+package exception;
 
 /**
  * @author 13225

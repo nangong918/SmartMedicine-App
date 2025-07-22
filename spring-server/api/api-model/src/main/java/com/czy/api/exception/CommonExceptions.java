@@ -1,5 +1,6 @@
 package com.czy.api.exception;
 
+import exception.ExceptionEnums;
 import lombok.Getter;
 
 /**
@@ -7,7 +8,7 @@ import lombok.Getter;
  * @date 2025/6/26 17:22
  */
 @Getter
-public enum CommonExceptions implements ExceptionEnums{
+public enum CommonExceptions implements ExceptionEnums {
 
     // 参数错误
     PARAM_ERROR("C_10001", "参数错误、不全"),

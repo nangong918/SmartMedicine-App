@@ -2,7 +2,7 @@ package utils;
 
 import com.alibaba.fastjson.JSON;
 import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.exception.ExceptionEnums;
+import exception.ExceptionEnums;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.server.ServerWebExchange;

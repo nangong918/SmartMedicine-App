@@ -1,5 +1,6 @@
 package com.czy.api.exception;
 
+import exception.ExceptionEnums;
 import lombok.Getter;
 
 /**
@@ -7,7 +8,7 @@ import lombok.Getter;
  * @date 2025/6/26 17:58
  */
 @Getter
-public enum AuthSmsExceptions implements ExceptionEnums{
+public enum AuthSmsExceptions implements ExceptionEnums {
 
     // 发送短信失败
     SEND_SMS_FAIL("A_10001", "发送短信失败"),

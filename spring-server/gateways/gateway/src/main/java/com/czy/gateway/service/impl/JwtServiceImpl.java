@@ -6,6 +6,7 @@ import com.czy.api.constant.auth.JwtConstant;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.api.exception.GatewayExceptions;
 import com.czy.gateway.service.JwtService;
+import exception.AppException;
 import jwt.TokenStatue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,14 +38,43 @@ public class JwtServiceImpl implements JwtService {
         if (!StringUtils.hasText(accessToken)) {
             return ResponseUtils.setErrorResponse(exchange, GatewayExceptions.ACCESS_TOKEN_EMPTY);
         }
+        Long userId;
+        try {
+            userId = getUserId(exchange);
+        } catch (AppException e) {
+            return ResponseUtils.setErrorResponse(exchange, e.getExceptionEnums());
+        }
+
+        try {
+            tokenValidatorService.checkTokenBelongUser(accessToken, userId);
+        } catch (Exception e) {
+            return ResponseUtils.setErrorResponse(exchange, GatewayExceptions.TOKEN_USER_ID_NOT_MATCH);
+        }
 
         return Mono.fromCallable(() -> tokenValidatorService.checkTokenStatus(
                 accessToken, JwtConstant.ACCESS_TOKEN_GENERATE_KEY
-                ))
-                .flatMap(status -> handleTokenStatus(exchange, chain, status));
+                    )
+                )
+                .flatMap(status ->
+                        handleAccessTokenStatus(exchange, chain, status)
+                );
     }
 
-    private Mono<Void> handleTokenStatus(ServerWebExchange exchange, GatewayFilterChain chain, TokenStatue status) {
+    private Long getUserId(ServerWebExchange exchange) throws AppException{
+        String userIdStr = exchange.getRequest().getHeaders().getFirst(JwtConstant.USER_ID_HEADER_NAME);
+        if (!StringUtils.hasText(userIdStr)){
+            throw new AppException(GatewayExceptions.USER_ID_ERROR);
+        }
+        long userId;
+        try {
+            userId = Long.parseLong(userIdStr);
+        } catch (Exception e) {
+            throw new AppException(GatewayExceptions.USER_ID_ERROR);
+        }
+        return userId;
+    }
+
+    private Mono<Void> handleAccessTokenStatus(ServerWebExchange exchange, GatewayFilterChain chain, TokenStatue status) {
         if (TokenStatue.VALID.equals(status)) {
             return chain.filter(exchange);
         }
@@ -64,6 +94,19 @@ public class JwtServiceImpl implements JwtService {
     private Mono<Void> handleRefreshToken(ServerWebExchange exchange, GatewayFilterChain chain, String refreshToken) {
         if (!StringUtils.hasText(refreshToken)) {
             return ResponseUtils.setErrorResponse(exchange, GatewayExceptions.REFRESH_TOKEN_EMPTY);
+        }
+
+        Long userId;
+        try {
+            userId = getUserId(exchange);
+        } catch (AppException e) {
+            return ResponseUtils.setErrorResponse(exchange, e.getExceptionEnums());
+        }
+
+        try {
+            tokenValidatorService.checkTokenBelongUser(refreshToken, userId);
+        } catch (Exception e) {
+            return ResponseUtils.setErrorResponse(exchange, GatewayExceptions.TOKEN_USER_ID_NOT_MATCH);
         }
 
         return Mono.fromCallable(() -> tokenValidatorService.checkTokenStatus(refreshToken, JwtConstant.REFRESH_TOKEN_GENERATE_KEY))

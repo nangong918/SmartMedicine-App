@@ -1,5 +1,6 @@
 package com.czy.api.exception;
 
+import exception.ExceptionEnums;
 import lombok.Getter;
 
 /**
@@ -7,7 +8,7 @@ import lombok.Getter;
  * @date 2025/6/26 17:22
  */
 @Getter
-public enum UserExceptions implements ExceptionEnums{
+public enum UserExceptions implements ExceptionEnums {
 
     // 用户资料存在问题
     USER_INFO_ERROR("U_10001", "用户资料存在问题"),
