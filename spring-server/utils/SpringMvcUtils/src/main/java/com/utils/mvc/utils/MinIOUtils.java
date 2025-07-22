@@ -478,7 +478,15 @@ public class MinIOUtils {
         String url = minIOConfig.minioClient().getPresignedObjectUrl(args);
 
         if (minIOConfig.isUseGatewayProxy()){
-            return url.replace(minIOConfig.getEndpoint(), minIOConfig.minioGatewayAgentUrl());
+            String httpPrefix = "http://";
+            String httpsPrefix = "https://";
+            String endpoint = minIOConfig.getEndpoint();
+            if (endpoint.contains(httpsPrefix)){
+                return url.replace(minIOConfig.getEndpoint(), httpsPrefix + minIOConfig.minioGatewayAgentUrl());
+            }
+            else {
+                return url.replace(minIOConfig.getEndpoint(), httpPrefix + minIOConfig.minioGatewayAgentUrl());
+            }
         }
         else {
             return url;
