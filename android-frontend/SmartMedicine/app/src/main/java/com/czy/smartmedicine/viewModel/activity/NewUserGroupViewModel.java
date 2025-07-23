@@ -310,6 +310,7 @@ public class NewUserGroupViewModel extends ViewModel {
                 newList.add(itemVo);
             }
         }
+        // 取消部分livedata；list类型如果使用livedata是无法观察到内部数据的。list<livedata<item>>又太耗性能
         Optional.ofNullable(this.newUserGroupVo.addContactListVo.contactItemList)
                 .ifPresent(listLd -> listLd.setValue(newList));
 //                        .map(LiveData::getValue)
