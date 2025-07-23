@@ -72,6 +72,8 @@ public class SearchActivityUserViewModel extends ViewModel {
                                                 .map(f -> f.fileUrl)
                                                 .orElse(null)
                                         );
+                                // 设置查询到的userId
+                                itemVo.uid = (u.userId);
                                 // 通过返回的ao直接设置状态
                                 Integer[] handleButtonState = AddUserStateHandler.getApplyStateButton(u.addUserStatusAo);
                                 Log.i(TAG, "handleSearchUsers: " + Arrays.toString(handleButtonState));
