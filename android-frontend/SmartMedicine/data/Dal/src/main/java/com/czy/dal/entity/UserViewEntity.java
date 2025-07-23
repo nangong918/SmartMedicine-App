@@ -9,5 +9,8 @@ public class UserViewEntity {
     public String userName;
 
     // 用户头像
+    public Long avatarFileId;
+
+    // 用户头像url
     public String avatarUrl;
 }
