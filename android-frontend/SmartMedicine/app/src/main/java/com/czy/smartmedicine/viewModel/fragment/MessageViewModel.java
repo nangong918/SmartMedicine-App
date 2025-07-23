@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.czy.appcore.network.netty.api.receive.ReceiveMessageApi;
+import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.baseUtilsLib.network.BaseResponse;
@@ -72,14 +72,14 @@ public class MessageViewModel extends ViewModel {
 
     //---------------------------NetWork---------------------------
 
-    private ReceiveMessageApi receiveMessageApi;
+    private ChatApiHandler chatApiHandler;
 
     // 消息队列：如果因为List是一个唯一资源，多线程情况下应该上锁，而上锁会导致阻塞或者CPU繁忙，应该将全部的消息交给消息队列处理；避免重要线程被普通任务阻塞
     private final Handler messageHandler = new Handler(Looper.getMainLooper());
 
     private void initReceiveMessageApi(){
         initEventBus();
-        receiveMessageApi = new ReceiveMessageApi() {
+        chatApiHandler = new ChatApiHandler() {
             @Override
             public void receiveUserText(@NonNull UserTextDataResponse response) {
                 // socket消息交给消息队列同步等待处理
@@ -268,14 +268,14 @@ public class MessageViewModel extends ViewModel {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(UserTextDataResponse response) {
         if (response != null){
-            receiveMessageApi.receiveUserText(response);
+            chatApiHandler.receiveUserText(response);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(GroupTextDataResponse response) {
         if (response != null){
-            receiveMessageApi.receiveGroupText(response);
+            chatApiHandler.receiveGroupText(response);
         }
     }
 

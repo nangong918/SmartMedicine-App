@@ -13,7 +13,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
-import com.czy.appcore.network.netty.api.receive.ReceiveMessageApi;
+import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.baseUtilsLib.permission.GainPermissionCallback;
@@ -29,7 +29,6 @@ import com.czy.dal.dto.netty.response.HaveReadMessageResponse;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityTestBinding;
 import com.czy.smartmedicine.test.TestConfig;
-import com.czy.smartmedicine.viewModel.activity.PublishViewModel;
 import com.czy.smartmedicine.viewModel.activity.TestViewModel;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
@@ -177,11 +176,11 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
 
     //------------------Message------------------
 
-    private ReceiveMessageApi receiveMessageApi;
+    private ChatApiHandler chatApiHandler;
 
     private void initReceiveMessageApi(){
         initEventBus();
-        receiveMessageApi = new ReceiveMessageApi() {
+        chatApiHandler = new ChatApiHandler() {
             @Override
             public void receiveUserText(@NonNull UserTextDataResponse response) {
                 binding.tvMessage.setText(response.getContent());
@@ -208,7 +207,7 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
     public void onMessageReceived(UserTextDataResponse response) {
         if (response != null){
             // 根据 message 的 type 执行对应的方法
-            receiveMessageApi.receiveUserText(response);
+            chatApiHandler.receiveUserText(response);
             Log.d("Socket", "onMessageReceived: " + response.getContent());
         }
     }
