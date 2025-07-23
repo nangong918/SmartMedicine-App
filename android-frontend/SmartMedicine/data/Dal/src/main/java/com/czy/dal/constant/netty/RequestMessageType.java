@@ -1,6 +1,5 @@
 package com.czy.dal.constant.netty;
 
-
 import com.czy.dal.annotation.MsgTranslator;
 
 /**
@@ -78,6 +77,7 @@ public class RequestMessageType {
     }
     public final static class Chat {
         public final static String root = "Chat:";
+        public static final String DELETE_ALL_MESSAGE = "delete_all_message:";
         private static final String toUser = "toUser:";
         private static final String toGroup = "toGroup:";
         private static final String text = "text";
