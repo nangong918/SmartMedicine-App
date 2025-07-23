@@ -25,6 +25,7 @@ import com.czy.smartmedicine.databinding.FragmentContactUserGroupBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.ContactUserGroupViewModel;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 
@@ -71,15 +72,19 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
     @Override
     protected void setListener() {
         super.setListener();
+
+        binding.lyMain.setOnRefreshListener(() -> {
+            viewModel.getMyFriendList(new ArrayList<>());
+        });
     }
 
     //-----------------------ViewModel-----------------------
 
-    private ContactUserGroupViewModel contactUserGroupViewModel;
+    private ContactUserGroupViewModel viewModel;
 
     private void initViewModel() {
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        contactUserGroupViewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, ContactUserGroupViewModel.class);
+        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, ContactUserGroupViewModel.class);
 
         initViewModelVo();
 
@@ -91,7 +96,7 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
 
         contactUserGroupVo.contactListVo = new ContactListVo();
 
-        contactUserGroupViewModel.init(contactUserGroupVo);
+        viewModel.init(contactUserGroupVo);
 
         // binding.setViewModel(contactUserGroupViewModel);
         // binding.setLifecycleOwner(this);
@@ -102,7 +107,7 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
 
     private void observeData() {
         // 观察RecyclerView
-        Optional.ofNullable(contactUserGroupViewModel)
+        Optional.ofNullable(viewModel)
                 .map(vm -> vm.contactUserGroupVo)
                 .map(cvo -> cvo.contactListVo)
                 .map(cvo -> cvo.contactItemList)
@@ -110,6 +115,8 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
                     liveData.observe(this, newList -> {
                         Optional.ofNullable(((ContactAdapter)binding.rvFriends.getAdapter()))
                                 .ifPresent(contactAdapter -> contactAdapter.setCurrentList(newList));
+                        // 取消下滑
+                        binding.lyMain.setRefreshing(false);
                     });
                 });
     }
@@ -120,10 +127,10 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
     private void initRecyclerView(){
 
         ContactAdapter adapter = new ContactAdapter(
-                contactUserGroupViewModel.contactUserGroupVo.contactListVo.contactItemList.getValue(),
+                viewModel.contactUserGroupVo.contactListVo.contactItemList.getValue(),
                 position -> {
             Log.d(TAG, "position:" + position);
-            contactUserGroupViewModel.onUserClicked(position, (ao) -> {
+            viewModel.onUserClicked(position, (ao) -> {
                 // 启动用户详细信息界面
                 Intent intent = new Intent(requireActivity(), UserBriefActivity.class);
                 intent.putExtra(UserBriefStartAo.class.getName(), ao);
@@ -154,16 +161,16 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
     @Override
     public void onPause() {
         super.onPause();
-        if (contactUserGroupViewModel != null){
-            contactUserGroupViewModel.onPause();
+        if (viewModel != null){
+            viewModel.onPause();
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (contactUserGroupViewModel != null){
-            contactUserGroupViewModel.onDestroy();
+        if (viewModel != null){
+            viewModel.onDestroy();
         }
     }
 }
