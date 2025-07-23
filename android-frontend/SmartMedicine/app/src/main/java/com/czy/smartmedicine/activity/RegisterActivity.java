@@ -27,6 +27,9 @@ import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * 注册界面
+ */
 public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
     public RegisterActivity() {

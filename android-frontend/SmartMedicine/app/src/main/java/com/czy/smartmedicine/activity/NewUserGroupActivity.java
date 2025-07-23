@@ -18,7 +18,9 @@ import com.czy.smartmedicine.viewModel.activity.NewUserGroupViewModel;
 
 import java.util.Optional;
 
-// Navigation解决首页切换问题
+/**
+ * 新朋友/群组界面
+ */
 public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBinding> {
 
     public NewUserGroupActivity() {

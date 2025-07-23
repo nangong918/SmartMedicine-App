@@ -15,6 +15,9 @@ import com.czy.smartmedicine.viewModel.activity.UserBriefViewModel;
 
 import java.util.Optional;
 
+/**
+ * 用户简介主页（点击头像之后的朋友圈页面）
+ */
 public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
 
     public UserBriefActivity() {

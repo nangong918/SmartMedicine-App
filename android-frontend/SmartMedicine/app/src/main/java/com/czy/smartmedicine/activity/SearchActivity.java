@@ -22,6 +22,9 @@ import com.czy.smartmedicine.viewModel.activity.SearchActivityUserViewModel;
 
 import java.util.Optional;
 
+/**
+ * 搜索界面：搜索好友
+ */
 public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 
     public SearchActivity() {

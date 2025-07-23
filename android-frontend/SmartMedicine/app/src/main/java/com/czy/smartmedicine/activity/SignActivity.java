@@ -26,7 +26,7 @@ import com.czy.smartmedicine.viewModel.activity.SignViewModel;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 /**
- *  @author 13225
+ *  登录界面
  */
 public class SignActivity extends BaseActivity<ActivitySignBinding> {
 

@@ -17,6 +17,9 @@ import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * 启动页面
+ */
 public class StartActivity extends BaseActivity<ActivityStartBinding> {
 
     public StartActivity() {

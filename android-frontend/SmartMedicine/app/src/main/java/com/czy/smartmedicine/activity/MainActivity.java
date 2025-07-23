@@ -34,10 +34,7 @@ import java.util.Optional;
 
 /**
  * @author 13225
- * Android Mvvm设计模式：
- * Model：Activity，Fragment：负责交互；LiveData监听
- * ViewModel：数据双向绑定；LiveData保存；逻辑
- * View：展示
+ * 主界面
  */
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
