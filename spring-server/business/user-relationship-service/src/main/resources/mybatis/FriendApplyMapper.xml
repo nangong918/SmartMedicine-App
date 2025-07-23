@@ -104,6 +104,7 @@
     </select>
     <select id="getAddMeRequestList" resultType="com.czy.api.domain.bo.relationship.NewUserItemBo">
         SELECT
+            la.id AS userId,           -- 用户ID
             la.user_name AS userName,  -- 用户名称
             la.phone AS handlerPhone,  -- 处理人的电话
             la.avatar_file_id AS avatarFileId,  -- 处理人的头像 URL
