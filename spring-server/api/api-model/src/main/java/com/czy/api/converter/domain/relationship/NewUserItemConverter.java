@@ -50,6 +50,7 @@ public interface NewUserItemConverter {
         return ao;
     }
 
+    @Mapping(target = "userId", source = "userId")
     @Mapping(target = "userName", source = "userName")
     @Mapping(target = "userAccount", source = "userAccount")
     @Mapping(target = "avatarFileId", source = "avatarFileId")

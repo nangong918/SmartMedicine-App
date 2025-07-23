@@ -1,6 +1,8 @@
 package com.czy.dal.entity;
 
 public class UserViewEntity {
+    // userId
+    public Long userId;
 
     // user账号
     public String userAccount;

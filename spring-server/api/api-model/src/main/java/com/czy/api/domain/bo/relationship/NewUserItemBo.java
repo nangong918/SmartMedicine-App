@@ -39,6 +39,9 @@ import lombok.Data;
 @Data
 public class NewUserItemBo {
 
+    // 用户id
+    public Long userId;
+
     // 是否是添加我的请求 / 是否对我添加别人请求的响应
     public boolean isAddMeNotResponse = true;
 

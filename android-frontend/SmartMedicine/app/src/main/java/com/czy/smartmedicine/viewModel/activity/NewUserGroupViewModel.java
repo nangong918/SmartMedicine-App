@@ -7,39 +7,35 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.api.handle.AsyncRequestCallback;
-import com.czy.appcore.network.api.handle.WaitAllRequestFinishCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
+import com.czy.appcore.service.AddUserStateHandler;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.customviewlib.view.addContact.AddContactAdapter;
 import com.czy.dal.OnPositionItemButtonContentClick;
-import com.czy.appcore.service.AddUserStateHandler;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.newUser.AddUserStatusAo;
+import com.czy.dal.ao.newUser.NewUserItemAo;
 import com.czy.dal.constant.newUserGroup.ApplyButtonStatusEnum;
 import com.czy.dal.constant.newUserGroup.ApplyStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleButtonStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleStatusEnum;
-import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
-import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
+import com.czy.dal.dto.netty.request.AddUserRequest;
+import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
-
 import com.czy.dal.vo.fragmentActivity.NewUserGroupVo;
-import com.czy.dal.ao.newUser.NewUserItemAo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.AsyncRequestManager;
 import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -122,9 +118,9 @@ public class NewUserGroupViewModel extends ViewModel {
     // isAddMeNotResponse = true;
     private void handleGetAddMeRequestList(BaseResponse<GetAddMeRequestListResponse> response, Context context) {
         List<NewUserItemAo> list = Optional.ofNullable(response)
-                        .map(BaseResponse::getData)
-                        .map(data -> data.addMeRequestList)
-                        .orElse(null);
+                .map(BaseResponse::getData)
+                .map(data -> data.addMeRequestList)
+                .orElse(null);
         handleNewUserData(list);
     }
 
@@ -157,7 +153,7 @@ public class NewUserGroupViewModel extends ViewModel {
     }
 
     //==========添加用户 AddUserRequest
-;
+    ;
 //    private void doAddUserFriend(
 //            AddUserRequest request,
 //            String handlerAccount) {
@@ -300,13 +296,13 @@ public class NewUserGroupViewModel extends ViewModel {
     }
 
     // 用于记录两个响应的user user list
-    private final List<NewUserItemAo> newUserItemAoList = new LinkedList<>();
+    private List<NewUserItemAo> newUserItemAoList = new LinkedList<>();
 
     //==========获取最新的添加信息消息
 
     public void getNewUserData(Context context){
         // 首先先清空数据缓存
-        newUserItemAoList.clear();
+        newUserItemAoList = new LinkedList<>();
 
         // 请求
         BaseHttpRequest request = new BaseHttpRequest();
@@ -331,7 +327,7 @@ public class NewUserGroupViewModel extends ViewModel {
     private synchronized void handleNewUserData(List<NewUserItemAo> list){
         // 非空添加
         Optional.ofNullable(list)
-                        .ifPresent(newUserItemAoList::addAll);
+                .ifPresent(newUserItemAoList::addAll);
 
         // 更新Data List
         this.newUserGroupVo.newUserItemListLd.setValue(newUserItemAoList);
@@ -355,7 +351,9 @@ public class NewUserGroupViewModel extends ViewModel {
                         .ifPresent(uv -> {
                             itemVo.account = (uv.userAccount);
                             itemVo.avatarUrlOrUri = (uv.avatarUrl);
-                            itemVo.name = (ao.userViewEntity.userName);
+                            itemVo.name = (uv.userName);
+                            // 设置查询到的userId
+                            itemVo.uid = (uv.userId);
                             // isBeAdd
                             ao.isBeAdd = ao.addUserStatusAo.isBeAdd(MainApplication.getInstance().
                                     getUserLoginInfoAo().account);
@@ -377,6 +375,8 @@ public class NewUserGroupViewModel extends ViewModel {
         Optional.ofNullable(this.newUserGroupVo.addContactListVo.contactItemList)
                 .ifPresent(listLd -> listLd.setValue(newList));
         updateRclList();
+//                        .map(LiveData::getValue)
+//                        .ifPresent(l -> l.addAll(addContactListVo.contactItemList.getValue()));
     }
 
     public void addUserFriend(AddUserRequest request, String handlerAccount){
