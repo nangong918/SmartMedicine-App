@@ -149,7 +149,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
 
     // 初始化ViewModel之后申请Data
     private void initViewModelData() {
-        newUserGroupViewModel.getNewUserData();
+        newUserGroupViewModel.getNewUserData(this);
     }
 
     @Override

@@ -243,6 +243,7 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 todo 推荐系统已经推荐的post编辑进入已推荐过,召回阶段不再选取
 todo 明天继续跑通IM和post
 商品购物系统需要加入(后台配置秒杀活动)
+修好这个项目基本的全部Bug并且基本实现大部分通用功能再开新项目
 
 ##### 重构+细化
 * spring学习
@@ -322,6 +323,10 @@ todo 明天继续跑通IM和post
 8. oss优化, url存储在redis中,并且redis.ttl < oss.ttl
 9. 搜索,排序算法优化.
 10. 微服务分布式优化:集群,均衡负载,分布式锁,分布式事务,链路,服务注册,服务发现,服务熔断,服务限流
+
+## Android
+暂时取消DiffUtil，测试总是出bug，属于过度开发；归为性能优化点
+List取消使用LiveData
 
 ##### 问题
 尝试解决Redis RDB问题:
