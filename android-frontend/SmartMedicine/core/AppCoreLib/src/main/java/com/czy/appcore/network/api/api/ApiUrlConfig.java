@@ -3,7 +3,7 @@ package com.czy.appcore.network.api.api;
 
 
 import com.czy.appcore.BaseConfig;
-import com.czy.baseUtilsLib.debug.DebugMyUtil;
+import com.czy.baseUtilsLib.debug.DebugEnvironment;
 
 public class ApiUrlConfig {
 
@@ -11,7 +11,7 @@ public class ApiUrlConfig {
 
     // 获取url
     private static String getMainUrl() {
-        return switch (DebugMyUtil.projectEnvironment) {
+        return switch (DebugEnvironment.projectEnvironment) {
             case LOCAL -> BaseConfig.LOCAL_URL;
             case TEST -> BaseConfig.TEST_URL;
             case PRODUCTION, STAGING -> BaseConfig.PRODUCTION_URL;
@@ -22,7 +22,7 @@ public class ApiUrlConfig {
     // 交给H5调用
     public static String getMainApiUrlH5(){
         String apiUrl = getMainUrl() + "/api";
-        DebugMyUtil.logR("H5访问的ApiUrl为:" + apiUrl);
+        DebugEnvironment.logR("H5访问的ApiUrl为:" + apiUrl);
         return apiUrl;
     }
 
@@ -33,7 +33,7 @@ public class ApiUrlConfig {
                 //.append("/api/")
                 .append("/")
         ;
-        DebugMyUtil.logR("builder:" + builder);
+        DebugEnvironment.logR("builder:" + builder);
         return builder.toString();
     }
 

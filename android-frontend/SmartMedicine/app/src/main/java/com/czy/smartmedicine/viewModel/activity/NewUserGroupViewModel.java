@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.customviewlib.view.addContact.AddContactAdapter;
 import com.czy.dal.OnPositionItemButtonContentClick;
 import com.czy.appcore.service.AddUserStateHandler;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
@@ -54,6 +55,19 @@ public class NewUserGroupViewModel extends ViewModel {
     }
 
     //---------------------------Vo Ld---------------------------
+
+    public AddContactAdapter rclAdapter;
+
+    public void updateRclList(){
+        List<AddContactItemVo> list = Optional.ofNullable(newUserGroupVo)
+                .map(vo -> vo.addContactListVo)
+                .map(listVo -> listVo.contactItemList)
+                .map(LiveData::getValue)
+                .orElse(new LinkedList<>());
+        if (rclAdapter != null){
+            rclAdapter.setChatItems(list);
+        }
+    }
 
     public NewUserGroupVo newUserGroupVo = new NewUserGroupVo();
 
@@ -313,6 +327,7 @@ public class NewUserGroupViewModel extends ViewModel {
         // 取消部分livedata；list类型如果使用livedata是无法观察到内部数据的。list<livedata<item>>又太耗性能
         Optional.ofNullable(this.newUserGroupVo.addContactListVo.contactItemList)
                 .ifPresent(listLd -> listLd.setValue(newList));
+        updateRclList();
 //                        .map(LiveData::getValue)
 //                        .ifPresent(l -> l.addAll(addContactListVo.contactItemList.getValue()));
     }

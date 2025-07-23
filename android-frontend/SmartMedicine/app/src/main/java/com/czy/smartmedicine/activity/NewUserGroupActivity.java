@@ -47,7 +47,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
 
     //-----------------------Intent Data-----------------------
 
-    private NewUserGroupActivityIntentAo newUserGroupActivityIntentAo = null;
+    private NewUserGroupActivityIntentAo intentAo = null;
 
     private void initIntentData() {
         // 获取传递的对象
@@ -56,14 +56,14 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
             Optional.ofNullable(intent)
                     .map(i -> (NewUserGroupActivityIntentAo)i.getSerializableExtra(NewUserGroupActivityIntentAo.class.getName()))
                     .ifPresent(ao -> {
-                        this.newUserGroupActivityIntentAo = ao;
+                        this.intentAo = ao;
                         handleUserGroupEnum(ao.userGroupEnum);
                     });
         } catch (Exception e) {
             Log.e(TAG, "initIntentData::getSerializableExtra Error: ", e);
             finish();
         }
-        if (newUserGroupActivityIntentAo == null) {
+        if (intentAo == null) {
             Log.e(TAG, "initIntentData::newUserGroupActivityStartAo is null");
             finish();
         }
@@ -98,6 +98,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
                 position -> {
             Log.d(TAG, "position:" + position);
         });
+        newUserGroupViewModel.rclAdapter = adapter;
         binding.rclvContent.setAdapter(adapter);
     }
 
@@ -122,7 +123,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
     private void initViewModelVo(){
         NewUserGroupVo newUserGroupVo = new NewUserGroupVo();
         // 是否为User界面 如果为 null 或不等于 USER，默认设置为 true
-        newUserGroupVo.isUserNotGroup = Optional.ofNullable(newUserGroupActivityIntentAo)
+        newUserGroupVo.isUserNotGroup = Optional.ofNullable(intentAo)
                 .map(ao -> ao.userGroupEnum)
                 .map(userGroupEnum -> userGroupEnum.equals(UserGroupEnum.USER))
                 .orElse(true);
@@ -135,7 +136,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
 
     private void observeData(){
         // 观察RecyclerView
-        Optional.ofNullable(newUserGroupViewModel)
+/*        Optional.ofNullable(newUserGroupViewModel)
                 .map(vm -> vm.newUserGroupVo)
                 .map(newUserGroupVo -> newUserGroupVo.addContactListVo)
                 .map(addContactListVo -> addContactListVo.contactItemList)
@@ -143,7 +144,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
                     Optional.ofNullable(binding.rclvContent.getAdapter())
                             .map(adapter -> (AddContactAdapter)adapter)
                             .ifPresent(a -> a.setChatItems(list));
-                }));
+                }));*/
     }
 
     // 初始化ViewModel之后申请Data
