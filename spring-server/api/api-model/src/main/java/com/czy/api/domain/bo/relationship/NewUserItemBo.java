@@ -54,6 +54,9 @@ public class NewUserItemBo {
     // 用户头像
     public Long avatarFileId;
 
+    // 用户头像url
+    public String avatarUrl;
+
     // 申请时间
     public Long applyTime;
 

@@ -47,6 +47,9 @@ public class UserViewEntity implements BaseBean {
     // 用户头像
     public Long avatarFileId;
 
+    // 用户头像url
+    public String avatarUrl;
+
     public void setByLoginUserDo(UserDo userDo) {
         if (userDo == null){
             return;

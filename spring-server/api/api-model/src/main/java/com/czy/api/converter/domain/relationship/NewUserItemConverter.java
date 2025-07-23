@@ -53,5 +53,6 @@ public interface NewUserItemConverter {
     @Mapping(target = "userName", source = "userName")
     @Mapping(target = "userAccount", source = "userAccount")
     @Mapping(target = "avatarFileId", source = "avatarFileId")
+    @Mapping(target = "avatarUrl", source = "avatarUrl")
     UserViewEntity boToUserViewEntity(NewUserItemBo bo);
 }

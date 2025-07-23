@@ -314,6 +314,19 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     @Override
     public List<NewUserItemAo> getAddMeRequestList(Long handlerId) {
         List<NewUserItemBo> applyToMeList = friendApplyMapper.getAddMeRequestList(handlerId);
+        if (CollectionUtils.isEmpty(applyToMeList)){
+            return new ArrayList<>();
+        }
+        List<Long> fileIdList = applyToMeList.stream()
+                .map(NewUserItemBo::getAvatarFileId)
+                .collect(Collectors.toList());
+        List<String> fileUrlList = ossService.getFileUrlsByFileIds(fileIdList);
+        assert fileUrlList.size() == applyToMeList.size();
+        for (int i = 0; i < applyToMeList.size(); i++){
+            applyToMeList.get(i).setAvatarUrl(
+                    fileUrlList.get(i)
+            );
+        }
         return convertBoListToAoList(applyToMeList);
     }
 
