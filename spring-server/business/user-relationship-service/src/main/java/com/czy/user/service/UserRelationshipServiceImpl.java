@@ -14,7 +14,11 @@ import com.czy.api.converter.domain.relationship.SearchFriendApplyConverter;
 import com.czy.api.domain.Do.relationship.FriendApplyDo;
 import com.czy.api.domain.Do.relationship.UserFriendDo;
 import com.czy.api.domain.Do.user.UserDo;
-import com.czy.api.domain.ao.relationship.*;
+import com.czy.api.domain.ao.relationship.AddUserAo;
+import com.czy.api.domain.ao.relationship.HandleAddedMeAo;
+import com.czy.api.domain.ao.relationship.MyFriendItemAo;
+import com.czy.api.domain.ao.relationship.NewUserItemAo;
+import com.czy.api.domain.ao.relationship.SearchFriendApplyAo;
 import com.czy.api.domain.bo.relationship.NewUserItemBo;
 import com.czy.api.domain.bo.relationship.SearchFriendApplyBo;
 import com.czy.api.domain.dto.socket.response.HandleAddUserResponse;
@@ -32,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -47,7 +51,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Component
+@Service
 @org.apache.dubbo.config.annotation.Service(protocol = "dubbo", version = "1.0.0")
 public class UserRelationshipServiceImpl implements UserRelationshipService {
 

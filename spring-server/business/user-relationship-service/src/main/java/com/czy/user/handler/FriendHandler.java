@@ -22,7 +22,6 @@ import com.czy.user.handler.api.FriendApi;
 import com.czy.user.mq.sender.ToSocketMqSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,8 +36,7 @@ public class FriendHandler implements FriendApi {
 
     private final LoginService loginService;
     private final UserService userService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private UserRelationshipService userRelationshipService;
+    private final UserRelationshipService userRelationshipService;
     private final AddUserConverter addUserConverter;
     private final ToSocketMqSender toSocketMqSender;
     private final HandleAddUserConverter handleAddUserConverter;
