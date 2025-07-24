@@ -17,12 +17,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.netty.IMessageListener;
-import com.czy.appcore.network.api.ApiRequest;
+import com.czy.appcore.network.api.api.ApiRequest;
 import com.czy.appcore.network.netty.api.SocketApiResponseHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.network.netty.queue.SocketMessageQueue;
 import com.czy.appcore.network.netty.service.NettySocketServiceInitiator;
-import com.czy.appcore.service.UserModel;
 import com.czy.baseUtilsLib.file.SecuritySharedPreferencesUtils;
 import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.network.BaseResponse;
@@ -36,7 +35,7 @@ import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.netty.Message;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
-import com.czy.appcore.network.api.ApiRequestProvider;
+import com.czy.appcore.network.api.api.ApiRequestProvider;
 import com.czy.appcore.network.netty.service.NettySocketService;
 import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.czy.smartmedicine.utils.ViewModelUtil;
@@ -93,6 +92,11 @@ public class MainApplication extends Application {
             apiRequestInstance = ApiRequestProvider.getApiRequest();
         }
         return apiRequestInstance;
+    }
+
+    public static void setToken(){
+        LoginTokenAo loginTokenAo = MainApplication.getInstance().getLoginTokenAo();
+        ApiRequestProvider.getAuthInterceptor(loginTokenAo).setLoginTokenAo(loginTokenAo);
     }
 
     // 请求接口实现
@@ -209,7 +213,7 @@ public class MainApplication extends Application {
             try {
                 // SharePreferences
                 SharedPreferences sp = SecuritySharedPreferencesUtils.getSecuritySharedPreferences(
-                        UserModel.USER_INFO_FILE_NAME,
+                        UserLoginInfoAo.class.getName(),
                         this
                 );
                 userLoginInfoAo.getFromSharePreferences(sp);
@@ -221,11 +225,11 @@ public class MainApplication extends Application {
     }
 
     public void clearUserLoginInfoAo(){
-        userLoginInfoAo = null;
+        this.userLoginInfoAo = null;
         try {
             // SharePreferences
             SecuritySharedPreferencesUtils.clearSecuritySharedPreferences(
-                    UserModel.USER_INFO_FILE_NAME,
+                    UserLoginInfoAo.class.getName(),
                     this
             );
         } catch (Exception e) {
@@ -238,7 +242,7 @@ public class MainApplication extends Application {
         try {
             // SharePreferences
             SharedPreferences sp = SecuritySharedPreferencesUtils.getSecuritySharedPreferences(
-                    UserModel.USER_INFO_FILE_NAME,
+                    UserLoginInfoAo.class.getName(),
                     this
             );
             userLoginInfoAo.saveToSharePreferences(sp);
@@ -248,16 +252,54 @@ public class MainApplication extends Application {
     }
 
     public void clearAllSharePreferences() {
+        clearLoginTokenAo();
+        clearUserLoginInfoAo();
     }
 
     private LoginTokenAo loginTokenAo;
 
     public LoginTokenAo getLoginTokenAo() {
+        if (loginTokenAo == null){
+            loginTokenAo = new LoginTokenAo();
+            try {
+                // SharePreferences
+                SharedPreferences sp = SecuritySharedPreferencesUtils.getSecuritySharedPreferences(
+                        LoginTokenAo.class.getName(),
+                        this
+                );
+                loginTokenAo.getFromSharePreferences(sp);
+            } catch (Exception e) {
+                Log.e(TAG, "getUserLoginInfoAo error", e);
+            }
+        }
         return loginTokenAo;
     }
 
     public void setLoginTokenAo(LoginTokenAo loginTokenAo) {
         this.loginTokenAo = loginTokenAo;
+        try {
+            // SharePreferences
+            SharedPreferences sp = SecuritySharedPreferencesUtils.getSecuritySharedPreferences(
+                    LoginTokenAo.class.getName(),
+                    this
+            );
+            loginTokenAo.saveToSharePreferences(sp);
+        } catch (Exception e) {
+            Log.e(TAG, "setUserLoginInfoAo error", e);
+        }
+    }
+
+    public void clearLoginTokenAo(){
+        this.loginTokenAo = null;
+        try {
+            // SharePreferences
+            SecuritySharedPreferencesUtils.clearSecuritySharedPreferences(
+                    LoginTokenAo.class.getName(),
+                    this
+            );
+        } catch (Exception e) {
+            Log.e(TAG, "clearLoginTokenAo error", e);
+        }
     }
 
     //==========messageList

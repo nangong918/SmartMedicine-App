@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.czy.api.domain.ao.oss.FileAo;
 import com.utils.mvc.service.MinIOService;
 import com.utils.mvc.utils.MinIOUtils;
+import com.utils.mvc.utils.ViewContentTypeEnum;
 import domain.ErrorFile;
 import domain.FileIsExistResult;
 import domain.FileOptionResult;
@@ -100,8 +101,8 @@ public class MinIOServiceImpl implements MinIOService {
                 errorFiles.add(new ErrorFile("", "[文件不能为空]"));
                 continue;
             }
-            String fileName = file.getOriginalFilename();
-            if (fileName == null) {
+            String fileName = IdUtil.getSnowflakeNextId() + "_" + file.getOriginalFilename();
+            if (file.getOriginalFilename() == null) {
                 errorFiles.add(new ErrorFile("", "[文件名不能为空]"));
                 continue;
             }
@@ -125,8 +126,54 @@ public class MinIOServiceImpl implements MinIOService {
     }
 
     @Override
+    public FileOptionResult uploadImages(List<MultipartFile> files, Long userId, String bucketName) {
+        // 内部包含检查是否已经存在的逻辑
+        FileOptionResult fileOptionResult = new FileOptionResult();
+        List<SuccessFile> successFiles = new ArrayList<>();
+        List<ErrorFile> errorFiles = new ArrayList<>();
+        try {
+            minIOUtils.createBucket(bucketName);
+        } catch (Exception e) {
+            log.error("创建存储桶失败, bucketName: {}", bucketName, e);
+            throw new OssException("创建存储桶失败");
+        }
+        for (MultipartFile file : files) {
+            if (file == null){
+                errorFiles.add(new ErrorFile("", "[文件不能为空]"));
+                continue;
+            }
+            String fileName = IdUtil.getSnowflakeNextId() + "_" + file.getOriginalFilename();
+            if (file.getOriginalFilename() == null) {
+                errorFiles.add(new ErrorFile("", "[文件名不能为空]"));
+                continue;
+            }
+            try {
+                String fileStorageName = getFileStorageName(userId, fileName);
+                ObjectWriteResponse response = minIOUtils.uploadFile(
+                        bucketName,
+                        file,
+                        fileStorageName,
+                        ViewContentTypeEnum.getContentType(fileName)
+                );
+                if (response != null){
+                    long fileId = IdUtil.getSnowflakeNextId();
+                    successFiles.add(new SuccessFile(fileName, fileStorageName, file.getSize(), fileId));
+                }
+            } catch (Exception e) {
+                log.error("上传文件失败", e);
+                errorFiles.add(new ErrorFile(fileName, "[上传失败]"));
+            }
+        }
+        // 添加fileId
+
+        fileOptionResult.setErrorFiles(errorFiles);
+        fileOptionResult.setSuccessFiles(successFiles);
+        return fileOptionResult;
+    }
+
+    @Override
     public FileOptionResult uploadFilesWithIdempotent
-            (List<MultipartFile> files, List<FileIsExistResult> fileIsExistResults, String bucketName, Long userId){
+            (List<MultipartFile> files, List<FileIsExistResult> fileIsExistResults, String bucketName, Long userId, boolean isImage){
         // 内部包含检查是否已经存在的逻辑
         FileOptionResult fileOptionResult = new FileOptionResult();
         List<SuccessFile> successFiles = new ArrayList<>();
@@ -153,8 +200,8 @@ public class MinIOServiceImpl implements MinIOService {
                 errorFiles.add(new ErrorFile("", "[文件不能为空]"));
                 continue;
             }
-            String fileName = multipartFile.getOriginalFilename();
-            if (fileName == null) {
+            String fileName = IdUtil.getSnowflakeNextId() + "_" + multipartFile.getOriginalFilename();
+            if (multipartFile.getOriginalFilename() == null) {
                 errorFiles.add(new ErrorFile("", "[文件名不能为空]"));
                 continue;
             }
@@ -176,8 +223,15 @@ public class MinIOServiceImpl implements MinIOService {
             // 非幂等上传
             try {
                 String fileStorageName = getFileStorageName(userId, fileName);
-                ObjectWriteResponse response = minIOUtils.uploadFile(
-                        bucketName, multipartFile, fileStorageName, multipartFile.getContentType());
+                ObjectWriteResponse response;
+                if (isImage){
+                    response = minIOUtils.uploadFile(
+                            bucketName, multipartFile, fileStorageName, ViewContentTypeEnum.getContentType(fileName));
+                }
+                else {
+                    response = minIOUtils.uploadFile(
+                            bucketName, multipartFile, fileStorageName, multipartFile.getContentType());
+                }
                 if (response != null){
                     long fileId = IdUtil.getSnowflakeNextId();
                     successFiles.add(new SuccessFile(fileName, fileStorageName, multipartFile.getSize(), fileId));
@@ -257,6 +311,92 @@ public class MinIOServiceImpl implements MinIOService {
                 continue;
             } catch (Exception e) {
                 log.error("上传文件失败，minIO存储失败", e);
+                errorFiles.add(new ErrorFile(fileName, "[上传失败]"));
+                continue;
+            }
+        }
+        fileOptionResult.setErrorFiles(errorFiles);
+        fileOptionResult.setSuccessFiles(successFiles);
+        return fileOptionResult;
+    }
+
+    @Override
+    public FileOptionResult uploadMultipartFiles(List<MultipartFile> files, String bucketName) {
+        FileOptionResult fileOptionResult = new FileOptionResult();
+        List<SuccessFile> successFiles = new ArrayList<>();
+        List<ErrorFile> errorFiles = new ArrayList<>();
+        if (CollectionUtils.isEmpty(files)){
+            return fileOptionResult;
+        }
+        try {
+            minIOUtils.createBucket(bucketName);
+        } catch (Exception e) {
+            log.error("创建存储桶失败", e);
+            throw new OssException("创建存储桶失败");
+        }
+
+        for (MultipartFile file : files){
+            if (file == null){
+                errorFiles.add(new ErrorFile("", "[文件不能为空]"));
+                continue;
+            }
+            String fileName = IdUtil.getSnowflakeNextId() + "_" + file.getName();
+            log.info("上传文件fileName：{}", fileName);
+            try {
+                String fileStorageName = getFileStorageName(-1L, fileName);
+                ObjectWriteResponse response = minIOUtils.uploadFile(bucketName, file, fileStorageName, file.getContentType());
+                log.info("上传文件fileStorageName：{}", fileStorageName);
+                if (response != null){
+                    long fileId = IdUtil.getSnowflakeNextId();
+                    successFiles.add(new SuccessFile(fileName, fileStorageName, file.getSize(), fileId));
+                }
+            } catch (Exception e) {
+                log.error("上传文件失败, file转为inputStream失败", e);
+                errorFiles.add(new ErrorFile(fileName, "[上传失败]"));
+                continue;
+            }
+        }
+        fileOptionResult.setErrorFiles(errorFiles);
+        fileOptionResult.setSuccessFiles(successFiles);
+        return fileOptionResult;
+    }
+
+    @Override
+    public FileOptionResult uploadMultipartImageFiles(List<MultipartFile> files, String bucketName) {
+        FileOptionResult fileOptionResult = new FileOptionResult();
+        List<SuccessFile> successFiles = new ArrayList<>();
+        List<ErrorFile> errorFiles = new ArrayList<>();
+        if (CollectionUtils.isEmpty(files)){
+            return fileOptionResult;
+        }
+        try {
+            minIOUtils.createBucket(bucketName);
+        } catch (Exception e) {
+            log.error("创建存储桶失败", e);
+            throw new OssException("创建存储桶失败");
+        }
+
+        for (MultipartFile file : files){
+            if (file == null){
+                errorFiles.add(new ErrorFile("", "[文件不能为空]"));
+                continue;
+            }
+            String fileName = IdUtil.getSnowflakeNextId() + "_" + file.getOriginalFilename();
+            log.info("上传文件fileName：{}", fileName);
+            try {
+                String fileStorageName = getFileStorageName(-1L, fileName);
+                ObjectWriteResponse response = minIOUtils.uploadFile(
+                        bucketName, file,
+                        fileStorageName,
+                        ViewContentTypeEnum.getContentType(fileName)
+                );
+                log.info("上传文件fileStorageName：{}", fileStorageName);
+                if (response != null){
+                    long fileId = IdUtil.getSnowflakeNextId();
+                    successFiles.add(new SuccessFile(fileName, fileStorageName, file.getSize(), fileId));
+                }
+            } catch (Exception e) {
+                log.error("上传文件失败, file转为inputStream失败", e);
                 errorFiles.add(new ErrorFile(fileName, "[上传失败]"));
                 continue;
             }

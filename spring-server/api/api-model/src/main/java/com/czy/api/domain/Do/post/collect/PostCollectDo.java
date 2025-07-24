@@ -8,11 +8,12 @@ import java.io.Serializable;
 /**
  * @author 13225
  * @date 2025/4/23 17:13
+ * 一对多关系
  */
 @Data
 public class PostCollectDo implements Serializable {
     @Id
-    // collectFolderId；not null
+    // 记录id
     private Long id;
     // postId；not null
     private Long postId;

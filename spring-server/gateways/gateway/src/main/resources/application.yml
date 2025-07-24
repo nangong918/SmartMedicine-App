@@ -37,6 +37,8 @@ spring:
   cloud:
     # 网关
     gateway: # Spring Cloud GatewayApplication 配置项，对应 GatewayProperties 类
+      # 自定义的属性：dns
+      dns: smart-medicine
       # 路由配置项，对应 RouteDefinition 数组
       default-filters:
 #        - name: Jwt
@@ -48,6 +50,14 @@ spring:
             - Path=/test
           filters:
             - StripPrefix=1 # 删除前缀，对应 StripPrefixFilter
+        # minio
+        - id: minio
+          uri: http://127.0.0.1:9000  # 目标地址
+          predicates:
+            # oss 的minIO就配置为oss-minio不要改了
+            - Path=/oss-minio/**  # 匹配路径
+          filters:
+            - StripPrefix=1  # 删除前缀
 
 #        # ip
 #        - id: ip-user
@@ -98,7 +108,7 @@ spring:
         server-addr: 127.0.0.1:8848
   #-------------------------debug-------------------------
 debug:
-  access-token-check: true
+  access-token-check: false
   all-log: false
   vcode-check: false
   debug: false

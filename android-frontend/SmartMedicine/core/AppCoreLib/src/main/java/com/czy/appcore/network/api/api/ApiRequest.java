@@ -1,5 +1,6 @@
-package com.czy.appcore.network.api;
+package com.czy.appcore.network.api.api;
 
+import com.czy.appcore.BaseConfig;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.constant.backEnd.BackEndConstant;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
@@ -10,7 +11,9 @@ import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
+import com.czy.dal.dto.http.request.SearchUserRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
+import com.czy.dal.dto.http.request.UserBriefRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -21,6 +24,7 @@ import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
+import com.czy.dal.dto.http.response.UserBriefResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
@@ -117,8 +121,8 @@ public interface ApiRequest {
      * @param request   账号
      * @return          用户列表
      */
-    @POST(BackEndConstant.USER_RELATION + "/relation/searchUser")
-    Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body BaseHttpRequest request);
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.USER_RELATION + "/relation/searchUser")
+    Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body SearchUserRequest request);
 
     /**
      * 添加用户
@@ -143,7 +147,7 @@ public interface ApiRequest {
      * @param request   用户基本信息
      * @return          添加我的请求
      */
-    @POST(BackEndConstant.USER_RELATION + "/relation/getAddMeRequestList")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.USER_RELATION + "/relation/getAddMeRequestList")
     Observable<BaseResponse<GetAddMeRequestListResponse>> getAddMeRequestList(@Body BaseHttpRequest request);
 
     /**
@@ -151,7 +155,7 @@ public interface ApiRequest {
      * @param request   用户基本信息
      * @return          处理我的添加用户请求
      */
-    @POST(BackEndConstant.USER_RELATION + "/relation/getHandleMyAddUserResponseList")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.USER_RELATION + "/relation/getHandleMyAddUserResponseList")
     Observable<BaseResponse<GetHandleMyAddUserResponseListResponse>> getHandleMyAddUserResponseList(@Body BaseHttpRequest request);
 
     /**
@@ -159,7 +163,7 @@ public interface ApiRequest {
      * @param request   用户基本信息
      * @return          好友列表
      */
-    @POST(BackEndConstant.USER_RELATION + "/relation/getMyFriendList")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.USER_RELATION + "/relation/getMyFriendList")
     Observable<BaseResponse<GetMyFriendsResponse>> getMyFriendList(@Body GetMyFriendsRequest request);
 
     /**
@@ -167,8 +171,16 @@ public interface ApiRequest {
      * @param request   用户基本信息
      * @return          好友申请数量
      */
-    @POST(BackEndConstant.USER_RELATION + "/relation/getMyFriendApplyList")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.USER_RELATION + "/relation/getMyFriendApplyList")
     Observable<BaseResponse<Integer>> getMyFriendApplyList(@Body BaseHttpRequest request);
+
+    /**
+     * 获取用户简略信息
+     * @param request   用户基本信息
+     * @return          用户简略信息
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/userBrief/get")
+    Observable<BaseResponse<UserBriefResponse>> getUserBrief(@Body UserBriefRequest request);
 
     //--------------聊天相关--------------
 
@@ -178,7 +190,7 @@ public interface ApiRequest {
      * @param request   用户基本信息
      * @return  List<用户消息最新一条消息, 未读消息数量>
      */
-    @POST(BackEndConstant.MESSAGE + "/chat/getUserNewMessage")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MESSAGE + "/chat/getUserNewMessage")
     Observable<BaseResponse<UserNewMessageResponse>> getUserNewMessage(@Body BaseHttpRequest request);
 
     /**
@@ -187,7 +199,7 @@ public interface ApiRequest {
      * @param request 请求获取消息：timestampIndex 消息起始索引；消息条数messageCount（max 200）
      * @return 获取消息
      */
-    @POST(BackEndConstant.MESSAGE + "/chat/fetchUserMessage")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MESSAGE + "/chat/fetchUserMessage")
     Observable<BaseResponse<FetchUserMessageResponse>> fetchUserMessage(@Body FetchUserMessageRequest request);
 
     /**
@@ -199,7 +211,7 @@ public interface ApiRequest {
      * @return               上传结果（id + url）
      */
     @Multipart
-    @POST(BackEndConstant.MESSAGE + "/chatFile/uploadAndSend")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MESSAGE + "/chatFile/uploadAndSend")
     Observable<BaseResponse<ChatUploadFileResponse>> uploadAndSend(
             @Part MultipartBody.Part file,
             @Part("fileId") RequestBody fileId,
@@ -218,7 +230,7 @@ public interface ApiRequest {
      */
     //@Part 注解用于标识 Multipart 请求体的一部分,这里的 file 就是文件部分
     @Multipart
-    @POST(BackEndConstant.OSS + "/oss/upload")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.OSS + "/oss/upload")
     Observable<BaseResponse<FileUploadResponse>> fileUpload(
             // paramName: file
             @Part MultipartBody.Part file,
@@ -242,7 +254,7 @@ public interface ApiRequest {
      * @param request   请求
      * @return          推荐帖子
      */
-    @POST(BackEndConstant.RECOMMEND + "/recommend/getPost")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/recommend/getPost")
     Observable<BaseResponse<RecommendPostResponse>> getRecommendPosts(@Body RecommendPostRequest request);
 
     /**
@@ -251,7 +263,7 @@ public interface ApiRequest {
      * @param pageNum   页码
      * @return          帖子
      */
-    @GET(BackEndConstant.POST + "/post/getPost")
+    @GET(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/post/getPost")
     Observable<BaseResponse<SinglePostResponse>> getSinglePost(
             @Query("postId") Long postId,
             @Query("pageNum") Long pageNum
@@ -262,7 +274,7 @@ public interface ApiRequest {
      * @param request   请求
      * @return  发布帖子
      */
-    @POST(BackEndConstant.POST + "/post/postPublishFirst")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/post/postPublishFirst")
     Observable<BaseResponse<PostPublishResponse>> postPublishFirst(
             @Body PostPublishRequest request
     );
@@ -274,10 +286,18 @@ public interface ApiRequest {
      * @param userAccount   用户账号
      * @return              发布帖子
      */
-    @POST(BackEndConstant.POST + "/postFile/uploadPost")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/postFile/uploadPost")
     Observable<BaseResponse<String>> uploadPostFile(
             @Part List<MultipartBody.Part> files,
             @Part("postId") Long postId,
             @Part("userAccount") String userAccount
+    );
+
+    //--------------Test--------------
+
+    @Multipart
+    @POST(BackEndConstant.OSS + "/oss/uploadTest")
+    Observable<BaseResponse<String>> uploadImageTest(
+            @Part MultipartBody.Part file
     );
 }

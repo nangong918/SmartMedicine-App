@@ -14,6 +14,7 @@ import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.base.BaseHttpRequest;
 import com.czy.api.domain.dto.http.request.GetMyFriendsRequest;
 import com.czy.api.domain.dto.http.request.SearchUserByNameRequest;
+import com.czy.api.domain.dto.http.request.SearchUserRequest;
 import com.czy.api.domain.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.api.domain.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.api.domain.dto.http.response.GetMyFriendsResponse;
@@ -24,7 +25,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -49,14 +53,28 @@ public class UserRelationshipController {
      * @return List搜索结果。之所以是list是因为模糊搜索可能出现一系列匹配
      */
     @PostMapping(RelationshipConstant.Search_User_ByAccount)
-    public Mono<BaseResponse<SearchUserResponse>>
-    searchUserByAccount(@Validated @RequestBody BaseHttpRequest request) {
-        UserDo receiverDo = userService.getUserById(request.getReceiverId());
-        List<SearchFriendApplyAo> searchFriendApplyAoList =
-                userRelationshipService.searchFriend(request.getSenderId(), receiverDo.getAccount());
+    public BaseResponse<SearchUserResponse>
+    searchUserByAccount(@Validated @RequestBody SearchUserRequest request) {
+//        UserDo receiverDo = userService.getUserById(request.getReceiverId());
+        UserDo receiverAccountDo = userService.getUserByAccount(request.getUserData());
+        UserDo receiverPhoneDo = userService.getUserByPhone(request.getUserData());
+//        UserDo receiverNameDO = userService.getUserByAccount(request.getUserData());
         SearchUserResponse searchUser = new SearchUserResponse();
-        searchUser.setUserList(searchFriendApplyAoList);
-        return Mono.just(BaseResponse.getResponseEntitySuccess(searchUser));
+        List<SearchFriendApplyAo> searchByAccountList = searchFriend(request.getSenderId(), receiverAccountDo);
+        List<SearchFriendApplyAo> searchByPhoneList = searchFriend(request.getSenderId(), receiverPhoneDo);
+        // 合并并去重
+        List<SearchFriendApplyAo> finalList = Stream.concat(searchByAccountList.stream(), searchByPhoneList.stream())
+                .distinct() // 去重
+                .collect(Collectors.toList());
+        searchUser.setUserList(finalList);
+        return BaseResponse.getResponseEntitySuccess(searchUser);
+    }
+
+    private List<SearchFriendApplyAo> searchFriend(Long senderId, UserDo receiverDo) {
+        if (receiverDo == null || receiverDo.getId() == null){
+            return new ArrayList<>();
+        }
+        return userRelationshipService.searchFriend(senderId, receiverDo.getAccount());
     }
 
     /**

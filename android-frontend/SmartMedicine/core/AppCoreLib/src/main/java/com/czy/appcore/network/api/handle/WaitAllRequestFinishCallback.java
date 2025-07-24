@@ -1,6 +1,6 @@
-package com.czy.appcore.network.api;
+package com.czy.appcore.network.api.handle;
 
-public interface SyncAllRequestFinish {
+public interface WaitAllRequestFinishCallback {
     /**
      * 所有请求完成
      * @param isAllSuccess  是否所有请求成功

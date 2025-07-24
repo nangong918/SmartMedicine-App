@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 帖子详情界面
+ */
 public class PostActivity extends BaseActivity<ActivityPostBinding> {
 
     public PostActivity() {

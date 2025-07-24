@@ -1,6 +1,7 @@
 package com.utils.mvc.handler;
 
 
+import com.czy.api.exception.CommonExceptions;
 import exception.AppException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +34,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errorResponse = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errorResponse.put(error.getField(), error.getDefaultMessage())
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+                    errorResponse.put("code", CommonExceptions.PARAM_ERROR.getCode());
+                    errorResponse.put("message", error.getDefaultMessage());
+                }
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }

@@ -30,7 +30,10 @@ public class AddUserStatusAo {
             return false;
         }
         // applyAccount和本account相同 -> view是被添加
-        Log.i("AddUserStatusAo", "isBeAdd: applyAccount=" + applyAccount + ", myUserAccount=" + myUserAccount + " \n isBeAdd: " + applyAccount.equals(myUserAccount));
+        Log.i(AddUserStatusAo.class.getName(), "isBeAdd: applyAccount=" +
+                applyAccount + ", myUserAccount=" +
+                myUserAccount +
+                " \n isBeAdd: " + TextUtils.equals(myUserAccount, applyAccount));
         return TextUtils.equals(myUserAccount, applyAccount);
     }
 }

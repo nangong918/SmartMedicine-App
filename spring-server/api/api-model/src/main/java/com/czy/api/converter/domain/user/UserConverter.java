@@ -3,7 +3,9 @@ package com.czy.api.converter.domain.user;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
 import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
+import com.czy.api.domain.entity.UserViewEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.factory.Mappers;
 
@@ -36,4 +38,17 @@ public interface UserConverter {
         userFeatureNeo4jDo.setAccount(loginUserDo.getAccount());
         return userFeatureNeo4jDo;
     };
+
+    // userDo -> userViewEntity
+    @Mapping(target = "userId", source = "id")
+    @Mapping(target = "userAccount", source = "account")
+    @Mapping(target = "userName", source = "userName")
+    @Mapping(target = "avatarFileId", source = "avatarFileId")
+    UserViewEntity toUserViewEntity_(UserDo userDo);
+
+    default UserViewEntity toUserViewEntity(UserDo userDo, String avatarUrl){
+        UserViewEntity userViewEntity = toUserViewEntity_(userDo);
+        userViewEntity.setAvatarUrl(avatarUrl);
+        return userViewEntity;
+    }
 }

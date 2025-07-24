@@ -168,7 +168,7 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 参考《大麦》看看是否存在优化空间
 
 #### 排期
-##### 跑通阶段
+##### 跑通阶段    (功能极简,跑通就行.后续不重构,本系统用于学习Java的优化方案)
 * 数据导入到数据库：
   * 3天
   * 6月4~6 （调用代码，进行导入数据库测试）
@@ -201,20 +201,21 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
       * Kafka:帖子评论行为
 * App聊天
   * 重构netty和app服务,将长连接改为userId而不是userAccount 1天(24)
-  * 好友相关 3天 (25~27)
-    * 添加,删除好友
-    * 好友列表
-  * 聊天相关 3天 (28~7月2)
+  * 好友相关 3天 (21~23)
+    * 列表视图 (21,22)
+    * 添加,删除好友 (23)
+    * 好友列表 (23)
+  * 聊天相关 2天 (24~25)
     * 发送文本消息
     * 发送图片消息
   * 学习MySQL,MongoDB,ElasticSearch,Neo4j,Hive特性
-  * 学习查询分页,学习数据库分库分表 4天(2~5)
-  * 聊天记录相关 5天 (7~11)
+  * 学习查询分页,学习数据库分库分表
+  * 聊天记录相关
     * 临时聊天记录列表
     * 单个好友分页聊天记录
     * 关键词ElasticSearch查询聊天记录
     * 聊天记录存储的分库分表设计
-* App获取帖子联调
+* App获取帖子联调 3天(28~30)
   * url存储在redis重构
   * redis学习
 * App行为上传I（浏览帖子 + 点赞等）
@@ -222,13 +223,13 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 6月16~6月18
 * 在线层推荐
   * 2天
-  * 6月19~20
-* App搜索帖子
+  * 6~8(3天)
+* App搜索帖子 2天(31~1)
   * 3天
   * 6月21~24
 * 收藏帖子 (简化:取消创建帖子收藏夹)
   * 2天
-  * 6月25~26
+  * 2~5 (2天)
 * 评论帖子 (优先)
   * 3天
   * 6月27~7月1
@@ -238,6 +239,11 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 * App行为上传II（搜索帖子，收藏帖子，转发帖子，评论帖子）
   * 3天
   * 7月3~7月5
+
+todo 推荐系统已经推荐的post编辑进入已推荐过,召回阶段不再选取
+todo 明天继续跑通IM和post
+商品购物系统需要加入(后台配置秒杀活动)
+修好这个项目基本的全部Bug并且基本实现大部分通用功能再开新项目
 
 ##### 重构+细化
 * spring学习
@@ -263,6 +269,7 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
     * 前端编写, 用前端测试netty
     * 1.学习mq,2.重构netty,3.编写前端
 
+先自己梳理好逻辑,再进行测试,微服务的重启成本太高
 
 ##### 最终功能补充 (不要着急写新功能,在当前系统未重构优化完成之间,禁止开发新功能)
 * 商品购物 (联合推荐系统 + 大麦的pay系统) [一般的公司都有支付系统,此功能至少实现]
@@ -272,6 +279,25 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 * 语音视频通话
 * 群组+直播
 * 后台管理
+
+##### 购物模块
+购物系统设计:
+* 用户系统
+  * 评价
+  * 购物车
+* 商品商户系统
+  * 商品发布
+  * 商品库存管理
+* 推荐系统
+  * 商品推荐
+  * 搜索                 (采纳)
+* 支付系统
+  * 支付 (**秒杀支付**)   (采纳)
+* 订单系统
+  * 订单                 (采纳)
+  * 物流实时更新
+* IM系统
+  * 售前售后              (采纳)
 
 ##### JMeter压测
 
@@ -297,3 +323,14 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 8. oss优化, url存储在redis中,并且redis.ttl < oss.ttl
 9. 搜索,排序算法优化.
 10. 微服务分布式优化:集群,均衡负载,分布式锁,分布式事务,链路,服务注册,服务发现,服务熔断,服务限流
+
+## Android
+暂时取消DiffUtil，测试总是出bug，属于过度开发；归为性能优化点
+List取消使用LiveData
+
+##### 问题
+尝试解决Redis RDB问题:
+`1160:M 26 Jun 2025 11:18:11.079 * 1 changes in 3600 seconds. Saving...
+1160:M 26 Jun 2025 11:18:11.123 * Background saving started by pid 10054
+10054:C 26 Jun 2025 11:18:11.128 # Failed opening the RDB file dump.rdb (in server root dir /Redis) for saving: No error
+1160:M 26 Jun 2025 11:18:11.253 # Background saving error`

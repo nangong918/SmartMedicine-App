@@ -1,38 +1,41 @@
 package com.czy.smartmedicine.viewModel.activity;
 
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.czy.appcore.network.api.handle.AsyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.dal.OnPositionItemButtonContentClick;
 import com.czy.appcore.service.AddUserStateHandler;
+import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.customviewlib.view.addContact.AddContactAdapter;
+import com.czy.dal.OnPositionItemButtonContentClick;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.newUser.AddUserStatusAo;
+import com.czy.dal.ao.newUser.NewUserItemAo;
 import com.czy.dal.constant.newUserGroup.ApplyButtonStatusEnum;
 import com.czy.dal.constant.newUserGroup.ApplyStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleButtonStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleStatusEnum;
-import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
-import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
+import com.czy.dal.dto.netty.request.AddUserRequest;
+import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
-
 import com.czy.dal.vo.fragmentActivity.NewUserGroupVo;
-import com.czy.dal.ao.newUser.NewUserItemAo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.utils.AsyncRequestManager;
+import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,10 +58,25 @@ public class NewUserGroupViewModel extends ViewModel {
 
     //---------------------------Vo Ld---------------------------
 
+    public AddContactAdapter rclAdapter;
+
+    public void updateRclList(){
+        List<AddContactItemVo> list = Optional.ofNullable(newUserGroupVo)
+                .map(vo -> vo.addContactListVo)
+                .map(listVo -> listVo.contactItemList)
+                .map(LiveData::getValue)
+                .map(LinkedList::new)
+                .orElse(new LinkedList<>());
+        if (rclAdapter != null){
+            rclAdapter.setChatItems(list);
+        }
+    }
+
     public NewUserGroupVo newUserGroupVo = new NewUserGroupVo();
 
     public void init(NewUserGroupVo newUserGroupVo){
         initVo(newUserGroupVo);
+        initNetwork();
     }
 
     private void initVo(NewUserGroupVo newUserGroupVo){
@@ -68,38 +86,65 @@ public class NewUserGroupViewModel extends ViewModel {
     }
 
     //---------------------------NetWork---------------------------
-;
+
+    private AsyncRequestManager newUserRequestManager;
+
+    private void initNetwork(){
+        /*
+         * 两个请求：
+         *      获取添加我的请求列表: doGetAddMeRequestList
+         *      获取我请求添加的响应结果列表: doGetHandleMyAddUserResponseList
+         */
+        newUserRequestManager = new AsyncRequestManager(2);
+    }
     //==========获取添加我的请求列表
 
-    private void doGetAddMeRequestList(BaseHttpRequest request) {
+    private void doGetAddMeRequestList(BaseHttpRequest request, Context context, AsyncRequestCallback callback) {
         apiRequestImpl.getAddMeRequestList(
                 request,
-                this::handleGetAddMeRequestList,
-                ViewModelUtil::globalThrowableToast
+                response -> ResponseTool.handleAsyncResponseEx(
+                        response,
+                        context,
+                        callback,
+                        this::handleGetAddMeRequestList
+                ),
+                throwable -> {
+                    callback.onThrowable(throwable);
+                    ViewModelUtil.globalThrowableToast(throwable);
+                }
         );
     }
 
     // isAddMeNotResponse = true;
-    private void handleGetAddMeRequestList(BaseResponse<GetAddMeRequestListResponse> response) {
+    private void handleGetAddMeRequestList(BaseResponse<GetAddMeRequestListResponse> response, Context context) {
         List<NewUserItemAo> list = Optional.ofNullable(response)
-                        .map(BaseResponse::getData)
-                        .map(data -> data.addMeRequestList)
-                        .orElse(null);
+                .map(BaseResponse::getData)
+                .map(data -> data.addMeRequestList)
+                .orElse(null);
         handleNewUserData(list);
     }
 
     //==========获取我请求添加的响应结果列表
 
-    private void doGetHandleMyAddUserResponseList(BaseHttpRequest request) {
+    private void doGetHandleMyAddUserResponseList(BaseHttpRequest request, Context context, AsyncRequestCallback callback) {
         apiRequestImpl.getHandleMyAddUserResponseList(
                 request,
-                this::handleGetHandleMyAddUserResponseList,
-                ViewModelUtil::globalThrowableToast
+                response -> ResponseTool.handleAsyncResponseEx(
+                        response,
+                        context,
+                        callback,
+                        this::handleGetHandleMyAddUserResponseList
+                ),
+                throwable -> {
+                    callback.onThrowable(throwable);
+                    ViewModelUtil.globalThrowableToast(throwable);
+                }
         );
     }
 
     // isAddMeNotResponse = false;
-    private void handleGetHandleMyAddUserResponseList(BaseResponse<GetHandleMyAddUserResponseListResponse> response) {
+    private void handleGetHandleMyAddUserResponseList
+    (BaseResponse<GetHandleMyAddUserResponseListResponse> response, Context context) {
         List<NewUserItemAo> list = Optional.ofNullable(response)
                 .map(BaseResponse::getData)
                 .map(data -> data.handleMyAddUserResponseList)
@@ -108,7 +153,7 @@ public class NewUserGroupViewModel extends ViewModel {
     }
 
     //==========添加用户 AddUserRequest
-;
+    ;
 //    private void doAddUserFriend(
 //            AddUserRequest request,
 //            String handlerAccount) {
@@ -251,48 +296,64 @@ public class NewUserGroupViewModel extends ViewModel {
     }
 
     // 用于记录两个响应的user user list
-    private final List<NewUserItemAo> newUserItemAoList = new LinkedList<>();
+    private List<NewUserItemAo> newUserItemAoList = new LinkedList<>();
 
     //==========获取最新的添加信息消息
 
-    public void getNewUserData(){
+    public void getNewUserData(Context context){
         // 首先先清空数据缓存
-        newUserItemAoList.clear();
+        newUserItemAoList = new LinkedList<>();
 
         // 请求
         BaseHttpRequest request = new BaseHttpRequest();
         request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
 
+        newUserRequestManager.setSyncAllRequestFinish(isAllSuccess -> {
+            if (isAllSuccess){
+                handleAllNewUserData();
+            }
+            else {
+                ToastUtils.showToast(context, "获取添加信息失败");
+            }
+        });
+
         // 获取添加我的消息List
-        doGetAddMeRequestList(request);
+        doGetAddMeRequestList(request, context, newUserRequestManager.getSyncRequestManagerCallback());
 
         // 获取我添加的消息响应List
-        doGetHandleMyAddUserResponseList(request);
+        doGetHandleMyAddUserResponseList(request, context, newUserRequestManager.getSyncRequestManagerCallback());
     }
 
     private synchronized void handleNewUserData(List<NewUserItemAo> list){
         // 非空添加
         Optional.ofNullable(list)
-                        .ifPresent(newUserItemAoList::addAll);
+                .ifPresent(newUserItemAoList::addAll);
 
         // 更新Data List
         this.newUserGroupVo.newUserItemListLd.setValue(newUserItemAoList);
+//                        .map(LiveData::getValue)
+//                        .ifPresent(l -> l.addAll(addContactListVo.contactItemList.getValue()));
+    }
 
+    private void handleAllNewUserData(){
         // 更新View List
         List<AddContactItemVo> newList = Optional.ofNullable(this.newUserGroupVo)
                 .map(vo -> vo.addContactListVo)
                 .map(ctlist -> ctlist.contactItemList)
                 .map(LiveData::getValue)
                 .orElse(new ArrayList<>());
-        if (list != null){
-            for(NewUserItemAo ao : list){
+
+        if (this.newUserItemAoList != null){
+            for(NewUserItemAo ao : this.newUserItemAoList){
                 AddContactItemVo itemVo = new AddContactItemVo();
                 Optional.ofNullable(ao)
                         .map(a -> a.userViewEntity)
                         .ifPresent(uv -> {
                             itemVo.account = (uv.userAccount);
                             itemVo.avatarUrlOrUri = (uv.avatarUrl);
-                            itemVo.name = (ao.userViewEntity.userName);
+                            itemVo.name = (uv.userName);
+                            // 设置查询到的userId
+                            itemVo.uid = (uv.userId);
                             // isBeAdd
                             ao.isBeAdd = ao.addUserStatusAo.isBeAdd(MainApplication.getInstance().
                                     getUserLoginInfoAo().account);
@@ -310,8 +371,10 @@ public class NewUserGroupViewModel extends ViewModel {
                 newList.add(itemVo);
             }
         }
+        // 取消部分livedata；list类型如果使用livedata是无法观察到内部数据的。list<livedata<item>>又太耗性能
         Optional.ofNullable(this.newUserGroupVo.addContactListVo.contactItemList)
                 .ifPresent(listLd -> listLd.setValue(newList));
+        updateRclList();
 //                        .map(LiveData::getValue)
 //                        .ifPresent(l -> l.addAll(addContactListVo.contactItemList.getValue()));
     }

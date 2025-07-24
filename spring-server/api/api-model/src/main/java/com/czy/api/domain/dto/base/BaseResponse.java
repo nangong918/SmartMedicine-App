@@ -1,6 +1,8 @@
 package com.czy.api.domain.dto.base;
 
 
+import exception.ExceptionEnums;
+import exception.AppException;
 import json.BaseBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -105,5 +107,15 @@ public class BaseResponse<T> implements BaseBean, Serializable {
         return new BaseResponse<>("400", warningMessage, null);
     }
 
-    // TODO LogBackErrorCode 给前端和后端日志分离，并且单独拆分出 AppException
+    public static <T> BaseResponse<T> LogBackError(String errorCode, String errorMessage) {
+        return new BaseResponse<>(errorCode, errorMessage, null);
+    }
+
+    public static <T> BaseResponse<T> LogBackError(ExceptionEnums exceptionEnums) {
+        return new BaseResponse<>(exceptionEnums.getCode(), exceptionEnums.getMessage(), null);
+    }
+
+    public static <T> BaseResponse<T> LogBackError(AppException appException) {
+        return new BaseResponse<>(appException.getErrCode(), appException.getMessage(), null);
+    }
 }

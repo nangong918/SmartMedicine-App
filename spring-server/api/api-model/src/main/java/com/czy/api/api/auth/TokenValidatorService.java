@@ -11,6 +11,15 @@ import jwt.TokenStatue;
 public interface TokenValidatorService {
 
     /**
+     * 验证token是否属于某个用户 (是LoginPayloadAo)
+     * @param token
+     * @param userId
+     * @return              true:属于
+     * @throws Exception     Exception
+     */
+    boolean checkTokenBelongUser(String token, Long userId) throws Exception;
+
+    /**
      * 验证token状态
      * @param accessToken
      * @param key

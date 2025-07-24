@@ -254,8 +254,8 @@ public class PostController {
     @Deprecated
     @GetMapping("/getPost/deprecated")
     public BaseResponse<GetPostResponse>
-    getPost(@RequestParam Long postId,
-            @RequestParam Integer pageNum){
+    getPost(@RequestParam("postId") Long postId,
+            @RequestParam("pageNum") Integer pageNum){
         if (ObjectUtils.isEmpty(postId)){
             return BaseResponse.LogBackError("参数错误");
         }
@@ -276,8 +276,8 @@ public class PostController {
 
     @GetMapping("/getPost")
     public BaseResponse<SinglePostResponse>
-    getPostNew(@RequestParam Long postId,
-            @RequestParam Integer pageNum){
+    getPostNew(@RequestParam("postId") Long postId,
+            @RequestParam("pageNum") Integer pageNum){
         if (ObjectUtils.isEmpty(postId)){
             return BaseResponse.LogBackError("参数错误");
         }
@@ -304,20 +304,20 @@ public class PostController {
     // 获取下拉一级评论（pageNum）
     @GetMapping("/getPostLevel1Comments")
     public BaseResponse<GetPostCommentsResponse>
-    getPostLevel1Comments(@RequestParam Long postId,
-                    @RequestParam Integer pageSize,
-                    @RequestParam Integer pageNum){
+    getPostLevel1Comments(@RequestParam("postId") Long postId,
+                    @RequestParam("pageSize") Integer pageSize,
+                    @RequestParam("pageNum") Integer pageNum){
         return getPostComments(postId, null, pageSize, pageNum);
     }
 
     // 获取二级评论（commentId + pageNum）
     @GetMapping("/getPostLevel2Comments")
     public BaseResponse<GetPostCommentsResponse>
-    getPostLevel2Comments(@RequestParam Long postId,
-                    @RequestParam Long leve1commentId,
-                    @RequestParam Integer pageSize,
-                    @RequestParam Integer pageNum){
-        return getPostComments(postId, leve1commentId, pageSize, pageNum);
+    getPostLevel2Comments(@RequestParam("postId") Long postId,
+                    @RequestParam("level1commentId") Long level1commentId,
+                    @RequestParam("pageSize") Integer pageSize,
+                    @RequestParam("pageNum") Integer pageNum){
+        return getPostComments(postId, level1commentId, pageSize, pageNum);
     }
 
     private BaseResponse<GetPostCommentsResponse> getPostComments(

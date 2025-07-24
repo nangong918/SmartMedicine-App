@@ -130,7 +130,8 @@ public class PostFileController {
                     files,
                     results,
                     userPostImageBucket,
-                    userId
+                    userId,
+                    true
             );
 
             // 上传记录数据到mysql
@@ -296,7 +297,8 @@ public class PostFileController {
                             files,
                             results,
                             userPostImageBucket,
-                            userId
+                            userId,
+                            true
                     );
 
                     // 上传记录数据到mysql

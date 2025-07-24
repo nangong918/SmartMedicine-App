@@ -10,7 +10,7 @@ import com.czy.dal.dto.netty.forwardMessage.UserTextDataResponse;
 import com.czy.dal.dto.netty.response.HaveReadMessageResponse;
 
 
-public interface ReceiveMessageApi {
+public interface ChatApiHandler {
 
 //    @MessageType(value = ResponseMessageType.Connect.CONNECT_SUCCESS, desc = "用户连接")
 //    void connect(@NonNull ConnectResponse response);

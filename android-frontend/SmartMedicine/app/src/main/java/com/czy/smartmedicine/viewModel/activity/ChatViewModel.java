@@ -14,7 +14,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.BaseConfig;
-import com.czy.appcore.network.netty.api.receive.ReceiveMessageApi;
+import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.service.chat.ChatListManager;
 import com.czy.appcore.service.chat.MessageItem;
@@ -228,10 +228,10 @@ public class ChatViewModel extends ViewModel {
     }
 
     // receive
-    private ReceiveMessageApi receiveMessageApi;
+    private ChatApiHandler chatApiHandler;
 
     private void initReceiveMessageApi(){
-        receiveMessageApi = new ReceiveMessageApi() {
+        chatApiHandler = new ChatApiHandler() {
             @Override
             public void receiveUserText(@NonNull UserTextDataResponse response) {
                 MessageItem item = MessageItem.getByUserTextDataResponse(response);
@@ -248,7 +248,7 @@ public class ChatViewModel extends ViewModel {
 
             @Override
             public void haveReadMessage(@NonNull HaveReadMessageResponse response) {
-                Log.d(TAG, "消息已读：senderAccount:" + response.senderAccount);
+                Log.d(TAG, "消息已读：senderAccount:" + response.receiverAccount);
             }
 
             @Override
@@ -375,7 +375,7 @@ public class ChatViewModel extends ViewModel {
                 .orElse("");
         if (receiverAccount.equals(response.getSenderId())){
             // 根据 message 的 type 执行对应的方法 TODO 梳理逻辑，这里有问题：chatListManager 和 消息队列分离了；chatListManager在Activity重新启动会出现数据丢失
-            receiveMessageApi.receiveUserText(response);
+            chatApiHandler.receiveUserText(response);
         }
     }
 
@@ -391,7 +391,7 @@ public class ChatViewModel extends ViewModel {
                 .orElse(Constants.ERROR_ID);
         if (receiverId.equals(response.getSenderId())){
             // 根据 message 的 type 执行对应的方法
-            receiveMessageApi.receiveUserImage(response);
+            chatApiHandler.receiveUserImage(response);
         }
     }
 

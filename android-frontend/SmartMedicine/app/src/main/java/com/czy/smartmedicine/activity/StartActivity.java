@@ -2,13 +2,13 @@ package com.czy.smartmedicine.activity;
 
 
 import android.content.Intent;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.dal.ao.login.LoginTokenAo;
 import com.czy.dal.constant.Constants;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityStartBinding;
@@ -17,6 +17,9 @@ import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * 启动页面
+ */
 public class StartActivity extends BaseActivity<ActivityStartBinding> {
 
     public StartActivity() {
@@ -76,8 +79,12 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
                 .map(MainApplication::getUserLoginInfoAo)
                 .map(ao -> ao.userId)
                 .orElse(null);
-        Log.i(TAG, "检查是否未登录::userId: " + userId);
-        return userId != null && !Constants.ERROR_ID.equals(userId);
+        LoginTokenAo loginTokenAo = MainApplication.getInstance().getLoginTokenAo();
+        Log.i(TAG, "检查是否未登录::userId: " + userId + "\nloginTokenAo: " + loginTokenAo.toJsonString());
+        return userId == null ||
+                userId == 0L ||
+                Constants.ERROR_ID.equals(userId) ||
+                loginTokenAo.isEmpty();
     }
 
     // 跳转页面
@@ -90,6 +97,8 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
         else {
             try {
                 assert userId != null;
+                // 设置accessToken和refreshToken到拦截器
+                MainApplication.setToken();
                 // 启用登录长连接
                 MainApplication.getInstance().startNettySocketService(userId);
                 Intent intent = new Intent(StartActivity.this, MainActivity.class);

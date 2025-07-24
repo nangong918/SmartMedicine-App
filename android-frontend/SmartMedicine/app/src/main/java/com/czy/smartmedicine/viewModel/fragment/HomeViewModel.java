@@ -238,21 +238,21 @@ public class HomeViewModel extends ViewModel {
         switch (postOperation){
             case LIKE -> {
                 PostLikeRequest request = new PostLikeRequest(postVo.postId, NettyOptionEnum.ADD.getCode());
-                socketMessageSender.likePost(request);
+                socketMessageSender.postLike(request);
             }
             case CANCEL_LIKE -> {
                 PostLikeRequest request = new PostLikeRequest(postVo.postId, NettyOptionEnum.DELETE.getCode());
-                socketMessageSender.likePost(request);
+                socketMessageSender.postLike(request);
             }
             case COLLECT -> {
                 // 默认文件夹
                 PostCollectRequest request = new PostCollectRequest(postVo.postId, null, NettyOptionEnum.ADD.getCode());
-                socketMessageSender.collectPost(request);
+                socketMessageSender.postCollect(request);
             }
             case CANCEL_COLLECT -> {
                 // 默认文件夹
                 PostCollectRequest request = new PostCollectRequest(postVo.postId, null, NettyOptionEnum.DELETE.getCode());
-                socketMessageSender.collectPost(request);
+                socketMessageSender.postCollect(request);
             }
             case NOT_INTERESTED -> {
                 PostDisLikeRequest request = new PostDisLikeRequest(postVo.postId, NettyOptionEnum.ADD.getCode());

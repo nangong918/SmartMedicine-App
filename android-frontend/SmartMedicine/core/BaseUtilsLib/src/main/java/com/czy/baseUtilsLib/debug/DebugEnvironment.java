@@ -3,7 +3,7 @@ package com.czy.baseUtilsLib.debug;
 import android.util.Log;
 
 // 一些在Debug情况下的操作；Release情况下取消这些操作
-public class DebugMyUtil {
+public class DebugEnvironment {
 
     // Debug状态或者Release状态
     public static final Environment projectEnvironment = Environment.LOCAL;

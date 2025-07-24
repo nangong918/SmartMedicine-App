@@ -88,3 +88,7 @@ spring:
           initial-interval: 1000 # 重试间隔，单位为毫秒。默认为 1000 。
           max-interval: 1200000 #重试最大时间间隔（单位毫秒）
           multiplier: 2 #间隔时间乘子，间隔时间*乘子=下一次的间隔时间，最大不能超过设置的最大间隔时间
+
+test.debug:
+  use-gateway-proxy: true
+  address: 192.168.1.2

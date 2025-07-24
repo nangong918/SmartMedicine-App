@@ -10,7 +10,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.czy.appcore.BaseConfig;
-import com.czy.appcore.network.api.SyncRequestCallback;
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.permission.GainPermissionCallback;
@@ -27,6 +27,9 @@ import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * 注册界面
+ */
 public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
     public RegisterActivity() {

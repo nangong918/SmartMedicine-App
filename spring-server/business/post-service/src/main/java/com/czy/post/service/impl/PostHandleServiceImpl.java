@@ -1,5 +1,6 @@
 package com.czy.post.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.czy.api.domain.Do.post.collect.PostCollectDo;
 import com.czy.api.domain.Do.post.collect.PostCollectFolderDo;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
@@ -126,6 +127,7 @@ public class PostHandleServiceImpl implements PostHandleService {
     @Override
     public Long createPostCollectFolder(Long userId, String collectFolderName) {
         PostCollectFolderDo postCollectFolderDo = new PostCollectFolderDo();
+        postCollectFolderDo.setId(IdUtil.getSnowflakeNextId());
         postCollectFolderDo.setUserId(userId);
         postCollectFolderDo.setCollectFolderName(collectFolderName);
         return postCollectFolderMapper.savePostCollectFolder(postCollectFolderDo);
@@ -141,11 +143,13 @@ public class PostHandleServiceImpl implements PostHandleService {
         PostCollectFolderDo postCollectFolderDo = postCollectFolderMapper.findPostCollectFolderById(collectFolderId);
         if (postCollectFolderDo == null || postCollectFolderDo.getUserId() == null){
             postCollectFolderDo = new PostCollectFolderDo();
+            postCollectFolderDo.setId(IdUtil.getSnowflakeNextId());
             postCollectFolderDo.setUserId(userId);
             postCollectFolderDo.setCollectFolderName(newCollectFolderName);
             postCollectFolderMapper.savePostCollectFolder(postCollectFolderDo);
         }
         else {
+            postCollectFolderDo.setId(collectFolderId);
             postCollectFolderDo.setUserId(userId);
             postCollectFolderDo.setCollectFolderName(newCollectFolderName);
             postCollectFolderMapper.updatePostCollectFolder(postCollectFolderDo);

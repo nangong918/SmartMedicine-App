@@ -3,14 +3,13 @@ package com.czy.smartmedicine.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
-
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
-import com.czy.appcore.network.api.SyncRequestCallback;
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
@@ -21,14 +20,13 @@ import com.czy.dal.ao.intent.RegisterActivityIntentAo;
 import com.czy.dal.constant.intent.RegisterActivityType;
 import com.czy.dal.vo.fragmentActivity.SignVo;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.R;
 import com.czy.smartmedicine.databinding.ActivitySignBinding;
 import com.czy.smartmedicine.test.TestConfig;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.SignViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 /**
- *  @author 13225
+ *  登录界面
  */
 public class SignActivity extends BaseActivity<ActivitySignBinding> {
 
@@ -138,12 +136,14 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         NetworkLoadUtils.showDialog(this);
         viewModel.doSign(
                 this,
-                viewModel.signVo.pwd.getValue(),
                 viewModel.signVo.phone.getValue(),
+                viewModel.signVo.pwd.getValue(),
                 new SyncRequestCallback() {
                         @Override
                         public void onThrowable(Throwable throwable) {
                             NetworkLoadUtils.dismissDialog();
+                            ToastUtils.showToastActivity(SignActivity.this, throwable.getMessage());
+                            Log.w(TAG, "onThrowable: " + throwable);
                         }
 
                         @Override

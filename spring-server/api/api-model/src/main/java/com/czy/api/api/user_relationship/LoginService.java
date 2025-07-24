@@ -30,7 +30,9 @@ public interface LoginService {
     void updateStorageToDatabase(@NonNull LoginUserDo loginUserDo);
 
     // 密码登录 [ip检查]
-    boolean checkPassword(String account, String password);
+    boolean checkAccountPassword(String account, String password);
+
+    boolean checkPhonePassword(String phone, String password);
 
     // 登录
     LoginSignResponse loginUser(LoginJwtPayloadAo loginJwtPayloadAo);

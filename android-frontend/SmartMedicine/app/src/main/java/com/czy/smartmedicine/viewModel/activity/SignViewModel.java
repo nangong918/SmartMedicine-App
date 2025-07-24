@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModel;
 
-import com.czy.appcore.network.api.SyncRequestCallback;
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.utils.OnTextInputEnd;
 import com.czy.appcore.utils.TextChangeLegalCallback;
@@ -28,11 +28,12 @@ import com.czy.dal.constant.Constants;
 import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
 import com.czy.dal.dto.http.response.IsRegisterResponse;
-import com.czy.dal.vo.fragmentActivity.SignVo;
 import com.czy.dal.dto.http.response.LoginSignResponse;
+import com.czy.dal.vo.fragmentActivity.SignVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.MainActivity;
+import com.czy.smartmedicine.utils.ResponseTool;
 
 import java.util.Optional;
 
@@ -129,13 +130,19 @@ public class SignViewModel extends ViewModel {
         apiRequestImpl.passwordLogin(
                 request,
                 response -> {
-                    handleLogin(response, context, callback);
+                    ResponseTool.handleSyncResponseEx(
+                            response,
+                            context,
+                            callback,
+                            this::handleLogin
+                    );
                 },
                 callback::onThrowable
         );
     }
 
     private void handleLogin(BaseResponse<LoginSignResponse> response, Context context, SyncRequestCallback callback){
+        // 数据解析
         LoginSignResponse loginSignResponse = response.getData();
         Long userId = Optional.ofNullable(loginSignResponse)
                 .map(re -> re.userVo)
@@ -181,6 +188,12 @@ public class SignViewModel extends ViewModel {
         Log.i(TAG, "存储结果::userLoginInfoAo: " + userLoginInfoAo.toJsonString());
         loginTokenAo = MainApplication.getInstance().getLoginTokenAo();
         Log.i(TAG, "存储结果::loginTokenAo: " + loginTokenAo.toJsonString());
+
+        // 设置accessToken和refreshToken到拦截器
+        MainApplication.setToken();
+
+        // 长连接
+        MainApplication.getInstance().startNettySocketService(userLoginInfoAo.userId);
 
         // runnable
         callback.onAllRequestSuccess();

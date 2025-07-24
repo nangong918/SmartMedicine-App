@@ -11,7 +11,7 @@ public class ResponseUtil {
 
     public static <T> boolean handleResponse(BaseResponse<T> response, Context context){
         if(response != null && response.getCode() != null){
-            if (SUCCESS_CODE.equals(response.getCode())){
+            if (SUCCESS_CODE_STRING.equals(response.getCode())){
                 return true;
             }
             else {
@@ -27,7 +27,7 @@ public class ResponseUtil {
 
     public static <T> boolean handleResponse(BaseResponse<T> response, OnThrowableCallback onThrowableCallback){
         if(response != null && response.getCode() != null){
-            if (SUCCESS_CODE.equals(response.getCode())){
+            if (SUCCESS_CODE_STRING.equals(response.getCode())){
                 return true;
             }
             else {

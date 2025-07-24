@@ -34,6 +34,7 @@ import java.util.Optional;
 
 /**
  * @author 13225
+ * 聊天界面
  */
 public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
