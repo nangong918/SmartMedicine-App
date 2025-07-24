@@ -16,6 +16,7 @@ import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
 import com.czy.dal.dto.http.request.SearchUserRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
+import com.czy.dal.dto.http.request.UserBriefRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -26,6 +27,7 @@ import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
+import com.czy.dal.dto.http.response.UserBriefResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
 import com.czy.dal.dto.netty.response.ChatUploadFileResponse;
@@ -263,6 +265,18 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                                      OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
                 mApi.getMyFriendApplyList(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/userBrief/get")
+    //    Observable<BaseResponse<UserBriefResponse>> getUserBrief(@Body UserBriefRequest request);
+    public void getUserBrief(UserBriefRequest request,
+                             OnSuccessCallback<BaseResponse<UserBriefResponse>> onSuccessCallback,
+                             OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.getUserBrief(request),
                 onSuccessCallback,
                 onThrowableCallback
         );

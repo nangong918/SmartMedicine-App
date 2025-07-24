@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.contact.ContactAdapter;
-import com.czy.dal.ao.userBrief.UserBriefStartAo;
+import com.czy.dal.ao.userBrief.UserBriefIntentAo;
 import com.czy.dal.vo.entity.contact.ContactListVo;
 import com.czy.dal.vo.fragmentActivity.ContactUserGroupVo;
 import com.czy.smartmedicine.MainApplication;
@@ -133,7 +133,7 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
             viewModel.onUserClicked(position, (ao) -> {
                 // 启动用户详细信息界面
                 Intent intent = new Intent(requireActivity(), UserBriefActivity.class);
-                intent.putExtra(UserBriefStartAo.class.getName(), ao);
+                intent.putExtra(UserBriefIntentAo.class.getName(), ao);
                 requireActivity().startActivity(intent);
             });
         });

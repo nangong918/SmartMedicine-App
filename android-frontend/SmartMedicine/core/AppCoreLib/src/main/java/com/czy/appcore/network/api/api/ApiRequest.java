@@ -13,6 +13,7 @@ import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
 import com.czy.dal.dto.http.request.SearchUserRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
+import com.czy.dal.dto.http.request.UserBriefRequest;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -23,6 +24,7 @@ import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
+import com.czy.dal.dto.http.response.UserBriefResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
@@ -171,6 +173,14 @@ public interface ApiRequest {
      */
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.USER_RELATION + "/relation/getMyFriendApplyList")
     Observable<BaseResponse<Integer>> getMyFriendApplyList(@Body BaseHttpRequest request);
+
+    /**
+     * 获取用户简略信息
+     * @param request   用户基本信息
+     * @return          用户简略信息
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/userBrief/get")
+    Observable<BaseResponse<UserBriefResponse>> getUserBrief(@Body UserBriefRequest request);
 
     //--------------聊天相关--------------
 

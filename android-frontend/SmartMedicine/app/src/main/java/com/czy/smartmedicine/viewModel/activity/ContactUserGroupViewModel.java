@@ -14,7 +14,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.ao.newUser.MyFriendItemAo;
-import com.czy.dal.ao.userBrief.UserBriefStartAo;
+import com.czy.dal.ao.userBrief.UserBriefIntentAo;
 import com.czy.dal.constant.Constants;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -116,7 +116,8 @@ public class ContactUserGroupViewModel extends ViewModel {
                         contactItem.chatContactItemVo.name = (Optional.ofNullable(userViewEntity.userName).orElse(""));
                         // 设置账号
                         contactItem.contactAccount = (Optional.ofNullable(userViewEntity.userAccount).orElse(""));
-
+                        // userId
+                        contactItem.userId = (Optional.ofNullable(userViewEntity.userId).orElse(Constants.ERROR_ID));
                         return contactItem;
                     })
                     .collect(Collectors.toList());
@@ -153,10 +154,11 @@ public class ContactUserGroupViewModel extends ViewModel {
                 .map(list -> list.get(position))
                 .orElse(new ChatContactItemAo());
 
-        UserBriefStartAo ubAo = new UserBriefStartAo();
+        UserBriefIntentAo ubAo = new UserBriefIntentAo();
         ubAo.avatarUrl = Optional.ofNullable(ccAo.chatContactItemVo).map(vo -> vo.avatarUrlOrUri).orElse("");
         ubAo.userAccount = Optional.ofNullable(ccAo.contactAccount).orElse("");
         ubAo.userName = Optional.ofNullable(ccAo.chatContactItemVo).map(vo -> vo.name).orElse("");
+        ubAo.userId = Optional.ofNullable(ccAo.userId).orElse(Constants.ERROR_ID);
 //        ChatActivityStartAo ubAo = new ChatActivityStartAo();
 //        ubAo.chatMessageListItemVo = new ArrayList<>();
 //        ubAo.avatarUrl = Optional.ofNullable(ccAo.avatarUrlOrUri).map(LiveData::getValue).orElse("");
@@ -167,7 +169,7 @@ public class ContactUserGroupViewModel extends ViewModel {
     }
 
     public interface OnUserClickedFinish{
-        void onFinish(UserBriefStartAo ao);
+        void onFinish(UserBriefIntentAo ao);
     }
 
     private void storage(){

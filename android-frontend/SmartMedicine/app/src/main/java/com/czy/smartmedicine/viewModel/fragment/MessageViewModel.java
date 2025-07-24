@@ -122,6 +122,7 @@ public class MessageViewModel extends ViewModel {
         item.contactAccount = contactAccount;
         item.chatContactItemVo.avatarUrlOrUri = response.avatarUrl;
         item.chatContactItemVo.name = response.senderName;
+        item.userId = response.senderId;
         item.chatContactItemVo.setMessagePreview(response.getContent());
         item.chatContactItemVo.time = (DateUtils.getTime(new Date(Long.parseLong(response.timestamp))));
         List<ChatContactItemAo> list = new ArrayList<>();
@@ -158,6 +159,7 @@ public class MessageViewModel extends ViewModel {
         String contactAccount = response.account == null ? "" : response.account;
         ChatContactItemAo item = new ChatContactItemAo();
         item.contactAccount = contactAccount;
+        item.userId = response.senderId;
         item.chatContactItemVo.avatarUrlOrUri = response.avatarUrl;
         item.chatContactItemVo.name = response.senderName;
         item.chatContactItemVo.setMessagePreview("图片消息");

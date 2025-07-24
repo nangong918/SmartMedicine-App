@@ -4,7 +4,7 @@ import com.czy.baseUtilsLib.json.BaseBean;
 
 import java.io.Serializable;
 
-public class UserBriefStartAo implements Serializable, BaseBean {
+public class UserBriefIntentAo implements Serializable, BaseBean {
 
     // view
     public String userName;
@@ -12,4 +12,6 @@ public class UserBriefStartAo implements Serializable, BaseBean {
 
     // data
     public String userAccount;
+    // 必填
+    public Long userId;
 }
