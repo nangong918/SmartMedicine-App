@@ -1,6 +1,7 @@
 package com.czy.post.service;
 
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.ao.post.PostInfoAo;
 import lombok.NonNull;
 
 import java.util.List;
@@ -40,4 +41,8 @@ public interface PostService {
     PostAo findPostById(Long postId);
     List<PostAo> findPostsByIdList(List<Long> idList);
 
+    // 根据userId查询其发布的帖子
+    List<PostInfoAo> findPublishedPostsByUserId(Long userId, int pageNum, int pageSize);
+    // 根据userId查询其收藏的帖子
+    List<PostInfoAo> findCollectedPostsByUserId(Long userId, int pageNum, int pageSize);
 }
