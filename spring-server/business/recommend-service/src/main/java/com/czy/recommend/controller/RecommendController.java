@@ -9,6 +9,7 @@ import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.RecommendPostRequest;
 import com.czy.api.domain.dto.http.response.RecommendPostResponse;
+import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.recommend.service.RecommendService;
 import com.utils.mvc.redisson.RedissonClusterLock;
@@ -63,7 +64,7 @@ public class RecommendController {
         );
 
         if (!redissonService.tryLock(singleRecommendLock)){
-            return BaseResponse.LogBackError("用户正在推荐帖子，请稍后再试");
+            return BaseResponse.LogBackError(CommonExceptions.FREQUENTLY_CLICK, "用户正在推荐帖子，请稍后再试");
         }
 
         // 2.检查是否频繁点击推荐
@@ -81,9 +82,9 @@ public class RecommendController {
             );
             // 此分布式锁只等其自动消失，不解锁
             if (!redissonService.tryLock(clickRecommendLock)){
-                return BaseResponse.LogBackError("请耐心等待，请稍后再试");
+                return BaseResponse.LogBackError(CommonExceptions.FREQUENTLY_CLICK,"请耐心等待，请稍后再试");
             }
-            return BaseResponse.LogBackError("用户点击推荐次数过多，请稍后再试");
+            return BaseResponse.LogBackError(CommonExceptions.FREQUENTLY_CLICK,"用户点击推荐次数过多，请稍后再试");
         }
 
         try {

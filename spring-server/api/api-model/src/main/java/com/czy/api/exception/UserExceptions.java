@@ -31,6 +31,8 @@ public enum UserExceptions implements ExceptionEnums {
     RESET_USER_INFO_FAIL("U_10010", "重置用户信息失败"),
     // 登录失败
     LOGIN_FAIL("U_10011", "登录失败"),
+    // 头像未上传
+    IMAGE_NOT_UPLOAD("U_10012", "头像未上传"),
     ;
 
     private final String code;

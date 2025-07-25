@@ -10,6 +10,8 @@ import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.response.ChatUploadFileResponse;
 import com.czy.api.domain.dto.socket.response.UserImageResponse;
+import com.czy.api.exception.OssExceptions;
+import com.czy.api.exception.UserExceptions;
 import com.czy.message.mq.sender.RabbitMqSender;
 import com.utils.mvc.service.MinIOService;
 import domain.FileIsExistResult;
@@ -58,17 +60,17 @@ public class ChatFileController {
             @RequestParam("receiverId") Long receiverId
     ){
         if (file == null){
-            return BaseResponse.LogBackError("上传文件不能为空");
+            return BaseResponse.LogBackError(OssExceptions.UPLOAD_FILE_IS_EMPTY);
         }
         if (fileId == null){
-            return BaseResponse.LogBackError("请检查文件id正确性");
+            return BaseResponse.LogBackError(OssExceptions.CHECK_FILE_ID_IS_RIGHT);
         }
 
         UserDo senderDo = userService.getUserById(senderId);
         UserDo receiverDo = userService.getUserById(receiverId);
         if (senderDo == null || senderDo.getId() == null ||
                 receiverDo == null || receiverDo.getId() == null){
-            return BaseResponse.LogBackError("用户id信息错误");
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
         }
 
         String chatPostImageBucket = MessageConstant.MESSAGE_FILE_BUCKET + senderId;
@@ -119,7 +121,7 @@ public class ChatFileController {
         // 获取url
         List<String> urls = ossService.getFileUrlsByFileIds(successIds);
         if (urls.isEmpty()){
-            return BaseResponse.LogBackError("fileUrl解析失败");
+            return BaseResponse.LogBackError(OssExceptions.FILE_URL_PARSE_ERROR);
         }
 
         List<Long> avatarFileIds = new ArrayList<>();

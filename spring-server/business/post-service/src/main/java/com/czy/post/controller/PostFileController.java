@@ -16,6 +16,10 @@ import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.PostOssResponse;
 import com.czy.api.domain.entity.event.UserOssResponse;
 import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.exception.CommonExceptions;
+import com.czy.api.exception.OssExceptions;
+import com.czy.api.exception.PostExceptions;
+import com.czy.api.exception.UserExceptions;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostService;
 import com.utils.mvc.redisson.RedissonClusterLock;
@@ -74,18 +78,15 @@ public class PostFileController {
             @RequestParam("userId") Long userId){
 
         if (CollectionUtils.isEmpty(files)) {
-            return BaseResponse.LogBackError("请检查files, 不能为空");
+            return BaseResponse.LogBackError(OssExceptions.UPLOAD_FILE_IS_EMPTY);
         }
-        if (postId == null) {
-            return BaseResponse.LogBackError("请检查postId, 不能为空");
-        }
-        if (userId == null) {
-            return BaseResponse.LogBackError("请检查userId, 不能为空");
+        if (postId == null || userId == null) {
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
         UserDo userDo = userService.getUserById(userId);
         if (userDo == null || userDo.getId() == null || !StringUtils.hasText(userDo.getAccount())){
-            return BaseResponse.LogBackError("请检查userId, 该用户不存在");
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
         }
 
         String userPostImageBucket = UserConstant.USER_FILE_BUCKET + postId;
@@ -96,7 +97,7 @@ public class PostFileController {
         if (!redissonService.hasKey(ossKey)) {
             log.warn("postId：{}，上传帖子file失败，redis不存在数据", postId);
             releaseLock(lockData, lockPath);
-            return BaseResponse.LogBackError(String.format("请检查[postId:%s]的内容是否正确盛传", postId));
+            return BaseResponse.LogBackError(OssExceptions.FILE_NOT_FOUND ,String.format("请检查[postId:%s]的内容是否正确上传", postId));
         }
 
         /*
@@ -158,18 +159,18 @@ public class PostFileController {
 
                 boolean result = handleUpload(postOssResponse);
                 if (!result){
-                    return BaseResponse.LogBackError("上传文件到数据库失败");
+                    return BaseResponse.LogBackError(OssExceptions.UPLOAD_FILE_RECORD_ERROR);
                 }
                 PostVo postVo = postFrontService.getPostVo(postId);
                 return BaseResponse.getResponseEntitySuccess(postVo);
             }
         } catch (Exception e){
             log.error("上传文件失败", e);
-            return BaseResponse.LogBackError("上传文件失败");
+            return BaseResponse.LogBackError(OssExceptions.UPLOAD_FILE_ERROR);
         } finally {
             releaseLock(lockData, lockPath);
         }
-        return BaseResponse.LogBackError("上传文件失败");
+        return BaseResponse.LogBackError(OssExceptions.UPLOAD_FILE_ERROR);
     }
 
     private boolean handleUpload(PostOssResponse postOssResponse){
@@ -177,7 +178,7 @@ public class PostFileController {
         try {
             PostAo postAo = redissonService.getObjectFromJson(fileRedisKey, PostAo.class);
             if (postAo == null){
-                log.error("获取redis失败，postAo == null，fileRedisKey: {}", fileRedisKey);
+                log.warn("获取redis失败，postAo == null，fileRedisKey: {}", fileRedisKey);
                 return false;
             }
             else {
@@ -194,7 +195,7 @@ public class PostFileController {
                 postService.updatePostAfterOss(postAo);
             }
         } catch (Exception e) {
-            log.error("获取redis失败，fileRedisKey: {}", fileRedisKey);
+            log.error("获取redis失败，fileRedisKey: {}", fileRedisKey, e);
             return false;
         }
         return true;
@@ -210,26 +211,24 @@ public class PostFileController {
             @RequestParam("newContent") String newContent,
             @RequestParam("postId") Long postId,
             @RequestParam("userId") Long userId){
-        if (postId == null) {
-            return BaseResponse.LogBackError("请检查postId, 不能为空");
+        if (postId == null || userId == null) {
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
-        if (userId == null) {
-            return BaseResponse.LogBackError("请检查userId, 不能为空");
-        }
+
         if (CollectionUtils.isEmpty(files) &&
                 !StringUtils.hasText(newTitle) &&
                 !StringUtils.hasText(newContent)){
-            return BaseResponse.LogBackError("你不能不修改任何数据");
+            return BaseResponse.LogBackError(PostExceptions.UPDATE_POST_ERROR);
         }
 
         UserDo userDo = userService.getUserById(userId);
         if (userDo == null || userDo.getId() == null || !StringUtils.hasText(userDo.getAccount())){
-            return BaseResponse.LogBackError("请检查userId, 该用户不存在");
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST, String.format("userId: %s", userId));
         }
 
         PostAo postAo = postService.findPostById(postId);
         if (postAo == null || postAo.getId() == null){
-            return BaseResponse.LogBackError("请检查postId, 该帖子不存在");
+            return BaseResponse.LogBackError(PostExceptions.POST_NOT_EXIST, String.format("postId: %s", postId));
         }
 
         String userPostImageBucket = UserConstant.USER_FILE_BUCKET + postId;
@@ -243,7 +242,7 @@ public class PostFileController {
         );
 
         if (!redissonService.tryLock(redissonClusterLock)){
-            return BaseResponse.LogBackError("正在修改请勿频繁点击");
+            return BaseResponse.LogBackError(OssExceptions.UPDATE_POST_FREQUENTLY);
         }
 
         try {
@@ -254,7 +253,7 @@ public class PostFileController {
                 postAo.setTitle(newTitle);
                 // 审核 目前只有防止刷帖；没有自然语言审核
                 if (!postService.isLegalPost(postAo)) {
-                    return BaseResponse.LogBackError("帖子内容不合规，请修改");
+                    return BaseResponse.LogBackError(PostExceptions.POST_CONTENT_ILLEGAL);
                 }
                 try {
                     // 2.缓存到redis
