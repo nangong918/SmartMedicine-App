@@ -4,6 +4,7 @@ import com.czy.appcore.BaseConfig;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.constant.backEnd.BackEndConstant;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
+import com.czy.dal.dto.http.request.FuzzySearchRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
@@ -14,6 +15,7 @@ import com.czy.dal.dto.http.request.RegisterUserRequest;
 import com.czy.dal.dto.http.request.SearchUserRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.request.UserBriefRequest;
+import com.czy.dal.dto.http.response.FuzzySearchResponse;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -291,6 +293,16 @@ public interface ApiRequest {
             @Part List<MultipartBody.Part> files,
             @Part("postId") Long postId,
             @Part("userAccount") String userAccount
+    );
+
+    /**
+     * 模糊搜索帖子
+     * @param request   请求
+     * @return          模糊搜索帖子结果
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.SEARCH + "/main/fuzzy")
+    Observable<BaseResponse<FuzzySearchResponse>> fuzzySearch(
+            @Body FuzzySearchRequest request
     );
 
     //--------------Test--------------
