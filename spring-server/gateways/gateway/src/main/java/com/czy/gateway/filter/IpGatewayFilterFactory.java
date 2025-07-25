@@ -1,6 +1,7 @@
 package com.czy.gateway.filter;
 
 import com.czy.api.constant.gateway.InterceptorConstant;
+import com.czy.api.exception.CommonExceptions;
 import com.czy.gateway.service.FlowLimitService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,15 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.OrderedGatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
+import utils.ResponseUtils;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,31 +31,35 @@ public class IpGatewayFilterFactory extends AbstractGatewayFilterFactory<IpGatew
     @Override
     public GatewayFilter apply(IpGatewayFilterFactory.Config config) {
 
-        return new OrderedGatewayFilter((exchange, chain) ->
-                Optional.ofNullable(exchange)
-                .map(ex -> {
-                    String ip = Optional.ofNullable(ex.getRequest().getRemoteAddress())
-                            .map(InetSocketAddress::getAddress)
-                            .map(InetAddress::getHostAddress)
-                            .orElse("");
+        return new OrderedGatewayFilter((exchange, chain) -> {
+            String ip = Optional.ofNullable(exchange.getRequest().getRemoteAddress())
+                    .map(InetSocketAddress::getAddress)
+                    .map(InetAddress::getHostAddress)
+                    .orElse("");
 
-                    String url = ex.getRequest().getURI().getPath();
-                    String key = url + ":" + ip;
+            String url = exchange.getRequest().getURI().getPath();
+            String key = url + ":" + ip;
 
-                    return flowLimitService.accessAndRecord(InterceptorConstant.IP_PREFIX, key)
-                            .flatMap(isAllowed -> {
-                                if (!isAllowed) {
-                                    ex.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                                    ex.getResponse().getHeaders().setContentType(MediaType.TEXT_PLAIN);
-                                    return ex.getResponse().setComplete();
-                                }
-                                // 允许通过则继续
-                                return chain.filter(ex);
-                            });
-                })
-                // 如果 exchange 为 null，则返回一个空的 Mono
-                .orElse(Mono.empty()),
-                1);
+            return flowLimitService.accessAndRecord(
+                    exchange,
+                    chain ,
+                    InterceptorConstant.IP_PREFIX,
+                    key
+            ).onErrorResume(e -> {
+                log.error("IP 限流异常", e);
+                return ResponseUtils.setErrorResponse(exchange, CommonExceptions.SYSTEM_ERROR);
+            });
+/*            return flowLimitService.accessAndRecord(InterceptorConstant.IP_PREFIX, key)
+                    .flatMap(isAllowed -> {
+                        if (!isAllowed) {
+                            ex.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                            ex.getResponse().getHeaders().setContentType(MediaType.TEXT_PLAIN);
+                            return ex.getResponse().setComplete();
+                        }
+                        // 允许通过则继续
+                        return chain.filter(ex);
+                    });*/
+        },1);
     }
 
     @Getter

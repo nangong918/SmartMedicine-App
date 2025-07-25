@@ -1,5 +1,7 @@
 package com.czy.auth.service;
 
+import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
+import exception.AppException;
 import jwt.BaseJwtPayloadAo;
 import jwt.TokenStatue;
 import com.czy.api.api.auth.TokenValidatorService;
@@ -8,6 +10,8 @@ import com.czy.auth.validator.JwtValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -20,6 +24,19 @@ public class TokenValidatorServiceImpl implements TokenValidatorService {
 
     private final JwtValidator jwtValidator;
 
+
+    @Override
+    public boolean checkTokenBelongUser(String token, Long userId) throws Exception{
+        try {
+            LoginJwtPayloadAo ao = getJwtTokenAo(token, LoginJwtPayloadAo.class);
+            Long id = Optional.ofNullable(ao)
+                    .map(LoginJwtPayloadAo::getUserId)
+                    .orElse(-1L);
+            return id.equals(userId);
+        } catch (Exception e){
+            throw new AppException("Token无效，解析失败");
+        }
+    }
 
     @Override
     public TokenStatue checkTokenStatus(String accessToken, String key) {

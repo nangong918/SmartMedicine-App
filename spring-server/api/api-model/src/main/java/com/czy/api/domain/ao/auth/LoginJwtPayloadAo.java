@@ -14,22 +14,27 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class LoginJwtPayloadAo extends BaseJwtPayloadAo { // JWT Payload(负载)
-    // 登录用户ID
-    private String userAccount;
+    // id
+    private Long userId;
+    // phone
+    private String phone;
+    // account
+    private String account;
     // 登录用户UUID
     private String uuid;
     // 功能权限
     private String function;
 
-
-    public LoginJwtPayloadAo(String userAccount, String uuid, String function) {
-        this.userAccount = userAccount;
+    public LoginJwtPayloadAo(Long userId, String phone, String account, String uuid, String function) {
+        this.userId = userId;
+        this.phone = phone;
+        this.account = account;
         this.uuid = uuid;
         this.function = function;
     }
 
     @Override
     public String getSubject() {
-        return userAccount;
+        return String.valueOf(userId);
     }
 }

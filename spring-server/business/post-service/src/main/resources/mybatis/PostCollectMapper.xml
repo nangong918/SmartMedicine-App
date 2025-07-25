@@ -56,4 +56,35 @@
         WHERE post_id = #{postId}
           AND collect_folder_id = #{collectFolderId}
     </select>
+    <select id="findPostCollectsByIdList" resultType="com.czy.api.domain.Do.post.collect.PostCollectDo">
+        SELECT
+        <include refid="doColumns"/>
+        FROM post_collect
+        WHERE id IN
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+            #{item}
+        </foreach>
+    </select>
+    <!-- 通过userId查询，联表查询 （未测试：2025/7/24）-->
+    <select id="findPostCollectsByUserId" resultType="com.czy.api.domain.Do.post.collect.PostCollectDo">
+        SELECT
+            pc.id AS id,
+            pc.post_id AS postId,
+            pc.collect_folder_id AS collectFolderId
+        FROM post_collect pc
+            LEFT JOIN post_collect_folder pcf
+            ON pc.collect_folder_id = pcf.id
+        WHERE pcf.user_id = #{userId}
+    </select>
+    <select id="findPostCollectsByUserIdPaging" resultType="com.czy.api.domain.Do.post.collect.PostCollectDo">
+        SELECT
+            pc.id AS id,
+            pc.post_id AS postId,
+            pc.collect_folder_id AS collectFolderId
+        FROM post_collect pc
+            LEFT JOIN post_collect_folder pcf
+            ON pc.collect_folder_id = pcf.id
+        WHERE pcf.user_id = #{userId}
+        LIMIT #{pageNum} * #{pageSize}, #{pageSize}
+    </select>
 </mapper>

@@ -22,9 +22,9 @@
         phone,
         permission,
         register_time,
-        last_online_time,
-        <if test="avatarFileId != null">,
-            avatar_file_id
+        last_online_time
+        <if test="avatarFileId != null">
+            ,avatar_file_id
         </if>
         )
         VALUES (
@@ -35,9 +35,9 @@
         #{phone},
         #{permission},
         #{registerTime},
-        #{lastOnlineTime},
-        <if test="avatarFileId != null">,
-            #{avatarFileId}
+        #{lastOnlineTime}
+        <if test="avatarFileId != null">
+            ,#{avatarFileId}
         </if>
         )
     </insert>

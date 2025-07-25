@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.czy.appcore.network.netty.api.receive.ReceiveAddUserApi;
+import com.czy.appcore.network.netty.api.receive.FriendApiHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.constant.Constants;
@@ -58,7 +58,7 @@ public class FriendsViewModel extends ViewModel {
 
     //---------------------------NetWork---------------------------
 
-    private ReceiveAddUserApi receiveAddUserApi;
+    private FriendApiHandler friendApiHandler;
 
     // 消息队列
     private final Handler messageHandler = new Handler(Looper.getMainLooper());
@@ -66,7 +66,7 @@ public class FriendsViewModel extends ViewModel {
     // 首次进入好友列表申请根本就不在FriendsFragment，而是在ViewPager的Fragment中
     private void initReceiveAddUserApi(){
         initEventBus();
-        receiveAddUserApi = new ReceiveAddUserApi() {
+        friendApiHandler = new FriendApiHandler() {
             @Override
             public void receiveAddedFriend(@NonNull AddUserToTargetUserResponse response) {
                 Log.i(TAG, "receiveAddedFriend: " + response.toJsonString());
@@ -74,6 +74,11 @@ public class FriendsViewModel extends ViewModel {
                     processFriendsMessage();
                 });
                 // TODO 消息弹窗提示
+            }
+
+            @Override
+            public void receiveBeDeleted(@NonNull AddUserToTargetUserResponse response) {
+
             }
 
             @Override
@@ -141,14 +146,14 @@ public class FriendsViewModel extends ViewModel {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(AddUserToTargetUserResponse response) {
         if (response != null){
-            receiveAddUserApi.receiveAddedFriend(response);
+            friendApiHandler.receiveAddedFriend(response);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(HandleAddUserResponse response) {
         if (response != null){
-            receiveAddUserApi.receiveAddFriendResult(response);
+            friendApiHandler.receiveAddFriendResult(response);
         }
     }
 

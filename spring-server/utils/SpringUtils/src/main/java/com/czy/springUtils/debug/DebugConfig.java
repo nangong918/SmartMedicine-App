@@ -19,6 +19,17 @@ public class DebugConfig {
     private boolean debug = false;
     private boolean allLog = false;
     private boolean vcodeCheck = true;
-    private boolean isAccessTokenCheck = true;
-    private boolean isRecordUserAccount = true;
+    private boolean accessTokenCheck = true;
+    private boolean recordUserAccount = true;
+
+    @Override
+    public String toString() {
+        return "DebugConfig{" +
+                "debug=" + debug +
+                ", allLog=" + allLog +
+                ", vcodeCheck=" + vcodeCheck +
+                ", accessTokenCheck=" + accessTokenCheck +
+                ", recordUserAccount=" + recordUserAccount +
+                '}';
+    }
 }

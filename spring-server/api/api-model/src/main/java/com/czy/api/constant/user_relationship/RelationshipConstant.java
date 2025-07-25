@@ -6,7 +6,7 @@ package com.czy.api.constant.user_relationship;
  */
 public class RelationshipConstant {
 
-    public static final String serviceName = "user-relationship-service";
+    public static final String serviceName = UserConstant.serviceName;
     public static final String serviceRoute = "/" + serviceName;
     public static final String Relationship_CONTROLLER = "/relation";
 

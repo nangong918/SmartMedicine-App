@@ -160,10 +160,13 @@ public class LoginServiceImpl implements LoginService {
         // key统一格式：user_register:phone
         String key = UserConstant.USER_REGISTER_REDIS_KEY + loginUserDo.getPhone();
         boolean result = redissonService.setObjectByJson(key, loginUserDo, UserConstant.USER_CHANGE_KEY_EXPIRE_TIME);
-        log.info("已经将用户信息缓存到Redis，redis-key：{}，存储信息：{}", key, loginUserDo.toJsonString());
         if (!result){
             log.warn("用户注册失败，account: {}", loginUserDo.getAccount());
             throw new AppException("用户注册失败");
+        }
+        else {
+            loginUserDo = redissonService.getObjectFromJson(key, LoginUserDo.class);
+            log.info("已经将用户信息缓存到Redis，redis-key：{}，存储信息：{}", key, loginUserDo.toJsonString());
         }
     }
 
@@ -207,7 +210,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public boolean checkPassword(String account, String password) {
+    public boolean checkAccountPassword(String account, String password) {
         LoginUserDo loginUserDo = checkAccountExist(account);
 
         if (!EncryptUtil.bcryptVerify(password, loginUserDo.getPassword())){
@@ -218,10 +221,22 @@ public class LoginServiceImpl implements LoginService {
         return true;
     }
 
+    @Override
+    public boolean checkPhonePassword(String phone, String password) {
+        LoginUserDo loginUserDo = checkPhoneExist(phone);
+
+        if (!EncryptUtil.bcryptVerify(password, loginUserDo.getPassword())){
+            String errorMsg = String.format("用户password错误，phone: %s", phone);
+            log.warn(errorMsg);
+            throw new AppException(errorMsg);
+        }
+        return true;
+    }
+
     // 返回accessToken
     @Override
     public LoginSignResponse loginUser(LoginJwtPayloadAo loginJwtPayloadAo) {
-        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount(loginJwtPayloadAo.getUserAccount());
+        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount(loginJwtPayloadAo.getAccount());
         // 生成accessToken
         LoginSignResponse loginSignResponse = new LoginSignResponse();
         // 告诉前端建立WebSocket连接
@@ -285,6 +300,16 @@ public class LoginServiceImpl implements LoginService {
         LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount(account);
         if (loginUserDo == null){
             String errorMsg = String.format("用户account不存在，account: %s", account);
+            log.warn(errorMsg);
+            throw new AppException(errorMsg);
+        }
+        return loginUserDo;
+    }
+
+    private LoginUserDo checkPhoneExist(String phone) {
+        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByPhone(phone);
+        if (loginUserDo == null){
+            String errorMsg = String.format("用户phone不存在，phone: %s", phone);
             log.warn(errorMsg);
             throw new AppException(errorMsg);
         }

@@ -7,4 +7,5 @@ package com.czy.dal.dto.http.response;
  */
 public class SendSmsResponse {
     public String phone;
+    public String smsType;
 }

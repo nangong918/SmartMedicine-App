@@ -18,10 +18,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.customviewlib.view.DialogConfirm;
+import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.R;
 import com.czy.smartmedicine.databinding.ActivityMainBinding;
 import com.czy.smartmedicine.fragment.AiFragment;
 import com.czy.smartmedicine.fragment.friends.FriendsFragment;
@@ -34,10 +34,7 @@ import java.util.Optional;
 
 /**
  * @author 13225
- * Android Mvvm设计模式：
- * Model：Activity，Fragment：负责交互；LiveData监听
- * ViewModel：数据双向绑定；LiveData保存；逻辑
- * View：展示
+ * 主界面
  */
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
@@ -64,13 +61,25 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         exitDialog.setContent(getString(com.czy.customviewlib.R.string.are_you_sure_to_exit),0xFFF94040);
 
         View headerView = binding.mainNavigationView.getHeaderView(0);
-        TextView nagiText = headerView.findViewById(com.czy.customviewlib.R.id.nagi_text);
+        TextView nameTv = headerView.findViewById(com.czy.customviewlib.R.id.nagi_name);
+        TextView accountTv = headerView.findViewById(com.czy.customviewlib.R.id.nagi_account);
+        TextView phoneTv = headerView.findViewById(com.czy.customviewlib.R.id.nagi_phone);
 
-        String accountName = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
-                .map(userLoginInfoAo -> userLoginInfoAo.account)
+        UserLoginInfoAo userLoginInfoAo = MainApplication.getInstance().getUserLoginInfoAo();
+
+        String name = Optional.ofNullable(userLoginInfoAo)
+                .map(ao -> ao.account)
+                .orElse("");
+        String account = Optional.ofNullable(userLoginInfoAo)
+                .map(ao -> ao.account)
+                .orElse("");
+        String phone = Optional.ofNullable(userLoginInfoAo)
+                .map(ao -> ao.phone)
                 .orElse("");
         // 设置文本
-        nagiText.setText(accountName);
+        nameTv.setText(name);
+        accountTv.setText(account);
+        phoneTv.setText(phone);
     }
 
     public void setMainTopBar(@NonNull MainTopBarVo mainTopBarVo) {

@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -17,16 +16,16 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.loader.content.CursorLoader;
 
 
 import com.bumptech.glide.Glide;
-import com.czy.baseUtilsLib.debug.DebugMyUtil;
+import com.czy.baseUtilsLib.debug.DebugEnvironment;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +35,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -56,7 +54,7 @@ public class FileUtil {
         file = new File(filePath[0]);
         if(file.exists()){
             boolean deleteResult = file.delete();
-            DebugMyUtil.logR("deleteResult:" + deleteResult);
+            DebugEnvironment.logR("deleteResult:" + deleteResult);
         }
         // 通过指针重置内容
         filePath[0] = "";
@@ -206,9 +204,9 @@ public class FileUtil {
      * @param file  文件
      * @return MultipartBody.Part
      */
-    public static MultipartBody.Part createMultipartBodyPart(File file) {
+    public static MultipartBody.Part createMultipartBodyPart(File file, @NonNull String fileRequestParamName) {
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        return MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+        return MultipartBody.Part.createFormData(fileRequestParamName, file.getName(), requestFile);
     }
 
     /**

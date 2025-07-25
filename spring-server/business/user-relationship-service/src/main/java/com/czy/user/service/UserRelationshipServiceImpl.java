@@ -1,5 +1,6 @@
 package com.czy.user.service;
 
+import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.UserRelationshipService;
 import com.czy.api.api.user_relationship.UserSearchService;
 import com.czy.api.api.user_relationship.UserService;
@@ -35,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -50,7 +51,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Component
+@Service
 @org.apache.dubbo.config.annotation.Service(protocol = "dubbo", version = "1.0.0")
 public class UserRelationshipServiceImpl implements UserRelationshipService {
 
@@ -60,12 +61,12 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     private final NewUserItemConverter newUserItemConverter;
     private final ToSocketMqSender toSocketMqSender;
 
-    // Dubbo远程调用User服务
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private UserService userService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private UserSearchService userSearchService;
+    private final UserService userService;
+    private final UserSearchService userSearchService;
     private final FriendApplyMapper friendApplyMapper;
+
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private OssService ossService;
 
     private final ObjectMapper objectMapper;
 
@@ -317,6 +318,19 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     @Override
     public List<NewUserItemAo> getAddMeRequestList(Long handlerId) {
         List<NewUserItemBo> applyToMeList = friendApplyMapper.getAddMeRequestList(handlerId);
+        if (CollectionUtils.isEmpty(applyToMeList)){
+            return new ArrayList<>();
+        }
+        List<Long> fileIdList = applyToMeList.stream()
+                .map(NewUserItemBo::getAvatarFileId)
+                .collect(Collectors.toList());
+        List<String> fileUrlList = ossService.getFileUrlsByFileIds(fileIdList);
+        assert fileUrlList.size() == applyToMeList.size();
+        for (int i = 0; i < applyToMeList.size(); i++){
+            applyToMeList.get(i).setAvatarUrl(
+                    fileUrlList.get(i)
+            );
+        }
         return convertBoListToAoList(applyToMeList);
     }
 
@@ -355,18 +369,19 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     @Override
     public List<SearchFriendApplyAo> searchFriend(Long applyId, String handlerAccount) {
         // 用左连接写在MySQL，因为比先查询UserList，然后再逐个查询applyAccount和handlerAccount的状态快多了
-        UserDo applyUser = userService.getUserById(applyId);
-        List<SearchFriendApplyBo> boList = friendApplyMapper.fuzzySearchHandlerByApplyAccount(applyUser.getAccount(), handlerAccount);
-        // 使用 Stream API 进行转换
-        return boList.stream()
-                .map(searchFriendApplyConverter::boToAo)
-                .collect(Collectors.toList());
+        UserDo applyUserDo = userService.getUserById(applyId);
+        if (applyUserDo == null || applyUserDo.getId() == null){
+            throw new AppException("申请用户存在问题：不存在");
+        }
+        List<SearchFriendApplyBo> boList = friendApplyMapper.fuzzySearchHandlerByApplyAccount(applyUserDo.getAccount(), handlerAccount);
+
+        return processFriendApplyBoList(boList);
     }
 
     @Override
     public List<SearchFriendApplyAo> searchFriendByName(Long applyId, String handlerUserName) {
         UserDo applyUserDo = userService.getUserById(applyId);
-        if (applyUserDo == null){
+        if (applyUserDo == null || applyUserDo.getId() == null){
             throw new AppException("申请用户存在问题：不存在");
         }
         List<UserDo> userDos = userSearchService.searchUserByIkName(handlerUserName);
@@ -382,7 +397,27 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
             List<SearchFriendApplyBo> boList = friendApplyMapper.getFriendApplyByUserId(applyUserDo.getId(), handleUserDo.getId());
             boAllList.addAll(boList);
         });
-        return boAllList.stream()
+
+        return processFriendApplyBoList(boAllList);
+    }
+
+    // listBo -> listAo
+    private List<SearchFriendApplyAo> processFriendApplyBoList(List<SearchFriendApplyBo> boList) {
+        if (CollectionUtils.isEmpty(boList)) {
+            return new ArrayList<>();
+        }
+
+        List<Long> fileIds = boList.stream()
+                .map(SearchFriendApplyBo::getAvatarFileId)
+                .collect(Collectors.toList());
+
+        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+
+        for (int i = 0; i < fileUrls.size(); i++) {
+            boList.get(i).setAvatarUrl(fileUrls.get(i));
+        }
+
+        return boList.stream()
                 .map(searchFriendApplyConverter::boToAo)
                 .collect(Collectors.toList());
     }

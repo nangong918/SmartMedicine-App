@@ -20,8 +20,27 @@ public interface PostCollectMapper {
             @Param("collectFolderId") Long collectFolderId
     );
 
+    // 通过idList获取
+    List<PostCollectDo> findPostCollectsByIdList(List<Long> idList);
+
     // 通过collectFolderId获取全部List<PostCollectDo>
     List<PostCollectDo> findPostCollectsByCollectFolderId(Long collectFolderId);
+
+    // 通过userId获取全部List<PostCollectDo> (需要联表查询)
+    List<PostCollectDo> findPostCollectsByUserId(Long userId);
+
+    /**
+     * 通过userId分页获取全部List<PostCollectDo> (需要联表查询)
+     * @param userId    用户id
+     * @param pageNum   页码
+     * @param pageSize  每页数量
+     * @return          List<PostCollectDo>
+     */
+    List<PostCollectDo> findPostCollectsByUserIdPaging(
+            @Param("userId") Long userId,
+            @Param("pageNum") Integer pageNum,
+            @Param("pageSize") Integer pageSize
+    );
 
     // 增加PostCollectDo
     void savePostCollect(PostCollectDo postCollectDo);

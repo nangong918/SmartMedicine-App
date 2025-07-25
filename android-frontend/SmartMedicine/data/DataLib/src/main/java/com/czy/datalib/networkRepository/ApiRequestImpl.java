@@ -1,13 +1,13 @@
 package com.czy.datalib.networkRepository;
 
 
-import com.czy.appcore.network.api.ApiRequest;
-import com.czy.appcore.network.api.SyncRequestCallback;
+import com.czy.appcore.network.api.api.ApiRequest;
 import com.czy.baseUtilsLib.network.BaseApiRequestImpl;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.OnSuccessCallback;
 import com.czy.baseUtilsLib.network.OnThrowableCallback;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
+import com.czy.dal.dto.http.request.FuzzySearchRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
@@ -15,7 +15,10 @@ import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
-import com.czy.dal.dto.http.request.SendSmsInfoRequest;
+import com.czy.dal.dto.http.request.SearchUserRequest;
+import com.czy.dal.dto.http.request.SendSmsRequest;
+import com.czy.dal.dto.http.request.UserBriefRequest;
+import com.czy.dal.dto.http.response.FuzzySearchResponse;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -26,6 +29,7 @@ import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
+import com.czy.dal.dto.http.response.UserBriefResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
 import com.czy.dal.dto.netty.response.ChatUploadFileResponse;
@@ -37,8 +41,10 @@ import com.czy.dal.vo.entity.UserVo;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 public class ApiRequestImpl extends BaseApiRequestImpl {
@@ -51,7 +57,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/login/sendSms")
     //    Observable<BaseResponse<String>> sendSms(@Body BaseRequest baseRequest);
-    public void sendSms(SendSmsInfoRequest request,
+    public void sendSms(SendSmsRequest request,
                         OnSuccessCallback<BaseResponse<SendSmsResponse>> onSuccessCallback,
                         OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
@@ -139,7 +145,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @POST("/user/searchUser")
     //    Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body BaseNettyRequest request);
-    public void searchUsers(BaseHttpRequest request,
+    public void searchUsers(SearchUserRequest request,
                             OnSuccessCallback<BaseResponse<SearchUserResponse>> onSuccessCallback,
                             OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
@@ -266,6 +272,18 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
         );
     }
 
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/userBrief/get")
+    //    Observable<BaseResponse<UserBriefResponse>> getUserBrief(@Body UserBriefRequest request);
+    public void getUserBrief(UserBriefRequest request,
+                             OnSuccessCallback<BaseResponse<UserBriefResponse>> onSuccessCallback,
+                             OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.getUserBrief(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
     //    @Multipart
     //    @POST("file/uploadImage")
     //    Observable<BaseResponse<FileUploadResponse>> fileUpload(
@@ -355,6 +373,38 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                                OnThrowableCallback onThrowableCallback){
         this.sendRequestCallback(
                 mApi.uploadPostFile(files, postId, userAccount),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.SEARCH + "/main/fuzzy")
+    //    Observable<BaseResponse<FuzzySearchResponse>> fuzzySearch(
+    //            @Body FuzzySearchRequest request
+    //    );
+    public void fuzzySearch(FuzzySearchRequest request,
+                            OnSuccessCallback<BaseResponse<FuzzySearchResponse>> onSuccessCallback,
+                            OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.fuzzySearch(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+
+    //--------------Test--------------
+
+    //    @Multipart
+    //    @POST(BackEndConstant.OSS + "/oss/uploadTest")
+    //    Observable<BaseResponse<String>> uploadImageTest(
+    //            @Part MultipartBody.Part file
+    //    );
+    public void uploadImageTest(MultipartBody.Part file,
+                                OnSuccessCallback<BaseResponse<String>> onSuccessCallback,
+                                OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.uploadImageTest(file),
                 onSuccessCallback,
                 onThrowableCallback
         );

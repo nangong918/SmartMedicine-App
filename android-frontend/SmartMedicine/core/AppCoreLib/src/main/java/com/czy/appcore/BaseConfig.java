@@ -27,6 +27,10 @@ public class BaseConfig extends com.czy.baseUtilsLib.config.BaseConfig {
     public static final String PHONE_PREFIX = "1";
     // 电话长度
     public static final int PHONE_LENGTH = 11;
+    // 搜索字段最小长度
+    public static final int SEARCH_FIELD_MIN_LENGTH = 2;
+    // 搜索字段最大长度
+    public static final int SEARCH_FIELD_MAX_LENGTH = 15;
 
     // StartActivity 等待时长
     public static final int DELAY_TIME = 2000;
@@ -41,4 +45,9 @@ public class BaseConfig extends com.czy.baseUtilsLib.config.BaseConfig {
     public static final int BITMAP_MAX_SIZE = 400;
     // 头像最大大小 200 * 200 = 160 KB
     public static final int BITMAP_MAX_SIZE_AVATAR = 200;
+    // 手机号前缀
+    public static String phonePrefix = "+86";
+
+    // 请求是否加认证token前缀 最后要在拦截器检查去掉; 定义一些不像url的命名避免出现与后端路由重合
+    public static final String AUTH_TOKEN_PREFIX = "/has-0!0-token";
 }

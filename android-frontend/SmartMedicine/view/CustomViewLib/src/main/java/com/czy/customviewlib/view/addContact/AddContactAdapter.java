@@ -37,12 +37,14 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void setChatItems(List<AddContactItemVo> newList){
         // 观察 contactItemList 的变化
         if (currentList != null) {
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AddContactDiffCallback(currentList, newList));
+            // 暂时取消DiffUtil，测试总是出bug，属于过度开发；归为性能优化点
+//            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AddContactDiffCallback(currentList, newList));
 
             currentList.clear();
             currentList.addAll(newList);
 
-            diffResult.dispatchUpdatesTo(this);
+//            diffResult.dispatchUpdatesTo(this);
+            notifyDataSetChanged();
         }
         else {
             currentList = newList;

@@ -4,10 +4,13 @@ import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.recommend.RecommendConstant;
 import com.czy.api.constant.recommend.RecommendRedisKey;
+import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.RecommendPostRequest;
 import com.czy.api.domain.dto.http.response.RecommendPostResponse;
+import com.czy.api.exception.CommonExceptions;
+import com.czy.api.exception.UserExceptions;
 import com.czy.recommend.service.RecommendService;
 import com.utils.mvc.redisson.RedissonClusterLock;
 import com.utils.mvc.redisson.RedissonService;
@@ -32,7 +35,7 @@ import java.util.List;
 @RestController
 @Validated // 启用校验
 @RequiredArgsConstructor // 自动注入@Autowired
-@RequestMapping(RecommendConstant.RECOMMEND_CONTROLLER)
+@RequestMapping(RecommendConstant.POST_RECOMMEND_CONTROLLER)
 public class RecommendController {
 
     private final RecommendService recommendService;
@@ -46,10 +49,11 @@ public class RecommendController {
     @PostMapping(RecommendConstant.RECOMMEND_POSTS)
     public BaseResponse<RecommendPostResponse>
     recommendPosts(@Validated @RequestBody RecommendPostRequest request) {
-        String userAccount = request.getUserAccount();
-        Long userId = userService.getIdByAccount(userAccount);
-        if (userId == null) {
-            return BaseResponse.LogBackError("用户不存在");
+        Long userId = request.getFeatureContext().getUserId();
+
+        UserDo userDo = userService.getUserById(userId);
+        if (userDo == null || userDo.getId() == null){
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
         }
 
         // 1.用于检查单次推荐的分布式锁
@@ -60,7 +64,7 @@ public class RecommendController {
         );
 
         if (!redissonService.tryLock(singleRecommendLock)){
-            return BaseResponse.LogBackError("用户正在推荐帖子，请稍后再试");
+            return BaseResponse.LogBackError(CommonExceptions.FREQUENTLY_CLICK, "用户正在推荐帖子，请稍后再试");
         }
 
         // 2.检查是否频繁点击推荐
@@ -78,9 +82,9 @@ public class RecommendController {
             );
             // 此分布式锁只等其自动消失，不解锁
             if (!redissonService.tryLock(clickRecommendLock)){
-                return BaseResponse.LogBackError("请耐心等待，请稍后再试");
+                return BaseResponse.LogBackError(CommonExceptions.FREQUENTLY_CLICK,"请耐心等待，请稍后再试");
             }
-            return BaseResponse.LogBackError("用户点击推荐次数过多，请稍后再试");
+            return BaseResponse.LogBackError(CommonExceptions.FREQUENTLY_CLICK,"用户点击推荐次数过多，请稍后再试");
         }
 
         try {
@@ -90,7 +94,7 @@ public class RecommendController {
             RecommendPostResponse response = new RecommendPostResponse();
             response.setPostInfoUrlAos(postInfoUrlAos);
             long endTime = System.currentTimeMillis();
-            log.info("用户{}推荐帖子耗时{}ms", userAccount, endTime - startTime);
+            log.info("用户{}推荐帖子耗时{}ms", userDo.getAccount(), endTime - startTime);
             return BaseResponse.getResponseEntitySuccess(response);
         } finally {
             // 解除单次推荐的分布式锁

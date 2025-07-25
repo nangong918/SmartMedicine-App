@@ -106,6 +106,13 @@ public interface OssService {
     InputStream downloadFileByFileName(Long userId, String fileName);
 
     /**
+     * 通过fileId下载
+     * @param fileId            文件id
+     * @return                  InputStream
+     */
+    InputStream downloadFileByFileId(Long fileId);
+
+    /**
      * 通过List<filename>获取图片List<Url>
      * @param userId            用户id
      * @param fileNames         文件名List
@@ -122,6 +129,13 @@ public interface OssService {
      *     支持Long为null返回null的url
      */
     List<String> getFileUrlsByFileIds(List<Long> fileIds);
+
+
+    /**
+     * 测试：用FileStorageName获取图片Url
+     * @return url
+     */
+    String getFileUrlsByFileStorageName(String fileStorageName, String bucketName);
 
     // 删除文件 fileStorageName
     boolean deleteFileByStorageName(Long userId, String fileStorageName, String bucketName);

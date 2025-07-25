@@ -3,7 +3,7 @@ package com.czy.baseUtilsLib.logic;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.czy.baseUtilsLib.debug.DebugMyUtil;
+import com.czy.baseUtilsLib.debug.DebugEnvironment;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,7 +16,7 @@ import java.util.Date;
 @SuppressLint("SimpleDateFormat")
 public class DateInfoUtils {
 
-    protected static final String TAG = DebugMyUtil.class.getSimpleName();
+    protected static final String TAG = DebugEnvironment.class.getSimpleName();
 
     /**
      * 获取时间戳

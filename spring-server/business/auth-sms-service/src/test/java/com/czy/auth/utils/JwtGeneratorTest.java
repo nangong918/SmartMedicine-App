@@ -10,7 +10,12 @@ import org.junit.jupiter.api.Test;
  * @date 2025/4/10 15:38
  */
 class JwtGeneratorTest {
-    private static final LoginJwtPayloadAo jwtPayloadAo = new LoginJwtPayloadAo("13225", "123456", UserConstant.JWT_FUNCTION_LOGIN);
+    private static final LoginJwtPayloadAo jwtPayloadAo = new LoginJwtPayloadAo(
+            1L,
+            "13225",
+            "13225",
+            "123456",
+            UserConstant.JWT_FUNCTION_LOGIN);
     @Test
     void generateToken() {
         JwtGenerator jwtGenerator = new JwtGenerator();

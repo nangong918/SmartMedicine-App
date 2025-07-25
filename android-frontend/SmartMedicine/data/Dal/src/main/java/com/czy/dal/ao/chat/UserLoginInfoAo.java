@@ -7,7 +7,7 @@ import com.czy.baseUtilsLib.json.BaseBean;
 import com.czy.baseUtilsLib.object.BaseSharedPreferencesBean;
 
 public class UserLoginInfoAo extends BaseSharedPreferencesBean implements BaseBean {
-    public Long userId;
+    public Long userId = -1L;
     public String account;
     public String phone;
     public String userName;

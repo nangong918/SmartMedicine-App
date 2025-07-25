@@ -11,6 +11,8 @@ import com.czy.dal.constant.Constants;
 import com.czy.baseUtilsLib.object.BeanUtil;
 import com.czy.dal.dto.netty.forwardMessage.SendImageRequest;
 import com.czy.dal.dto.netty.request.AddUserRequest;
+import com.czy.dal.dto.netty.request.DeleteAllMessageRequest;
+import com.czy.dal.dto.netty.request.DeleteUserRequest;
 import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.netty.request.HaveReadMessageRequest;
 import com.czy.dal.dto.netty.request.PostCollectRequest;
@@ -20,6 +22,7 @@ import com.czy.dal.dto.netty.request.PostFolderRequest;
 import com.czy.dal.dto.netty.request.PostForwardRequest;
 import com.czy.dal.dto.netty.request.PostLikeRequest;
 import com.czy.dal.dto.netty.request.UserBrowseTimeRequest;
+import com.czy.dal.dto.netty.request.UserCityLocationRequest;
 import com.czy.dal.dto.netty.request.UserClickPostRequest;
 import com.czy.dal.netty.Message;
 import com.czy.dal.dto.netty.request.DisconnectRequest;
@@ -128,7 +131,19 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
     }
 
     @Override
+    public void deleteUser(DeleteUserRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, request.getReceiverId(), methodName);
+    }
+
+    @Override
     public void handleAddedUser(HandleAddedUserRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, request.getReceiverId(), methodName);
+    }
+
+    @Override
+    public void postCollect(PostCollectRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
         sendRequest(request, request.getReceiverId(), methodName);
     }
@@ -146,27 +161,9 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
     }
 
     @Override
-    public void likePost(PostLikeRequest request) {
+    public void deleteAllMessage(DeleteAllMessageRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
-    }
-
-    @Override
-    public void collectPost(PostCollectRequest request) {
-        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
-    }
-
-    @Override
-    public void commentPost(PostCommentRequest request) {
-        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
-    }
-
-    @Override
-    public void forwardPost(PostForwardRequest request) {
-        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
+        sendRequest(request, request.getReceiverId(), methodName);
     }
 
     @Override
@@ -176,7 +173,31 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
     }
 
     @Override
+    public void postComment(PostCommentRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, request.getReceiverId(), methodName);
+    }
+
+    @Override
+    public void postForward(PostForwardRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, request.getReceiverId(), methodName);
+    }
+
+    @Override
+    public void postLike(PostLikeRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, request.getReceiverId(), methodName);
+    }
+
+    @Override
     public void notInterested(PostDisLikeRequest request) {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        sendRequest(request, Constants.SERVER_ID, methodName);
+    }
+
+    @Override
+    public void uploadCityLocation(UserCityLocationRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
         sendRequest(request, Constants.SERVER_ID, methodName);
     }

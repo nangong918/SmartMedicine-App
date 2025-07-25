@@ -19,6 +19,7 @@ import com.czy.api.domain.dto.http.request.FetchUserMessageRequest;
 import com.czy.api.domain.dto.http.request.FetchUserMessageResponse;
 import com.czy.api.domain.dto.http.request.KeywordChatHistoryRequest;
 import com.czy.api.domain.dto.http.response.UserNewMessageResponse;
+import com.czy.api.exception.UserExceptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -139,7 +140,7 @@ public class ChatController {
     public BaseResponse<UserNewMessageResponse>
     getUserNewMessage(@Valid @RequestBody BaseHttpRequest request) {
         if (!userService.checkUserExist(request.getSenderId())){
-            return BaseResponse.LogBackError("用户不存在");
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
         }
         // 获取用户的最新消息List
         List<UserChatLastMessageBo> lastMessageList = chatService.getUserAllChatMessage(request.getSenderId());
@@ -181,8 +182,7 @@ public class ChatController {
     getUserKeyChatHistory(@Valid @RequestBody KeywordChatHistoryRequest request) {
         UserDo userDo = userService.getUserByAccount(request.getSenderAccount());
         if (userDo == null || userDo.getId() == null) {
-            String warningMessage = String.format("用户account不存在，account: %s", request.getSenderAccount());
-            return BaseResponse.LogBackError(warningMessage);
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
         }
 
         List<UserChatMessageEsDo> messageEsList;
@@ -196,8 +196,7 @@ public class ChatController {
             // 如果有接收者账户，查询发送者和接收者之间的聊天记录
             UserDo receiverDo = userService.getUserByAccount(request.getReceiverAccount());
             if (receiverDo == null || receiverDo.getId() == null) {
-                String warningMessage = String.format("用户account不存在，account: %s", request.getReceiverAccount());
-                return BaseResponse.LogBackError(warningMessage);
+                return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
             }
             messageEsList = chatSearchService.searchUserChatMessageLimit(userDo.getId(), receiverDo.getId(), request.getKeyword(), 20);
         }

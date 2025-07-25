@@ -1,12 +1,15 @@
 package com.czy.user.service;
 
 import cn.hutool.core.util.IdUtil;
+import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.user_relationship.UserConstant;
+import com.czy.api.converter.domain.user.UserConverter;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
 import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.user.UserInfoAo;
+import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.vo.user.UserVo;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.user.mapper.es.UserEsMapper;
@@ -19,6 +22,7 @@ import com.utils.mvc.redisson.RedissonService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -26,6 +30,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -50,6 +55,9 @@ public class UserServiceImpl implements UserService {
     private final UserFeatureRepository userFeatureRepository;
     private final UserFrontService userFrontService;
     private final RedissonService redissonService;
+    private final UserConverter userConverter;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private OssService ossService;
 
     @Override
     public Integer checkAccountExist(String userAccount) {
@@ -240,5 +248,24 @@ public class UserServiceImpl implements UserService {
         }
 
         return imageId;
+    }
+
+    @Override
+    public UserViewEntity getUserViewEntity(Long userId) {
+        UserDo userDo = userMapper.getUserById(userId);
+        if (userDo == null || userDo.getId() == null){
+            return null;
+        }
+        String avatarUrl = "";
+        if (userDo.getAvatarFileId() != null){
+            List<Long> fileIds = new ArrayList<>();
+            fileIds.add(userDo.getAvatarFileId());
+            List<String> fileUrlsByFileIds = ossService.getFileUrlsByFileIds(fileIds);
+            avatarUrl = Optional.ofNullable(fileUrlsByFileIds)
+                    .filter(list -> !CollectionUtils.isEmpty(list))
+                    .map(l -> l.get(0))
+                    .orElse("");
+        }
+        return userConverter.toUserViewEntity(userDo, avatarUrl);
     }
 }

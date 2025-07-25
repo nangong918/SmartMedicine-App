@@ -3,9 +3,9 @@ package com.czy.appcore.network.netty.api;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.czy.appcore.network.netty.api.receive.FriendApiHandler;
+import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
 import com.czy.dal.annotation.MessageType;
-import com.czy.appcore.network.netty.api.receive.ReceiveAddUserApi;
-import com.czy.appcore.network.netty.api.receive.ReceiveMessageApi;
 import com.czy.appcore.network.netty.queue.SocketMessageQueue;
 import com.czy.dal.netty.Message;
 import com.czy.dal.dto.netty.base.BaseResponseData;
@@ -24,8 +24,8 @@ public class SocketApiResponseHandler {
 //    private static final Map<String, Method> methodMap = new HashMap<>();
 //
 //    static {
-//        registerMethods(ReceiveMessageApi.class);
-//        registerMethods(ReceiveAddUserApi.class);
+//        registerMethods(ChatApiHandler.class);
+//        registerMethods(FriendApiHandler.class);
 //    }
 //
 //    private static void registerMethods(Class<?> apiClass) {
@@ -138,10 +138,10 @@ public class SocketApiResponseHandler {
 
     static {
         messageTypeMap = new HashMap<>();
-        // 处理 ReceiveAddUserApi 接口的注解
-        registerApi(ReceiveAddUserApi.class);
-        // 处理 ReceiveMessageApi 接口的注解
-        registerApi(ReceiveMessageApi.class);
+        // 处理 FriendApiHandler 接口的注解
+        registerApi(FriendApiHandler.class);
+        // 处理 ChatApiHandler 接口的注解
+        registerApi(ChatApiHandler.class);
     }
 
     @SuppressWarnings("unchecked")

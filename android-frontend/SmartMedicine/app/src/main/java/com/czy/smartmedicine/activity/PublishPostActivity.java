@@ -17,6 +17,9 @@ import com.czy.smartmedicine.databinding.ActivityPublishPostBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.PublishViewModel;
 
+/**
+ * 发布帖子界面
+ */
 public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding> {
 
     public PublishPostActivity() {

@@ -14,7 +14,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.BaseConfig;
-import com.czy.appcore.network.api.SyncRequestCallback;
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.utils.OnTextInputEnd;
 import com.czy.appcore.utils.TextChangeLegalCallback;
@@ -27,7 +27,7 @@ import com.czy.baseUtilsLib.timer.CountDownTimerUtil;
 import com.czy.baseUtilsLib.timer.CountdownCallback;
 import com.czy.dal.ao.intent.RegisterActivityIntentAo;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
-import com.czy.dal.dto.http.request.SendSmsInfoRequest;
+import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.vo.entity.UserVo;
@@ -85,7 +85,7 @@ public class RegisterViewModel extends ViewModel {
     }
 
     private void doSendSms(Context context, String phone, String type, SyncRequestCallback callback){
-        SendSmsInfoRequest request = new SendSmsInfoRequest(phone, type);
+        SendSmsRequest request = new SendSmsRequest(phone, type);
         apiRequestImpl.sendSms(
                 request,
                 response -> {
@@ -172,7 +172,7 @@ public class RegisterViewModel extends ViewModel {
         String fileExtension = originalFilename.contains(".") ?
                 originalFilename.substring(originalFilename.lastIndexOf(".")) : ""; // 获取扩展名
 
-        MultipartBody.Part filePart = com.czy.baseUtilsLib.file.FileUtil.createMultipartBodyPart(imageFile);
+        MultipartBody.Part filePart = com.czy.baseUtilsLib.file.FileUtil.createMultipartBodyPart(imageFile, "img");
         // 文件名称，方便后端保存
         String phone = Optional.ofNullable(registerVo.phone)
                         .map(LiveData::getValue)

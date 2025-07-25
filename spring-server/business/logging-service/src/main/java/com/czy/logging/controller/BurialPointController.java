@@ -73,7 +73,7 @@ public class BurialPointController {
 //        }
 //        Long userId = userService.getIdByAccount(request.getUserAccount());
 //        if (userId == null){
-//            return BaseResponse.LogBackError("用户不存在");
+//            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
 //        }
 //        UserCityLocationInfoAo ao = request.getAo();
 //        ao.setUserId(userId);
@@ -91,7 +91,7 @@ public class BurialPointController {
 //        }
 //        Long userId = userService.getIdByAccount(request.getUserAccount());
 //        if (userId == null){
-//            return BaseResponse.LogBackError("用户不存在");
+//            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
 //        }
 //        userActionRecordService.clickPost(userId, request.getPostId(), request.getTimestamp(), request.getTimestamp());
 //        return BaseResponse.getResponseEntitySuccess("上传成功");
@@ -107,7 +107,7 @@ public class BurialPointController {
 //        }
 //        Long userId = userService.getIdByAccount(request.getUserAccount());
 //        if (userId == null){
-//            return BaseResponse.LogBackError("用户不存在");
+//            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
 //        }
 //        userActionRecordService.uploadClickPostAndBrowseTime(userId, request.getPostId(), request.getBrowseDuration(), request.getTimestamp());
 //        return BaseResponse.getResponseEntitySuccess("上传成功");

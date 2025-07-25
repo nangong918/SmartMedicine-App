@@ -3,6 +3,7 @@ package com.czy.api.api.user_relationship;
 
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.user.UserInfoAo;
+import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.vo.user.UserVo;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +43,12 @@ public interface UserService {
      * @return      用户
      */
     UserDo getUserById(Long id);
+
+    /**
+     * 检查用户是否存在
+     * @param userId    用户Id
+     * @return          true:存在
+     */
     boolean checkUserExist(Long userId);
     /**
      * 根据id获取用户
@@ -100,4 +107,11 @@ public interface UserService {
      * @param lockPath  分布式锁映射
      */
     long updateAvatar(String account, String lockPath);
+
+    /**
+     * 获取用户视图
+     * @param userId    用户Id
+     * @return          用户视图
+     */
+    UserViewEntity getUserViewEntity(Long userId);
 }

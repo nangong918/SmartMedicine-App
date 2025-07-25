@@ -1,5 +1,6 @@
 package com.czy.api.converter.domain.relationship;
 
+import com.czy.api.domain.ao.oss.FileResAo;
 import com.czy.api.domain.ao.relationship.AddUserStatusAo;
 import com.czy.api.domain.ao.relationship.SearchFriendApplyAo;
 import com.czy.api.domain.bo.relationship.SearchFriendApplyBo;
@@ -18,6 +19,7 @@ public interface SearchFriendApplyConverter {
     SearchFriendApplyConverter INSTANCE = Mappers.getMapper(SearchFriendApplyConverter.class);
 
     // bo -> ao
+    @Mapping(target = "userId", source = "userId")
     @Mapping(target = "account", source = "account")
     @Mapping(target = "userName", source = "userName")
     @Mapping(target = "phone", source = "phone")
@@ -25,7 +27,7 @@ public interface SearchFriendApplyConverter {
     @Mapping(target = "handleTime", source = "handleTime")
     @Mapping(target = "source", source = "source")
     @Mapping(target = "chatList", source = "chatList")
-    @Mapping(target = "avatarFileId", source = "avatarFileId")
+//    @Mapping(target = "avatarFileId", source = "avatarFileId")
     SearchFriendApplyAo boToAo_(SearchFriendApplyBo bo);
 
     default SearchFriendApplyAo boToAo(SearchFriendApplyBo bo){
@@ -37,6 +39,11 @@ public interface SearchFriendApplyConverter {
         addUserStatusAo.setApplyAccount(bo.getApplyAccount());
         addUserStatusAo.setHandlerAccount(bo.getHandlerAccount());
         ao.setAddUserStatusAo(addUserStatusAo);
+        // file
+        FileResAo fileResAo = new FileResAo();
+        fileResAo.setFileId(bo.getAvatarFileId());
+        fileResAo.setFileUrl(bo.getAvatarUrl());
+        ao.setFileResAo(fileResAo);
         return ao;
     };
 }

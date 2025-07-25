@@ -15,11 +15,12 @@ public class AppException extends RuntimeException{
     /**
      * 错误码
      */
-    private String errCode;
+    private String errCode = "ServiceWarn";
     /**
      * 状态码 [不赋值默认200]
      */
     private int statusCode = 200;
+    private ExceptionEnums exceptionEnums;
 
     /**
      * 构造方法
@@ -27,6 +28,12 @@ public class AppException extends RuntimeException{
      */
     public AppException(String errMsg) {
         super(errMsg);
+    }
+
+    public AppException(ExceptionEnums exceptionEnums){
+        super(exceptionEnums.getMessage());
+        this.errCode = exceptionEnums.getCode();
+        this.exceptionEnums = exceptionEnums;
     }
 
     public AppException(String errMsg, Throwable e) {

@@ -5,13 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -30,11 +27,11 @@ public class ScheduledTaskService {
 
 
     // @Scheduled与WebSocket冲突，会导致Bean named 'defaultSockJsTaskScheduler' is expected to be of type 'org.springframework.scheduling.TaskScheduler' but was actually of type 'org.springframework.beans.factory.support.NullBean'
-    @Scheduled(fixedRate = 1000L * 60 * 24) // 每隔一天执行一次
-    public void functionTest12EveryDay() {
-        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Shanghai"));
-        log.info("@Scheduled定时任务：，当前时间： {}", now);
-    }
+//    @Scheduled(fixedRate = 1000L * 60 * 60 * 24) // 每隔一天执行一次
+//    public void functionTest12EveryDay() {
+//        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Shanghai"));
+//        log.info("@Scheduled定时任务：，当前时间： {}", now);
+//    }
 
     @PostConstruct
     public void init() {

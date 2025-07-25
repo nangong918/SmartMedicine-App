@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.lang.reflect.Field;
@@ -21,7 +20,7 @@ import java.util.Map;
 @Data
 public class BaseHttpRequest extends BaseRequest {
 
-    @NotEmpty(message = "发送者 Account 不能为空")
+    @NotNull(message = "发送者 Id 不能为空")
     public Long senderId = -1L;
     public Long receiverId = -1L;
     public String type = "";

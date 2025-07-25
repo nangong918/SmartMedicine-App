@@ -1,34 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:background="@color/red_10"
-    android:layout_height="70dp">
+    android:layout_height="130dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/nagi_text"
-        android:layout_width="130dp"
+        android:id="@+id/nagi_name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/nagi_logo"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
         android:maxLines="1"
         android:layout_toEndOf="@id/nagi_logo"
-        android:text="Main 设置"
+        tools:text="鸦鸭鸭鸭羽天下第一！"
+        android:textStyle="bold"
+        android:textSize="17sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/nagi_account"
+        app:layout_constraintTop_toBottomOf="@+id/nagi_name"
+        app:layout_constraintStart_toStartOf="@+id/nagi_name"
+        android:layout_marginTop="5dp"
+        android:layout_width="300dp"
+        android:maxLines="1"
+        android:layout_height="wrap_content"
+        tools:text="czyczy918"
         android:textSize="14sp" />
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/nagi_phone"
+        app:layout_constraintTop_toBottomOf="@+id/nagi_account"
+        app:layout_constraintStart_toStartOf="@+id/nagi_name"
+        android:layout_marginTop="5dp"
+        android:layout_width="300dp"
+        android:maxLines="1"
+        android:layout_height="wrap_content"
+        tools:text="1322596900"
+        android:textSize="14sp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/setImage"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="38dp"
-        android:layout_toEndOf="@id/nagi_logo"
+        android:layout_marginTop="5dp"
+        app:layout_constraintStart_toStartOf="@+id/nagi_phone"
+        app:layout_constraintTop_toBottomOf="@+id/nagi_phone"
         android:src="@drawable/settings_24px" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/nagi_logo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
@@ -37,4 +65,4 @@
         android:layout_marginBottom="12dp" />
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

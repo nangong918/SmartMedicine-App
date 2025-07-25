@@ -31,7 +31,7 @@ import lombok.Data;
  */
 @Data
 public class SearchFriendApplyBo {
-
+    public Long userId;
     public String account;
     public String userName;
     public String phone;
@@ -45,6 +45,8 @@ public class SearchFriendApplyBo {
     public String chatList;
     // 头fileId
     public Long avatarFileId;
+    // 头像url
+    public String avatarUrl;
     // 申请状态
     public int applyStatus;
     // 处理状态

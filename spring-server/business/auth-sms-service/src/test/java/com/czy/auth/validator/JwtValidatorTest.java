@@ -14,7 +14,12 @@ import org.springframework.util.StringUtils;
  * @date 2025/4/10 16:09
  */
 class JwtValidatorTest {
-    private static final LoginJwtPayloadAo jwtPayloadAo = new LoginJwtPayloadAo("13225", "123456", UserConstant.JWT_FUNCTION_LOGIN);
+    private static final LoginJwtPayloadAo jwtPayloadAo = new LoginJwtPayloadAo(
+            1L,
+            "13225",
+            "13225",
+            "123456",
+            UserConstant.JWT_FUNCTION_LOGIN);
     @Test
     void validateToken() {
         String token = JwtGenerator.generateToken_s(jwtPayloadAo, JwtConstant.ACCESS_TOKEN_GENERATE_KEY, 30L);

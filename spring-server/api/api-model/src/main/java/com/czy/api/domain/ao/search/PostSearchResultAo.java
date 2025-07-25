@@ -22,6 +22,6 @@ public class PostSearchResultAo {
     private List<PostPreviewVo> tokenizedPostPreviewVoList = new ArrayList<>();
     // similar匹配结果
     private List<PostPreviewVo> similarPostPreviewVoList = new ArrayList<>();
-    // recommend匹配结果
+    // recommend匹配结果 (上述全部无结果，然后：为您推荐)
     private List<PostPreviewVo> recommendPostPreviewVoList = new ArrayList<>();
 }

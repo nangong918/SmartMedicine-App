@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class IsRegisterResponse {
+    public String account;
     public String phone;
     public boolean isRegister;
 }

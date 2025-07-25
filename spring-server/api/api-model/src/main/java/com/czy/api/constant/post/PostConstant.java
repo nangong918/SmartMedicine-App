@@ -16,6 +16,8 @@ public class PostConstant {
     public static final String serviceRoute = "/" + serviceName;
     // Post_CONTROLLER
     public static final String Post_CONTROLLER = "/post";
+    // UserBriefController
+    public static final String USER_BRIEF_CONTROLLER = "/userBrief";
     // postPublishFirst
     public static final String POST_PUBLISH_FIRST = "/postPublishFirst";
     // postUpdateAll

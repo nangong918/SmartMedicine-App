@@ -4,7 +4,11 @@ import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.post.PostConstant;
+import com.czy.api.domain.Do.post.collect.PostCollectDo;
 import com.czy.api.domain.ao.post.PostAo;
+import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.post.mapper.mysql.PostCollectMapper;
+import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.service.PostFileService;
 import com.czy.post.service.PostService;
@@ -18,8 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -40,6 +47,8 @@ public class PostServiceImpl implements PostService {
     private final PostFileService postFileService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
+    private final PostInfoMapper postInfoMapper;
+    private final PostCollectMapper postCollectMapper;
 
     @Override
     public long releasePostWithoutFile(@NonNull PostAo postAo) {
@@ -172,5 +181,28 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostAo> findPostsByIdList(List<Long> idList) {
         return postStorageService.findPostAoByIds(idList);
+    }
+
+    @Override
+    public List<PostInfoAo> findPublishedPostsByUserId(Long userId, int pageNum, int pageSize) {
+        List<Long> postIdList = postInfoMapper.getPostInfoDoListByAuthorIdPaging(userId, pageNum, pageSize);
+        if (CollectionUtils.isEmpty(postIdList)){
+            return new ArrayList<>();
+        }
+
+        return postStorageService.findPostInfoAoList(postIdList);
+    }
+
+    @Override
+    public List<PostInfoAo> findCollectedPostsByUserId(Long userId, int pageNum, int pageSize) {
+        List<PostCollectDo> postAoList = postCollectMapper.findPostCollectsByUserIdPaging(userId, pageNum, pageSize);
+        if (CollectionUtils.isEmpty(postAoList)){
+            return new ArrayList<>();
+        }
+        List<Long> postIdList = postAoList.stream()
+                .map(PostCollectDo::getPostId)
+                .collect(Collectors.toList());
+
+        return postStorageService.findPostInfoAoList(postIdList);
     }
 }

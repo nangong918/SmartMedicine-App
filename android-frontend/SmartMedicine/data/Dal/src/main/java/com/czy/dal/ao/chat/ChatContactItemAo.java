@@ -3,6 +3,7 @@ package com.czy.dal.ao.chat;
 import android.util.Log;
 
 import com.czy.baseUtilsLib.json.BaseBean;
+import com.czy.dal.constant.Constants;
 import com.czy.dal.vo.entity.contact.ChatContactItemVo;
 
 import java.util.Objects;
@@ -19,6 +20,7 @@ public class ChatContactItemAo implements BaseBean {
     // data
     // 联系人账号信息，用于搜索
     public String contactAccount;
+    public Long userId;
 
     public ChatContactItemAo() {
 
@@ -26,6 +28,7 @@ public class ChatContactItemAo implements BaseBean {
 
     public ChatContactItemAo(ChatContactItemAo ao){
         this.contactAccount = ao.contactAccount;
+        this.userId = ao.userId;
         this.chatContactItemVo = new ChatContactItemVo(ao.chatContactItemVo);
     }
 
@@ -44,9 +47,11 @@ public class ChatContactItemAo implements BaseBean {
             String thisName = chatContactItemVo.name == null ? "" : chatContactItemVo.name;
             String thatName = that.chatContactItemVo.name == null ? "" : that.chatContactItemVo.name;
             String thisMessagePreview = chatContactItemVo.messagePreview == null ? "" : chatContactItemVo.messagePreview;
+            Long thisUserId = userId == null ? Constants.ERROR_ID : userId;
             String thatMessagePreview = that.chatContactItemVo.messagePreview == null ? "" : that.chatContactItemVo.messagePreview;
             String thisTime = chatContactItemVo.time == null ? "" : chatContactItemVo.time;
             String thatTime = that.chatContactItemVo.time == null ? "" : that.chatContactItemVo.time;
+            Long thatUserId = that.userId == null ? Constants.ERROR_ID : userId;
             int thisUnreadCount = chatContactItemVo.unreadCount;
             int thatUnreadCount = that.chatContactItemVo.unreadCount;
             String thisContactAccount = contactAccount == null ? "" : contactAccount;
@@ -55,6 +60,7 @@ public class ChatContactItemAo implements BaseBean {
             return thisName.equals(thatName) &&
                     thisMessagePreview.equals(thatMessagePreview) &&
                     thisTime.equals(thatTime) &&
+                    thisUserId.equals(thatUserId) &&
                     thisUnreadCount == thatUnreadCount &&
                     thisContactAccount.equals(thatContactAccount);
         }
@@ -70,9 +76,11 @@ public class ChatContactItemAo implements BaseBean {
         String thisName = chatContactItemVo.name == null ? "" : chatContactItemVo.name;
         String thatName = that.chatContactItemVo.name == null ? "" : that.chatContactItemVo.name;
         String thisMessagePreview = chatContactItemVo.messagePreview == null ? "" : chatContactItemVo.messagePreview;
+        Long thisUserId = userId == null ? Constants.ERROR_ID : userId;
         String thatMessagePreview = that.chatContactItemVo.messagePreview == null ? "" : that.chatContactItemVo.messagePreview;
         String thisTime = chatContactItemVo.time == null ? "" : chatContactItemVo.time;
         String thatTime = that.chatContactItemVo.time == null ? "" : that.chatContactItemVo.time;
+        Long thatUserId = that.userId == null ? Constants.ERROR_ID : userId;
         int thisUnreadCount = chatContactItemVo.unreadCount;
         int thatUnreadCount = that.chatContactItemVo.unreadCount;
         String thisContactAccount = contactAccount == null ? "" : contactAccount;
@@ -86,11 +94,13 @@ public class ChatContactItemAo implements BaseBean {
         Log.i("ChatContactItemAo", "equals::equals: " + (thisName.equals(thatName) &&
                 thisMessagePreview.equals(thatMessagePreview) &&
                 thisTime.equals(thatTime) &&
+                thisUserId.equals(thatUserId) &&
                 thisUnreadCount == thatUnreadCount &&
                 thisContactAccount.equals(thatContactAccount)));
 
         return thisName.equals(thatName) &&
                 thisMessagePreview.equals(thatMessagePreview) &&
+                thisUserId.equals(thatUserId) &&
                 thisTime.equals(thatTime) &&
                 thisUnreadCount == thatUnreadCount &&
                 thisContactAccount.equals(thatContactAccount);

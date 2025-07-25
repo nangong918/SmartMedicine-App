@@ -37,6 +37,8 @@ import lombok.Data;
 
 @Data
 public class UserViewEntity implements BaseBean {
+    // userId
+    public Long userId;
 
     // user账号
     public String userAccount;
@@ -47,10 +49,14 @@ public class UserViewEntity implements BaseBean {
     // 用户头像
     public Long avatarFileId;
 
+    // 用户头像url
+    public String avatarUrl;
+
     public void setByLoginUserDo(UserDo userDo) {
         if (userDo == null){
             return;
         }
+        this.userId = userDo.getId();
         this.userAccount = userDo.getAccount();
         this.userName = userDo.getUserName();
         this.avatarFileId = userDo.getAvatarFileId();
