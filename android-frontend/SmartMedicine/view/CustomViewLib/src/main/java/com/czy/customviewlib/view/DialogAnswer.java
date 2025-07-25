@@ -23,9 +23,12 @@ public class DialogAnswer {
         setCloseClickListener();
     }
 
-    public void setContent(String question, String answer, View.OnClickListener onViewDetailsClickListener) {
+    public void setContent(String question, String answer) {
         binding.tvQuestion.setText(question);
         binding.tvAnswer.setText(answer);
+    }
+
+    public void setViewDetailsClickListener(View.OnClickListener onViewDetailsClickListener){
         binding.btnViewConfirm.setOnClickListener(onViewDetailsClickListener);
     }
 

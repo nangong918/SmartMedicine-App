@@ -50,7 +50,7 @@ public enum FuzzySearchResponseEnum {
                 return value;
             }
         }
-        return null;
+        return NO_RESULT;
     }
 
 }

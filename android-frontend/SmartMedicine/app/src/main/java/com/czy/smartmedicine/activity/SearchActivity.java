@@ -8,7 +8,9 @@ import android.widget.SearchView;
 
 import androidx.lifecycle.ViewModel;
 
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseActivity;
+import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.ao.intent.SearchActivityIntentAo;
@@ -153,6 +155,9 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                 SearchActivityPostViewModel searchActivityPostViewModel = (SearchActivityPostViewModel)viewModel;
                 searchActivityPostViewModel.init(new SearchPostVo(), this);
                 searchActivityPostViewModel.initRecyclerAdapter(binding.rclvSearch, this);
+                searchActivityPostViewModel.initDialogAnswer(this, v -> {
+                    // todo 跳转到跟ai聊天的详情页
+                });
             }
             case PRODUCTS -> {
             }
@@ -242,9 +247,28 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
         }
         switch (intentAo.searchType){
             case USER -> {
-                ((SearchActivityUserViewModel)viewModel).searchUsers(query);
+                SearchActivityUserViewModel searchActivityUserVo = (SearchActivityUserViewModel)viewModel;
+                searchActivityUserVo.searchUsers(query);
             }
             case GROUP -> {}
+            case POST -> {
+                SearchActivityPostViewModel searchActivityPostViewModel = (SearchActivityPostViewModel)viewModel;
+                NetworkLoadUtils.showDialog(this);
+                searchActivityPostViewModel.searchPosts(this, query, new SyncRequestCallback() {
+                    @Override
+                    public void onThrowable(Throwable throwable) {
+                        NetworkLoadUtils.dismissDialog();
+                    }
+
+                    @Override
+                    public void onAllRequestSuccess() {
+                        NetworkLoadUtils.dismissDialog();
+                    }
+                });
+            }
+            case PRODUCTS -> {
+
+            }
         }
     }
 }

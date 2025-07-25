@@ -27,6 +27,10 @@ public class BaseConfig extends com.czy.baseUtilsLib.config.BaseConfig {
     public static final String PHONE_PREFIX = "1";
     // 电话长度
     public static final int PHONE_LENGTH = 11;
+    // 搜索字段最小长度
+    public static final int SEARCH_FIELD_MIN_LENGTH = 2;
+    // 搜索字段最大长度
+    public static final int SEARCH_FIELD_MAX_LENGTH = 15;
 
     // StartActivity 等待时长
     public static final int DELAY_TIME = 2000;
