@@ -32,6 +32,7 @@ import com.czy.smartmedicine.activity.PostActivity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 public class PostClickManager {
@@ -282,5 +283,20 @@ public class PostClickManager {
         }
 
         return postTypes;
+    }
+
+    public List<PostAo> getPostAoByPostVo(List<PostVo> postVoList){
+        if (postVoList == null || postVoList.isEmpty()){
+            return new ArrayList<>();
+        }
+        List<PostInfoUrlAo> postInfoUrlAos = Optional.of(postVoList)
+                .map(list -> {
+                    // stream流转换
+                    return list.stream()
+                            .map(PostInfoUrlAo::getPostInfoUsrAoByVo)
+                            .collect(Collectors.toList());
+                })
+                .orElse(new ArrayList<>());
+        return getPostAoListByResponse(postInfoUrlAos);
     }
 }

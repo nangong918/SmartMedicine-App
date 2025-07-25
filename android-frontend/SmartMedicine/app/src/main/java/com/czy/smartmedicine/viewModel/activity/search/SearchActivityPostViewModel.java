@@ -1,5 +1,6 @@
 package com.czy.smartmedicine.viewModel.activity.search;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 
@@ -18,6 +19,11 @@ import com.czy.customviewlib.view.home.OnRecommendCardClick;
 import com.czy.customviewlib.view.home.PostAdapter;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.home.PostAo;
+import com.czy.dal.ao.search.AppFunctionAo;
+import com.czy.dal.ao.search.PersonalEvaluateAo;
+import com.czy.dal.ao.search.PostRecommendAo;
+import com.czy.dal.ao.search.PostSearchResultAo;
+import com.czy.dal.ao.search.QuestionAo;
 import com.czy.dal.constant.Constants;
 import com.czy.dal.constant.search.FuzzySearchResponseEnum;
 import com.czy.dal.dto.http.request.FuzzySearchRequest;
@@ -124,6 +130,7 @@ public class SearchActivityPostViewModel extends ViewModel {
                 );
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void handleSearchPosts(BaseResponse<FuzzySearchResponse> response, Context context, SyncRequestCallback callback, Object param) {
         Integer fuzzySearchType = Optional.ofNullable(response)
                 .map(BaseResponse::getData)
@@ -155,10 +162,38 @@ public class SearchActivityPostViewModel extends ViewModel {
             case NO_RESULT -> {
                 ToastUtils.showToast(context, "没有搜索结果");
             }
-            case NOT_NATURAL_LANGUAGE_RESULT -> {
+            case NOT_NATURAL_LANGUAGE_RESULT, TALK_RESULT -> {
                 String answer = (String) data;
                 dialogAnswer.setContent(question, answer);
                 dialogAnswer.show();
+            }
+            case SEARCH_POST_RESULT -> {
+                PostSearchResultAo ao = (PostSearchResultAo) data;
+                searchPostVo.postAoList.clear();
+                List<PostAo> likePostAoList = postClickManager.getPostAoByPostVo(ao.likePostPreviewVoList);
+                List<PostAo> tokenizedPostAoList = postClickManager.getPostAoByPostVo(ao.tokenizedPostPreviewVoList);
+                List<PostAo> similarPostAoList = postClickManager.getPostAoByPostVo(ao.similarPostPreviewVoList);
+                List<PostAo> recommendPostAoList = postClickManager.getPostAoByPostVo(ao.recommendPostPreviewVoList);
+
+                searchPostVo.postAoList.addAll(likePostAoList);
+                searchPostVo.postAoList.addAll(tokenizedPostAoList);
+                searchPostVo.postAoList.addAll(similarPostAoList);
+                searchPostVo.postAoList.addAll(recommendPostAoList);
+
+                // ui通知items变化
+                postAdapter.notifyDataSetChanged();
+            }
+            case QUESTION_RESULT -> {
+                QuestionAo ao = (QuestionAo) data;
+            }
+            case RECOMMEND_QUESTION_RESULT -> {
+                PostRecommendAo ao = (PostRecommendAo) data;
+            }
+            case APP_FUNCTION_RESULT -> {
+                AppFunctionAo ao = (AppFunctionAo) data;
+            }
+            case PERSONAL_QUESTION_RESULT -> {
+                PersonalEvaluateAo ao = (PersonalEvaluateAo) data;
             }
         }
         callback.onAllRequestSuccess();
