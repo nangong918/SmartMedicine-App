@@ -5,6 +5,7 @@ import json.BaseBean;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -14,8 +15,8 @@ import javax.validation.constraints.Size;
 @Data
 public class FuzzySearchRequest implements BaseBean {
     // 用户account，用于搜索的context特征上下文
-    @NotEmpty(message = "发送者账号不能为空")
-    public String userAccount;
+    @NotNull(message = "发送者Id不能为空")
+    public Long userId;
     // 搜索的句子 最大长度16，最小长度2
     @NotEmpty(message = "搜索的句子不能为空")
     @Size(

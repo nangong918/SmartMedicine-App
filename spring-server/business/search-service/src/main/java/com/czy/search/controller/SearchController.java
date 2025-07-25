@@ -12,6 +12,7 @@ import com.czy.api.constant.search.SearchConstant;
 import com.czy.api.constant.search.SearchLevel;
 import com.czy.api.constant.search.result.PersonalResultIntent;
 import com.czy.api.constant.search.result.PostRecommendResult;
+import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.Do.user.UserHealthDataDo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostNerResult;
@@ -21,12 +22,14 @@ import com.czy.api.domain.ao.search.PersonalEvaluateAo;
 import com.czy.api.domain.ao.search.PostRecommendAo;
 import com.czy.api.domain.ao.search.PostSearchResultAo;
 import com.czy.api.domain.ao.search.QuestionAo;
+import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.api.domain.dto.python.MedicalPredictionResponse;
 import com.czy.api.domain.dto.python.NlpSearchResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
 import com.czy.api.domain.vo.post.PostPreviewVo;
+import com.czy.api.exception.UserExceptions;
 import com.czy.search.component.KafkaSender;
 import com.czy.search.config.SearchTestConfig;
 import com.czy.search.service.FuzzySearchService;
@@ -97,12 +100,18 @@ public class SearchController {
      * @return  搜索结果
      */
     @PostMapping("/fuzzy")
-    public FuzzySearchResponse fuzzySearch(@Valid @RequestBody FuzzySearchRequest request) {
+    public BaseResponse<FuzzySearchResponse> fuzzySearch(@Valid @RequestBody FuzzySearchRequest request) {
         // 搜索这种消耗资源的操作需要给用户上限流和分布式锁
+
+        // 账号检查
+        UserDo userDo = userService.getUserById(request.getUserId());
+        if (userDo == null || userDo.getId() == null){
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
+        }
 
         // 提取搜素句子
         String sentence = request.getSentence();
-        Long userId = userService.getIdByAccount(request.getUserAccount());
+
 
         log.info("debug状态：{}", searchTestConfig.isDebug);
         if (searchTestConfig.isDebug){
@@ -111,7 +120,8 @@ public class SearchController {
             nlpSearchResponse.setMessage("");
             nlpSearchResponse.setType(NlpResultEnum.SEARCH.getCode());
 
-            return handleNlpResult(nlpSearchResponse, sentence, userId);
+            FuzzySearchResponse response = handleNlpResult(nlpSearchResponse, sentence, userDo.getId());
+            return BaseResponse.getResponseEntitySuccess(response);
         }
 
         // python服务处理nlp搜索
@@ -123,12 +133,12 @@ public class SearchController {
                 .map(ResponseEntity::getBody)
                 .orElse(null);
 
-        FuzzySearchResponse response = handleNlpResult(nlpSearchResponse, sentence, userId);
+        FuzzySearchResponse response = handleNlpResult(nlpSearchResponse, sentence, userDo.getId());
 
         // kafka发送搜索行为
-        searchActionKafkaSend(response, userId);
+        searchActionKafkaSend(response, userDo.getId());
 
-        return response;
+        return BaseResponse.getResponseEntitySuccess(response);
     }
 
     /**
