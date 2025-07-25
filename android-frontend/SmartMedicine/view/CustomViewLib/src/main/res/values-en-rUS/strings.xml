@@ -58,4 +58,9 @@
     <string name="sign_not_register_prompt">手机号码未注册</string>
     <string name="sign_not_register_prompt2">请先注册您的号码</string>
     <string name="please_give_permission">请给予权限</string>
+    <string name="search_user">搜索用户</string>
+    <string name="search_group">搜索群组</string>
+    <string name="search_post">搜索帖子</string>
+    <string name="search_products">搜索商品</string>
+    <string name="search">搜索</string>
 </resources>

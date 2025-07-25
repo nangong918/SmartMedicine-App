@@ -1,4 +1,4 @@
-package com.czy.smartmedicine.viewModel.activity;
+package com.czy.smartmedicine.viewModel.activity.search;
 
 import android.os.Handler;
 import android.os.Looper;

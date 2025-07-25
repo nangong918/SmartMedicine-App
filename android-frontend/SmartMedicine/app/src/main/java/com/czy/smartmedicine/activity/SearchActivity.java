@@ -19,7 +19,7 @@ import com.czy.dal.vo.fragmentActivity.SearchActivityUserVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySearchBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.activity.SearchActivityUserViewModel;
+import com.czy.smartmedicine.viewModel.activity.search.SearchActivityUserViewModel;
 
 import java.util.Optional;
 
@@ -82,28 +82,19 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 
         switch (searchEnum){
             case USER -> {
-                title = "搜索用户";
+                title = getString(com.czy.customviewlib.R.string.search_user);
             }
             case GROUP -> {
-                title = "搜索群组";
+                title = getString(com.czy.customviewlib.R.string.search_group);
             }
-            case ARTICLE -> {
-                title = "搜索文章";
+            case POST -> {
+                title = getString(com.czy.customviewlib.R.string.search_post);
             }
-            case VIDEO -> {
-                title = "搜索视频";
-            }
-            case MUSIC -> {
-                title = "搜索音乐";
-            }
-            case PHOTO -> {
-                title = "搜索图片";
-            }
-            case DOCUMENT -> {
-                title = "搜索文档";
+            case PRODUCTS -> {
+                title = getString(com.czy.customviewlib.R.string.search_products);
             }
             case OTHER -> {
-                title = "搜索";
+                title = getString(com.czy.customviewlib.R.string.search);
             }
         }
 
@@ -147,7 +138,15 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                 viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchActivityUserViewModel.class);
                 ((SearchActivityUserViewModel)viewModel).init(searchActivityUserVo);
             }
-            case GROUP -> {}
+            case GROUP -> {
+
+            }
+            case POST -> {
+
+            }
+            case PRODUCTS -> {
+
+            }
         }
     }
     private SearchActivityUserVo searchActivityUserVo;
