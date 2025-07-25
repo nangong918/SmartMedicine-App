@@ -64,4 +64,5 @@
     <string name="search_products">搜索商品</string>
     <string name="search">搜索</string>
     <string name="post_error">帖子异常，请查看其他帖子</string>
+    <string name="view_details">查看详情</string>
 </resources>
