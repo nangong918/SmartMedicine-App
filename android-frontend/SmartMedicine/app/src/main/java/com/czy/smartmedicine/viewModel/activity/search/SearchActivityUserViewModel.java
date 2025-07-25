@@ -25,7 +25,7 @@ import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
-import com.czy.dal.vo.fragmentActivity.SearchActivityUserVo;
+import com.czy.dal.vo.fragmentActivity.search.SearchUserVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ViewModelUtil;
@@ -49,14 +49,14 @@ public class SearchActivityUserViewModel extends ViewModel {
 
     //---------------------------Vo Ld---------------------------
 
-    public SearchActivityUserVo searchActivityUserVo = new SearchActivityUserVo();
+    public SearchUserVo searchUserVo = new SearchUserVo();
 
-    public void init(SearchActivityUserVo searchActivityUserVo){
-        initVo(searchActivityUserVo);
+    public void init(SearchUserVo searchUserVo){
+        initVo(searchUserVo);
     }
 
-    private void initVo(SearchActivityUserVo searchActivityUserVo) {
-        this.searchActivityUserVo = searchActivityUserVo;
+    private void initVo(SearchUserVo searchUserVo) {
+        this.searchUserVo = searchUserVo;
     }
 
     private void showSearchUsers(List<SearchFriendApplyAo> userList) {
@@ -83,7 +83,7 @@ public class SearchActivityUserViewModel extends ViewModel {
                             }
                             return list;
                         }).orElse(new LinkedList<>());
-        searchActivityUserVo.addContactListVo.contactItemList.setValue(addContactList);
+        searchUserVo.addContactListVo.contactItemList.setValue(addContactList);
     }
 
     //---------------------------NetWork---------------------------
@@ -185,7 +185,7 @@ public class SearchActivityUserViewModel extends ViewModel {
             }
 
             // 更新Ao
-            AddUserStatusAo ao = Optional.ofNullable(this.searchActivityUserVo)
+            AddUserStatusAo ao = Optional.ofNullable(this.searchUserVo)
                     .map(vo -> vo.addContactListVo)
                     .map(avo -> avo.contactItemList)
                     .map(LiveData::getValue)
@@ -209,7 +209,7 @@ public class SearchActivityUserViewModel extends ViewModel {
             ao.handleStatus = handleStatusEnum.code;
 
             // 更新ui
-            Optional.ofNullable(this.searchActivityUserVo)
+            Optional.ofNullable(this.searchUserVo)
                     .map(vo -> vo.addContactListVo)
                     .map(addContactListVo -> addContactListVo.getByAccount(applierAccount))
                     .ifPresent(item -> {
@@ -231,7 +231,7 @@ public class SearchActivityUserViewModel extends ViewModel {
             }
 
             // 更新Ao
-            AddUserStatusAo ao = Optional.ofNullable(this.searchActivityUserVo)
+            AddUserStatusAo ao = Optional.ofNullable(this.searchUserVo)
                     .map(vo -> vo.addContactListVo)
                     .map(avo -> avo.contactItemList)
                     .map(LiveData::getValue)
@@ -255,7 +255,7 @@ public class SearchActivityUserViewModel extends ViewModel {
             ao.applyStatus = applyStatusEnum.code;
 
             // 更新ui
-            Optional.ofNullable(this.searchActivityUserVo)
+            Optional.ofNullable(this.searchUserVo)
                     .map(vo -> vo.addContactListVo)
                     .map(addContactListVo -> addContactListVo.getByAccount(handlerAccount))
                     .ifPresent(item -> {
@@ -411,7 +411,7 @@ public class SearchActivityUserViewModel extends ViewModel {
     }
 
     private AddContactItemVo getAddContactItemVo(int position){
-        return Optional.of(searchActivityUserVo)
+        return Optional.of(searchUserVo)
                 .map(v -> v.addContactListVo)
                 .map(o -> o.contactItemList)
                 .map(LiveData::getValue)

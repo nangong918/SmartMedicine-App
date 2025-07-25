@@ -18,7 +18,7 @@ public class FuzzySearchResponse implements BaseBean {
      * <p>
      * 默认是：非自然语言结果
      */
-    public Integer type = FuzzySearchResponseEnum.NOT_NATURAL_LANGUAGE_RESULT.getType();
+    public Integer type = FuzzySearchResponseEnum.NO_RESULT.getType();
     /**
      * 数据；由于有多种数据源，所以用Object存储
      * ERROR_RESULT -> String 返回错误信息

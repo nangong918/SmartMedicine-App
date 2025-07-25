@@ -1,11 +1,11 @@
-package com.czy.dal.vo.fragmentActivity;
+package com.czy.dal.vo.fragmentActivity.search;
 
 import androidx.lifecycle.MutableLiveData;
 
 import com.czy.dal.vo.entity.addContact.AddContactListVo;
 
 
-public class SearchActivityUserVo {
+public class SearchUserVo {
     // 输入框内容
     public final MutableLiveData<String> edtvInputData = new MutableLiveData<>();
 

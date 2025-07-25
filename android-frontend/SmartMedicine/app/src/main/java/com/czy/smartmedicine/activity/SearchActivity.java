@@ -15,9 +15,11 @@ import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.addContact.AddContactAdapter;
 import com.czy.dal.ao.intent.SearchActivityIntentAo;
 import com.czy.dal.constant.SearchEnum;
-import com.czy.dal.vo.fragmentActivity.SearchActivityUserVo;
+import com.czy.dal.vo.fragmentActivity.search.SearchPostVo;
+import com.czy.dal.vo.fragmentActivity.search.SearchUserVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySearchBinding;
+import com.czy.smartmedicine.viewModel.activity.search.SearchActivityPostViewModel;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.search.SearchActivityUserViewModel;
 
@@ -105,7 +107,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
     private void initRecyclerView(){
 //        testRecyclerView();
         adapter = new AddContactAdapter(
-                searchActivityUserVo.addContactListVo.contactItemList.getValue(),
+                searchUserVo.addContactListVo.contactItemList.getValue(),
                 position -> {
             Log.d(TAG, "position:" + position);
         });
@@ -114,7 +116,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 
     private void observeData(){
         // 观察RecyclerView
-        Optional.ofNullable(searchActivityUserVo)
+        Optional.ofNullable(searchUserVo)
                 .map(vo -> vo.addContactListVo)
                 .map(vo -> vo.contactItemList)
                 .ifPresent(liveData -> {
@@ -136,24 +138,30 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
         switch (intentAo.searchType){
             case USER -> {
                 viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchActivityUserViewModel.class);
-                ((SearchActivityUserViewModel)viewModel).init(searchActivityUserVo);
+
+                SearchActivityUserViewModel searchActivityUserVo = (SearchActivityUserViewModel)viewModel;
+                searchActivityUserVo.init(searchUserVo);
             }
             case GROUP -> {
 
             }
             case POST -> {
+                viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchActivityPostViewModel.class);
 
+                SearchActivityPostViewModel searchActivityPostViewModel = (SearchActivityPostViewModel)viewModel;
+                searchActivityPostViewModel.init(new SearchPostVo(), this);
+                searchActivityPostViewModel.initRecyclerAdapter(binding.rclvSearch, this);
             }
             case PRODUCTS -> {
 
             }
         }
     }
-    private SearchActivityUserVo searchActivityUserVo;
+    private SearchUserVo searchUserVo;
     private void initViewModelVo(){
         switch (intentAo.searchType){
             case USER -> {
-                searchActivityUserVo = new SearchActivityUserVo();
+                searchUserVo = new SearchUserVo();
 
                 // 双向绑定
                 // SearchView -> LiveData
@@ -166,14 +174,14 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                     @Override
                     public boolean onQueryTextChange(String newText) {
                         // 更新 LiveData 数据
-                        Optional.of(searchActivityUserVo)
+                        Optional.of(searchUserVo)
                                 .map(vo -> vo.edtvInputData)
                                 .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
                         return true;
                     }
                 });
                 // LiveData -> SearchView
-                searchActivityUserVo.edtvInputData.observe(this, newText -> {
+                searchUserVo.edtvInputData.observe(this, newText -> {
                     if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
                         binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
                     }
