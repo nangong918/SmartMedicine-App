@@ -13,6 +13,7 @@ import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.addContact.AddContactAdapter;
+import com.czy.dal.ao.intent.SearchActivityIntentAo;
 import com.czy.dal.constant.SearchEnum;
 import com.czy.dal.vo.fragmentActivity.SearchActivityUserVo;
 import com.czy.smartmedicine.MainApplication;
@@ -23,7 +24,7 @@ import com.czy.smartmedicine.viewModel.activity.SearchActivityUserViewModel;
 import java.util.Optional;
 
 /**
- * 搜索界面：搜索好友
+ * 搜索界面：搜索好友 / 搜索帖子
  */
 public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 
@@ -36,22 +37,38 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
     @Override
     protected void init() {
         super.init();
+
+        initIntent();
+
         initView();
+
         initViewModel();
     }
 
-    private SearchEnum searchEnum;
+    private void initIntent(){
+        Intent intent = getIntent();
+
+        this.intentAo = (SearchActivityIntentAo) intent.getSerializableExtra(SearchActivityIntentAo.INTENT_KEY);
+        if (intentAo == null){
+            Log.e(TAG, "初始化searchActivity失败, intentAo是null");
+            ToastUtils.showToast(this, "初始化searchActivity失败");
+            finish();
+        }
+        if (intentAo.searchType == null){
+            Log.e(TAG, "初始化searchActivity失败, searchType是null");
+            ToastUtils.showToast(this, "初始化searchActivity失败");
+            finish();
+        }
+    }
+
+    private SearchActivityIntentAo intentAo = null;
+
 
     //----------------------------view----------------------------
 
     private void initView(){
-        Intent intent = getIntent();
 
-        this.searchEnum = Optional.ofNullable(intent.getSerializableExtra(SearchEnum.INTENT_EXTRA_NAME))
-                .map(o -> (SearchEnum) o)
-                .orElse(SearchEnum.OTHER);
-
-        analysisSearchType(searchEnum);
+        analysisSearchType(intentAo.searchType);
 
         initViewModelVo();
 
@@ -119,12 +136,13 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
     }
 
     //----------------------------viewModel----------------------------
-
+;
+    // 由于此页面是复用页面，所以可能需要多个viewModel适配，所以类型使用的是通用viewModel
     private ViewModel viewModel;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        switch (searchEnum){
+        switch (intentAo.searchType){
             case USER -> {
                 viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchActivityUserViewModel.class);
                 ((SearchActivityUserViewModel)viewModel).init(searchActivityUserVo);
@@ -134,7 +152,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
     }
     private SearchActivityUserVo searchActivityUserVo;
     private void initViewModelVo(){
-        switch (searchEnum){
+        switch (intentAo.searchType){
             case USER -> {
                 searchActivityUserVo = new SearchActivityUserVo();
 
@@ -183,7 +201,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
         if (TextUtils.isEmpty(query)){
             ToastUtils.showToastActivity(this, "请输入搜索内容");
         }
-        switch (searchEnum){
+        switch (intentAo.searchType){
             case USER -> {
                 ((SearchActivityUserViewModel)viewModel).searchUsers(query);
             }

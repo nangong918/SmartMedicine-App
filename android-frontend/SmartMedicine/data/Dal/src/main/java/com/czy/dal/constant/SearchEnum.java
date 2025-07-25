@@ -12,8 +12,6 @@ public enum SearchEnum {
 
     private final int code;
 
-    public static final String INTENT_EXTRA_NAME = "SearchActivity.SearchType";
-
     SearchEnum(int code) {
         this.code = code;
     }
@@ -29,6 +27,6 @@ public enum SearchEnum {
                 return item;
             }
         }
-        return null;
+        return USER;
     }
 }

@@ -54,7 +54,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
         try {
             Intent intent = getIntent();
             Optional.ofNullable(intent)
-                    .map(i -> (NewUserGroupActivityIntentAo)i.getSerializableExtra(NewUserGroupActivityIntentAo.class.getName()))
+                    .map(i -> (NewUserGroupActivityIntentAo)i.getSerializableExtra(NewUserGroupActivityIntentAo.INTENT_KEY))
                     .ifPresent(ao -> {
                         this.intentAo = ao;
                         handleUserGroupEnum(ao.userGroupEnum);

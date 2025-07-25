@@ -295,6 +295,8 @@ public interface ApiRequest {
             @Part("userAccount") String userAccount
     );
 
+    //-------------搜索相关--------------
+
     /**
      * 模糊搜索帖子
      * @param request   请求
