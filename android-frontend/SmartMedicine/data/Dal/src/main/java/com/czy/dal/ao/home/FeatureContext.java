@@ -9,7 +9,7 @@ import java.util.List;
  * @date 2025/5/16 17:01
  */
 public class FeatureContext {
-    public final Long userId = null;
+    public Long userId = null;
     // 当前环境感兴趣的帖子
     public List<Long> postIds;
     // timestamp

@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseFragment;
+import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.vo.fragmentActivity.HomeVo;
 import com.czy.smartmedicine.MainApplication;
@@ -59,6 +61,22 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         binding.fbtnPublishPost.setOnClickListener(v -> {
             Intent intent = new Intent(requireActivity(), PublishPostActivity.class);
             startActivity(intent);
+        });
+
+        binding.lyMain.setOnRefreshListener(() -> {
+            NetworkLoadUtils.showDialog(requireContext());
+            viewModel.getRecommendPosts(requireContext(), new SyncRequestCallback() {
+                @Override
+                public void onThrowable(Throwable throwable) {
+                    NetworkLoadUtils.dismissDialog();
+                }
+
+                @Override
+                public void onAllRequestSuccess() {
+                    NetworkLoadUtils.dismissDialog();
+                    binding.lyMain.setRefreshing(false);
+                }
+            });
         });
     }
 

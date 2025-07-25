@@ -1,11 +1,13 @@
 package com.czy.smartmedicine.viewModel.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.customviewlib.view.home.OnRecommendCardClick;
@@ -19,6 +21,7 @@ import com.czy.dal.vo.fragmentActivity.HomeVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.manager.PostClickManager;
+import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import java.util.ArrayList;
@@ -73,15 +76,25 @@ public class HomeViewModel extends ViewModel {
     }
 
     // 获取推荐帖子 todo 适配一下（debug模式下暂时不进行用户已推荐过滤）
-    public void getRecommendPosts(){
+    public void getRecommendPosts(Context context, SyncRequestCallback callback){
         FeatureContext currentFeatureContext = getFeatureContext();
         RecommendPostRequest request = new RecommendPostRequest();
         request.featureContext = currentFeatureContext;
-        request.userAccount = MainApplication.getInstance().getUserLoginInfoAo().account;
+        request.featureContext.userId = MainApplication.getInstance().getUserLoginInfoAo().userId;
         apiRequestImpl.getRecommendPosts(
                 request,
-                this::handleGetPostList,
-                ViewModelUtil::globalThrowableToast
+                response -> {
+                    ResponseTool.handleSyncResponseEx(
+                            response,
+                            context,
+                            callback,
+                            this::handleGetPostList
+                    );
+                },
+                throwable -> {
+                    callback.onThrowable(throwable);
+                    ViewModelUtil.globalThrowableToast(throwable);
+                }
         );
     }
 
@@ -90,7 +103,7 @@ public class HomeViewModel extends ViewModel {
      * @param response  接口返回的数据
      */
     @SuppressLint("NotifyDataSetChanged")
-    private void handleGetPostList(BaseResponse<RecommendPostResponse> response) {
+    private void handleGetPostList(BaseResponse<RecommendPostResponse> response, Context context, SyncRequestCallback callback) {
         List<PostInfoUrlAo> postInfoAos = Optional.ofNullable(response)
                 .map(BaseResponse::getData)
                 .map(RecommendPostResponse::getPostInfoUrlAos)
@@ -119,6 +132,8 @@ public class HomeViewModel extends ViewModel {
         for (int i = beforeSize; i < homeList.size(); i++) {
             postAdapter.notifyItemInserted(i);
         }
+
+        callback.onAllRequestSuccess();
     }
 
     //---------------------------Logic---------------------------
@@ -135,6 +150,7 @@ public class HomeViewModel extends ViewModel {
 
     private final FeatureContext featureContext = new FeatureContext();
 
+    // todo 实现的时候需要再采集更多的数据，如点击时间，点击时长，交给后端的规则集去处理
     public void setFeatureContext(List<Long> postIds){
         // 添加全部上下文
         featureContext.postIds.addAll(postIds);

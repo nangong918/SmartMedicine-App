@@ -4,7 +4,6 @@ import com.czy.api.domain.ao.feature.FeatureContext;
 import lombok.Data;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -16,6 +15,4 @@ public class RecommendPostRequest {
     @Valid
     @NotNull(message = "特征上下文不能为空")
     private FeatureContext featureContext;
-    @NotEmpty(message = "用户账号不能为空")
-    private String userAccount;
 }
