@@ -94,7 +94,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
 
         newUserGroupViewModel.newUserGroupVo.addContactListVo = new AddContactListVo();
         AddContactAdapter adapter = new AddContactAdapter(
-                newUserGroupViewModel.newUserGroupVo.addContactListVo.contactItemList.getValue(),
+                newUserGroupViewModel.newUserGroupVo.addContactListVo.contactItemList,
                 position -> {
             Log.d(TAG, "position:" + position);
         });

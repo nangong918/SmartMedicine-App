@@ -7,12 +7,10 @@ import android.util.Log;
 import android.widget.SearchView;
 
 import androidx.lifecycle.ViewModel;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.addContact.AddContactAdapter;
 import com.czy.dal.ao.intent.SearchActivityIntentAo;
 import com.czy.dal.constant.SearchEnum;
 import com.czy.dal.vo.fragmentActivity.search.SearchPostVo;
@@ -20,8 +18,8 @@ import com.czy.dal.vo.fragmentActivity.search.SearchUserVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySearchBinding;
 import com.czy.smartmedicine.viewModel.activity.search.SearchActivityPostViewModel;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.search.SearchActivityUserViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.Optional;
 
@@ -103,20 +101,26 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
         binding.topBar.setTitle(title);
     }
 
-    RecyclerView.Adapter<RecyclerView.ViewHolder> adapter;
     private void initRecyclerView(){
 //        testRecyclerView();
-        adapter = new AddContactAdapter(
-                searchUserVo.addContactListVo.contactItemList.getValue(),
+//        adapter = new AddContactAdapter(
+//                searchUserVo.addContactListVo.contactItemList,
+//                position -> {
+//            Log.d(TAG, "position:" + position);
+//        });
+//        binding.rclvSearch.setAdapter(adapter);
+        ((SearchActivityUserViewModel)viewModel).initRecyclerAdapter(
+                binding.rclvSearch,
                 position -> {
-            Log.d(TAG, "position:" + position);
-        });
-        binding.rclvSearch.setAdapter(adapter);
+                    Log.d(TAG, "position:" + position);
+                }
+        );
     }
 
     private void observeData(){
         // 观察RecyclerView
-        Optional.ofNullable(searchUserVo)
+        // 取消观察list
+/*        Optional.ofNullable(searchUserVo)
                 .map(vo -> vo.addContactListVo)
                 .map(vo -> vo.contactItemList)
                 .ifPresent(liveData -> {
@@ -125,7 +129,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                                 .map(adapter -> (AddContactAdapter)adapter)
                                 .ifPresent(a -> a.setChatItems(list));
                     });
-                });
+                });*/
     }
 
     //----------------------------viewModel----------------------------
@@ -140,7 +144,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                 viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchActivityUserViewModel.class);
 
                 SearchActivityUserViewModel searchActivityUserVo = (SearchActivityUserViewModel)viewModel;
-                searchActivityUserVo.init(searchUserVo);
+                searchActivityUserVo.init(new SearchUserVo());
             }
             case GROUP -> {
 

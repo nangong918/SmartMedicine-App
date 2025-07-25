@@ -7,7 +7,6 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.api.handle.AsyncRequestCallback;
@@ -64,7 +63,7 @@ public class NewUserGroupViewModel extends ViewModel {
         List<AddContactItemVo> list = Optional.ofNullable(newUserGroupVo)
                 .map(vo -> vo.addContactListVo)
                 .map(listVo -> listVo.contactItemList)
-                .map(LiveData::getValue)
+//                .map(LiveData::getValue)
                 .map(LinkedList::new)
                 .orElse(new LinkedList<>());
         if (rclAdapter != null){
@@ -226,7 +225,7 @@ public class NewUserGroupViewModel extends ViewModel {
             AddUserStatusAo ao = Optional.ofNullable(this.newUserGroupVo)
                     .map(vo -> vo.addContactListVo)
                     .map(avo -> avo.contactItemList)
-                    .map(LiveData::getValue)
+//                    .map(LiveData::getValue)
                     .map(list -> {
                         for (AddContactItemVo item : list) {
                             if (TextUtils.isEmpty(item.account)){
@@ -268,7 +267,7 @@ public class NewUserGroupViewModel extends ViewModel {
             AddUserStatusAo ao = Optional.ofNullable(this.newUserGroupVo)
                     .map(vo -> vo.addContactListVo)
                     .map(avo -> avo.contactItemList)
-                    .map(LiveData::getValue)
+//                    .map(LiveData::getValue)
                     .map(list -> {
                         for (AddContactItemVo item : list) {
                             if (TextUtils.isEmpty(item.account)){
@@ -340,7 +339,7 @@ public class NewUserGroupViewModel extends ViewModel {
         List<AddContactItemVo> newList = Optional.ofNullable(this.newUserGroupVo)
                 .map(vo -> vo.addContactListVo)
                 .map(ctlist -> ctlist.contactItemList)
-                .map(LiveData::getValue)
+//                .map(LiveData::getValue)
                 .orElse(new ArrayList<>());
 
         if (this.newUserItemAoList != null){
@@ -372,8 +371,9 @@ public class NewUserGroupViewModel extends ViewModel {
             }
         }
         // 取消部分livedata；list类型如果使用livedata是无法观察到内部数据的。list<livedata<item>>又太耗性能
-        Optional.ofNullable(this.newUserGroupVo.addContactListVo.contactItemList)
-                .ifPresent(listLd -> listLd.setValue(newList));
+//        Optional.ofNullable(this.newUserGroupVo.addContactListVo.contactItemList)
+//                .ifPresent(listLd -> listLd.setValue(newList));
+        this.newUserGroupVo.addContactListVo.contactItemList = new ArrayList<>(newList);
         updateRclList();
 //                        .map(LiveData::getValue)
 //                        .ifPresent(l -> l.addAll(addContactListVo.contactItemList.getValue()));
@@ -531,7 +531,7 @@ public class NewUserGroupViewModel extends ViewModel {
         return Optional.of(newUserGroupVo)
                 .map(v -> v.addContactListVo)
                 .map(o -> o.contactItemList)
-                .map(LiveData::getValue)
+//                .map(LiveData::getValue)
                 .map(list -> {
                     if (list.size() >= position){
                         return list.get(position);
