@@ -165,4 +165,8 @@ public class ResponseMessageType {
         public final static String DELETE_FILE = responseRoot + root + "deleteFile";
     }
 
+    public final static class Error{
+        public final static String root = "Error:";
+        public final static String NETTY_ERROR = responseRoot + root + "netty";
+    }
 }

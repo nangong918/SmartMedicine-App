@@ -23,6 +23,8 @@ import com.czy.api.domain.dto.socket.response.PostForwardResponse;
 import com.czy.api.domain.dto.socket.response.PostLikeResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionCommentPost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionOperatePost;
+import com.czy.api.exception.PostExceptions;
+import com.czy.api.utils.NettyUtils;
 import com.czy.post.component.KafkaSender;
 import com.czy.post.handler.api.PostApi;
 import com.czy.post.mq.sender.RabbitMqSender;
@@ -192,13 +194,35 @@ public class PostHandler implements PostApi{
         rabbitMqSender.push(nettyServerResponse);
     }
 
+    // 评论帖子： netty响应三方：1.评论者（成功评论）2.帖子作者（帖子被评论）3.被评论者（收到评论）
     @Override
     public void postComment(PostCommentRequest request) {
         NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
+
+        // 1. 参数校验
         boolean isOptionLegal = checkOption(request);
         if (!isOptionLegal){
             return;
         }
+
+        // 2. 数据操作
+        // 发布评论
+        if (NettyOptionEnum.ADD.getCode() == request.getOptionCode()){
+
+        }
+        // 删除评论
+        else if (NettyOptionEnum.DELETE.getCode() == request.getOptionCode()){
+            Long commentId = request.getCommentId();
+            if (commentId == null){
+                // Mq -> sender
+                NettyUtils.sentErrorMessage(
+                        request.getSenderId(),
+                        PostExceptions.DELETE_COMMENT_ERROR,
+                        rabbitMqSender
+                );
+            }
+        }
+
         PostCommentResponse postCommentResponse = new PostCommentResponse();
         postCommentResponse.setOptionCode(request.getOptionCode());
         postCommentResponse.setCommentId(request.getCommentId());

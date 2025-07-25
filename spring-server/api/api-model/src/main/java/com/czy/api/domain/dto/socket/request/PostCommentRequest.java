@@ -17,7 +17,7 @@ public class PostCommentRequest extends NettyOptionRequest {
     // postId
     public Long postId;
     // 评论id (删除评论的时候用)
-    public Long commentId;
+    public Long commentId = null;
     // 评论内容
     public String content;
     // 此评论回复的评论id（索引）；null able（null就是直接回复帖子；是一级评论）

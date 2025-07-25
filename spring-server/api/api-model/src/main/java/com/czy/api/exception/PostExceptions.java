@@ -18,6 +18,10 @@ public enum PostExceptions implements ExceptionEnums {
     POST_CONTENT_ILLEGAL("P_10003", "帖子内容不合规，请修改"),
     // 修改帖子失败，你不能不修改任何数据
     UPDATE_POST_ERROR("P_10004", "修改帖子失败，你不能不修改任何数据"),
+    // 评论失败
+    COMMENT_ERROR("P_10005", "评论失败"),
+    // 删除评论失败
+    DELETE_COMMENT_ERROR("P_10006", "删除评论失败"),
     ;
 
     private final String code;

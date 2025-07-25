@@ -241,9 +241,12 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 7月3~7月5
 
 todo 推荐系统已经推荐的post编辑进入已推荐过,召回阶段不再选取
+todo 一定要加上Spark,Hive,Hadoop,实现大数据
+todo 点赞(netty)，评论(netty+http)，收藏(netty)，转发(netty)
 todo 明天继续跑通IM和post
 商品购物系统需要加入(后台配置秒杀活动)
 修好这个项目基本的全部Bug并且基本实现大部分通用功能再开新项目
+todo 推荐页面加入部分购物推荐, 搜索商品, 挂号预约(秒杀)
 
 ##### 重构+细化
 * spring学习
