@@ -40,9 +40,9 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 
         initIntent();
 
-        initView();
-
         initViewModel();
+
+        initView();
     }
 
     private void initIntent(){
@@ -146,9 +146,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                 SearchActivityUserViewModel searchActivityUserVo = (SearchActivityUserViewModel)viewModel;
                 searchActivityUserVo.init(new SearchUserVo());
             }
-            case GROUP -> {
-
-            }
+            case GROUP -> {}
             case POST -> {
                 viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchActivityPostViewModel.class);
 
@@ -157,15 +155,14 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                 searchActivityPostViewModel.initRecyclerAdapter(binding.rclvSearch, this);
             }
             case PRODUCTS -> {
-
             }
         }
     }
-    private SearchUserVo searchUserVo;
+
     private void initViewModelVo(){
         switch (intentAo.searchType){
             case USER -> {
-                searchUserVo = new SearchUserVo();
+                SearchActivityUserViewModel searchActivityUserViewModel = (SearchActivityUserViewModel)viewModel;
 
                 // 双向绑定
                 // SearchView -> LiveData
@@ -178,20 +175,51 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                     @Override
                     public boolean onQueryTextChange(String newText) {
                         // 更新 LiveData 数据
-                        Optional.of(searchUserVo)
-                                .map(vo -> vo.edtvInputData)
-                                .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
+                        SearchActivityUserViewModel searchActivityUserViewModel = (SearchActivityUserViewModel)viewModel;
+                        Optional.ofNullable(searchActivityUserViewModel.searchUserVo)
+                                        .map(vo -> vo.edtvInputData)
+                                        .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
                         return true;
                     }
                 });
                 // LiveData -> SearchView
-                searchUserVo.edtvInputData.observe(this, newText -> {
+                searchActivityUserViewModel.searchUserVo.edtvInputData.observe(this, newText -> {
                     if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
                         binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
                     }
                 });
             }
             case GROUP -> {}
+            case POST -> {
+                SearchActivityPostViewModel searchActivityPostViewModel = (SearchActivityPostViewModel)viewModel;
+
+                // 双向绑定
+                // SearchView -> LiveData
+                binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        SearchActivityPostViewModel searchActivityPostViewModel = (SearchActivityPostViewModel)viewModel;
+                        Optional.ofNullable(searchActivityPostViewModel.searchPostVo)
+                                .map(vo -> vo.edtvInputData)
+                                .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
+                        return true;
+                    }
+                });
+                // LiveData -> SearchView
+                searchActivityPostViewModel.searchPostVo.edtvInputData.observe(this, newText -> {
+                    if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
+                        binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
+                    }
+                });
+            }
+            case PRODUCTS -> {
+
+            }
         }
     }
 
