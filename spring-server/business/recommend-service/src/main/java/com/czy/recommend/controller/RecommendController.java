@@ -34,7 +34,7 @@ import java.util.List;
 @RestController
 @Validated // 启用校验
 @RequiredArgsConstructor // 自动注入@Autowired
-@RequestMapping(RecommendConstant.RECOMMEND_CONTROLLER)
+@RequestMapping(RecommendConstant.POST_RECOMMEND_CONTROLLER)
 public class RecommendController {
 
     private final RecommendService recommendService;
