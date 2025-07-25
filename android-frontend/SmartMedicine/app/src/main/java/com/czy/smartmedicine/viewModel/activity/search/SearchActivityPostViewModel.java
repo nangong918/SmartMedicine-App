@@ -2,6 +2,7 @@ package com.czy.smartmedicine.viewModel.activity.search;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.czy.customviewlib.view.home.OnRecommendCardClick;
 import com.czy.customviewlib.view.home.PostAdapter;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.home.PostAo;
+import com.czy.dal.ao.home.PostInfoUrlAo;
 import com.czy.dal.ao.search.AppFunctionAo;
 import com.czy.dal.ao.search.PersonalEvaluateAo;
 import com.czy.dal.ao.search.PostRecommendAo;
@@ -26,6 +28,7 @@ import com.czy.dal.ao.search.PostSearchResultAo;
 import com.czy.dal.ao.search.QuestionAo;
 import com.czy.dal.constant.Constants;
 import com.czy.dal.constant.search.FuzzySearchResponseEnum;
+import com.czy.dal.constant.search.PersonalResultIntent;
 import com.czy.dal.dto.http.request.FuzzySearchRequest;
 import com.czy.dal.dto.http.response.FuzzySearchResponse;
 import com.czy.dal.vo.fragmentActivity.search.SearchPostVo;
@@ -169,33 +172,73 @@ public class SearchActivityPostViewModel extends ViewModel {
             }
             case SEARCH_POST_RESULT -> {
                 PostSearchResultAo ao = (PostSearchResultAo) data;
-                searchPostVo.postAoList.clear();
-                List<PostAo> likePostAoList = postClickManager.getPostAoByPostVo(ao.likePostPreviewVoList);
-                List<PostAo> tokenizedPostAoList = postClickManager.getPostAoByPostVo(ao.tokenizedPostPreviewVoList);
-                List<PostAo> similarPostAoList = postClickManager.getPostAoByPostVo(ao.similarPostPreviewVoList);
-                List<PostAo> recommendPostAoList = postClickManager.getPostAoByPostVo(ao.recommendPostPreviewVoList);
 
-                searchPostVo.postAoList.addAll(likePostAoList);
-                searchPostVo.postAoList.addAll(tokenizedPostAoList);
-                searchPostVo.postAoList.addAll(similarPostAoList);
-                searchPostVo.postAoList.addAll(recommendPostAoList);
-
-                // ui通知items变化
-                postAdapter.notifyDataSetChanged();
+                loadSearchResult(ao);
             }
             case QUESTION_RESULT -> {
                 QuestionAo ao = (QuestionAo) data;
+                PostSearchResultAo postSearchResultAo = ao.postSearchResultAo;
+
+                if (postSearchResultAo != null){
+                    loadSearchResult(postSearchResultAo);
+                }
+                String answer = Optional.ofNullable(ao.diseaseQuestionAo)
+                        .map(dao -> dao.answer)
+                        .orElse("");
+                if (!TextUtils.isEmpty(answer)){
+                    dialogAnswer.setContent(question, answer);
+                    dialogAnswer.show();
+                }
             }
             case RECOMMEND_QUESTION_RESULT -> {
                 PostRecommendAo ao = (PostRecommendAo) data;
+                List<PostInfoUrlAo> postInfoUrlAos = ao.postInfoUrlAos;
+                if(postInfoUrlAos != null && !postInfoUrlAos.isEmpty()){
+                    List<PostAo> postAoList = postClickManager.getPostAoListByResponse(postInfoUrlAos);
+                    searchPostVo.postAoList.clear();
+                    searchPostVo.postAoList.addAll(postAoList);
+                    postAdapter.notifyDataSetChanged();
+                }
             }
             case APP_FUNCTION_RESULT -> {
                 AppFunctionAo ao = (AppFunctionAo) data;
+                // 暂未开发
+                ToastUtils.showToast(context, ao.message);
             }
             case PERSONAL_QUESTION_RESULT -> {
                 PersonalEvaluateAo ao = (PersonalEvaluateAo) data;
+                PersonalResultIntent intentType = PersonalResultIntent.getByType(ao.intent);
+                Double heartDisease = Optional.ofNullable(ao.heartDisease)
+                        .orElse(0.0) * 100.0;
+                Double diabetes = Optional.ofNullable(ao.diabetes)
+                        .orElse(0.0) * 100.0;
+                @SuppressLint("DefaultLocale") String message = String.format("%s \n %s: %.2f%%\n %s: %.2f%%",
+                        intentType.getName(),
+                        context.getString(com.czy.customviewlib.R.string.possible_heart_disease),
+                        heartDisease,
+                        context.getString(com.czy.customviewlib.R.string.possible_diabetes),
+                        diabetes
+                );
+                ToastUtils.showToast(context, message);
             }
         }
         callback.onAllRequestSuccess();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void loadSearchResult(PostSearchResultAo ao){
+        searchPostVo.postAoList.clear();
+        List<PostAo> likePostAoList = postClickManager.getPostAoByPostVo(ao.likePostPreviewVoList);
+        List<PostAo> tokenizedPostAoList = postClickManager.getPostAoByPostVo(ao.tokenizedPostPreviewVoList);
+        List<PostAo> similarPostAoList = postClickManager.getPostAoByPostVo(ao.similarPostPreviewVoList);
+        List<PostAo> recommendPostAoList = postClickManager.getPostAoByPostVo(ao.recommendPostPreviewVoList);
+
+        searchPostVo.postAoList.addAll(likePostAoList);
+        searchPostVo.postAoList.addAll(tokenizedPostAoList);
+        searchPostVo.postAoList.addAll(similarPostAoList);
+        searchPostVo.postAoList.addAll(recommendPostAoList);
+
+        // ui通知items变化
+        postAdapter.notifyDataSetChanged();
     }
 }
