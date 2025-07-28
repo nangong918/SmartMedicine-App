@@ -169,4 +169,9 @@ public class ResponseMessageType {
         public final static String root = "Error:";
         public final static String NETTY_ERROR = responseRoot + root + "netty";
     }
+
+    public final static class Success{
+        public final static String root = "Success:";
+        public final static String NETTY_SUCCESS = responseRoot + root + "netty";
+    }
 }

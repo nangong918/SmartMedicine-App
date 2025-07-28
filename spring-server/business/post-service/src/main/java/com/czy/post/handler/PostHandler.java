@@ -13,6 +13,7 @@ import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.base.NettyOptionRequest;
+import com.czy.api.domain.dto.service.CollectOperateResultDto;
 import com.czy.api.domain.dto.service.CommentResultDto;
 import com.czy.api.domain.dto.socket.request.PostCollectRequest;
 import com.czy.api.domain.dto.socket.request.PostCommentRequest;
@@ -20,6 +21,7 @@ import com.czy.api.domain.dto.socket.request.PostDisLikeRequest;
 import com.czy.api.domain.dto.socket.request.PostFolderRequest;
 import com.czy.api.domain.dto.socket.request.PostForwardRequest;
 import com.czy.api.domain.dto.socket.request.PostLikeRequest;
+import com.czy.api.domain.dto.socket.response.CollectionOperateResponse;
 import com.czy.api.domain.dto.socket.response.NettyServerResponse;
 import com.czy.api.domain.dto.socket.response.PostCommentResponse;
 import com.czy.api.domain.dto.socket.response.PostForwardResponse;
@@ -96,9 +98,9 @@ public class PostHandler implements PostApi{
 
     @Override
     public void postCollect(PostCollectRequest request) {
-        NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
         boolean isOptionLegal = checkOption(request);
         if (!isOptionLegal){
+            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
         if (ObjectUtils.isEmpty(request.getPostId())){
@@ -109,110 +111,185 @@ public class PostHandler implements PostApi{
             return;
         }
 
-        Integer operateType = PostOperation.NULL.getCode();
-        // 收藏帖子
-        if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
-            try {
+        NettyOptionEnum nettyOptionEnum = NettyOptionEnum.getByCode(request.getOptionCode());
+        switch (nettyOptionEnum){
+            // 收藏
+            case ADD: {
+                // 收藏
                 Long folderId = request.getFolderId();
-                if (folderId == null || folderId == 0L){
-                    // 创建文件夹
+                if (folderId == null || NettyConstants.ERROR_ID.equals(folderId)){
+                    // 查找/创建文件夹
                     folderId = postHandleService.createPostCollectFolder(request.getSenderId(), PostConstant.DEFAULT_COLLECT_FOLDER_NAME);
                 }
                 postHandleService.postCollect(request.getPostId(), folderId);
-                operateType = PostOperation.COLLECT.getCode();
-            } catch (Exception e){
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
+
+                // 发送消息
+                NettyUtils.sendSuccessMessage(
+                        request.getSenderId(),
+                        "收藏成功",
+                        rabbitMqSender
+                );
+                break;
             }
-        }
-        // 取消收藏
-        if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
-            try {
+            // 取消收藏
+            case DELETE: {
                 Long folderId = request.getFolderId();
                 if (folderId == null){
                     return;
                 }
+
+                // 取消收藏
                 postHandleService.deletePostCollect(request.getPostId(), folderId);
-                operateType = PostOperation.CANCEL_COLLECT.getCode();
-            } catch (Exception e){
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
+
+                // 发送消息
+                NettyUtils.sendSuccessMessage(
+                        request.getSenderId(),
+                        "取消收藏成功",
+                        rabbitMqSender
+                );
             }
-        }
-        // 修改收藏夹
-        if (request.getOptionCode() == NettyOptionEnum.UPDATE.getCode()){
-            try {
+            // 更改收藏
+            case UPDATE: {
                 Long folderId = request.getFolderId();
                 if (folderId == null || request.getNewFolderId() == null){
                     return;
                 }
                 postHandleService.postCollectUpdate(request.getPostId(), folderId, request.getNewFolderId());
-            } catch (Exception e){
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
+            }
+            // 未知
+            default: {
+                NettyUtils.sentErrorMessage(
+                        request.getSenderId(),
+                        PostExceptions.OPERATION_TYPE_NOT_EXIST,
+                        rabbitMqSender
+                );
+                return;
             }
         }
-        // netty通知前端 内部会设置发送id是serverId
-        NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
-        // Mq -> user
-        rabbitMqSender.push(nettyServerResponse);
-        // kafka -> log -> feature
-        UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
-        userActionOperatePost.setUserId(request.getSenderId());
-        userActionOperatePost.setPostId(request.getPostId());
-        userActionOperatePost.setOperateType(operateType);
 
-        try {
-            kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
-        } catch (Exception e) {
-            log.error("用户显性行为Kafka传输异常：[收藏] [userId:{}] [postId:{}]", request.getSenderId(), request.getPostId(), e);
+        // 通过netty operation -> 帖子操作类型
+        PostOperation operateEnum = Optional.of(request.getOptionCode())
+                .map(code -> {
+                    NettyOptionEnum optionEnum = NettyOptionEnum.getByCode(code);
+                    switch (optionEnum){
+                        case ADD:
+                            return PostOperation.COLLECT;
+                        case DELETE:
+                            return PostOperation.CANCEL_COLLECT;
+                        default:
+                            return PostOperation.NULL;
+                    }
+                })
+                .orElse(PostOperation.NULL);
+
+        // kafka -> log -> feature
+        if (!PostOperation.NULL.equals(operateEnum)){
+            UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
+            userActionOperatePost.setUserId(request.getSenderId());
+            userActionOperatePost.setPostId(request.getPostId());
+            userActionOperatePost.setOperateType(operateEnum.getCode());
+
+            try {
+                kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
+            } catch (Exception e) {
+                log.error("用户显性行为Kafka传输异常：[收藏] [userId:{}] [postId:{}]", request.getSenderId(), request.getPostId(), e);
+            }
         }
     }
 
     @Override
     public void collectFolder(PostFolderRequest request) {
-        NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
         boolean isOptionLegal = checkOption(request);
         if (!isOptionLegal){
+            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
 
-        // 创建收藏夹
-        if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
-            try {
-                if (!StringUtils.hasText(request.getName())){
-                    return;
+        CollectOperateResultDto resultDto = operateCollectFolder(request);
+        boolean isSuccess = resultDto.isSuccess();
+        if (isSuccess){
+            if (resultDto.getOptionEnum().equals(NettyOptionEnum.ADD)){
+                Long collectionFolderId = resultDto.getCollectFolderId();
+                if (collectionFolderId == null){
+                    // id 为 null 创建收藏夹失败
+                    NettyUtils.sentErrorMessage(request.getSenderId(), PostExceptions.CREATE_COLLECT_FOLDER_FAILED, rabbitMqSender);
                 }
-                postHandleService.createPostCollectFolder(request.getSenderId(), request.getName());
-            } catch (Exception e){
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
+                else {
+                    CollectionOperateResponse response = new CollectionOperateResponse();
+                    response.setCollectionFolderId(collectionFolderId);
+                    response.setSenderId(NettyConstants.SERVER_ID);
+                    response.setReceiverId(request.getSenderId());
+                    response.setOptionCode(NettyOptionEnum.ADD.getCode());
+                    response.setTimestamp(String.valueOf(System.currentTimeMillis()));
+                    rabbitMqSender.push(response);
+                }
+            }
+            else {
+                NettyUtils.sendSuccessMessage(request.getSenderId(), "操作成功", rabbitMqSender);
             }
         }
-        // 删除收藏夹
-        if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
-            try {
-                Long folderId = request.getFolderId();
-                if (folderId == null){
-                    return;
-                }
-                postHandleService.deletePostCollectFolder(folderId, request.getSenderId());
-            } catch (Exception e){
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
-            }
+        else {
+            NettyUtils.sentErrorMessage(request.getSenderId(), PostExceptions.COLLECT_FOLDER_OPERATION_FAILED, rabbitMqSender);
         }
-        // 更改搜藏夹
-        if (request.getOptionCode() == NettyOptionEnum.UPDATE.getCode()){
-            try {
-                if (request.getFolderId() == null || request.getNewName() == null){
-                    return;
-                }
-                postHandleService.updatePostCollectFolder(request.getFolderId(), request.getSenderId(), request.getNewName());
-            } catch (Exception e){
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
-            }
-        }
+    }
 
-        // netty通知前端 内部会设置发送id是serverId
-        NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
-        // Mq -> user
-        rabbitMqSender.push(nettyServerResponse);
+    /**
+     * 操作收藏夹
+     * @param request   收藏夹请求
+     * @return          是否成功
+     */
+    private CollectOperateResultDto operateCollectFolder(PostFolderRequest request){
+        NettyOptionEnum optionEnum = NettyOptionEnum.getByCode(request.getOptionCode());
+        switch (optionEnum) {
+            case ADD: {
+                try {
+                    if (!StringUtils.hasText(request.getName())){
+                        return new CollectOperateResultDto();
+                    }
+                    Long collectFolderId = postHandleService.createPostCollectFolder(
+                            request.getSenderId(),
+                            request.getName()
+                    );
+                    if (collectFolderId != null){
+                        return new CollectOperateResultDto(collectFolderId);
+                    }
+                    else {
+                        return new CollectOperateResultDto(optionEnum);
+                    }
+                } catch (Exception e){
+                    log.error("创建收藏夹失败", e);
+                    return new CollectOperateResultDto(optionEnum);
+                }
+            }
+            case DELETE: {
+                try {
+                    Long folderId = request.getFolderId();
+                    if (folderId == null){
+                        return new CollectOperateResultDto(optionEnum);
+                    }
+                    postHandleService.deletePostCollectFolder(folderId, request.getSenderId());
+                    return new CollectOperateResultDto(optionEnum, true);
+                } catch (Exception e){
+                    log.error("删除收藏夹失败", e);
+                    return new CollectOperateResultDto(optionEnum);
+                }
+            }
+            case UPDATE: {
+                try {
+                    if (request.getFolderId() == null || request.getNewName() == null){
+                        return new CollectOperateResultDto();
+                    }
+                    postHandleService.updatePostCollectFolder(request.getFolderId(), request.getSenderId(), request.getNewName());
+                    return new CollectOperateResultDto(optionEnum, true);
+                } catch (Exception e){
+                    log.error("更新收藏夹失败", e);
+                    return new CollectOperateResultDto(optionEnum);
+                }
+            }
+            default: {
+                return new CollectOperateResultDto(optionEnum);
+            }
+        }
     }
 
     // 评论帖子： netty响应三方：1.评论者（成功评论）2.帖子作者（帖子被评论）3.被评论者（收到评论）
@@ -221,6 +298,7 @@ public class PostHandler implements PostApi{
         // 1. 参数校验
         boolean isOptionLegal = checkOption(request);
         if (!isOptionLegal){
+            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
         if (request.getPostId() == null){
@@ -257,7 +335,6 @@ public class PostHandler implements PostApi{
                 // 获取返回对象
                 PostCommentResponse response = new PostCommentResponse();
                 // 从request获取其他属性
-                sePostCommentResponseByRequest(response, request);
                 response.setCommentId(request.getCommentId());
                 response.setPostId(postId);
                 response.setContent(content);
@@ -448,6 +525,7 @@ public class PostHandler implements PostApi{
         Integer operateType = PostOperation.NULL.getCode();
         boolean isOptionLegal = checkOption(request);
         if (!isOptionLegal){
+            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
         if (ObjectUtils.isEmpty(request.getPostId())){
@@ -508,6 +586,7 @@ public class PostHandler implements PostApi{
         Integer operateType = PostOperation.NULL.getCode();
         boolean isOptionLegal = checkOption(request);
         if (!isOptionLegal){
+            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
         if (ObjectUtils.isEmpty(request.getPostId())){

@@ -47,4 +47,12 @@
         FROM post_collect_folder
         WHERE user_id = #{userId}
     </select>
+    <select id="findPostCollectFolderByUserIdAndName"
+            resultType="com.czy.api.domain.Do.post.collect.PostCollectFolderDo">
+        SELECT
+        <include refid="doColumns"/>
+        FROM post_collect_folder
+        WHERE user_id = #{userId}
+            AND collect_folder_name = #{collectFolderName}
+    </select>
 </mapper>

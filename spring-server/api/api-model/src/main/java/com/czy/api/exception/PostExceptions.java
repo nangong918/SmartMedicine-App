@@ -29,7 +29,12 @@ public enum PostExceptions implements ExceptionEnums {
     // 没有评论的权限
     NO_COMMENT_PERMISSION("P_10009", "没有评论的权限"),
     // 对帖子操作行为异常
-    OPERATION_TYPE_NOT_EXIST("P_10010", "对帖子操作行为异常");
+    OPERATION_TYPE_NOT_EXIST("P_10010", "对帖子操作行为异常"),
+    // 收藏夹操作失败
+    COLLECT_FOLDER_OPERATION_FAILED("P_10011", "收藏夹操作失败"),
+    // 创建收藏夹失败
+    CREATE_COLLECT_FOLDER_FAILED("P_10012", "创建收藏夹失败"),
+    ;
 
     private final String code;
     private final String message;
