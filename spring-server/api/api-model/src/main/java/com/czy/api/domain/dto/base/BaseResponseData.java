@@ -4,6 +4,7 @@ import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.converter.base.BaseResponseConverter;
 import com.czy.api.domain.entity.event.Message;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import exception.ExceptionEnums;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +29,11 @@ public class BaseResponseData extends BaseRequestData implements ToDataMap{
     // 提供给Json的无参构造器
     public BaseResponseData(){
 
+    }
+
+    public void setError(@NotNull ExceptionEnums exceptionEnums){
+        this.code = exceptionEnums.getCode();
+        this.message = exceptionEnums.getMessage();
     }
 
     public BaseResponseData(BaseResponseData baseResponseData){
