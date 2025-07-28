@@ -3,14 +3,17 @@ package com.czy.post.handler;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.feature.PostOperation;
 import com.czy.api.constant.netty.KafkaConstant;
+import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.NettyOptionEnum;
 import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.base.NettyOptionRequest;
+import com.czy.api.domain.dto.service.CommentResultDto;
 import com.czy.api.domain.dto.socket.request.PostCollectRequest;
 import com.czy.api.domain.dto.socket.request.PostCommentRequest;
 import com.czy.api.domain.dto.socket.request.PostDisLikeRequest;
@@ -21,23 +24,32 @@ import com.czy.api.domain.dto.socket.response.NettyServerResponse;
 import com.czy.api.domain.dto.socket.response.PostCommentResponse;
 import com.czy.api.domain.dto.socket.response.PostForwardResponse;
 import com.czy.api.domain.dto.socket.response.PostLikeResponse;
+import com.czy.api.domain.dto.socket.response.PostOperationBaseResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionCommentPost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionOperatePost;
+import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PostExceptions;
+import com.czy.api.exception.UserExceptions;
 import com.czy.api.utils.NettyUtils;
 import com.czy.post.component.KafkaSender;
 import com.czy.post.handler.api.PostApi;
+import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostHandleService;
 import com.czy.post.service.PostService;
 import com.czy.springUtils.annotation.HandlerType;
+import exception.ExceptionEnums;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 
 /**
@@ -56,6 +68,7 @@ public class PostHandler implements PostApi{
     private final RabbitMqSender rabbitMqSender;
     private final PostCommentConverter postCommentConverter;
     private final PostService postService;
+    private final PostInfoMapper postInfoMapper;
     private final PostCommentService postCommentService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
@@ -67,12 +80,14 @@ public class PostHandler implements PostApi{
             return false;
         }
         if (request.getSenderId() == null){
-            log.warn("发送者id为空");
+            NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
+            nettyServerResponse.setError(UserExceptions.USER_NOT_EXIST);
             return false;
         }
         if (request.getOptionCode() == NettyOptionEnum.NULL.getCode()){
             NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
-            nettyServerResponse.setMessage("操作类型不能为null");
+            // 操作行为异常
+            nettyServerResponse.setError(PostExceptions.OPERATION_TYPE_NOT_EXIST);
             rabbitMqSender.push(nettyServerResponse);
             return false;
         }
@@ -87,8 +102,13 @@ public class PostHandler implements PostApi{
             return;
         }
         if (ObjectUtils.isEmpty(request.getPostId())){
+            NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
+            // 帖子参数不存在
+            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
+            rabbitMqSender.push(nettyServerResponse);
             return;
         }
+
         Integer operateType = PostOperation.NULL.getCode();
         // 收藏帖子
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
@@ -153,6 +173,7 @@ public class PostHandler implements PostApi{
         if (!isOptionLegal){
             return;
         }
+
         // 创建收藏夹
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
             try {
@@ -197,77 +218,93 @@ public class PostHandler implements PostApi{
     // 评论帖子： netty响应三方：1.评论者（成功评论）2.帖子作者（帖子被评论）3.被评论者（收到评论）
     @Override
     public void postComment(PostCommentRequest request) {
-        NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
-
         // 1. 参数校验
         boolean isOptionLegal = checkOption(request);
         if (!isOptionLegal){
+            return;
+        }
+        if (request.getPostId() == null){
+            return;
+        }
+        if (ObjectUtils.isEmpty(request.getPostId())){
+            NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
+            // 帖子参数不存在
+            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
+            rabbitMqSender.push(nettyServerResponse);
             return;
         }
 
         // 2. 数据操作
         // 发布评论
         if (NettyOptionEnum.ADD.getCode() == request.getOptionCode()){
+            String content = request.getContent();
+            if (!StringUtils.hasText(content)){
+                // Mq -> sender Error
+                NettyUtils.sentErrorMessage(
+                        request.getSenderId(),
+                        PostExceptions.EMPTY_COMMENT_ERROR,
+                        rabbitMqSender
+                );
+            }
+            Long senderId = request.getSenderId();
+            Long postId = request.getPostId();
+            Long replyCommentId = request.getReplyCommentId();
 
+            // 执行评论
+            CommentResultDto resultDto = postCommentService.comment(senderId, postId, replyCommentId, content);
+
+            if (resultDto.isSuccess()){
+                // 获取返回对象
+                PostCommentResponse response = new PostCommentResponse();
+                // 从request获取其他属性
+                sePostCommentResponseByRequest(response, request);
+                response.setCommentId(request.getCommentId());
+                response.setPostId(postId);
+                response.setContent(content);
+                response.setReplyCommentId(replyCommentId);
+
+                // 需要通知被评论的人 (在此之前需要设置postId)
+                notifyAllUsers(request, replyCommentId, response);
+            }
+            else {
+                ExceptionEnums exceptionEnums = Optional.ofNullable(resultDto.getExceptionEnums())
+                        .orElse(PostExceptions.COMMENT_ERROR);
+
+                // Mq -> sender Error
+                NettyUtils.sentErrorMessage(
+                        request.getSenderId(),
+                        exceptionEnums,
+                        rabbitMqSender
+                );
+            }
         }
         // 删除评论
         else if (NettyOptionEnum.DELETE.getCode() == request.getOptionCode()){
             Long commentId = request.getCommentId();
             if (commentId == null){
-                // Mq -> sender
+                // Mq -> sender Error
                 NettyUtils.sentErrorMessage(
                         request.getSenderId(),
                         PostExceptions.DELETE_COMMENT_ERROR,
                         rabbitMqSender
                 );
             }
-        }
+            else {
+                // 数据库操作
+                postCommentService.deleteComment(request.getPostId(), commentId, request.getSenderId());
 
-        PostCommentResponse postCommentResponse = new PostCommentResponse();
-        postCommentResponse.setOptionCode(request.getOptionCode());
-        postCommentResponse.setCommentId(request.getCommentId());
-        postCommentResponse.setPostId(request.getPostId());
-        postCommentResponse.setContent(request.getContent());
-        postCommentResponse.setReplyCommentId(request.getReplyCommentId());
-        postCommentResponse.setSenderId(request.getSenderId());
-        // 这里的receiverId管你是什么都不用
-//        postCommentResponse.setReceiverId(request.getReceiverId());
-        postCommentResponse.setTimestamp(request.getTimestamp());
-        postCommentResponse.setType(request.getType());
-        // 发布评论
-        if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
-            try {
-                PostCommentDo postCommentDo = postCommentConverter.postCommentRequestToPostCommentDo(request, request.getSenderId());
-                // TODO 考虑先存在Redis然后定时批量导入，评论这种东西放在Redis就行了
-                postHandleService.postComment(postCommentDo);
-                // 通知作者 + 评论发布者
-                // 先通知作者
-                notifyAuthor(postCommentResponse);
-                // 再通知评论发布者
-                notifyCommenter(postCommentResponse);
-            } catch (Exception e){
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
+                // 告知请求者删除成功
+                PostCommentResponse response = new PostCommentResponse();
+                // 发送者是系统服务器; 接收者是请求者
+                response.setSenderId(NettyConstants.SERVER_ID);
+                response.setReceiverId(request.getSenderId());
+                // 从request获取其他属性
+                sePostCommentResponseByRequest(response, request);
+
+                // 通知操作申请者
+                rabbitMqSender.push(response);
             }
         }
-        // 删除评论
-        if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
-            try {
-                Long postId = request.getPostId();
-                Long commentId = request.getCommentId();
-                if (postId == null || commentId == null){
-                    return;
-                }
-                // 删除评论不需要netty通知，抖音也是这样做的
-                postHandleService.deleteComment(postId, commentId);
-            } catch (Exception e){
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
-            }
-        }
-
-        // netty通知前端 内部会设置发送id是serverId
-        NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
-        // Mq -> user
-        rabbitMqSender.push(nettyServerResponse);
 
         // userAction -> kafka -> feature-service
         UserActionCommentPost userActionCommentPost = new UserActionCommentPost();
@@ -279,6 +316,17 @@ public class PostHandler implements PostApi{
         } catch (Exception e){
             log.error("用户显性行为Kafka传输异常：[评论] [userId:{}] [postId:{}]", request.getSenderId(), request.getPostId(), e);
         }
+    }
+
+    private void sePostCommentResponseByRequest(
+            @NotNull PostOperationBaseResponse response,
+            @NotNull NettyOptionRequest request
+    ){
+        // 可以选择此处设置自动去转换，也可以自行设置
+        response.setType(request.getType());
+        response.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        // 操作类型获取
+        response.setOptionCode(request.getOptionCode());
     }
 
     // comment通知作者
@@ -303,9 +351,63 @@ public class PostHandler implements PostApi{
         }
     }
 
+    /**
+     * 通知所有用户   负责将数据发送给消息队列，然后通知用户。
+     * 在调用之前response中需要先设置好属性。
+     * 此方法只执行：非独特响应体数据赋值，寻址，发送，独特响应体数据设置需要提前设置。
+     * @param request           请求
+     * @param replyCommentId    回复的评论id
+     * @param response          响应体
+     */
+    private void notifyAllUsers(NettyOptionRequest request, @Nullable Long replyCommentId, PostOperationBaseResponse response){
+        sePostCommentResponseByRequest(response, request);
+
+        // 1. 通知发送者
+        response.setSenderId(NettyConstants.SERVER_ID);
+        response.setReceiverId(request.getSenderId());
+        // sever -> sender
+        rabbitMqSender.push(response);
+
+        // 2. 通知接收者
+        if (replyCommentId != null){
+            PostCommentDo postCommenterDo = postCommentService.getPostCommentById(replyCommentId);
+            if (postCommenterDo != null && postCommenterDo.getId() != null){
+                Long commenterId = Optional.ofNullable(postCommenterDo.getCommenterId())
+                                .orElse(NettyConstants.ERROR_ID);
+                if (!NettyConstants.ERROR_ID.equals(commenterId)){
+                    response.setSenderId(request.getSenderId());
+                    response.setReceiverId(commenterId);
+                    // sender -> receiver
+                    rabbitMqSender.push(response);
+                }
+            }
+        }
+
+        // 3. 通知作者
+        if (response.getPostId() != null){
+            response.setSenderId(request.getSenderId());
+            PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(response.getPostId());
+            if (postInfoDo != null && postInfoDo.getAuthorId() != null){
+                response.setReceiverId(postInfoDo.getAuthorId());
+                // sender -> poster
+                rabbitMqSender.push(response);
+            }
+        }
+    }
+
     @Override
     public void postForward(PostForwardRequest request) {
         NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
+
+        // 参数校验
+        if (ObjectUtils.isEmpty(request.getPostId())){
+            NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
+            // 帖子参数不存在
+            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
+            rabbitMqSender.push(nettyServerResponse);
+            return;
+        }
+
         Integer operateType = PostOperation.NULL.getCode();
         try {
             // 数据库操作
@@ -348,6 +450,14 @@ public class PostHandler implements PostApi{
         if (!isOptionLegal){
             return;
         }
+        if (ObjectUtils.isEmpty(request.getPostId())){
+            NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
+            // 帖子参数不存在
+            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
+            rabbitMqSender.push(nettyServerResponse);
+            return;
+        }
+
         // 点赞
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
             try {
@@ -359,7 +469,7 @@ public class PostHandler implements PostApi{
                     return;
                 }
                 PostLikeResponse postLikeResponse = new PostLikeResponse(request.getPostId());
-                postLikeResponse.setLikeUserId(request.getSenderId());
+//                postLikeResponse.setLikeUserId(request.getSenderId());
                 postLikeResponse.setReceiverId(postAo.getAuthorId());
                 rabbitMqSender.push(postLikeResponse);
                 operateType = PostOperation.LIKE.getCode();
@@ -400,6 +510,14 @@ public class PostHandler implements PostApi{
         if (!isOptionLegal){
             return;
         }
+        if (ObjectUtils.isEmpty(request.getPostId())){
+            NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
+            // 帖子参数不存在
+            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
+            rabbitMqSender.push(nettyServerResponse);
+            return;
+        }
+
         // 不感兴趣
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
             try {
@@ -411,7 +529,7 @@ public class PostHandler implements PostApi{
                     return;
                 }
                 PostLikeResponse postLikeResponse = new PostLikeResponse(request.getPostId());
-                postLikeResponse.setLikeUserId(request.getSenderId());
+//                postLikeResponse.setLikeUserId(request.getSenderId());
                 postLikeResponse.setReceiverId(postAo.getAuthorId());
                 rabbitMqSender.push(postLikeResponse);
                 operateType = PostOperation.NOT_INTERESTED.getCode();

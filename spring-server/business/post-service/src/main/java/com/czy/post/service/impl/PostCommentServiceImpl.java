@@ -4,11 +4,13 @@ import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostCommentAo;
+import com.czy.api.domain.dto.service.CommentResultDto;
 import com.czy.post.mapper.mongo.PostCommentMongoMapper;
 import com.czy.post.service.PostCommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -104,5 +106,17 @@ public class PostCommentServiceImpl implements PostCommentService {
             postCommentAoList.add(ao);
         }
         return postCommentAoList;
+    }
+
+    @NotNull
+    @Override
+    public CommentResultDto comment(Long senderId, Long postId, Long replyCommentId, String content) {
+
+        return null;
+    }
+
+    @Override
+    public void deleteComment(Long postId, Long commentId, Long senderId) {
+        postCommentMongoMapper.deleteCommentByPostIdAndCommentId(postId, commentId);
     }
 }

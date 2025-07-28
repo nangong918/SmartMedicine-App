@@ -11,6 +11,7 @@ public interface NettyConstants {
     String BIND_MESSAGE_INNER_QUEUE = "signal/channel/BIND_MESSAGE_INNER_QUEUE";
     // 主播qq 哈哈哈哈
     Long SERVER_ID = -1322596900L;
+    Long ERROR_ID = -1L;
     String MESSAGE_TYPE_HTTP = "messageTypeHttp";
     String imageMessageTitle = "[图片]";
 }

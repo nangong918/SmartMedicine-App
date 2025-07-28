@@ -22,7 +22,14 @@ public enum PostExceptions implements ExceptionEnums {
     COMMENT_ERROR("P_10005", "评论失败"),
     // 删除评论失败
     DELETE_COMMENT_ERROR("P_10006", "删除评论失败"),
-    ;
+    // 不能发布空评论
+    EMPTY_COMMENT_ERROR("P_10007", "不能发布空评论"),
+    // 回复的内容已被删除
+    REPLY_COMMENT_DELETED("P_10008", "回复的内容已被删除"),
+    // 没有评论的权限
+    NO_COMMENT_PERMISSION("P_10009", "没有评论的权限"),
+    // 对帖子操作行为异常
+    OPERATION_TYPE_NOT_EXIST("P_10010", "对帖子操作行为异常");
 
     private final String code;
     private final String message;
