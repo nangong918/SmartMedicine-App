@@ -3,7 +3,7 @@ package com.czy.dal.ao.chat;
 import android.util.Log;
 
 import com.czy.baseUtilsLib.json.BaseBean;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.vo.entity.contact.ChatContactItemVo;
 
 import java.util.Objects;
@@ -47,11 +47,11 @@ public class ChatContactItemAo implements BaseBean {
             String thisName = chatContactItemVo.name == null ? "" : chatContactItemVo.name;
             String thatName = that.chatContactItemVo.name == null ? "" : that.chatContactItemVo.name;
             String thisMessagePreview = chatContactItemVo.messagePreview == null ? "" : chatContactItemVo.messagePreview;
-            Long thisUserId = userId == null ? Constants.ERROR_ID : userId;
+            Long thisUserId = userId == null ? NettyConstants.ERROR_ID : userId;
             String thatMessagePreview = that.chatContactItemVo.messagePreview == null ? "" : that.chatContactItemVo.messagePreview;
             String thisTime = chatContactItemVo.time == null ? "" : chatContactItemVo.time;
             String thatTime = that.chatContactItemVo.time == null ? "" : that.chatContactItemVo.time;
-            Long thatUserId = that.userId == null ? Constants.ERROR_ID : userId;
+            Long thatUserId = that.userId == null ? NettyConstants.ERROR_ID : userId;
             int thisUnreadCount = chatContactItemVo.unreadCount;
             int thatUnreadCount = that.chatContactItemVo.unreadCount;
             String thisContactAccount = contactAccount == null ? "" : contactAccount;
@@ -76,11 +76,11 @@ public class ChatContactItemAo implements BaseBean {
         String thisName = chatContactItemVo.name == null ? "" : chatContactItemVo.name;
         String thatName = that.chatContactItemVo.name == null ? "" : that.chatContactItemVo.name;
         String thisMessagePreview = chatContactItemVo.messagePreview == null ? "" : chatContactItemVo.messagePreview;
-        Long thisUserId = userId == null ? Constants.ERROR_ID : userId;
+        Long thisUserId = userId == null ? NettyConstants.ERROR_ID : userId;
         String thatMessagePreview = that.chatContactItemVo.messagePreview == null ? "" : that.chatContactItemVo.messagePreview;
         String thisTime = chatContactItemVo.time == null ? "" : chatContactItemVo.time;
         String thatTime = that.chatContactItemVo.time == null ? "" : that.chatContactItemVo.time;
-        Long thatUserId = that.userId == null ? Constants.ERROR_ID : userId;
+        Long thatUserId = that.userId == null ? NettyConstants.ERROR_ID : userId;
         int thisUnreadCount = chatContactItemVo.unreadCount;
         int thatUnreadCount = that.chatContactItemVo.unreadCount;
         String thisContactAccount = contactAccount == null ? "" : contactAccount;

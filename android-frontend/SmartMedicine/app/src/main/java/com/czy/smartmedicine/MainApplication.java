@@ -30,7 +30,7 @@ import com.czy.customviewlib.view.GlobalDialogFragment;
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.login.LoginTokenAo;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.netty.Message;
@@ -114,7 +114,7 @@ public class MainApplication extends Application {
     public BaseHttpRequest getBaseNettyRequest(){
         BaseHttpRequest request = new BaseHttpRequest();
         request.senderId = getUserLoginInfoAo().userId;
-        request.receiverId = Constants.SERVER_ID;
+        request.receiverId = NettyConstants.SERVER_ID;
         request.timestamp = System.currentTimeMillis();
         return request;
     }
@@ -155,11 +155,11 @@ public class MainApplication extends Application {
                 public void onConnectionStatusChanged(String netWorkState) throws RemoteException {
                     Log.i(NettySocketService.TAG, "onConnectionStatusChanged: " + netWorkState);
                     if (!TextUtils.isEmpty(netWorkState)){
-                        if (netWorkState.equals(Constants.CONNECTED)){
-                            Log.d(TAG, "onConnectionStatusChanged: " + Constants.CONNECTED);
+                        if (netWorkState.equals(NettyConstants.CONNECTED)){
+                            Log.d(TAG, "onConnectionStatusChanged: " + NettyConstants.CONNECTED);
                         }
-                        else if (netWorkState.equals(Constants.DISCONNECTED)){
-                            Log.d(TAG, "onConnectionStatusChanged: " + Constants.DISCONNECTED);
+                        else if (netWorkState.equals(NettyConstants.DISCONNECTED)){
+                            Log.d(TAG, "onConnectionStatusChanged: " + NettyConstants.DISCONNECTED);
                             // 清空全部首次打开的缓存
                             HttpRequestManager.refreshAllValue();
                         }

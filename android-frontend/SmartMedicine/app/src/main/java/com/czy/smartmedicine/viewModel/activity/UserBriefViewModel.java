@@ -3,14 +3,13 @@ package com.czy.smartmedicine.viewModel.activity;
 import android.content.Context;
 import android.text.TextUtils;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.UserBriefRequest;
 import com.czy.dal.dto.http.response.UserBriefResponse;
 import com.czy.dal.vo.entity.home.PostVo;
@@ -49,10 +48,10 @@ public class UserBriefViewModel extends ViewModel {
         UserLoginInfoAo userLoginInfoAo = MainApplication.getInstance().getUserLoginInfoAo();
         Long senderId = Optional.ofNullable(userLoginInfoAo)
                 .map(ao -> ao.userId)
-                .orElse(Constants.ERROR_ID);
+                .orElse(NettyConstants.ERROR_ID);
         Long receiverId = Optional.ofNullable(userBriefVo)
                 .map(vo -> vo.userId)
-                .orElse(Constants.ERROR_ID);
+                .orElse(NettyConstants.ERROR_ID);
         UserBriefRequest request = new UserBriefRequest();
         request.senderId = senderId;
         request.receiverId = receiverId;
@@ -101,7 +100,7 @@ public class UserBriefViewModel extends ViewModel {
         Long userId = Optional.ofNullable(response.getData())
                 .map(data -> data.userView)
                 .map(view -> view.userId)
-                .orElse(Constants.ERROR_ID);
+                .orElse(NettyConstants.ERROR_ID);
 
         userBriefVo.userName.setValue(userName);
         userBriefVo.userAccount.setValue(userAccount);

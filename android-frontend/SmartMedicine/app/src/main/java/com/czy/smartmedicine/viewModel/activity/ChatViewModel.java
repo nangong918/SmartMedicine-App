@@ -22,7 +22,7 @@ import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.bo.UserChatMessageBo;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.constant.MessageTypeEnum;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.dal.dto.netty.forwardMessage.SendImageRequest;
@@ -388,7 +388,7 @@ public class ChatViewModel extends ViewModel {
                 .orElse("");
         Long receiverId = Optional.ofNullable(chatVo)
                 .map(vo -> vo.contactId)
-                .orElse(Constants.ERROR_ID);
+                .orElse(NettyConstants.ERROR_ID);
         if (receiverId.equals(response.getSenderId())){
             // 根据 message 的 type 执行对应的方法
             chatApiHandler.receiveUserImage(response);

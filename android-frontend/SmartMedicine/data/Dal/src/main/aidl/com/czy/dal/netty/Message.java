@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.czy.baseUtilsLib.json.BaseBean;
 import com.czy.baseUtilsLib.object.BeanUtil;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.model.RequestBodyProto;
 import com.czy.dal.model.ResponseBodyProto;
 
@@ -224,7 +224,7 @@ public class Message implements Parcelable, BaseBean {
         Message message = new Message();
         message.data = dataMap;
         message.senderId = senderId;
-        message.receiverId = receiverId == null ? Constants.SERVER_ID : receiverId;
+        message.receiverId = receiverId == null ? NettyConstants.SERVER_ID : receiverId;
         message.type = type;
         try {
             message.timestamp = Long.valueOf(dataMap.get("timestamp"));
@@ -244,7 +244,7 @@ public class Message implements Parcelable, BaseBean {
         }
         Message message = new Message();
         message.data = dataMap;
-        message.senderId = senderId == null ? Constants.SERVER_ID : senderId;
+        message.senderId = senderId == null ? NettyConstants.SERVER_ID : senderId;
         message.receiverId = receiverId;
         message.type = type;
         try {

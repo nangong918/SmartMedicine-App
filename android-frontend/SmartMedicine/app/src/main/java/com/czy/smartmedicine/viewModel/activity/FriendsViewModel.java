@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModel;
 import com.czy.appcore.network.netty.api.receive.FriendApiHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.response.AddUserToTargetUserResponse;
 import com.czy.dal.dto.netty.response.HandleAddUserResponse;
@@ -110,8 +110,8 @@ public class FriendsViewModel extends ViewModel {
             BaseHttpRequest request = new BaseHttpRequest();
             request.senderId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
                     .map(ao -> ao.userId)
-                    .orElse(Constants.ERROR_ID);
-            if (Constants.ERROR_ID.equals(request.senderId)){
+                    .orElse(NettyConstants.ERROR_ID);
+            if (NettyConstants.ERROR_ID.equals(request.senderId)){
                 Log.w(TAG, "doGetUserNewMessage: senderId is empty");
                 return;
             }

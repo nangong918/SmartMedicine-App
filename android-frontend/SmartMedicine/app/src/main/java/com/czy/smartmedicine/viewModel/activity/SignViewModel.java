@@ -24,7 +24,7 @@ import com.czy.baseUtilsLib.permission.PermissionUtil;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.login.LoginTokenAo;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
 import com.czy.dal.dto.http.response.IsRegisterResponse;
@@ -147,7 +147,7 @@ public class SignViewModel extends ViewModel {
         Long userId = Optional.ofNullable(loginSignResponse)
                 .map(re -> re.userVo)
                 .map(u -> u.userId)
-                .orElse(Constants.ERROR_ID);
+                .orElse(NettyConstants.ERROR_ID);
         String userAccount = Optional.ofNullable(loginSignResponse)
                 .map(re -> re.userVo)
                 .map(u -> u.account)
@@ -224,7 +224,7 @@ public class SignViewModel extends ViewModel {
             Long userId = Optional.ofNullable(loginSignResponse)
                     .map(re -> re.userVo)
                     .map(u -> u.userId)
-                    .orElse(Constants.ERROR_ID);
+                    .orElse(NettyConstants.ERROR_ID);
             String userAccount = Optional.ofNullable(loginSignResponse)
                     .map(re -> re.userVo)
                     .map(u -> u.account)

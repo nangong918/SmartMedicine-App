@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import com.czy.appcore.netty.IMessageListener;
 import com.czy.appcore.netty.IMessageService;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.constant.netty.RequestMessageType;
 import com.czy.dal.netty.Message;
 
@@ -38,7 +38,7 @@ public class NettySocketServiceInitiator {
                     isBound = true;
                     Message message = new Message();
                     message.senderId = senderId;
-                    message.receiverId = Constants.SERVER_ID;
+                    message.receiverId = NettyConstants.SERVER_ID;
                     message.type = RequestMessageType.Connect.CONNECT;
                     Log.i(NettySocketService.TAG, "new message.senderId: " + message.senderId);
                     // 发送连接消息

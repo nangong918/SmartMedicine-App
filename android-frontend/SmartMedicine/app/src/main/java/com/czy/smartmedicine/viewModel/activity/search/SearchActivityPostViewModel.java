@@ -26,7 +26,7 @@ import com.czy.dal.ao.search.PersonalEvaluateAo;
 import com.czy.dal.ao.search.PostRecommendAo;
 import com.czy.dal.ao.search.PostSearchResultAo;
 import com.czy.dal.ao.search.QuestionAo;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.constant.search.FuzzySearchResponseEnum;
 import com.czy.dal.constant.search.PersonalResultIntent;
 import com.czy.dal.dto.http.request.FuzzySearchRequest;
@@ -101,8 +101,8 @@ public class SearchActivityPostViewModel extends ViewModel {
         UserLoginInfoAo userLoginInfoAo = MainApplication.getInstance().getUserLoginInfoAo();
         Long userId = Optional.ofNullable(userLoginInfoAo)
                 .map(UserLoginInfoAo::getUserId)
-                .orElse(Constants.ERROR_ID);
-        if (userId.equals(Constants.ERROR_ID)){
+                .orElse(NettyConstants.ERROR_ID);
+        if (userId.equals(NettyConstants.ERROR_ID)){
             ToastUtils.showToast(context, "请先登录");
             return;
         }

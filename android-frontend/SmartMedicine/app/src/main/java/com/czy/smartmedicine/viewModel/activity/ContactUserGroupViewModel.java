@@ -15,7 +15,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.ao.newUser.MyFriendItemAo;
 import com.czy.dal.ao.userBrief.UserBriefIntentAo;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
 import com.czy.dal.entity.UserViewEntity;
@@ -117,7 +117,7 @@ public class ContactUserGroupViewModel extends ViewModel {
                         // 设置账号
                         contactItem.contactAccount = (Optional.ofNullable(userViewEntity.userAccount).orElse(""));
                         // userId
-                        contactItem.userId = (Optional.ofNullable(userViewEntity.userId).orElse(Constants.ERROR_ID));
+                        contactItem.userId = (Optional.ofNullable(userViewEntity.userId).orElse(NettyConstants.ERROR_ID));
                         return contactItem;
                     })
                     .collect(Collectors.toList());
@@ -138,7 +138,7 @@ public class ContactUserGroupViewModel extends ViewModel {
         }
         GetMyFriendsRequest request = new GetMyFriendsRequest();
         request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
-        request.receiverId = Constants.SERVER_ID;
+        request.receiverId = NettyConstants.SERVER_ID;
         request.accountList = accountList;
         doGetMyFriendList(request);
     }
@@ -158,7 +158,7 @@ public class ContactUserGroupViewModel extends ViewModel {
         ubAo.avatarUrl = Optional.ofNullable(ccAo.chatContactItemVo).map(vo -> vo.avatarUrlOrUri).orElse("");
         ubAo.userAccount = Optional.ofNullable(ccAo.contactAccount).orElse("");
         ubAo.userName = Optional.ofNullable(ccAo.chatContactItemVo).map(vo -> vo.name).orElse("");
-        ubAo.userId = Optional.ofNullable(ccAo.userId).orElse(Constants.ERROR_ID);
+        ubAo.userId = Optional.ofNullable(ccAo.userId).orElse(NettyConstants.ERROR_ID);
 //        ChatActivityStartAo ubAo = new ChatActivityStartAo();
 //        ubAo.chatMessageListItemVo = new ArrayList<>();
 //        ubAo.avatarUrl = Optional.ofNullable(ccAo.avatarUrlOrUri).map(LiveData::getValue).orElse("");
