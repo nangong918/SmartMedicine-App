@@ -5,6 +5,8 @@ import com.czy.api.domain.Do.user.UserDo;
 import json.BaseBean;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 获取好友的方法：
  * 需要获取的：account，user_name，avatar_file_id
@@ -36,7 +38,7 @@ import lombok.Data;
 
 
 @Data
-public class UserViewEntity implements BaseBean {
+public class UserViewEntity implements BaseBean, Serializable {
     // userId
     public Long userId;
 
