@@ -560,7 +560,7 @@ public class PostHandler implements PostApi{
     @Override
     public void postLike(PostLikeRequest request) {
         boolean isOptionLegal = checkOption(request);
-        if (!isOptionLegal || ObjectUtils.isEmpty(request.getPostId()) || request.getPostId() == null){
+        if (!isOptionLegal || ObjectUtils.isEmpty(request.getPostId())){
             NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
@@ -631,50 +631,56 @@ public class PostHandler implements PostApi{
 
     @Override
     public void notInterested(PostDisLikeRequest request) {
-        Integer operateType = PostOperation.NULL.getCode();
         boolean isOptionLegal = checkOption(request);
-        if (!isOptionLegal){
-            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
-            return;
-        }
-        if (ObjectUtils.isEmpty(request.getPostId())){
-            NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
-            // 帖子参数不存在
-            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
-            rabbitMqSender.push(nettyServerResponse);
+        if (!isOptionLegal || ObjectUtils.isEmpty(request.getPostId())){
+            NettyUtils.sentErrorMessage(request.getSenderId(),
+                    CommonExceptions.PARAM_ERROR,
+                    rabbitMqSender
+            );
             return;
         }
 
+        Integer operateType = PostOperation.NULL.getCode();
+
+        // 获取postInfo
+        PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(request.getPostId());
+        if (postInfoDo == null || postInfoDo.getId() == null){
+            NettyUtils.sentErrorMessage(
+                    request.getSenderId(),
+                    PostExceptions.POST_NOT_EXIST,
+                    rabbitMqSender
+            );
+            return;
+        }
+
+        PostLikeResponse response = new PostLikeResponse(request.getPostId());
+        setPostOperationBaseResponseByRequest(response, request);
+        response.setSenderId(NettyConstants.SERVER_ID);
+        response.setReceiverId(request.getSenderId());
+
         // 不感兴趣
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
-            try {
-                // 数据库增加
-                postHandleService.postNotInterested(request.getPostId(), request.getSenderId());
-                // 通知作者
-                PostAo postAo = postService.findPostById(request.getPostId());
-                if (postAo == null || postAo.getAuthorId() == null){
-                    return;
-                }
-                PostLikeResponse postLikeResponse = new PostLikeResponse(request.getPostId());
-//                postLikeResponse.setLikeUserId(request.getSenderId());
-                postLikeResponse.setReceiverId(postAo.getAuthorId());
-                rabbitMqSender.push(postLikeResponse);
-                operateType = PostOperation.NOT_INTERESTED.getCode();
-            } catch (Exception ignored){
-            }
+            // 数据库增加
+            postHandleService.postNotInterested(request.getPostId(), request.getSenderId());
+            operateType = PostOperation.NOT_INTERESTED.getCode();
+
+            // 通知用户成功
+            rabbitMqSender.push(response);
         }
         // 取消不感兴趣
-        if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
-            try {
-                postHandleService.deletePostNotInterested(request.getPostId(), request.getSenderId());
-                operateType = PostOperation.CANCEL_NOT_INTERESTED.getCode();
-            } catch (Exception ignored){
-            }
+        else if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
+            // 数据库扣减
+            postHandleService.deletePostNotInterested(request.getPostId(), request.getSenderId());
+            operateType = PostOperation.CANCEL_NOT_INTERESTED.getCode();
+
+            // 通知用户成功
+            rabbitMqSender.push(response);
         }
 
         // userAction -> kafka -> feature-service
         UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
-        userActionOperatePost.setPostId(request.getSenderId());
+        userActionOperatePost.setUserId(request.getSenderId());
+        userActionOperatePost.setPostId(request.getPostId());
         userActionOperatePost.setOperateType(operateType);
 
         try {
