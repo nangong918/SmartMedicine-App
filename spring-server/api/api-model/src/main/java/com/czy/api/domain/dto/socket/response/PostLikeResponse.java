@@ -15,6 +15,8 @@ import java.util.Map;
 @Data
 public class PostLikeResponse extends PostOperationBaseResponse {
 
+    public PostLikeResponse(){}
+
     public PostLikeResponse(Long postId){
         super.setType(ResponseMessageType.Post.LIKE_POST);
         this.postId = postId;

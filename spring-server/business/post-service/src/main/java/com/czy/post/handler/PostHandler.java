@@ -559,64 +559,74 @@ public class PostHandler implements PostApi{
 
     @Override
     public void postLike(PostLikeRequest request) {
-        NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
-        Integer operateType = PostOperation.NULL.getCode();
         boolean isOptionLegal = checkOption(request);
-        if (!isOptionLegal){
+        if (!isOptionLegal || ObjectUtils.isEmpty(request.getPostId()) || request.getPostId() == null){
             NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
-        if (ObjectUtils.isEmpty(request.getPostId())){
-            NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
-            // 帖子参数不存在
-            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
-            rabbitMqSender.push(nettyServerResponse);
-            return;
-        }
 
+        // 记录操作行为类型
+        Integer operateType = PostOperation.NULL.getCode();
+        PostLikeResponse response = new PostLikeResponse(request.getPostId());
         // 点赞
         if (request.getOptionCode() == NettyOptionEnum.ADD.getCode()){
-            try {
-                // 数据库增加
-                postHandleService.postLike(request.getPostId(), request.getSenderId());
-                // 通知作者
-                PostAo postAo = postService.findPostById(request.getPostId());
-                if (postAo == null || postAo.getAuthorId() == null){
-                    return;
-                }
-                PostLikeResponse postLikeResponse = new PostLikeResponse(request.getPostId());
-//                postLikeResponse.setLikeUserId(request.getSenderId());
-                postLikeResponse.setReceiverId(postAo.getAuthorId());
-                rabbitMqSender.push(postLikeResponse);
-                operateType = PostOperation.LIKE.getCode();
-            } catch (Exception e){
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
-            }
+            // 数据库增加
+            postHandleService.postLike(request.getPostId(), request.getSenderId());
+            operateType = PostOperation.LIKE.getCode();
+
+            // 通知
+            notifyAllUsersLike(request, response);
         }
         // 取消点赞
-        if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
+        else if (request.getOptionCode() == NettyOptionEnum.DELETE.getCode()){
+            // 数据库减少
+            postHandleService.deletePostLike(request.getPostId(), request.getSenderId());
+            operateType = PostOperation.CANCEL_LIKE.getCode();
+
+            // 通知
+            notifyAllUsersLike(request, response);
+        }
+
+        // userAction -> kafka -> feature-service
+        if (!operateType.equals(PostOperation.NULL.getCode())){
+            UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
+            userActionOperatePost.setUserId(request.getSenderId());
+            userActionOperatePost.setPostId(request.getPostId());
+            userActionOperatePost.setOperateType(operateType);
+
             try {
-                postHandleService.deletePostLike(request.getPostId(), request.getSenderId());
-                operateType = PostOperation.CANCEL_LIKE.getCode();
+                kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
             } catch (Exception e){
-                isSuccess = NettyResponseStatuesEnum.FAILURE;
+                log.error("用户显性行为Kafka传输异常：[点赞] [userId:{}] [postId:{}]", request.getSenderId(), request.getPostId(), e);
             }
         }
-        // netty通知前端 内部会设置发送id是serverId
-        NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
-        // Mq -> user
-        rabbitMqSender.push(nettyServerResponse);
-        // userAction -> kafka -> feature-service
-        UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
-        userActionOperatePost.setUserId(request.getSenderId());
-        userActionOperatePost.setPostId(request.getPostId());
-        userActionOperatePost.setOperateType(operateType);
+    }
 
-        try {
-            kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
-        } catch (Exception e){
-            log.error("用户显性行为Kafka传输异常：[点赞] [userId:{}] [postId:{}]", request.getSenderId(), request.getPostId(), e);
+    private void notifyAllUsersLike(PostLikeRequest request, PostLikeResponse response){
+        // 从request初始化赋值
+        setPostOperationBaseResponseByRequest(response, request);
+        response.setPostId(request.getPostId());
+
+        // 参数校验
+        PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(request.getPostId());
+        if (postInfoDo == null || postInfoDo.getId() == null){
+            NettyUtils.sentErrorMessage(
+                    request.getSenderId(),
+                    PostExceptions.POST_NOT_EXIST,
+                    rabbitMqSender
+            );
         }
+        // 发送给作者
+        else if (postInfoDo.getAuthorId() != null){
+            response.setSenderId(request.getSenderId());
+            response.setReceiverId(postInfoDo.getAuthorId());
+            rabbitMqSender.push(response);
+        }
+
+        // 发送给发送者
+        response.setSenderId(NettyConstants.SERVER_ID);
+        response.setReceiverId(request.getSenderId());
+        rabbitMqSender.push(response);
     }
 
     @Override
