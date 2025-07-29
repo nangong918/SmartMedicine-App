@@ -18,12 +18,14 @@ import com.czy.api.domain.dto.http.request.SendImageRequest;
 import com.czy.api.domain.dto.http.request.SendTextDataRequest;
 import com.czy.api.domain.dto.socket.response.UploadFileResponse;
 import com.czy.api.domain.dto.socket.response.UserTextDataResponse;
+import com.czy.api.exception.UserExceptions;
 import com.czy.message.handler.api.ChatApi;
 import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
 import com.czy.message.mq.sender.RabbitMqSender;
 import com.czy.message.queue.ChatMessageQueue;
 import com.czy.springUtils.annotation.HandlerType;
 import exception.AppException;
+import exception.NettyException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -161,10 +163,15 @@ public class ChatHandler implements ChatApi {
     }
 
     // 获得 UserChatLastMessageBo 不用区分发送者和接收者，因为发送者的未读消息数量一定是0
-    private UserChatLastMessageBo getUserChatLastMessageBo(BaseRequestData request, String content, int msgType) {
+    private UserChatLastMessageBo getUserChatLastMessageBo(BaseRequestData request, String content, int msgType) throws NettyException {
         UserChatLastMessageBo bo = new UserChatLastMessageBo();
         UserDo senderDo = userService.getUserById(request.getSenderId());
         UserDo receiverDo = userService.getUserById(request.getReceiverId());
+
+        if (senderDo == null || receiverDo == null || senderDo.getId() == null || receiverDo.getId() == null){
+            // 交给全局异常处理
+            throw new NettyException(UserExceptions.USER_NOT_EXIST, request.getSenderId());
+        }
 
         bo.setSenderId(senderDo.getId());
         bo.setReceiverId(receiverDo.getId());
