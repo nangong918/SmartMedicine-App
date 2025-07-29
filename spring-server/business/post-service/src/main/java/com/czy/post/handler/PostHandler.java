@@ -11,6 +11,7 @@ import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
+import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.dto.base.NettyOptionRequest;
 import com.czy.api.domain.dto.service.CollectOperateResultDto;
@@ -46,7 +47,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -246,6 +246,7 @@ public class PostHandler implements PostApi{
                     if (!StringUtils.hasText(request.getName())){
                         return new CollectOperateResultDto();
                     }
+                    // 如果存在的话，直接返回的就是存在的id
                     Long collectFolderId = postHandleService.createPostCollectFolder(
                             request.getSenderId(),
                             request.getName()
@@ -297,18 +298,8 @@ public class PostHandler implements PostApi{
     public void postComment(PostCommentRequest request) {
         // 1. 参数校验
         boolean isOptionLegal = checkOption(request);
-        if (!isOptionLegal){
+        if (!isOptionLegal || ObjectUtils.isEmpty(request.getPostId())){
             NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
-            return;
-        }
-        if (request.getPostId() == null){
-            return;
-        }
-        if (ObjectUtils.isEmpty(request.getPostId())){
-            NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
-            // 帖子参数不存在
-            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
-            rabbitMqSender.push(nettyServerResponse);
             return;
         }
 
@@ -341,7 +332,7 @@ public class PostHandler implements PostApi{
                 response.setReplyCommentId(replyCommentId);
 
                 // 需要通知被评论的人 (在此之前需要设置postId)
-                notifyAllUsers(request, replyCommentId, response);
+                notifyAllUsersComment(request, response);
             }
             else {
                 ExceptionEnums exceptionEnums = Optional.ofNullable(resultDto.getExceptionEnums())
@@ -376,7 +367,7 @@ public class PostHandler implements PostApi{
                 response.setSenderId(NettyConstants.SERVER_ID);
                 response.setReceiverId(request.getSenderId());
                 // 从request获取其他属性
-                sePostCommentResponseByRequest(response, request);
+                setPostOperationBaseResponseByRequest(response, request);
 
                 // 通知操作申请者
                 rabbitMqSender.push(response);
@@ -395,7 +386,7 @@ public class PostHandler implements PostApi{
         }
     }
 
-    private void sePostCommentResponseByRequest(
+    private void setPostOperationBaseResponseByRequest(
             @NotNull PostOperationBaseResponse response,
             @NotNull NettyOptionRequest request
     ){
@@ -433,11 +424,11 @@ public class PostHandler implements PostApi{
      * 在调用之前response中需要先设置好属性。
      * 此方法只执行：非独特响应体数据赋值，寻址，发送，独特响应体数据设置需要提前设置。
      * @param request           请求
-     * @param replyCommentId    回复的评论id
      * @param response          响应体
      */
-    private void notifyAllUsers(NettyOptionRequest request, @Nullable Long replyCommentId, PostOperationBaseResponse response){
-        sePostCommentResponseByRequest(response, request);
+    private void notifyAllUsersComment(PostCommentRequest request, PostOperationBaseResponse response){
+        // 初始化值
+        setPostOperationBaseResponseByRequest(response, request);
 
         // 1. 通知发送者
         response.setSenderId(NettyConstants.SERVER_ID);
@@ -446,8 +437,8 @@ public class PostHandler implements PostApi{
         rabbitMqSender.push(response);
 
         // 2. 通知接收者
-        if (replyCommentId != null){
-            PostCommentDo postCommenterDo = postCommentService.getPostCommentById(replyCommentId);
+        if (request.getReplyCommentId() != null){
+            PostCommentDo postCommenterDo = postCommentService.getPostCommentById(request.getReplyCommentId());
             if (postCommenterDo != null && postCommenterDo.getId() != null){
                 Long commenterId = Optional.ofNullable(postCommenterDo.getCommenterId())
                                 .orElse(NettyConstants.ERROR_ID);
@@ -472,11 +463,66 @@ public class PostHandler implements PostApi{
         }
     }
 
+    private void notifyAllUsersForward(PostForwardRequest request, PostOperationBaseResponse response){
+        // 1. 参数校验
+        if (request.getToUserId() == null){
+            NettyUtils.sentErrorMessage(
+                    request.getSenderId(),
+                    CommonExceptions.PARAM_ERROR,
+                    rabbitMqSender
+            );
+            return;
+        }
+        // 获取接收者
+        UserDo receiverDo = userService.getUserById(request.getToUserId());
+        if (receiverDo == null || receiverDo.getId() == null){
+            NettyUtils.sentErrorMessage(
+                    request.getSenderId(),
+                    UserExceptions.USER_NOT_EXIST,
+                    rabbitMqSender
+            );
+            return;
+        }
+
+        // 2. 初始化值
+        setPostOperationBaseResponseByRequest(response, request);
+
+        // 3. 发送给接收者
+        response.setSenderId(request.getSenderId());
+        response.setReceiverId(request.getReceiverId());
+        rabbitMqSender.push(response);
+
+        // 4. 发送给发送者，说明成功了
+        NettyUtils.sendSuccessMessage(
+                request.getSenderId(),
+                NettyResponseStatuesEnum.SUCCESS.getMessage(),
+                rabbitMqSender
+        );
+
+        // 5. 发送给作者
+        Long postId = Optional.ofNullable(request.getPostId())
+                .orElse(NettyConstants.ERROR_ID);
+        if (!postId.equals(NettyConstants.ERROR_ID)){
+            PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(postId);
+            Long authorId = Optional.ofNullable(postInfoDo)
+                    .map(PostInfoDo::getAuthorId)
+                    .orElse(NettyConstants.ERROR_ID);
+            if (!authorId.equals(NettyConstants.ERROR_ID)){
+                response.setReceiverId(authorId);
+                // sender -> receiver
+                rabbitMqSender.push(response);
+            }
+        }
+    }
+
     @Override
     public void postForward(PostForwardRequest request) {
-        NettyResponseStatuesEnum isSuccess = NettyResponseStatuesEnum.SUCCESS;
-
         // 参数校验
+        boolean isOptionLegal = checkOption(request);
+        if (!isOptionLegal){
+            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
+            return;
+        }
         if (ObjectUtils.isEmpty(request.getPostId())){
             NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
             // 帖子参数不存在
@@ -485,31 +531,23 @@ public class PostHandler implements PostApi{
             return;
         }
 
-        Integer operateType = PostOperation.NULL.getCode();
-        try {
-            // 数据库操作
-            postHandleService.postForward(request.getPostId());
-            // netty通知前端 内部会设置发送id是serverId
-            PostForwardResponse postForwardResponse = new PostForwardResponse(request.getPostId());
-            postForwardResponse.setContent(request.getContent());
-            postForwardResponse.setSenderId(request.getSenderId());
-            // 对前端的receiverId不信任，可能是SERVER_ID，设置为ToUserAccount
-            postForwardResponse.setReceiverId(request.getToUserId());
-            rabbitMqSender.push(postForwardResponse);
-            operateType = PostOperation.FORWARD.getCode();
-        } catch (Exception e){
-            isSuccess = NettyResponseStatuesEnum.FAILURE;
-        }
-        // netty通知sender
+        // 数据库操作
+        postHandleService.postForward(request.getPostId());
         // netty通知前端 内部会设置发送id是serverId
-        NettyServerResponse nettyServerResponse = new NettyServerResponse(isSuccess, request);
-        // Mq -> user
-        rabbitMqSender.push(nettyServerResponse);
+        PostForwardResponse response = new PostForwardResponse(request.getPostId());
+        response.setContent(request.getContent());
+        response.setSenderId(request.getSenderId());
+        // 对前端的receiverId不信任，可能是SERVER_ID，设置为ToUserAccount
+        response.setReceiverId(request.getToUserId());
+
+        // 通知 全部的人
+        notifyAllUsersForward(request, response);
+
         // userAction -> kafka -> feature-service
         UserActionOperatePost userActionOperatePost = new UserActionOperatePost();
         userActionOperatePost.setUserId(request.getSenderId());
         userActionOperatePost.setPostId(request.getPostId());
-        userActionOperatePost.setOperateType(operateType);
+        userActionOperatePost.setOperateType(PostOperation.FORWARD.getCode());
 
         try {
             kafkaSender.sendUserActionMessage(userActionOperatePost, KafkaConstant.Topic.Post_Operation);
