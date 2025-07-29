@@ -34,7 +34,7 @@ import java.util.Optional;
 
 /**
  * @author 13225
- * 聊天界面
+ * 聊天界面 * todo 解决问题：1.发送方的view在对面
  */
 public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 

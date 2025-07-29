@@ -76,11 +76,12 @@ public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
 
         binding.btnSendMessage.setOnClickListener(v -> {
             Intent intent = new Intent(this, ChatActivity.class);
-            ChatActivityStartAo CommandActivityStartAo = new ChatActivityStartAo();
-            CommandActivityStartAo.contactAccount = viewModel.userBriefVo.userAccount.getValue();
-            CommandActivityStartAo.contactName = viewModel.userBriefVo.userName.getValue();
-            CommandActivityStartAo.avatarUrl = viewModel.userBriefVo.avatarUrl.getValue();
-            intent.putExtra(ChatActivityStartAo.class.getName(), CommandActivityStartAo);
+            ChatActivityStartAo startAo = new ChatActivityStartAo();
+            startAo.contactAccount = viewModel.userBriefVo.userAccount.getValue();
+            startAo.contactName = viewModel.userBriefVo.userName.getValue();
+            startAo.avatarUrl = viewModel.userBriefVo.avatarUrl.getValue();
+            startAo.contactId = viewModel.userBriefVo.userId;
+            intent.putExtra(ChatActivityStartAo.class.getName(), startAo);
             startActivity(intent);
         });
 

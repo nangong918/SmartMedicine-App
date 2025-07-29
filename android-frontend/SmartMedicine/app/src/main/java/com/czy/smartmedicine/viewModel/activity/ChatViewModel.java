@@ -109,6 +109,7 @@ public class ChatViewModel extends ViewModel {
         chatVo.name.setValue(ao.contactName);
         chatVo.inputText.setValue(ao.inputText);
         chatVo.contactAccount = ao.contactAccount;
+        chatVo.contactId = ao.contactId;
         chatVo.avatarUrlOrUri.setValue(ao.avatarUrl);
         List<ChatMessageItemVo> chatMessageList = ao.chatMessageListItemVo;
         if (chatMessageList != null && !chatMessageList.isEmpty()){
