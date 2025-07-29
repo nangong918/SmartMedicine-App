@@ -76,7 +76,7 @@
         id
         FROM post_info
         WHERE author_id = #{authorId}
-        LIMIT #{page} * #{size}, #{size}
+        LIMIT #{offset}, #{size}
     </select>
     <select id="getPostInfoDoListByAuthorIdBeforeTimestamp" resultType="java.lang.Long">
         SELECT
