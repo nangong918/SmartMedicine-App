@@ -50,6 +50,8 @@ public interface MqConstants {
         String LOGGING_EXCHANGE = LoggingQueue.ID + EXCHANGE;
         // 死信是小概率事件，所以死信单独设计交换机
         String DEAD_LETTER_EXCHANGE = DeadLetterQueue.ID + EXCHANGE;
+        // error
+        String ERROR_EXCHANGE = ErrorQueue.ID + EXCHANGE;
     }
 
 
@@ -220,5 +222,13 @@ public interface MqConstants {
 //        String OSS_DLX_QUEUE = "socket" + R.OSS + QUEUE_KEY;
 
         String TO_SERVER = "to-server";
+    }
+
+    interface ErrorQueue {
+        String ID = ".error";
+        interface Routing {
+            String TO_SOCKET_ROUTING = TO_SOCKET + ID;
+        }
+        String ERROR_TO_SOCKET_QUEUE = OssQueue.Routing.TO_SOCKET_ROUTING + QUEUE;
     }
 }

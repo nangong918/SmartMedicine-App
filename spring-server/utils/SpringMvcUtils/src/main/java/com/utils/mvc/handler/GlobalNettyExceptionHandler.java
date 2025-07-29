@@ -1,7 +1,12 @@
 package com.utils.mvc.handler;
 
+import com.czy.api.utils.NettyUtils;
+import com.utils.mvc.component.RabbitMqErrorSender;
+import exception.ExceptionEnums;
+import exception.NettyException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
  * @author 13225
@@ -12,6 +17,27 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @ControllerAdvice
 public class GlobalNettyExceptionHandler {
 
-    // Todo rabbitmq 发送异常
+    private final RabbitMqErrorSender rabbitMqErrorSender;
 
+    @ExceptionHandler(NettyException.class)
+    public void handleNettyException(NettyException e) {
+        ExceptionEnums exceptionEnums = new ExceptionEnums() {
+            @Override
+            public String getCode() {
+                return e.getCode();
+            }
+
+            @Override
+            public String getMessage() {
+                return e.getMessage();
+            }
+        };
+
+        // Mq -> error to receiver
+        NettyUtils.sentErrorMessage(
+                e.getReceiverId(),
+                exceptionEnums,
+                rabbitMqErrorSender
+        );
+    }
 }
