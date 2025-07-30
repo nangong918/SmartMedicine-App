@@ -97,7 +97,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        if (viewType == 0) {
+        if (viewType == ChatMessageItemVo.VIEW_TYPE_SENDER) {
             ViewSendMessageItemBinding binding = ViewSendMessageItemBinding.inflate(inflater, parent, false);
             return new SenderViewHolder(binding);
         }

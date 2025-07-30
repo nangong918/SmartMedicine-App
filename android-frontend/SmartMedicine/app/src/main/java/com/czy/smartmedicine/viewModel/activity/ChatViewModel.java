@@ -205,8 +205,12 @@ public class ChatViewModel extends ViewModel {
             // 数据类型转换
             List<ChatMessageItemVo> chatMessageItemVos = new ArrayList<>();
             for (MessageItem item : list){
+                Long myId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                        .map(ao -> ao.userId)
+                        .orElse(null);
+
                 ChatMessageItemVo chatMessageItemVo = item.toChatMessageItemVo(
-                        MainApplication.getInstance().getUserLoginInfoAo().account
+                        myId
                 );
 
                 // 图片消息

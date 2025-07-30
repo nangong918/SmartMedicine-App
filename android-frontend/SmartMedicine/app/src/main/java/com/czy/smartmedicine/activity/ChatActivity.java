@@ -34,7 +34,6 @@ import java.util.Optional;
 /**
  * @author 13225
  * 聊天界面
- *todo 解决问题：1.发送方的view在对面
  */
 public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
@@ -235,12 +234,12 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
                         viewModel.uriAtomicReference.set(imageUri);
                         Bitmap bitmap = MainApplication.getInstance().getImageManager().uriToBitmapMediaStore(this, imageUri);
                         bitmap = MainApplication.getInstance().getImageManager().processImage(bitmap, BaseConfig.BITMAP_MAX_SIZE);
-                        ChatMessageItemVo chatMessageItemVo = new ChatMessageItemVo();
-                        chatMessageItemVo.bitmap = bitmap;
-                        chatMessageItemVo.setTimeByStringTimeStamp(System.currentTimeMillis());
-                        chatMessageItemVo.viewType = ChatMessageItemVo.VIEW_TYPE_SENDER;
-                        chatMessageItemVo.content = "";
-                        chatMessageItemVo.messageType = MessageTypeEnum.image.code;
+                        ChatMessageItemVo vo = new ChatMessageItemVo();
+                        vo.bitmap = bitmap;
+                        vo.setTimeByStringTimeStamp(System.currentTimeMillis());
+                        vo.viewType = ChatMessageItemVo.VIEW_TYPE_SENDER;
+                        vo.content = "";
+                        vo.messageType = MessageTypeEnum.image.code;
                         List<ChatMessageItemVo> currentList = Optional.ofNullable(viewModel)
                                 .map(vm -> vm.chatVo)
                                 .map(cvo -> cvo.chatListVo)
@@ -248,7 +247,7 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 //                                .map(LiveData::getValue)
                                 .orElse(new ArrayList<>());
 
-                        currentList.add(chatMessageItemVo);
+                        currentList.add(vo);
                         // 如果是null则赋值，如果不是null，那么就是其本身的值
                         viewModel.chatVo.chatListVo.chatMessageList = currentList;
                         // 更新ui
@@ -257,7 +256,7 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
                         viewModel.sendPictureMessage(
                                 this,
                                 bitmap,
-                                chatMessageItemVo.getCreatedTimestamp()
+                                vo.getCreatedTimestamp()
                         );
                     }
                 });
