@@ -14,5 +14,5 @@ public interface NettyConstants {
     Long ERROR_ID = -1L;
     String MESSAGE_TYPE_HTTP = "messageTypeHttp";
     String imageMessageTitle = "[图片]";
-    String SUCCESS_CODE = "200";
+    String SUCCESS_CODE = "S_200";
 }

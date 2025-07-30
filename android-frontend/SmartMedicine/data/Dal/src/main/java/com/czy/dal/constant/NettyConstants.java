@@ -16,4 +16,5 @@ public interface NettyConstants {
     String CONNECTED = "connected";
     String DISCONNECTED = "disconnected";
     Long ERROR_ID = -1L;
+    String SUCCESS_CODE = "S_200";
 }

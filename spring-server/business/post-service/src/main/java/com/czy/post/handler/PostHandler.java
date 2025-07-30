@@ -77,7 +77,7 @@ public class PostHandler implements PostApi{
 
     private final KafkaSender kafkaSender;
 
-    private boolean checkOption(NettyOptionRequest request){
+    private boolean checkParams(NettyOptionRequest request){
         if (request == null){
             return false;
         }
@@ -98,9 +98,9 @@ public class PostHandler implements PostApi{
 
     @Override
     public void postCollect(PostCollectRequest request) {
-        boolean isOptionLegal = checkOption(request);
+        boolean isOptionLegal = checkParams(request);
         if (!isOptionLegal){
-            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
+            NettyUtils.sendErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
         if (ObjectUtils.isEmpty(request.getPostId())){
@@ -158,7 +158,7 @@ public class PostHandler implements PostApi{
             }
             // 未知
             default: {
-                NettyUtils.sentErrorMessage(
+                NettyUtils.sendErrorMessage(
                         request.getSenderId(),
                         PostExceptions.OPERATION_TYPE_NOT_EXIST,
                         rabbitMqSender
@@ -199,9 +199,9 @@ public class PostHandler implements PostApi{
 
     @Override
     public void collectFolder(PostFolderRequest request) {
-        boolean isOptionLegal = checkOption(request);
+        boolean isOptionLegal = checkParams(request);
         if (!isOptionLegal){
-            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
+            NettyUtils.sendErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
 
@@ -212,7 +212,7 @@ public class PostHandler implements PostApi{
                 Long collectionFolderId = resultDto.getCollectFolderId();
                 if (collectionFolderId == null){
                     // id 为 null 创建收藏夹失败
-                    NettyUtils.sentErrorMessage(request.getSenderId(), PostExceptions.CREATE_COLLECT_FOLDER_FAILED, rabbitMqSender);
+                    NettyUtils.sendErrorMessage(request.getSenderId(), PostExceptions.CREATE_COLLECT_FOLDER_FAILED, rabbitMqSender);
                 }
                 else {
                     CollectionOperateResponse response = new CollectionOperateResponse();
@@ -229,7 +229,7 @@ public class PostHandler implements PostApi{
             }
         }
         else {
-            NettyUtils.sentErrorMessage(request.getSenderId(), PostExceptions.COLLECT_FOLDER_OPERATION_FAILED, rabbitMqSender);
+            NettyUtils.sendErrorMessage(request.getSenderId(), PostExceptions.COLLECT_FOLDER_OPERATION_FAILED, rabbitMqSender);
         }
     }
 
@@ -297,9 +297,9 @@ public class PostHandler implements PostApi{
     @Override
     public void postComment(PostCommentRequest request) {
         // 1. 参数校验
-        boolean isOptionLegal = checkOption(request);
+        boolean isOptionLegal = checkParams(request);
         if (!isOptionLegal || ObjectUtils.isEmpty(request.getPostId())){
-            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
+            NettyUtils.sendErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
 
@@ -309,7 +309,7 @@ public class PostHandler implements PostApi{
             String content = request.getContent();
             if (!StringUtils.hasText(content)){
                 // Mq -> sender Error
-                NettyUtils.sentErrorMessage(
+                NettyUtils.sendErrorMessage(
                         request.getSenderId(),
                         PostExceptions.EMPTY_COMMENT_ERROR,
                         rabbitMqSender
@@ -339,7 +339,7 @@ public class PostHandler implements PostApi{
                         .orElse(PostExceptions.COMMENT_ERROR);
 
                 // Mq -> sender Error
-                NettyUtils.sentErrorMessage(
+                NettyUtils.sendErrorMessage(
                         request.getSenderId(),
                         exceptionEnums,
                         rabbitMqSender
@@ -351,7 +351,7 @@ public class PostHandler implements PostApi{
             Long commentId = request.getCommentId();
             if (commentId == null){
                 // Mq -> sender Error
-                NettyUtils.sentErrorMessage(
+                NettyUtils.sendErrorMessage(
                         request.getSenderId(),
                         PostExceptions.DELETE_COMMENT_ERROR,
                         rabbitMqSender
@@ -466,7 +466,7 @@ public class PostHandler implements PostApi{
     private void notifyAllUsersForward(PostForwardRequest request, PostOperationBaseResponse response){
         // 1. 参数校验
         if (request.getToUserId() == null){
-            NettyUtils.sentErrorMessage(
+            NettyUtils.sendErrorMessage(
                     request.getSenderId(),
                     CommonExceptions.PARAM_ERROR,
                     rabbitMqSender
@@ -476,7 +476,7 @@ public class PostHandler implements PostApi{
         // 获取接收者
         UserDo receiverDo = userService.getUserById(request.getToUserId());
         if (receiverDo == null || receiverDo.getId() == null){
-            NettyUtils.sentErrorMessage(
+            NettyUtils.sendErrorMessage(
                     request.getSenderId(),
                     UserExceptions.USER_NOT_EXIST,
                     rabbitMqSender
@@ -518,9 +518,9 @@ public class PostHandler implements PostApi{
     @Override
     public void postForward(PostForwardRequest request) {
         // 参数校验
-        boolean isOptionLegal = checkOption(request);
+        boolean isOptionLegal = checkParams(request);
         if (!isOptionLegal){
-            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
+            NettyUtils.sendErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
         if (ObjectUtils.isEmpty(request.getPostId())){
@@ -559,9 +559,9 @@ public class PostHandler implements PostApi{
 
     @Override
     public void postLike(PostLikeRequest request) {
-        boolean isOptionLegal = checkOption(request);
+        boolean isOptionLegal = checkParams(request);
         if (!isOptionLegal || ObjectUtils.isEmpty(request.getPostId())){
-            NettyUtils.sentErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
+            NettyUtils.sendErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqSender);
             return;
         }
 
@@ -610,7 +610,7 @@ public class PostHandler implements PostApi{
         // 参数校验
         PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(request.getPostId());
         if (postInfoDo == null || postInfoDo.getId() == null){
-            NettyUtils.sentErrorMessage(
+            NettyUtils.sendErrorMessage(
                     request.getSenderId(),
                     PostExceptions.POST_NOT_EXIST,
                     rabbitMqSender
@@ -631,9 +631,9 @@ public class PostHandler implements PostApi{
 
     @Override
     public void notInterested(PostDisLikeRequest request) {
-        boolean isOptionLegal = checkOption(request);
+        boolean isOptionLegal = checkParams(request);
         if (!isOptionLegal || ObjectUtils.isEmpty(request.getPostId())){
-            NettyUtils.sentErrorMessage(request.getSenderId(),
+            NettyUtils.sendErrorMessage(request.getSenderId(),
                     CommonExceptions.PARAM_ERROR,
                     rabbitMqSender
             );
@@ -645,7 +645,7 @@ public class PostHandler implements PostApi{
         // 获取postInfo
         PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(request.getPostId());
         if (postInfoDo == null || postInfoDo.getId() == null){
-            NettyUtils.sentErrorMessage(
+            NettyUtils.sendErrorMessage(
                     request.getSenderId(),
                     PostExceptions.POST_NOT_EXIST,
                     rabbitMqSender

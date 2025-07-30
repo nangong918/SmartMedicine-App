@@ -17,4 +17,6 @@ import lombok.EqualsAndHashCode;
 public class SendImageRequest extends BaseRequestData implements BaseBean {
     public String fileName;
     public Long fileSize;
+    // 由前端自己生成的消息id，用于通知Android端哪个消息被处理了
+    private String androidMessageId;
 }

@@ -15,18 +15,20 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UserTextDataResponse extends BaseResponseData implements BaseBean {
+    @Deprecated
     private String title;
     private String content;
     public String senderName;
+    @Deprecated
     public String avatarUrls;
 
     @Override
     public Map<String, String> toDataMap() {
         Map<String, String> data = super.toDataMap();
-        data.put("title", title);
+//        data.put("title", title);
         data.put("content", content);
         data.put("senderName", senderName);
-        data.put("avatarFileId", avatarUrls);
+//        data.put("avatarUrls", avatarUrls);
         return data;
     }
 }
