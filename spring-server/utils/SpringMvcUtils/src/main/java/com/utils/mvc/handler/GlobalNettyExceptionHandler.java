@@ -1,19 +1,14 @@
 package com.utils.mvc.handler;
 
-import com.czy.api.utils.NettyUtils;
-import com.utils.mvc.component.RabbitMqErrorSender;
-import exception.ExceptionEnums;
-import exception.NettyException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
  * @author 13225
  * @date 2025/7/29 9:45
  * 全局netty异常拦截
+ * 非mvc @ControllerAdvice 无法调用，取消此方法
+ * @see com.utils.mvc.aspect.NettyExceptionAspect
  */
-@RequiredArgsConstructor
+/*@RequiredArgsConstructor
 @ControllerAdvice
 public class GlobalNettyExceptionHandler {
 
@@ -40,4 +35,4 @@ public class GlobalNettyExceptionHandler {
                 rabbitMqErrorSender
         );
     }
-}
+}*/

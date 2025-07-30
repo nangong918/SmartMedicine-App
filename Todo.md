@@ -240,6 +240,7 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 3天
   * 7月3~7月5
 
+aop 实现切面参数校验
 todo 推荐系统已经推荐的post编辑进入已推荐过,召回阶段不再选取
 todo 一定要加上Spark,Hive,Hadoop,实现大数据
 todo post获取权限筛选；评论权限筛选（AOP？）。
