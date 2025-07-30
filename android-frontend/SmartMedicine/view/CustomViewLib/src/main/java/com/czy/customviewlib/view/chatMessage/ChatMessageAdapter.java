@@ -61,7 +61,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     // 更新View，与当前的view对比然后更新指定的view
     @SuppressLint("NotifyDataSetChanged")
-    public void setCurrentList(List<ChatMessageItemVo> newList, Runnable onFinish){
+    public void setCurrentList(List<ChatMessageItemVo> newList){
         if (this.currentList != null){
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ChatMessageDiffCallback(this.currentList, newList));
             this.currentList.clear();
@@ -75,8 +75,10 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             this.currentList.addAll(newList);
             notifyDataSetChanged();
         }
+
         // 滚动到最底部
-        onFinish.run();
+        Optional.ofNullable(onSetMessage)
+                        .ifPresent(Runnable::run);
     }
 
     public ChatMessageAdapter(List<ChatMessageItemVo> list){
@@ -141,4 +143,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 .map(List::size)
                 .orElse(0);
     }
+
+    private Runnable onSetMessage;
+
+    public void setOnSetMessageCallback(Runnable onSetMessage){
+        this.onSetMessage = onSetMessage;
+    }
+
 }

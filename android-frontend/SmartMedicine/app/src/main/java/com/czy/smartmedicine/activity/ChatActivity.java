@@ -9,7 +9,6 @@ import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.lifecycle.LiveData;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.baseUtilsLib.activity.BaseActivity;
@@ -25,8 +24,8 @@ import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 import com.czy.dal.vo.fragmentActivity.chat.ChatVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityChatBinding;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.ChatViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,8 @@ import java.util.Optional;
 
 /**
  * @author 13225
- * 聊天界面 * todo 解决问题：1.发送方的view在对面
+ * 聊天界面
+ *todo 解决问题：1.发送方的view在对面
  */
 public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
@@ -134,33 +134,33 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
     private void observeData(){
         // 观察RecyclerView
-        Optional.ofNullable(viewModel)
-                .map(vm -> vm.chatVo)
-                .map(cvo -> cvo.chatListVo)
-                .map(cvo -> cvo.chatMessageList)
-                .ifPresent(liveData -> {
-                    liveData.observe(this, newList -> {
-                        Optional.ofNullable(((ChatMessageAdapter)binding.rclvMessage.getAdapter()))
-                                .ifPresent(chatMessageAdapter -> {
-                                    runOnUiThread(() -> {
-                                        chatMessageAdapter.setCurrentList(
-                                                newList,
-                                                () -> {
-                                                    Log.e("Intercep", "observeData:newList: " + (newList.size() - 1));
-                                                    if (!newList.isEmpty()){
-                                                        Log.e("Intercep", "observeData:newList::bitmap: " + newList.get(newList.size() - 1).bitmap);
-                                                    }
-                                                    runOnUiThread(() -> {
-                                                        binding.rclvMessage.scrollToPosition(
-                                                                chatMessageAdapter.getItemCount() - 1
-                                                        );
-                                                    });
-                                                }
-                                        );
-                                    });
-                                });
-                    });
-                });
+//        Optional.ofNullable(viewModel)
+//                .map(vm -> vm.chatVo)
+//                .map(cvo -> cvo.chatListVo)
+//                .map(cvo -> cvo.chatMessageList)
+//                .ifPresent(liveData -> {
+//                    liveData.observe(this, newList -> {
+//                        Optional.ofNullable(((ChatMessageAdapter)binding.rclvMessage.getAdapter()))
+//                                .ifPresent(chatMessageAdapter -> {
+//                                    runOnUiThread(() -> {
+//                                        chatMessageAdapter.setCurrentList(
+//                                                newList,
+//                                                () -> {
+//                                                    Log.e("Intercep", "observeData:newList: " + (newList.size() - 1));
+//                                                    if (!newList.isEmpty()){
+//                                                        Log.e("Intercep", "observeData:newList::bitmap: " + newList.get(newList.size() - 1).bitmap);
+//                                                    }
+//                                                    runOnUiThread(() -> {
+//                                                        binding.rclvMessage.scrollToPosition(
+//                                                                chatMessageAdapter.getItemCount() - 1
+//                                                        );
+//                                                    });
+//                                                }
+//                                        );
+//                                    });
+//                                });
+//                    });
+//                });
         // 标题
         Optional.ofNullable(viewModel)
                 .map(vm -> vm.chatVo)
@@ -205,10 +205,20 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
                 .map(ao -> ao.chatVo)
                 .map(ao -> ao.chatListVo)
                 .map(ao -> ao.chatMessageList)
-                .map(LiveData::getValue)
+//                .map(LiveData::getValue)
                 .orElse(new ArrayList<>());
-        ChatMessageAdapter adapter = new ChatMessageAdapter(chatMessageList);
-        binding.rclvMessage.setAdapter(adapter);
+        viewModel.chatMessageAdapter = new ChatMessageAdapter(chatMessageList);
+        viewModel.chatMessageAdapter.setOnSetMessageCallback(
+                () -> {
+                    // recyclerView滚动到最下面
+                    binding.rclvMessage.scrollToPosition(
+                            viewModel.chatMessageAdapter.getItemCount() - 1
+                    );
+                }
+        );
+        binding.rclvMessage.setAdapter(
+                viewModel.chatMessageAdapter
+        );
     }
 
     //===========Picture
@@ -235,11 +245,14 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
                                 .map(vm -> vm.chatVo)
                                 .map(cvo -> cvo.chatListVo)
                                 .map(cvo -> cvo.chatMessageList)
-                                .map(LiveData::getValue)
+//                                .map(LiveData::getValue)
                                 .orElse(new ArrayList<>());
 
                         currentList.add(chatMessageItemVo);
-                        viewModel.chatVo.chatListVo.chatMessageList.postValue(currentList);
+                        // 如果是null则赋值，如果不是null，那么就是其本身的值
+                        viewModel.chatVo.chatListVo.chatMessageList = currentList;
+                        // 更新ui
+                        viewModel.notifyMessageListChange();
                         // 发送图片消息
                         viewModel.sendPictureMessage(
                                 this,

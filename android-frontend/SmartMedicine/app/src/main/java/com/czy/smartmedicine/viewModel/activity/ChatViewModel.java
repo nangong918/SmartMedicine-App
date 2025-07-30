@@ -10,7 +10,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.BaseConfig;
@@ -20,10 +19,11 @@ import com.czy.appcore.service.chat.ChatListManager;
 import com.czy.appcore.service.chat.MessageItem;
 import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.customviewlib.view.chatMessage.ChatMessageAdapter;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.bo.UserChatMessageBo;
-import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.constant.MessageTypeEnum;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.dal.dto.netty.forwardMessage.SendImageRequest;
 import com.czy.dal.dto.netty.forwardMessage.SendTextDataRequest;
@@ -67,17 +67,17 @@ public class ChatViewModel extends ViewModel {
     }
 
     //---------------------------Vo Ld---------------------------
-    Handler messageHandler;
+
+    private Handler messageHandler;
+    public ChatMessageAdapter chatMessageAdapter;
+
     public ChatVo chatVo = new ChatVo();
     public void init(ChatVo chatVo) {
-        messageHandler = new Handler(Looper.getMainLooper());
-        initVo(chatVo);
+        this.messageHandler = new Handler(Looper.getMainLooper());
+        this.chatVo = chatVo;
         initMessage();
         initEventBus();
         initChatListManager();
-    }
-    private void initVo(ChatVo chatVo){
-        this.chatVo = chatVo;
     }
 
     public TextWatcher getTextWatcher(){
@@ -103,6 +103,14 @@ public class ChatViewModel extends ViewModel {
         };
     }
 
+    public void notifyMessageListChange(){
+        List<ChatMessageItemVo> currentList = Optional.ofNullable(chatVo)
+                .map(cvo -> cvo.chatListVo)
+                .map(cvo -> cvo.chatMessageList)
+                .orElse(new ArrayList<>());
+        chatMessageAdapter.setCurrentList(currentList);
+    }
+
     //-----------------------Start-----------------------
 
     public void setStartAo(ChatActivityStartAo ao){
@@ -117,7 +125,10 @@ public class ChatViewModel extends ViewModel {
                     .map(chatListVo -> chatListVo.chatMessageList)
                     .ifPresent(ls -> {
                         messageHandler.post(() -> {
-                            ls.postValue(chatMessageList);
+//                            ls.postValue(chatMessageList);
+                            chatMessageAdapter.setCurrentList(
+                                    chatMessageList
+                            );
                         });
                     });
         }
@@ -210,13 +221,15 @@ public class ChatViewModel extends ViewModel {
 
                 chatMessageItemVos.add(chatMessageItemVo);
             }
-            // 设置LiveData
+            // 初始化设置
             Optional.ofNullable(chatVo)
                     .map(chatVo -> chatVo.chatListVo)
                     .map(chatListVo -> chatListVo.chatMessageList)
                     .ifPresent(ls -> {
+                        ls.clear();
+                        ls.addAll(chatMessageItemVos);
                         messageHandler.post(() -> {
-                            ls.postValue(chatMessageItemVos);
+                            chatMessageAdapter.setCurrentList(ls);
                         });
                     });
         });
@@ -339,7 +352,7 @@ public class ChatViewModel extends ViewModel {
             List<ChatMessageItemVo> list = Optional.ofNullable(chatVo)
                     .map(chatVo -> chatVo.chatListVo)
                     .map(chatListVo -> chatListVo.chatMessageList)
-                    .map(LiveData::getValue)
+//                    .map(LiveData::getValue)
                     .orElse(null);
             if (list != null){
                 Log.e("Intercep", "handleDownloadImage::listItemCreatedTime: " + listItemCreatedTime);
@@ -358,9 +371,9 @@ public class ChatViewModel extends ViewModel {
             Optional.ofNullable(chatVo)
                     .map(chatVo -> chatVo.chatListVo)
                     .map(chatListVo -> chatListVo.chatMessageList)
-                    .ifPresent(liveData -> {
+                    .ifPresent(ls -> {
                         messageHandler.post(() -> {
-                            liveData.postValue(list);
+                            chatMessageAdapter.setCurrentList(ls);
                         });
                     });
         }
