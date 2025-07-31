@@ -6,7 +6,6 @@ import com.czy.api.constant.netty.MqConstants;
 import com.czy.api.domain.entity.event.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ToSocketMqSender implements RabbitMqSenderInterface {
 
+    private final RabbitTemplate rabbitJsonTemplate;
     private final RabbitTemplate confirmRabbitJsonTemplate;
 //    private final BaseResponseConverter baseResponseConverter;
 
@@ -30,20 +30,29 @@ public class ToSocketMqSender implements RabbitMqSenderInterface {
             return;
         }
 
-        // 发送消息
-        confirmRabbitJsonTemplate.convertAndSend(
+//        // 发送消息
+//        confirmRabbitJsonTemplate.convertAndSend(
+//                // 交换机
+//                MqConstants.Exchange.RELATIONSHIP_EXCHANGE,
+//                // 路由键
+//                MqConstants.RelationshipQueue.Routing.TO_SOCKET_ROUTING,
+//                // 消息
+//                message,
+//                // 消息持久化
+//                messagePostProcessor -> {
+//                    messagePostProcessor.getMessageProperties()
+//                            .setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+//                    return messagePostProcessor;
+//                }
+//        );
+
+        rabbitJsonTemplate.convertAndSend(
                 // 交换机
                 MqConstants.Exchange.RELATIONSHIP_EXCHANGE,
                 // 路由键
                 MqConstants.RelationshipQueue.Routing.TO_SOCKET_ROUTING,
                 // 消息
-                message,
-                // 消息持久化
-                messagePostProcessor -> {
-                    messagePostProcessor.getMessageProperties()
-                            .setDeliveryMode(MessageDeliveryMode.PERSISTENT);
-                    return messagePostProcessor;
-                }
+                message
         );
     }
 

@@ -144,7 +144,9 @@ public class ChatHandler implements ChatApi {
 
         // to sender
         Map<String, String> dataMap = new HashMap<>();
-        dataMap.put("androidMessageId", request.getAndroidMessageId());
+        dataMap.put("androidMessageId", Optional.ofNullable(request.getAndroidMessageId())
+                .orElse(String.valueOf(NettyConstants.ERROR_ID))
+        );
         NettyUtils.sendSuccessMessage(
                 request.getSenderId(),
                 dataMap,

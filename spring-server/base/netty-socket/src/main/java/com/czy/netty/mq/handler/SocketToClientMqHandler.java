@@ -53,6 +53,7 @@ public class SocketToClientMqHandler {
     )
     public void handleMessageMessage(Message message) {
         // 监听到消息校验之后就发送
+        log.info("接收到Message消息：{}", message);
         sendMessage(message);
     }
 
@@ -118,6 +119,7 @@ public class SocketToClientMqHandler {
     )
     public void handleRelationshipMessage(@Valid Message message) {
         // 监听到消息校验之后就发送
+        log.info("接收到Relation消息：{}", message);
         sendMessage(message);
     }
 
