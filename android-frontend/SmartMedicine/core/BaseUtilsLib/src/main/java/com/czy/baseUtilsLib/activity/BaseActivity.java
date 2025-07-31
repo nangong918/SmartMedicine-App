@@ -7,20 +7,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.viewbinding.ViewBinding;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 
 /**
@@ -56,7 +55,6 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
     @Override
     protected void onStart() {
         super.onStart();
-        // TODO 再考虑
 //        initView();
     }
 
@@ -102,14 +100,23 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
 //                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
 //                View.SYSTEM_UI_FLAG_FULLSCREEN);
 
-        EdgeToEdge.enable(this);
+//        EdgeToEdge.enable(this);
+//
+//        // 处理窗口插入
+//        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
 
-        // 处理窗口插入
-        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //去除标题导航栏
+        Optional.ofNullable(getSupportActionBar())
+                .ifPresent(ActionBar::hide);
+        //去除时间和电量等
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
     }
 
     // 将头部的Bar隐藏

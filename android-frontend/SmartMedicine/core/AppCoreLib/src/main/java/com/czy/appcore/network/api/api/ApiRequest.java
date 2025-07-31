@@ -254,7 +254,7 @@ public interface ApiRequest {
      * @param request   请求
      * @return          推荐帖子
      */
-    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/getPost")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/get")
     Observable<BaseResponse<RecommendPostResponse>> getRecommendPosts(@Body RecommendPostRequest request);
 
     /**

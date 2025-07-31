@@ -10,7 +10,7 @@ public class RecommendConstant {
     // serviceRoute
     public static final String serviceRoute = "/" + serviceName;
     public static final String POST_RECOMMEND_CONTROLLER = "/rec/post";
-    public static final String RECOMMEND_POSTS = "/getPost";
+    public static final String RECOMMEND_POSTS = "/get";
     // serviceUri
     public static final String serviceUri = "lb://" + serviceName;
 }

@@ -59,7 +59,7 @@ public class RecommendController {
         // 1.用于检查单次推荐的分布式锁
         RedissonClusterLock singleRecommendLock = new RedissonClusterLock(
                 String.valueOf(userId),
-                RecommendConstant.serviceRoute + RecommendConstant.RECOMMEND_POSTS,
+                RecommendConstant.POST_RECOMMEND_CONTROLLER + RecommendConstant.RECOMMEND_POSTS,
                 RecommendRedisKey.clickRecommendLockTimeout
         );
 
