@@ -1,10 +1,7 @@
 package com.utils.mvc.component;
 
 import com.czy.api.api.RabbitMqSenderInterface;
-import com.czy.api.constant.netty.MessageTypeTranslator;
 import com.czy.api.constant.netty.MqConstants;
-import com.czy.api.constant.netty.ResponseMessageType;
-import com.czy.api.domain.dto.base.BaseResponseData;
 import com.czy.api.domain.entity.event.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,16 +27,5 @@ public class RabbitMqErrorSender implements RabbitMqSenderInterface {
                 MqConstants.ErrorQueue.Routing.TO_SOCKET_ROUTING,
                 message
         );
-    }
-
-    @Override
-    public <T extends BaseResponseData> void push(T t) {
-        Message message = t.getMessageByResponse();
-        message.setType(MessageTypeTranslator.translateClean(t.getType()));
-        if (ResponseMessageType.NULL.equals(message.getType())){
-            return;
-        }
-
-        push(message);
     }
 }
