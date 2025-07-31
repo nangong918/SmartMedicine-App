@@ -150,11 +150,10 @@ public class ChatViewModel extends ViewModel {
 
     public void fetchUserMessage(Long timestampIndex, Integer messageCount){
         FetchUserMessageRequest request = new FetchUserMessageRequest();
-        request.receiverAccount = chatVo.contactAccount;
         request.timestampIndex = timestampIndex;
         request.messageCount = messageCount;
-        request.senderAccount = MainApplication.getInstance().getUserLoginInfoAo().account;
         request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        request.receiverId = chatVo.contactId;
 
         apiRequestImpl.fetchUserMessage(request
                 , this::handleFetchUserMessage
