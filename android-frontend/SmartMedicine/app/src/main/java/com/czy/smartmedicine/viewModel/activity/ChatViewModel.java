@@ -1,6 +1,7 @@
 package com.czy.smartmedicine.viewModel.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
@@ -9,8 +10,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
@@ -19,6 +26,9 @@ import com.czy.appcore.service.chat.ChatListManager;
 import com.czy.appcore.service.chat.MessageItem;
 import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.baseUtilsLib.permission.GainPermissionCallback;
+import com.czy.baseUtilsLib.permission.PermissionUtil;
+import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.customviewlib.view.chatMessage.ChatMessageAdapter;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.bo.UserChatMessageBo;
@@ -109,6 +119,26 @@ public class ChatViewModel extends ViewModel {
                 .map(cvo -> cvo.chatMessageList)
                 .orElse(new ArrayList<>());
         chatMessageAdapter.setCurrentList(currentList);
+    }
+
+    public void initRecyclerView(@NonNull RecyclerView recyclerView){
+        List<ChatMessageItemVo> chatMessageList = Optional.ofNullable(chatVo)
+                .map(ao -> ao.chatListVo)
+                .map(ao -> ao.chatMessageList)
+//                .map(LiveData::getValue)
+                .orElse(new ArrayList<>());
+        chatMessageAdapter = new ChatMessageAdapter(chatMessageList);
+        chatMessageAdapter.setOnSetMessageCallback(
+                () -> {
+                    // recyclerView滚动到最下面
+                    recyclerView.scrollToPosition(
+                            this.chatMessageAdapter.getItemCount() - 1
+                    );
+                }
+        );
+        recyclerView.setAdapter(
+                this.chatMessageAdapter
+        );
     }
 
     //-----------------------Start-----------------------
@@ -238,6 +268,76 @@ public class ChatViewModel extends ViewModel {
         });
     }
 
+    //===========selectImage
+
+    private ActivityResultLauncher<Intent> selectImageLauncher;
+
+    // 初始化图片选择器
+    public void initPictureSelectorLauncher(FragmentActivity activity){
+        selectImageLauncher = activity.registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Uri imageUri = Optional.ofNullable(result)
+                            .map(ActivityResult::getData)
+                            .map(Intent::getData)
+                            .orElse(null);
+                    if (imageUri != null){
+                        uriAtomicReference.set(imageUri);
+                        // url -> bitmap
+                        Bitmap bitmap = MainApplication.getInstance().getImageManager()
+                                .uriToBitmapMediaStore(activity, imageUri);
+                        // 压缩图片
+                        bitmap = MainApplication.getInstance().getImageManager().processImage(bitmap, BaseConfig.BITMAP_MAX_SIZE);
+
+                        long currentTime = System.currentTimeMillis();
+                        String content = Optional.ofNullable(chatVo)
+                                .map(cvo -> cvo.inputText)
+                                .map(LiveData::getValue)
+                                .orElse("");
+
+                        // ui展示
+                        ChatMessageItemVo vo = new ChatMessageItemVo();
+                        vo.bitmap = bitmap;
+                        vo.setTimeByStringTimeStamp(currentTime);
+                        vo.viewType = ChatMessageItemVo.VIEW_TYPE_SENDER;
+                        vo.content = chatVo.inputText.getValue();
+
+                        // 发送图片消息
+                        sendPictureMessage(
+                                activity,
+                                bitmap,
+                                currentTime,
+                                content,
+                                vo.getItemId()
+                        );
+                    }
+                    else {
+                        ToastUtils.showToast(activity, activity.getString(com.czy.customviewlib.R.string.send_image_failed));
+                    }
+                }
+        );
+    }
+
+    // 选择 + 发送图片
+    public void beginSelectPicture(FragmentActivity activity){
+        PermissionUtil.requestPermissionsX(activity, new String[]{
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        }, new GainPermissionCallback() {
+            @Override
+            public void allGranted() {
+                com.czy.baseUtilsLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
+            }
+
+            @Override
+            public void notGranted(String[] notGrantedPermissions) {
+                ToastUtils.showToastActivity(activity,
+                        activity.getString(com.czy.customviewlib.R.string.gain_permission_failed)
+                );
+            }
+        });
+    }
+
     //===========Message
 
     private void initMessage(){
@@ -277,14 +377,13 @@ public class ChatViewModel extends ViewModel {
         };
     }
 
-    // TODO 消息获取：1.外存获取，2.内存获取，3.网络获取，4.Socket获取 5.本地发送数据
-
     //===========Picture
 
     public AtomicReference<Uri> uriAtomicReference = new AtomicReference<>();
 
     public void sendPictureMessage(Context context,
-                                   Bitmap bitmap, Long listTime) {
+                                   Bitmap bitmap, Long listTime,
+                                   String content, String androidMessageId) {
         // Http Send
         File imageFile = null;
         // 确保您在这里传入正确的 Uri
@@ -321,10 +420,14 @@ public class ChatViewModel extends ViewModel {
 
         // Socket Send
         SendImageRequest request = new SendImageRequest();
-        request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        request.senderId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                .map(ao -> ao.userId)
+                .orElse(NettyConstants.ERROR_ID);
         request.receiverId = chatVo.contactId;
         request.timestamp = String.valueOf(listTime);
         request.fileName = fileName + "_" + request.timestamp + fileExtension;
+        request.content = content;
+        request.androidMessageId = androidMessageId;
         socketMessageSender.sendImageToUser(request);
     }
 

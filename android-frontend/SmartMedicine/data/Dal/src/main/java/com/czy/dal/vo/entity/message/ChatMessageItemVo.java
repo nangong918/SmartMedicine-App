@@ -7,12 +7,12 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.date.DateUtils;
-import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.constant.MessageTypeEnum;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author 13225
@@ -21,19 +21,17 @@ import java.util.Objects;
 public class ChatMessageItemVo implements Serializable {
     private static final String TAG = ChatMessageItemVo.class.getSimpleName();
 
-    public static long totalNumber = 0;
 
-    private final long id;
+    private final String itemId;
     private final long createdTimestamp;
 
     public ChatMessageItemVo(){
-        id = totalNumber;
-        totalNumber++;
+        itemId = UUID.randomUUID().toString();
         createdTimestamp = System.currentTimeMillis();
     }
 
-    public long getId(){
-        return id;
+    public String getItemId(){
+        return itemId;
     }
 
     public long getCreatedTimestamp(){

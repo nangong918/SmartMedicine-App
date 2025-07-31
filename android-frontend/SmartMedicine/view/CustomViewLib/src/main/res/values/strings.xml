@@ -67,4 +67,6 @@
     <string name="view_details">查看详情</string>
     <string name="possible_heart_disease">心脏病可能</string>
     <string name="possible_diabetes">糖尿病可能</string>
+    <string name="send_image_failed">图片发送失败</string>
+    <string name="gain_permission_failed">获取权限失败</string>
 </resources>
