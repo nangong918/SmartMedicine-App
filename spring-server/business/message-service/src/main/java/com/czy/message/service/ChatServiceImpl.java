@@ -173,16 +173,16 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public void saveUserChatMessageToRedis(UserChatLastMessageBo userChatLastMessageBo) {
-        String key = MessageConstant.CHAT_MESSAGE_KEY + userChatLastMessageBo.senderAccount + ":" + userChatLastMessageBo.receiverAccount + ":";
-        redisService.setObject(key, userChatLastMessageBo, MessageConstant.CHAT_MESSAGE_EXPIRE_TIME);
+    public void saveUserChatMessageToRedis(UserChatLastMessageBo bo) {
+        String key = MessageConstant.CHAT_MESSAGE_KEY + bo.senderId + ":" + bo.receiverId + ":";
+        redisService.setObject(key, bo, MessageConstant.CHAT_MESSAGE_EXPIRE_TIME);
     }
 
     @Override
-    public void saveUserChatMessagesToDatabase(List<UserChatMessageDo> userChatMessageDoList) {
+    public void saveUserChatMessagesToDatabase(List<UserChatMessageDo> dos) {
         // 取消存储到mysql
-//        chatMapper.batchInsert(userChatMessageDoList);
-        messageStorageService.storeMessagesToDatabase(userChatMessageDoList);
+//        chatMapper.batchInsert(dos);
+        messageStorageService.storeMessagesToDatabase(dos);
     }
 
     private long getUserId(String account){
