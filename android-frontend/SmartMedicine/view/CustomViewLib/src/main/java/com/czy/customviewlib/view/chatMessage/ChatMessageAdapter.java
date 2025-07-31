@@ -24,6 +24,9 @@ import java.util.Optional;
 
 /**
  * @author 13225
+ * todo 此处需要修改：1.收到消息的头像需要缓存到本地，避免每次都去请求url
+ *  2. image的显示存在问题
+ *  3. 收到的数据回显都是 发送者（显示错误）
  */
 public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 

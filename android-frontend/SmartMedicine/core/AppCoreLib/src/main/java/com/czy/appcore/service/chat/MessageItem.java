@@ -33,13 +33,13 @@ public class MessageItem{
         return chatMessageItemVo;
     }
 
-    public static MessageItem getByChatMessageItemVo(UserChatMessageBo userChatMessageBo){
+    public static MessageItem getByChatMessageItemVo(UserChatMessageBo bo){
         MessageItem messageItem = new MessageItem();
-        messageItem.content = userChatMessageBo.msgContent;
-        messageItem.messageType = userChatMessageBo.msgType;
-        messageItem.receiverId = userChatMessageBo.receiverId;
-        messageItem.senderId = userChatMessageBo.senderId;
-        messageItem.timestamp = userChatMessageBo.timestamp;
+        messageItem.content = bo.msgContent;
+        messageItem.messageType = bo.msgType;
+        messageItem.receiverId = bo.receiverId;
+        messageItem.senderId = bo.senderId;
+        messageItem.timestamp = bo.timestamp;
         return messageItem;
     }
 

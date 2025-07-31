@@ -8,9 +8,11 @@ import com.czy.api.constant.MessageTypeEnum;
 import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.converter.domain.message.UserChatMessageConverter;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
+import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.message.FetchUserMessageAo;
 import com.czy.api.domain.bo.message.UserChatLastMessageBo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
+import com.czy.api.exception.UserExceptions;
 import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
 import com.czy.message.mapper.mysql.UserChatMessageMapper;
 import com.czy.message.service.transactional.MessageStorageService;
@@ -93,11 +95,15 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<UserChatMessageBo> getUserChatMessage(@NonNull FetchUserMessageAo fetchUserMessageAo) {
+        // 参数校验
+        UserDo senderDo = userService.getUserById(fetchUserMessageAo.getSenderId());
+        UserDo receiverDo = userService.getUserById(fetchUserMessageAo.getReceiverId());
+        if (senderDo == null || receiverDo == null || senderDo.getId() == null || receiverDo.getId() == null){
+            throw new AppException(UserExceptions.USER_NOT_EXIST);
+        }
+
         // 限制 messageCount 最大值为 200
         int messageCount = Math.min(fetchUserMessageAo.getMessageCount(), MessageConstant.MAX_SEARCH_MESSAGE_LIMIT);
-
-        long senderId = getUserId(fetchUserMessageAo.getSenderAccount());
-        long receiverId = getUserId(fetchUserMessageAo.getReceiverAccount());
 
         // 此处不应该是mysql查询，而应该是mongodb查询
 //        return chatMapper.selectMessagesAfter(
@@ -110,8 +116,8 @@ public class ChatServiceImpl implements ChatService {
         // 根据 timestampIndex 和 messageCount 查询用户聊天记录
         // 资源文件存储的是 fileIdStr
         List<UserChatMessageDo> messageDoList = userChatMessageMongoMapper.findMessagesAfterTimestamp(
-                senderId,
-                receiverId,
+                senderDo.getId(),
+                receiverDo.getId(),
                 Optional.ofNullable(fetchUserMessageAo.getTimestampIndex())
                         .orElse(System.currentTimeMillis()),
                 messageCount
@@ -160,8 +166,8 @@ public class ChatServiceImpl implements ChatService {
         return messageDoList.stream()
                 .map(message -> userChatMessageConverter.toBo(
                         message,
-                        fetchUserMessageAo.getSenderAccount(),
-                        fetchUserMessageAo.getReceiverAccount()
+                        senderDo.getAccount(),
+                        receiverDo.getAccount()
                 ))
                 .collect(Collectors.toList());
     }
