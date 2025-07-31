@@ -15,7 +15,7 @@ import com.czy.customviewlib.view.home.OnRecommendCardClick;
 import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
 import com.czy.dal.ao.home.PostIntentAo;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.constant.home.PostOperation;
 import com.czy.dal.constant.home.RecommendButtonType;
 import com.czy.dal.constant.home.RecommendCardType;
@@ -68,7 +68,7 @@ public class PostClickManager {
                             return;
                         }
 
-                        Long postId = result.getData().getLongExtra(PostIntentAo.POST_ID, Constants.ERROR_ID);
+                        Long postId = result.getData().getLongExtra(PostIntentAo.POST_ID, NettyConstants.ERROR_ID);
                         // 记录观看时长
                         recordViewingDuration(duration, postId);
                     }
@@ -183,7 +183,7 @@ public class PostClickManager {
         Long userId = MainApplication.getInstance().getUserLoginInfoAo().userId;
         Long time = System.currentTimeMillis();
         UserClickPostRequest request = new UserClickPostRequest();
-        request.receiverId = Constants.SERVER_ID;
+        request.receiverId = NettyConstants.SERVER_ID;
         request.postId = postId;
         request.senderId = userId;
         request.timestamp = String.valueOf(time);
@@ -195,7 +195,7 @@ public class PostClickManager {
         Long userId = MainApplication.getInstance().getUserLoginInfoAo().userId;
         Long time = System.currentTimeMillis();
         UserBrowseTimeRequest request = new UserBrowseTimeRequest();
-        request.receiverId = Constants.SERVER_ID;
+        request.receiverId = NettyConstants.SERVER_ID;
         request.senderId = userId;
         request.timestamp = String.valueOf(time);
         request.postId = postId;

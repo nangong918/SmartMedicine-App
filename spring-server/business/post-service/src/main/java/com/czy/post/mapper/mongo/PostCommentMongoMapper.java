@@ -133,4 +133,15 @@ public class PostCommentMongoMapper {
                 PostCommentDo.class
         );
     }
+
+    // 根据postId和commentId删除消息
+    public void deleteCommentByPostIdAndCommentId(Long postId, Long commentId) {
+        mongoTemplate.remove(
+                Query.query(
+                        Criteria.where("postId").is(postId)
+                                .and("id").is(commentId)
+                ),
+                PostCommentDo.class
+        );
+    }
 }

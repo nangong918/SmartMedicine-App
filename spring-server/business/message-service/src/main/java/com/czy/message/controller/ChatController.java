@@ -159,17 +159,13 @@ public class ChatController {
     public BaseResponse<FetchUserMessageResponse>
     fetchUserMessage(@Valid @RequestBody FetchUserMessageRequest request) {
         // 封装请求 -> Ao
-        FetchUserMessageAo fetchUserMessageAo = new FetchUserMessageAo();
-        fetchUserMessageAo.setSenderAccount(request.getSenderAccount());
-        fetchUserMessageAo.setReceiverAccount(request.getReceiverAccount());
-        fetchUserMessageAo.setTimestampIndex(request.getTimestampIndex());
-        fetchUserMessageAo.setMessageCount(request.getMessageCount());
+        FetchUserMessageAo ao = userChatMessageConverter.fetchUserMessageRequestToAo(request);
         // 获取用户聊天消息
-        List<UserChatMessageBo> messageList = chatService.getUserChatMessage(fetchUserMessageAo);
+        List<UserChatMessageBo> messageList = chatService.getUserChatMessage(ao);
         // 封装响应
-        FetchUserMessageResponse fetchUserMessageResponse = new FetchUserMessageResponse();
-        fetchUserMessageResponse.setMessageList(messageList);
-        return BaseResponse.getResponseEntitySuccess(fetchUserMessageResponse);
+        FetchUserMessageResponse response = new FetchUserMessageResponse();
+        response.setMessageList(messageList);
+        return BaseResponse.getResponseEntitySuccess(response);
     }
 
     /**

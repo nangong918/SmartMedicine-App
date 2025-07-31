@@ -33,6 +33,7 @@ public interface PostInfoMapper {
     List<Long> getPostInfoDoListByAuthorIdPaging(
             @Param("authorId") Long authorId,
             @Param("page") int page,
+            @Param("offset") int offset,
             @Param("size") int size);
 
     // 根据authorId获取List<id> + 分页 + 获取releaseTimestamp前n个

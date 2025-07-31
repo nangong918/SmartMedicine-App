@@ -5,7 +5,7 @@ package com.czy.appcore.network.netty.constant;
 import android.text.TextUtils;
 
 import com.czy.dal.annotation.MsgTranslator;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.constant.netty.RequestMessageType;
 
 import java.lang.reflect.Field;
@@ -44,7 +44,7 @@ public class MessageTypeTranslator {
         // 如果是null，则设置为空字符串
         resType = resType == null ? "" : resType;
         // 如果是http请求，则不设置type
-        resType = Constants.MESSAGE_TYPE_HTTP.equals(resType) ? "" : resType;
+        resType = NettyConstants.MESSAGE_TYPE_HTTP.equals(resType) ? "" : resType;
         return resType;
     }
 }

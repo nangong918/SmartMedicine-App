@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.czy.appcore.BaseConfig;
@@ -16,7 +15,7 @@ import com.czy.appcore.network.netty.connect.ConnectNettyCallback;
 import com.czy.appcore.network.netty.connect.NettyConnectChangeCallback;
 import com.czy.appcore.network.netty.event.OnReceiveMessage;
 import com.czy.appcore.network.netty.manager.NettySocketManager;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.model.RequestBodyProto;
 import com.czy.dal.netty.Message;
 
@@ -96,7 +95,7 @@ public class NettySocketService extends Service {
             public void onConnect() {
                 try {
                     if (messageListener != null){
-                        messageListener.onConnectionStatusChanged(Constants.CONNECTED);
+                        messageListener.onConnectionStatusChanged(NettyConstants.CONNECTED);
                     }
                     else {
                         Log.e(TAG, "onReceiveMessage::messageListener is null");
@@ -110,7 +109,7 @@ public class NettySocketService extends Service {
             public void onDisconnect() {
                 try {
                     if (messageListener != null){
-                        messageListener.onConnectionStatusChanged(Constants.DISCONNECTED);
+                        messageListener.onConnectionStatusChanged(NettyConstants.DISCONNECTED);
                     }
                     else {
                         Log.e(TAG, "onReceiveMessage::messageListener is null");
@@ -147,7 +146,7 @@ public class NettySocketService extends Service {
     public class NettySocketServiceBinder extends IMessageService.Stub {
         @Override
         public void connect(long uid) throws RemoteException {
-            if(Constants.ERROR_ID.equals(uid)){
+            if(NettyConstants.ERROR_ID.equals(uid)){
                 Log.w(TAG, "connect::uid is empty");
                 return;
             }

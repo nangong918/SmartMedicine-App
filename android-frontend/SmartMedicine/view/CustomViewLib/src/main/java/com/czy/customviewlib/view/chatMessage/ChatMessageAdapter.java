@@ -24,6 +24,9 @@ import java.util.Optional;
 
 /**
  * @author 13225
+ * todo 此处需要修改：1.收到消息的头像需要缓存到本地，避免每次都去请求url
+ *  2. image的显示存在问题
+ *  3. 收到的数据回显都是 发送者（显示错误）
  */
 public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
@@ -61,7 +64,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     // 更新View，与当前的view对比然后更新指定的view
     @SuppressLint("NotifyDataSetChanged")
-    public void setCurrentList(List<ChatMessageItemVo> newList, Runnable onFinish){
+    public void setCurrentList(List<ChatMessageItemVo> newList){
         if (this.currentList != null){
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ChatMessageDiffCallback(this.currentList, newList));
             this.currentList.clear();
@@ -75,8 +78,10 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             this.currentList.addAll(newList);
             notifyDataSetChanged();
         }
+
         // 滚动到最底部
-        onFinish.run();
+        Optional.ofNullable(onSetMessage)
+                        .ifPresent(Runnable::run);
     }
 
     public ChatMessageAdapter(List<ChatMessageItemVo> list){
@@ -95,7 +100,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        if (viewType == 0) {
+        if (viewType == ChatMessageItemVo.VIEW_TYPE_SENDER) {
             ViewSendMessageItemBinding binding = ViewSendMessageItemBinding.inflate(inflater, parent, false);
             return new SenderViewHolder(binding);
         }
@@ -141,4 +146,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 .map(List::size)
                 .orElse(0);
     }
+
+    private Runnable onSetMessage;
+
+    public void setOnSetMessageCallback(Runnable onSetMessage){
+        this.onSetMessage = onSetMessage;
+    }
+
 }

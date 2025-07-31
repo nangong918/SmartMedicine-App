@@ -2,7 +2,7 @@ package com.czy.dal.vo.fragmentActivity;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.vo.entity.home.PostVo;
 
 import java.util.ArrayList;
@@ -20,5 +20,5 @@ public class UserBriefVo {
     // data
     public Long avatarFileId;
     // 被访问user的Id
-    public Long userId = Constants.ERROR_ID;
+    public Long userId = NettyConstants.ERROR_ID;
 }

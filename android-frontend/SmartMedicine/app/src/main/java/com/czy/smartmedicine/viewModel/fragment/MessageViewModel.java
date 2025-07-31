@@ -16,7 +16,7 @@ import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.bo.UserChatLastMessageBo;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.dal.dto.netty.forwardMessage.UserImageResponse;
@@ -175,8 +175,8 @@ public class MessageViewModel extends ViewModel {
             BaseHttpRequest request = new BaseHttpRequest();
             request.senderId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
                             .map(ao -> ao.userId)
-                            .orElse(Constants.ERROR_ID);
-            if (Constants.ERROR_ID.equals(request.senderId)){
+                            .orElse(NettyConstants.ERROR_ID);
+            if (NettyConstants.ERROR_ID.equals(request.senderId)){
                 Log.w(TAG, "doGetUserNewMessage: senderId is empty");
                 return;
             }

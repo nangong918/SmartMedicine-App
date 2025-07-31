@@ -9,7 +9,7 @@ import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.dal.ao.login.LoginTokenAo;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityStartBinding;
 
@@ -83,7 +83,7 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
         Log.i(TAG, "检查是否未登录::userId: " + userId + "\nloginTokenAo: " + loginTokenAo.toJsonString());
         return userId == null ||
                 userId == 0L ||
-                Constants.ERROR_ID.equals(userId) ||
+                NettyConstants.ERROR_ID.equals(userId) ||
                 loginTokenAo.isEmpty();
     }
 

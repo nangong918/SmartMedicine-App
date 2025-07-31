@@ -5,7 +5,7 @@ package com.czy.dal.constant;
  * @author 13225
  * @date 2025/2/11 23:42
  */
-public interface Constants {
+public interface NettyConstants {
     // 推送消息队列
     String PUSH_MESSAGE_INNER_QUEUE = "signal/channel/PUSH_MESSAGE_INNER_QUEUE";
     // 绑定队列
@@ -16,4 +16,5 @@ public interface Constants {
     String CONNECTED = "connected";
     String DISCONNECTED = "disconnected";
     Long ERROR_ID = -1L;
+    String SUCCESS_CODE = "S_200";
 }

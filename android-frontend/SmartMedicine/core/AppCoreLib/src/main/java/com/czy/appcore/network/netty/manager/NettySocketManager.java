@@ -13,7 +13,7 @@ import androidx.multidex.BuildConfig;
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.netty.connect.ConnectNettyCallback;
 import com.czy.appcore.network.netty.connect.NettyConnectChangeCallback;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.constant.netty.RequestMessageType;
 import com.czy.appcore.network.netty.event.OnReceiveMessage;
 import com.czy.appcore.network.netty.handler.ResponseBodyHandler;
@@ -101,7 +101,7 @@ public class NettySocketManager {
     }
 
     public void setUserId(Long userId){
-        if (userId == null || Constants.ERROR_ID.equals(userId)){
+        if (userId == null || NettyConstants.ERROR_ID.equals(userId)){
             Log.w(TAG, "init::userId is empty");
             this.connectNettyCallback.onConnectFailure("User ID is empty");
             return;
@@ -206,7 +206,7 @@ public class NettySocketManager {
         Message message = Message.getRequestBody(
                 registerRequest,
                 this.userId,
-                Constants.SERVER_ID,
+                NettyConstants.SERVER_ID,
                 RequestMessageType.Connect.CONNECT
         );
 
@@ -349,7 +349,7 @@ public class NettySocketManager {
         Message ping = new Message();
         ping.type = RequestMessageType.ToServer.PING;
         ping.senderId = this.userId;
-        ping.receiverId = Constants.SERVER_ID;
+        ping.receiverId = NettyConstants.SERVER_ID;
         return ping;
     }
 

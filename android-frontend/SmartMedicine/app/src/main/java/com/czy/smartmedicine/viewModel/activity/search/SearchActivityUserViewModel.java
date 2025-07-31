@@ -104,8 +104,11 @@ public class SearchActivityUserViewModel extends ViewModel {
 //        searchUserVo.addContactListVo.contactItemList.setValue(addContactList);
         searchUserVo.addContactListVo.contactItemList = new ArrayList<>(addContactList);
 //        addContactAdapter.setChatItems(addContactList);
-        // 暂时取消使用DiffUtil
-        addContactAdapter.notifyDataSetChanged();
+        addContactAdapter.setChatItems(
+                searchUserVo.addContactListVo.contactItemList
+        );
+//        // 暂时取消使用DiffUtil
+//        addContactAdapter.notifyDataSetChanged();
     }
 
     //---------------------------NetWork---------------------------

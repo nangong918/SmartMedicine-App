@@ -29,6 +29,7 @@ public class ChatActivityStartAo implements Serializable, BaseBean {
      * 联系人id/群组id
      */
     public String contactAccount;
+    public Long contactId;
 
     // 初始化的输入框
     public String inputText;

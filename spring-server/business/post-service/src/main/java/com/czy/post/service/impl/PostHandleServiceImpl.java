@@ -126,11 +126,20 @@ public class PostHandleServiceImpl implements PostHandleService {
 
     @Override
     public Long createPostCollectFolder(Long userId, String collectFolderName) {
-        PostCollectFolderDo postCollectFolderDo = new PostCollectFolderDo();
-        postCollectFolderDo.setId(IdUtil.getSnowflakeNextId());
-        postCollectFolderDo.setUserId(userId);
-        postCollectFolderDo.setCollectFolderName(collectFolderName);
-        return postCollectFolderMapper.savePostCollectFolder(postCollectFolderDo);
+        PostCollectFolderDo postCollectFolderDo = postCollectFolderMapper.findPostCollectFolderByUserIdAndName(
+                userId,
+                collectFolderName
+        );
+        if (postCollectFolderDo != null && postCollectFolderDo.getId() != null){
+            return postCollectFolderDo.getId();
+        }
+        else {
+            postCollectFolderDo = new PostCollectFolderDo();
+            postCollectFolderDo.setId(IdUtil.getSnowflakeNextId());
+            postCollectFolderDo.setUserId(userId);
+            postCollectFolderDo.setCollectFolderName(collectFolderName);
+            return postCollectFolderMapper.savePostCollectFolder(postCollectFolderDo);
+        }
     }
 
     @Override

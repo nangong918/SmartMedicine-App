@@ -185,7 +185,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostInfoAo> findPublishedPostsByUserId(Long userId, int pageNum, int pageSize) {
-        List<Long> postIdList = postInfoMapper.getPostInfoDoListByAuthorIdPaging(userId, pageNum, pageSize);
+        List<Long> postIdList = postInfoMapper.getPostInfoDoListByAuthorIdPaging(
+                userId,
+                pageNum,
+                // sql不能计算offset，需要在java代码中进行计算
+                pageNum * pageSize,
+                pageSize
+        );
         if (CollectionUtils.isEmpty(postIdList)){
             return new ArrayList<>();
         }
@@ -195,7 +201,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostInfoAo> findCollectedPostsByUserId(Long userId, int pageNum, int pageSize) {
-        List<PostCollectDo> postAoList = postCollectMapper.findPostCollectsByUserIdPaging(userId, pageNum, pageSize);
+        List<PostCollectDo> postAoList = postCollectMapper.findPostCollectsByUserIdPaging(
+                userId,
+                // sql代码不能进行数学计算，偏移量需要在Java代码计算
+                pageNum * pageSize,
+                pageNum,
+                pageSize
+        );
         if (CollectionUtils.isEmpty(postAoList)){
             return new ArrayList<>();
         }

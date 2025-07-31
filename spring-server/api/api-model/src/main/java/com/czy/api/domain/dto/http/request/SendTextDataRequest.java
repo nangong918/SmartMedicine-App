@@ -15,4 +15,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class SendTextDataRequest extends BaseRequestData implements BaseBean {
     private String content;
+    // 由前端自己生成的消息id，用于通知Android端哪个消息被处理了
+    private String androidMessageId;
 }

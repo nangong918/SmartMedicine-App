@@ -8,14 +8,17 @@ import com.czy.api.constant.MessageTypeEnum;
 import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.converter.domain.message.UserChatMessageConverter;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
+import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.message.FetchUserMessageAo;
 import com.czy.api.domain.bo.message.UserChatLastMessageBo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
+import com.czy.api.exception.UserExceptions;
 import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
 import com.czy.message.mapper.mysql.UserChatMessageMapper;
 import com.czy.message.service.transactional.MessageStorageService;
 import com.czy.springUtils.service.RedisService;
 import exception.AppException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -90,12 +94,16 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<UserChatMessageBo> getUserChatMessage(FetchUserMessageAo fetchUserMessageAo) {
+    public List<UserChatMessageBo> getUserChatMessage(@NonNull FetchUserMessageAo fetchUserMessageAo) {
+        // 参数校验
+        UserDo senderDo = userService.getUserById(fetchUserMessageAo.getSenderId());
+        UserDo receiverDo = userService.getUserById(fetchUserMessageAo.getReceiverId());
+        if (senderDo == null || receiverDo == null || senderDo.getId() == null || receiverDo.getId() == null){
+            throw new AppException(UserExceptions.USER_NOT_EXIST);
+        }
+
         // 限制 messageCount 最大值为 200
         int messageCount = Math.min(fetchUserMessageAo.getMessageCount(), MessageConstant.MAX_SEARCH_MESSAGE_LIMIT);
-
-        long senderId = getUserId(fetchUserMessageAo.getSenderAccount());
-        long receiverId = getUserId(fetchUserMessageAo.getReceiverAccount());
 
         // 此处不应该是mysql查询，而应该是mongodb查询
 //        return chatMapper.selectMessagesAfter(
@@ -107,7 +115,13 @@ public class ChatServiceImpl implements ChatService {
 
         // 根据 timestampIndex 和 messageCount 查询用户聊天记录
         // 资源文件存储的是 fileIdStr
-        List<UserChatMessageDo> messageDoList = userChatMessageMongoMapper.findMessagesAfterTimestamp(senderId, receiverId, fetchUserMessageAo.getTimestampIndex(), messageCount);
+        List<UserChatMessageDo> messageDoList = userChatMessageMongoMapper.findAllMessagesAfterTimestamp(
+                senderDo.getId(),
+                receiverDo.getId(),
+                Optional.ofNullable(fetchUserMessageAo.getTimestampIndex())
+                        .orElse(System.currentTimeMillis()),
+                messageCount
+        );
         if (CollectionUtils.isEmpty(messageDoList)){
             return new LinkedList<>();
         }
@@ -152,23 +166,23 @@ public class ChatServiceImpl implements ChatService {
         return messageDoList.stream()
                 .map(message -> userChatMessageConverter.toBo(
                         message,
-                        fetchUserMessageAo.getSenderAccount(),
-                        fetchUserMessageAo.getReceiverAccount()
+                        senderDo.getAccount(),
+                        receiverDo.getAccount()
                 ))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void saveUserChatMessageToRedis(UserChatLastMessageBo userChatLastMessageBo) {
-        String key = MessageConstant.CHAT_MESSAGE_KEY + userChatLastMessageBo.senderAccount + ":" + userChatLastMessageBo.receiverAccount + ":";
-        redisService.setObject(key, userChatLastMessageBo, MessageConstant.CHAT_MESSAGE_EXPIRE_TIME);
+    public void saveUserChatMessageToRedis(UserChatLastMessageBo bo) {
+        String key = MessageConstant.CHAT_MESSAGE_KEY + bo.senderId + ":" + bo.receiverId + ":";
+        redisService.setObject(key, bo, MessageConstant.CHAT_MESSAGE_EXPIRE_TIME);
     }
 
     @Override
-    public void saveUserChatMessagesToDatabase(List<UserChatMessageDo> userChatMessageDoList) {
+    public void saveUserChatMessagesToDatabase(List<UserChatMessageDo> dos) {
         // 取消存储到mysql
-//        chatMapper.batchInsert(userChatMessageDoList);
-        messageStorageService.storeMessagesToDatabase(userChatMessageDoList);
+//        chatMapper.batchInsert(dos);
+        messageStorageService.storeMessagesToDatabase(dos);
     }
 
     private long getUserId(String account){

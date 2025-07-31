@@ -6,13 +6,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.customviewlib.databinding.ViewAddContactCardItemBinding;
-
 import com.czy.dal.OnPositionItemClick;
-import com.czy.dal.vo.entity.addContact.AddContactDiffCallback;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
 
 import java.util.List;
@@ -35,20 +32,25 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     // 更新View，与当前的view对比然后更新指定的view
     @SuppressLint("NotifyDataSetChanged")
     public void setChatItems(List<AddContactItemVo> newList){
-        // 观察 contactItemList 的变化
-        if (currentList != null) {
-            // 暂时取消DiffUtil，测试总是出bug，属于过度开发；归为性能优化点
-//            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AddContactDiffCallback(currentList, newList));
-
-            currentList.clear();
-            currentList.addAll(newList);
-
-//            diffResult.dispatchUpdatesTo(this);
+        // 检查地址是否相同
+        if (newList == currentList){
             notifyDataSetChanged();
         }
         else {
-            currentList = newList;
-            notifyDataSetChanged();
+            if (currentList != null) {
+                // 暂时取消DiffUtil，测试总是出bug，属于过度开发；归为性能优化点
+//            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AddContactDiffCallback(currentList, newList));
+
+                currentList.clear();
+                currentList.addAll(newList);
+
+//            diffResult.dispatchUpdatesTo(this);
+                notifyDataSetChanged();
+            }
+            else {
+                currentList = newList;
+                notifyDataSetChanged();
+            }
         }
     }
 

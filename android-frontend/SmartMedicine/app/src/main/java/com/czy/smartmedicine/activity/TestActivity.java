@@ -20,7 +20,7 @@ import com.czy.baseUtilsLib.permission.GainPermissionCallback;
 import com.czy.baseUtilsLib.permission.PermissionUtil;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.dal.dto.netty.forwardMessage.SendTextDataRequest;
 import com.czy.dal.dto.netty.forwardMessage.UserImageResponse;
@@ -68,8 +68,8 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
             Long sendId = Optional.ofNullable(binding.etSenderId.getText())
                     .map(Editable::toString)
                     .map(Long::parseLong)
-                    .orElse(Constants.ERROR_ID);
-            if (Constants.ERROR_ID.equals(sendId)){
+                    .orElse(NettyConstants.ERROR_ID);
+            if (NettyConstants.ERROR_ID.equals(sendId)){
                 ToastUtils.showToastActivity(this, "请输入发送者id");
                 return;
             }
@@ -81,12 +81,12 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
             Long senderId = Optional.ofNullable(binding.etSenderId.getText())
                     .map(Editable::toString)
                     .map(Long::parseLong)
-                    .orElse(Constants.ERROR_ID);
+                    .orElse(NettyConstants.ERROR_ID);
 
             Long receiverId = Optional.ofNullable(binding.etReceiverId.getText())
                     .map(Editable::toString)
                     .map(Long::parseLong)
-                    .orElse(Constants.ERROR_ID);
+                    .orElse(NettyConstants.ERROR_ID);
             Log.i("Socket", "senderId: " + senderId + " receiverId: " + receiverId);
             String content = binding.etMessage.getText().toString();
 
