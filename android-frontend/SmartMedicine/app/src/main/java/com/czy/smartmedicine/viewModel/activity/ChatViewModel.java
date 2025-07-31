@@ -388,10 +388,13 @@ public class ChatViewModel extends ViewModel {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(UserTextDataResponse response) {
         // 检查匹配是否是该用户的信息
-        String receiverAccount = Optional.ofNullable(chatVo)
-                .map(vo -> vo.contactAccount)
-                .orElse("");
-        if (receiverAccount.equals(response.getSenderId())){
+//        String receiverAccount = Optional.ofNullable(chatVo)
+//                .map(vo -> vo.contactAccount)
+//                .orElse("");
+        Long receiverId = Optional.ofNullable(chatVo)
+                .map(vo -> vo.contactId)
+                .orElse(NettyConstants.ERROR_ID);
+        if (receiverId.equals(response.getSenderId())){
             // 根据 message 的 type 执行对应的方法 TODO 梳理逻辑，这里有问题：chatListManager 和 消息队列分离了；chatListManager在Activity重新启动会出现数据丢失
             chatApiHandler.receiveUserText(response);
         }
@@ -401,9 +404,9 @@ public class ChatViewModel extends ViewModel {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(UserImageResponse response) {
         // 检查匹配是否是该用户的信息
-        String receiverAccount = Optional.ofNullable(chatVo)
-                .map(vo -> vo.contactAccount)
-                .orElse("");
+//        String receiverAccount = Optional.ofNullable(chatVo)
+//                .map(vo -> vo.contactAccount)
+//                .orElse("");
         Long receiverId = Optional.ofNullable(chatVo)
                 .map(vo -> vo.contactId)
                 .orElse(NettyConstants.ERROR_ID);
