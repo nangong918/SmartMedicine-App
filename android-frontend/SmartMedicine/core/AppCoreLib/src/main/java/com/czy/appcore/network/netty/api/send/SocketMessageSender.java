@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSON;
 import com.czy.appcore.netty.IMessageService;
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.baseUtilsLib.object.BeanUtil;
 import com.czy.dal.dto.netty.forwardMessage.SendImageRequest;
 import com.czy.dal.dto.netty.request.AddUserRequest;
@@ -65,7 +65,7 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
         Message message = new Message();
         message.data = dataMap;
         message.senderId = this.senderId;
-        message.receiverId = receiverId == null ? Constants.SERVER_ID : receiverId;
+        message.receiverId = receiverId == null ? NettyConstants.SERVER_ID : receiverId;
         // type 在 setMessageTypeFromAnnotation设置
         try {
             message.timestamp = Long.valueOf(dataMap.get("timestamp"));
@@ -103,13 +103,13 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
     @Override
     public void connect(@NonNull RegisterRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
+        sendRequest(request, NettyConstants.SERVER_ID, methodName);
     }
 
     @Override
     public void disconnect(@NonNull DisconnectRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
+        sendRequest(request, NettyConstants.SERVER_ID, methodName);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
     @Override
     public void collectFolder(PostFolderRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
+        sendRequest(request, NettyConstants.SERVER_ID, methodName);
     }
 
     @Override
@@ -193,25 +193,25 @@ public class SocketMessageSender extends BaseMessageSender<SocketSendApi> implem
     @Override
     public void notInterested(PostDisLikeRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
+        sendRequest(request, NettyConstants.SERVER_ID, methodName);
     }
 
     @Override
     public void uploadCityLocation(UserCityLocationRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
+        sendRequest(request, NettyConstants.SERVER_ID, methodName);
     }
 
     @Override
     public void uploadClickEvent(UserClickPostRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
+        sendRequest(request, NettyConstants.SERVER_ID, methodName);
     }
 
     @Override
     public void uploadBrowseEvent(UserBrowseTimeRequest request) {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        sendRequest(request, Constants.SERVER_ID, methodName);
+        sendRequest(request, NettyConstants.SERVER_ID, methodName);
     }
 
 //    private void sendMessage(RequestBodyProto.RequestBody message){

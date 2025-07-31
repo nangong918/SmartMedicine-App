@@ -38,8 +38,9 @@ public interface PostCollectMapper {
      */
     List<PostCollectDo> findPostCollectsByUserIdPaging(
             @Param("userId") Long userId,
-            @Param("pageNum") Integer pageNum,
-            @Param("pageSize") Integer pageSize
+            @Param("offset") int offset,
+            @Param("pageNum") int pageNum,
+            @Param("pageSize") int pageSize
     );
 
     // 增加PostCollectDo

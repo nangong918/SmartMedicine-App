@@ -2,34 +2,20 @@ package com.czy.smartmedicine.activity;
 
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.lifecycle.LiveData;
-
-import com.czy.appcore.BaseConfig;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
-import com.czy.baseUtilsLib.permission.GainPermissionCallback;
-import com.czy.baseUtilsLib.permission.PermissionUtil;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.chatMessage.ChatMessageAdapter;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
-import com.czy.dal.constant.MessageTypeEnum;
-import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 import com.czy.dal.vo.fragmentActivity.chat.ChatVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityChatBinding;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.ChatViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -45,9 +31,7 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     @Override
     protected void init() {
         super.init();
-        initPictureLauncher();
         initViewModel();
-        initRecyclerView();
         initIntentData();
 //        viewModel.fetchUserMessage(System.currentTimeMillis(), 20);
         // 此处加载，否则出现bug：startAo在请求之后，导致请求的参数是null
@@ -65,22 +49,9 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
             binding.smSendMessage.setEditMessage("");
         });
 
-        binding.smSendMessage.setImgClickListener(v -> {
-            PermissionUtil.requestPermissionsX(this, new String[]{
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, new GainPermissionCallback() {
-                @Override
-                public void allGranted() {
-                    com.czy.baseUtilsLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
-                }
-
-                @Override
-                public void notGranted(String[] notGrantedPermissions) {
-                    ToastUtils.showToastActivity(ChatActivity.this, "获取权限失败");
-                }
-            });
-        });
+        binding.smSendMessage.setImgClickListener(v ->
+                viewModel.beginSelectPicture(this)
+        );
     }
 
     //-----------------------Intent Data-----------------------
@@ -118,6 +89,12 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
         viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, ChatViewModel.class);
 
         initViewModelVo();
+
+        // 初始化图片选择器
+        viewModel.initPictureSelectorLauncher(this);
+
+        // 初始化recyclerView
+        viewModel.initRecyclerView(binding.rclvMessage);
     }
 
     private void initViewModelVo(){
@@ -133,34 +110,6 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     }
 
     private void observeData(){
-        // 观察RecyclerView
-        Optional.ofNullable(viewModel)
-                .map(vm -> vm.chatVo)
-                .map(cvo -> cvo.chatListVo)
-                .map(cvo -> cvo.chatMessageList)
-                .ifPresent(liveData -> {
-                    liveData.observe(this, newList -> {
-                        Optional.ofNullable(((ChatMessageAdapter)binding.rclvMessage.getAdapter()))
-                                .ifPresent(chatMessageAdapter -> {
-                                    runOnUiThread(() -> {
-                                        chatMessageAdapter.setCurrentList(
-                                                newList,
-                                                () -> {
-                                                    Log.e("Intercep", "observeData:newList: " + (newList.size() - 1));
-                                                    if (!newList.isEmpty()){
-                                                        Log.e("Intercep", "observeData:newList::bitmap: " + newList.get(newList.size() - 1).bitmap);
-                                                    }
-                                                    runOnUiThread(() -> {
-                                                        binding.rclvMessage.scrollToPosition(
-                                                                chatMessageAdapter.getItemCount() - 1
-                                                        );
-                                                    });
-                                                }
-                                        );
-                                    });
-                                });
-                    });
-                });
         // 标题
         Optional.ofNullable(viewModel)
                 .map(vm -> vm.chatVo)
@@ -198,57 +147,6 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 //                });
     }
 
-    //-----------------------Recycler View-----------------------
-
-    private void initRecyclerView(){
-        List<ChatMessageItemVo> chatMessageList = Optional.ofNullable(viewModel)
-                .map(ao -> ao.chatVo)
-                .map(ao -> ao.chatListVo)
-                .map(ao -> ao.chatMessageList)
-                .map(LiveData::getValue)
-                .orElse(new ArrayList<>());
-        ChatMessageAdapter adapter = new ChatMessageAdapter(chatMessageList);
-        binding.rclvMessage.setAdapter(adapter);
-    }
-
-    //===========Picture
-
-    private ActivityResultLauncher<Intent> selectImageLauncher;
-
-    private void initPictureLauncher(){
-        selectImageLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    Intent data = result.getData();
-                    if (data != null) {
-                        Uri imageUri = data.getData();
-                        viewModel.uriAtomicReference.set(imageUri);
-                        Bitmap bitmap = MainApplication.getInstance().getImageManager().uriToBitmapMediaStore(this, imageUri);
-                        bitmap = MainApplication.getInstance().getImageManager().processImage(bitmap, BaseConfig.BITMAP_MAX_SIZE);
-                        ChatMessageItemVo chatMessageItemVo = new ChatMessageItemVo();
-                        chatMessageItemVo.bitmap = bitmap;
-                        chatMessageItemVo.setTimeByStringTimeStamp(System.currentTimeMillis());
-                        chatMessageItemVo.viewType = ChatMessageItemVo.VIEW_TYPE_SENDER;
-                        chatMessageItemVo.content = "";
-                        chatMessageItemVo.messageType = MessageTypeEnum.image.code;
-                        List<ChatMessageItemVo> currentList = Optional.ofNullable(viewModel)
-                                .map(vm -> vm.chatVo)
-                                .map(cvo -> cvo.chatListVo)
-                                .map(cvo -> cvo.chatMessageList)
-                                .map(LiveData::getValue)
-                                .orElse(new ArrayList<>());
-
-                        currentList.add(chatMessageItemVo);
-                        viewModel.chatVo.chatListVo.chatMessageList.postValue(currentList);
-                        // 发送图片消息
-                        viewModel.sendPictureMessage(
-                                this,
-                                bitmap,
-                                chatMessageItemVo.getCreatedTimestamp()
-                        );
-                    }
-                });
-    }
 
     @Override
     protected void onPause() {

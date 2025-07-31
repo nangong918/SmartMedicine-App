@@ -1,6 +1,7 @@
 package com.czy.smartmedicine.viewModel.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
@@ -9,9 +10,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
@@ -20,10 +26,14 @@ import com.czy.appcore.service.chat.ChatListManager;
 import com.czy.appcore.service.chat.MessageItem;
 import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.baseUtilsLib.permission.GainPermissionCallback;
+import com.czy.baseUtilsLib.permission.PermissionUtil;
+import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.customviewlib.view.chatMessage.ChatMessageAdapter;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.bo.UserChatMessageBo;
-import com.czy.dal.constant.Constants;
 import com.czy.dal.constant.MessageTypeEnum;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.dal.dto.netty.forwardMessage.SendImageRequest;
 import com.czy.dal.dto.netty.forwardMessage.SendTextDataRequest;
@@ -67,17 +77,17 @@ public class ChatViewModel extends ViewModel {
     }
 
     //---------------------------Vo Ld---------------------------
-    Handler messageHandler;
+
+    private Handler messageHandler;
+    public ChatMessageAdapter chatMessageAdapter;
+
     public ChatVo chatVo = new ChatVo();
     public void init(ChatVo chatVo) {
-        messageHandler = new Handler(Looper.getMainLooper());
-        initVo(chatVo);
+        this.messageHandler = new Handler(Looper.getMainLooper());
+        this.chatVo = chatVo;
         initMessage();
         initEventBus();
         initChatListManager();
-    }
-    private void initVo(ChatVo chatVo){
-        this.chatVo = chatVo;
     }
 
     public TextWatcher getTextWatcher(){
@@ -103,12 +113,41 @@ public class ChatViewModel extends ViewModel {
         };
     }
 
+    public void notifyMessageListChange(){
+        List<ChatMessageItemVo> currentList = Optional.ofNullable(chatVo)
+                .map(cvo -> cvo.chatListVo)
+                .map(cvo -> cvo.chatMessageList)
+                .orElse(new ArrayList<>());
+        chatMessageAdapter.setCurrentList(currentList);
+    }
+
+    public void initRecyclerView(@NonNull RecyclerView recyclerView){
+        List<ChatMessageItemVo> chatMessageList = Optional.ofNullable(chatVo)
+                .map(ao -> ao.chatListVo)
+                .map(ao -> ao.chatMessageList)
+//                .map(LiveData::getValue)
+                .orElse(new ArrayList<>());
+        chatMessageAdapter = new ChatMessageAdapter(chatMessageList);
+        chatMessageAdapter.setOnSetMessageCallback(
+                () -> {
+                    // recyclerView滚动到最下面
+                    recyclerView.scrollToPosition(
+                            this.chatMessageAdapter.getItemCount() - 1
+                    );
+                }
+        );
+        recyclerView.setAdapter(
+                this.chatMessageAdapter
+        );
+    }
+
     //-----------------------Start-----------------------
 
     public void setStartAo(ChatActivityStartAo ao){
         chatVo.name.setValue(ao.contactName);
         chatVo.inputText.setValue(ao.inputText);
         chatVo.contactAccount = ao.contactAccount;
+        chatVo.contactId = ao.contactId;
         chatVo.avatarUrlOrUri.setValue(ao.avatarUrl);
         List<ChatMessageItemVo> chatMessageList = ao.chatMessageListItemVo;
         if (chatMessageList != null && !chatMessageList.isEmpty()){
@@ -116,7 +155,10 @@ public class ChatViewModel extends ViewModel {
                     .map(chatListVo -> chatListVo.chatMessageList)
                     .ifPresent(ls -> {
                         messageHandler.post(() -> {
-                            ls.postValue(chatMessageList);
+//                            ls.postValue(chatMessageList);
+                            chatMessageAdapter.setCurrentList(
+                                    chatMessageList
+                            );
                         });
                     });
         }
@@ -138,11 +180,10 @@ public class ChatViewModel extends ViewModel {
 
     public void fetchUserMessage(Long timestampIndex, Integer messageCount){
         FetchUserMessageRequest request = new FetchUserMessageRequest();
-        request.receiverAccount = chatVo.contactAccount;
         request.timestampIndex = timestampIndex;
         request.messageCount = messageCount;
-        request.senderAccount = MainApplication.getInstance().getUserLoginInfoAo().account;
         request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        request.receiverId = chatVo.contactId;
 
         apiRequestImpl.fetchUserMessage(request
                 , this::handleFetchUserMessage
@@ -193,8 +234,12 @@ public class ChatViewModel extends ViewModel {
             // 数据类型转换
             List<ChatMessageItemVo> chatMessageItemVos = new ArrayList<>();
             for (MessageItem item : list){
+                Long myId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                        .map(ao -> ao.userId)
+                        .orElse(null);
+
                 ChatMessageItemVo chatMessageItemVo = item.toChatMessageItemVo(
-                        MainApplication.getInstance().getUserLoginInfoAo().account
+                        myId
                 );
 
                 // 图片消息
@@ -209,15 +254,87 @@ public class ChatViewModel extends ViewModel {
 
                 chatMessageItemVos.add(chatMessageItemVo);
             }
-            // 设置LiveData
+            // 初始化设置
             Optional.ofNullable(chatVo)
                     .map(chatVo -> chatVo.chatListVo)
                     .map(chatListVo -> chatListVo.chatMessageList)
                     .ifPresent(ls -> {
+                        ls.clear();
+                        ls.addAll(chatMessageItemVos);
                         messageHandler.post(() -> {
-                            ls.postValue(chatMessageItemVos);
+                            chatMessageAdapter.setCurrentList(ls);
                         });
                     });
+        });
+    }
+
+    //===========selectImage
+
+    private ActivityResultLauncher<Intent> selectImageLauncher;
+
+    // 初始化图片选择器
+    public void initPictureSelectorLauncher(FragmentActivity activity){
+        selectImageLauncher = activity.registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Uri imageUri = Optional.ofNullable(result)
+                            .map(ActivityResult::getData)
+                            .map(Intent::getData)
+                            .orElse(null);
+                    if (imageUri != null){
+                        uriAtomicReference.set(imageUri);
+                        // url -> bitmap
+                        Bitmap bitmap = MainApplication.getInstance().getImageManager()
+                                .uriToBitmapMediaStore(activity, imageUri);
+                        // 压缩图片
+                        bitmap = MainApplication.getInstance().getImageManager().processImage(bitmap, BaseConfig.BITMAP_MAX_SIZE);
+
+                        long currentTime = System.currentTimeMillis();
+                        String content = Optional.ofNullable(chatVo)
+                                .map(cvo -> cvo.inputText)
+                                .map(LiveData::getValue)
+                                .orElse("");
+
+                        // ui展示
+                        ChatMessageItemVo vo = new ChatMessageItemVo();
+                        vo.bitmap = bitmap;
+                        vo.setTimeByStringTimeStamp(currentTime);
+                        vo.viewType = ChatMessageItemVo.VIEW_TYPE_SENDER;
+                        vo.content = chatVo.inputText.getValue();
+
+                        // 发送图片消息
+                        sendPictureMessage(
+                                activity,
+                                bitmap,
+                                currentTime,
+                                content,
+                                vo.getItemId()
+                        );
+                    }
+                    else {
+                        ToastUtils.showToast(activity, activity.getString(com.czy.customviewlib.R.string.send_image_failed));
+                    }
+                }
+        );
+    }
+
+    // 选择 + 发送图片
+    public void beginSelectPicture(FragmentActivity activity){
+        PermissionUtil.requestPermissionsX(activity, new String[]{
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        }, new GainPermissionCallback() {
+            @Override
+            public void allGranted() {
+                com.czy.baseUtilsLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
+            }
+
+            @Override
+            public void notGranted(String[] notGrantedPermissions) {
+                ToastUtils.showToastActivity(activity,
+                        activity.getString(com.czy.customviewlib.R.string.gain_permission_failed)
+                );
+            }
         });
     }
 
@@ -260,14 +377,13 @@ public class ChatViewModel extends ViewModel {
         };
     }
 
-    // TODO 消息获取：1.外存获取，2.内存获取，3.网络获取，4.Socket获取 5.本地发送数据
-
     //===========Picture
 
     public AtomicReference<Uri> uriAtomicReference = new AtomicReference<>();
 
     public void sendPictureMessage(Context context,
-                                   Bitmap bitmap, Long listTime) {
+                                   Bitmap bitmap, Long listTime,
+                                   String content, String androidMessageId) {
         // Http Send
         File imageFile = null;
         // 确保您在这里传入正确的 Uri
@@ -304,10 +420,14 @@ public class ChatViewModel extends ViewModel {
 
         // Socket Send
         SendImageRequest request = new SendImageRequest();
-        request.senderId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        request.senderId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                .map(ao -> ao.userId)
+                .orElse(NettyConstants.ERROR_ID);
         request.receiverId = chatVo.contactId;
         request.timestamp = String.valueOf(listTime);
         request.fileName = fileName + "_" + request.timestamp + fileExtension;
+        request.content = content;
+        request.androidMessageId = androidMessageId;
         socketMessageSender.sendImageToUser(request);
     }
 
@@ -338,7 +458,7 @@ public class ChatViewModel extends ViewModel {
             List<ChatMessageItemVo> list = Optional.ofNullable(chatVo)
                     .map(chatVo -> chatVo.chatListVo)
                     .map(chatListVo -> chatListVo.chatMessageList)
-                    .map(LiveData::getValue)
+//                    .map(LiveData::getValue)
                     .orElse(null);
             if (list != null){
                 Log.e("Intercep", "handleDownloadImage::listItemCreatedTime: " + listItemCreatedTime);
@@ -357,9 +477,9 @@ public class ChatViewModel extends ViewModel {
             Optional.ofNullable(chatVo)
                     .map(chatVo -> chatVo.chatListVo)
                     .map(chatListVo -> chatListVo.chatMessageList)
-                    .ifPresent(liveData -> {
+                    .ifPresent(ls -> {
                         messageHandler.post(() -> {
-                            liveData.postValue(list);
+                            chatMessageAdapter.setCurrentList(ls);
                         });
                     });
         }
@@ -370,10 +490,13 @@ public class ChatViewModel extends ViewModel {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(UserTextDataResponse response) {
         // 检查匹配是否是该用户的信息
-        String receiverAccount = Optional.ofNullable(chatVo)
-                .map(vo -> vo.contactAccount)
-                .orElse("");
-        if (receiverAccount.equals(response.getSenderId())){
+//        String receiverAccount = Optional.ofNullable(chatVo)
+//                .map(vo -> vo.contactAccount)
+//                .orElse("");
+        Long receiverId = Optional.ofNullable(chatVo)
+                .map(vo -> vo.contactId)
+                .orElse(NettyConstants.ERROR_ID);
+        if (receiverId.equals(response.getSenderId())){
             // 根据 message 的 type 执行对应的方法 TODO 梳理逻辑，这里有问题：chatListManager 和 消息队列分离了；chatListManager在Activity重新启动会出现数据丢失
             chatApiHandler.receiveUserText(response);
         }
@@ -383,12 +506,12 @@ public class ChatViewModel extends ViewModel {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(UserImageResponse response) {
         // 检查匹配是否是该用户的信息
-        String receiverAccount = Optional.ofNullable(chatVo)
-                .map(vo -> vo.contactAccount)
-                .orElse("");
+//        String receiverAccount = Optional.ofNullable(chatVo)
+//                .map(vo -> vo.contactAccount)
+//                .orElse("");
         Long receiverId = Optional.ofNullable(chatVo)
                 .map(vo -> vo.contactId)
-                .orElse(Constants.ERROR_ID);
+                .orElse(NettyConstants.ERROR_ID);
         if (receiverId.equals(response.getSenderId())){
             // 根据 message 的 type 执行对应的方法
             chatApiHandler.receiveUserImage(response);

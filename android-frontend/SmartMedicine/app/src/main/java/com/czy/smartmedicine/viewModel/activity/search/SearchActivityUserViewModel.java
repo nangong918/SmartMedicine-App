@@ -1,18 +1,21 @@
-package com.czy.smartmedicine.viewModel.activity;
+package com.czy.smartmedicine.viewModel.activity.search;
 
+import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.service.AddUserStateHandler;
 import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.customviewlib.view.addContact.AddContactAdapter;
 import com.czy.dal.OnPositionItemButtonContentClick;
+import com.czy.dal.OnPositionItemClick;
 import com.czy.dal.ao.newUser.AddUserStatusAo;
 import com.czy.dal.ao.newUser.SearchFriendApplyAo;
 import com.czy.dal.constant.newUserGroup.AddSourceEnum;
@@ -25,11 +28,12 @@ import com.czy.dal.dto.http.response.SearchUserResponse;
 import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
-import com.czy.dal.vo.fragmentActivity.SearchActivityUserVo;
+import com.czy.dal.vo.fragmentActivity.search.SearchUserVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,18 +51,32 @@ public class SearchActivityUserViewModel extends ViewModel {
         this.socketMessageSender = socketMessageSender;
     }
 
+    public void init(SearchUserVo searchUserVo){
+        this.searchUserVo = searchUserVo;
+    }
+
     //---------------------------Vo Ld---------------------------
 
-    public SearchActivityUserVo searchActivityUserVo = new SearchActivityUserVo();
+    public SearchUserVo searchUserVo = new SearchUserVo();
 
-    public void init(SearchActivityUserVo searchActivityUserVo){
-        initVo(searchActivityUserVo);
+    public AddContactAdapter addContactAdapter;
+
+    public void initRecyclerAdapter(RecyclerView recyclerView, OnPositionItemClick onPositionItemClick){
+        List<AddContactItemVo> addContactList = Optional.ofNullable(searchUserVo)
+                .map(vo -> vo.addContactListVo)
+                .map(vo -> vo.contactItemList)
+                .orElse(new LinkedList<>());
+
+        addContactAdapter = new AddContactAdapter(
+                addContactList,
+                onPositionItemClick
+        );
+
+        recyclerView.setAdapter(addContactAdapter);
     }
 
-    private void initVo(SearchActivityUserVo searchActivityUserVo) {
-        this.searchActivityUserVo = searchActivityUserVo;
-    }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void showSearchUsers(List<SearchFriendApplyAo> userList) {
         List<AddContactItemVo> addContactList = Optional.ofNullable(userList)
                         .map(ul -> {
@@ -83,7 +101,14 @@ public class SearchActivityUserViewModel extends ViewModel {
                             }
                             return list;
                         }).orElse(new LinkedList<>());
-        searchActivityUserVo.addContactListVo.contactItemList.setValue(addContactList);
+//        searchUserVo.addContactListVo.contactItemList.setValue(addContactList);
+        searchUserVo.addContactListVo.contactItemList = new ArrayList<>(addContactList);
+//        addContactAdapter.setChatItems(addContactList);
+        addContactAdapter.setChatItems(
+                searchUserVo.addContactListVo.contactItemList
+        );
+//        // 暂时取消使用DiffUtil
+//        addContactAdapter.notifyDataSetChanged();
     }
 
     //---------------------------NetWork---------------------------
@@ -185,10 +210,10 @@ public class SearchActivityUserViewModel extends ViewModel {
             }
 
             // 更新Ao
-            AddUserStatusAo ao = Optional.ofNullable(this.searchActivityUserVo)
+            AddUserStatusAo ao = Optional.ofNullable(this.searchUserVo)
                     .map(vo -> vo.addContactListVo)
                     .map(avo -> avo.contactItemList)
-                    .map(LiveData::getValue)
+//                    .map(LiveData::getValue)
                     .map(list -> {
                         for (AddContactItemVo item : list) {
                             if (TextUtils.isEmpty(item.account)){
@@ -209,7 +234,7 @@ public class SearchActivityUserViewModel extends ViewModel {
             ao.handleStatus = handleStatusEnum.code;
 
             // 更新ui
-            Optional.ofNullable(this.searchActivityUserVo)
+            Optional.ofNullable(this.searchUserVo)
                     .map(vo -> vo.addContactListVo)
                     .map(addContactListVo -> addContactListVo.getByAccount(applierAccount))
                     .ifPresent(item -> {
@@ -231,10 +256,10 @@ public class SearchActivityUserViewModel extends ViewModel {
             }
 
             // 更新Ao
-            AddUserStatusAo ao = Optional.ofNullable(this.searchActivityUserVo)
+            AddUserStatusAo ao = Optional.ofNullable(this.searchUserVo)
                     .map(vo -> vo.addContactListVo)
                     .map(avo -> avo.contactItemList)
-                    .map(LiveData::getValue)
+//                    .map(LiveData::getValue)
                     .map(list -> {
                         for (AddContactItemVo item : list) {
                             item.isBeAdd = item.addUserStatusAo.isBeAdd(
@@ -255,7 +280,7 @@ public class SearchActivityUserViewModel extends ViewModel {
             ao.applyStatus = applyStatusEnum.code;
 
             // 更新ui
-            Optional.ofNullable(this.searchActivityUserVo)
+            Optional.ofNullable(this.searchUserVo)
                     .map(vo -> vo.addContactListVo)
                     .map(addContactListVo -> addContactListVo.getByAccount(handlerAccount))
                     .ifPresent(item -> {
@@ -411,10 +436,10 @@ public class SearchActivityUserViewModel extends ViewModel {
     }
 
     private AddContactItemVo getAddContactItemVo(int position){
-        return Optional.of(searchActivityUserVo)
+        return Optional.of(searchUserVo)
                 .map(v -> v.addContactListVo)
                 .map(o -> o.contactItemList)
-                .map(LiveData::getValue)
+//                .map(LiveData::getValue)
                 .map(list -> {
                     if (list.size() >= position){
                         return list.get(position);

@@ -27,6 +27,8 @@ import com.czy.api.domain.dto.http.response.SinglePostResponse;
 import com.czy.api.domain.vo.post.CommentVo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.exception.CommonExceptions;
+import com.czy.api.exception.PostExceptions;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
@@ -155,7 +157,7 @@ public class PostController {
             @RequestParam Long postId,
             @RequestParam Long userId) {
         if (postId == null || userId == null){
-            return BaseResponse.LogBackError("参数错误");
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
         postService.deletePost(postId, userId);
         return BaseResponse.getResponseEntitySuccess("删除成功");
@@ -220,7 +222,7 @@ public class PostController {
     getPosts(@Valid @RequestBody GetPostInfoListRequest request){
         List<Long> postIds = request.getPostIds();
         if (CollectionUtils.isEmpty(postIds)){
-            return BaseResponse.LogBackError("参数错误");
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
         List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
         GetPostInfoListResponse getPostResponse = new GetPostInfoListResponse();
@@ -233,7 +235,7 @@ public class PostController {
     getPostsNew(@Valid @RequestBody GetPostPreviewListRequest request){
         List<Long> postIds = request.getPostIds();
         if (CollectionUtils.isEmpty(postIds)){
-            return BaseResponse.LogBackError("参数错误");
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
         List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
 
@@ -257,12 +259,11 @@ public class PostController {
     getPost(@RequestParam("postId") Long postId,
             @RequestParam("pageNum") Integer pageNum){
         if (ObjectUtils.isEmpty(postId)){
-            return BaseResponse.LogBackError("参数错误");
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
         PostAo postAo = postService.findPostById(postId);
-        if (postAo == null){
-            String warningMessage = String.format("帖子不存在，postId: %s", postId);
-            return BaseResponse.LogBackError(warningMessage);
+        if (postAo == null || postAo.getId() == null){
+            return BaseResponse.LogBackError(PostExceptions.POST_NOT_EXIST);
         }
         if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
             pageNum = 1;
@@ -279,13 +280,12 @@ public class PostController {
     getPostNew(@RequestParam("postId") Long postId,
             @RequestParam("pageNum") Integer pageNum){
         if (ObjectUtils.isEmpty(postId)){
-            return BaseResponse.LogBackError("参数错误");
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
         PostAo postAo = postService.findPostById(postId);
         if (postAo == null || postAo.getId() == null){
-            String warningMessage = String.format("帖子不存在，postId: %s", postId);
-            return BaseResponse.LogBackError(warningMessage);
+            return BaseResponse.LogBackError(PostExceptions.POST_NOT_EXIST);
         }
         if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
             pageNum = 1;
@@ -326,14 +326,13 @@ public class PostController {
             Integer pageSize,
             Integer pageNum) {
         if (postId == null) {
-            return BaseResponse.LogBackError("参数错误");
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
         if (leve1commentId != null) {
             PostCommentDo postCommentDo = postCommentService.getPostCommentById(leve1commentId);
-            if (postCommentDo == null) {
-                String warningMessage = String.format("评论不存在，commentId: %s", leve1commentId);
-                return BaseResponse.LogBackError(warningMessage);
+            if (postCommentDo == null || postCommentDo.getId() == null) {
+                return BaseResponse.LogBackError(PostExceptions.COMMENT_NOT_EXIST);
             }
         }
 

@@ -53,6 +53,7 @@ public class SocketToClientMqHandler {
     )
     public void handleMessageMessage(Message message) {
         // 监听到消息校验之后就发送
+        log.info("接收到Message消息：{}", message);
         sendMessage(message);
     }
 
@@ -118,6 +119,7 @@ public class SocketToClientMqHandler {
     )
     public void handleRelationshipMessage(@Valid Message message) {
         // 监听到消息校验之后就发送
+        log.info("接收到Relation消息：{}", message);
         sendMessage(message);
     }
 
@@ -150,6 +152,39 @@ public class SocketToClientMqHandler {
             )
     )
     public void handleOssMessage(@Valid Message message) {
+        // 监听到消息校验之后就发送
+        sendMessage(message);
+    }
+
+    @RabbitListener(
+            bindings = @QueueBinding(
+                    value = @Queue(
+                            name = MqConstants.ErrorQueue.ERROR_TO_SOCKET_QUEUE,
+                            // 持久化队列
+                            durable = "true",
+                            // 排他队列
+                            exclusive = "false",
+                            // 自动删除：通知类型队列
+                            autoDelete = "true",
+                            arguments = {
+                                    // 惰性队列 需要RabbitMq 3.6以上
+//                                @Argument(name = "x-queue-mode", value = "Lazy"),
+//                                    @Argument(name = "x-message-ttl", value = MqConstants.ErrorQueue.message_ttl_str, type = "java.lang.Integer"),
+//                                    @Argument(name = "x-max-length", value = MqConstants.ErrorQueue.max_length_str, type = "java.lang.Integer"),
+                                    // 无所谓的通知消息不需要死信队列
+//                                    @Argument(name = "x-dead-letter-exchange", value = MqConstants.Exchange.DEAD_LETTER_EXCHANGE),
+//                                    @Argument(name = "x-dead-letter-routing-key", value = MqConstants.DeadLetterQueue.OSS_DEAD_LETTER_QUEUE)
+                            }
+                    ),
+                    exchange = @Exchange(
+                            value = MqConstants.Exchange.ERROR_EXCHANGE,
+                            type = ExchangeTypes.TOPIC,
+                            durable = "true"  // 持久化交换机
+                    ),
+                    key = MqConstants.ErrorQueue.Routing.TO_SOCKET_ROUTING
+            )
+    )
+    public void handleErrorMessage(@Valid Message message) {
         // 监听到消息校验之后就发送
         sendMessage(message);
     }

@@ -27,6 +27,7 @@ import java.util.Optional;
 
 /**
  * 帖子详情界面
+ * todo 点赞，评论，收藏，转发
  */
 public class PostActivity extends BaseActivity<ActivityPostBinding> {
 

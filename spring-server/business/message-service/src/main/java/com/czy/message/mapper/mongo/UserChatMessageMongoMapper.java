@@ -84,6 +84,9 @@ public class UserChatMessageMongoMapper {
 
     // 获取特定用户之间某个时间戳之前的n条消息
     public List<UserChatMessageDo> findMessagesBeforeTimestamp(Long senderId, Long receiverId, Long timestamp, int n) {
+        if (timestamp == null){
+            timestamp = 0L;
+        }
         Query query = Query.query(
                 Criteria.where("senderId").is(senderId)
                         .and("receiverId").is(receiverId)
@@ -93,19 +96,55 @@ public class UserChatMessageMongoMapper {
         return mongoTemplate.find(query, UserChatMessageDo.class);
     }
 
-    // 获取特定用户之间某个时间戳之后的n条消息（包括当前时间戳）
-    public List<UserChatMessageDo> findMessagesAfterTimestamp(Long senderId, Long receiverId, Long timestamp, int n) {
+    // 获取特定用户之间某个时间戳之后的n条消息（包括当前时间戳）（特定发送关系）
+    public List<UserChatMessageDo> findSenderReceiverMessagesAfterTimestamp(Long senderId, Long receiverId, Long timestamp, int n) {
+        if (timestamp == null){
+            timestamp = 0L;
+        }
         Query query = Query.query(
                 Criteria.where("senderId").is(senderId)
                         .and("receiverId").is(receiverId)
-                        .and("timestamp").gte(timestamp))
+                        /*
+                         * gte（greater than or equal to）：表示大于或等于
+                         * lt（less than）：表示小于
+                         */
+//                        .and("timestamp").gte(timestamp))
+                        .and("timestamp").lt(timestamp))
                 .with(Sort.by(Sort.Direction.ASC, "timestamp"))
                 .limit(n);
         return mongoTemplate.find(query, UserChatMessageDo.class);
     }
 
+    // 获取特定用户之间某个时间戳之后的n条消息（包括当前时间戳）（非特定发送关系）
+    public List<UserChatMessageDo> findAllMessagesAfterTimestamp(Long senderId, Long receiverId, Long timestamp, int n) {
+        if (timestamp == null) {
+            timestamp = 0L;
+        }
+
+        // 创建查询条件
+        Criteria criteria1 = Criteria.where("senderId").is(senderId)
+                .and("receiverId").is(receiverId)
+                .and("timestamp").lt(timestamp);
+        Criteria criteria2 = Criteria.where("senderId").is(receiverId)
+                .and("receiverId").is(senderId)
+                .and("timestamp").lt(timestamp);
+
+        // 使用或操作符组合条件
+        Criteria combinedCriteria = new Criteria().orOperator(criteria1, criteria2);
+
+        Query query = Query.query(combinedCriteria)
+                 // 时间戳条件：降序
+                .with(Sort.by(Sort.Direction.ASC, "timestamp"))
+                .limit(n);
+
+        return mongoTemplate.find(query, UserChatMessageDo.class);
+    }
+
     // 根据senderId，receiverId，timestamp更新消息
     public void updateMessage(Long senderId, Long receiverId, Long timestamp, String newMessage, String newType) {
+        if (timestamp == null){
+            timestamp = 0L;
+        }
         Query query = Query.query(Criteria.where("senderId").is(senderId)
                 .and("receiverId").is(receiverId)
                 .and("timestamp").is(timestamp));

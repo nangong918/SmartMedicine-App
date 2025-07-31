@@ -2,6 +2,8 @@ package com.czy.post.service;
 
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.ao.post.PostCommentAo;
+import com.czy.api.domain.dto.service.CommentResultDto;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -29,4 +31,18 @@ public interface PostCommentService {
      * 返回list中会包含null值，因为可能存在注销了的用户，所以需要设为null
      */
     List<PostCommentAo> getPostCommentAoList(List<PostCommentDo> postCommentDoList);
+
+    /**
+     * 评论
+     * @param senderId           发送者id
+     * @param postId             帖子id
+     * @param replyCommentId     回复的评论id (null则为一级评论，存在则是二级评论（回复）)
+     * @param content            评论内容
+     * @return                   评论结果
+     */
+    @NotNull
+    CommentResultDto comment(Long senderId, Long postId, Long replyCommentId, String content);
+
+    // 删除评论
+    void deleteComment(Long postId, Long commentId, Long senderId);
 }

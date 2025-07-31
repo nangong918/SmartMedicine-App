@@ -20,6 +20,7 @@ import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.viewPager.ViewPagerConstant;
 import com.czy.dal.ao.intent.NewUserGroupActivityIntentAo;
+import com.czy.dal.ao.intent.SearchActivityIntentAo;
 import com.czy.dal.constant.SearchEnum;
 import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
@@ -133,7 +134,9 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
         mainTopBarVo.selectItemEnum = SelectItemEnum.FRIENDS;
         mainTopBarVo.onFriendCallback = () -> {
             Intent intent = new Intent(requireActivity(), SearchActivity.class);
-            intent.putExtra(SearchEnum.INTENT_EXTRA_NAME, SearchEnum.USER);
+            SearchActivityIntentAo intentAo = new SearchActivityIntentAo();
+            intentAo.searchType = SearchEnum.USER;
+            intent.putExtra(SearchActivityIntentAo.INTENT_KEY, intentAo);
             searchUserLauncher.launch(intent);
         };
         ((MainActivity)requireActivity()).setMainTopBar(mainTopBarVo);
@@ -156,7 +159,7 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
             Intent intent = new Intent(requireActivity(), NewUserGroupActivity.class);
             NewUserGroupActivityIntentAo newUserGroupActivityIntentAo = new NewUserGroupActivityIntentAo();
             newUserGroupActivityIntentAo.userGroupEnum = UserGroupEnum.USER;
-            intent.putExtra(NewUserGroupActivityIntentAo.class.getName(), newUserGroupActivityIntentAo);
+            intent.putExtra(NewUserGroupActivityIntentAo.INTENT_KEY, newUserGroupActivityIntentAo);
             newFriendLauncher.launch(intent);
         });
     }

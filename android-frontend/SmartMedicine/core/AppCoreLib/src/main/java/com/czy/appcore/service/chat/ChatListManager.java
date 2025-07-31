@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class ChatListManager {
 
-    private static final String TAG = "ChatListManager";
+    private static final String TAG = ChatListManager.class.getName();
 
     public ChatListManager(@NonNull OnMessageListChange onMessageListChange){
         // 启动检查消息更新

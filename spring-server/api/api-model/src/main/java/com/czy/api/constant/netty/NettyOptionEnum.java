@@ -25,4 +25,14 @@ public enum NettyOptionEnum {
         this.value = value;
     }
 
+    // code -> o
+    public static NettyOptionEnum getByCode(int code) {
+        for (NettyOptionEnum value : NettyOptionEnum.values()) {
+            if (value.code == code) {
+                return value;
+            }
+        }
+        return NULL;
+    }
+
 }

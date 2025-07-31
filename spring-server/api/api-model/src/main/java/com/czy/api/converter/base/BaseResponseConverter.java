@@ -59,7 +59,10 @@ public interface BaseResponseConverter {
                 .setReceiverId(message.getReceiverId())
                 .setType(message.getType())
                 .setTimestamp(message.getTimestamp())
-                .putAllData(message.getData())
+                .putAllData(
+                        Optional.ofNullable(message.getData())
+                                .orElse(new HashMap<>())
+                )
                 .build();
     }
 

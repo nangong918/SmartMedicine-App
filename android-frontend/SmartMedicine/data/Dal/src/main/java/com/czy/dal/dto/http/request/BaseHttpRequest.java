@@ -2,11 +2,11 @@ package com.czy.dal.dto.http.request;
 
 import android.util.Log;
 
-import com.czy.dal.constant.Constants;
+import com.czy.dal.constant.NettyConstants;
 
 public class BaseHttpRequest {
-    public Long senderId = Constants.ERROR_ID;
-    public Long receiverId = Constants.SERVER_ID;
+    public Long senderId = NettyConstants.ERROR_ID;
+    public Long receiverId = NettyConstants.SERVER_ID;
     public String type = "";
     public Long timestamp = System.currentTimeMillis();
 

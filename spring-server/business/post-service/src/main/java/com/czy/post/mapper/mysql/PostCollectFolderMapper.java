@@ -36,4 +36,10 @@ public interface PostCollectFolderMapper {
 
     // collectFolderId查询
     PostCollectFolderDo findPostCollectFolderById(Long collectFolderId);
+
+    // 根据文件夹name查询某个用户的文件夹
+    PostCollectFolderDo findPostCollectFolderByUserIdAndName(
+            @Param("userId")Long userId,
+            @Param("collectFolderName")String collectFolderName
+    );
 }

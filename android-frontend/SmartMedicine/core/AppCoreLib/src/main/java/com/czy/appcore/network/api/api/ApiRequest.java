@@ -4,6 +4,7 @@ import com.czy.appcore.BaseConfig;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.constant.backEnd.BackEndConstant;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
+import com.czy.dal.dto.http.request.FuzzySearchRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
 import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
@@ -14,6 +15,7 @@ import com.czy.dal.dto.http.request.RegisterUserRequest;
 import com.czy.dal.dto.http.request.SearchUserRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.request.UserBriefRequest;
+import com.czy.dal.dto.http.response.FuzzySearchResponse;
 import com.czy.dal.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.http.response.GetMyFriendsResponse;
@@ -26,9 +28,7 @@ import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.dto.http.response.UserBriefResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
-import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
-import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.dto.netty.response.ChatUploadFileResponse;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
@@ -124,23 +124,23 @@ public interface ApiRequest {
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.USER_RELATION + "/relation/searchUser")
     Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body SearchUserRequest request);
 
-    /**
-     * 添加用户
-     * @param request    添加的用户信息
-     * @return                  添加的用户信息
-     */
-    @Deprecated // 改为netty了
-    @POST("/user/addUser")
-    Observable<BaseResponse<Void>> addUserFriend(@Body AddUserRequest request);
-
-    /**
-     * 处理添加用户
-     * @param request   处理添加用户的请求
-     * @return          处理添加用户的响应
-     */
-    @Deprecated // 改为netty了
-    @POST("/user/handleAddedUser")
-    Observable<BaseResponse<Void>> handleAddedUser(@Body HandleAddedUserRequest request);
+//    /**
+//     * 添加用户
+//     * @param request    添加的用户信息
+//     * @return                  添加的用户信息
+//     */
+//    @Deprecated // 改为netty了
+//    @POST("/user/addUser")
+//    Observable<BaseResponse<Void>> addUserFriend(@Body AddUserRequest request);
+//
+//    /**
+//     * 处理添加用户
+//     * @param request   处理添加用户的请求
+//     * @return          处理添加用户的响应
+//     */
+//    @Deprecated // 改为netty了
+//    @POST("/user/handleAddedUser")
+//    Observable<BaseResponse<Void>> handleAddedUser(@Body HandleAddedUserRequest request);
 
     /**
      * 获取添加我的请求
@@ -254,7 +254,7 @@ public interface ApiRequest {
      * @param request   请求
      * @return          推荐帖子
      */
-    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/recommend/getPost")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/getPost")
     Observable<BaseResponse<RecommendPostResponse>> getRecommendPosts(@Body RecommendPostRequest request);
 
     /**
@@ -291,6 +291,18 @@ public interface ApiRequest {
             @Part List<MultipartBody.Part> files,
             @Part("postId") Long postId,
             @Part("userAccount") String userAccount
+    );
+
+    //-------------搜索相关--------------
+
+    /**
+     * 模糊搜索帖子
+     * @param request   请求
+     * @return          模糊搜索帖子结果
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.SEARCH + "/main/fuzzy")
+    Observable<BaseResponse<FuzzySearchResponse>> fuzzySearch(
+            @Body FuzzySearchRequest request
     );
 
     //--------------Test--------------

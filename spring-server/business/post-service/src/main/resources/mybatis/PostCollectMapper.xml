@@ -85,6 +85,6 @@
             LEFT JOIN post_collect_folder pcf
             ON pc.collect_folder_id = pcf.id
         WHERE pcf.user_id = #{userId}
-        LIMIT #{pageNum} * #{pageSize}, #{pageSize}
+        LIMIT #{offset}, #{pageSize}
     </select>
 </mapper>

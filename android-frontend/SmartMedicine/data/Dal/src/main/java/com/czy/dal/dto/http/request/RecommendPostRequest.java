@@ -9,5 +9,4 @@ import com.czy.dal.ao.home.FeatureContext;
  */
 public class RecommendPostRequest {
     public FeatureContext featureContext;
-    public String userAccount;
 }

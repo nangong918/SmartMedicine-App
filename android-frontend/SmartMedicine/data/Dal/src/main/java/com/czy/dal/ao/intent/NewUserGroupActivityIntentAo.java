@@ -6,6 +6,8 @@ import java.io.Serializable;
 
 public class NewUserGroupActivityIntentAo implements Serializable {
 
+    public static final String INTENT_KEY = NewUserGroupActivityIntentAo.class.getName();
+
     public UserGroupEnum userGroupEnum = UserGroupEnum.USER;
 
 }

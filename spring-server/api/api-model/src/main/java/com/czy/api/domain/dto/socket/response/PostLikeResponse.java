@@ -1,7 +1,6 @@
 package com.czy.api.domain.dto.socket.response;
 
 import com.czy.api.constant.netty.ResponseMessageType;
-import com.czy.api.domain.dto.base.NettyOptionResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,10 +13,9 @@ import java.util.Map;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PostLikeResponse extends NettyOptionResponse {
+public class PostLikeResponse extends PostOperationBaseResponse {
 
-    public Long postId;
-    public Long likeUserId;
+    public PostLikeResponse(){}
 
     public PostLikeResponse(Long postId){
         super.setType(ResponseMessageType.Post.LIKE_POST);
@@ -26,9 +24,6 @@ public class PostLikeResponse extends NettyOptionResponse {
 
     @Override
     public Map<String, String> toDataMap() {
-        Map<String, String> dataMap = super.toDataMap();
-        dataMap.put("postId", String.valueOf(postId));
-        dataMap.put("likeUserAccount", String.valueOf(likeUserId));
-        return dataMap;
+        return super.toDataMap();
     }
 }

@@ -11,6 +11,8 @@ import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.UserOssResponse;
 import com.czy.api.domain.vo.user.UserVo;
+import com.czy.api.exception.CommonExceptions;
+import com.czy.api.exception.UserExceptions;
 import com.czy.user.mapper.mysql.user.LoginUserMapper;
 import com.czy.user.mapper.mysql.user.UserMapper;
 import com.czy.user.service.front.UserFrontService;
@@ -62,13 +64,10 @@ public class UserFileController {
             @RequestParam("userId") Long userId
     ) {
         if (img == null){
-            return BaseResponse.LogBackError("请上传图片");
+            return BaseResponse.LogBackError(UserExceptions.IMAGE_NOT_UPLOAD);
         }
-        if (!StringUtils.hasText(phone)){
-            return BaseResponse.LogBackError("请输入手机号");
-        }
-        if (userId == null){
-            return BaseResponse.LogBackError("请输入用户id");
+        if (!StringUtils.hasText(phone) || userId == null){
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
         String userImageBucket = UserConstant.USER_FILE_BUCKET + userId;

@@ -25,7 +25,7 @@ public class Message implements BaseBean {
     private Long receiverId;
     @NotBlank(message = "Message type cannot be null or empty")
     private String type;
-    private Map<String, String> data;
+    private Map<String, String> data = new HashMap<>();
     private Long timestamp = System.currentTimeMillis();
 
     /**

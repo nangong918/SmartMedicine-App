@@ -21,6 +21,7 @@ public class BaseFragment<viewBinding extends ViewBinding> extends Fragment {
     protected viewBinding binding;
     protected String TAG;
 
+    // 通常情况下，只要fragment执行了onCreateView方法，Fragment就是isAdded Activity
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
