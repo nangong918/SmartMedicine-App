@@ -36,6 +36,11 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     }
 
     @Override
+    public ActivityPostBinding getBinding() {
+        return ActivityPostBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     protected void init() {
         super.init();
         initIntent();

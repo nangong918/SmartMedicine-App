@@ -3,8 +3,6 @@ package com.czy.baseUtilsLib.activity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,10 +13,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewbinding.ViewBinding;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Optional;
 
 
@@ -26,7 +20,7 @@ import java.util.Optional;
  * 解决ViewBinding重复代码    （通过反射实现）
  * @param <viewBinding>     视图绑定类型
  */
-public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActivity {
+public abstract class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActivity {
     protected viewBinding binding;
     protected final String activityName;
     protected final String TAG;
@@ -35,6 +29,8 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
 //        this.activityName = activityName;
 //        TAG = activityName;
 //    }
+
+    public abstract viewBinding getBinding();
 
     public BaseActivity(Class<?> classType){
         this.activityName = classType.getSimpleName();
@@ -45,7 +41,9 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initViewBinding();
+//        initViewBinding();
+        this.binding = getBinding();
+        setContentView(binding.getRoot());
 
         init();
         initData();
@@ -58,6 +56,7 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
 //        initView();
     }
 
+/*
     private void initViewBinding(){
         // 反射获取泛型的父类型即：BaseViewBindActivity<viewBinding extends ViewBinding>    （BaseViewBindActivity<ActivityMainBinding>）
         Type superclass = getClass().getGenericSuperclass();
@@ -82,6 +81,7 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
             Log.e(TAG, "发生未知错误: " + e.getMessage(), e);
         }
     }
+*/
 
     private void initWindow(){
 

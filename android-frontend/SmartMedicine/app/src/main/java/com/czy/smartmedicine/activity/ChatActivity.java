@@ -29,6 +29,11 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     }
 
     @Override
+    public ActivityChatBinding getBinding() {
+        return ActivityChatBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     protected void init() {
         super.init();
         initViewModel();
