@@ -1,7 +1,6 @@
 package com.czy.baseUtilsLib.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,24 +10,33 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewbinding.ViewBinding;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
+public abstract class BaseFragment<viewBinding extends ViewBinding> extends Fragment {
 
-public class BaseFragment<viewBinding extends ViewBinding> extends Fragment {
     protected viewBinding binding;
     protected String TAG;
+
+    public abstract viewBinding getBinding();
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
     // 通常情况下，只要fragment执行了onCreateView方法，Fragment就是isAdded Activity
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initViewBinding(inflater, container);
-        init();
-        setListener();
+        this.binding = getBinding();
+        this.setListener();
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // 此处binding才生效
     }
 
     protected String fragmentName;
@@ -38,6 +46,7 @@ public class BaseFragment<viewBinding extends ViewBinding> extends Fragment {
         TAG = this.fragmentName;
     }
 
+/*
     private void initViewBinding(LayoutInflater inflater, ViewGroup container) {
         // 获取泛型的父类型
         Type superclass = getClass().getGenericSuperclass();
@@ -60,15 +69,13 @@ public class BaseFragment<viewBinding extends ViewBinding> extends Fragment {
             Log.e(TAG, "发生未知错误: " + e.getMessage(), e);
         }
     }
+*/
 
-    protected void init() {
-        // 初始化逻辑
-    }
 
+    // 设置监听逻辑
     protected void setListener() {
-        // 设置监听逻辑
-    }
 
+    }
 
     @Override
     public void onDestroyView() {

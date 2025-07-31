@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
@@ -59,8 +60,15 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
     }
 
     @Override
+    public FragmentMessageBinding getBinding() {
+        return FragmentMessageBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initViewModel();
     }
 
     @Override
@@ -71,9 +79,8 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
     }
 
     @Override
-    protected void init() {
-        super.init();
-        initViewModel();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
     }
 

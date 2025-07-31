@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.smartmedicine.databinding.FragmentSearchBinding;
@@ -25,6 +26,11 @@ public class SearchFragment extends BaseFragment<FragmentSearchBinding> {
     }
 
     @Override
+    public FragmentSearchBinding getBinding() {
+        return FragmentSearchBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -37,10 +43,11 @@ public class SearchFragment extends BaseFragment<FragmentSearchBinding> {
     }
 
     @Override
-    protected void init() {
-        super.init();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initView();
     }
+
 
     private final String[] mStrs = {"aaa", "bbb", "ccc", "abcdefg"};
     private void initView() {

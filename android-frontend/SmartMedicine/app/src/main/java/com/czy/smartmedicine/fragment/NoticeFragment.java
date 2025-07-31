@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.smartmedicine.databinding.FragmentNoticeBinding;
@@ -22,6 +23,11 @@ public class NoticeFragment extends BaseFragment<FragmentNoticeBinding> {
     }
 
     @Override
+    public FragmentNoticeBinding getBinding() {
+        return FragmentNoticeBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -34,8 +40,8 @@ public class NoticeFragment extends BaseFragment<FragmentNoticeBinding> {
     }
 
     @Override
-    protected void init() {
-        super.init();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override

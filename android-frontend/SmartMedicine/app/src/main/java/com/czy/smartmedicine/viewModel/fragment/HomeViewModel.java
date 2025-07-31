@@ -3,6 +3,7 @@ package com.czy.smartmedicine.viewModel.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
+import androidx.activity.result.ActivityResultCaller;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,15 +41,18 @@ public class HomeViewModel extends ViewModel {
         this.socketMessageSender = socketMessageSender;
     }
 
+    public SocketMessageSender getSocketMessageSender(){
+        return socketMessageSender;
+    }
+
     //---------------------------Vo Ld---------------------------
 
     public HomeVo homeVo = new HomeVo();
     public PostAdapter postAdapter;
 
-    public void init(HomeVo homeVo, FragmentActivity activity){
+    public void init(HomeVo homeVo){
         this.homeVo = homeVo;
         initialNetworkRequest();
-        initPostClickManager(activity);
     }
 
     //==========RecyclerView
@@ -140,11 +144,11 @@ public class HomeViewModel extends ViewModel {
 
     public PostClickManager postClickManager;
 
-    private void initPostClickManager(FragmentActivity activity){
+    public void initPostClickManager(ActivityResultCaller fragment){
         postClickManager = new PostClickManager(
                 homeVo.postListVo.postAoList,
                 this.socketMessageSender,
-                activity
+                fragment
         );
     }
 
