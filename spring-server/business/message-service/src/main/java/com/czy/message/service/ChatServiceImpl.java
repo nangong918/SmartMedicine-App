@@ -25,12 +25,7 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,17 +50,36 @@ public class ChatServiceImpl implements ChatService {
 
 
     @Override
-    public List<UserChatLastMessageBo> getUserAllChatMessage(Long senderId) {
+    public List<UserChatLastMessageBo> getUserAllChatMessage(Long userId) {
         List<UserChatLastMessageBo> messages = new LinkedList<>();
         // 获取所有相关的键 考虑到senderId可能是receiverId
-//        Set<String> keys = redisService.getKeys(MessageConstant.CHAT_MESSAGE_KEY + senderId + ":");
+//        Set<String> keys = redisService.getKeys(MessageConstant.CHAT_MESSAGE_KEY + userId + ":");
         // 此时的sender是想要查询sender收到的消息；所以sender要作为receiver；所以
-        String checkKey = MessageConstant.CHAT_MESSAGE_KEY + "*:" + senderId;
-        Set<String> keysReceiver = redisService.getKeys(checkKey);
+        // sender是receiver
+        String receiverCheckKey = MessageConstant.CHAT_MESSAGE_KEY + "*:" + userId;
+        // sender是sender
+        String senderCheckKey = MessageConstant.CHAT_MESSAGE_KEY + userId + ":*";
+        Set<String> keysReceiver = redisService.getKeys(receiverCheckKey);
+        Set<String> keysSender = redisService.getKeys(senderCheckKey);
 
+        // Map<senderId, bo>
+        Map<Long, UserChatLastMessageBo> receiverMap = new HashMap<>();
+        // user收到的消息
         for (String key : keysReceiver) {
             UserChatLastMessageBo message = redisService.getObject(key, UserChatLastMessageBo.class);
             if (message != null) {
+                receiverMap.put(message.getSenderId(), message);
+                messages.add(message);
+            }
+        }
+        // user发送的消息
+        // 洗数据：只添加map中（receiverId不存在的）
+        for (String key : keysSender) {
+            UserChatLastMessageBo message = redisService.getObject(key, UserChatLastMessageBo.class);
+            // 当我发送的消息中，接受者的id没给我发消息则加入map
+            if (receiverMap.get(message.getReceiverId()) == null){
+                // 自己发送给别人的消息是不存在未读的
+                message.setUnreadCount(0);
                 messages.add(message);
             }
         }
