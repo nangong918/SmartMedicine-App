@@ -69,7 +69,7 @@ public class ChatHandler implements ChatApi {
     @Override
     public void sendTextMessageToUser(SendTextDataRequest request) {
         // 参数校验
-        if (checkParams(request, request.getContent())){
+        if (!checkParams(request, request.getContent())){
             NettyUtils.sendErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqErrorSender);
             throw new NettyException(CommonExceptions.PARAM_ERROR, request.getSenderId());
         }
