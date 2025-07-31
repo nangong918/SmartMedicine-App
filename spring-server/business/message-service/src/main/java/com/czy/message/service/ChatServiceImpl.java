@@ -16,6 +16,7 @@ import com.czy.message.mapper.mysql.UserChatMessageMapper;
 import com.czy.message.service.transactional.MessageStorageService;
 import com.czy.springUtils.service.RedisService;
 import exception.AppException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -90,7 +92,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<UserChatMessageBo> getUserChatMessage(FetchUserMessageAo fetchUserMessageAo) {
+    public List<UserChatMessageBo> getUserChatMessage(@NonNull FetchUserMessageAo fetchUserMessageAo) {
         // 限制 messageCount 最大值为 200
         int messageCount = Math.min(fetchUserMessageAo.getMessageCount(), MessageConstant.MAX_SEARCH_MESSAGE_LIMIT);
 
@@ -107,7 +109,13 @@ public class ChatServiceImpl implements ChatService {
 
         // 根据 timestampIndex 和 messageCount 查询用户聊天记录
         // 资源文件存储的是 fileIdStr
-        List<UserChatMessageDo> messageDoList = userChatMessageMongoMapper.findMessagesAfterTimestamp(senderId, receiverId, fetchUserMessageAo.getTimestampIndex(), messageCount);
+        List<UserChatMessageDo> messageDoList = userChatMessageMongoMapper.findMessagesAfterTimestamp(
+                senderId,
+                receiverId,
+                Optional.ofNullable(fetchUserMessageAo.getTimestampIndex())
+                        .orElse(System.currentTimeMillis()),
+                messageCount
+        );
         if (CollectionUtils.isEmpty(messageDoList)){
             return new LinkedList<>();
         }
