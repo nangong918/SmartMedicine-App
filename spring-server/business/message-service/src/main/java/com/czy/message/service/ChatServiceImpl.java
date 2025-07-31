@@ -115,7 +115,7 @@ public class ChatServiceImpl implements ChatService {
 
         // 根据 timestampIndex 和 messageCount 查询用户聊天记录
         // 资源文件存储的是 fileIdStr
-        List<UserChatMessageDo> messageDoList = userChatMessageMongoMapper.findMessagesAfterTimestamp(
+        List<UserChatMessageDo> messageDoList = userChatMessageMongoMapper.findAllMessagesAfterTimestamp(
                 senderDo.getId(),
                 receiverDo.getId(),
                 Optional.ofNullable(fetchUserMessageAo.getTimestampIndex())
