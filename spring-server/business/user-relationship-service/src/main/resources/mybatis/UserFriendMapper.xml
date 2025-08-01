@@ -3,9 +3,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.czy.user.mapper.mysql.relation.UserFriendMapper">
 
+    <sql id="doColumns">
+        user_id, friend_id, add_time, last_chat_time,
+        remark_user_for_friend,
+        remark_friend_for_user
+    </sql>
+    <sql id="insertValue">
+        #{userId}, #{friendId}, #{addTime}, #{lastChatTime},
+        #{remarkUserForFriend},
+        #{remarkFriendForUser}
+    </sql>
     <insert id="addUserFriend">
-        insert into user_friend(user_id, friend_id, add_time)
-        values(#{userId}, #{friendId}, #{addTime})
+        insert into
+        user_friend(<include refid="doColumns"/>)
+        values(<include refid="insertValue"/>)
     </insert>
     <update id="updateUserFriend">
         update user_friend
@@ -18,6 +29,15 @@
             </if>
             <if test="addTime != null">
                 add_time = #{addTime},
+            </if>
+            <if test="lastChatTime != null">
+                last_chat_time = #{lastChatTime},
+            </if>
+            <if test="remarkUserForFriend != null">
+                remark_user_for_friend = #{remarkUserForFriend},
+            </if>
+            <if test="remarkFriendForUser != null">
+                remark_friend_for_user = #{remarkFriendForUser},
             </if>
         </set>
         WHERE (user_id = #{userId} AND friend_id = #{friendId})

@@ -51,7 +51,7 @@ public class UserViewEntity implements BaseBean, Serializable {
     // 用户头像
     public Long avatarFileId;
 
-    // 用户头像url
+    // 用户头像url (无法查询出来，需要去ossService用minio或者redis获取)
     public String avatarUrl;
 
     public void setByLoginUserDo(UserDo userDo) {
