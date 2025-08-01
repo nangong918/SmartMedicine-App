@@ -15,7 +15,7 @@ import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.dal.ao.chat.ChatContactItemAo;
-import com.czy.dal.bo.UserChatLastMessageBo;
+import com.czy.dal.bo.UserChatLastViewMessageBo;
 import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
@@ -211,22 +211,47 @@ public class MessageViewModel extends ViewModel {
         if (ViewModelUtil.handleResponse(response)){
             // Bo -> Ao
             List<ChatContactItemAo> chatContactList = new ArrayList<>();
-            for (UserChatLastMessageBo lastMessageBo : response.getData().lastMessageList) {
-                ChatContactItemAo chatContactItemAo = new ChatContactItemAo();
-                chatContactItemAo.chatContactItemVo.messagePreview = (lastMessageBo.msgContent);
-                chatContactItemAo.chatContactItemVo.time = (DateUtils.getTime(new Date(lastMessageBo.timestamp)));
-                chatContactItemAo.chatContactItemVo.unreadCount = (lastMessageBo.unreadCount);
-                chatContactItemAo.contactAccount = lastMessageBo.senderAccount;
-                // 暂时不设置avatarUrlOrUri，而是从MessageFragment传递
-//                chatContactItemAo.chatContactItemVo.avatarUrlOrUri = (lastMessageBo.contactPhoto);
-                chatContactItemAo.chatContactItemVo.name = TextUtils.isEmpty(lastMessageBo.receiverName) ? lastMessageBo.receiverAccount : lastMessageBo.receiverName;
-                chatContactList.add(chatContactItemAo);
+            for (UserChatLastViewMessageBo lastMessageBo : response.getData().lastMessageList) {
+                ChatContactItemAo ao = new ChatContactItemAo();
+                ao.chatContactItemVo.messagePreview = (lastMessageBo.msgContent);
+                ao.chatContactItemVo.time = (DateUtils.getTime(new Date(lastMessageBo.timestamp)));
+                ao.chatContactItemVo.unreadCount = (lastMessageBo.unreadCount);
+                ao.contactAccount = lastMessageBo.senderAccount;
+                // 头像 URL
+                ao.chatContactItemVo.avatarUrlOrUri =
+                        lastMessageBo.friendViewEntity.avatarUrl;
+                // name = name + (备注) ? 备注 : account
+                ao.chatContactItemVo.name = getFinalName(ao, lastMessageBo);
+                chatContactList.add(ao);
             }
             // 同步设置
             messageHandler.post(() -> {
                 handleUserChatLastMessage(chatContactList);
             });
         }
+    }
+
+    // name = name + (备注) ? 备注 : account
+    private String getFinalName(ChatContactItemAo ao, UserChatLastViewMessageBo lastMessageBo) {
+        String name = Optional.ofNullable(ao.chatContactItemVo.name)
+                .orElse("");
+        String remark = Optional.ofNullable(lastMessageBo.friendViewEntity.remark)
+                .orElse("");
+        String finalName = ao.contactAccount;
+        if (!TextUtils.isEmpty(name)){
+            if (!TextUtils.isEmpty(remark)){
+                finalName = name + "(" + remark + ")";
+            }
+            else {
+                finalName = name;
+            }
+        }
+        else {
+            if (!TextUtils.isEmpty(name)){
+                finalName = name;
+            }
+        }
+        return finalName;
     }
 
     private synchronized void handleUserChatLastMessage(List<ChatContactItemAo> list){

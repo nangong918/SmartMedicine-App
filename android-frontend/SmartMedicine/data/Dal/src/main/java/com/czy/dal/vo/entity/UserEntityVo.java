@@ -5,7 +5,7 @@ package com.czy.dal.vo.entity;
  * @author 13225
  * @date 2025/6/10 16:21
  */
-public class UserVo {
+public class UserEntityVo {
     // view
     public String userName;
     public String account;

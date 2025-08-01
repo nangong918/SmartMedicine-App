@@ -25,4 +25,19 @@ public class UserChatMessageBo implements BaseBean, Serializable {
     public Long timestamp;
     // 名称
     public String receiverName;
+
+    public void setData(UserChatMessageBo bo){
+        if (bo.id != null){
+            this.id = bo.id;
+        }
+        this.msgContent = bo.msgContent;
+        this.msgType = bo.msgType;
+        this.senderId = bo.senderId;
+        this.receiverId = bo.receiverId;
+        this.timestamp = bo.timestamp;
+        this.receiverName = bo.receiverName;
+        this.senderAccount = bo.senderAccount;
+        this.receiverAccount = bo.receiverAccount;
+    }
 }
+

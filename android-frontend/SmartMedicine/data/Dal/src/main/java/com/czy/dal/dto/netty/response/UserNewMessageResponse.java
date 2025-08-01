@@ -2,7 +2,7 @@ package com.czy.dal.dto.netty.response;
 
 
 import com.czy.baseUtilsLib.json.BaseBean;
-import com.czy.dal.bo.UserChatLastMessageBo;
+import com.czy.dal.bo.UserChatLastViewMessageBo;
 
 import java.util.List;
 
@@ -11,5 +11,5 @@ import java.util.List;
  * @date 2025/2/26 14:30
  */
 public class UserNewMessageResponse implements BaseBean {
-    public List<UserChatLastMessageBo> lastMessageList;
+    public List<UserChatLastViewMessageBo> lastMessageList;
 }

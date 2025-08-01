@@ -34,7 +34,7 @@ import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
-import com.czy.dal.vo.entity.UserVo;
+import com.czy.dal.vo.entity.UserEntityVo;
 
 import java.util.List;
 
@@ -91,7 +91,7 @@ public interface ApiRequest {
      */
     @Multipart
     @POST(BackEndConstant.USER_RELATION + "/userFile/register")
-    Observable<BaseResponse<UserVo>> registerUserUploadImg(
+    Observable<BaseResponse<UserEntityVo>> registerUserUploadImg(
             // paramName: img
             @Part MultipartBody.Part img,
             @Part("phone") RequestBody phone,
