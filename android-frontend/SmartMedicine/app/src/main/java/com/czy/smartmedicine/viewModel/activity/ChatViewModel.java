@@ -365,7 +365,7 @@ public class ChatViewModel extends ViewModel {
 
             @Override
             public void haveReadMessage(@NonNull HaveReadMessageResponse response) {
-                Log.d(TAG, "消息已读：senderAccount:" + response.receiverAccount);
+                Log.d(TAG, "消息已读：haveReadUserId:" + response.haveReadUserId);
             }
 
             @Override

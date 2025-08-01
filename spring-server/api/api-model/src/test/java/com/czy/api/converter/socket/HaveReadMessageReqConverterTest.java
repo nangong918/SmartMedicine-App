@@ -17,7 +17,7 @@ class HaveReadMessageReqConverterTest {
                 .setSenderId(1L)
                 .setReceiverId(2L)
                 .setType("type")
-                .putData("receiverUserAccount", "receiverUserAccount")
+                .putData("receiverUserId", "12345678901")
                 .setTimestamp(System.currentTimeMillis())
                 .build();
         long startTime = System.currentTimeMillis();
