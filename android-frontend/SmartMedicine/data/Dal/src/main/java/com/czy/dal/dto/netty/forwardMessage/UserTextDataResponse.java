@@ -16,7 +16,8 @@ public class UserTextDataResponse extends BaseResponseData implements BaseBean {
     public String content;
     public String senderName;
     // 当值不为空才更新
-    public String avatarUrl = "";
+    @Deprecated(since = "2025-08-01; 因为netty不去执行oss操作，太费时了")
+    public String avatarUrls = "";
 
     public String getTitle() {
         return title;

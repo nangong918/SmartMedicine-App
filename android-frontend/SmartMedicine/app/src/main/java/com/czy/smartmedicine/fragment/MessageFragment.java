@@ -1,9 +1,6 @@
 package com.czy.smartmedicine.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,21 +10,11 @@ import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.chatCard.ChatContactAdapter;
-import com.czy.dal.ao.chat.ChatActivityStartAo;
-import com.czy.dal.ao.chat.ChatContactItemAo;
-import com.czy.dal.vo.entity.message.ChatContactListVo;
 import com.czy.dal.vo.fragmentActivity.MessageVo;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.activity.ChatActivity;
 import com.czy.smartmedicine.databinding.FragmentMessageBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.fragment.MessageViewModel;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -81,7 +68,12 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initRecyclerView();
+
+        // 此处recyclerView才创建
+        viewModel.initRecyclerView(
+                binding.rclvMessage,
+                requireActivity()
+        );
     }
 
     @Override
@@ -97,7 +89,7 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
         viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, MessageViewModel.class);
 
-        initViewModelVo();
+        viewModel.init(new MessageVo());
 
 //        // 绑定viewModel
 //        binding.setViewModel(signViewModel);
@@ -107,18 +99,9 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
         observeData();
     }
 
-    private void initViewModelVo(){
-        MessageVo messageVo = new MessageVo();
-
-        List<ChatContactItemAo> list = new ArrayList<>();
-        messageVo.chatContactListVo.chatContactListLd.setValue(list);
-
-        viewModel.init(messageVo);
-    }
-
     private void observeData() {
         // 观察RecyclerView
-        Optional.ofNullable(viewModel)
+/*        Optional.ofNullable(viewModel)
                 .map(vm -> vm.messageVo)
                 .map(mvo -> mvo.chatContactListVo)
                 .map(cvo -> cvo.chatContactListLd)
@@ -129,50 +112,7 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
                                     chatContactAdapter.setCurrentList(newList);
                                 });
                     });
-                });
-    }
-
-    //-----------------------RecyclerView-----------------------
-
-    private void initRecyclerView() {
-        // TODO 将test改为获取数据资源 :0.聊天Activity，1.先不要持久化数据，全部从网络获取；2.添加好友功能 3.WebSocket前后端发送消息 4.FirebaseMessagingService消息推送 5.好友前端持久化 6.聊天记录前后端持久化
-        ChatContactListVo recyclerViewVo = Optional.ofNullable(viewModel.messageVo)
-                .map(vo -> vo.chatContactListVo)
-                .orElse(new ChatContactListVo());
-        ChatContactAdapter adapter = new ChatContactAdapter(
-                recyclerViewVo.chatContactListLd.getValue(),
-                position -> {
-                    // 启动Ao
-                    ChatActivityStartAo chatActivityStartAo = getChatActivityStartAo(
-                            Optional.ofNullable(recyclerViewVo.chatContactListLd.getValue())
-                                    .map(list -> list.get(position))
-                                    .orElse(new ChatContactItemAo())
-                    );
-
-                    // 归零未读
-                    List<ChatContactItemAo> list = recyclerViewVo.chatContactListLd.getValue();
-                    list.get(position).chatContactItemVo.unreadCount = 0;
-                    // 通知后端那一条被读了
-                    String contactAccount = list.get(position).contactAccount;
-                    viewModel.socketHaveReadMessage(contactAccount);
-                    // 通知观察者调用 chatContactAdapter.setCurrentList(newList)
-                    viewModel.messageVo.chatContactListVo.chatContactListLd.postValue(list);
-
-                    // 启动ChatActivity
-                    Intent intent = new Intent(requireActivity(), ChatActivity.class);
-                    intent.putExtra(ChatActivityStartAo.class.getName(), chatActivityStartAo);
-                    startActivity(intent);
-        });
-        binding.rclvMessage.setAdapter(adapter);
-    }
-
-    private ChatActivityStartAo getChatActivityStartAo(ChatContactItemAo chatContactItemAo){
-        ChatActivityStartAo chatActivityStartAo = new ChatActivityStartAo();
-        chatActivityStartAo.contactAccount = chatContactItemAo.contactAccount;
-        chatActivityStartAo.contactName = chatContactItemAo.chatContactItemVo.name;
-        chatActivityStartAo.chatMessageListItemVo = new LinkedList<>();
-        // TODO 从网络或者本地获取聊天记录
-        return chatActivityStartAo;
+                });*/
     }
 
     @Override

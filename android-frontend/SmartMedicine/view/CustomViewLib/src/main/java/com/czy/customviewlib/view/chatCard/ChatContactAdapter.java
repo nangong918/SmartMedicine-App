@@ -2,7 +2,6 @@ package com.czy.customviewlib.view.chatCard;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -10,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.czy.baseUtilsLib.json.BaseBean;
 import com.czy.customviewlib.databinding.ViewChatCardItemBinding;
 import com.czy.dal.OnPositionItemClick;
 import com.czy.dal.ao.chat.ChatContactItemAo;
@@ -38,14 +36,19 @@ public class ChatContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     // 更新View，与当前的view对比然后更新指定的view
     @SuppressLint("NotifyDataSetChanged")
-    public void setCurrentList(List<ChatContactItemAo> newList){
+    public void setCurrentList(@NonNull List<ChatContactItemAo> newList){
         if (this.currentList != null){
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContactDiffCallback(this.currentList, newList), true);
-            // 清空并添加新的列表
-            this.currentList.clear();
-            this.currentList.addAll(newList);
-            // 通过 diffResult 更新 RecyclerView
-            diffResult.dispatchUpdatesTo(this);
+            if (this.currentList == newList){
+                notifyDataSetChanged();
+            }
+            else {
+                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContactDiffCallback(this.currentList, newList), true);
+                // 清空并添加新的列表
+                this.currentList.clear();
+                this.currentList.addAll(newList);
+                // 通过 diffResult 更新 RecyclerView
+                diffResult.dispatchUpdatesTo(this);
+            }
         }
         else {
             this.currentList = new ArrayList<>();

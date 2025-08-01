@@ -15,6 +15,6 @@ public class UserImageResponse extends BaseResponseData implements BaseBean {
     public String account;
     public String imageUrl;
     public String senderName;
-    // 当值不为空才更新
-    public String avatarUrl = "";
+    @Deprecated(since = "2025-08-01; 因为netty不去执行oss操作，太费时了")
+    public String avatarUrls = "";
 }
