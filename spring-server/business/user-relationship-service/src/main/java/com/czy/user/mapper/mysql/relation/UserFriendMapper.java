@@ -3,6 +3,7 @@ package com.czy.user.mapper.mysql.relation;
 
 
 import com.czy.api.domain.Do.relationship.UserFriendDo;
+import com.czy.api.domain.entity.FriendViewEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -35,10 +36,21 @@ public interface UserFriendMapper {
     List<UserFriendDo> getUserFriends(int userId);
 
     // 通过userAccount查询用户好友的全部好友及其view信息
-    List<UserViewEntity> getUserFriendsViewByAccount(String userAccount);
+    List<UserViewEntity> getUsersViewByAccount(String userAccount);
 
     // 通过userId查询用户好友的全部好友及其view信息
-    List<UserViewEntity> getUserFriendsViewByUserId(Long userId);
+    List<UserViewEntity> getUsersViewByUserId(Long userId);
+
+    // 通过userId查询用户好友的全部好友及其FriendsView信息
+    List<FriendViewEntity> getFriendsViewByUserId(Long userId);
+
+    // 通过userId查询用户好友的list好友及其view信息
+    List<FriendViewEntity> getFriendsViewByUserIdFriendsId(
+            @Param("userId") Long userId,
+            @Param("friendId") List<Long> friendsId
+    );
+
+    // 通过userId查询用户好友的list好友及其FriendsView信息
 
     // 查询用户的好友数量
     int getUserFriendsCount(Long userId);

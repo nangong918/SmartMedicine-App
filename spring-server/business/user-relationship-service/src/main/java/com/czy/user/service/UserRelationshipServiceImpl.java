@@ -312,7 +312,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public List<UserViewEntity> getFriendList(Long senderId) {
-        return userFriendMapper.getUserFriendsViewByUserId(senderId);
+        return userFriendMapper.getUsersViewByUserId(senderId);
     }
 
     @Override
@@ -352,7 +352,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public List<MyFriendItemAo> getMyFriendList(Long senderId) {
-        List<UserViewEntity> list = userFriendMapper.getUserFriendsViewByUserId(senderId);
+        List<UserViewEntity> list = userFriendMapper.getUsersViewByUserId(senderId);
         List<MyFriendItemAo> myFriendItemAoList = new ArrayList<>();
         Optional.ofNullable(list)
                 .ifPresent(list1 -> {
