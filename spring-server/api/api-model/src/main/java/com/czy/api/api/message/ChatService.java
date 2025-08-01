@@ -5,6 +5,7 @@ package com.czy.api.api.message;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.ao.message.FetchUserMessageAo;
 import com.czy.api.domain.bo.message.UserChatLastMessageBo;
+import com.czy.api.domain.bo.message.UserChatLastViewMessageBo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
 
 import java.util.List;
@@ -15,9 +16,11 @@ import java.util.List;
  */
 public interface ChatService {
 
-    // 拉取用户的全部聊天消息(限制1000条，超过就流式传输)：某个用户跟所有用户的1条最新消息List
-    List<UserChatLastMessageBo> getUserAllChatMessage(Long senderId);
-    // 拉取和某个用户的消息
+    // 拉取用户的全部聊天消息(限制1000条，超过就流式传输)：某个用户跟所有用户的1条最新消息List (包括friendsView)
+    List<UserChatLastViewMessageBo> getUserAllChatMessage(Long senderId);
+    // messageList -> messageViewList （boList）的senderId必须全部相同
+    List<UserChatLastViewMessageBo> getViewMessageByMessage(List<UserChatLastMessageBo> boList);
+    // 拉取和某个用户的消息 （不包括friendView）
     UserChatLastMessageBo getUserChatMessage(Long senderId, Long receiverId);
     // 清空某条未读消息的数量
     void clearUserChatMessageUnreadCount(Long senderId, Long receiverId);

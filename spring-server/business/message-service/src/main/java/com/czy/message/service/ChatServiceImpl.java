@@ -3,6 +3,7 @@ package com.czy.message.service;
 
 import com.czy.api.api.message.ChatService;
 import com.czy.api.api.oss.OssService;
+import com.czy.api.api.user_relationship.UserRelationshipService;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.MessageTypeEnum;
 import com.czy.api.constant.message.MessageConstant;
@@ -11,7 +12,9 @@ import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.message.FetchUserMessageAo;
 import com.czy.api.domain.bo.message.UserChatLastMessageBo;
+import com.czy.api.domain.bo.message.UserChatLastViewMessageBo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
+import com.czy.api.domain.entity.FriendViewEntity;
 import com.czy.api.exception.UserExceptions;
 import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
 import com.czy.message.mapper.mysql.UserChatMessageMapper;
@@ -38,7 +41,7 @@ import java.util.stream.Collectors;
 @org.apache.dubbo.config.annotation.Service(protocol = "dubbo", version = "1.0.0")
 public class ChatServiceImpl implements ChatService {
 
-    private final UserChatMessageMapper chatMapper;
+    private final UserChatMessageMapper userChatMessageMapper;
     private final RedisService redisService;
     private final MessageStorageService messageStorageService;
     private final UserChatMessageMongoMapper userChatMessageMongoMapper;
@@ -47,10 +50,11 @@ public class ChatServiceImpl implements ChatService {
     private UserService userService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
+    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
+    private UserRelationshipService userRelationshipService;
 
-    // todo 存入的时候id可能存入错了
     @Override
-    public List<UserChatLastMessageBo> getUserAllChatMessage(Long userId) {
+    public List<UserChatLastViewMessageBo> getUserAllChatMessage(Long userId) {
         List<UserChatLastMessageBo> messages = new LinkedList<>();
         // 获取所有相关的键 考虑到senderId可能是receiverId
 //        Set<String> keys = redisService.getKeys(MessageConstant.CHAT_MESSAGE_KEY + userId + ":");
@@ -84,10 +88,65 @@ public class ChatServiceImpl implements ChatService {
             }
         }
 
-        // todo 改造响应体为 UserChatLastMessageBo
+        List<UserChatLastViewMessageBo> friendsViewMessages = getViewMessageByMessage(messages);
 
         // 限制返回的消息数量 (交给前端去根据时间顺序排序，节省后端算力和时间)
-        return messages.size() > MessageConstant.MAX_RECENT_MESSAGE_COUNT ? messages.subList(0, MessageConstant.MAX_RECENT_MESSAGE_COUNT) : messages;
+        return friendsViewMessages.size() > MessageConstant.MAX_RECENT_MESSAGE_COUNT ?
+                friendsViewMessages.subList(0, MessageConstant.MAX_RECENT_MESSAGE_COUNT) : friendsViewMessages;
+    }
+
+    @Override
+    public List<UserChatLastViewMessageBo> getViewMessageByMessage(List<UserChatLastMessageBo> boList) {
+        if (CollectionUtils.isEmpty(boList)){
+            return Collections.emptyList();
+        }
+
+        Long userId = Optional.ofNullable(boList.get(0))
+                        .map(UserChatMessageBo::getSenderId)
+                        .orElse(null);
+
+        if (userId == null){
+            return Collections.emptyList();
+        }
+
+        List<Long> friendsId = boList.stream()
+                .map(UserChatMessageBo::getReceiverId)
+                .collect(Collectors.toList());
+
+        // mybatis查询的结果如果无记录是不会返回到list中的，所以不能直接for循环组装
+        List<FriendViewEntity> friendViewEntityList = userRelationshipService.getFriendsViewByUserIdFriendsId(
+                userId,
+                friendsId
+        );
+
+        if (CollectionUtils.isEmpty(friendViewEntityList)){
+            return Collections.emptyList();
+        }
+
+        // 转为Map<friendId, friendViewEntity>；避免双重for循环
+        Map<Long, FriendViewEntity> friendViewEntityMap = friendViewEntityList.stream()
+                .collect(Collectors.toMap(
+                        // 此userId是friend的id
+                        FriendViewEntity::getUserId,
+                        friend -> friend)
+                );
+
+        // mybatis查询的结果如果无记录是不会返回到list中的，所以不能直接for循环组装
+        List<UserChatLastViewMessageBo> userChatLastViewMessageBoList = new ArrayList<>();
+        for (UserChatLastMessageBo bo : boList){
+            Long friendId = Optional.ofNullable(bo)
+                    .map(UserChatMessageBo::getReceiverId)
+                    .orElse(null);
+            if (friendId == null){
+                userChatLastViewMessageBoList.add(null);
+                continue;
+            }
+            FriendViewEntity friendViewEntity = friendViewEntityMap.get(friendId);
+            UserChatLastViewMessageBo userChatLastViewMessageBo = new UserChatLastViewMessageBo();
+            userChatLastViewMessageBo.setData(friendViewEntity, bo);
+            userChatLastViewMessageBoList.add(userChatLastViewMessageBo);
+        }
+        return userChatLastViewMessageBoList;
     }
 
     @Override
