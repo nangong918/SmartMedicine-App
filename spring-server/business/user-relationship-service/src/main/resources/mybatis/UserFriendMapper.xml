@@ -113,42 +113,76 @@ WHERE lu.account = #{userAccount}
     </select>
     <select id="getFriendsViewByUserId" resultType="com.czy.api.domain.entity.FriendViewEntity">
         SELECT
-            lu2.id AS friendId,
-            lu2.user_name AS friendName,
-            lu2.avatar_file_id AS avatarFileId,
-            lu2.account AS friendAccount,
+            CASE
+                WHEN uf.user_id = #{userId} THEN uf.friend_id
+                ELSE uf.user_id
+            END AS friendId,
+            lu.user_name AS friendName,
+            lu.avatar_file_id AS avatarFileId,
+            lu.account AS friendAccount,
+            CASE
+                WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend
+                ELSE uf.remark_friend_for_user
+            END AS remark
+        FROM user_friend uf
+        JOIN login_user lu ON (
+            uf.user_id = lu.id OR
+            uf.friend_id = lu.id
+        )
+        WHERE
+            uf.user_id = #{userId} OR
+            uf.friend_id = #{userId}
+    </select>
+    <select id="getFriendsViewByUserIdFriendId" resultType="com.czy.api.domain.entity.FriendViewEntity">
+        SELECT
+            CASE
+                WHEN uf.user_id = #{userId} THEN uf.friend_id
+                ELSE uf.user_id
+            END AS friendId,
+            lu.user_name AS friendName,
+            lu.avatar_file_id AS avatarFileId,
+            lu.account AS friendAccount,
             CASE
                 WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend  -- 作为user, remark_user_for_friend是他备注别人
                 ELSE uf.remark_friend_for_user                              -- 作为friend, remark_friend_for_user是他备注别人
             END AS remark
-        FROM login_user lu
-                 JOIN user_friend uf ON (uf.user_id = lu.id OR uf.friend_id = lu.id)
-                 JOIN login_user lu2 ON (
-            (uf.user_id = lu.id AND uf.friend_id = lu2.id) OR
-            (uf.friend_id = lu.id AND uf.user_)
-                 )
+        FROM user_friend uf
+        JOIN login_user lu ON (
+            (uf.user_id = #{userId} AND uf.friend_id = lu.id) OR
+            (uf.friend_id = #{userId} AND uf.user_id = lu.id)
+        )
+        WHERE
+            (uf.user_id = #{userId} AND uf.friend_id = #{friendId}) OR
+            (uf.friend_id = #{userId} AND uf.user_id = #{friendId})
     </select>
     <select id="getFriendsViewByUserIdFriendsId" resultType="com.czy.api.domain.entity.FriendViewEntity">
         SELECT
-        lu2.id AS friendId,
-        lu2.user_name AS friendName,
-        lu2.avatar_file_id AS avatarFileId,
-        lu2.account AS friendAccount,
-        CASE
-            WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend  -- 作为user, remark_user_for_friend是他备注别人
-            ELSE uf.remark_friend_for_user                              -- 作为friend, remark_friend_for_user是他备注别人
-        END AS remark
-        FROM login_user lu
-        JOIN user_friend uf ON (uf.user_id = lu.id OR uf.friend_id = lu.id)
-        JOIN login_user lu2 ON (
-        (uf.user_id = lu.id AND uf.friend_id = lu2.id) OR
-        (uf.friend_id = lu.id AND uf.user_id = lu2.id)
+            CASE
+                WHEN uf.user_id = #{userId} THEN uf.friend_id
+                ELSE uf.user_id
+            END AS friendId,
+            lu.user_name AS friendName,
+            lu.avatar_file_id AS avatarFileId,
+            lu.account AS friendAccount,
+            CASE
+                WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend
+                ELSE uf.remark_friend_for_user
+            END AS remark
+        FROM user_friend uf
+        JOIN login_user lu ON (
+            uf.user_id = lu.id OR
+            uf.friend_id = lu.id
         )
-        <if test="friendId != null and friendId.size() > 0">
-            WHERE lu2.id IN
-            <foreach item="id" collection="friendId" open="(" separator="," close=")">
+        WHERE
+        (uf.user_id = #{userId} OR uf.friend_id = #{userId})
+        <if test="friendsId != null and friendsId.size() > 0">
+            AND (
+            uf.friend_id IN
+            <foreach item="id" collection="friendsId" open="(" separator="," close=")">
                 #{id}
             </foreach>
+            )
         </if>
     </select>
+
 </mapper>
