@@ -149,19 +149,23 @@ public class ServiceTests {
 
     @Test
     public void friendViewSqlTest(){
-        List<FriendViewEntity> list1 = userFriendMapper.getFriendsViewByUserId(1947489239400275968L);
+
+        Long userId = 1947489239400275968L;
+        Long friendId = 1947602063380209664L;
+
+        List<FriendViewEntity> list1 = userFriendMapper.getFriendsViewByUserId(userId);
         for (FriendViewEntity item : list1) {
             log.info("item = {}", item);
         }
         FriendViewEntity entity = userFriendMapper.getFriendsViewByUserIdFriendId(
-                1947489239400275968L,
-                1947602063380209664L
+                userId,
+                friendId
         );
         log.info("entity = {}", entity);
         List<Long> friendsId = new ArrayList<>();
-        friendsId.add(1947602063380209664L);
+        friendsId.add(friendId);
         List<FriendViewEntity> list2 = userFriendMapper.getFriendsViewByUserIdFriendsId(
-                1947489239400275968L,
+                userId,
                 friendsId
         );
         log.info("list2 = {}", list2);
