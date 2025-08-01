@@ -304,15 +304,20 @@ public class MessageViewModel extends ViewModel {
             List<ChatContactItemAo> chatContactList = new ArrayList<>();
             for (UserChatLastViewMessageBo lastMessageBo : response.getData().lastMessageList) {
                 ChatContactItemAo ao = new ChatContactItemAo();
-                ao.chatContactItemVo.messagePreview = (lastMessageBo.msgContent);
-                ao.chatContactItemVo.time = (DateUtils.getTime(new Date(lastMessageBo.timestamp)));
-                ao.chatContactItemVo.unreadCount = (lastMessageBo.unreadCount);
-                ao.contactAccount = lastMessageBo.senderAccount;
+                ao.chatContactItemVo.messagePreview = lastMessageBo.msgContent;
+                ao.chatContactItemVo.time = DateUtils.getTime(
+                        new Date(
+                                Optional.ofNullable(lastMessageBo.timestamp)
+                                        .orElse(System.currentTimeMillis())
+                        )
+                );
+                ao.chatContactItemVo.unreadCount = lastMessageBo.unreadCount;
+                ao.contactAccount = lastMessageBo.friendViewEntity.userAccount;
                 // 头像 URL
                 ao.chatContactItemVo.avatarUrlOrUri =
                         lastMessageBo.friendViewEntity.avatarUrl;
                 // name = name + (备注) ? 备注 : account
-                ao.chatContactItemVo.name = getFinalName(ao, lastMessageBo);
+                ao.chatContactItemVo.name = getFinalName(lastMessageBo);
                 chatContactList.add(ao);
             }
             // 同步设置
@@ -323,12 +328,16 @@ public class MessageViewModel extends ViewModel {
     }
 
     // name = name + (备注) ? 备注 : account
-    private String getFinalName(ChatContactItemAo ao, UserChatLastViewMessageBo lastMessageBo) {
-        String name = Optional.ofNullable(ao.chatContactItemVo.name)
+    private String getFinalName(UserChatLastViewMessageBo bo) {
+        String name = Optional.ofNullable(bo.friendViewEntity)
+                .map(f -> f.userName)
                 .orElse("");
-        String remark = Optional.ofNullable(lastMessageBo.friendViewEntity.remark)
+        String remark = Optional.ofNullable(bo.friendViewEntity)
+                .map(f -> f.remark)
                 .orElse("");
-        String finalName = ao.contactAccount;
+        String finalName = Optional.ofNullable(bo.friendViewEntity)
+                .map(f -> f.userAccount)
+                .orElse("");
         if (!TextUtils.isEmpty(name)){
             if (!TextUtils.isEmpty(remark)){
                 finalName = name + "(" + remark + ")";
@@ -345,40 +354,61 @@ public class MessageViewModel extends ViewModel {
         return finalName;
     }
 
+    /**
+     * 同步更新list
+     * @param list  需要添加的list
+     */
     private synchronized void handleUserChatLastMessage(List<ChatContactItemAo> list){
         if (list == null || list.isEmpty()){
             return;
         }
         List<ChatContactItemAo> chatContactList = messageVo.chatContactListVo.chatContactList;
-        if (chatContactList == null){
-            messageVo.chatContactListVo.chatContactList = new ArrayList<>();
-            messageVo.chatContactListVo.chatContactList.addAll(list);
-            // 通知ui更新
+        if (chatContactList == null || chatContactList.isEmpty()){
+            chatContactList = new ArrayList<>(list);
+            messageVo.chatContactListVo.chatContactList = chatContactList;
         }
         else {
             for (ChatContactItemAo item : list){
+                // 检查是否存在，存在则将数据添加
+                // 未读消息数量信息如果为null则说明是netty推送过来的；未读消息 += 1
+                // 未读消息数量信息如果非null则说明是http查询，数据是精确的；未读消息 = num
                 AtomicBoolean isExist = new AtomicBoolean(false);
                 for (int i = 0; i < chatContactList.size(); i++){
                     ChatContactItemAo chatContactItemAo = chatContactList.get(i);
-                    if (chatContactItemAo.contactAccount.equals(item.contactAccount)){
+                    // 相同的情况：存在
+                    if (item.userId != null && item.userId.equals(chatContactItemAo.userId)){
+                        isExist.set(true);
+                        // 复制原来的数据，因为要移除原来的数据
                         ChatContactItemAo ao = new ChatContactItemAo(item);
-                        ao.chatContactItemVo.unreadCount =
-                                chatContactItemAo.chatContactItemVo.unreadCount + 1;
+                        // 未读消息数量信息如果为null则说明是netty推送过来的；未读消息 += 1
+                        if (ao.chatContactItemVo.unreadCount == null){
+                            item.chatContactItemVo.unreadCount += 1;
+                        }
+                        // 未读消息数量信息如果非null则说明是http查询，数据是精确的；未读消息 = num
+                        else {
+                            item.chatContactItemVo.unreadCount
+                                    = ao.chatContactItemVo.unreadCount;
+                        }
                         chatContactList.remove(i);
                         chatContactList.add(0, ao);
-                        isExist.set(true);
                         break;
                     }
                 }
+                // 遍历之后发现不存在
                 if (!isExist.get()) {
-                    ChatContactItemAo ao = new ChatContactItemAo(item);
-                    ao.chatContactItemVo.unreadCount = 1;
-                    chatContactList.add(0, ao);
+                    // 未读消息数量信息如果为null则说明是netty推送过来的；未读消息 += 1
+                    if (item.chatContactItemVo.unreadCount == null) {
+                        item.chatContactItemVo.unreadCount = 1;
+                    }
+                    // 未读消息数量信息如果非null则说明是http查询，数据是精确的；未读消息 = num
+//                    else {
+//                    }
+                    chatContactList.add(0, item);
                 }
             }
         }
-        // 更新 LiveData
-//        messageVo.chatContactListVo.chatContactListLd.postValue(chatContactList);
+        // 通知ui更新
+        chatContactAdapter.setCurrentList(chatContactList);
     }
 
     //---------------------------EventBus---------------------------
