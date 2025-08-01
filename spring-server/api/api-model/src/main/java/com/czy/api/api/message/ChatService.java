@@ -20,6 +20,8 @@ public interface ChatService {
     List<UserChatLastViewMessageBo> getUserAllChatMessage(Long senderId);
     // messageList -> messageViewList （boList）的senderId必须全部相同
     List<UserChatLastViewMessageBo> getViewMessageByMessage(List<UserChatLastMessageBo> boList);
+    // 为List<UserChatLastViewMessageBo>赋值image信息值
+    void assignImageInfo(List<UserChatLastViewMessageBo> boList);
     // 拉取和某个用户的消息 （不包括friendView）
     UserChatLastMessageBo getUserChatMessage(Long senderId, Long receiverId);
     // 清空某条未读消息的数量

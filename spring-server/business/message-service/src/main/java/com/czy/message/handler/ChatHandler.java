@@ -200,7 +200,7 @@ public class ChatHandler implements ChatApi {
         // 缓存到Redis
         chatService.saveUserChatMessageToRedis(bo);
 
-        //  todo 持久化到数据库应该在http上传image成功之后再执行
+        // todo 持久化到数据库应该在http上传image成功之后再执行
 
         // 持久化到MySQL
         UserChatMessageDo userChatMessageDo = getUserChatMessageDo(

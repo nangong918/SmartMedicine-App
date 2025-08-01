@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -90,6 +91,9 @@ public class ChatServiceImpl implements ChatService {
 
         List<UserChatLastViewMessageBo> friendsViewMessages = getViewMessageByMessage(messages);
 
+        // 通过user的fileId为他的fileUrl赋值
+        assignImageInfo(friendsViewMessages);
+
         // 限制返回的消息数量 (交给前端去根据时间顺序排序，节省后端算力和时间)
         return friendsViewMessages.size() > MessageConstant.MAX_RECENT_MESSAGE_COUNT ?
                 friendsViewMessages.subList(0, MessageConstant.MAX_RECENT_MESSAGE_COUNT) : friendsViewMessages;
@@ -147,6 +151,38 @@ public class ChatServiceImpl implements ChatService {
             userChatLastViewMessageBoList.add(userChatLastViewMessageBo);
         }
         return userChatLastViewMessageBoList;
+    }
+
+    @Override
+    public void assignImageInfo(List<UserChatLastViewMessageBo> boList) {
+        if (CollectionUtils.isEmpty(boList)){
+            return;
+        }
+        List<Long> fileIds = new ArrayList<>();
+        for (UserChatLastViewMessageBo bo : boList){
+            if (bo == null || !StringUtils.hasText(bo.getFileIdStr())){
+                fileIds.add(null);
+                continue;
+            }
+            Long fileId = null;
+            try {
+                fileId = Long.parseLong(bo.getFileIdStr());
+                fileIds.add(fileId);
+            } catch (Exception e){
+                fileIds.add(null);
+            }
+        }
+        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+        assert fileUrls.size() == boList.size();
+        for (int i = 0; i < boList.size(); i++) {
+            FriendViewEntity fe = Optional.ofNullable(boList.get(i))
+                    .map(UserChatLastViewMessageBo::getFriendViewEntity)
+                    .orElse(null);
+            if (fe != null){
+                fe.setAvatarUrl(fileUrls.get(i));
+                boList.get(i).setFriendViewEntity(fe);
+            }
+        }
     }
 
     @Override
