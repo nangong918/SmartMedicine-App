@@ -23,6 +23,7 @@ import com.czy.api.domain.bo.relationship.NewUserItemBo;
 import com.czy.api.domain.bo.relationship.SearchFriendApplyBo;
 import com.czy.api.domain.dto.socket.response.HandleAddUserResponse;
 import com.czy.api.domain.entity.ChatEntity;
+import com.czy.api.domain.entity.FriendViewEntity;
 import com.czy.api.domain.entity.MessageEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.entity.event.Message;
@@ -459,6 +460,11 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
             // dubbo会循环调用，此处必须用mq
             toSocketMqSender.push(deleteMessage);
         }
+    }
+
+    @Override
+    public List<FriendViewEntity> getFriendsViewByUserIdFriendsId(Long userId, List<Long> friendsId) {
+        return userFriendMapper.getFriendsViewByUserIdFriendsId(userId, friendsId);
     }
 
     private Long getUserId(String account){

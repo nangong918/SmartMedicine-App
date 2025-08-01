@@ -117,8 +117,10 @@ WHERE lu.account = #{userAccount}
             lu2.user_name AS friendName,
             lu2.avatar_file_id AS avatarFileId,
             lu2.account AS friendAccount,
-            uf.remark_user_for_friend AS remarkUserForFriend,
-            uf.remark_friend_for_user AS remarkFriendForUser
+            CASE
+                WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend  -- 作为user, remark_user_for_friend是他备注别人
+                ELSE uf.remark_friend_for_user                              -- 作为friend, remark_friend_for_user是他备注别人
+            END AS remark
         FROM login_user lu
                  JOIN user_friend uf ON (uf.user_id = lu.id OR uf.friend_id = lu.id)
                  JOIN login_user lu2 ON (
@@ -132,8 +134,10 @@ WHERE lu.account = #{userAccount}
         lu2.user_name AS friendName,
         lu2.avatar_file_id AS avatarFileId,
         lu2.account AS friendAccount,
-        uf.remark_user_for_friend AS remarkUserForFriend,
-        uf.remark_friend_for_user AS remarkFriendForUser
+        CASE
+            WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend  -- 作为user, remark_user_for_friend是他备注别人
+            ELSE uf.remark_friend_for_user                              -- 作为friend, remark_friend_for_user是他备注别人
+        END AS remark
         FROM login_user lu
         JOIN user_friend uf ON (uf.user_id = lu.id OR uf.friend_id = lu.id)
         JOIN login_user lu2 ON (
