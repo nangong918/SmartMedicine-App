@@ -291,7 +291,10 @@ public class MessageViewModel extends ViewModel {
         apiRequestImpl.getUserNewMessage(
                 request,
                 this::handleGetUserNewMessage,
-                ViewModelUtil::globalThrowableToast
+                throwable -> {
+                    Log.i(TAG, "getUserNewMessage error: " + throwable);
+                    ViewModelUtil.globalThrowableToast(throwable);
+                }
         );
     }
 

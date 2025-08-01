@@ -44,7 +44,7 @@ public interface UserFriendMapper {
     // 通过userId查询用户好友的全部好友及其FriendsView信息
     List<FriendViewEntity> getFriendsViewByUserId(Long userId);
 
-    List<FriendViewEntity> getFriendsViewByUserIdFriendId(
+    FriendViewEntity getFriendsViewByUserIdFriendId(
             @Param("userId") Long userId,
             @Param("friendId") Long friendId
     );

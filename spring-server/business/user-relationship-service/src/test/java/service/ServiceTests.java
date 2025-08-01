@@ -4,9 +4,11 @@ import com.czy.api.api.user_relationship.UserRelationshipService;
 import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
 import com.czy.api.constant.user_relationship.newUserGroup.HandleStatusEnum;
 import com.czy.api.domain.ao.relationship.*;
+import com.czy.api.domain.entity.FriendViewEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.user.UserServiceApplication;
+import com.czy.user.mapper.mysql.relation.UserFriendMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -139,5 +142,28 @@ public class ServiceTests {
                 System.out.println("item = " + item.toJsonString());
             });
         }
+    }
+
+    @Autowired
+    private UserFriendMapper userFriendMapper;
+
+    @Test
+    public void friendViewSqlTest(){
+        List<FriendViewEntity> list1 = userFriendMapper.getFriendsViewByUserId(1947489239400275968L);
+        for (FriendViewEntity item : list1) {
+            log.info("item = {}", item);
+        }
+        FriendViewEntity entity = userFriendMapper.getFriendsViewByUserIdFriendId(
+                1947489239400275968L,
+                1947602063380209664L
+        );
+        log.info("entity = {}", entity);
+        List<Long> friendsId = new ArrayList<>();
+        friendsId.add(1947602063380209664L);
+        List<FriendViewEntity> list2 = userFriendMapper.getFriendsViewByUserIdFriendsId(
+                1947489239400275968L,
+                friendsId
+        );
+        log.info("list2 = {}", list2);
     }
 }

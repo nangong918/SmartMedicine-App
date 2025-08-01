@@ -90,4 +90,6 @@ public interface UserRelationshipService {
      * @return              好友列表
      */
     List<FriendViewEntity> getFriendsViewByUserIdFriendsId(Long userId, List<Long> friendsId);
+    FriendViewEntity getFriendViewByUserFriendId(Long userId, Long friendId);
+    List<FriendViewEntity> getFriendsViewByUserId(Long userId);
 }

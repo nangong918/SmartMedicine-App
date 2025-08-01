@@ -467,6 +467,16 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
         return userFriendMapper.getFriendsViewByUserIdFriendsId(userId, friendsId);
     }
 
+    @Override
+    public FriendViewEntity getFriendViewByUserFriendId(Long userId, Long friendId) {
+        return userFriendMapper.getFriendsViewByUserIdFriendId(userId, friendId);
+    }
+
+    @Override
+    public List<FriendViewEntity> getFriendsViewByUserId(Long userId) {
+        return userFriendMapper.getFriendsViewByUserId(userId);
+    }
+
     private Long getUserId(String account){
         Long userId = userService.getIdByAccount(account);
         if (userId == null){

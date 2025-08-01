@@ -195,13 +195,17 @@ WHERE lu.account = #{userAccount}
         JOIN login_user luu ON uf.user_id = luu.id
         JOIN login_user luf ON uf.friend_id = luf.id
         WHERE
-            uf.user_id = #{userId} OR uf.friend_id = #{userId}
+            (uf.user_id = #{userId} OR uf.friend_id = #{userId})
             <if test="friendsId != null and friendsId.size() > 0">
-                AND (uf.friend_id IN
-                <foreach item="friendId" collection="friendsId" open="(" separator="," close=")">
-                    #{friendId}
-                </foreach>
-                )
+                AND ((uf.friend_id IN
+                        <foreach item="friendId" collection="friendsId" open="(" separator="," close=")">
+                            #{friendId}
+                        </foreach>
+                ) OR (uf.user_id IN
+                        <foreach item="friendId" collection="friendsId" open="(" separator="," close=")">
+                            #{friendId}
+                        </foreach>
+                ))
             </if>
     </select>
 
