@@ -48,7 +48,7 @@ public class ChatServiceImpl implements ChatService {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
 
-
+    // todo 存入的时候id可能存入错了
     @Override
     public List<UserChatLastMessageBo> getUserAllChatMessage(Long userId) {
         List<UserChatLastMessageBo> messages = new LinkedList<>();
@@ -83,6 +83,8 @@ public class ChatServiceImpl implements ChatService {
                 messages.add(message);
             }
         }
+
+        // todo 改造响应体为 UserChatLastMessageBo
 
         // 限制返回的消息数量 (交给前端去根据时间顺序排序，节省后端算力和时间)
         return messages.size() > MessageConstant.MAX_RECENT_MESSAGE_COUNT ? messages.subList(0, MessageConstant.MAX_RECENT_MESSAGE_COUNT) : messages;
