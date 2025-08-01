@@ -117,18 +117,25 @@ WHERE lu.account = #{userAccount}
                 WHEN uf.user_id = #{userId} THEN uf.friend_id
                 ELSE uf.user_id
             END AS friendId,
-            lu.user_name AS friendName,
-            lu.avatar_file_id AS avatarFileId,
-            lu.account AS friendAccount,
             CASE
-                WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend
-                ELSE uf.remark_friend_for_user
+                WHEN uf.user_id = #{userId} THEN luf.user_name
+                ELSE luu.user_name
+            END AS friendName,
+            CASE
+                WHEN uf.user_id = #{userId} THEN luf.avatar_file_id
+                ELSE luu.avatar_file_id
+            END AS friendAvatarFileId,
+            CASE
+                WHEN uf.user_id = #{userId} THEN luf.account
+                ELSE luu.account
+            END AS friendAccount,
+            CASE
+                WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend  -- 作为user, remark_user_for_friend是他备注别人
+                ELSE uf.remark_friend_for_user                              -- 作为friend, remark_friend_for_user是他备注别人
             END AS remark
         FROM user_friend uf
-        JOIN login_user lu ON (
-            uf.user_id = lu.id OR
-            uf.friend_id = lu.id
-        )
+        JOIN login_user luu ON uf.user_id = luu.id
+        JOIN login_user luf ON uf.friend_id = luf.id
         WHERE
             uf.user_id = #{userId} OR
             uf.friend_id = #{userId}
@@ -139,21 +146,28 @@ WHERE lu.account = #{userAccount}
                 WHEN uf.user_id = #{userId} THEN uf.friend_id
                 ELSE uf.user_id
             END AS friendId,
-            lu.user_name AS friendName,
-            lu.avatar_file_id AS avatarFileId,
-            lu.account AS friendAccount,
             CASE
-                WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend  -- 作为user, remark_user_for_friend是他备注别人
-                ELSE uf.remark_friend_for_user                              -- 作为friend, remark_friend_for_user是他备注别人
+                WHEN uf.user_id = #{userId} THEN luf.user_name
+                ELSE luu.user_name
+            END AS friendName,
+            CASE
+                WHEN uf.user_id = #{userId} THEN luf.avatar_file_id
+                ELSE luu.avatar_file_id
+            END AS friendAvatarFileId,
+            CASE
+                WHEN uf.user_id = #{userId} THEN luf.account
+                ELSE luu.account
+            END AS friendAccount,
+            CASE
+                WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend
+                ELSE uf.remark_friend_for_user
             END AS remark
         FROM user_friend uf
-        JOIN login_user lu ON (
-            (uf.user_id = #{userId} AND uf.friend_id = lu.id) OR
-            (uf.friend_id = #{userId} AND uf.user_id = lu.id)
-        )
+        JOIN login_user luu ON uf.user_id = luu.id
+        JOIN login_user luf ON uf.friend_id = luf.id
         WHERE
-            (uf.user_id = #{userId} AND uf.friend_id = #{friendId}) OR
-            (uf.friend_id = #{userId} AND uf.user_id = #{friendId})
+            (uf.user_id = #{userId} OR uf.friend_id = #{userId})
+            AND (uf.friend_id = #{friendId} OR uf.user_id = #{friendId})
     </select>
     <select id="getFriendsViewByUserIdFriendsId" resultType="com.czy.api.domain.entity.FriendViewEntity">
         SELECT
@@ -161,28 +175,34 @@ WHERE lu.account = #{userAccount}
                 WHEN uf.user_id = #{userId} THEN uf.friend_id
                 ELSE uf.user_id
             END AS friendId,
-            lu.user_name AS friendName,
-            lu.avatar_file_id AS avatarFileId,
-            lu.account AS friendAccount,
+            CASE
+                WHEN uf.user_id = #{userId} THEN luf.user_name
+                ELSE luu.user_name
+            END AS friendName,
+            CASE
+                WHEN uf.user_id = #{userId} THEN luf.avatar_file_id
+                ELSE luu.avatar_file_id
+            END AS friendAvatarFileId,
+            CASE
+                WHEN uf.user_id = #{userId} THEN luf.account
+                ELSE luu.account
+            END AS friendAccount,
             CASE
                 WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend
                 ELSE uf.remark_friend_for_user
             END AS remark
         FROM user_friend uf
-        JOIN login_user lu ON (
-            uf.user_id = lu.id OR
-            uf.friend_id = lu.id
-        )
+        JOIN login_user luu ON uf.user_id = luu.id
+        JOIN login_user luf ON uf.friend_id = luf.id
         WHERE
-        (uf.user_id = #{userId} OR uf.friend_id = #{userId})
-        <if test="friendsId != null and friendsId.size() > 0">
-            AND (
-            uf.friend_id IN
-            <foreach item="id" collection="friendsId" open="(" separator="," close=")">
-                #{id}
-            </foreach>
-            )
-        </if>
+            uf.user_id = #{userId} OR uf.friend_id = #{userId}
+            <if test="friendsId != null and friendsId.size() > 0">
+                AND (uf.friend_id IN
+                <foreach item="friendId" collection="friendsId" open="(" separator="," close=")">
+                    #{friendId}
+                </foreach>
+                )
+            </if>
     </select>
 
 </mapper>

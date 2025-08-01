@@ -117,6 +117,35 @@ public class ChatServiceImpl implements ChatService {
                 .map(UserChatMessageBo::getReceiverId)
                 .collect(Collectors.toList());
 
+        /**        已经在数据库验证成功的sql代码
+         *         SELECT
+         *             CASE
+         *                 WHEN uf.user_id = #{userId} THEN uf.friend_id
+         *                 ELSE uf.user_id
+         *             END AS friendId,
+         *             CASE
+         *                 WHEN uf.user_id = #{userId} THEN lfu.user_name
+         *                 ELSE luu.user_name
+         *             END AS friendName
+         *             CASE
+         *                 WHEN uf.user_id = #{userId} THEN lfu.avatar_file_id
+         *                 ELSE luu.avatar_file_id
+         *             END AS friendAvatarFileId
+         *             CASE
+         *                 WHEN uf.user_id = #{userId} THEN lfu.account
+         *                 ELSE luu.account
+         *             END AS friendAccount
+         *             CASE
+         *                 WHEN uf.user_id = #{userId} THEN uf.remark_user_for_friend
+         *                 ELSE uf.remark_friend_for_user
+         *             END AS remark
+         *         FROM user_friend uf
+         *         JOIN login_user luu ON uf.user_id = luu.id
+         *         JOIN login_user luf ON uf.friend_id = luf.id
+         *         WHERE
+         *             uf.user_id = #{userId} OR
+         *             uf.friend_id = #{userId}
+         */
         // mybatis查询的结果如果无记录是不会返回到list中的，所以不能直接for循环组装
         List<FriendViewEntity> friendViewEntityList = userRelationshipService.getFriendsViewByUserIdFriendsId(
                 userId,
