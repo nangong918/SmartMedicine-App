@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -189,13 +188,17 @@ public class ChatServiceImpl implements ChatService {
         }
         List<Long> fileIds = new ArrayList<>();
         for (UserChatLastViewMessageBo bo : boList){
-            if (bo == null || !StringUtils.hasText(bo.getFileIdStr())){
+            Long avatarFileId = Optional.ofNullable(bo)
+                    .map(UserChatLastViewMessageBo::getFriendViewEntity)
+                    .map(FriendViewEntity::getAvatarFileId)
+                    .orElse(null);
+            if (bo == null || avatarFileId == null){
                 fileIds.add(null);
                 continue;
             }
             Long fileId = null;
             try {
-                fileId = Long.parseLong(bo.getFileIdStr());
+                fileId = avatarFileId;
                 fileIds.add(fileId);
             } catch (Exception e){
                 fileIds.add(null);
