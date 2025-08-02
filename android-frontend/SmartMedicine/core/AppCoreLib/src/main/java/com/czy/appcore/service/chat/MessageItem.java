@@ -1,5 +1,6 @@
 package com.czy.appcore.service.chat;
 
+import com.czy.baseUtilsLib.algorithm.SortItem;
 import com.czy.dal.bo.UserChatMessageBo;
 import com.czy.dal.constant.MessageTypeEnum;
 import com.czy.dal.dto.netty.forwardMessage.SendTextDataRequest;
@@ -9,7 +10,7 @@ import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 
 import java.util.Optional;
 
-public class MessageItem{
+public class MessageItem extends SortItem {
     public Long senderId;
     public Long receiverId;
     public String content;

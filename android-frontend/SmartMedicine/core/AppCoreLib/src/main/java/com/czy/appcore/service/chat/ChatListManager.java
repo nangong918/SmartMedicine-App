@@ -19,13 +19,13 @@ public class ChatListManager {
 
     private static final String TAG = ChatListManager.class.getName();
 
-    public ChatListManager(@NonNull OnMessageListChange onMessageListChange){
+    public ChatListManager(@NonNull OnChatMessageChange onChatMessageChange){
         // 启动检查消息更新
-        this.onMessageListChange = onMessageListChange;
+        this.onChatMessageChange = onChatMessageChange;
         start();
     }
 
-    private final OnMessageListChange onMessageListChange;
+    private final OnChatMessageChange onChatMessageChange;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     public static final long WAIT_TIME = 1000L;
     // 直接从外存拿取数据 - List展示在RecyclerView
@@ -42,7 +42,7 @@ public class ChatListManager {
         // 立刻添加的必定是最新消息
         chatList.add(messageItem);
         mainHandler.post(() -> {
-            this.onMessageListChange.onMessageListChange(chatList);
+            this.onChatMessageChange.onChange(chatList);
         });
     }
 
@@ -90,10 +90,10 @@ public class ChatListManager {
             chatList.add(insertPosition, item);
         }
         // 更新回调/livedata
-//        this.onMessageListChange.onMessageListChange(chatList);
+//        this.onChatMessageChange.onChatMessageChange(chatList);
 
         mainHandler.post(() -> {
-            this.onMessageListChange.onMessageListChange(chatList);
+            this.onChatMessageChange.onChange(chatList);
         });
 
         /**

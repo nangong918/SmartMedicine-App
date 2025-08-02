@@ -2,6 +2,7 @@ package com.czy.dal.ao.chat;
 
 import android.util.Log;
 
+import com.czy.baseUtilsLib.algorithm.SortItem;
 import com.czy.baseUtilsLib.json.BaseBean;
 import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.vo.entity.contact.ChatContactItemVo;
@@ -11,7 +12,7 @@ import java.util.Objects;
 /**
  * @author 13225
  */
-public class ChatContactItemAo implements BaseBean {
+public class ChatContactItemAo extends SortItem implements BaseBean {
 
     // view
     // 单个联系人Vo信息
