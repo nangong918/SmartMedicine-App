@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.service.chat.ChatMessageManager;
+import com.czy.appcore.service.chat.OnRecentContactMessageChange;
 import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.customviewlib.view.chatCard.ChatContactAdapter;
@@ -67,6 +68,16 @@ public class MessageViewModel extends ViewModel {
         this.messageVo = messageVo;
         initSocketReceiver();
         initialNetworkRequest();
+
+        MainApplication.getInstance().getChatMessageManager().setOnRecentContactMessageChange(
+                getOnRecentContactMessageChange()
+        );
+    }
+
+    private OnRecentContactMessageChange getOnRecentContactMessageChange(){
+        return list -> {
+            chatContactAdapter.setCurrentList(list);
+        };
     }
 
     //---------------------------Vo Ld---------------------------

@@ -72,6 +72,7 @@ public class MainApplication extends Application {
 
     private void initGlobal(){
         apiRequestInstance = getApiRequestInstance();
+        this.chatMessageManager = getChatMessageManager();
     }
 
     private ImageManager imageManager;
@@ -90,6 +91,7 @@ public class MainApplication extends Application {
     public ChatMessageManager getChatMessageManager(){
         if (chatMessageManager == null){
             chatMessageManager = new ChatMessageManager();
+            chatMessageManager.start();
         }
         return chatMessageManager;
     }
