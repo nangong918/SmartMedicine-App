@@ -18,10 +18,13 @@ import androidx.lifecycle.MutableLiveData;
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.netty.IMessageListener;
 import com.czy.appcore.network.api.api.ApiRequest;
+import com.czy.appcore.network.api.api.ApiRequestProvider;
 import com.czy.appcore.network.netty.api.SocketApiResponseHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.network.netty.queue.SocketMessageQueue;
+import com.czy.appcore.network.netty.service.NettySocketService;
 import com.czy.appcore.network.netty.service.NettySocketServiceInitiator;
+import com.czy.appcore.service.chat.ChatMessageManager;
 import com.czy.baseUtilsLib.file.SecuritySharedPreferencesUtils;
 import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.network.BaseResponse;
@@ -35,8 +38,6 @@ import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.netty.Message;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
-import com.czy.appcore.network.api.api.ApiRequestProvider;
-import com.czy.appcore.network.netty.service.NettySocketService;
 import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
@@ -80,6 +81,17 @@ public class MainApplication extends Application {
             imageManager = new ImageManager();
         }
         return imageManager;
+    }
+
+    // ChatMessageManager
+
+    private ChatMessageManager chatMessageManager;
+
+    public ChatMessageManager getChatMessageManager(){
+        if (chatMessageManager == null){
+            chatMessageManager = new ChatMessageManager();
+        }
+        return chatMessageManager;
     }
 
     //==========ApiRequest

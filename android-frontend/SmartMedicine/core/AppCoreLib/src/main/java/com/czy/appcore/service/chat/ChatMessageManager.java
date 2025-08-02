@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.czy.baseUtilsLib.algorithm.SortUtils;
 import com.czy.dal.ao.chat.ChatContactItemAo;
+import com.czy.dal.constant.NettyConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -327,6 +328,24 @@ public class ChatMessageManager {
         return !chatContactIsEmpty || (!chatMessageMapIsEmpty && !chatMessageListIsAllEmpty);
     }
 
+    /// 数据获取
+    @NonNull
+    public List<ChatContactItemAo> getRecentContactMessages(){
+        return this.chatContactItemAoList;
+    }
+
+    @NonNull
+    public List<MessageItem> getChatMessages(@NonNull Long contactId){
+        if (contactId.equals(NettyConstants.ERROR_ID)){
+            return new ArrayList<>();
+        }
+        List<MessageItem> messageList = chatMessageMap.get(contactId);
+        if (messageList == null){
+            messageList = new ArrayList<>();
+        }
+        return messageList;
+    }
+
     /**
      * 停止消息处理线程
      */
@@ -348,5 +367,9 @@ public class ChatMessageManager {
         stop();
         running = true;
         startMessageProcessor();
+    }
+
+    public void cleanChatActivityParam(){
+        this.currentChatMessageContext = null;
     }
 }

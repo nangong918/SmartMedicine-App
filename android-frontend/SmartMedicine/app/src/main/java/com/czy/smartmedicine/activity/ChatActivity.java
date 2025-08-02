@@ -36,8 +36,8 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     @Override
     protected void init() {
         super.init();
-        initViewModel();
         initIntentData();
+        initViewModel();
 //        viewModel.fetchUserMessage(System.currentTimeMillis(), 20);
         // 此处加载，否则出现bug：startAo在请求之后，导致请求的参数是null
         viewModel.initialNetworkRequest(viewModel.chatVo.contactAccount);
@@ -61,6 +61,8 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
     //-----------------------Intent Data-----------------------
 
+    private ChatActivityStartAo startAo;
+
     private void initIntentData() {
         // 获取传递的对象
         try {
@@ -70,15 +72,10 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
                             ChatActivityStartAo.class.getName()
                     ))
                     .ifPresent(ao -> {
-                        viewModel.setStartAo(ao);
+                        this.startAo = ao;
                     });
         } catch (Exception e) {
             Log.d(TAG, "initIntentData::get ChatActivityStartAo SerializableExtra Error: ", e);
-            ToastUtils.showToast(this, "获取聊天对象失败");
-            finish();
-        }
-        if (TextUtils.isEmpty(viewModel.chatVo.contactAccount)){
-            Log.e(TAG, "initIntentData::chatActivityStartAo is null or contactId is empty");
             ToastUtils.showToast(this, "获取聊天对象失败");
             finish();
         }
@@ -104,7 +101,9 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
     private void initViewModelVo(){
         ChatVo chatVo = new ChatVo();
+        chatVo.contactId = startAo.contactId;
 
+        viewModel.setStartAo(startAo);
         viewModel.init(chatVo);
 
         // 观察数据

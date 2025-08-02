@@ -1,5 +1,7 @@
 package com.czy.appcore.service.chat;
 
+import android.text.TextUtils;
+
 import com.czy.baseUtilsLib.algorithm.SortItem;
 import com.czy.dal.bo.UserChatMessageBo;
 import com.czy.dal.constant.MessageTypeEnum;
@@ -16,6 +18,10 @@ public class MessageItem extends SortItem {
     public String content;
     public Integer messageType;
     public Long timestamp;
+    // null able
+    public Long msgFileId;
+    // null able
+    public String msgFileUrl;
 
     public ChatMessageItemVo toChatMessageItemVo(Long myId){
         ChatMessageItemVo chatMessageItemVo = new ChatMessageItemVo();
@@ -31,6 +37,9 @@ public class MessageItem extends SortItem {
                     }
                 }).orElse(ChatMessageItemVo.VIEW_TYPE_RECEIVER);
         chatMessageItemVo.isRead = false;
+        if (!TextUtils.isEmpty(this.msgFileUrl)){
+            chatMessageItemVo.avatarUrlOrUri = this.msgFileUrl;
+        }
         return chatMessageItemVo;
     }
 
@@ -42,6 +51,8 @@ public class MessageItem extends SortItem {
         messageItem.senderId = bo.senderId;
         messageItem.timestamp = bo.timestamp;
         messageItem.index = bo.timestamp;
+        messageItem.msgFileId = bo.msgFileId;
+        messageItem.msgFileUrl = bo.msgFileUrl;
         return messageItem;
     }
 
