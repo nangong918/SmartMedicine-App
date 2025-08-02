@@ -41,6 +41,7 @@ public class MessageItem extends SortItem {
         messageItem.receiverId = bo.receiverId;
         messageItem.senderId = bo.senderId;
         messageItem.timestamp = bo.timestamp;
+        messageItem.index = bo.timestamp;
         return messageItem;
     }
 
@@ -50,7 +51,16 @@ public class MessageItem extends SortItem {
         messageItem.messageType = MessageTypeEnum.text.code;
         messageItem.receiverId = request.getReceiverId();
         messageItem.senderId = request.getSenderId();
-        messageItem.timestamp = Long.valueOf(request.getTimestamp());
+        messageItem.timestamp = Optional.ofNullable(request.getTimestamp())
+                .map(t -> {
+                    try {
+                        return Long.valueOf(t);
+                    } catch (Exception e) {
+                        return System.currentTimeMillis();
+                    }
+                })
+                .orElse(System.currentTimeMillis());
+        messageItem.index = messageItem.timestamp;
         return messageItem;
     }
 
@@ -60,7 +70,16 @@ public class MessageItem extends SortItem {
         messageItem.messageType = MessageTypeEnum.text.code;
         messageItem.receiverId = response.getReceiverId();
         messageItem.senderId = response.getSenderId();
-        messageItem.timestamp = Long.valueOf(response.getTimestamp());
+        messageItem.timestamp = Optional.ofNullable(response.getTimestamp())
+                .map(t -> {
+                    try {
+                        return Long.valueOf(t);
+                    } catch (Exception e) {
+                        return System.currentTimeMillis();
+                    }
+                })
+                .orElse(System.currentTimeMillis());
+        messageItem.index = messageItem.timestamp;
         return messageItem;
     }
 
@@ -70,7 +89,16 @@ public class MessageItem extends SortItem {
         messageItem.messageType = MessageTypeEnum.image.code;
         messageItem.receiverId = response.getReceiverId();
         messageItem.senderId = response.getSenderId();
-        messageItem.timestamp = Long.valueOf(response.getTimestamp());
+        messageItem.timestamp = Optional.ofNullable(response.getTimestamp())
+                .map(t -> {
+                    try {
+                        return Long.valueOf(t);
+                    } catch (Exception e) {
+                        return System.currentTimeMillis();
+                    }
+                })
+                .orElse(System.currentTimeMillis());
+        messageItem.index = messageItem.timestamp;
         return messageItem;
     }
 }

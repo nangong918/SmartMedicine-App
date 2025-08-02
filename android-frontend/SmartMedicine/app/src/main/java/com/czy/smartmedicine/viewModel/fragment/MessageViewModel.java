@@ -186,20 +186,18 @@ public class MessageViewModel extends ViewModel {
         item.chatContactItemVo.name = response.senderName;
         item.userId = response.senderId;
         item.chatContactItemVo.setMessagePreview(response.getContent());
-        item.chatContactItemVo.time = DateUtils.getTime(
-                new Date(
-                        Optional.ofNullable(response.timestamp)
-                                .map(t -> {
-                                    try {
-                                        return Long.parseLong(t);
-                                    } catch (Exception e){
-                                        Log.w(TAG, "时间戳转化出错" + e);
-                                        return System.currentTimeMillis();
-                                    }
-                                })
-                                .orElse(System.currentTimeMillis())
-                )
-        );
+        item.timestamp = Optional.ofNullable(response.timestamp)
+                .map(t -> {
+                    try {
+                        return Long.parseLong(t);
+                    } catch (Exception e){
+                        Log.w(TAG, "时间戳转化出错" + e);
+                        return System.currentTimeMillis();
+                    }
+                })
+                .orElse(System.currentTimeMillis());
+        item.index = item.timestamp;
+        item.chatContactItemVo.time = DateUtils.getTime(new Date(item.timestamp));
         List<ChatContactItemAo> list = new ArrayList<>();
         list.add(item);
         handleUserChatLastMessage(list);
@@ -238,20 +236,18 @@ public class MessageViewModel extends ViewModel {
         item.chatContactItemVo.avatarUrlOrUri = response.avatarUrls;
         item.chatContactItemVo.name = response.senderName;
         item.chatContactItemVo.setMessagePreview("图片消息");
-        item.chatContactItemVo.time = DateUtils.getTime(
-                new Date(
-                        Optional.ofNullable(response.timestamp)
-                                .map(t -> {
-                                    try {
-                                        return Long.parseLong(t);
-                                    } catch (Exception e){
-                                        Log.w(TAG, "时间戳转化出错" + e);
-                                        return System.currentTimeMillis();
-                                    }
-                                })
-                                .orElse(System.currentTimeMillis())
-                )
-        );
+        item.timestamp = Optional.ofNullable(response.timestamp)
+                .map(t -> {
+                    try {
+                        return Long.parseLong(t);
+                    } catch (Exception e){
+                        Log.w(TAG, "时间戳转化出错" + e);
+                        return System.currentTimeMillis();
+                    }
+                })
+                .orElse(System.currentTimeMillis());
+        item.index = item.timestamp;
+        item.chatContactItemVo.time = DateUtils.getTime(new Date(item.timestamp));
         List<ChatContactItemAo> list = new ArrayList<>();
         list.add(item);
         handleUserChatLastMessage(list);

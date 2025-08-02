@@ -22,6 +22,7 @@ public class ChatContactItemAo extends SortItem implements BaseBean {
     // 联系人账号信息，用于搜索
     public String contactAccount;
     public Long userId;
+    public Long timestamp;
 
     public ChatContactItemAo() {
 
@@ -31,6 +32,8 @@ public class ChatContactItemAo extends SortItem implements BaseBean {
         this.contactAccount = ao.contactAccount;
         this.userId = ao.userId;
         this.chatContactItemVo = new ChatContactItemVo(ao.chatContactItemVo);
+        this.timestamp = ao.timestamp;
+        this.index = ao.index;
     }
 
     // 用于判断两个对象是否属于一个对象（用唯一标识符判断）
