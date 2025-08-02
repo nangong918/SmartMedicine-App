@@ -12,6 +12,7 @@ import java.util.List;
 public class ChatActivityStartAo implements Serializable, BaseBean {
 
     // View
+    @Deprecated(since = "2025/8/2; chatActivity自己会拿，不需要传递，多此一举")
     public List<ChatMessageItemVo> chatMessageListItemVo;
 
     /**

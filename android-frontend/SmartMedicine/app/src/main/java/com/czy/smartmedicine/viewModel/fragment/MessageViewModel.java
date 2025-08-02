@@ -46,7 +46,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +75,12 @@ public class MessageViewModel extends ViewModel {
 
     private OnRecentContactMessageChange getOnRecentContactMessageChange(){
         return list -> {
-            chatContactAdapter.setCurrentList(list);
+            // 先赋值
+            messageVo.chatContactListVo.chatContactList = list;
+            // 更新ui
+            chatContactAdapter.setCurrentList(
+                    messageVo.chatContactListVo.chatContactList
+            );
         };
     }
 
@@ -136,12 +140,18 @@ public class MessageViewModel extends ViewModel {
     }
 
     private ChatActivityStartAo getChatActivityStartAo(ChatContactItemAo chatContactItemAo){
-        ChatActivityStartAo chatActivityStartAo = new ChatActivityStartAo();
-        chatActivityStartAo.contactAccount = chatContactItemAo.contactAccount;
-        chatActivityStartAo.contactName = chatContactItemAo.chatContactItemVo.name;
-        chatActivityStartAo.chatMessageListItemVo = new LinkedList<>();
-        // TODO 从网络或者本地获取聊天记录
-        return chatActivityStartAo;
+        ChatActivityStartAo startAo = new ChatActivityStartAo();
+        startAo.contactAccount = chatContactItemAo.contactAccount;
+        startAo.contactId = chatContactItemAo.userId;
+        // 初始化的输入框
+        startAo.inputText = "";
+
+        // ChatContactItemVo
+        startAo.contactName = chatContactItemAo.chatContactItemVo.name;
+        startAo.avatarUrl = chatContactItemAo.chatContactItemVo.avatarUrlOrUri;
+        // 聊天记录
+//        startAo.chatMessageListItemVo = new LinkedList<>();
+        return startAo;
     }
 
     ;

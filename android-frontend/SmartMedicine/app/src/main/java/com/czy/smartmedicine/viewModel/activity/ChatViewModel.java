@@ -176,7 +176,7 @@ public class ChatViewModel extends ViewModel {
         chatVo.contactAccount = ao.contactAccount;
         chatVo.contactId = ao.contactId;
         chatVo.avatarUrlOrUri.setValue(ao.avatarUrl);
-        List<ChatMessageItemVo> chatMessageList = ao.chatMessageListItemVo;
+/*        List<ChatMessageItemVo> chatMessageList = ao.chatMessageListItemVo;
         if (chatMessageList != null && !chatMessageList.isEmpty()){
             Optional.ofNullable(chatVo.chatListVo)
                     .map(chatListVo -> chatListVo.chatMessageList)
@@ -188,7 +188,7 @@ public class ChatViewModel extends ViewModel {
                             );
                         });
                     });
-        }
+        }*/
     }
     // TODO 改为下拉刷新view
     //---------------------------NetWork---------------------------
