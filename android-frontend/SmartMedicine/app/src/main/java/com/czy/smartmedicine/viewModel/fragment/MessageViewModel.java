@@ -327,6 +327,12 @@ public class MessageViewModel extends ViewModel {
             List<ChatContactItemAo> chatContactList = new ArrayList<>();
             for (UserChatLastViewMessageBo lastMessageBo : response.getData().lastMessageList) {
                 ChatContactItemAo ao = new ChatContactItemAo();
+                // view: ChatContactItemVo
+                // 头像 URL
+                ao.chatContactItemVo.avatarUrlOrUri =
+                        lastMessageBo.friendViewEntity.avatarUrl;
+                // name = name + (备注) ? 备注 : account
+                ao.chatContactItemVo.name = getFinalName(lastMessageBo);
                 ao.chatContactItemVo.messagePreview = lastMessageBo.msgContent;
                 ao.chatContactItemVo.time = DateUtils.getTime(
                         new Date(
@@ -335,12 +341,11 @@ public class MessageViewModel extends ViewModel {
                         )
                 );
                 ao.chatContactItemVo.unreadCount = lastMessageBo.unreadCount;
+                // data
                 ao.contactAccount = lastMessageBo.friendViewEntity.userAccount;
-                // 头像 URL
-                ao.chatContactItemVo.avatarUrlOrUri =
-                        lastMessageBo.friendViewEntity.avatarUrl;
-                // name = name + (备注) ? 备注 : account
-                ao.chatContactItemVo.name = getFinalName(lastMessageBo);
+                ao.userId = lastMessageBo.friendViewEntity.userId;
+                ao.timestamp = lastMessageBo.timestamp;
+
                 chatContactList.add(ao);
             }
 
