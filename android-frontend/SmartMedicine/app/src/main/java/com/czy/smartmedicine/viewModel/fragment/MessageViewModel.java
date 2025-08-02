@@ -88,6 +88,9 @@ public class MessageViewModel extends ViewModel {
 
         // 绑定Adapter
         recyclerView.setAdapter(chatContactAdapter);
+
+        // initView
+        chatContactAdapter.setCurrentList(messageVo.chatContactListVo.chatContactList);
     }
 
     private OnPositionItemClick getOnPositionClickListener(@NonNull FragmentActivity activity){
@@ -170,7 +173,7 @@ public class MessageViewModel extends ViewModel {
         };
     }
 
-    // TODO 消息获取：外存获取，内存获取，Http网络获取，Socket获取
+    // 消息获取：外存获取，Http网络获取，Socket获取 -> 内存
 
     private void processUserTextDataResponse(UserTextDataResponse response){
         Log.d(TAG, "receiveUserText: " + response.toJsonString());
@@ -273,12 +276,7 @@ public class MessageViewModel extends ViewModel {
         // 非首次打开，读取内存数据
         else {
             ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
-            List<ChatContactItemAo> chatContactItemAoList = chatMessageManager.getRecentContactMessages();
-            chatContactAdapter.setCurrentList(chatContactItemAoList);
-
-//            List<ChatContactItemAo> cacheList = Optional.ofNullable(MainApplication.getInstance().chatContactList)
-//                    .orElse(new ArrayList<>());
-//            messageVo.chatContactListVo.chatContactList.postValue(cacheList);
+            messageVo.chatContactListVo.chatContactList = chatMessageManager.getRecentContactMessages();
         }
     }
 
