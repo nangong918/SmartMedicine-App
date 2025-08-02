@@ -26,6 +26,10 @@ public class UserChatMessageDo implements Serializable {
     public String msgContent;
     // not null
     public Integer msgType;
+    // null able
+    public Long msgFileId;
+    // null able
+    public String msgFileUrl;
     // not null;索引
     public Long senderId;
     // not null;索引

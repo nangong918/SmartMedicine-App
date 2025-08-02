@@ -25,6 +25,10 @@ public class UserChatMessageBo implements BaseBean, Serializable {
     public Long timestamp;
     // 名称
     public String receiverName;
+    // null able
+    public Long msgFileId;
+    // null able
+    public String msgFileUrl;
 
     public void setData(UserChatMessageBo bo){
         if (bo.id != null){
@@ -38,6 +42,8 @@ public class UserChatMessageBo implements BaseBean, Serializable {
         this.receiverName = bo.receiverName;
         this.senderAccount = bo.senderAccount;
         this.receiverAccount = bo.receiverAccount;
+        this.msgFileId = bo.msgFileId;
+        this.msgFileUrl = bo.msgFileUrl;
     }
 }
 

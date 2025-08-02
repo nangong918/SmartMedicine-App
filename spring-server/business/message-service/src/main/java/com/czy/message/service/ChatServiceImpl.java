@@ -282,8 +282,8 @@ public class ChatServiceImpl implements ChatService {
             List<Long> fileIds;
             try {
                 fileIds = fileMessageDoList.stream()
-                        .map(UserChatMessageDo::getMsgContent)
-                        .map(Long::parseLong)
+                        .map(UserChatMessageDo::getMsgFileId)
+//                        .map(Long::parseLong)
                         .collect(Collectors.toList());
             } catch (Exception e){
                 log.error("fileIdList 解析失败", e);
@@ -292,7 +292,8 @@ public class ChatServiceImpl implements ChatService {
             List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
             for (int i = 0; i < fileMessageDoList.size(); i++){
                 UserChatMessageDo message = fileMessageDoList.get(i);
-                message.setMsgContent(fileUrls.get(i));
+//                message.setMsgContent(fileUrls.get(i));
+                message.setMsgFileUrl(fileUrls.get(i));
             }
 
             // 合并
