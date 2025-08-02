@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
+import com.czy.appcore.service.chat.ChatMessageManager;
 import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.customviewlib.view.chatCard.ChatContactAdapter;
@@ -47,7 +48,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class MessageViewModel extends ViewModel {
@@ -65,7 +65,7 @@ public class MessageViewModel extends ViewModel {
 
     public void init(MessageVo messageVo){
         this.messageVo = messageVo;
-        initReceiveMessageApi();
+        initSocketReceiver();
         initialNetworkRequest();
     }
 
@@ -140,7 +140,7 @@ public class MessageViewModel extends ViewModel {
     // 消息队列：如果因为List是一个唯一资源，多线程情况下应该上锁，而上锁会导致阻塞或者CPU繁忙，应该将全部的消息交给消息队列处理；避免重要线程被普通任务阻塞
     private final Handler messageHandler = new Handler(Looper.getMainLooper());
 
-    private void initReceiveMessageApi(){
+    private void initSocketReceiver(){
         initEventBus();
         chatApiHandler = new ChatApiHandler() {
             @Override
@@ -200,7 +200,9 @@ public class MessageViewModel extends ViewModel {
         item.chatContactItemVo.time = DateUtils.getTime(new Date(item.timestamp));
         List<ChatContactItemAo> list = new ArrayList<>();
         list.add(item);
-        handleUserChatLastMessage(list);
+        // 同步设置
+        ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
+        chatMessageManager.cacheMessage(list);
 
         // 存在contactAccount 暂时取消方案，Map索引数据结构在ChatList中先实现再说
 //                ChatContactItemAo contactItemAo = messageVo.chatContactListVo.findContactByAccount(contactAccount);
@@ -250,7 +252,9 @@ public class MessageViewModel extends ViewModel {
         item.chatContactItemVo.time = DateUtils.getTime(new Date(item.timestamp));
         List<ChatContactItemAo> list = new ArrayList<>();
         list.add(item);
-        handleUserChatLastMessage(list);
+        // 同步设置
+        ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
+        chatMessageManager.cacheMessage(list);
     }
 
     private void initialNetworkRequest(){
@@ -268,8 +272,12 @@ public class MessageViewModel extends ViewModel {
         }
         // 非首次打开，读取内存数据
         else {
-            List<ChatContactItemAo> cacheList = Optional.ofNullable(MainApplication.getInstance().chatContactList)
-                    .orElse(new ArrayList<>());
+            ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
+            List<ChatContactItemAo> chatContactItemAoList = chatMessageManager.getRecentContactMessages();
+            chatContactAdapter.setCurrentList(chatContactItemAoList);
+
+//            List<ChatContactItemAo> cacheList = Optional.ofNullable(MainApplication.getInstance().chatContactList)
+//                    .orElse(new ArrayList<>());
 //            messageVo.chatContactListVo.chatContactList.postValue(cacheList);
         }
     }
@@ -316,10 +324,10 @@ public class MessageViewModel extends ViewModel {
                 ao.chatContactItemVo.name = getFinalName(lastMessageBo);
                 chatContactList.add(ao);
             }
+
             // 同步设置
-            messageHandler.post(() -> {
-                handleUserChatLastMessage(chatContactList);
-            });
+            ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
+            chatMessageManager.cacheMessage(chatContactList);
         }
     }
 
@@ -350,63 +358,6 @@ public class MessageViewModel extends ViewModel {
         return finalName;
     }
 
-    /**
-     * 同步更新list
-     * @param list  需要添加的list
-     */
-    private synchronized void handleUserChatLastMessage(List<ChatContactItemAo> list){
-        if (list == null || list.isEmpty()){
-            return;
-        }
-        List<ChatContactItemAo> chatContactList = messageVo.chatContactListVo.chatContactList;
-        if (chatContactList == null || chatContactList.isEmpty()){
-            chatContactList = new ArrayList<>(list);
-            messageVo.chatContactListVo.chatContactList = chatContactList;
-        }
-        else {
-            for (ChatContactItemAo item : list){
-                // 检查是否存在，存在则将数据添加
-                // 未读消息数量信息如果为null则说明是netty推送过来的；未读消息 += 1
-                // 未读消息数量信息如果非null则说明是http查询，数据是精确的；未读消息 = num
-                AtomicBoolean isExist = new AtomicBoolean(false);
-                for (int i = 0; i < chatContactList.size(); i++){
-                    ChatContactItemAo chatContactItemAo = chatContactList.get(i);
-                    // 相同的情况：存在
-                    if (item.userId != null && item.userId.equals(chatContactItemAo.userId)){
-                        isExist.set(true);
-                        // 复制原来的数据，因为要移除原来的数据
-                        ChatContactItemAo ao = new ChatContactItemAo(item);
-                        // 未读消息数量信息如果为null则说明是netty推送过来的；未读消息 += 1
-                        if (ao.chatContactItemVo.unreadCount == null){
-                            item.chatContactItemVo.unreadCount += 1;
-                        }
-                        // 未读消息数量信息如果非null则说明是http查询，数据是精确的；未读消息 = num
-                        else {
-                            item.chatContactItemVo.unreadCount
-                                    = ao.chatContactItemVo.unreadCount;
-                        }
-                        chatContactList.remove(i);
-                        chatContactList.add(0, ao);
-                        break;
-                    }
-                }
-                // 遍历之后发现不存在
-                if (!isExist.get()) {
-                    // 未读消息数量信息如果为null则说明是netty推送过来的；未读消息 += 1
-                    if (item.chatContactItemVo.unreadCount == null) {
-                        item.chatContactItemVo.unreadCount = 1;
-                    }
-                    // 未读消息数量信息如果非null则说明是http查询，数据是精确的；未读消息 = num
-//                    else {
-//                    }
-                    chatContactList.add(0, item);
-                }
-            }
-        }
-        // 通知ui更新
-        chatContactAdapter.setCurrentList(chatContactList);
-    }
-
     //---------------------------EventBus---------------------------
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -435,16 +386,16 @@ public class MessageViewModel extends ViewModel {
 
     ;
     // 存储List
-    public void storage(){
-        MainApplication.getInstance().chatContactList = Optional.ofNullable(messageVo)
-                .map(mvo -> mvo.chatContactListVo)
-                .map(cvo -> cvo.chatContactList)
-//                .map(LiveData::getValue)
-                .orElse(new ArrayList<>());
-    }
+//    public void storage(){
+//        MainApplication.getInstance().chatContactList = Optional.ofNullable(messageVo)
+//                .map(mvo -> mvo.chatContactListVo)
+//                .map(cvo -> cvo.chatContactList)
+////                .map(LiveData::getValue)
+//                .orElse(new ArrayList<>());
+//    }
 
     public void onPause() {
-        storage();
+//        storage();
     }
 
     public void onDestroy() {

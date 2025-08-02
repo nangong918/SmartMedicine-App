@@ -316,7 +316,7 @@ public class MainApplication extends Application {
 
     //==========messageList
 
-    public List<ChatContactItemAo> chatContactList = new ArrayList<>();
+//    public List<ChatContactItemAo> chatContactList = new ArrayList<>();
 
     //==========friendsApplyNum
 

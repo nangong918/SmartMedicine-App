@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 用于管理chat消息管理者
@@ -285,7 +286,73 @@ public class ChatMessageManager {
             return;
         }
 
-        // 调用二分查找算法
+        /// 添加
+        // 直接添加
+        if (chatContactItemAoList.isEmpty()){
+            chatContactItemAoList.addAll(list);
+        }
+        // 存在判断添加
+        else {
+            for (ChatContactItemAo item : list){
+                // 检查是否存在，存在则将数据添加
+                // 未读消息数量信息如果为null则说明是netty推送过来的；未读消息 += 1
+                // 未读消息数量信息如果非null则说明是http查询，数据是精确的；未读消息 = num
+                AtomicBoolean isExist = new AtomicBoolean(false);
+                for (int i = 0; i < chatContactItemAoList.size(); i++){
+                    ChatContactItemAo chatContactItemAo = chatContactItemAoList.get(i);
+                    // 相同的情况：存在
+                    if (item.userId != null && item.userId.equals(chatContactItemAo.userId)){
+                        isExist.set(true);
+                        // 复制原来的数据，因为要移除原来的数据
+                        ChatContactItemAo ao = new ChatContactItemAo(item);
+                        // 未读消息数量信息如果为null则说明是netty推送过来的；未读消息 += 1
+                        if (ao.chatContactItemVo.unreadCount == null){
+                            item.chatContactItemVo.unreadCount += 1;
+                        }
+                        // 未读消息数量信息如果非null则说明是http查询，数据是精确的；未读消息 = num
+                        else {
+                            item.chatContactItemVo.unreadCount
+                                    = ao.chatContactItemVo.unreadCount;
+                        }
+                        // 移除原来的数据
+                        chatContactItemAoList.remove(i);
+                        // 新的数据添加到第一个
+                        chatContactItemAoList.add(0, ao);
+                        break;
+                    }
+                }
+                // 遍历之后发现不存在
+                if (!isExist.get()) {
+                    // 未读消息数量信息如果为null则说明是netty推送过来的；未读消息 += 1
+                    if (item.chatContactItemVo.unreadCount == null) {
+                        item.chatContactItemVo.unreadCount = 1;
+                    }
+                    // 未读消息数量信息如果非null则说明是http查询，数据是精确的；未读消息 = num
+//                    else {
+//                    }
+                    chatContactItemAoList.add(0, item);
+                }
+            }
+        }
+
+        // 排序 根据index 从大到小排序
+        chatContactItemAoList.sort((o1, o2) -> Long.compare(o2.index, o1.index));
+
+        // 消息队列避免并发
+        mainHandler.post(() -> {
+                    // 尝试回调更新
+                    if (onRecentContactMessageChange != null) {
+                        try {
+                            onRecentContactMessageChange.onChange(chatContactItemAoList);
+                        } catch (Exception e) {
+                            Log.e(TAG, "调用更新RecentContactMessage异常" + e);
+                        }
+                    } else {
+                        Log.e(TAG, "没有设置OnRecentContactMessageChange");
+                    }
+                });
+        // 此list需要根据item再做处理，暂时不适用二分排序
+/*        // 调用二分查找算法
         for (ChatContactItemAo item : list) {
             // 使用二分查找找到插入位置
             int insertPosition = SortUtils.findInsertPosition(item.index, chatContactItemAoList);
@@ -307,7 +374,7 @@ public class ChatMessageManager {
             else {
                 Log.e(TAG, "没有设置OnRecentContactMessageChange");
             }
-        });
+        });*/
     }
 
     /**
