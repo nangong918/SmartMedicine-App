@@ -51,6 +51,8 @@ import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 import com.czy.dal.vo.fragmentActivity.chat.ChatVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.ChatActivity;
+import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -190,18 +192,14 @@ public class ChatViewModel extends ViewModel {
                     });
         }*/
     }
-    // TODO 改为下拉刷新view
+    // TODO 改为下拉刷新view （全部做完再完善）
     //---------------------------NetWork---------------------------
-    public void initialNetworkRequest(String contactAccount){
-        // TODO 重构的时候todo
-//        String key = ChatActivity.class.getName() + ":" + contactAccount;
-//        if (HttpRequestManager.getIsFirstOpen(key)){
-//            fetchUserMessage(System.currentTimeMillis(), 20);
-//        }
-//        else {
-//            // TODO
-//        }
-        fetchUserMessage(System.currentTimeMillis(), 20);
+    public void initialNetworkRequest(Long contactId){
+        // HttpRequestManager会在断开连接的时候调用refreshAllValue清除所有的缓存，会从新请求最新的聊天数据
+        String key = ChatActivity.class.getName() + ":" + contactId;
+        if (HttpRequestManager.getIsFirstOpen(key)){
+            fetchUserMessage(System.currentTimeMillis(), BaseConfig.DEFAULT_MESSAGE_FETCH_COUNT);
+        }
     }
     //==========主动与此好友的消息
 

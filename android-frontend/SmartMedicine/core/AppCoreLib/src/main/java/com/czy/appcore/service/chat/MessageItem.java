@@ -10,6 +10,7 @@ import com.czy.dal.dto.netty.forwardMessage.UserImageResponse;
 import com.czy.dal.dto.netty.forwardMessage.UserTextDataResponse;
 import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class MessageItem extends SortItem {
@@ -22,6 +23,37 @@ public class MessageItem extends SortItem {
     public Long msgFileId;
     // null able
     public String msgFileUrl;
+
+    // 是否相等
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        MessageItem that = (MessageItem) o;
+        return Objects.equals(senderId, that.senderId) &&
+                Objects.equals(receiverId, that.receiverId) &&
+                Objects.equals(content, that.content) &&
+                Objects.equals(messageType, that.messageType) &&
+                Objects.equals(timestamp, that.timestamp) &&
+                Objects.equals(msgFileId, that.msgFileId) &&
+                Objects.equals(msgFileUrl, that.msgFileUrl);
+    }
+
+    /**
+     * 在 Java 中，如果重写了 equals 方法，那么必须重写 hashCode 方法。
+     * 这是因为在使用哈希表（如 HashMap、HashSet）时，Java 需要同时使用这两个方法来确保对象的一致性
+     * @return  int
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(senderId, receiverId, content, messageType, timestamp, msgFileId, msgFileUrl);
+    }
 
     public ChatMessageItemVo toChatMessageItemVo(Long myId){
         ChatMessageItemVo chatMessageItemVo = new ChatMessageItemVo();

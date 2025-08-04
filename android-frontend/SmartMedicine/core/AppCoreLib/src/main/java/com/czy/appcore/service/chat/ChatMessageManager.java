@@ -246,17 +246,25 @@ public class ChatMessageManager {
                         return l;
                     });
 
+            // 记录是否变化，以判断是否更新UI
+            boolean isChange = false;
             // 调用二分查找算法
             for (MessageItem item : list) {
                 // 使用二分查找找到插入位置
-                int insertPosition = SortUtils.findInsertPosition(item.index, chatMessageList);
+                Integer insertPosition = SortUtils.findInsertPosition(item, chatMessageList);
+
+                // 如果insertPosition == null说明消息存在问题或者不存在，则不添加
+                if (insertPosition == null) {
+                    continue;
+                }
 
                 // 在合适位置插入新消息
                 chatMessageList.add(insertPosition, item);
+                isChange = true;
             }
 
             // 检查ui是否需要更新
-            if (currentContactId != null && currentContactId.equals(contactId)){
+            if (isChange && currentContactId != null && currentContactId.equals(contactId)){
                 // 消息队列避免并发
                 mainHandler.post(() -> {
                     // 尝试回调更新

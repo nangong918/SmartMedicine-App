@@ -29,4 +29,29 @@ public class SortUtils {
         return low; // 返回插入位置
     }
 
+    public static <T extends SortItem> Integer findInsertPosition(T item, List<T> sortItemList){
+        if (item == null) {
+            return null; // 如果 item 为 null，返回 null
+        }
+
+        int low = 0, high = sortItemList.size() - 1;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            T midItem = sortItemList.get(mid);
+
+            // 检查是否存在相同的消息
+            if (item.equals(midItem)) {
+                return null; // 找到相同的消息，返回 null
+            }
+
+            if (midItem.index < item.index) {
+                low = mid + 1; // 向右查找
+            } else {
+                high = mid - 1; // 向左查找
+            }
+        }
+        return low; // 返回插入位置
+    }
+
 }

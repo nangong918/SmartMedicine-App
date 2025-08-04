@@ -38,9 +38,11 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
         super.init();
         initIntentData();
         initViewModel();
-//        viewModel.fetchUserMessage(System.currentTimeMillis(), 20);
-        // 此处加载，否则出现bug：startAo在请求之后，导致请求的参数是null
-        viewModel.initialNetworkRequest(viewModel.chatVo.contactAccount);
+
+        // 初始化聊天数据请求
+        viewModel.initialNetworkRequest(
+                viewModel.chatVo.contactId)
+        ;
     }
 
     @Override
