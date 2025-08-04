@@ -195,10 +195,56 @@ public class ChatViewModel extends ViewModel {
     // TODO 改为下拉刷新view （全部做完再完善）
     //---------------------------NetWork---------------------------
     public void initialNetworkRequest(Long contactId){
+        if (contactId == null || contactId.equals(NettyConstants.ERROR_ID)){
+            Log.w(TAG, "contactId is null");
+            return;
+        }
         // HttpRequestManager会在断开连接的时候调用refreshAllValue清除所有的缓存，会从新请求最新的聊天数据
         String key = ChatActivity.class.getName() + ":" + contactId;
         if (HttpRequestManager.getIsFirstOpen(key)){
             fetchUserMessage(System.currentTimeMillis(), BaseConfig.DEFAULT_MESSAGE_FETCH_COUNT);
+        }
+        else {
+            List<MessageItem> messageItems = Optional.ofNullable(MainApplication.getInstance().getChatMessageManager())
+                    .map(manager -> manager.getChatMessages(contactId))
+                    .orElse(new ArrayList<>());
+
+            Long myId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                    .map(ao -> ao.userId)
+                    .orElse(NettyConstants.ERROR_ID);
+
+            if (NettyConstants.ERROR_ID.equals(myId)){
+                Log.w(TAG, "myId is null");
+                return;
+            }
+
+            // 将值设置给chatListVo
+            this.chatVo.chatListVo.chatMessageList = messageItems.stream()
+                    .map(item -> item.toChatMessageItemVo(myId))
+                    .collect(Collectors.toList());
+
+            // 通知adapter更新view
+            // 创建 Handler
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            // 定义 Runnable
+            Runnable checkAdapterRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (chatMessageAdapter != null) {
+                        // 更新 UI
+                        chatMessageAdapter.setCurrentList(chatVo.chatListVo.chatMessageList);
+                        Log.i(TAG, "chatMessageAdapter is not null, 更新ui");
+                    } else {
+                        // 如果 chatMessageAdapter 仍然为 null，300 毫秒后继续检查
+                        Log.i(TAG, "chatMessageAdapter is null 继续等待300");
+                        handler.postDelayed(this, 300);
+                    }
+                }
+            };
+
+            // 开始检查
+            handler.post(checkAdapterRunnable);
         }
     }
     //==========主动与此好友的消息
