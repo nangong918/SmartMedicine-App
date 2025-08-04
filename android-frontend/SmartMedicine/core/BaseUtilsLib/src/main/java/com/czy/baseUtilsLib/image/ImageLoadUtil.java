@@ -3,13 +3,12 @@ package com.czy.baseUtilsLib.image;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -22,14 +21,7 @@ import com.bumptech.glide.request.target.Target;
 import com.czy.baseUtilsLib.R;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 /**
  * @author 13225
@@ -109,49 +101,76 @@ public class ImageLoadUtil {
 
     /**
      * 加载图片资源：存在本地文件资源/网络资源的区分
-     * @param uri           图片的uri
-     * @param imageView     需要加载到的imageview
+     * @param urlOrUri       图片的url/uri
+     * @param imageView      需要加载到的imageview
      */
-    public static void loadImageViewByResource(String uri, ImageView imageView){
-        Glide.with(imageView.getContext())
-                .load(uri)
-                .error(R.drawable.icon_dialog_loading)
-                .into(imageView);
-//        // 网络
-//        if (uri.startsWith("http") || uri.startsWith("https")){
-//            Glide.with(imageView.getContext())
-//                    .load(uri)
-//                    .error(R.drawable.icon_dialog_loading)
-//                    .into(imageView);
-//        }
-//        // 本地file
-//        else {
-//            File file = new File(uri);
-//            if (file.exists()) {
-//                Glide.with(imageView.getContext())
-//                        .load(file)
-//                        .error(R.drawable.icon_dialog_loading)
-//                        .into(imageView);
-//            }
-//            else {
-//                Glide.with(imageView.getContext())
-//                        .load(R.drawable.icon_dialog_loading)
-//                        .into(imageView);
-//            }
-//        }
+    public static void loadImageViewByResource(String urlOrUri, ImageView imageView){
+        if (imageView == null){
+            Log.w(TAG, "imageView is null");
+            return;
+        }
+        if (TextUtils.isEmpty(urlOrUri)){
+            imageView.setImageResource(R.drawable.icon_default_acatar);
+            Log.w(TAG, "urlOrUri is empty");
+        }
+
+        // 网络
+        if (urlOrUri.startsWith("http") || urlOrUri.startsWith("https")){
+            loadImageViewByNetWork(urlOrUri, imageView);
+        }
+        // 本地file
+        else {
+            loadImageViewByLocalFile(urlOrUri, imageView);
+        }
     }
 
     /**
-     * 加载图片资源：存在本地文件资源/网络资源的区分
-     * @param imageUri          图片的uri
-     * @param lifecycleOwner    生命周期
-     * @param imageView         需要加载到的imageview
+     * 加载图片资源            加载网络图片
+     * @param url            图片的uri
+     * @param imageView     需要加载到的imageview
      */
-    public static void observeImageResource(MutableLiveData<String> imageUri, LifecycleOwner lifecycleOwner, ImageView imageView){
-        imageUri.observe(lifecycleOwner, uri -> {
-            if (uri != null) {
-                ImageLoadUtil.loadImageViewByResource(uri, imageView);
-            }
-        });
+    public static void loadImageViewByNetWork(String url, ImageView imageView){
+        Glide.with(imageView.getContext())
+                .load(url)
+                .error(R.drawable.icon_dialog_loading)
+                .into(imageView);
     }
+
+    /**
+     * 加载图片资源            加载本地图片
+     * @param uriStr        图片资源
+     * @param imageView      需要加载到的imageview
+     */
+    public static void loadImageViewByLocalFile(String uriStr, ImageView imageView) {
+        File file = new File(uriStr);
+        if (file.exists()) {
+            Glide.with(imageView.getContext())
+                    .load(file)
+                    .error(R.drawable.icon_default_acatar)
+                    .into(imageView);
+        } else {
+            Glide.with(imageView.getContext())
+                    .load(R.drawable.icon_dialog_loading)
+                    .into(imageView);
+        }
+    }
+
+    /**
+     * 加载图片
+     * @param uri           图片uri
+     * @param imageView     图片view
+     */
+    public static void loadImageViewByLocalFile(Uri uri, ImageView imageView) {
+        if (uri != null) {
+            Glide.with(imageView.getContext())
+                    .load(uri)
+                    .error(R.drawable.icon_default_acatar)
+                    .into(imageView);
+        } else {
+            Glide.with(imageView.getContext())
+                    .load(R.drawable.icon_dialog_loading)
+                    .into(imageView);
+        }
+    }
+
 }

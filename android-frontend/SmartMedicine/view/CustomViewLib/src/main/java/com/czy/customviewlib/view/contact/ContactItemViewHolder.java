@@ -1,7 +1,5 @@
 package com.czy.customviewlib.view.contact;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,7 +7,6 @@ import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.customviewlib.databinding.ViewContactItemBinding;
 import com.czy.dal.OnPositionItemClick;
 import com.czy.dal.ao.chat.ChatContactItemAo;
-import com.czy.dal.vo.entity.contact.ContactItemVo;
 
 
 /**
@@ -28,7 +25,7 @@ public class ContactItemViewHolder extends RecyclerView.ViewHolder{
         if (chatContactItemAo == null){
             return;
         }
-        ImageLoadUtil.loadImageViewByResource(chatContactItemAo.chatContactItemVo.avatarUrlOrUri, binding.imvgAvatar);
+        ImageLoadUtil.loadImageViewByNetWork(chatContactItemAo.chatContactItemVo.avatarUrlOrUri, binding.imvgAvatar);
         binding.tvName.setText(chatContactItemAo.chatContactItemVo.name);
     }
 

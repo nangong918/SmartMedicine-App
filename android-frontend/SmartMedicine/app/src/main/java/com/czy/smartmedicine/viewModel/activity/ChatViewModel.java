@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -47,6 +48,7 @@ import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.HaveReadMessageResponse;
+import com.czy.dal.dto.netty.response.UploadFileResponse;
 import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 import com.czy.dal.vo.fragmentActivity.chat.ChatVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
@@ -175,19 +177,6 @@ public class ChatViewModel extends ViewModel {
         chatVo.contactAccount = ao.contactAccount;
         chatVo.contactId = ao.contactId;
         chatVo.avatarUrlOrUri.setValue(ao.avatarUrl);
-/*        List<ChatMessageItemVo> chatMessageList = ao.chatMessageListItemVo;
-        if (chatMessageList != null && !chatMessageList.isEmpty()){
-            Optional.ofNullable(chatVo.chatListVo)
-                    .map(chatListVo -> chatListVo.chatMessageList)
-                    .ifPresent(ls -> {
-                        messageHandler.post(() -> {
-//                            ls.postValue(chatMessageList);
-                            chatMessageAdapter.setCurrentList(
-                                    chatMessageList
-                            );
-                        });
-                    });
-        }*/
     }
     // TODO 改为下拉刷新view （全部做完再完善）
     //---------------------------NetWork---------------------------
@@ -343,17 +332,6 @@ public class ChatViewModel extends ViewModel {
                             myId
                     );
 
-                    // 图片消息
-                    if (MessageTypeEnum.image.code == item.messageType){
-                        Log.e("Intercep", "receive chatMessageItemVo timestamp: " + chatMessageItemVo.timestamp);
-                        Log.e("Intercep", "receive item timestamp: " + item.timestamp);
-//                        downloadMessageImage(
-//                                chatMessageItemVo.content,
-//                                chatMessageItemVo.timestamp
-//                        );
-                        // todo 修改下载图片方法
-                    }
-
                     chatMessageItemVos.add(chatMessageItemVo);
                 }
 
@@ -400,14 +378,42 @@ public class ChatViewModel extends ViewModel {
                                 .map(LiveData::getValue)
                                 .orElse("");
 
-                        // ui展示
-                        ChatMessageItemVo vo = new ChatMessageItemVo();
-                        vo.bitmap = bitmap;
-                        vo.setTimeByStringTimeStamp(currentTime);
-                        vo.viewType = ChatMessageItemVo.VIEW_TYPE_SENDER;
-                        vo.content = chatVo.inputText.getValue();
+                        // Http Send
+                        File imageFile = null;
+                        // 确保您在这里传入正确的 Uri
+                        imageFile = MainApplication.getInstance().getImageManager().bitmapToFile(bitmap, uriAtomicReference.get(), activity);
 
-                        // 发送图片消息
+
+                        // ui展示 （chatMessageManager 回调去处理）
+                        ChatMessageItemVo vo = new ChatMessageItemVo();
+                        vo.avatarUrlOrUri = uriAtomicReference.get().toString();
+                        vo.content = chatVo.inputText.getValue();
+                        vo.timestamp = currentTime;
+                        vo.setTimeByStringTimeStamp(currentTime);
+                        vo.isRead = false;
+//                        vo.bitmap = bitmap;
+                        vo.imageFile = imageFile;
+                        vo.viewType = ChatMessageItemVo.VIEW_TYPE_SENDER;
+                        vo.messageType = MessageTypeEnum.image.code;
+
+                        // 缓存消息到本地
+                        chatVo.chatListVo.chatMessageList.add(vo);
+
+                        ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
+                        MessageItem item = MessageItem.getItemByChatMessageItemVo(
+                                vo,
+                                Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                                        .map(ao -> ao.userId)
+                                        .orElse(NettyConstants.ERROR_ID),
+                                chatVo.contactId
+                        );
+                        chatMessageManager.immediatelyAddChatMessage(
+                                item,
+                                chatVo.contactId,
+                                getOnChatMessageChange()
+                        );
+
+                        // netty发送图片消息
                         sendPictureMessage(
                                 activity,
                                 bitmap,
@@ -525,8 +531,6 @@ public class ChatViewModel extends ViewModel {
                 , ViewModelUtil::globalThrowableToast
         );
 
-        Log.e("Intercep", "send Image Time: " + listTime);
-
         // Socket Send
         SendImageRequest request = new SendImageRequest();
         request.senderId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
@@ -548,6 +552,7 @@ public class ChatViewModel extends ViewModel {
         }
     }
 
+    @Deprecated(since = "2025/8/4 现在使用minio生成的uri加载，而不是直接从后端获取byte[]")
     private void downloadMessageImage(String url, long listItemCreatedTime){
         apiRequestImpl.downloadImage(url,
                 response -> {
@@ -557,6 +562,7 @@ public class ChatViewModel extends ViewModel {
         );
     }
 
+    @Deprecated(since = "2025/8/4 现在使用minio生成的uri加载，而不是直接从后端获取byte[]")
     private void handleDownloadImage(BaseResponse<FileDownloadBytesResponse> response, long listItemCreatedTime) {
         if (ViewModelUtil.handleResponse(response)) {
             ImageManager imageManager = new ImageManager();
@@ -625,6 +631,67 @@ public class ChatViewModel extends ViewModel {
             // 根据 message 的 type 执行对应的方法
             chatApiHandler.receiveUserImage(response);
         }
+    }
+
+    // 被要求上传图片
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onMessageReceived(UploadFileResponse response){
+        List<ChatMessageItemVo> list = chatVo.chatListVo.chatMessageList;
+        if (list == null || list.isEmpty()){
+            Log.i(TAG, "onMessageReceived: list is empty");
+            return;
+        }
+
+        Long fileId = response.fileId;
+
+        for (ChatMessageItemVo vo : list){
+            // 找到对应的消息
+            if (response.messageId != null && response.messageId.equals(vo.getItemId())){
+
+                if (vo.imageFile == null || !vo.imageFile.exists()) {
+                    // 处理文件未创建或路径不正确的情况
+                    Log.e(TAG, "Image file creation failed");
+                    return;
+                }
+
+                // 获取文件名
+                String originalFilename = vo.imageFile.getName(); // 使用 getName() 获取文件名
+
+                // 获取文件扩展名
+                String fileExtension = originalFilename.contains(".") ?
+                        originalFilename.substring(originalFilename.lastIndexOf(".")) : ""; // 获取扩展名
+
+                MultipartBody.Part filePart = com.czy.baseUtilsLib.file.FileUtil.createMultipartBodyPart(vo.imageFile, "file");
+
+                // 文件名称，方便后端保存
+                String fileName = MainApplication.getInstance().getUserLoginInfoAo().account + "_" + chatVo.contactAccount;
+
+                // 创建其他参数请求体
+                RequestBody fileIdPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(fileId));
+                RequestBody senderIdPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(
+                        MainApplication.getInstance().getUserLoginInfoAo().userId
+                ));
+                RequestBody receiverIdPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(
+                        chatVo.contactId
+                ));
+
+
+                apiRequestImpl.uploadAndSend(
+                        filePart,
+                        fileIdPart,
+                        senderIdPart,
+                        receiverIdPart,
+                        uploadResp -> {},
+                        throwable -> {}
+                );
+            }
+        }
+    }
+
+    // 上传图片结果
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onReceiveUploadFileResult(Message response){
+
     }
 
     private void initEventBus() {

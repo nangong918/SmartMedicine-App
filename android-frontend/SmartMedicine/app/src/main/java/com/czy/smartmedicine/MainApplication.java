@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.TextUtils;
@@ -13,9 +12,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.MutableLiveData;
 
-import com.czy.appcore.BaseConfig;
 import com.czy.appcore.netty.IMessageListener;
 import com.czy.appcore.network.api.api.ApiRequest;
 import com.czy.appcore.network.api.api.ApiRequestProvider;
@@ -27,7 +24,6 @@ import com.czy.appcore.network.netty.service.NettySocketServiceInitiator;
 import com.czy.appcore.service.chat.ChatMessageManager;
 import com.czy.baseUtilsLib.file.SecuritySharedPreferencesUtils;
 import com.czy.baseUtilsLib.image.ImageManager;
-import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.customviewlib.view.GlobalDialogFragment;
 import com.czy.dal.ao.chat.ChatContactItemAo;
@@ -35,11 +31,9 @@ import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.login.LoginTokenAo;
 import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
-import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.netty.Message;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.manager.HttpRequestManager;
-import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -426,25 +420,6 @@ public class MainApplication extends Application {
             Log.w(TAG, "showGlobalToast::resId is not exist " + resId, e);
         }
         return message;
-    }
-
-    //----------------------------Global Network----------------------------
-
-    private void downloadImage(String url, MutableLiveData<Bitmap> bitmapLd){
-        getApiRequestImplInstance().downloadImage(url,
-                response -> {
-                    handleDownloadImage(response, bitmapLd);
-                },
-                ViewModelUtil::globalThrowableToast
-        );
-    }
-
-    private void handleDownloadImage(BaseResponse<FileDownloadBytesResponse> response, MutableLiveData<Bitmap> bitmapLd) {
-        if (ViewModelUtil.handleResponse(response)) {
-            Bitmap bitmap = getImageManager().bytesToBitmap(response.getData().getFileBytes());
-            bitmap = getImageManager().processImage(bitmap, BaseConfig.BITMAP_MAX_SIZE);
-            bitmapLd.postValue(bitmap);
-        }
     }
 
     //----------------------------APP终止的时候调用----------------------------

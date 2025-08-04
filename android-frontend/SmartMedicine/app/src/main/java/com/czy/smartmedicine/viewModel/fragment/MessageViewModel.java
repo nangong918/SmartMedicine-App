@@ -104,6 +104,7 @@ public class MessageViewModel extends ViewModel {
     }
 
     private OnPositionItemClick getOnPositionClickListener(@NonNull FragmentActivity activity){
+        // TODO 点击之后netty通知后端消息已读
         return position -> {
             ChatContactListVo recyclerViewVo = Optional.ofNullable(messageVo)
                     .map(vo -> vo.chatContactListVo)
@@ -241,9 +242,6 @@ public class MessageViewModel extends ViewModel {
         ChatContactItemAo item = new ChatContactItemAo();
         item.contactAccount = contactAccount;
         item.userId = response.senderId;
-        item.chatContactItemVo.avatarUrlOrUri = response.avatarUrls;
-        item.chatContactItemVo.name = response.senderName;
-        item.chatContactItemVo.setMessagePreview("图片消息");
         item.timestamp = Optional.ofNullable(response.timestamp)
                 .map(t -> {
                     try {
@@ -254,8 +252,15 @@ public class MessageViewModel extends ViewModel {
                     }
                 })
                 .orElse(System.currentTimeMillis());
-        item.index = item.timestamp;
+//        item.chatContactItemVo.avatarUrlOrUri = response.avatarUrls;
+        item.chatContactItemVo.name = response.senderName;
+        // 包含消息裁剪功能
+        item.chatContactItemVo.setMessagePreview("图片消息");
         item.chatContactItemVo.time = DateUtils.getTime(new Date(item.timestamp));
+        item.chatContactItemVo.unreadCount = 0;
+
+        item.index = item.timestamp;
+
         List<ChatContactItemAo> list = new ArrayList<>();
         list.add(item);
         // 同步设置

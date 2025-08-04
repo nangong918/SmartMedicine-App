@@ -22,11 +22,11 @@ public class MessageItem extends SortItem {
     // null able
     public Long msgFileId;
     // null able
-    public String msgFileUrl;
+    public String msgFileUrlOrUri;
+    // messageId
+    public String messageId;
 
     // 是否相等
-
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
@@ -42,7 +42,8 @@ public class MessageItem extends SortItem {
                 Objects.equals(messageType, that.messageType) &&
                 Objects.equals(timestamp, that.timestamp) &&
                 Objects.equals(msgFileId, that.msgFileId) &&
-                Objects.equals(msgFileUrl, that.msgFileUrl);
+                Objects.equals(msgFileUrlOrUri, that.msgFileUrlOrUri) &&
+                Objects.equals(messageId, that.messageId);
     }
 
     /**
@@ -52,9 +53,10 @@ public class MessageItem extends SortItem {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(senderId, receiverId, content, messageType, timestamp, msgFileId, msgFileUrl);
+        return Objects.hash(senderId, receiverId, content, messageType, timestamp, msgFileId, msgFileUrlOrUri, messageId);
     }
 
+    // MessageItem -> ChatMessageItemVo
     public ChatMessageItemVo toChatMessageItemVo(Long myId){
         ChatMessageItemVo chatMessageItemVo = new ChatMessageItemVo();
         chatMessageItemVo.content = content;
@@ -69,10 +71,32 @@ public class MessageItem extends SortItem {
                     }
                 }).orElse(ChatMessageItemVo.VIEW_TYPE_RECEIVER);
         chatMessageItemVo.isRead = false;
-        if (!TextUtils.isEmpty(this.msgFileUrl)){
-            chatMessageItemVo.avatarUrlOrUri = this.msgFileUrl;
+        if (!TextUtils.isEmpty(this.msgFileUrlOrUri)){
+            chatMessageItemVo.avatarUrlOrUri = this.msgFileUrlOrUri;
         }
+        chatMessageItemVo.setItemId(this.messageId);
         return chatMessageItemVo;
+    }
+
+    // ChatMessageItemVo -> MessageItem
+    public static MessageItem getItemByChatMessageItemVo
+    (ChatMessageItemVo vo, Long senderId, Long receiverId){
+        MessageItem item = new MessageItem();
+        if (vo == null){
+            return item;
+        }
+
+        item.senderId = senderId;
+        item.receiverId = receiverId;
+        item.content = vo.content;
+        item.messageType = vo.messageType;
+        item.timestamp = vo.timestamp;
+//        item.msgFileId
+        item.msgFileUrlOrUri = vo.avatarUrlOrUri;
+        item.messageId = vo.getItemId();
+
+        item.index = item.timestamp;
+        return item;
     }
 
     public static MessageItem getByChatMessageItemVo(UserChatMessageBo bo){
@@ -84,7 +108,7 @@ public class MessageItem extends SortItem {
         messageItem.timestamp = bo.timestamp;
         messageItem.index = bo.timestamp;
         messageItem.msgFileId = bo.msgFileId;
-        messageItem.msgFileUrl = bo.msgFileUrl;
+        messageItem.msgFileUrlOrUri = bo.msgFileUrl;
         return messageItem;
     }
 
@@ -128,7 +152,9 @@ public class MessageItem extends SortItem {
 
     public static MessageItem getByUserImageResponse(UserImageResponse response){
         MessageItem messageItem = new MessageItem();
-        messageItem.content = response.imageUrl;
+        messageItem.content = response.content;
+        messageItem.msgFileUrlOrUri = response.imageUrl;
+        messageItem.msgFileId = response.imageFileId;
         messageItem.messageType = MessageTypeEnum.image.code;
         messageItem.receiverId = response.getReceiverId();
         messageItem.senderId = response.getSenderId();
