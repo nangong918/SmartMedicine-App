@@ -19,7 +19,7 @@ public interface ChatService {
     // 拉取用户的全部聊天消息(限制1000条，超过就流式传输)：某个用户跟所有用户的1条最新消息List (包括friendsView)
     List<UserChatLastViewMessageBo> getUserAllChatMessage(Long senderId);
     // messageList -> messageViewList （boList）的senderId必须全部相同
-    List<UserChatLastViewMessageBo> getViewMessageByMessage(List<UserChatLastMessageBo> boList);
+    List<UserChatLastViewMessageBo> getViewMessageByMessage(List<UserChatLastMessageBo> boList, Long senderId);
     // 为List<UserChatLastViewMessageBo>赋值image信息值
     void assignImageInfo(List<UserChatLastViewMessageBo> boList);
     // 拉取和某个用户的消息 （不包括friendView）

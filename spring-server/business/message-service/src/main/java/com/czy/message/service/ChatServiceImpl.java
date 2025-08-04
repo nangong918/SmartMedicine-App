@@ -54,15 +54,16 @@ public class ChatServiceImpl implements ChatService {
     private UserRelationshipService userRelationshipService;
 
     @Override
-    public List<UserChatLastViewMessageBo> getUserAllChatMessage(Long userId) {
+    public List<UserChatLastViewMessageBo> getUserAllChatMessage(Long senderId) {
         List<UserChatLastMessageBo> messages = new LinkedList<>();
         // 获取所有相关的键 考虑到senderId可能是receiverId
-//        Set<String> keys = redisService.getKeys(MessageConstant.CHAT_MESSAGE_KEY + userId + ":");
+//        Set<String> keys = redisService.getKeys(MessageConstant.CHAT_MESSAGE_KEY + senderId + ":");
         // 此时的sender是想要查询sender收到的消息；所以sender要作为receiver；所以
+        // MessageConstant.CHAT_MESSAGE_KEY + bo.senderId + ":" + bo.receiverId + ":";
         // sender是receiver
-        String receiverCheckKey = MessageConstant.CHAT_MESSAGE_KEY + "*:" + userId;
+        String receiverCheckKey = MessageConstant.CHAT_MESSAGE_KEY + "*:" + senderId;
         // sender是sender
-        String senderCheckKey = MessageConstant.CHAT_MESSAGE_KEY + userId + ":*";
+        String senderCheckKey = MessageConstant.CHAT_MESSAGE_KEY + senderId + ":*";
         Set<String> keysReceiver = redisService.getKeys(receiverCheckKey);
         Set<String> keysSender = redisService.getKeys(senderCheckKey);
 
@@ -88,7 +89,8 @@ public class ChatServiceImpl implements ChatService {
             }
         }
 
-        List<UserChatLastViewMessageBo> friendsViewMessages = getViewMessageByMessage(messages);
+        // 获取最近消息的friendsView
+        List<UserChatLastViewMessageBo> friendsViewMessages = getViewMessageByMessage(messages, senderId);
 
         // 通过user的fileId为他的fileUrl赋值
         assignImageInfo(friendsViewMessages);
@@ -99,22 +101,28 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<UserChatLastViewMessageBo> getViewMessageByMessage(List<UserChatLastMessageBo> boList) {
+    public List<UserChatLastViewMessageBo> getViewMessageByMessage(List<UserChatLastMessageBo> boList, Long senderId) {
         if (CollectionUtils.isEmpty(boList)){
             return Collections.emptyList();
         }
 
-        Long userId = Optional.ofNullable(boList.get(0))
-                        .map(UserChatMessageBo::getSenderId)
-                        .orElse(null);
-
-        if (userId == null){
+        if (senderId == null){
             return Collections.emptyList();
         }
 
-        List<Long> friendsId = boList.stream()
-                .map(UserChatMessageBo::getReceiverId)
-                .collect(Collectors.toList());
+        List<Long> friendsId = new ArrayList<>();
+
+        for (UserChatLastMessageBo bo : boList){
+            // 请求者 在消息中是 发送者
+            Long friendId;
+            if (senderId.equals(bo.getSenderId())){
+                friendId = bo.getReceiverId();
+            }
+            else {
+                friendId = bo.getSenderId();
+            }
+            friendsId.add(friendId);
+        }
 
         /**        已经在数据库验证成功的sql代码
          *         SELECT
@@ -147,7 +155,7 @@ public class ChatServiceImpl implements ChatService {
          */
         // mybatis查询的结果如果无记录是不会返回到list中的，所以不能直接for循环组装
         List<FriendViewEntity> friendViewEntityList = userRelationshipService.getFriendsViewByUserIdFriendsId(
-                userId,
+                senderId,
                 friendsId
         );
 
