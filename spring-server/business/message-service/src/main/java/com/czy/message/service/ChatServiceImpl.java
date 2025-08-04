@@ -111,6 +111,7 @@ public class ChatServiceImpl implements ChatService {
         }
 
         List<Long> friendsId = new ArrayList<>();
+        Map<Long, UserChatLastMessageBo> friendsBoMap = new HashMap<>();
 
         for (UserChatLastMessageBo bo : boList){
             // 请求者 在消息中是 发送者
@@ -122,6 +123,7 @@ public class ChatServiceImpl implements ChatService {
                 friendId = bo.getSenderId();
             }
             friendsId.add(friendId);
+            friendsBoMap.put(friendId, bo);
         }
 
         /**        已经在数据库验证成功的sql代码
@@ -173,14 +175,14 @@ public class ChatServiceImpl implements ChatService {
 
         // mybatis查询的结果如果无记录是不会返回到list中的，所以不能直接for循环组装
         List<UserChatLastViewMessageBo> userChatLastViewMessageBoList = new ArrayList<>();
-        for (UserChatLastMessageBo bo : boList){
-            Long friendId = Optional.ofNullable(bo)
-                    .map(UserChatMessageBo::getReceiverId)
-                    .orElse(null);
+        for (Long friendId : friendsId){
             if (friendId == null){
                 userChatLastViewMessageBoList.add(null);
                 continue;
             }
+
+            UserChatLastMessageBo bo = friendsBoMap.get(friendId);
+
             FriendViewEntity friendViewEntity = friendViewEntityMap.get(friendId);
             UserChatLastViewMessageBo userChatLastViewMessageBo = new UserChatLastViewMessageBo();
             userChatLastViewMessageBo.setData(friendViewEntity, bo);
