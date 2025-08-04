@@ -254,6 +254,7 @@ todo 明天继续跑通IM和post
 修好这个项目基本的全部Bug并且基本实现大部分通用功能再开新项目
 todo 推荐页面加入部分购物推荐, 搜索商品, 挂号预约(秒杀)
 todo 如果想要走Android C++就需要完成NDK + RTMP实现直播推流
+todo Redisson 替换 Redis
 
 ##### 重构+细化
 * spring学习

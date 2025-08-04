@@ -41,8 +41,8 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
         // 初始化聊天数据请求
         viewModel.initialNetworkRequest(
-                viewModel.chatVo.contactId)
-        ;
+                viewModel.chatVo.contactId
+        );
     }
 
     @Override

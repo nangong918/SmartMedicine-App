@@ -90,6 +90,10 @@ public class ChatMessageManager {
             chatMessageMap.put(contactId, new ArrayList<>());
         }
 
+        Long currentContactId = Optional.ofNullable(this.currentChatMessageContext)
+                .map(context -> context.contactId)
+                .orElse(null);
+
         // 获取list
         List<MessageItem> list = Optional.ofNullable(chatMessageMap.get(contactId))
                 .orElseGet(() -> {
@@ -103,14 +107,16 @@ public class ChatMessageManager {
         list.add(item);
 
         // 用消息队列回调，避免线程并发冲突
-        mainHandler.post(() -> {
-            if (onChatMessageChange != null){
-                onChatMessageChange.onChange(list);
-            }
-            else {
-                Log.w(TAG, "onChatMessageChange is null");
-            }
-        });
+        if (contactId != null && contactId.equals(currentContactId)){
+            mainHandler.post(() -> {
+                if (onChatMessageChange != null){
+                    onChatMessageChange.onChange(list);
+                }
+                else {
+                    Log.w(TAG, "onChatMessageChange is null");
+                }
+            });
+        }
     }
 
     /**
