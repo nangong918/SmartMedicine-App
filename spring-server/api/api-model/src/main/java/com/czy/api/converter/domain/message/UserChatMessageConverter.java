@@ -29,18 +29,22 @@ public interface UserChatMessageConverter {
         bo.setSenderId(userChatMessageDo.getSenderId());
         bo.setReceiverId(userChatMessageDo.getReceiverId());
         bo.setTimestamp(userChatMessageDo.getTimestamp());
+        bo.setMsgFileId(userChatMessageDo.getMsgFileId());
+        bo.setMsgFileUrl(userChatMessageDo.getMsgFileUrl());
         return bo;
     }
 
     // bo -> do
-    default UserChatMessageDo toDo(UserChatMessageBo userChatMessageBo, Long senderId, Long receiverId){
+    default UserChatMessageDo toDo(UserChatMessageBo bo, Long senderId, Long receiverId){
         UserChatMessageDo userChatMessageDo = new UserChatMessageDo();
-        userChatMessageDo.setId(userChatMessageBo.getId());
-        userChatMessageDo.setMsgContent(userChatMessageBo.getMsgContent());
-        userChatMessageDo.setMsgType(userChatMessageBo.getMsgType());
+        userChatMessageDo.setId(bo.getId());
+        userChatMessageDo.setMsgContent(bo.getMsgContent());
+        userChatMessageDo.setMsgType(bo.getMsgType());
         userChatMessageDo.setSenderId(senderId);
         userChatMessageDo.setReceiverId(receiverId);
-        userChatMessageDo.setTimestamp(userChatMessageBo.getTimestamp());
+        userChatMessageDo.setTimestamp(bo.getTimestamp());
+        userChatMessageDo.setMsgFileId(bo.getMsgFileId());
+        userChatMessageDo.setMsgFileUrl(bo.getMsgFileUrl());
         return userChatMessageDo;
     }
 

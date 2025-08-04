@@ -1,11 +1,13 @@
 package com.czy.smartmedicine.viewModel.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -22,8 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.appcore.service.chat.ChatListManager;
+import com.czy.appcore.service.chat.ChatMessageManager;
+import com.czy.appcore.service.chat.CurrentChatMessageContext;
 import com.czy.appcore.service.chat.MessageItem;
+import com.czy.appcore.service.chat.OnChatMessageChange;
 import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.permission.GainPermissionCallback;
@@ -44,10 +48,13 @@ import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.HaveReadMessageResponse;
+import com.czy.dal.dto.netty.response.UploadFileResponse;
 import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 import com.czy.dal.vo.fragmentActivity.chat.ChatVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.ChatActivity;
+import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -59,6 +66,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -84,10 +92,29 @@ public class ChatViewModel extends ViewModel {
     public ChatVo chatVo = new ChatVo();
     public void init(ChatVo chatVo) {
         this.messageHandler = new Handler(Looper.getMainLooper());
-        this.chatVo = chatVo;
-        initMessage();
+        setVo(chatVo);
+        initSocketReceiver();
         initEventBus();
-        initChatListManager();
+        setChatMessageManager();
+    }
+
+    private void setVo(ChatVo chatVo){
+        this.chatVo = chatVo;
+        // 从缓存中获取数据
+        ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
+        List<MessageItem> chatMessageList = chatMessageManager.getChatMessages(this.chatVo.contactId);
+
+        // 获取我的id，用于判断消息是对方发送还是我发送的
+        Long myId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                .map(ao -> ao.userId)
+                .orElse(null);
+
+        // 设置初始值
+        this.chatVo.chatListVo.chatMessageList = chatMessageList.stream()
+                .map(item -> item.toChatMessageItemVo(myId))
+                .collect(Collectors.toList());
+
+        // 初始化view（在adapter初始化结束之后）
     }
 
     public TextWatcher getTextWatcher(){
@@ -121,13 +148,9 @@ public class ChatViewModel extends ViewModel {
         chatMessageAdapter.setCurrentList(currentList);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void initRecyclerView(@NonNull RecyclerView recyclerView){
-        List<ChatMessageItemVo> chatMessageList = Optional.ofNullable(chatVo)
-                .map(ao -> ao.chatListVo)
-                .map(ao -> ao.chatMessageList)
-//                .map(LiveData::getValue)
-                .orElse(new ArrayList<>());
-        chatMessageAdapter = new ChatMessageAdapter(chatMessageList);
+        chatMessageAdapter = new ChatMessageAdapter();
         chatMessageAdapter.setOnSetMessageCallback(
                 () -> {
                     // recyclerView滚动到最下面
@@ -139,6 +162,11 @@ public class ChatViewModel extends ViewModel {
         recyclerView.setAdapter(
                 this.chatMessageAdapter
         );
+
+        // 初始化view
+        chatMessageAdapter.setCurrentList(
+                chatVo.chatListVo.chatMessageList
+        );
     }
 
     //-----------------------Start-----------------------
@@ -149,32 +177,63 @@ public class ChatViewModel extends ViewModel {
         chatVo.contactAccount = ao.contactAccount;
         chatVo.contactId = ao.contactId;
         chatVo.avatarUrlOrUri.setValue(ao.avatarUrl);
-        List<ChatMessageItemVo> chatMessageList = ao.chatMessageListItemVo;
-        if (chatMessageList != null && !chatMessageList.isEmpty()){
-            Optional.ofNullable(chatVo.chatListVo)
-                    .map(chatListVo -> chatListVo.chatMessageList)
-                    .ifPresent(ls -> {
-                        messageHandler.post(() -> {
-//                            ls.postValue(chatMessageList);
-                            chatMessageAdapter.setCurrentList(
-                                    chatMessageList
-                            );
-                        });
-                    });
-        }
     }
-    // TODO 改为下拉刷新view
+    // TODO 改为下拉刷新view （全部做完再完善）
     //---------------------------NetWork---------------------------
-    public void initialNetworkRequest(String contactAccount){
-        // TODO 重构的时候todo
-//        String key = ChatActivity.class.getName() + ":" + contactAccount;
-//        if (HttpRequestManager.getIsFirstOpen(key)){
-//            fetchUserMessage(System.currentTimeMillis(), 20);
-//        }
-//        else {
-//            // TODO
-//        }
-        fetchUserMessage(System.currentTimeMillis(), 20);
+    public void initialNetworkRequest(Long contactId){
+        if (contactId == null || contactId.equals(NettyConstants.ERROR_ID)){
+            Log.w(TAG, "contactId is null");
+            return;
+        }
+        // HttpRequestManager会在断开连接的时候调用refreshAllValue清除所有的缓存，会从新请求最新的聊天数据
+        String key = ChatActivity.class.getName() + ":" + contactId;
+        if (HttpRequestManager.getIsFirstOpen(key)){
+            fetchUserMessage(System.currentTimeMillis(), BaseConfig.DEFAULT_MESSAGE_FETCH_COUNT);
+        }
+        else {
+            // 从缓存获取数据
+            List<MessageItem> messageItems = Optional.ofNullable(MainApplication.getInstance().getChatMessageManager())
+                    .map(manager -> manager.getChatMessages(contactId))
+                    .orElse(new ArrayList<>());
+
+            Long myId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                    .map(ao -> ao.userId)
+                    .orElse(NettyConstants.ERROR_ID);
+
+            if (NettyConstants.ERROR_ID.equals(myId)){
+                Log.w(TAG, "myId is null");
+                return;
+            }
+
+            // 将值设置给chatListVo
+            this.chatVo.chatListVo.chatMessageList = messageItems.stream()
+                    .map(item -> item.toChatMessageItemVo(myId))
+                    .collect(Collectors.toList());
+
+            // 通知adapter更新view
+            // 创建 Handler
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            // 定义 Runnable
+            Runnable checkAdapterRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (chatMessageAdapter != null) {
+                        // 更新 UI
+                        chatMessageAdapter.setCurrentList(chatVo.chatListVo.chatMessageList);
+                        Log.i(TAG, "chatMessageAdapter is not null, 更新ui");
+                    }
+                    else {
+                        // 如果 chatMessageAdapter 仍然为 null，300 毫秒后继续检查
+                        Log.i(TAG, "chatMessageAdapter is null 继续等待300");
+                        handler.postDelayed(this, 300);
+                    }
+                }
+            };
+
+            // 开始检查
+            handler.post(checkAdapterRunnable);
+        }
     }
     //==========主动与此好友的消息
 
@@ -198,7 +257,10 @@ public class ChatViewModel extends ViewModel {
                 MessageItem messageItem = MessageItem.getByChatMessageItemVo(messageBo);
                 messageList.add(messageItem);
             }
-            chatListManager.cacheAddMessage(messageList);
+            MainApplication.getInstance().getChatMessageManager().cacheMessage(
+                    messageList,
+                    chatVo.contactId
+            );
         }
     }
 
@@ -206,7 +268,7 @@ public class ChatViewModel extends ViewModel {
 
     public void sendMessage(){
         String message = chatVo.inputText.getValue();
-        String receiverAccount = chatVo.contactAccount;
+//        String receiverAccount = chatVo.contactAccount;
         Long receiverId = chatVo.contactId;
         // 用Netty长连接发送消息
         SendTextDataRequest request = new SendTextDataRequest();
@@ -220,52 +282,73 @@ public class ChatViewModel extends ViewModel {
 
         // 本地展示
         MessageItem messageItem = MessageItem.getBySendTextDataRequest(request);
-        chatListManager.immediatelyAddMessage(messageItem);
+        // 添加到缓存 + 更新UI
+        MainApplication.getInstance().getChatMessageManager().immediatelyAddChatMessage(
+                messageItem,
+                receiverId,
+                getOnChatMessageChange()
+        );
     }
 
     //===========ChatListManager
 
-    public ChatListManager chatListManager;
+    // 设置聊天列表管理器的参数
+    private void setChatMessageManager(){
+        Long contactId = Optional.ofNullable(chatVo)
+                .map(vo -> vo.contactId)
+                .orElse(null);
 
-    private void initChatListManager(){
-        // ChatList：2.内存数据源
-        chatListManager = new ChatListManager(list -> {
-            chatVo.isLoading.setValue(false);
-            // 数据类型转换
-            List<ChatMessageItemVo> chatMessageItemVos = new ArrayList<>();
-            for (MessageItem item : list){
-                Long myId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
-                        .map(ao -> ao.userId)
-                        .orElse(null);
+        if (contactId == null){
+            Log.w(TAG, "contactId is null");
+            return;
+        }
 
-                ChatMessageItemVo chatMessageItemVo = item.toChatMessageItemVo(
-                        myId
-                );
+        ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
 
-                // 图片消息
-                if (MessageTypeEnum.image.code == item.messageType){
-                    Log.e("Intercep", "receive chatMessageItemVo timestamp: " + chatMessageItemVo.timestamp);
-                    Log.e("Intercep", "receive item timestamp: " + item.timestamp);
-                    downloadMessageImage(
-                            chatMessageItemVo.content,
-                            chatMessageItemVo.timestamp
+        // 当前聊天的上下文（userId + 变化回调监听）
+        OnChatMessageChange onChatMessageChange = getOnChatMessageChange();
+        CurrentChatMessageContext currentChatMessageContext = new CurrentChatMessageContext(
+                contactId,
+                onChatMessageChange
+        );
+        chatMessageManager.setCurrentChatMessageContext(currentChatMessageContext);
+    }
+
+    private OnChatMessageChange onChatMessageChange;
+
+    private OnChatMessageChange getOnChatMessageChange(){
+        if (onChatMessageChange == null){
+            onChatMessageChange = list -> {
+                chatVo.isLoading.setValue(false);
+
+                // 数据类型转换
+                List<ChatMessageItemVo> chatMessageItemVos = new ArrayList<>();
+                for (MessageItem item : list){
+                    Long myId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                            .map(ao -> ao.userId)
+                            .orElse(null);
+
+                    ChatMessageItemVo chatMessageItemVo = item.toChatMessageItemVo(
+                            myId
                     );
+
+                    chatMessageItemVos.add(chatMessageItemVo);
                 }
 
-                chatMessageItemVos.add(chatMessageItemVo);
-            }
-            // 初始化设置
-            Optional.ofNullable(chatVo)
-                    .map(chatVo -> chatVo.chatListVo)
-                    .map(chatListVo -> chatListVo.chatMessageList)
-                    .ifPresent(ls -> {
-                        ls.clear();
-                        ls.addAll(chatMessageItemVos);
-                        messageHandler.post(() -> {
-                            chatMessageAdapter.setCurrentList(ls);
+                // UI 更新 todo 需要优化
+                Optional.ofNullable(chatVo)
+                        .map(chatVo -> chatVo.chatListVo)
+                        .map(chatListVo -> chatListVo.chatMessageList)
+                        .ifPresent(ls -> {
+                            ls.clear();
+                            ls.addAll(chatMessageItemVos);
+                            messageHandler.post(() -> {
+                                chatMessageAdapter.setCurrentList(ls);
+                            });
                         });
-                    });
-        });
+            };
+        }
+        return onChatMessageChange;
     }
 
     //===========selectImage
@@ -295,14 +378,42 @@ public class ChatViewModel extends ViewModel {
                                 .map(LiveData::getValue)
                                 .orElse("");
 
-                        // ui展示
-                        ChatMessageItemVo vo = new ChatMessageItemVo();
-                        vo.bitmap = bitmap;
-                        vo.setTimeByStringTimeStamp(currentTime);
-                        vo.viewType = ChatMessageItemVo.VIEW_TYPE_SENDER;
-                        vo.content = chatVo.inputText.getValue();
+                        // Http Send
+                        File imageFile = null;
+                        // 确保您在这里传入正确的 Uri
+                        imageFile = MainApplication.getInstance().getImageManager().bitmapToFile(bitmap, uriAtomicReference.get(), activity);
 
-                        // 发送图片消息
+
+                        // ui展示 （chatMessageManager 回调去处理）
+                        ChatMessageItemVo vo = new ChatMessageItemVo();
+                        vo.avatarUrlOrUri = uriAtomicReference.get().toString();
+                        vo.content = chatVo.inputText.getValue();
+                        vo.timestamp = currentTime;
+                        vo.setTimeByStringTimeStamp(currentTime);
+                        vo.isRead = false;
+//                        vo.bitmap = bitmap;
+                        vo.imageFile = imageFile;
+                        vo.viewType = ChatMessageItemVo.VIEW_TYPE_SENDER;
+                        vo.messageType = MessageTypeEnum.image.code;
+
+                        // 缓存消息到本地
+                        chatVo.chatListVo.chatMessageList.add(vo);
+
+                        ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
+                        MessageItem item = MessageItem.getItemByChatMessageItemVo(
+                                vo,
+                                Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                                        .map(ao -> ao.userId)
+                                        .orElse(NettyConstants.ERROR_ID),
+                                chatVo.contactId
+                        );
+                        chatMessageManager.immediatelyAddChatMessage(
+                                item,
+                                chatVo.contactId,
+                                getOnChatMessageChange()
+                        );
+
+                        // netty发送图片消息
                         sendPictureMessage(
                                 activity,
                                 bitmap,
@@ -340,14 +451,7 @@ public class ChatViewModel extends ViewModel {
 
     //===========Message
 
-    private void initMessage(){
-        initReceiveMessageApi();
-    }
-
-    // receive
-    private ChatApiHandler chatApiHandler;
-
-    private void initReceiveMessageApi(){
+    private void initSocketReceiver(){
         chatApiHandler = new ChatApiHandler() {
             @Override
             public void receiveUserText(@NonNull UserTextDataResponse response) {
@@ -355,7 +459,11 @@ public class ChatViewModel extends ViewModel {
 
                 // 立刻将消息添加 (单条)
                 // ChatList：5.本地发送数据源
-                chatListManager.immediatelyAddMessage(item);
+                MainApplication.getInstance().getChatMessageManager().immediatelyAddChatMessage(
+                        item,
+                        chatVo.contactId,
+                        getOnChatMessageChange()
+                );
             }
 
             @Override
@@ -365,17 +473,24 @@ public class ChatViewModel extends ViewModel {
 
             @Override
             public void haveReadMessage(@NonNull HaveReadMessageResponse response) {
-                Log.d(TAG, "消息已读：senderAccount:" + response.receiverAccount);
+                Log.d(TAG, "消息已读：haveReadUserId:" + response.haveReadUserId);
             }
 
             @Override
             public void receiveUserImage(@NonNull UserImageResponse response) {
                 MessageItem item = MessageItem.getByUserImageResponse(response);
 
-                chatListManager.immediatelyAddMessage(item);
+                MainApplication.getInstance().getChatMessageManager().immediatelyAddChatMessage(
+                        item,
+                        chatVo.contactId,
+                        getOnChatMessageChange()
+                );
             }
         };
     }
+
+    // receive
+    private ChatApiHandler chatApiHandler;
 
     //===========Picture
 
@@ -416,8 +531,6 @@ public class ChatViewModel extends ViewModel {
                 , ViewModelUtil::globalThrowableToast
         );
 
-        Log.e("Intercep", "send Image Time: " + listTime);
-
         // Socket Send
         SendImageRequest request = new SendImageRequest();
         request.senderId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
@@ -439,6 +552,7 @@ public class ChatViewModel extends ViewModel {
         }
     }
 
+    @Deprecated(since = "2025/8/4 现在使用minio生成的uri加载，而不是直接从后端获取byte[]")
     private void downloadMessageImage(String url, long listItemCreatedTime){
         apiRequestImpl.downloadImage(url,
                 response -> {
@@ -448,6 +562,7 @@ public class ChatViewModel extends ViewModel {
         );
     }
 
+    @Deprecated(since = "2025/8/4 现在使用minio生成的uri加载，而不是直接从后端获取byte[]")
     private void handleDownloadImage(BaseResponse<FileDownloadBytesResponse> response, long listItemCreatedTime) {
         if (ViewModelUtil.handleResponse(response)) {
             ImageManager imageManager = new ImageManager();
@@ -518,6 +633,67 @@ public class ChatViewModel extends ViewModel {
         }
     }
 
+    // 被要求上传图片
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onMessageReceived(UploadFileResponse response){
+        List<ChatMessageItemVo> list = chatVo.chatListVo.chatMessageList;
+        if (list == null || list.isEmpty()){
+            Log.i(TAG, "onMessageReceived: list is empty");
+            return;
+        }
+
+        Long fileId = response.fileId;
+
+        for (ChatMessageItemVo vo : list){
+            // 找到对应的消息
+            if (response.messageId != null && response.messageId.equals(vo.getItemId())){
+
+                if (vo.imageFile == null || !vo.imageFile.exists()) {
+                    // 处理文件未创建或路径不正确的情况
+                    Log.e(TAG, "Image file creation failed");
+                    return;
+                }
+
+                // 获取文件名
+                String originalFilename = vo.imageFile.getName(); // 使用 getName() 获取文件名
+
+                // 获取文件扩展名
+                String fileExtension = originalFilename.contains(".") ?
+                        originalFilename.substring(originalFilename.lastIndexOf(".")) : ""; // 获取扩展名
+
+                MultipartBody.Part filePart = com.czy.baseUtilsLib.file.FileUtil.createMultipartBodyPart(vo.imageFile, "file");
+
+                // 文件名称，方便后端保存
+                String fileName = MainApplication.getInstance().getUserLoginInfoAo().account + "_" + chatVo.contactAccount;
+
+                // 创建其他参数请求体
+                RequestBody fileIdPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(fileId));
+                RequestBody senderIdPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(
+                        MainApplication.getInstance().getUserLoginInfoAo().userId
+                ));
+                RequestBody receiverIdPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(
+                        chatVo.contactId
+                ));
+
+
+                apiRequestImpl.uploadAndSend(
+                        filePart,
+                        fileIdPart,
+                        senderIdPart,
+                        receiverIdPart,
+                        uploadResp -> {},
+                        throwable -> {}
+                );
+            }
+        }
+    }
+
+    // 上传图片结果
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onReceiveUploadFileResult(Message response){
+
+    }
+
     private void initEventBus() {
         EventBus.getDefault().register(this);
     }
@@ -535,9 +711,7 @@ public class ChatViewModel extends ViewModel {
     }
 
     public void onDestroy() {
-        if (chatListManager != null){
-            chatListManager.stop();
-        }
+        MainApplication.getInstance().getChatMessageManager().cleanChatActivityParam();
         unInitEventBus();
     }
 }

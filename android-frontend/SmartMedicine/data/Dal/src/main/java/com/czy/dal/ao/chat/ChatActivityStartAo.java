@@ -5,6 +5,7 @@ import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -12,6 +13,7 @@ import java.util.List;
 public class ChatActivityStartAo implements Serializable, BaseBean {
 
     // View
+    @Deprecated(since = "2025/8/2; chatActivity自己会拿，不需要传递，多此一举")
     public List<ChatMessageItemVo> chatMessageListItemVo;
 
     /**
@@ -33,4 +35,15 @@ public class ChatActivityStartAo implements Serializable, BaseBean {
 
     // 初始化的输入框
     public String inputText;
+
+    public static ChatActivityStartAo getStartAoByChatContactItemAo(ChatContactItemAo ao, String inputText){
+        ChatActivityStartAo startAo = new ChatActivityStartAo();
+        startAo.contactName = ao.chatContactItemVo.name;
+        startAo.avatarUrl = ao.chatContactItemVo.avatarUrlOrUri;
+        startAo.contactAccount = ao.contactAccount;
+        startAo.contactId = ao.userId;
+        startAo.inputText = Optional.ofNullable(inputText).orElse("");
+        return startAo;
+    }
+
 }

@@ -240,7 +240,8 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 3天
   * 7月3~7月5
 
-aop 实现切面参数校验
+todo JVM调参, 解决redis爆炸问题(已解决,redis.conf配置持久化路径问题, 在C盘出现没有权限写入问题)
+todo 学习dubbo;实现dubbo服务能够动态注册生产者,让消消费者动态获取生产者注册服务
 todo 提高系统的鲁棒性：（单点，各种场景考虑，性能分析，中间件分析）
 todo 推荐系统已经推荐的post编辑进入已推荐过,召回阶段不再选取
 todo 一定要加上Spark,Hive,Hadoop,实现大数据
@@ -252,6 +253,8 @@ todo 明天继续跑通IM和post
 商品购物系统需要加入(后台配置秒杀活动)
 修好这个项目基本的全部Bug并且基本实现大部分通用功能再开新项目
 todo 推荐页面加入部分购物推荐, 搜索商品, 挂号预约(秒杀)
+todo 如果想要走Android C++就需要完成NDK + RTMP实现直播推流
+todo Redisson 替换 Redis
 
 ##### 重构+细化
 * spring学习

@@ -1,7 +1,6 @@
 package com.czy.customviewlib.view.chatMessage;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-
-
+import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.customviewlib.R;
 import com.czy.customviewlib.databinding.ViewReceivedMessageItemBinding;
 import com.czy.customviewlib.databinding.ViewSendMessageItemBinding;
+import com.czy.dal.constant.MessageTypeEnum;
 import com.czy.dal.vo.entity.chat.ChatMessageDiffCallback;
 import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 
@@ -60,12 +59,26 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    private List<ChatMessageItemVo> currentList;
+    private final List<ChatMessageItemVo> currentList = new ArrayList<>();
 
     // 更新View，与当前的view对比然后更新指定的view
     @SuppressLint("NotifyDataSetChanged")
     public void setCurrentList(List<ChatMessageItemVo> newList){
-        if (this.currentList != null){
+        // 入参为null
+        if (newList == null){
+            currentList.clear();
+            notifyDataSetChanged();
+            // 滚动到最底部
+            Optional.ofNullable(onSetMessage)
+                    .ifPresent(Runnable::run);
+            return;
+        }
+        // 相同地址的情况
+        if (newList == currentList){
+            // 地址相同直接更新
+            notifyDataSetChanged();
+        }
+        else {
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ChatMessageDiffCallback(this.currentList, newList));
             this.currentList.clear();
             this.currentList.addAll(newList);
@@ -73,20 +86,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             // TODO BUG此处有问题，暂时使用全部更新Bug
             notifyItemChanged(newList.size() - 1);
         }
-        else {
-            this.currentList = new ArrayList<>();
-            this.currentList.addAll(newList);
-            notifyDataSetChanged();
-        }
 
         // 滚动到最底部
         Optional.ofNullable(onSetMessage)
                         .ifPresent(Runnable::run);
     }
 
-    public ChatMessageAdapter(List<ChatMessageItemVo> list){
-        this.currentList = new ArrayList<>();
-        this.currentList.addAll(list);
+    public ChatMessageAdapter(){
     }
 
     //实现不同的viewType
@@ -112,27 +118,34 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ChatMessageItemVo chatMessageItemVo = currentList.get(position);
-        if (chatMessageItemVo.viewType == ChatMessageItemVo.VIEW_TYPE_SENDER){
+        ChatMessageItemVo vo = currentList.get(position);
+        if (vo.viewType == ChatMessageItemVo.VIEW_TYPE_SENDER){
             // 处理发送方对话框的数据和视图
-            ((SenderViewHolder) holder).binding.tvMessage.setText(chatMessageItemVo.content);
-            ((SenderViewHolder) holder).binding.tvTime.setText(chatMessageItemVo.time);
-            if (chatMessageItemVo.bitmap != null){
+            ((SenderViewHolder) holder).binding.tvMessage.setText(vo.content);
+            ((SenderViewHolder) holder).binding.tvTime.setText(vo.time);
+            if (MessageTypeEnum.image.code == vo.messageType){
                 ((SenderViewHolder) holder).binding.imgvMessage.setVisibility(View.VISIBLE);
-                ((SenderViewHolder) holder).binding.imgvMessage.setImageBitmap(chatMessageItemVo.bitmap);
+                // 加载图片
+                ImageLoadUtil.loadImageViewByResource(
+                        vo.avatarUrlOrUri,
+                        ((SenderViewHolder) holder).binding.imgvMessage
+                );
             }
             else {
                 ((SenderViewHolder) holder).binding.imgvMessage.setVisibility(View.GONE);
             }
-            Log.e("Intercep", "chatMessageItemVo.bitmap: " + chatMessageItemVo.bitmap + " position: " + position);
         }
         else {
             // 处理发送方对话框的数据和视图
-            ((ReceiverViewHolder) holder).binding.tvMessage.setText(chatMessageItemVo.content);
-            ((ReceiverViewHolder) holder).binding.tvTime.setText(chatMessageItemVo.time);
-            if (chatMessageItemVo.bitmap != null){
+            ((ReceiverViewHolder) holder).binding.tvMessage.setText(vo.content);
+            ((ReceiverViewHolder) holder).binding.tvTime.setText(vo.time);
+            if (MessageTypeEnum.image.code == vo.messageType){
                 ((ReceiverViewHolder) holder).binding.imgvMessage.setVisibility(View.VISIBLE);
-                ((ReceiverViewHolder) holder).binding.imgvMessage.setImageBitmap(chatMessageItemVo.bitmap);
+                // 加载图片
+                ImageLoadUtil.loadImageViewByResource(
+                        vo.avatarUrlOrUri,
+                        ((ReceiverViewHolder) holder).binding.imgvMessage
+                );
             }
             else {
                 ((ReceiverViewHolder) holder).binding.imgvMessage.setVisibility(View.GONE);
@@ -142,7 +155,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return Optional.ofNullable(this.currentList)
+        return Optional.of(this.currentList)
                 .map(List::size)
                 .orElse(0);
     }

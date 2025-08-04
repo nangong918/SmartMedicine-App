@@ -30,7 +30,7 @@ import com.czy.dal.dto.http.request.RegisterUserRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
-import com.czy.dal.vo.entity.UserVo;
+import com.czy.dal.vo.entity.UserEntityVo;
 import com.czy.dal.vo.fragmentActivity.RegisterVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
@@ -194,7 +194,7 @@ public class RegisterViewModel extends ViewModel {
         );
     }
 
-    private void handleFileUpload(BaseResponse<UserVo> userVoBaseResponse, Context context, SyncRequestCallback callback) {
+    private void handleFileUpload(BaseResponse<UserEntityVo> userVoBaseResponse, Context context, SyncRequestCallback callback) {
         // 后面userVo可能有用，目前还未开放，毕竟user的全部vo信息都在这里了
         callback.onAllRequestSuccess();
     }

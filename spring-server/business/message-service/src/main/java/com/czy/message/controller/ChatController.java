@@ -11,7 +11,7 @@ import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.Do.message.UserChatMessageEsDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.message.FetchUserMessageAo;
-import com.czy.api.domain.bo.message.UserChatLastMessageBo;
+import com.czy.api.domain.bo.message.UserChatLastViewMessageBo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.base.BaseHttpRequest;
@@ -143,7 +143,7 @@ public class ChatController {
             return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
         }
         // 获取用户的最新消息List
-        List<UserChatLastMessageBo> lastMessageList = chatService.getUserAllChatMessage(request.getSenderId());
+        List<UserChatLastViewMessageBo> lastMessageList = chatService.getUserAllChatMessage(request.getSenderId());
         // 封装响应
         UserNewMessageResponse userNewMessageResponse = new UserNewMessageResponse();
         userNewMessageResponse.setLastMessageList(lastMessageList);

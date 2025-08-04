@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.smartmedicine.databinding.FragmentAiBinding;
@@ -22,6 +23,11 @@ public class AiFragment extends BaseFragment<FragmentAiBinding> {
     }
 
     @Override
+    public FragmentAiBinding getBinding() {
+        return FragmentAiBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -33,9 +39,11 @@ public class AiFragment extends BaseFragment<FragmentAiBinding> {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+
     @Override
-    protected void init() {
-        super.init();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // initView(); 此处binding才生效
     }
 
     @Override

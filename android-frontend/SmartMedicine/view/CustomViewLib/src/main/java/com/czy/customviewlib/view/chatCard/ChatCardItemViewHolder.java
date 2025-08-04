@@ -2,7 +2,6 @@ package com.czy.customviewlib.view.chatCard;
 
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
@@ -24,7 +23,7 @@ public class ChatCardItemViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void bind(ChatContactItemAo chatContactItemAo){
-        ImageLoadUtil.loadImageViewByResource(chatContactItemAo.chatContactItemVo.avatarUrlOrUri, binding.imvgAvatar);
+        ImageLoadUtil.loadImageViewByNetWork(chatContactItemAo.chatContactItemVo.avatarUrlOrUri, binding.imvgAvatar);
         binding.tvName.setText(chatContactItemAo.chatContactItemVo.name);
         binding.tvMessagePreview.setText(chatContactItemAo.chatContactItemVo.messagePreview);
         binding.tvTime.setText(chatContactItemAo.chatContactItemVo.time);

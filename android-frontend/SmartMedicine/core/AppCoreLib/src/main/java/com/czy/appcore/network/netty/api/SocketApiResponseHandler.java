@@ -3,12 +3,13 @@ package com.czy.appcore.network.netty.api;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.czy.appcore.network.netty.api.receive.FriendApiHandler;
 import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
-import com.czy.dal.annotation.MessageType;
+import com.czy.appcore.network.netty.api.receive.FriendApiHandler;
+import com.czy.appcore.network.netty.api.receive.OssApiHandler;
 import com.czy.appcore.network.netty.queue.SocketMessageQueue;
-import com.czy.dal.netty.Message;
+import com.czy.dal.annotation.MessageType;
 import com.czy.dal.dto.netty.base.BaseResponseData;
+import com.czy.dal.netty.Message;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -137,11 +138,14 @@ public class SocketApiResponseHandler {
     private static final Map<String, Class<? extends BaseResponseData>> messageTypeMap;
 
     static {
+        // 在此处注册NettyApiHandler接口
         messageTypeMap = new HashMap<>();
         // 处理 FriendApiHandler 接口的注解
         registerApi(FriendApiHandler.class);
         // 处理 ChatApiHandler 接口的注解
         registerApi(ChatApiHandler.class);
+        // 处理 OssApiHandler 接口的注解
+        registerApi(OssApiHandler.class);
     }
 
     @SuppressWarnings("unchecked")

@@ -12,8 +12,8 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class HaveReadMessageResponse extends BaseResponseData implements BaseBean {
-    // 我发送了消息，接收者已经把我消息读取了；receiverAccount是读取我消息的人
-    public String receiverAccount;
+    // 读取的人的id
+    public Long haveReadUserId;
     public HaveReadMessageResponse(){
         super();
         this.senderId = NettyConstants.SERVER_ID;
@@ -22,7 +22,7 @@ public class HaveReadMessageResponse extends BaseResponseData implements BaseBea
     @Override
     public Map<String, String> toDataMap() {
         Map<String, String> map = super.toDataMap();
-        map.put("receiverAccount", receiverAccount);
+        map.put("haveReadUserId", String.valueOf(haveReadUserId));
         return map;
     }
 }

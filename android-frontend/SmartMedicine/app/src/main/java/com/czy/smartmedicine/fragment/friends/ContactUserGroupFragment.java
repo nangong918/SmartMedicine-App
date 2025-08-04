@@ -3,15 +3,13 @@ package com.czy.smartmedicine.fragment.friends;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
@@ -22,8 +20,8 @@ import com.czy.dal.vo.fragmentActivity.ContactUserGroupVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.UserBriefActivity;
 import com.czy.smartmedicine.databinding.FragmentContactUserGroupBinding;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.ContactUserGroupViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -39,9 +37,14 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
     }
 
     @Override
+    public FragmentContactUserGroupBinding getBinding() {
+        return FragmentContactUserGroupBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        initViewModel();
     }
 
     @Override
@@ -54,17 +57,11 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initView();
         changeToDo(position);
     }
 
-    @Override
-    protected void init() {
-        super.init();
-        initView();
-    }
-
     private void initView(){
-        initViewModel();
 
         initRecyclerView();
     }

@@ -9,17 +9,18 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class HaveReadMessageRequest extends BaseRequestData {
-    public String receiverUserAccount;
+    // receiverId是SERVER_ID；receiverUserId是接收USER_ID
+    public Long receiverUserId;
     public HaveReadMessageRequest(){
         super();
         this.timestamp = String.valueOf(System.currentTimeMillis());
         this.receiverId = NettyConstants.SERVER_ID;
     }
 
-    public HaveReadMessageRequest(String haveBeenReadAccount){
+    public HaveReadMessageRequest(Long haveBeenReadUserId){
         super();
         this.timestamp = String.valueOf(System.currentTimeMillis());
         this.receiverId = NettyConstants.SERVER_ID;
-        this.receiverUserAccount = haveBeenReadAccount;
+        this.receiverUserId = haveBeenReadUserId;
     }
 }

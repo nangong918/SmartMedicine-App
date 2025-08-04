@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCaller;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -46,24 +47,25 @@ public class PostClickManager {
     // 启动postActivity的IntentLauncher
     private ActivityResultLauncher<Intent> openPostActivityLauncher;
 
-    public PostClickManager(@NonNull List<PostAo> postAoList, @NonNull SocketMessageSender sender, @NonNull FragmentActivity activity){
+    public PostClickManager(@NonNull List<PostAo> postAoList, @NonNull SocketMessageSender sender,
+                            @NonNull ActivityResultCaller activityResultCaller){
         this.postAoList = postAoList;
         this.socketSender = sender;
-        initActivityLauncher(activity);
+        initActivityLauncher(activityResultCaller);
     }
 
     private long startReadPostTime = System.currentTimeMillis();
 
-    private void initActivityLauncher(FragmentActivity activity){
-        openPostActivityLauncher = activity.registerForActivityResult(
+    private void initActivityLauncher(ActivityResultCaller caller) {
+        openPostActivityLauncher = caller.registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK){
+                    if (result.getResultCode() == Activity.RESULT_OK) {
                         // 计算观看时长
                         long endTime = System.currentTimeMillis();
                         long duration = endTime - startReadPostTime;
 
-                        if (result.getData() == null){
+                        if (result.getData() == null) {
                             Log.w(TAG, "浏览post返回结果失败，result.getData() == null");
                             return;
                         }
@@ -71,8 +73,7 @@ public class PostClickManager {
                         Long postId = result.getData().getLongExtra(PostIntentAo.POST_ID, NettyConstants.ERROR_ID);
                         // 记录观看时长
                         recordViewingDuration(duration, postId);
-                    }
-                    else {
+                    } else {
                         Log.w(TAG, "打开帖子失败");
                     }
                 }

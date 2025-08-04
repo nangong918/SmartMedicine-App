@@ -45,11 +45,21 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public String get(String key) {
-        return redisTemplate.execute((RedisCallback<String>) connection -> {
-            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-            byte[] value = connection.get(serializer.serialize(key));
-            return serializer.deserialize(value);
-        });
+        try {
+            return redisTemplate.execute((RedisCallback<String>) connection -> {
+                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+                byte [] keyBytes = serializer.serialize(key);
+                if (keyBytes == null) {
+                    log.warn("RedisService:key: {}, keyBytes is null", key);
+                    return null;
+                }
+                byte[] value = connection.get(keyBytes);
+                return value != null ? serializer.deserialize(value) : null;
+            });
+        } catch (Exception e) {
+            log.error("Error getting value from Redis: ", e);
+            return null; // 或者抛出自定义异常
+        }
     }
 
     @Override

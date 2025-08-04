@@ -5,16 +5,10 @@ import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.netty.base.BaseResponseData;
 
 public class HaveReadMessageResponse extends BaseResponseData implements BaseBean {
-    // 我发送了消息，接收者已经把我消息读取了；receiverAccount是读取我消息的人
-    public String receiverAccount;
+    // 读取的人的id
+    public Long haveReadUserId;
     public HaveReadMessageResponse(){
         super();
         this.senderId = NettyConstants.SERVER_ID;
-    }
-    public HaveReadMessageResponse(String receiverAccount, String timeStamp){
-        super();
-        this.senderId = NettyConstants.SERVER_ID;
-        this.receiverAccount = receiverAccount;
-        this.timestamp = timeStamp;
     }
 }

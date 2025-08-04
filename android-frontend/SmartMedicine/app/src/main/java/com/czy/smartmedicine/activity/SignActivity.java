@@ -37,6 +37,11 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
     //---------------------------init---------------------------
 
     @Override
+    public ActivitySignBinding getBinding() {
+        return ActivitySignBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     protected void init() {
         super.init();
 

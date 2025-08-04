@@ -3,31 +3,24 @@ package com.czy.baseUtilsLib.activity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.viewbinding.ViewBinding;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.util.Optional;
 
 
 /**
  * 解决ViewBinding重复代码    （通过反射实现）
  * @param <viewBinding>     视图绑定类型
  */
-public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActivity {
+public abstract class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActivity {
     protected viewBinding binding;
     protected final String activityName;
     protected final String TAG;
@@ -36,6 +29,8 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
 //        this.activityName = activityName;
 //        TAG = activityName;
 //    }
+
+    public abstract viewBinding getBinding();
 
     public BaseActivity(Class<?> classType){
         this.activityName = classType.getSimpleName();
@@ -46,7 +41,9 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initViewBinding();
+//        initViewBinding();
+        this.binding = getBinding();
+        setContentView(binding.getRoot());
 
         init();
         initData();
@@ -56,10 +53,10 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
     @Override
     protected void onStart() {
         super.onStart();
-        // TODO 再考虑
 //        initView();
     }
 
+/*
     private void initViewBinding(){
         // 反射获取泛型的父类型即：BaseViewBindActivity<viewBinding extends ViewBinding>    （BaseViewBindActivity<ActivityMainBinding>）
         Type superclass = getClass().getGenericSuperclass();
@@ -84,6 +81,7 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
             Log.e(TAG, "发生未知错误: " + e.getMessage(), e);
         }
     }
+*/
 
     private void initWindow(){
 
@@ -102,14 +100,23 @@ public class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActi
 //                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
 //                View.SYSTEM_UI_FLAG_FULLSCREEN);
 
-        EdgeToEdge.enable(this);
+//        EdgeToEdge.enable(this);
+//
+//        // 处理窗口插入
+//        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
 
-        // 处理窗口插入
-        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //去除标题导航栏
+        Optional.ofNullable(getSupportActionBar())
+                .ifPresent(ActionBar::hide);
+        //去除时间和电量等
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
     }
 
     // 将头部的Bar隐藏

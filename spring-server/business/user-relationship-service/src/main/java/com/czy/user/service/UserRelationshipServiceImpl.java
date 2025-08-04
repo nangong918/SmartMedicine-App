@@ -23,6 +23,7 @@ import com.czy.api.domain.bo.relationship.NewUserItemBo;
 import com.czy.api.domain.bo.relationship.SearchFriendApplyBo;
 import com.czy.api.domain.dto.socket.response.HandleAddUserResponse;
 import com.czy.api.domain.entity.ChatEntity;
+import com.czy.api.domain.entity.FriendViewEntity;
 import com.czy.api.domain.entity.MessageEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.entity.event.Message;
@@ -312,7 +313,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public List<UserViewEntity> getFriendList(Long senderId) {
-        return userFriendMapper.getUserFriendsViewByUserId(senderId);
+        return userFriendMapper.getUsersViewByUserId(senderId);
     }
 
     @Override
@@ -352,7 +353,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
 
     @Override
     public List<MyFriendItemAo> getMyFriendList(Long senderId) {
-        List<UserViewEntity> list = userFriendMapper.getUserFriendsViewByUserId(senderId);
+        List<UserViewEntity> list = userFriendMapper.getUsersViewByUserId(senderId);
         List<MyFriendItemAo> myFriendItemAoList = new ArrayList<>();
         Optional.ofNullable(list)
                 .ifPresent(list1 -> {
@@ -459,6 +460,21 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
             // dubbo会循环调用，此处必须用mq
             toSocketMqSender.push(deleteMessage);
         }
+    }
+
+    @Override
+    public List<FriendViewEntity> getFriendsViewByUserIdFriendsId(Long userId, List<Long> friendsId) {
+        return userFriendMapper.getFriendsViewByUserIdFriendsId(userId, friendsId);
+    }
+
+    @Override
+    public FriendViewEntity getFriendViewByUserFriendId(Long userId, Long friendId) {
+        return userFriendMapper.getFriendsViewByUserIdFriendId(userId, friendId);
+    }
+
+    @Override
+    public List<FriendViewEntity> getFriendsViewByUserId(Long userId) {
+        return userFriendMapper.getFriendsViewByUserId(userId);
     }
 
     private Long getUserId(String account){

@@ -14,4 +14,6 @@ public class UserFriendDo implements BaseBean {
     private Long friendId;
     private Long addTime = System.currentTimeMillis();
     private Long lastChatTime;
+    private String remarkUserForFriend;
+    private String remarkFriendForUser;
 }

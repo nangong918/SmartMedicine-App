@@ -63,13 +63,13 @@ public class ChatHandler implements ChatApi {
     private final UserChatMessageMongoMapper userChatMessageMongoMapper;
 
     private boolean checkParams(@NonNull BaseRequestData request, String content){
-        return request.checkParams() && StringUtils.hasText(content);
+        return !request.checkParams() || !StringUtils.hasText(content);
     }
 
     @Override
     public void sendTextMessageToUser(SendTextDataRequest request) {
         // 参数校验
-        if (!checkParams(request, request.getContent())){
+        if (checkParams(request, request.getContent())){
             NettyUtils.sendErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqErrorSender);
             throw new NettyException(CommonExceptions.PARAM_ERROR, request.getSenderId());
         }
@@ -91,6 +91,7 @@ public class ChatHandler implements ChatApi {
         UserChatLastMessageBo bo = getUserChatLastMessageBo(
                 request,
                 request.getContent(),
+                null,
                 senderDo,
                 receiverDo,
                 MessageTypeEnum.text.code
@@ -166,7 +167,7 @@ public class ChatHandler implements ChatApi {
     @Override
     public void sendImageToUser(SendImageRequest request) {
         // 参数校验
-        if (checkParams(request, request.getFileName())){
+        if (checkParams(request, request.getFileName()) || !request.checkParams()){
             NettyUtils.sendErrorMessage(request.getSenderId(), CommonExceptions.PARAM_ERROR, rabbitMqErrorSender);
             throw new NettyException(CommonExceptions.PARAM_ERROR, request.getSenderId());
         }
@@ -186,8 +187,10 @@ public class ChatHandler implements ChatApi {
         long imageSnowflakeId = IdUtil.getSnowflakeNextId();
         String fileIdStr = String.valueOf(imageSnowflakeId);
 
+        // 获取存储到redis的bo
         UserChatLastMessageBo bo = getUserChatLastMessageBo(
                 request,
+                request.getContent(),
                 fileIdStr,
                 senderDo,
                 receiverDo,
@@ -196,6 +199,8 @@ public class ChatHandler implements ChatApi {
 
         // 缓存到Redis
         chatService.saveUserChatMessageToRedis(bo);
+
+        // todo 持久化到数据库应该在http上传image成功之后再执行
 
         // 持久化到MySQL
         UserChatMessageDo userChatMessageDo = getUserChatMessageDo(
@@ -245,6 +250,7 @@ public class ChatHandler implements ChatApi {
     private UserChatLastMessageBo getUserChatLastMessageBo(
             BaseRequestData request,
             String content,
+            String fileIdStr,
             UserDo senderDo,
             UserDo receiverDo,
             int msgType
@@ -258,6 +264,9 @@ public class ChatHandler implements ChatApi {
         bo.setReceiverAccount(receiverDo.getAccount());
 
         bo.setMsgContent(content);
+        if (StringUtils.hasText(fileIdStr)){
+            bo.setFileIdStr(fileIdStr);
+        }
         bo.setTimestamp(
                 Optional.ofNullable(request.getTimestamp())
                         .map(timeL -> {

@@ -6,6 +6,7 @@ import com.czy.api.domain.dto.base.BaseRequestData;
 import json.BaseBean;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.util.StringUtils;
 
 /**
  * @author 13225
@@ -20,4 +21,9 @@ public class SendImageRequest extends BaseRequestData implements BaseBean {
     public String androidMessageId;
     // 文本消息内容
     public String content;
+
+    public boolean checkParams(){
+        return StringUtils.hasText(fileName) &&
+                StringUtils.hasText(androidMessageId);
+    }
 }

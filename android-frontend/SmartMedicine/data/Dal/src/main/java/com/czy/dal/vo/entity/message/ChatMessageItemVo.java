@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.dal.constant.MessageTypeEnum;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -22,7 +23,7 @@ public class ChatMessageItemVo implements Serializable {
     private static final String TAG = ChatMessageItemVo.class.getSimpleName();
 
 
-    private final String itemId;
+    private String itemId;
     private final long createdTimestamp;
 
     public ChatMessageItemVo(){
@@ -32,6 +33,10 @@ public class ChatMessageItemVo implements Serializable {
 
     public String getItemId(){
         return itemId;
+    }
+
+    public void setItemId(String itemId){
+        this.itemId = itemId;
     }
 
     public long getCreatedTimestamp(){
@@ -53,7 +58,9 @@ public class ChatMessageItemVo implements Serializable {
     public Boolean isRead;
 
     // 图片资源
+    @Deprecated(since = "2025/8/4 现在使用minio生成的uri加载，而不是直接从后端获取byte[]")
     public Bitmap bitmap = null;
+    public File imageFile;
 
     // 发送消息类型
     public int viewType;
@@ -123,7 +130,8 @@ public class ChatMessageItemVo implements Serializable {
                 thisViewType == thatViewType &&
                 thisMessageType == thatMessageType &&
                 thisTimestamp == thatTimestamp &&
-                Objects.equals(thisBitmap, thatBitmap);
+                Objects.equals(thisBitmap, thatBitmap)
+                ;
     }
 
     @Override

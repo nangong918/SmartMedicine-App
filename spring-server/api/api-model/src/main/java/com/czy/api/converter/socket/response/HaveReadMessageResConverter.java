@@ -31,7 +31,7 @@ public interface HaveReadMessageResConverter {
             message = new Message();
         }
         Map<String, String> data = new HashMap<>();
-        data.put("receiverAccount", response.getReceiverAccount());
+        data.put("haveReadUserId", String.valueOf(response.haveReadUserId));
         message.setData(data);
         return message;
     }

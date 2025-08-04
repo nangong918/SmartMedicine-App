@@ -28,6 +28,11 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
     }
 
     @Override
+    public ActivityNewUserGroupBinding getBinding() {
+        return ActivityNewUserGroupBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     protected void init() {
         super.init();
 

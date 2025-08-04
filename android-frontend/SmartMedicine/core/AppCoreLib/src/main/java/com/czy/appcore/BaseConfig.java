@@ -34,6 +34,8 @@ public class BaseConfig extends com.czy.baseUtilsLib.config.BaseConfig {
 
     // StartActivity 等待时长
     public static final int DELAY_TIME = 2000;
+    // 默认一次获取消息数量
+    public static final int DEFAULT_MESSAGE_FETCH_COUNT = 20;
 
     // SocketMessageQueue
     // 消息队列决定持久化阈值

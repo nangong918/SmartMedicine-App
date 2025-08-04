@@ -5,6 +5,7 @@ import com.czy.api.domain.ao.relationship.HandleAddedMeAo;
 import com.czy.api.domain.ao.relationship.MyFriendItemAo;
 import com.czy.api.domain.ao.relationship.NewUserItemAo;
 import com.czy.api.domain.ao.relationship.SearchFriendApplyAo;
+import com.czy.api.domain.entity.FriendViewEntity;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.UserViewEntity;
 
@@ -81,4 +82,14 @@ public interface UserRelationshipService {
     void deleteApplyStatus(AddUserAo addUserAo);
 
     void deleteFriend(AddUserAo addUserAo);
+
+    /**
+     * 获取用户好友列表
+     * @param userId        用户id
+     * @param friendsId     好友id
+     * @return              好友列表
+     */
+    List<FriendViewEntity> getFriendsViewByUserIdFriendsId(Long userId, List<Long> friendsId);
+    FriendViewEntity getFriendViewByUserFriendId(Long userId, Long friendId);
+    List<FriendViewEntity> getFriendsViewByUserId(Long userId);
 }

@@ -47,6 +47,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     @Override
+    public ActivityMainBinding getBinding() {
+        return ActivityMainBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     protected void init() {
         super.init();
         initView();

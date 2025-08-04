@@ -1,7 +1,6 @@
 package com.czy.smartmedicine.fragment.friends;
 
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -24,15 +23,15 @@ import com.czy.dal.ao.intent.SearchActivityIntentAo;
 import com.czy.dal.constant.SearchEnum;
 import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
-import com.czy.dal.vo.view.mainTop.MainTopBarVo;
 import com.czy.dal.vo.fragmentActivity.FriendsVo;
+import com.czy.dal.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.NewUserGroupActivity;
 import com.czy.smartmedicine.activity.SearchActivity;
 import com.czy.smartmedicine.databinding.FragmentFriendsBinding;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.FriendsViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.Optional;
 
@@ -50,8 +49,15 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
     }
 
     @Override
+    public FragmentFriendsBinding getBinding() {
+        return FragmentFriendsBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initViewModel();
+
     }
 
     @Override
@@ -64,6 +70,8 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        initView();
 
         // 获取屏幕高度
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -88,14 +96,6 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
             params.height = Math.max(viewPagerHeight, 0); // 确保高度不为负值
             binding.viewPager2.setLayoutParams(params);
         });
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    protected void init() {
-        super.init();
-        initView();
-        initViewModel();
     }
 
     //-----------------------ViewModel-----------------------
