@@ -153,7 +153,7 @@ public class ChatViewModel extends ViewModel {
                 .map(ao -> ao.chatMessageList)
 //                .map(LiveData::getValue)
                 .orElse(new ArrayList<>());
-        chatMessageAdapter = new ChatMessageAdapter(chatMessageList);
+        chatMessageAdapter = new ChatMessageAdapter();
         chatMessageAdapter.setOnSetMessageCallback(
                 () -> {
                     // recyclerView滚动到最下面

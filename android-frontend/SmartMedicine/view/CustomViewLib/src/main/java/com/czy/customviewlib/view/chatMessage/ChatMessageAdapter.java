@@ -60,12 +60,26 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    private List<ChatMessageItemVo> currentList;
+    private final List<ChatMessageItemVo> currentList = new ArrayList<>();
 
     // 更新View，与当前的view对比然后更新指定的view
     @SuppressLint("NotifyDataSetChanged")
     public void setCurrentList(List<ChatMessageItemVo> newList){
-        if (this.currentList != null){
+        // 入参为null
+        if (newList == null){
+            currentList.clear();
+            notifyDataSetChanged();
+            // 滚动到最底部
+            Optional.ofNullable(onSetMessage)
+                    .ifPresent(Runnable::run);
+            return;
+        }
+        // 相同地址的情况
+        if (newList == currentList){
+            // 地址相同直接更新
+            notifyDataSetChanged();
+        }
+        else {
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ChatMessageDiffCallback(this.currentList, newList));
             this.currentList.clear();
             this.currentList.addAll(newList);
@@ -73,20 +87,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             // TODO BUG此处有问题，暂时使用全部更新Bug
             notifyItemChanged(newList.size() - 1);
         }
-        else {
-            this.currentList = new ArrayList<>();
-            this.currentList.addAll(newList);
-            notifyDataSetChanged();
-        }
 
         // 滚动到最底部
         Optional.ofNullable(onSetMessage)
                         .ifPresent(Runnable::run);
     }
 
-    public ChatMessageAdapter(List<ChatMessageItemVo> list){
-        this.currentList = new ArrayList<>();
-        this.currentList.addAll(list);
+    public ChatMessageAdapter(){
     }
 
     //实现不同的viewType
