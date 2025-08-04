@@ -91,20 +91,15 @@ public class MessageViewModel extends ViewModel {
     public ChatContactAdapter chatContactAdapter;
 
     public void initRecyclerView(@NonNull RecyclerView recyclerView, @NonNull FragmentActivity activity){
-        ChatContactListVo recyclerViewVo = Optional.ofNullable(messageVo)
-                .map(vo -> vo.chatContactListVo)
-                .orElse(new ChatContactListVo());
-
         // 初始化Adapter
         this.chatContactAdapter = new ChatContactAdapter(
-                recyclerViewVo.chatContactList,
                 getOnPositionClickListener(activity)
         );
 
         // 绑定Adapter
         recyclerView.setAdapter(chatContactAdapter);
 
-        // initView
+        // 初始化view
         chatContactAdapter.setCurrentList(messageVo.chatContactListVo.chatContactList);
     }
 
@@ -296,8 +291,34 @@ public class MessageViewModel extends ViewModel {
         }
         // 非首次打开，读取内存数据
         else {
-            ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
-            messageVo.chatContactListVo.chatContactList = chatMessageManager.getRecentContactMessages();
+            // 从缓存获取数据
+            messageVo.chatContactListVo.chatContactList = Optional.ofNullable(MainApplication.getInstance().getChatMessageManager())
+                    .map(ChatMessageManager::getRecentContactMessages)
+                    .orElse(new ArrayList<>());
+
+            // 通知adapter更新view
+            // 创建 Handler
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            // 定义 Runnable
+            Runnable checkAdapterRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (chatContactAdapter != null){
+                        // 更新 UI
+                        chatContactAdapter.setCurrentList(messageVo.chatContactListVo.chatContactList);
+                        Log.i(TAG, "chatContactAdapter is not null, 刷新ui");
+                    }
+                    else{
+                        // 如果 chatContactAdapter 仍然为 null，300 毫秒后继续检查
+                        Log.i(TAG, "chatContactAdapter is null 继续等待300");
+                        handler.postDelayed(this, 300);
+                    }
+                }
+            };
+
+            // 开始检查
+            handler.post(checkAdapterRunnable);
         }
     }
 

@@ -148,11 +148,6 @@ public class ChatViewModel extends ViewModel {
 
     @SuppressLint("NotifyDataSetChanged")
     public void initRecyclerView(@NonNull RecyclerView recyclerView){
-        List<ChatMessageItemVo> chatMessageList = Optional.ofNullable(chatVo)
-                .map(ao -> ao.chatListVo)
-                .map(ao -> ao.chatMessageList)
-//                .map(LiveData::getValue)
-                .orElse(new ArrayList<>());
         chatMessageAdapter = new ChatMessageAdapter();
         chatMessageAdapter.setOnSetMessageCallback(
                 () -> {
@@ -167,7 +162,9 @@ public class ChatViewModel extends ViewModel {
         );
 
         // 初始化view
-        chatMessageAdapter.notifyDataSetChanged();
+        chatMessageAdapter.setCurrentList(
+                chatVo.chatListVo.chatMessageList
+        );
     }
 
     //-----------------------Start-----------------------
@@ -205,6 +202,7 @@ public class ChatViewModel extends ViewModel {
             fetchUserMessage(System.currentTimeMillis(), BaseConfig.DEFAULT_MESSAGE_FETCH_COUNT);
         }
         else {
+            // 从缓存获取数据
             List<MessageItem> messageItems = Optional.ofNullable(MainApplication.getInstance().getChatMessageManager())
                     .map(manager -> manager.getChatMessages(contactId))
                     .orElse(new ArrayList<>());
@@ -235,7 +233,8 @@ public class ChatViewModel extends ViewModel {
                         // 更新 UI
                         chatMessageAdapter.setCurrentList(chatVo.chatListVo.chatMessageList);
                         Log.i(TAG, "chatMessageAdapter is not null, 更新ui");
-                    } else {
+                    }
+                    else {
                         // 如果 chatMessageAdapter 仍然为 null，300 毫秒后继续检查
                         Log.i(TAG, "chatMessageAdapter is null 继续等待300");
                         handler.postDelayed(this, 300);

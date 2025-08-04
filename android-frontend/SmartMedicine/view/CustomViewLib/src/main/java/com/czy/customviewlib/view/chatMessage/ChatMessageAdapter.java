@@ -149,7 +149,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return Optional.ofNullable(this.currentList)
+        return Optional.of(this.currentList)
                 .map(List::size)
                 .orElse(0);
     }
