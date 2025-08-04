@@ -109,11 +109,13 @@ public class MessageViewModel extends ViewModel {
                     .map(vo -> vo.chatContactListVo)
                     .orElse(new ChatContactListVo());
 
-            // 启动Ao
-            ChatActivityStartAo chatActivityStartAo = getChatActivityStartAo(
+            // 获取ChatActivity启动Ao
+            ChatActivityStartAo chatActivityStartAo = ChatActivityStartAo.getStartAoByChatContactItemAo(
                     Optional.ofNullable(recyclerViewVo.chatContactList)
                             .map(list -> list.get(position))
                             .orElse(new ChatContactItemAo())
+                    ,
+                    ""
             );
 
             // 归零未读
@@ -132,21 +134,6 @@ public class MessageViewModel extends ViewModel {
             intent.putExtra(ChatActivityStartAo.class.getName(), chatActivityStartAo);
             activity.startActivity(intent);
         };
-    }
-
-    private ChatActivityStartAo getChatActivityStartAo(ChatContactItemAo chatContactItemAo){
-        ChatActivityStartAo startAo = new ChatActivityStartAo();
-        startAo.contactAccount = chatContactItemAo.contactAccount;
-        startAo.contactId = chatContactItemAo.userId;
-        // 初始化的输入框
-        startAo.inputText = "";
-
-        // ChatContactItemVo
-        startAo.contactName = chatContactItemAo.chatContactItemVo.name;
-        startAo.avatarUrl = chatContactItemAo.chatContactItemVo.avatarUrlOrUri;
-        // 聊天记录
-//        startAo.chatMessageListItemVo = new LinkedList<>();
-        return startAo;
     }
 
     ;

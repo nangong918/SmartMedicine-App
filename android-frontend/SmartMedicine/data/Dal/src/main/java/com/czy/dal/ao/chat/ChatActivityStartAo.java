@@ -5,6 +5,7 @@ import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -34,4 +35,15 @@ public class ChatActivityStartAo implements Serializable, BaseBean {
 
     // 初始化的输入框
     public String inputText;
+
+    public static ChatActivityStartAo getStartAoByChatContactItemAo(ChatContactItemAo ao, String inputText){
+        ChatActivityStartAo startAo = new ChatActivityStartAo();
+        startAo.contactName = ao.chatContactItemVo.name;
+        startAo.avatarUrl = ao.chatContactItemVo.avatarUrlOrUri;
+        startAo.contactAccount = ao.contactAccount;
+        startAo.contactId = ao.userId;
+        startAo.inputText = Optional.ofNullable(inputText).orElse("");
+        return startAo;
+    }
+
 }
