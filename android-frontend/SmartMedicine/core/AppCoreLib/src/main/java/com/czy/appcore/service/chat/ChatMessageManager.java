@@ -188,10 +188,6 @@ public class ChatMessageManager {
         messageProcessor = new Thread(() -> {
             while (running) {
 
-                // 不断检查消息队列
-                processRecentContactMessage();
-                processChatMessage();
-
                 // 如果没有消息，短暂休眠，避免忙等待
                 if (!checkIsNoMessageNeedProcess()) {
                     try {
@@ -200,9 +196,35 @@ public class ChatMessageManager {
                         Thread.currentThread().interrupt();
                     }
                 }
+
+                // 处理消息
+                processMessage();
             }
         });
         messageProcessor.start();
+    }
+
+    // 防止处理时间大于1秒造成重复处理
+    private final AtomicBoolean isProcessing = new AtomicBoolean(false);
+
+    private void processMessage(){
+        // 检查当前是否在处理
+        if (isProcessing.get()) {
+            Log.i(TAG, "processMessage is processing");
+            return; // 如果正在处理，直接返回
+        }
+
+        // 设置为正在处理
+        if (isProcessing.compareAndSet(false, true)) {
+            try {
+                // 不断检查消息队列
+                processRecentContactMessage();
+                processChatMessage();
+            } finally {
+                // 处理结束，设置为未处理
+                isProcessing.set(false);
+            }
+        }
     }
 
     private void processRecentContactMessage(){
