@@ -13,8 +13,11 @@ import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
+import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.vo.fragmentActivity.HomeVo;
+import com.czy.dal.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
@@ -64,6 +67,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 //                binding.rclvRecommend,
 //                requireActivity()
 //        );
+        ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.HOME));
     }
 
     @Override
