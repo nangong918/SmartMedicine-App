@@ -633,6 +633,15 @@ public class ChatViewModel extends ViewModel {
         }
     }
 
+    /*
+     * TODO  链式调用调试接口
+     *  1. 验证Glide是否能直接加载选择的uri；一个函数自动区分uri和url的加载是否可行
+     *  2. EventBus新的NettyApi接口可行性验证
+     *  3. 数据结构确认：ChatMessageItemVo存放File是否可行？
+     *  4. oss上传之后接受要求上传消息的之后上传接口测试 text/plain 是否可以传递 Long类型数据
+     *  5. 删除原先的在sendMessage的时候就进行http上传的逻辑。
+     *  6. 需要将fileId转为url交给用户2去加载url
+     */
     // 被要求上传图片
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(UploadFileResponse response){
