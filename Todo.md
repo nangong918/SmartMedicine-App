@@ -240,7 +240,8 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 3天
   * 7月3~7月5
 
-todo JVM调参, 解决redis爆炸问题
+todo JVM调参, 解决redis爆炸问题(已解决,redis.conf配置持久化路径问题, 在C盘出现没有权限写入问题)
+todo 学习dubbo;实现dubbo服务能够动态注册生产者,让消消费者动态获取生产者注册服务
 todo 提高系统的鲁棒性：（单点，各种场景考虑，性能分析，中间件分析）
 todo 推荐系统已经推荐的post编辑进入已推荐过,召回阶段不再选取
 todo 一定要加上Spark,Hive,Hadoop,实现大数据
