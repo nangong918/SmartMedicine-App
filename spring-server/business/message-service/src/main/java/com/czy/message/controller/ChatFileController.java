@@ -115,7 +115,16 @@ public class ChatFileController {
         );
 
         // 上传记录数据到mysql
-        ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), senderId, chatPostImageBucket);
+        // 预处理，不需要oss-service赋值fileId
+        List<SuccessFile> successFiles = Optional.ofNullable(fileOptionResult)
+                        .map(FileOptionResult::getSuccessFiles)
+                        .filter(list -> !CollectionUtils.isEmpty(list))
+                        .map(l -> {
+                            l.get(0).setFileId(fileId);
+                            return l;
+                        })
+                        .orElse(new ArrayList<>());
+        ossService.uploadFilesRecord(successFiles, senderId, chatPostImageBucket);
 
         // 获取成功ID
         List<Long> successIds = fileOptionResult.getSuccessFiles()
@@ -131,7 +140,7 @@ public class ChatFileController {
 
         // 从redis获取消息数据存储到mongodb
         // senderId : receiverId : msgFileId
-        String messageRedisKey = MessageConstant.CHAT_MESSAGE_KEY +
+        String messageRedisKey = MessageConstant.OSS_FILE_KET +
                 senderId + ":" + receiverId + ":" + fileId;
 
         UserChatMessageDo messageDo = redissonService.getObjectFromJson(

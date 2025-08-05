@@ -309,6 +309,10 @@ public class OssServiceImpl implements OssService {
             String url = getFileUrl(bucketName, fileStorageName);
             fileUrls.add(url);
         }
+        else {
+            // 数据长度对齐
+            fileUrls.add(null);
+        }
     }
 
     private String getFileUrl(String bucketName, String fileStorageName){
