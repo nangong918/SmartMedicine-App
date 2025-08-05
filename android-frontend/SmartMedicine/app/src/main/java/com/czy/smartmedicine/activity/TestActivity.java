@@ -140,7 +140,7 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
                     .map(Editable::toString)
                     .orElse("");
             if (!TextUtils.isEmpty(url)){
-                ImageLoadUtil.loadImageViewByUrl(url, binding.imgvLoadImage);
+                ImageLoadUtil.loadImageViewByResource(url, binding.imgvLoadImage);
             }
         });
     }
@@ -173,8 +173,10 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
 //                        if (bitmap != null){
 //                            binding.imgvSelectImage.setImageBitmap(bitmap);
 //                        }
-                        ImageLoadUtil.loadImageViewByLocalFile(
-                                imageUri,
+                        ImageLoadUtil.loadImageViewByResource(
+                                Optional.ofNullable(imageUri)
+                                        .map(Uri::toString)
+                                        .orElse(""),
                                 binding.imgvSelectImage
                         );
                     }
