@@ -204,12 +204,12 @@ public class ChatHandler implements ChatApi {
         // 缓存到Redis
         chatService.saveUserChatMessageToRedis(bo);
 
-        // todo 持久化到数据库应该在http上传image成功之后再执行
-
-        // 持久化到MySQL
+        // 获取需要持久化到mongodb的对象
         UserChatMessageDo userChatMessageDo = getUserChatMessageDo(
                 request, fileIdStr, MessageTypeEnum.image.code
         );
+        // 设置fileId
+        userChatMessageDo.setMsgFileId(imageSnowflakeId);
 
         // 存储到服务内存的缓存队列
 //        chatMessageQueue.addMessage(userChatMessageDo);
