@@ -2,7 +2,6 @@ package com.czy.smartmedicine.viewModel.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -44,8 +43,6 @@ import com.czy.dal.dto.netty.forwardMessage.UserImageResponse;
 import com.czy.dal.dto.netty.forwardMessage.UserTextDataResponse;
 import com.czy.dal.dto.netty.request.FetchUserMessageRequest;
 import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
-import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
-import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.HaveReadMessageResponse;
 import com.czy.dal.dto.netty.response.UploadFileResponse;
 import com.czy.dal.vo.entity.message.ChatMessageItemVo;
@@ -143,7 +140,20 @@ public class ChatViewModel extends ViewModel {
                 .map(cvo -> cvo.chatListVo)
                 .map(cvo -> cvo.chatMessageList)
                 .orElse(new ArrayList<>());
-        chatMessageAdapter.setCurrentList(currentList);
+        messageHandler.post(() -> chatMessageAdapter.setCurrentList(currentList));
+    }
+
+    public void notifyMessageListChange(List<ChatMessageItemVo> list){
+        List<ChatMessageItemVo> currentList = Optional.ofNullable(chatVo)
+                .map(cvo -> cvo.chatListVo)
+                .map(cvo -> cvo.chatMessageList)
+                .map(l -> {
+                    l.clear();
+                    l.addAll(list);
+                    return l;
+                })
+                .orElse(list);
+        messageHandler.post(() -> chatMessageAdapter.setCurrentList(currentList));
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -161,10 +171,8 @@ public class ChatViewModel extends ViewModel {
                 this.chatMessageAdapter
         );
 
-        // 初始化view
-        chatMessageAdapter.setCurrentList(
-                chatVo.chatListVo.chatMessageList
-        );
+//        // 初始化view
+//        notifyMessageListChange();
     }
 
     //-----------------------Start-----------------------
@@ -218,8 +226,7 @@ public class ChatViewModel extends ViewModel {
                 public void run() {
                     if (chatMessageAdapter != null) {
                         // 更新 UI
-                        chatMessageAdapter.setCurrentList(chatVo.chatListVo.chatMessageList);
-                        Log.i(TAG, "chatMessageAdapter is not null, 更新ui");
+                        notifyMessageListChange();
                     }
                     else {
                         // 如果 chatMessageAdapter 仍然为 null，300 毫秒后继续检查
@@ -335,15 +342,7 @@ public class ChatViewModel extends ViewModel {
                 }
 
                 // 图片消息：3.3.2 调用adapter UI更新
-                List<ChatMessageItemVo> currentList = Optional.ofNullable(chatVo)
-                        .map(chatVo -> chatVo.chatListVo)
-                        .map(chatListVo -> chatListVo.chatMessageList)
-                        .orElse(new ArrayList<>());
-
-                currentList.clear();
-                currentList.addAll(chatMessageItemVos);
-
-                messageHandler.post(() -> chatMessageAdapter.setCurrentList(currentList));
+                notifyMessageListChange(chatMessageItemVos);
             };
         }
         return onChatMessageChange;
@@ -592,15 +591,15 @@ public class ChatViewModel extends ViewModel {
         );
     }
 
-    private void handleFileUpload(BaseResponse<FileUploadResponse> response) {
-        if (ViewModelUtil.handleResponse(response)) {
-            String uploadState = Optional.ofNullable(response.getData()).map(FileUploadResponse::getUploadState).orElse("");
-//            ViewModelUtil.globalToast(uploadState);
-            Log.d(TAG, "上传状态：" + uploadState);
-        }
-    }
+//    private void handleFileUpload(BaseResponse<FileUploadResponse> response) {
+//        if (ViewModelUtil.handleResponse(response)) {
+//            String uploadState = Optional.ofNullable(response.getData()).map(FileUploadResponse::getUploadState).orElse("");
+////            ViewModelUtil.globalToast(uploadState);
+//            Log.d(TAG, "上传状态：" + uploadState);
+//        }
+//    }
 
-    @Deprecated(since = "2025/8/4 现在使用minio生成的uri加载，而不是直接从后端获取byte[]")
+/*    @Deprecated(since = "2025/8/4 现在使用minio生成的uri加载，而不是直接从后端获取byte[]")
     private void downloadMessageImage(String url, long listItemCreatedTime){
         apiRequestImpl.downloadImage(url,
                 response -> {
@@ -635,16 +634,9 @@ public class ChatViewModel extends ViewModel {
             }
 
             // bitmap -> ChatMessageItemVo设置值 -> viewModel.chatVo.chatListVo.chatMessageList.postValue(currentList);
-            Optional.ofNullable(chatVo)
-                    .map(chatVo -> chatVo.chatListVo)
-                    .map(chatListVo -> chatListVo.chatMessageList)
-                    .ifPresent(ls -> {
-                        messageHandler.post(() -> {
-                            chatMessageAdapter.setCurrentList(ls);
-                        });
-                    });
+            notifyMessageListChange();
         }
-    }
+    }*/
 
     //-----------------------EventBus-----------------------
 
@@ -676,15 +668,6 @@ public class ChatViewModel extends ViewModel {
         }
     }
 
-    /*
-         * TODO  链式调用调试接口
-         *  1. 验证Glide是否能直接加载选择的uri；一个函数自动区分uri和url的加载是否可行
-         *  2. EventBus新的NettyApi接口可行性验证
-         *  3. 数据结构确认：ChatMessageItemVo存放File是否可行？
-         *  4. oss上传之后接受要求上传消息的之后上传接口测试 text/plain 是否可以传递 Long类型数据
-         *  5. 删除原先的在sendMessage的时候就进行http上传的逻辑。
-         *  6. 需要将fileId转为url交给用户2去加载url
-     */
     // 被要求上传图片
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(UploadFileResponse response){
