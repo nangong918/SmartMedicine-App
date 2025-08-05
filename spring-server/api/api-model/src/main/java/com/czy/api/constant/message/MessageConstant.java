@@ -21,4 +21,8 @@ public class MessageConstant {
 
     // 文件存储桶
     public static final String MESSAGE_FILE_BUCKET = "chat-files-";
+    // oss 消息缓存key：senderId : receiverId : msgFileId
+    public static final String OSS_FILE_KET = "oss_file:";
+    // 15秒内上传发送的消息
+    public static final long OSS_FILE_EXPIRE_TIME = 15L;
 }

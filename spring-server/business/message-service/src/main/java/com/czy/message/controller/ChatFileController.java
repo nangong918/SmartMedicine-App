@@ -1,10 +1,12 @@
 package com.czy.message.controller;
 
+import com.czy.api.api.message.ChatService;
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.ResponseMessageType;
+import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.dto.base.BaseResponse;
@@ -13,6 +15,7 @@ import com.czy.api.domain.dto.socket.response.UserImageResponse;
 import com.czy.api.exception.OssExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.message.mq.sender.RabbitMqSender;
+import com.utils.mvc.redisson.RedissonService;
 import com.utils.mvc.service.MinIOService;
 import domain.FileIsExistResult;
 import domain.FileOptionResult;
@@ -52,6 +55,8 @@ public class ChatFileController {
     private OssService ossService;
     private final MinIOService minIOService;
     private final RabbitMqSender rabbitMqSender;
+    private final RedissonService redissonService;
+    private final ChatService chatService;
     @PostMapping("/uploadAndSend")
     public BaseResponse<ChatUploadFileResponse> uploadPostFilesAndSendMessage(
             @RequestParam("file") MultipartFile file,
@@ -122,6 +127,23 @@ public class ChatFileController {
         List<String> urls = ossService.getFileUrlsByFileIds(successIds);
         if (urls.isEmpty()){
             return BaseResponse.LogBackError(OssExceptions.FILE_URL_PARSE_ERROR);
+        }
+
+        // 从redis获取消息数据存储到mongodb
+        // senderId : receiverId : msgFileId
+        String messageRedisKey = MessageConstant.CHAT_MESSAGE_KEY +
+                senderId + ":" + receiverId + ":" + fileId;
+
+        UserChatMessageDo messageDo = redissonService.getObjectFromJson(
+                messageRedisKey, UserChatMessageDo.class
+        );
+        if (messageDo != null){
+            List<UserChatMessageDo> messageDoList = new ArrayList<>();
+            messageDoList.add(messageDo);
+            chatService.saveUserChatMessagesToDatabase(messageDoList);
+        }
+        else {
+            log.warn("从redis获取消息数据失败::fileId: [{}]", fileId);
         }
 
         List<Long> avatarFileIds = new ArrayList<>();

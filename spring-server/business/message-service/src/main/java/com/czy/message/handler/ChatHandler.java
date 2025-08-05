@@ -6,6 +6,7 @@ import com.czy.api.api.message.ChatService;
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.MessageTypeEnum;
+import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.netty.ResponseMessageType;
@@ -19,6 +20,7 @@ import com.czy.api.domain.dto.http.request.SendTextDataRequest;
 import com.czy.api.domain.dto.socket.response.UploadFileResponse;
 import com.czy.api.domain.dto.socket.response.UserTextDataResponse;
 import com.czy.api.exception.CommonExceptions;
+import com.czy.api.exception.MessageExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.api.utils.NettyUtils;
 import com.czy.message.handler.api.ChatApi;
@@ -27,6 +29,7 @@ import com.czy.message.mq.sender.RabbitMqSender;
 import com.czy.message.queue.ChatMessageQueue;
 import com.czy.springUtils.annotation.HandlerType;
 import com.utils.mvc.component.RabbitMqErrorSender;
+import com.utils.mvc.redisson.RedissonService;
 import exception.NettyException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +64,7 @@ public class ChatHandler implements ChatApi {
     private final ChatService chatService;
     private final ChatMessageQueue chatMessageQueue;
     private final UserChatMessageMongoMapper userChatMessageMongoMapper;
+    private final RedissonService redissonService;
 
     private boolean checkParams(@NonNull BaseRequestData request, String content){
         return !request.checkParams() || !StringUtils.hasText(content);
@@ -207,27 +211,28 @@ public class ChatHandler implements ChatApi {
                 request, fileIdStr, MessageTypeEnum.image.code
         );
 
-        // 特别单独设置
-        userChatMessageDo.setMsgContent(fileIdStr);
         // 存储到服务内存的缓存队列
-        chatMessageQueue.addMessage(userChatMessageDo);
+//        chatMessageQueue.addMessage(userChatMessageDo);
+
+        // 存储到缓存数据库这条取消：因为此时是还没有上传file，没有获取到file的Id。需要先将消息的信息存储在redis，然后等下oss的时候从redis获取，然后存储在mongodb中
+        saveFileMessageToRedis(userChatMessageDo);
 
         // Socket响应
         // 发送者上传文件
-        UploadFileResponse uploadFileResponse = new UploadFileResponse();
+        UploadFileResponse response = new UploadFileResponse();
         // 属性
-        uploadFileResponse.setFileId(imageSnowflakeId);
-        uploadFileResponse.setMessageId(request.getAndroidMessageId());
-        uploadFileResponse.setReceiveMyMessageUserId(receiverDo.getId());
-        uploadFileResponse.setReceiverAccount(receiverDo.getAccount());
+        response.setFileId(imageSnowflakeId);
+        response.setMessageId(request.getAndroidMessageId());
+        response.setReceiveMyMessageUserId(receiverDo.getId());
+        response.setReceiverAccount(receiverDo.getAccount());
         // id
-        uploadFileResponse.setSenderId(NettyConstants.SERVER_ID);
-        uploadFileResponse.setReceiverId(request.getSenderId());
+        response.setSenderId(NettyConstants.SERVER_ID);
+        response.setReceiverId(request.getSenderId());
         // type现在上传到oss
-        uploadFileResponse.setType(ResponseMessageType.Oss.UPLOAD_FILE_NOW);
-        uploadFileResponse.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        response.setType(ResponseMessageType.Oss.UPLOAD_FILE_NOW);
+        response.setTimestamp(String.valueOf(System.currentTimeMillis()));
         // message -> sender
-        rabbitMqSender.push(uploadFileResponse);
+        rabbitMqSender.push(response);
     }
 
     @Override
@@ -314,6 +319,30 @@ public class ChatHandler implements ChatApi {
                         .orElse(System.currentTimeMillis())
         );
         return messageDo;
+    }
+
+    private void saveFileMessageToRedis(@NonNull UserChatMessageDo messageDo){
+        if (messageDo.msgFileId == null){
+            log.warn("保存文件消息到Redis失败, 没有fileId::消息内容: [{}]", messageDo);
+            return;
+        }
+        String redisKey = MessageConstant.OSS_FILE_KET +
+                messageDo.senderId + ":" + messageDo.receiverId + ":" + messageDo.msgFileId;
+
+        // 存储到redis
+        boolean result = redissonService.setObjectByJson(redisKey, messageDo, MessageConstant.OSS_FILE_EXPIRE_TIME);
+
+        if (!result){
+            log.warn("保存文件消息到Redis失败::消息内容: [{}]", messageDo);
+            throw new NettyException(
+                    MessageExceptions.FILE_DATA_STORAGE_FAIL,
+                    messageDo.getSenderId()
+            );
+        }
+        else {
+            UserChatMessageDo messageDo1 = redissonService.getObjectFromJson(redisKey, UserChatMessageDo.class);
+            log.info("已经将文件消息缓存到Redis，redis-key：{}，存储信息：{}", redisKey, messageDo1);
+        }
     }
 
 
