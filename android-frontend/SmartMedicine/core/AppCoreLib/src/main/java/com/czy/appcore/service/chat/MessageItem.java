@@ -62,6 +62,7 @@ public class MessageItem extends SortItem {
         ChatMessageItemVo chatMessageItemVo = new ChatMessageItemVo();
         chatMessageItemVo.content = content;
         chatMessageItemVo.setTimeByStringTimeStamp(timestamp);
+        chatMessageItemVo.messageType = this.messageType;
         chatMessageItemVo.viewType = Optional.ofNullable(myId)
                 .map(id -> {
                     if (id.equals(senderId)){
