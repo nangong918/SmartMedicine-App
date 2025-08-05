@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -127,7 +128,9 @@ public class ChatFileController {
         ossService.uploadFilesRecord(successFiles, senderId, chatPostImageBucket);
 
         // 获取成功ID
-        List<Long> successIds = fileOptionResult.getSuccessFiles()
+        List<Long> successIds = Optional.ofNullable(fileOptionResult)
+                .map(FileOptionResult::getSuccessFiles)
+                .orElseGet(Collections::emptyList)
                 .stream()
                 .map(SuccessFile::getFileId)
                 .collect(Collectors.toList());
