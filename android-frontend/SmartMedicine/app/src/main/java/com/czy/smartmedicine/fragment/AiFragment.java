@@ -1,6 +1,7 @@
 package com.czy.smartmedicine.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.activity.MainActivity;
+import com.czy.smartmedicine.activity.TestActivity;
 import com.czy.smartmedicine.databinding.FragmentAiBinding;
 
 /**
@@ -53,5 +55,10 @@ public class AiFragment extends BaseFragment<FragmentAiBinding> {
     @Override
     protected void setListener() {
         super.setListener();
+
+        binding.btnTest.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), TestActivity.class);
+            startActivity(intent);
+        });
     }
 }

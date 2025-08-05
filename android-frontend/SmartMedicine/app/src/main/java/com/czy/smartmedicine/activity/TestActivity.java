@@ -1,7 +1,6 @@
 package com.czy.smartmedicine.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -169,11 +168,15 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
                     Intent data = result.getData();
                     if (data != null){
                         Uri imageUri = data.getData();
-                        viewModel.uriAtomicReference.set(imageUri);
-                        Bitmap bitmap = MainApplication.getInstance().getImageManager().uriToBitmapMediaStore(this, imageUri);
-                        if (bitmap != null){
-                            binding.imgvSelectImage.setImageBitmap(bitmap);
-                        }
+//                        viewModel.uriAtomicReference.set(imageUri);
+//                        Bitmap bitmap = MainApplication.getInstance().getImageManager().uriToBitmapMediaStore(this, imageUri);
+//                        if (bitmap != null){
+//                            binding.imgvSelectImage.setImageBitmap(bitmap);
+//                        }
+                        ImageLoadUtil.loadImageViewByLocalFile(
+                                imageUri,
+                                binding.imgvSelectImage
+                        );
                     }
                 }
         );
