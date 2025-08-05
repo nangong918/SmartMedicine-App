@@ -16,7 +16,6 @@ public class FeatureContext {
     @NotNull(message = "用户 ID 不能为空")
     private Long userId;
     // 当前环境感兴趣的帖子
-    @NotNull(message = "帖子 IDs 不能为 null")
     private List<Long> postIds;
     // timestamp
     @NotEmpty(message = "时间戳不能为空")

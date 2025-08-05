@@ -243,7 +243,7 @@ public interface ApiRequest {
      * @param url   url
      * @return      文件下载响应
      */
-    @Deprecated
+    @Deprecated(since = "2025/8/1: 直接去从响应体获取byte[]已成历史，后端把数据写入响应体会出现io阻塞")
     @GET(BackEndConstant.OSS + "/oss/downloadImage")
     Observable<BaseResponse<FileDownloadBytesResponse>> downloadImage(@Query("url") String url);
 

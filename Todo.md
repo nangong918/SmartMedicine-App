@@ -256,6 +256,8 @@ todo 推荐页面加入部分购物推荐, 搜索商品, 挂号预约(秒杀)
 todo 如果想要走Android C++就需要完成NDK + RTMP实现直播推流
 todo Redisson 替换 Redis
 todo android的eventBus合理化
+todo 性能优化，考虑使用kotlin
+todo 使用链路追踪检查接口耗费时长问题
 
 ##### 重构+细化
 * spring学习

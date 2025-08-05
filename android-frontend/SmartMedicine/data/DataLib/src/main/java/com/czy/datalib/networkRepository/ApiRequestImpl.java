@@ -304,6 +304,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @GET("/file/downloadImage")
     //    Observable<BaseResponse<FileDownloadBytesResponse>> downloadImage(@Query("url") String url);
+    @Deprecated
     public void downloadImage(String url,
                              OnSuccessCallback<BaseResponse<FileDownloadBytesResponse>> onSuccessCallback,
                              OnThrowableCallback onThrowableCallback){

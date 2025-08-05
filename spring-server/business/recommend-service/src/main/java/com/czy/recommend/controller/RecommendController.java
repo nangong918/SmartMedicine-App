@@ -45,7 +45,7 @@ public class RecommendController {
     private UserService userService;
     private final RedissonService redissonService;
 
-    // 推荐帖子
+    // 推荐帖子 todo 实现筛选某个用户是否看过某post的过滤
     @PostMapping(RecommendConstant.RECOMMEND_POSTS)
     public BaseResponse<RecommendPostResponse>
     recommendPosts(@Validated @RequestBody RecommendPostRequest request) {
