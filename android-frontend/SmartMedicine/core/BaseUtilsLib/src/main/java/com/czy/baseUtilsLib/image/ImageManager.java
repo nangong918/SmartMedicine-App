@@ -11,11 +11,11 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.czy.baseUtilsLib.file.FileUtil;
-import com.czy.baseUtilsLib.ui.ToastUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
-import java.util.Optional;
 
 
 // TODO 图片压缩工具
@@ -252,10 +251,35 @@ public class ImageManager {
     }
 
     /**
+     * 将图片Uri转化为File
+     * @param imageUri  图片Uri
+     * @param context   上下文
+     * @return           File
+     */
+    public File imageUriToFile(Uri imageUri, Context context){
+        Bitmap bitmap = uriToBitmapMediaStore(context, imageUri);
+        return bitmapToFile(bitmap, imageUri, context);
+    }
+
+    /**
+     * 将图片Uri转化为File
+     * @param imageUri      图片Uri
+     * @param context       上下文
+     * @param limitSize     图片大小限制
+     * @return              File
+     */
+    public File imageUriToFile(Uri imageUri, Context context, int limitSize){
+        Bitmap bitmap = uriToBitmapMediaStore(context, imageUri);
+        // 压缩图片
+        bitmap = processImage(bitmap, limitSize);
+        return bitmapToFile(bitmap, imageUri, context);
+    }
+
+    /**
      * 将位图转化为文件
      * @param bitmap                bitmap图片资源
      * @param currentImageUri       uri文件资源路径
-     * @param context               上下文
+     * @param context               上下文 （可以传递MainApplication）
      * @return                      File文件
      */
     public File bitmapToFile(Bitmap bitmap, Uri currentImageUri, Context context){
@@ -263,8 +287,8 @@ public class ImageManager {
         // 根据 Uri 获取文件路径
         ContentResolver contentResolver = context.getContentResolver();
         String filePath = FileUtil.getFilePathFromContentUri(currentImageUri,contentResolver);
-        Log.d("Runtime","currentImageUri:"+currentImageUri);
-        Log.d("Runtime","filePath:"+filePath);
+        Log.d(TAG,"currentImageUri:" + currentImageUri);
+        Log.d(TAG,"filePath:" + filePath);
         File file = new File(filePath);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -342,6 +366,40 @@ public class ImageManager {
         }
 
         return bitmap;
+    }
+
+    /**
+     * 获取图片名称
+     * @param imageUri  图片的uri
+     * @return 图片名称: [0] 图片名称, [1] 图片扩展名
+     */
+    public static String[] getImageName(Uri imageUri){
+        if (imageUri == null){
+            return null;
+        }
+        String fileName = imageUri.getLastPathSegment(); // 获取路径的最后一部分
+        if (TextUtils.isEmpty(fileName)){
+            return null;
+        }
+
+        // 如果文件名包含查询参数，去掉它
+        if (fileName.contains("?")) {
+            fileName = fileName.substring(0, fileName.indexOf("?"));
+        }
+
+        // 获取文件扩展名
+        String fileExtension = "";
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex != -1) {
+            fileExtension = fileName.substring(lastDotIndex); // 包含点
+            fileName = fileName.substring(0, lastDotIndex); // 获取文件名主体
+        }
+
+        // 组合新的文件名
+        return new String[]{
+                fileName,
+                fileExtension
+        };
     }
 
 }

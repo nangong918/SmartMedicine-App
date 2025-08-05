@@ -1,15 +1,11 @@
 package com.czy.dal.vo.entity.message;
 
 
-import android.graphics.Bitmap;
 import android.util.Log;
-
-import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.dal.constant.MessageTypeEnum;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -57,11 +53,6 @@ public class ChatMessageItemVo implements Serializable {
     // 是否已读
     public Boolean isRead;
 
-    // 图片资源
-    @Deprecated(since = "2025/8/4 现在使用minio生成的uri加载，而不是直接从后端获取byte[]")
-    public Bitmap bitmap = null;
-    public File imageFile;
-
     // 发送消息类型
     public int viewType;
 
@@ -97,68 +88,39 @@ public class ChatMessageItemVo implements Serializable {
     // 用于判断两个对象是否属于一个对象（用唯一标识符判断）
     public boolean isItemEquals(Object o){
         if (o instanceof ChatMessageItemVo that){
-            return this.timestamp == (that.timestamp);
+            return this.timestamp == (that.timestamp) &&
+                    Objects.equals(this.itemId, that.itemId) &&
+                    Objects.equals(this.content, that.content) &&
+                    Objects.equals(this.messageType, that.messageType)
+                    ;
         }
         return false;
     }
 
     public boolean isContentEquals(Object o){
+        return equals(o);
+    }
+
+    @Override
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ChatMessageItemVo that)) return false;
-
-        String thisAvatarUrl = avatarUrlOrUri == null ? "" : avatarUrlOrUri;
-        String thatAvatarUrl = that.avatarUrlOrUri == null ? "" : that.avatarUrlOrUri;
-        String thisContent = content == null ? "" : content;
-        String thatContent = that.content == null ? "" : that.content;
-        String thisTime = time == null ? "" : time;
-        String thatTime = that.time == null ? "" : that.time;
-        Boolean thisIsRead = isRead != null && isRead;
-        Boolean thatIsRead = that.isRead != null && that.isRead;
-        int thisViewType = viewType == 0 ? VIEW_TYPE_SENDER : VIEW_TYPE_RECEIVER;
-        int thatViewType = that.viewType == 0 ? VIEW_TYPE_SENDER : VIEW_TYPE_RECEIVER;
-        int thisMessageType = messageType == MessageTypeEnum.text.code ? MessageTypeEnum.text.code : MessageTypeEnum.image.code;
-        int thatMessageType = that.messageType == MessageTypeEnum.text.code ? MessageTypeEnum.text.code : MessageTypeEnum.image.code;
-        long thisTimestamp = timestamp;
-        long thatTimestamp = that.timestamp;
-        Bitmap thisBitmap = bitmap == null ? null : bitmap;
-        Bitmap thatBitmap = that.bitmap == null ? null : that.bitmap;
-
-        return thisAvatarUrl.equals(thatAvatarUrl) &&
-                thisContent.equals(thatContent) &&
-                thisTime.equals(thatTime) &&
-                thisIsRead.equals(thatIsRead) &&
-                thisViewType == thatViewType &&
-                thisMessageType == thatMessageType &&
-                thisTimestamp == thatTimestamp &&
-                Objects.equals(thisBitmap, thatBitmap)
+        if (o == null || getClass() != o.getClass()) return false;
+        ChatMessageItemVo vo = (ChatMessageItemVo) o;
+        return createdTimestamp == vo.createdTimestamp &&
+                viewType == vo.viewType &&
+                messageType == vo.messageType &&
+                timestamp == vo.timestamp &&
+                Objects.equals(itemId, vo.itemId) &&
+                Objects.equals(avatarUrlOrUri, vo.avatarUrlOrUri) &&
+                Objects.equals(content, vo.content) &&
+                Objects.equals(time, vo.time) &&
+                Objects.equals(isRead, vo.isRead)
                 ;
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ChatMessageItemVo)) return false;
-
-        String thisAvatarUrl = avatarUrlOrUri == null ? "" : avatarUrlOrUri;
-        String thatAvatarUrl = ((ChatMessageItemVo) o).avatarUrlOrUri == null ? "" : ((ChatMessageItemVo) o).avatarUrlOrUri;
-        String thisContent = content == null ? "" : content;
-        String thatContent = ((ChatMessageItemVo) o).content == null ? "" : ((ChatMessageItemVo) o).content;
-        String thisTime = time == null ? "" : time;
-        String thatTime = ((ChatMessageItemVo) o).time == null ? "" : ((ChatMessageItemVo) o).time;
-        Boolean thisIsRead = isRead != null && isRead;
-        Boolean thatIsRead = ((ChatMessageItemVo) o).isRead != null && ((ChatMessageItemVo) o).isRead;
-        int thisViewType = viewType == 0 ? VIEW_TYPE_SENDER : VIEW_TYPE_RECEIVER;
-        int thatViewType = ((ChatMessageItemVo) o).viewType == 0 ? VIEW_TYPE_SENDER : VIEW_TYPE_RECEIVER;
-
-        return thisAvatarUrl.equals(thatAvatarUrl) &&
-                thisContent.equals(thatContent) &&
-                thisTime.equals(thatTime) &&
-                thisIsRead.equals(thatIsRead) &&
-                thisViewType == thatViewType;
-    }
-
-    @Override
     public int hashCode() {
-        return Objects.hash(avatarUrlOrUri, content, time, viewType);
+        return Objects.hash(itemId, createdTimestamp, avatarUrlOrUri, content,
+                time, isRead, viewType, messageType, timestamp);
     }
 }

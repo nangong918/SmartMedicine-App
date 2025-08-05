@@ -56,6 +56,7 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
             binding.smSendMessage.setEditMessage("");
         });
 
+        // 图片消息：1. 选择图片
         binding.smSendMessage.setImgClickListener(v ->
                 viewModel.beginSelectPicture(this)
         );
