@@ -95,21 +95,6 @@ public class ChatViewModel extends ViewModel {
 
     private void setVo(ChatVo chatVo){
         this.chatVo = chatVo;
-        // 从缓存中获取数据
-        ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
-        List<MessageItem> chatMessageList = chatMessageManager.getChatMessages(this.chatVo.contactId);
-
-        // 获取我的id，用于判断消息是对方发送还是我发送的
-        Long myId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
-                .map(ao -> ao.userId)
-                .orElse(null);
-
-        // 设置初始值
-        this.chatVo.chatListVo.chatMessageList = chatMessageList.stream()
-                .map(item -> item.toChatMessageItemVo(myId))
-                .collect(Collectors.toList());
-
-        // 初始化view（在adapter初始化结束之后）
     }
 
     public TextWatcher getTextWatcher(){
