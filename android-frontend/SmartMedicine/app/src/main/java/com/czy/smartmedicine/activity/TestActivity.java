@@ -219,6 +219,8 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
             // 根据 message 的 type 执行对应的方法
             chatApiHandler.receiveUserText(response);
             Log.d("Socket", "onMessageReceived: " + response.getContent());
+            // 移除已处理的粘性事件
+            EventBus.getDefault().removeStickyEvent(response);
         }
     }
 

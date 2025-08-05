@@ -495,11 +495,17 @@ public class ChatViewModel extends ViewModel {
     }
 
     // 图片消息：4 等待图片消息被后端确认返回fileId，然后http上传图片
-    private void handleUploadPictureMessageOrder(UploadFileResponse response){
+
+    /**
+     * 处理要求上传图片的指令
+     * @param response  图片上传响应
+     * @return  是否消费了EventBus的事件
+     */
+    private boolean handleUploadPictureMessageOrder(UploadFileResponse response){
         List<ChatMessageItemVo> list = chatVo.chatListVo.chatMessageList;
         if (list == null || list.isEmpty()){
             Log.i(TAG, "onMessageReceived: list is empty");
-            return;
+            return false;
         }
 
         Long fileId = response.fileId;
@@ -521,7 +527,7 @@ public class ChatViewModel extends ViewModel {
                 if (file == null || !file.exists()) {
                     // 处理文件未创建或路径不正确的情况
                     Log.e(TAG, "Image file creation failed");
-                    return;
+                    return false;
                 }
 
                 // 获取文件名
@@ -555,8 +561,10 @@ public class ChatViewModel extends ViewModel {
                         senderIdPart,
                         receiverIdPart
                 );
+                return true;
             }
         }
+        return false;
     }
 
     // 图片消息：5 上传图片
@@ -637,9 +645,12 @@ public class ChatViewModel extends ViewModel {
         if (receiverId.equals(response.getSenderId())){
             // 根据 message 的 type 执行对应的方法 TODO 梳理逻辑，这里有问题：chatListManager 和 消息队列分离了；chatListManager在Activity重新启动会出现数据丢失
             chatApiHandler.receiveUserText(response);
+            // 移除已处理的粘性事件
+            EventBus.getDefault().removeStickyEvent(response);
         }
     }
 
+    // todo todo 需要把全部消息相关eventBus交给ChatManager，因为消息同时被Message和Chat监听，任何一方移除粘性事件都会让另一方消息丢失。
     // 图片消息：6 收到图片消息，在缓存并ui展示
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(UserImageResponse response) {
@@ -650,19 +661,26 @@ public class ChatViewModel extends ViewModel {
         if (!NettyConstants.ERROR_ID.equals(contactId) && contactId.equals(response.getSenderId())){
             // 图片消息：6.2 执行图片消息处理逻辑
             chatApiHandler.receiveUserImage(response);
+            // 移除已处理的粘性事件
+            EventBus.getDefault().removeStickyEvent(response);
         }
     }
 
     // 被要求上传图片
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageReceived(UploadFileResponse response){
-        handleUploadPictureMessageOrder(response);
+        boolean isConsumed = handleUploadPictureMessageOrder(response);
+        if (isConsumed){
+            // 移除已处理的粘性事件
+            EventBus.getDefault().removeStickyEvent(response);
+        }
     }
 
     // 上传图片结果
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onReceiveUploadFileResult(Message response){
-
+        // 移除已处理的粘性事件 todo 上传成功之后需要将消息转圈改为非转圈
+        EventBus.getDefault().removeStickyEvent(response);
     }
 
     private void initEventBus() {
