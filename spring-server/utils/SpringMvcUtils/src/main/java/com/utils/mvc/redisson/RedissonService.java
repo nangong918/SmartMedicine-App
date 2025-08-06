@@ -157,6 +157,13 @@ public interface RedissonService {
     int zAddAll(String key, Map<Object, Double> values, Long expireTime);
 
     /**
+     * 获取有序集合
+     * @param key   键
+     * @return      有序集合
+     */
+    Map<Object, Double> zGetAll(String key);
+
+    /**
      * 获取某个元素的分数
      * @param key
      * @param member

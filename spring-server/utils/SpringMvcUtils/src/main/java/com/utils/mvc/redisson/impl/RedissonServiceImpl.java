@@ -341,6 +341,20 @@ public class RedissonServiceImpl implements RedissonService {
     }
 
     @Override
+    public Map<Object, Double> zGetAll(String key) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        Map<Object, Double> resultMap = new HashMap<>();
+
+        // 遍历 ZSet 并填充结果 Map
+        for (Object member : zSet) {
+            Double score = zSet.getScore(member); // 获取分数
+            resultMap.put(member, score); // 加入到结果 Map
+        }
+
+        return resultMap;
+    }
+
+    @Override
     public Double zScore(String key, Object member) {
         RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
         return zSet.getScore(member);
