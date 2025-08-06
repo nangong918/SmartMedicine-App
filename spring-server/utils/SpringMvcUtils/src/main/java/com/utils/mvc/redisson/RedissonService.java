@@ -121,6 +121,7 @@ public interface RedissonService {
     void saveObjectHashMap(String key, HashMap<String, Object> data, Long expireTimes);
     HashMap<String, String> getHashMap(String key);
     HashMap<String, Object> getObjectHaseMap(String key);
+    HashMap<Object, Object> getObjectObjectHashMap(String key);
     Object getObjectFromHashMap(String key, String hashKey);
     void updateHashMap(String hashKey, String field, String value);
     void updateObjectHashMap(String hashKey, String field, Object value);

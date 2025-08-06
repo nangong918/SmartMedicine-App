@@ -243,6 +243,12 @@ public class RedissonServiceImpl implements RedissonService {
     }
 
     @Override
+    public HashMap<Object, Object> getObjectObjectHashMap(String key) {
+        RMap<Object, Object> map = redissonClient.getMap(key);
+        return new HashMap<>(map.readAllMap());
+    }
+
+    @Override
     public Object getObjectFromHashMap(String key, String hashKey) {
         RMap<String, Object> map = redissonClient.getMap(key);
         return map.get(hashKey);
