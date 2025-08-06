@@ -5,10 +5,12 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
+import com.czy.api.domain.ao.recommend.PostScoreAo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -19,6 +21,7 @@ public interface PostSearchService {
 
     // 0~1级搜索：完全匹配~mysql like匹配（放一起是因为like能一起做了）
     List<Long> searchPostIdsByLikeTitle(String likeTitle);
+    Map<Long, PostScoreAo> searchPostIdsByLikeTitle(Map<String, Double> entityScoreMap);
     // 2级搜索：分词匹配（分词器：IK/jieba）+ ElasticSearch
     List<Long> searchPostIdsByTokenizedTitle(String tokenizedTitle);
 
