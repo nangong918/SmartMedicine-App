@@ -132,6 +132,8 @@ public interface RedissonService {
 
     void addSet(String redisKey, Set<Object> objects, Long expireTime);
     Set<Object> getSet(String redisKey);
+    void removeSet(String redisKey);
+    void removeFromSet(String redisKey, Object object);
 
     // ===================== 有序集合(ZSet)操作 =====================
 

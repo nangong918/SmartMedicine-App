@@ -299,6 +299,17 @@ public class RedissonServiceImpl implements RedissonService {
         return rSet.readAll(); // 返回所有对象
     }
 
+    @Override
+    public void removeSet(String redisKey) {
+        redissonClient.getKeys().delete(redisKey); // 删除整个 Set
+    }
+
+    @Override
+    public void removeFromSet(String redisKey, Object object) {
+        RSet<Object> rSet = redissonClient.getSet(redisKey);
+        rSet.remove(object); // 从 Set 中删除指定对象
+    }
+
 
     private void setExpire(RScoredSortedSet<Object> zSet, Long expireTime) {
         if (expireTime == null) {
