@@ -61,4 +61,10 @@ public interface PostInfoMapper {
 
     // 通过title模糊查询postId
     List<Long> findPostIdByLikeTitle(String likeTitle);
+
+    // 查询不在postIds的postIds
+    List<Long> getNotInPostIds(
+            @Param("postIds") List<Long> postIds,
+            @Param("limitNum") int limitNum
+    );
 }

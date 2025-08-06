@@ -109,4 +109,19 @@
         FROM post_info
         WHERE title LIKE CONCAT('%', #{likeTitle}, '%')
     </select>
+    <select id="getNotInPostIds" resultType="java.lang.Long">
+        SELECT post_id
+        FROM posts
+        WHERE
+        <if test="postIds != null and postIds.size() > 0">
+            post_id NOT IN
+            <foreach item="id" index="index" collection="postIds" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="postIds == null or postIds.size() == 0">
+            1 = 1  <!-- 防止postIds是empty的情况出现空where -->
+        </if>
+        LIMIT #{limitNum}
+    </select>
 </mapper>

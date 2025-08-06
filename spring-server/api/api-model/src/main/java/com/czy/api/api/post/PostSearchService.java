@@ -59,4 +59,7 @@ public interface PostSearchService {
     // 对外提供转换方法
     List<PostPreviewVo> getPostPreviewVosByIds(List<Long> postIds);
     PostVo getPostVoById(Long postId);
+
+    // 获取不在postIds中的帖子
+    List<Long> getNotInPostIds(List<Long> postIds, int limitNum);
 }

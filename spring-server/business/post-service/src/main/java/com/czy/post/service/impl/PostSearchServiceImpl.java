@@ -344,4 +344,9 @@ public class PostSearchServiceImpl implements PostSearchService {
         }
         return postFrontService.postAoToPostVo(postAo);
     }
+
+    @Override
+    public List<Long> getNotInPostIds(List<Long> postIds, int limitNum) {
+        return postInfoMapper.getNotInPostIds(postIds, limitNum);
+    }
 }
