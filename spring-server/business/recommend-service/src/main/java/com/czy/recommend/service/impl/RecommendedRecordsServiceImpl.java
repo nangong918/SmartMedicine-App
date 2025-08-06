@@ -1,7 +1,7 @@
-package com.offline.recommend.service.impl;
+package com.czy.recommend.service.impl;
 
 import com.czy.api.constant.offline.OfflineRedisConstant;
-import com.offline.recommend.service.RecommendedRecordsService;
+import com.czy.recommend.service.RecommendedRecordsService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,7 @@ public class RecommendedRecordsServiceImpl implements RecommendedRecordsService 
     }
 
     /**
-     * 获取用户最近浏览的帖子
+     * 清空用户的浏览记录
      * @param userId    用户ID
      */
     @Override
@@ -62,7 +62,7 @@ public class RecommendedRecordsServiceImpl implements RecommendedRecordsService 
     }
 
     /**
-     * 获取用户推荐
+     * 获取用户浏览记录
      * @param userId    用户ID
      * @return          推荐帖子ids
      */

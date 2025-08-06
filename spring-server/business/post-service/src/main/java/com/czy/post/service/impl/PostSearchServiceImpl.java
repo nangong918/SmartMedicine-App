@@ -45,8 +45,10 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -346,7 +348,21 @@ public class PostSearchServiceImpl implements PostSearchService {
     }
 
     @Override
-    public List<Long> getNotInPostIds(List<Long> postIds, int limitNum) {
+    public List<Long> getNotInPostIds(Set<Long> postIds, int limitNum) {
+        if (postIds == null){
+            postIds = new HashSet<>();
+        }
+        if (limitNum <= 0){
+            limitNum = 1;
+        }
         return postInfoMapper.getNotInPostIds(postIds, limitNum);
+    }
+
+    @Override
+    public List<Long> getRandomPosts(int randomNum) {
+        if (randomNum <= 0){
+            return new ArrayList<>();
+        }
+        return postInfoMapper.getRandomPosts(randomNum);
     }
 }

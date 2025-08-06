@@ -1,4 +1,4 @@
-package com.czy.recommend.nearOnlineLayer.service;
+package com.czy.recommend.service;
 
 import com.czy.api.domain.ao.feature.FeatureContext;
 import com.czy.api.domain.ao.recommend.PostScoreAo;

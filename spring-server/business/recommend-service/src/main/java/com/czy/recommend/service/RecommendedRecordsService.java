@@ -1,4 +1,4 @@
-package com.offline.recommend.service;
+package com.czy.recommend.service;
 
 import lombok.NonNull;
 
@@ -17,12 +17,12 @@ public interface RecommendedRecordsService {
      */
     void recordRecommendedPosts(@NonNull Long userId, List<Long> postIds);
     /**
-     * 获取用户最近浏览的帖子
+     * 清空用户的浏览记录
      * @param userId    用户ID
      */
     void clearUserRecommendedPostRecords(@NonNull Long userId);
     /**
-     * 获取用户推荐
+     * 获取用户浏览记录
      * @param userId    用户ID
      * @return          推荐帖子ids
      */

@@ -5,7 +5,6 @@ import com.czy.api.api.offline.OfflineRecommendService;
 import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.offline.OfflineRedisConstant;
 import com.czy.api.domain.ao.recommend.PostScoreAo;
-import com.offline.recommend.service.RecommendedRecordsService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -27,7 +25,6 @@ import java.util.stream.Collectors;
 public class OfflineRecommendServiceImpl implements OfflineRecommendService {
 
     private final RedissonService redissonService;
-    private final RecommendedRecordsService recommendedRecordsService;
 
     /**
      * 获取离线推荐
@@ -57,11 +54,6 @@ public class OfflineRecommendServiceImpl implements OfflineRecommendService {
                 }
             }
 
-            // 记录推荐过的数据
-            List<Long> postIds = postScoreAoList.stream()
-                    .map(PostScoreAo::getPostId)
-                    .collect(Collectors.toList());
-            recommendedRecordsService.recordRecommendedPosts(userId, postIds);
             return postScoreAoList;
         }
         return new ArrayList<>();

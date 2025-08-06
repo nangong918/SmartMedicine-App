@@ -45,11 +45,11 @@ public class RecommendController {
     private UserService userService;
     private final RedissonService redissonService;
 
-    // 推荐帖子 todo 实现筛选某个用户是否看过某post的过滤
+    // 推荐帖子
     @PostMapping(RecommendConstant.RECOMMEND_POSTS)
     public BaseResponse<RecommendPostResponse>
     recommendPosts(@Validated @RequestBody RecommendPostRequest request) {
-        Long userId = request.getFeatureContext().getUserId();
+        Long userId = request.getUserId();
 
         UserDo userDo = userService.getUserById(userId);
         if (userDo == null || userDo.getId() == null){
@@ -89,7 +89,7 @@ public class RecommendController {
 
         try {
             long startTime = System.currentTimeMillis();
-            List<Long> recommendPostIdList = recommendService.getRecommendPosts(request.getFeatureContext());
+            List<Long> recommendPostIdList = recommendService.getRecommendPosts(request.getUserId());
             List<PostInfoUrlAo> postInfoUrlAos = postSearchService.getPostInfoUrlAos(recommendPostIdList);
             RecommendPostResponse response = new RecommendPostResponse();
             response.setPostInfoUrlAos(postInfoUrlAos);

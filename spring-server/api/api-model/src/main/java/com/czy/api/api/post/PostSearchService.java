@@ -9,6 +9,7 @@ import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author 13225
@@ -61,5 +62,8 @@ public interface PostSearchService {
     PostVo getPostVoById(Long postId);
 
     // 获取不在postIds中的帖子
-    List<Long> getNotInPostIds(List<Long> postIds, int limitNum);
+    List<Long> getNotInPostIds(Set<Long> postIds, int limitNum);
+
+    // 获取随机的id
+    List<Long> getRandomPosts(int randomNum);
 }

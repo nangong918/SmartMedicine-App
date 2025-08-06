@@ -1,4 +1,4 @@
-package com.czy.recommend.nearOnlineLayer.service.impl;
+package com.czy.recommend.service.impl;
 
 import com.czy.api.api.feature.FeatureRuleService;
 import com.czy.api.api.feature.PostFeatureService;
@@ -11,7 +11,7 @@ import com.czy.api.domain.ao.feature.ScoreAo;
 import com.czy.api.domain.ao.feature.UserTempFeatureAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.ao.recommend.PostScoreAo;
-import com.czy.recommend.nearOnlineLayer.service.NearOnlineRecommendService;
+import com.czy.recommend.service.NearOnlineRecommendService;
 import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

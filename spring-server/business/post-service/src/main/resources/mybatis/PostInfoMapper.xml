@@ -124,4 +124,10 @@
         </if>
         LIMIT #{limitNum}
     </select>
+    <select id="getRandomPosts" resultType="java.lang.Long">
+        SELECT post_id
+        FROM posts
+        ORDER BY RAND()  <!-- 使用 RAND() 来随机排序 -->
+        LIMIT #{randomNum}  <!-- 限制返回的数量 -->
+    </select>
 </mapper>
