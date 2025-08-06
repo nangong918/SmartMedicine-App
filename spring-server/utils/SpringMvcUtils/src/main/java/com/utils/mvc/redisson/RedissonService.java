@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author 13225
@@ -127,6 +128,10 @@ public interface RedissonService {
     void deleteFieldFromHash(String redisKey, String hashKey);
     void deleteFieldFromObjectHashMap(String redisKey, String hashKey);
 
+    //---------------------Set---------------------
+
+    void addSet(String redisKey, Set<Object> objects, Long expireTime);
+    Set<Object> getSet(String redisKey);
 
     // ===================== 有序集合(ZSet)操作 =====================
 

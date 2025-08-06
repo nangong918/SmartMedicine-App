@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
 import org.redisson.client.protocol.ScoredEntry;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -274,6 +276,27 @@ public class RedissonServiceImpl implements RedissonService {
     public void deleteFieldFromObjectHashMap(String redisKey, String hashKey) {
         RMap<String, Object> map = redissonClient.getMap(redisKey);
         map.remove(hashKey);
+    }
+
+    @Override
+    public void addSet(String redisKey, Set<Object> objects, Long expireTime) {
+        if (CollectionUtils.isEmpty(objects)){
+            return;
+        }
+        RSet<Object> rSet = redissonClient.getSet(redisKey);
+        rSet.addAll(objects);
+        if (expireTime != null && expireTime > 0){
+            rSet.expire(expireTime, TimeUnit.SECONDS);
+        }
+        else {
+            rSet.expire(EXPIRE_SECONDS, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public Set<Object> getSet(String redisKey) {
+        RSet<Object> rSet = redissonClient.getSet(redisKey);
+        return rSet.readAll(); // 返回所有对象
     }
 
 
