@@ -21,6 +21,12 @@ public interface PostSearchService {
 
     // 0~1级搜索：完全匹配~mysql like匹配（放一起是因为like能一起做了）
     List<Long> searchPostIdsByLikeTitle(String likeTitle);
+
+    /**
+     * 批量调用 searchPostIdsByLikeTitle；避免多次dubbo
+     * @param entityScoreMap    搜索词和搜索词scoreMap
+     * @return  帖子和帖子scoreMap
+     */
     Map<Long, PostScoreAo> searchPostIdsByLikeTitle(Map<String, Double> entityScoreMap);
     // 2级搜索：分词匹配（分词器：IK/jieba）+ ElasticSearch
     List<Long> searchPostIdsByTokenizedTitle(String tokenizedTitle);
