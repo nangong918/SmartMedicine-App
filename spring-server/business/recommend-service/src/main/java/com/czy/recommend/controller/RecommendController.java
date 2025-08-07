@@ -2,6 +2,7 @@ package com.czy.recommend.controller;
 
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.recommend.RecommendConstant;
 import com.czy.api.constant.recommend.RecommendRedisKey;
 import com.czy.api.domain.Do.user.UserDo;
@@ -17,6 +18,7 @@ import com.utils.mvc.redisson.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +35,6 @@ import java.util.List;
 @Slf4j
 @CrossOrigin(origins = "*") // 跨域
 @RestController
-@Validated // 启用校验
 @RequiredArgsConstructor // 自动注入@Autowired
 @RequestMapping(RecommendConstant.POST_RECOMMEND_CONTROLLER)
 public class RecommendController {
@@ -102,4 +103,33 @@ public class RecommendController {
         }
     }
 
+    // 测试用的随机post
+    @PostMapping("/test")
+    public BaseResponse<RecommendPostResponse>
+    testRecommendRandomPosts(@Validated @RequestBody RecommendPostRequest request){
+        Long userId = request.getUserId();
+
+        UserDo userDo = userService.getUserById(userId);
+        if (userDo == null || userDo.getId() == null){
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
+        }
+
+        // 过滤用户看过的内容的random帖子
+        List<Long> filterUserViewedPostIds = recommendService.getRandomPosts(userId, FeatureConstant.USER_RECOMMEND_GET_NUM);
+        log.info("过滤用户看过的内容的random帖子：{}", filterUserViewedPostIds);
+        if (CollectionUtils.isEmpty(filterUserViewedPostIds) || filterUserViewedPostIds.size() < FeatureConstant.USER_RECOMMEND_GET_NUM){
+            filterUserViewedPostIds.addAll(
+                    recommendService.getRandomPosts(
+                            FeatureConstant.USER_RECOMMEND_GET_NUM - filterUserViewedPostIds.size()
+                    )
+            );
+        }
+
+        long startTime = System.currentTimeMillis();
+        List<PostInfoUrlAo> postInfoUrlAos = postSearchService.getPostInfoUrlAos(filterUserViewedPostIds);
+        log.info("testRecommendRandomPosts::getPostInfoUrlAos time: {}", System.currentTimeMillis() - startTime);
+        RecommendPostResponse response = new RecommendPostResponse();
+        response.setPostInfoUrlAos(postInfoUrlAos);
+        return BaseResponse.getResponseEntitySuccess(response);
+    }
 }
