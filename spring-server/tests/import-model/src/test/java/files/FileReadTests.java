@@ -115,7 +115,8 @@ public class FileReadTests {
                 "test",
                 "test",
                 "test",
-                102524534L
+                102524534L,
+                false
         );
 //        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount("test");
 //        System.out.println(loginUserDo.toJsonString());
@@ -233,7 +234,8 @@ public class FileReadTests {
                 minUser.getAuthorInfoAo().getUserName(),
                 minUser.getUserAccount(),
                 String.valueOf(startTestPhone),
-                authorImageId
+                authorImageId,
+                true
         );
 
         // 4.创建post

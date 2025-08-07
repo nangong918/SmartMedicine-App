@@ -91,13 +91,14 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
     private static final String defaultPassword = "123456";
 
     @Override
-    public long createUser(String userName, String account, String phone, Long fileId) {
+    public long createUser(String userName, String account, String phone, Long fileId, boolean haveToCheck) {
         return userService.importUser(
                 userName,
                 account,
                 defaultPassword,
                 phone,
-                fileId
+                fileId,
+                haveToCheck
         );
     }
 
@@ -110,14 +111,20 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
 
     private final CrawlerDataManager crawlerDataManager;
 
+    private static int currentImportIndex = 0;
+
     @Override
     public void importAllData() {
+        log.info("开始导入全部爬取数据");
         List<AuthorAo> users = crawlerDataManager.readCrawlerAuthorData();
+        log.info("获取author数据完成，节点测试[authors.size: {}][author(0): {}]", users.size(), users.get(0).toJsonString());
         long startIndex = 0L;
+        currentImportIndex = 0;
         for (AuthorAo authorAo : users){
             String phone = String.valueOf(ImportsConstant.IMPORT_USER_PHONE_START + startIndex);
             importSingle(authorAo, phone);
             startIndex += 1L;
+            currentImportIndex++;
         }
     }
 
@@ -125,6 +132,9 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         Long authorImageId = null;
         // 1. 上传头像并获取id
         String authorImagePath = authorAo.getAuthorInfoAo().getUserImagePath();
+        if (currentImportIndex % 5 == 0){
+            log.info("importSingle::上传头像并获取id::节点检查，authorImagePath: {}", authorImagePath);
+        }
         if (StringUtils.hasText(authorImagePath)){
             FileOptionResult result = uploadFiles(
                     authorImagePath,
@@ -135,6 +145,10 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
                 authorImageId = result.getSuccessFiles().get(0).getFileId();
             }
         }
+        if (currentImportIndex % 5 == 0){
+            log.info("节点检查::authorImageId: {}", authorImageId);
+        }
+
         // 2. 上传postFileList
         // 2.1 获取postFileList
         List<ArticleDo> articleDos = authorAo.getArticleDos();
@@ -170,7 +184,8 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
                 authorAo.getAuthorInfoAo().getUserName(),
                 authorAo.getUserAccount(),
                 String.valueOf(userPhone),
-                authorImageId
+                authorImageId,
+                currentImportIndex % 5 == 0
         );
 
         // 4.创建post
