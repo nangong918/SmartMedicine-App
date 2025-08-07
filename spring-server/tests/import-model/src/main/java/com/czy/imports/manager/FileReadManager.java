@@ -64,4 +64,7 @@ public class FileReadManager {
         return files;
     }
 
+    public static void main(String[] args) {
+        FileReadManager fileReadManager = new FileReadManager();
+    }
 }

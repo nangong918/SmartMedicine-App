@@ -21,6 +21,12 @@ public interface ImportAuthorService {
 
     // 4.导入评论
 
-    // 统一导入
+    /**
+     * 批量导入：需要启动:
+     * user-relationship-service, post-service, oss-service
+     */
     void importAllData();
+
+    // 删除全部导入数据
+    void clearAllTestData();
 }
