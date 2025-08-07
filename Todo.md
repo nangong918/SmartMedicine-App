@@ -19,6 +19,10 @@
 
 ## 目前任务
 
+user行为记录改为hive存储
+公司: 日志数据源改为hive
+家: 重新确定功能, 设计UI
+
 ### spring-server
 
 2025年4月26日，Java系统基本完善。
@@ -247,13 +251,13 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 3天
   * 7月3~7月5
 
-todo 用于前端测试的随机post获取测试
-todo user行为记录改为aop
+todo 日志数据存储改为hive
+todo user行为记录改为aop; 数据记录位置改为hive(大数据仓库)
+todo 数据离线计算改为spark,flink
 todo JVM调参, 解决redis爆炸问题(已解决,redis.conf配置持久化路径问题, 在C盘出现没有权限写入问题)
 todo 学习dubbo;实现dubbo服务能够动态注册生产者,让消消费者动态获取生产者注册服务
 todo 提高系统的鲁棒性：（单点，各种场景考虑，性能分析，中间件分析）
 todo 推荐系统已经推荐的post编辑进入已推荐过,召回阶段不再选取
-todo 一定要加上Spark,Hive,Hadoop,实现大数据
 todo post获取权限筛选；评论权限筛选（AOP？）。
 todo 秒杀预约挂号系统
 todo 商品购物系统

@@ -50,6 +50,8 @@ public class RecommendServiceImpl implements RecommendService {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private final PostSearchService postSearchService;
 
+    // todo 1.完成批量导入 2.完成随机测试接口；用于帮助前端测试数据
+    // todo 导图记录各层数据来源, 让推荐系统变得可控，可追踪给
     /**
      * 获取推荐帖子
      * 1. 离线-召回
@@ -66,7 +68,7 @@ public class RecommendServiceImpl implements RecommendService {
         // final List
         List<Long> finalRecommendPosts = new ArrayList<>();
 
-        /// 离线层  (使用离线数据，不及时响应)
+        /// 离线层  (使用离线数据，不及时响应) todo 离线计算存储到 redis代码检查
         List<PostScoreAo> offlineRecommends = offlineRecommendService.getOfflineRecommend(userId);
         finalRecommendPosts = postScoreAosToIds(offlineRecommends);
         // 检查是否可以推荐
@@ -74,7 +76,7 @@ public class RecommendServiceImpl implements RecommendService {
             return finalRecommendPosts;
         }
 
-        /// 近线层 （使用在线数据，尽量及时响应）
+        /// 近线层 （使用在线数据，尽量及时响应） todo 检查是否需要近线计算
         // 计算出差多少个
         int needNum = FeatureConstant.USER_RECOMMEND_GET_NUM - finalRecommendPosts.size();
         List<PostScoreAo> nearlineRecommends = nearlineRecommendService.getNearlineRecommend(userId, needNum);
@@ -84,7 +86,7 @@ public class RecommendServiceImpl implements RecommendService {
             return finalRecommendPosts;
         }
 
-        /// 在线层 （使用在线数据，保证及时响应）
+        /// 在线层 （使用在线数据，保证及时响应） todo 检查在线行为是否存储在redis，在线层需要获取在线数据
         // 计算出差多少个
         int needNum2 = needNum - finalRecommendPosts.size();
         List<PostScoreAo> onlineRecommends = onlineRecommendService.getOnlineRecommend(userId, needNum2);
