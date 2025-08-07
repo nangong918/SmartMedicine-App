@@ -110,11 +110,11 @@
         WHERE title LIKE CONCAT('%', #{likeTitle}, '%')
     </select>
     <select id="getNotInPostIds" resultType="java.lang.Long">
-        SELECT post_id
-        FROM posts
+        SELECT id
+        FROM post_info
         WHERE
         <if test="postIds != null and postIds.size() > 0">
-            post_id NOT IN
+            id NOT IN
             <foreach item="id" index="index" collection="postIds" open="(" separator="," close=")">
                 #{id}
             </foreach>
@@ -125,8 +125,8 @@
         LIMIT #{limitNum}
     </select>
     <select id="getRandomPosts" resultType="java.lang.Long">
-        SELECT post_id
-        FROM posts
+        SELECT id
+        FROM post_info
         ORDER BY RAND()  <!-- 使用 RAND() 来随机排序 -->
         LIMIT #{randomNum}  <!-- 限制返回的数量 -->
     </select>
