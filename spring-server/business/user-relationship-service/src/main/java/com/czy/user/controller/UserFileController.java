@@ -70,7 +70,7 @@ public class UserFileController {
             return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
-        String userImageBucket = UserConstant.USER_FILE_BUCKET + userId;
+        String userImageBucket = UserConstant.USER_AVATAR_BUCKET + userId;
         String ossKey = UserConstant.USER_REGISTER_REDIS_KEY + phone;
         String lockPath = UserConstant.Login_CONTROLLER + UserConstant.Password_Register;
 
@@ -146,7 +146,7 @@ public class UserFileController {
             return BaseResponse.LogBackError("请输入用户id");
         }
 
-        String userImageBucket = UserConstant.USER_FILE_BUCKET + userId;
+        String userImageBucket = UserConstant.USER_AVATAR_BUCKET + userId;
         String lockPath = UserConstant.User_File_CONTROLLER + UserConstant.Update_Image;
 
         RedissonClusterLock redissonClusterLock = new RedissonClusterLock(

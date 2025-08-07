@@ -538,8 +538,13 @@ public class FileReadTests {
 
         // 清除 MySQL（不能批量执行）
         jdbcTemplate.execute("START TRANSACTION;");
+        // user
         jdbcTemplate.execute("DELETE FROM login_user;");
+        // oss
         jdbcTemplate.execute("DELETE FROM oss_file;");
+        // post
+        jdbcTemplate.execute("DELETE FROM post_collect;");
+        jdbcTemplate.execute("DELETE FROM post_collect_file;");
         jdbcTemplate.execute("DELETE FROM post_files;");
         jdbcTemplate.execute("DELETE FROM post_info;");
         jdbcTemplate.execute("COMMIT;");

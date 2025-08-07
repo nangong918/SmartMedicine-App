@@ -3,7 +3,8 @@ package com.czy.imports.service.impl;
 import com.czy.api.api.post.PostImportService;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.imports.ImportsConstant;
-import com.czy.api.constant.oss.FileConstant;
+import com.czy.api.constant.post.PostConstant;
+import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.oss.OssFileDo;
 import com.czy.api.domain.ao.oss.FileAo;
 import com.czy.imports.domain.Do.ArticleDo;
@@ -127,7 +128,7 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         if (StringUtils.hasText(authorImagePath)){
             FileOptionResult result = uploadFiles(
                     authorImagePath,
-                    FileConstant.USER_AVATAR_BUCKET
+                    UserConstant.USER_AVATAR_BUCKET
             );
             if (!result.getSuccessFiles().isEmpty()){
                 // 默认取第0个
@@ -147,7 +148,7 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
             if (StringUtils.hasText(articleImagePath)){
                 FileOptionResult result = uploadFiles(
                         articleImagePath,
-                        FileConstant.POST_FILE_BUCKET
+                        PostConstant.POST_FILE_BUCKET
                 );
                 if (!result.getSuccessFiles().isEmpty()){
                     List<Long> postFileIds = result.getSuccessFiles().stream()
@@ -198,8 +199,6 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
     private final PostDetailMongoMapper postDetailMongoMapper;
     private final PostDetailEsMapper postDetailEsMapper;
     private final UserEsMapper userEsMapper;
-    private final static String testAuthorBucketName = "author-file-test";
-    private final static String testPostBucketName = "post-file-test";
     @Override
     public void clearAllTestData() {
         // 清除 CQL (不能批量执行)
@@ -235,8 +234,8 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
 
         // 删除minIO数据
         try {
-            minIOService.deleteBucketAll(testAuthorBucketName);
-            minIOService.deleteBucketAll(testPostBucketName);
+            minIOService.deleteBucketAll(UserConstant.USER_AVATAR_BUCKET);
+            minIOService.deleteBucketAll(PostConstant.POST_FILE_BUCKET);
         } catch (Exception e){
             log.error("Error deleting bucket all in MinIO", e);
         }
