@@ -92,7 +92,7 @@ public interface UserService {
      * @param fileId    头像文件Id
      * @return          用户Id
      */
-    Long importUser(String userName, String account, String password, String phone, Long fileId, boolean haveToCheck);
+    Long importUser(long userId, String userName, String account, String password, String phone, Long fileId, boolean haveToCheck);
 
     /**
      * 获取用户ByIds

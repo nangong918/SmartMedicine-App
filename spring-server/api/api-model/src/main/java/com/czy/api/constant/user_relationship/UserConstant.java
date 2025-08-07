@@ -60,5 +60,5 @@ public class UserConstant {
     public static final String USER_REGISTER_REDIS_KEY = "user_register:";
 
     // 文件存储桶
-    public static final String USER_AVATAR_BUCKET = "user-avatar-";
+    public static final String USER_FILE_BUCKET = "user-file-";
 }

@@ -55,4 +55,8 @@ public interface MinIOService {
     void deleteBucketAll(String bucketName) throws Exception;
 
     FileOptionResult uploadMultipartImageFiles(List<MultipartFile> files, String bucketName);
+
+    List<String> getAllBucketNames() throws Exception;
+
+    List<String> getAllBucketNames(String prefix) throws Exception;
 }

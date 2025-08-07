@@ -181,8 +181,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Long importUser(String userName, String account, String password, String phone, Long fileId, boolean haveToCheck) {
-        long userId = IdUtil.getSnowflakeNextId();
+    public Long importUser(long userId, String userName, String account, String password, String phone, Long fileId, boolean haveToCheck) {
         LoginUserDo loginUserDo = new LoginUserDo();
         loginUserDo.setId(userId);
         loginUserDo.setUserName(userName);

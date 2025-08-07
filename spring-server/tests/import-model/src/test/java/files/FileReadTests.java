@@ -112,6 +112,7 @@ public class FileReadTests {
     @Test
     public void storageUserTest(){
         importAuthorService.createUser(
+                123L,
                 "test",
                 "test",
                 "test",
@@ -229,8 +230,11 @@ public class FileReadTests {
             }
         }
 
+        long userId = IdUtil.getSnowflakeNextId();
+
         // 3.创建user
-        long userId = importAuthorService.createUser(
+        importAuthorService.createUser(
+                userId,
                 minUser.getAuthorInfoAo().getUserName(),
                 minUser.getUserAccount(),
                 String.valueOf(startTestPhone),
@@ -240,8 +244,10 @@ public class FileReadTests {
 
         // 4.创建post
         for (int i = 0; i < articleDos.size(); i++){
+            long postId = IdUtil.getSnowflakeNextId();
             ArticleDo articleDo = articleDos.get(i);
             importAuthorService.createPost(
+                    postId,
                     articleDo.getTitle(),
                     articleDo.getContent(),
                     getTimestamp(articleDo.getTime()),

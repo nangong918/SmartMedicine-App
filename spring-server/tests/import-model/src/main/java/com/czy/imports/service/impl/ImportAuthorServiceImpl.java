@@ -1,5 +1,6 @@
 package com.czy.imports.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.post.PostImportService;
 import com.czy.api.api.user_relationship.UserService;
 import com.czy.api.constant.imports.ImportsConstant;
@@ -91,8 +92,9 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
     private static final String defaultPassword = "123456";
 
     @Override
-    public long createUser(String userName, String account, String phone, Long fileId, boolean haveToCheck) {
-        return userService.importUser(
+    public void createUser(long userId, String userName, String account, String phone, Long fileId, boolean haveToCheck) {
+        userService.importUser(
+                userId,
                 userName,
                 account,
                 defaultPassword,
@@ -103,10 +105,10 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
     }
 
     @Override
-    public void createPost(String title, String content, Long publishTime, List<Long> fileIdList, Long userId) {
+    public void createPost(long postId, String title, String content, Long publishTime, List<Long> fileIdList, Long userId) {
         log.info("start createPost:{}", title);
         // post信息，mysql存储到post_info和post_files；postDetail->mongodb;postTitle->es
-        postImportService.importPost(title, content, publishTime, fileIdList, userId);
+        postImportService.importPost(postId, title, content, publishTime, fileIdList, userId);
     }
 
     private final CrawlerDataManager crawlerDataManager;
@@ -135,10 +137,12 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         if (currentImportIndex % 5 == 0){
             log.info("importSingle::上传头像并获取id::节点检查，authorImagePath: {}", authorImagePath);
         }
+
+        long userId = IdUtil.getSnowflakeNextId();
         if (StringUtils.hasText(authorImagePath)){
             FileOptionResult result = uploadFiles(
                     authorImagePath,
-                    UserConstant.USER_AVATAR_BUCKET
+                    UserConstant.USER_FILE_BUCKET + userId
             );
             if (!result.getSuccessFiles().isEmpty()){
                 // 默认取第0个
@@ -180,7 +184,8 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         }
 
         // 3.创建user
-        long userId = createUser(
+        createUser(
+                userId,
                 authorAo.getAuthorInfoAo().getUserName(),
                 authorAo.getUserAccount(),
                 String.valueOf(userPhone),
@@ -191,7 +196,9 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         // 4.创建post
         for (int i = 0; i < articleDos.size(); i++){
             ArticleDo articleDo = articleDos.get(i);
+            long postId = IdUtil.getSnowflakeNextId();
             createPost(
+                    postId,
                     articleDo.getTitle(),
                     articleDo.getContent(),
                     getTimestamp(articleDo.getTime()),
@@ -249,8 +256,16 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
 
         // 删除minIO数据
         try {
-            minIOService.deleteBucketAll(UserConstant.USER_AVATAR_BUCKET);
-            minIOService.deleteBucketAll(PostConstant.POST_FILE_BUCKET);
+            List<String> userFileBuckets = minIOService.getAllBucketNames(UserConstant.USER_FILE_BUCKET);
+            List<String> postFileBuckets = minIOService.getAllBucketNames(PostConstant.POST_FILE_BUCKET);
+            for (String userFileBucket : userFileBuckets) {
+                minIOService.deleteBucketAll(userFileBucket);
+            }
+            for (String postFileBucket : postFileBuckets) {
+                minIOService.deleteBucketAll(postFileBucket);
+            }
+//            minIOService.deleteBucketAll(UserConstant.USER_FILE_BUCKET);
+//            minIOService.deleteBucketAll(PostConstant.POST_FILE_BUCKET);
         } catch (Exception e){
             log.error("Error deleting bucket all in MinIO", e);
         }

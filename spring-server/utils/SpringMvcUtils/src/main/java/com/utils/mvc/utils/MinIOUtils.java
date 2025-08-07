@@ -56,11 +56,17 @@ public class MinIOUtils {
      * @throws Exception
      */
     public void createBucket(String bucketName) throws Exception {
-        if (!bucketExists(bucketName)) {
-            minIOConfig.minioClient().makeBucket(MakeBucketArgs.builder()
-                    .bucket(bucketName)
-                    .build());
+        try {
+            if (!bucketExists(bucketName)) {
+                minIOConfig.minioClient().makeBucket(MakeBucketArgs.builder()
+                        .bucket(bucketName)
+                        .build());
+            }
+        } catch (Exception e){
+            log.error("创建存储桶失败, bucketName: {}", bucketName, e);
+            throw e;
         }
+
     }
 
     /**
