@@ -544,7 +544,7 @@ public class FileReadTests {
         jdbcTemplate.execute("DELETE FROM oss_file;");
         // post
         jdbcTemplate.execute("DELETE FROM post_collect;");
-        jdbcTemplate.execute("DELETE FROM post_collect_file;");
+        jdbcTemplate.execute("DELETE FROM post_collect_folder;");
         jdbcTemplate.execute("DELETE FROM post_files;");
         jdbcTemplate.execute("DELETE FROM post_info;");
         jdbcTemplate.execute("COMMIT;");
