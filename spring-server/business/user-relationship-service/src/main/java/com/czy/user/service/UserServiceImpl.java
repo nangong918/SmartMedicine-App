@@ -224,7 +224,12 @@ public class UserServiceImpl implements UserService {
             log.info("用户导入节点检查::[mysql: {}][es: {}][neo4j: {}]",
                     userMysql,
                     Optional.ofNullable(usersEs)
-                            .map(us -> us.get(0))
+                            .map(us -> {
+                                if (us.isEmpty()){
+                                    return null;
+                                }
+                                return us.get(0);
+                            })
                             .orElse(null),
                     userNeo4j.orElse(null)
                     );

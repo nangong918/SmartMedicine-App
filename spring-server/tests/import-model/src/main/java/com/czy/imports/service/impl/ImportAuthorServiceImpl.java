@@ -162,11 +162,12 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         }
         List<List<Long>> postFilesIds = new ArrayList<>(articleDos.size());
         for (ArticleDo articleDo : articleDos){
+            articleDo.setId(IdUtil.getSnowflakeNextId());
             String articleImagePath = articleDo.getArticleImagePath();
             if (StringUtils.hasText(articleImagePath)){
                 FileOptionResult result = uploadFiles(
                         articleImagePath,
-                        PostConstant.POST_FILE_BUCKET
+                        PostConstant.POST_FILE_BUCKET + articleDo.getId()
                 );
                 if (!result.getSuccessFiles().isEmpty()){
                     List<Long> postFileIds = result.getSuccessFiles().stream()
@@ -196,9 +197,8 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         // 4.创建post
         for (int i = 0; i < articleDos.size(); i++){
             ArticleDo articleDo = articleDos.get(i);
-            long postId = IdUtil.getSnowflakeNextId();
             createPost(
-                    postId,
+                    articleDo.getId(),
                     articleDo.getTitle(),
                     articleDo.getContent(),
                     getTimestamp(articleDo.getTime()),
@@ -259,9 +259,11 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
             List<String> userFileBuckets = minIOService.getAllBucketNames(UserConstant.USER_FILE_BUCKET);
             List<String> postFileBuckets = minIOService.getAllBucketNames(PostConstant.POST_FILE_BUCKET);
             for (String userFileBucket : userFileBuckets) {
+                log.info("开始清除 userFileBucket:{}", userFileBucket);
                 minIOService.deleteBucketAll(userFileBucket);
             }
             for (String postFileBucket : postFileBuckets) {
+                log.info("开始清除 postFileBucket:{}", postFileBucket);
                 minIOService.deleteBucketAll(postFileBucket);
             }
 //            minIOService.deleteBucketAll(UserConstant.USER_FILE_BUCKET);
