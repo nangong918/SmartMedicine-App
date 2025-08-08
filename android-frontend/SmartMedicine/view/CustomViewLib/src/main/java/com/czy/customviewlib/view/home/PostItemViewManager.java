@@ -67,7 +67,7 @@ public class PostItemViewManager {
 
             @Override
             public void setPostImage(String url) {
-                ImageLoadUtil.loadImageViewByLocalFile(url, binding.cardImage);
+                ImageLoadUtil.loadImageViewByResource(url, binding.cardImage);
             }
 
             @Override
@@ -93,7 +93,7 @@ public class PostItemViewManager {
 
             @Override
             public void setPostImage(String url) {
-                ImageLoadUtil.loadImageViewByLocalFile(url, binding.cardImage);
+                ImageLoadUtil.loadImageViewByResource(url, binding.cardImage);
             }
 
             @Override
@@ -116,7 +116,7 @@ public class PostItemViewManager {
 
             @Override
             public void setPostImage(String url) {
-                ImageLoadUtil.loadImageViewByLocalFile(url, binding.cardImage2);
+                ImageLoadUtil.loadImageViewByResource(url, binding.cardImage2);
             }
 
             @Override
