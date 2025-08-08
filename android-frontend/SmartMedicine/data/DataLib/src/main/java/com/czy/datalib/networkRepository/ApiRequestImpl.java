@@ -327,6 +327,18 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
         );
     }
 
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/test")
+    //    Observable<BaseResponse<RecommendPostResponse>> recommendTestGetRandomPost(@Body RecommendPostRequest request);
+    public void recommendTestGetRandomPost(RecommendPostRequest request,
+                                           OnSuccessCallback<BaseResponse<RecommendPostResponse>> onSuccessCallback,
+                                           OnThrowableCallback onThrowableCallback){
+        sendRequestCallback(
+                mApi.recommendTestGetRandomPost(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
     //    @GET("/post/getPost")
     //    Observable<BaseResponse<SinglePostResponse>> getSinglePost(
     //            @Query("postId") Long postId,

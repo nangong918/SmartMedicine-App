@@ -257,6 +257,10 @@ public interface ApiRequest {
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/get")
     Observable<BaseResponse<RecommendPostResponse>> getRecommendPosts(@Body RecommendPostRequest request);
 
+    // 前后端联调测试接口：获取随机post
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/test")
+    Observable<BaseResponse<RecommendPostResponse>> recommendTestGetRandomPost(@Body RecommendPostRequest request);
+
     /**
      * 获取单个帖子
      * @param postId    帖子id

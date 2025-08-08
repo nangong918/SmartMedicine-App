@@ -13,15 +13,16 @@ import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.customviewlib.view.home.OnRecommendCardClick;
 import com.czy.customviewlib.view.home.PostAdapter;
-import com.czy.dal.ao.home.FeatureContext;
 import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.vo.fragmentActivity.HomeVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.manager.PostClickManager;
+import com.czy.smartmedicine.test.TestConfig;
 import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
@@ -75,17 +76,49 @@ public class HomeViewModel extends ViewModel {
 
     //---------------------------NetWork---------------------------
 
-    // 初始化网络请求
+    // 初始化网络请求 todo 管理缓存，图片也要缓存在内存，避免重复网络请求
     private void initialNetworkRequest() {
     }
 
-    // 获取推荐帖子 todo 适配一下（debug模式下暂时不进行用户已推荐过滤）
-    public void getRecommendPosts(Context context, SyncRequestCallback callback){
-        FeatureContext currentFeatureContext = getFeatureContext();
+    public void getRecommendPostsP(Context context, SyncRequestCallback callback){
+        if (!TestConfig.IS_TEST){
+            getRecommendPosts(context, callback);
+        }
+        else {
+            testGetRandomPosts(context, callback);
+        }
+    }
+
+    // 获取推荐帖子
+    private void getRecommendPosts(Context context, SyncRequestCallback callback){
         RecommendPostRequest request = new RecommendPostRequest();
-        request.featureContext = currentFeatureContext;
-        request.featureContext.userId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        request.userId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                .map(ao -> ao.userId)
+                .orElse(NettyConstants.ERROR_ID);
         apiRequestImpl.getRecommendPosts(
+                request,
+                response -> {
+                    ResponseTool.handleSyncResponseEx(
+                            response,
+                            context,
+                            callback,
+                            this::handleGetPostList
+                    );
+                },
+                throwable -> {
+                    callback.onThrowable(throwable);
+                    ViewModelUtil.globalThrowableToast(throwable);
+                }
+        );
+    }
+
+    // 前后端联调测试接口：获取随机推荐帖子
+    private void testGetRandomPosts(Context context, SyncRequestCallback callback){
+        RecommendPostRequest request = new RecommendPostRequest();
+        request.userId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                .map(ao -> ao.userId)
+                .orElse(NettyConstants.ERROR_ID);
+        apiRequestImpl.recommendTestGetRandomPost(
                 request,
                 response -> {
                     ResponseTool.handleSyncResponseEx(
@@ -150,24 +183,5 @@ public class HomeViewModel extends ViewModel {
                 this.socketMessageSender,
                 fragment
         );
-    }
-
-    private final FeatureContext featureContext = new FeatureContext();
-
-    // todo 实现的时候需要再采集更多的数据，如点击时间，点击时长，交给后端的规则集去处理
-    public void setFeatureContext(List<Long> postIds){
-        // 添加全部上下文
-        featureContext.postIds.addAll(postIds);
-        featureContext.timestamp = System.currentTimeMillis();
-    }
-
-    public FeatureContext getFeatureContext(){
-        FeatureContext copyFeatureContext = this.featureContext.copy();
-        clearFeatureContext();
-        return copyFeatureContext;
-    }
-
-    private void clearFeatureContext(){
-        this.featureContext.clear();
     }
 }

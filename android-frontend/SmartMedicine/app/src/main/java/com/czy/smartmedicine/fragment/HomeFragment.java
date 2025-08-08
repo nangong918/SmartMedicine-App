@@ -81,7 +81,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
         binding.lyMain.setOnRefreshListener(() -> {
             NetworkLoadUtils.showDialog(requireContext());
-            viewModel.getRecommendPosts(requireContext(), new SyncRequestCallback() {
+            viewModel.getRecommendPostsP(requireContext(), new SyncRequestCallback() {
                 @Override
                 public void onThrowable(Throwable throwable) {
                     NetworkLoadUtils.dismissDialog();
