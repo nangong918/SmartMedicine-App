@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,32 +55,39 @@ public class MainTopBar extends ConstraintLayout {
     }
 
     public void setView(MainTopBarVo mainTopBarVo){
-        Optional.ofNullable(mainTopBarVo)
+        SelectItemEnum sli = Optional.ofNullable(mainTopBarVo)
                 .map(vo -> vo.selectItemEnum)
-                .ifPresent(
-                        sli -> {
-                            // view
-                            binding.lyFriend.setVisibility(sli == SelectItemEnum.FRIENDS ? View.VISIBLE : View.GONE);
-                            // data
-                            switch (sli){
-                                case HOME -> {}
-                                case SEARCH -> {}
-                                case AI -> {}
-                                case FRIENDS -> {
-                                    if (mainTopBarVo.onFriendCallback == null){
-                                        binding.lyFriend.setOnClickListener(v -> {});
-                                    }
-                                    else {
-                                        binding.lyFriend.setOnClickListener(v -> {
-                                            mainTopBarVo.onFriendCallback.onSearchFriendClick();
-                                        });
-                                    }
-                                }
-                                case NOTIFICATIONS -> {}
-                                case MESSAGE -> {}
-                            }
-                        }
-                );
+                .orElse(null);
+        if (sli == null){
+            binding.lyFriend.setVisibility(GONE);
+        }
+        else {
+            // view
+            if (mainTopBarVo.onFriendCallback != null && SelectItemEnum.FRIENDS.equals(sli)){
+                binding.lyFriend.setVisibility(VISIBLE);
+            }
+            else {
+                binding.lyFriend.setVisibility(GONE);
+            }
+            // data
+            switch (sli){
+                case HOME -> {}
+                case SEARCH -> {}
+                case AI -> {}
+                case FRIENDS -> {
+                    if (mainTopBarVo.onFriendCallback == null){
+                        binding.lyFriend.setOnClickListener(v -> {});
+                    }
+                    else {
+                        binding.lyFriend.setOnClickListener(v -> {
+                            mainTopBarVo.onFriendCallback.onSearchFriendClick();
+                        });
+                    }
+                }
+                case NOTIFICATIONS -> {}
+                case MESSAGE -> {}
+            }
+        }
     }
 
     public void setImageClickListener(OnClickListener listener){

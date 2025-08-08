@@ -120,7 +120,8 @@ public class ImageLoadUtil {
         }
         // 本地file
         else {
-            loadImageViewByLocalFile(urlOrUri, imageView);
+            Uri uri = Uri.parse(urlOrUri);
+            loadImageViewByLocalFile(uri, imageView);
         }
     }
 

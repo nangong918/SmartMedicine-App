@@ -32,11 +32,13 @@ public class CrawlerDataManager {
     public static final String articleDataString = "data.json";
     private final FileReadManager fileReadManager;
 
+    /// 读取当前项目下的：爬取数据 文件夹下的所有文件
     // 去读路径下的二级文件夹，如果二级文件夹的名字的Author就打开，读取0.txt
     public List<AuthorAo> readCrawlerAuthorData() {
         List<AuthorAo> authorAos = new ArrayList<>();
         // 获取爬取数据的路径
         String crawlerArticlePath = fileReadManager.crawlerArticlePath;
+        log.info("获取爬取数据的main路径: {}", crawlerArticlePath);
         // 一级路径的文件夹
         File[] crawler1Folder = fileReadManager.getFiles(crawlerArticlePath);
         if (crawler1Folder == null){

@@ -47,10 +47,9 @@ public class PostClickManager {
     // 启动postActivity的IntentLauncher
     private ActivityResultLauncher<Intent> openPostActivityLauncher;
 
-    public PostClickManager(@NonNull List<PostAo> postAoList, @NonNull SocketMessageSender sender,
-                            @NonNull ActivityResultCaller activityResultCaller){
+    public PostClickManager(@NonNull List<PostAo> postAoList, @NonNull ActivityResultCaller activityResultCaller){
         this.postAoList = postAoList;
-        this.socketSender = sender;
+        this.socketSender = MainApplication.getInstance().getMessageSender();
         initActivityLauncher(activityResultCaller);
     }
 
@@ -83,7 +82,7 @@ public class PostClickManager {
     public OnRecommendCardClick getOnRecommendCardClick(FragmentActivity activity) {
         return new OnRecommendCardClick() {
             @Override
-            public void onCardClick(int position, int cardType, int cardId) {
+            public void onCardClick(int position, RecommendCardType cardType, int cardId) {
                 PostVo postVo = getPostInfoByList(position, cardId);
                 Long postId = Optional.ofNullable(postVo)
                         .map(p -> p.postId)
@@ -98,18 +97,17 @@ public class PostClickManager {
             }
 
             @Override
-            public void onButtonClick(int position, int cardType, int cardId, int buttonType) {
+            public void onButtonClick(int position, RecommendCardType cardType, int cardId, RecommendButtonType buttonType) {
                 PostClickManager.this.onButtonClick(position, cardType, cardId, buttonType);
             }
         };
     }
 
-    public void onButtonClick(int position, int cardType, int cardId, int buttonType){
+    public void onButtonClick(int position, RecommendCardType cardType, int cardId, RecommendButtonType buttonType){
         PostVo postVo = getPostInfoByList(position, cardId);
-        RecommendButtonType recommendButtonType = RecommendButtonType.valueOf(buttonType);
 
         // 根据当前状态得出操作类型
-        PostOperation postOperation = postVo.clickChange(recommendButtonType);
+        PostOperation postOperation = postVo.clickChange(buttonType);
         // 状态切换
         postVo.clickChange(postOperation);
 
@@ -155,12 +153,31 @@ public class PostClickManager {
         if (postAoList.isEmpty()){
             return null;
         }
-        PostAo postAo = postAoList.get(position);
+        int realIndex = getPostRealIndexByPosition(position, cardId);
+        PostAo postAo = postAoList.get(realIndex);
         assert cardId >= 0 && cardId < 2;
         if (RecommendCardType.TWO_SMALL_CARD.value == postAo.viewType){
             return postAo.postVos[cardId];
         }
         return postAo.postVos[0];
+    }
+
+    /**
+     * 通过行索引获取list中真实的位置
+     * @param position  行索引
+     * @param cardId    卡片索引(列索引)
+     * @return  list中真实位置
+     */
+    private int getPostRealIndexByPosition(int position, int cardId){
+        if (position > postAoList.size() || position < 0 || (cardId != 0 && cardId != 1)){
+            Log.w(TAG, "getPostRealIndexByPosition: position out of range, position: " + position + " cardId:" + cardId);
+            throw new IllegalArgumentException("position out of range, position: " + position + " cardId:" + cardId);
+        }
+        int index = 0;
+        for (int i = 0; i < position; i++){
+            index += postAoList.get(i).postVos.length;
+        }
+        return index + cardId;
     }
 
     private void startPostActivityIntent(Long postId, FragmentActivity activity){

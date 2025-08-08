@@ -17,7 +17,7 @@ public class PostInfoUrlAo implements Serializable {
     public String authorName;
     // 作者头像
     public String authorAvatarUrl;
-    // fileUrl 只展示1个
+    // fileUrl 暂时只展示1个
     public String fileUrl;
     // title；not null
     public String title;

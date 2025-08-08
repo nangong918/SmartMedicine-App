@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
@@ -72,9 +73,6 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
             finish();
             return;
         }
-
-        // 利用postId去网络请求帖子信息（先请求1页的评论内容）
-        viewModel.getSinglePost(currentActivityPostId, 1L);
     }
 
     private PostViewModel viewModel;
@@ -91,11 +89,25 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         binding.setViewModel(viewModel);
         // 设置监听者
         binding.setLifecycleOwner(this);
+
+        // 利用postId去网络请求帖子信息（先请求1页的评论内容）
+        viewModel.getSinglePost(1, this, new SyncRequestCallback() {
+            @Override
+            public void onThrowable(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onAllRequestSuccess() {
+
+            }
+        });
     }
 
     private void initViewModelVo(){
-        PostActivityVo postActivityVo = new PostActivityVo();
-        viewModel.init(postActivityVo);
+        PostActivityVo vo = new PostActivityVo();
+        vo.postVoLd.postIdLd.setValue(currentActivityPostId);
+        viewModel.init(vo);
     }
 
     private void observeLivedata() {

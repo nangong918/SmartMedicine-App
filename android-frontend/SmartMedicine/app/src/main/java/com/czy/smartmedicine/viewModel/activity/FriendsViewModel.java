@@ -148,6 +148,8 @@ public class FriendsViewModel extends ViewModel {
         if (response != null){
             friendApiHandler.receiveAddedFriend(response);
         }
+        // 移除已处理的粘性事件
+        EventBus.getDefault().removeStickyEvent(response);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -155,6 +157,8 @@ public class FriendsViewModel extends ViewModel {
         if (response != null){
             friendApiHandler.receiveAddFriendResult(response);
         }
+        // 移除已处理的粘性事件
+        EventBus.getDefault().removeStickyEvent(response);
     }
 
     private void initEventBus() {

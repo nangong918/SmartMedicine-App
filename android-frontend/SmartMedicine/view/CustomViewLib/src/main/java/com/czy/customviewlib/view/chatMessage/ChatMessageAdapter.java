@@ -125,7 +125,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ((SenderViewHolder) holder).binding.tvTime.setText(vo.time);
             if (MessageTypeEnum.image.code == vo.messageType){
                 ((SenderViewHolder) holder).binding.imgvMessage.setVisibility(View.VISIBLE);
-                // 加载图片
+                // 图片消息：3.3.3 加载图片 (可以区分url和uri)
                 ImageLoadUtil.loadImageViewByResource(
                         vo.avatarUrlOrUri,
                         ((SenderViewHolder) holder).binding.imgvMessage
@@ -141,7 +141,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ((ReceiverViewHolder) holder).binding.tvTime.setText(vo.time);
             if (MessageTypeEnum.image.code == vo.messageType){
                 ((ReceiverViewHolder) holder).binding.imgvMessage.setVisibility(View.VISIBLE);
-                // 加载图片
+                // 图片消息：3.3.3 加载图片 (可以区分url和uri)
                 ImageLoadUtil.loadImageViewByResource(
                         vo.avatarUrlOrUri,
                         ((ReceiverViewHolder) holder).binding.imgvMessage

@@ -29,6 +29,7 @@ import com.czy.api.domain.dto.python.MedicalPredictionResponse;
 import com.czy.api.domain.dto.python.NlpSearchResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
 import com.czy.api.domain.vo.post.PostPreviewVo;
+import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.search.component.KafkaSender;
 import com.czy.search.config.SearchTestConfig;
@@ -141,6 +142,24 @@ public class SearchController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
+    // 功能测试通过，性能的话：todo 一次性返回全部结果存在问题，太消耗后端性能，需要策略
+    // 测试上述接口：fuzzySearch
+    @PostMapping("/test")
+    public BaseResponse<FuzzySearchResponse> testSearch(@RequestBody Map<String, String> jsonReq){
+        String sentence = jsonReq.get("sentence");
+        if (sentence == null) {
+            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
+        }
+
+        NlpSearchResponse nlpSearchResponse = new NlpSearchResponse();
+        nlpSearchResponse.setCode(200);
+        nlpSearchResponse.setMessage("");
+        nlpSearchResponse.setType(NlpResultEnum.SEARCH.getCode());
+
+        FuzzySearchResponse response = handleNlpResult(nlpSearchResponse, sentence, 1L);
+        return BaseResponse.getResponseEntitySuccess(response);
+    }
+
     /**
      * kafka发送搜索行为
      * @param response  搜索结果
@@ -247,7 +266,7 @@ public class SearchController {
             response.setData(ao);
             return response;
         }
-        // 搜索需求
+        // 问题需求
         else if (nlpSearchResponse.getType() >= NlpResultEnum.SYMPTOM_SEARCH_QUESTION.getCode() &&
                 nlpSearchResponse.getType() <= NlpResultEnum.DISEASE_TREATMENT_TIME.getCode()){
             FuzzySearchResponse response = new FuzzySearchResponse();

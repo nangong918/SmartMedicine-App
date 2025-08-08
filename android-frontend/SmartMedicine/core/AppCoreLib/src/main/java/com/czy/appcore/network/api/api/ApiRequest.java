@@ -6,6 +6,7 @@ import com.czy.dal.constant.backEnd.BackEndConstant;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.FuzzySearchRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
+import com.czy.dal.dto.http.request.GetSinglePostRequest;
 import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
 import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
@@ -243,7 +244,7 @@ public interface ApiRequest {
      * @param url   url
      * @return      文件下载响应
      */
-    @Deprecated
+    @Deprecated(since = "2025/8/1: 直接去从响应体获取byte[]已成历史，后端把数据写入响应体会出现io阻塞")
     @GET(BackEndConstant.OSS + "/oss/downloadImage")
     Observable<BaseResponse<FileDownloadBytesResponse>> downloadImage(@Query("url") String url);
 
@@ -257,17 +258,17 @@ public interface ApiRequest {
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/get")
     Observable<BaseResponse<RecommendPostResponse>> getRecommendPosts(@Body RecommendPostRequest request);
 
+    // 前后端联调测试接口：获取随机post
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/test")
+    Observable<BaseResponse<RecommendPostResponse>> recommendTestGetRandomPost(@Body RecommendPostRequest request);
+
     /**
      * 获取单个帖子
-     * @param postId    帖子id
-     * @param pageNum   页码
-     * @return          帖子
+     * @param request    帖子id + 页码
+     * @return           帖子
      */
-    @GET(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/post/getPost")
-    Observable<BaseResponse<SinglePostResponse>> getSinglePost(
-            @Query("postId") Long postId,
-            @Query("pageNum") Long pageNum
-    );
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/post/getPost")
+    Observable<BaseResponse<SinglePostResponse>> getSinglePost(@Body GetSinglePostRequest request);
 
     /**
      * 发布帖子（首次【因为1.需要审核是否发过，以及内容是否合法2.oss上传速度较慢，可以后台上传】）

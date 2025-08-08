@@ -13,6 +13,7 @@ import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 import java.util.Objects;
 import java.util.Optional;
 
+// todo 删除此类，直接使用 ChatMessageItemVo
 public class MessageItem extends SortItem {
     public Long senderId;
     public Long receiverId;
@@ -61,6 +62,7 @@ public class MessageItem extends SortItem {
         ChatMessageItemVo chatMessageItemVo = new ChatMessageItemVo();
         chatMessageItemVo.content = content;
         chatMessageItemVo.setTimeByStringTimeStamp(timestamp);
+        chatMessageItemVo.messageType = this.messageType;
         chatMessageItemVo.viewType = Optional.ofNullable(myId)
                 .map(id -> {
                     if (id.equals(senderId)){

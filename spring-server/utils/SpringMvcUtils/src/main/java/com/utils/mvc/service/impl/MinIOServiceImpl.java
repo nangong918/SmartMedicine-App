@@ -11,6 +11,7 @@ import domain.FileOptionResult;
 import domain.SuccessFile;
 import exception.OssException;
 import io.minio.ObjectWriteResponse;
+import io.minio.messages.Bucket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -404,5 +405,27 @@ public class MinIOServiceImpl implements MinIOService {
         fileOptionResult.setErrorFiles(errorFiles);
         fileOptionResult.setSuccessFiles(successFiles);
         return fileOptionResult;
+    }
+
+    @Override
+    public List<String> getAllBucketNames() throws Exception {
+        List<Bucket> buckets = minIOUtils.getAllBuckets();
+        List<String> bucketNames = new ArrayList<>();
+        for (Bucket bucket : buckets) {
+            bucketNames.add(bucket.name());
+        }
+        return bucketNames;
+    }
+
+    @Override
+    public List<String> getAllBucketNames(String prefix) throws Exception {
+        List<Bucket> buckets = minIOUtils.getAllBuckets();
+        List<String> bucketNames = new ArrayList<>();
+        for (Bucket bucket : buckets) {
+            if (bucket.name().startsWith(prefix)) {
+                bucketNames.add(bucket.name());
+            }
+        }
+        return bucketNames;
     }
 }

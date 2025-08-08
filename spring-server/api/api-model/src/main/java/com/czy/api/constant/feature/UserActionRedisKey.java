@@ -37,4 +37,8 @@ public interface UserActionRedisKey {
 
     // userHeat
     String USER_HEAT_REDIS_KEY = "user_heat:";
+
+    // online_temp
+    String USER_ONLINE_TEMP_REDIS_KEY = USER_FEATURE_REDIS_KEY + "online_temp:";
+    Long USER_ONLINE_TEMP_REDIS_KEY_EXPIRE = 60L * 60 * 24;
 }

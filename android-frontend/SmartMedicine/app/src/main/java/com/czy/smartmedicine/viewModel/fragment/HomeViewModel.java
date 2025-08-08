@@ -13,15 +13,18 @@ import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.customviewlib.view.home.OnRecommendCardClick;
 import com.czy.customviewlib.view.home.PostAdapter;
-import com.czy.dal.ao.home.FeatureContext;
 import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.vo.fragmentActivity.HomeVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.fragment.HomeFragment;
+import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.czy.smartmedicine.manager.PostClickManager;
+import com.czy.smartmedicine.test.TestConfig;
 import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
@@ -52,7 +55,6 @@ public class HomeViewModel extends ViewModel {
 
     public void init(HomeVo homeVo){
         this.homeVo = homeVo;
-        initialNetworkRequest();
     }
 
     //==========RecyclerView
@@ -75,17 +77,54 @@ public class HomeViewModel extends ViewModel {
 
     //---------------------------NetWork---------------------------
 
-    // 初始化网络请求
-    private void initialNetworkRequest() {
+    // 初始化网络请求 todo 管理缓存，图片也要缓存在内存，避免重复网络请求
+    public void initialNetworkRequest(Context context, SyncRequestCallback callback) {
+        // app首次打开HomeFragment时，请求推荐帖子
+        if (HttpRequestManager.getIsFirstOpen(HomeFragment.class.getName())){
+            getRecommendPostsP(context, callback);
+        }
+        // 不是首次打开管都不用管
     }
 
-    // 获取推荐帖子 todo 适配一下（debug模式下暂时不进行用户已推荐过滤）
-    public void getRecommendPosts(Context context, SyncRequestCallback callback){
-        FeatureContext currentFeatureContext = getFeatureContext();
+    public void getRecommendPostsP(Context context, SyncRequestCallback callback){
+        if (!TestConfig.IS_TEST){
+            getRecommendPosts(context, callback);
+        }
+        else {
+            testGetRandomPosts(context, callback);
+        }
+    }
+
+    // 获取推荐帖子
+    private void getRecommendPosts(Context context, SyncRequestCallback callback){
         RecommendPostRequest request = new RecommendPostRequest();
-        request.featureContext = currentFeatureContext;
-        request.featureContext.userId = MainApplication.getInstance().getUserLoginInfoAo().userId;
+        request.userId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                .map(ao -> ao.userId)
+                .orElse(NettyConstants.ERROR_ID);
         apiRequestImpl.getRecommendPosts(
+                request,
+                response -> {
+                    ResponseTool.handleSyncResponseEx(
+                            response,
+                            context,
+                            callback,
+                            this::handleGetPostList
+                    );
+                },
+                throwable -> {
+                    callback.onThrowable(throwable);
+                    ViewModelUtil.globalThrowableToast(throwable);
+                }
+        );
+    }
+
+    // 前后端联调测试接口：获取随机推荐帖子
+    private void testGetRandomPosts(Context context, SyncRequestCallback callback){
+        RecommendPostRequest request = new RecommendPostRequest();
+        request.userId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                .map(ao -> ao.userId)
+                .orElse(NettyConstants.ERROR_ID);
+        apiRequestImpl.recommendTestGetRandomPost(
                 request,
                 response -> {
                     ResponseTool.handleSyncResponseEx(
@@ -127,12 +166,7 @@ public class HomeViewModel extends ViewModel {
         int beforeSize = homeList.size();
         homeList.addAll(postAoList);
 
-        // 设置值，观察者模式会通知view更新
-//        homeVo.postListVo.postAoListLd.setValue(homeList);
-
-        // list都采用手动更新，而不是livedata观察
-        // 更新beforeSize ~ size
-//        this.postAdapter.notifyItemRangeChanged(beforeSize, homeList.size());
+        // adapter更新；注意此处RecyclerViewAdapter的更新逻辑跟其他地方的Adapter更新逻辑不一样，是直接由指针指向地址去更新
         for (int i = beforeSize; i < homeList.size(); i++) {
             postAdapter.notifyItemInserted(i);
         }
@@ -147,27 +181,7 @@ public class HomeViewModel extends ViewModel {
     public void initPostClickManager(ActivityResultCaller fragment){
         postClickManager = new PostClickManager(
                 homeVo.postListVo.postAoList,
-                this.socketMessageSender,
                 fragment
         );
-    }
-
-    private final FeatureContext featureContext = new FeatureContext();
-
-    // todo 实现的时候需要再采集更多的数据，如点击时间，点击时长，交给后端的规则集去处理
-    public void setFeatureContext(List<Long> postIds){
-        // 添加全部上下文
-        featureContext.postIds.addAll(postIds);
-        featureContext.timestamp = System.currentTimeMillis();
-    }
-
-    public FeatureContext getFeatureContext(){
-        FeatureContext copyFeatureContext = this.featureContext.copy();
-        clearFeatureContext();
-        return copyFeatureContext;
-    }
-
-    private void clearFeatureContext(){
-        this.featureContext.clear();
     }
 }

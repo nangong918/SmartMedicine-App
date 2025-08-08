@@ -5,12 +5,25 @@
 其次是:大数据+Java;最次之为Android.
 分布式存储,分布式计算
 
+## 想法
+1. 好好做好这个项目, 功能不是能力提升点, 修复bug之后的稳定系统才是能力提升点[优化系统, 完善系统]
+2. Github看创意Ai, 搬运之后做创意App
+3. OpenCV + Esp32人脸识别注视机器宠物
+4. 小型无人机
+5. 供应链游戏
+
 ## 提醒
 
 1. 学习推荐系统架构\学习Java场景题(由场景入八股)
 2. 学习推荐系统的业务 -> 架构 + 大数据 + 算法
 
 ## 目前任务
+
+1. 前后端联调：实现post搜索
+2. user行为记录改为hive存储
+
+公司: 1. 日志数据源改为hive 2. 搞推荐算法
+家: todo:1. 搞联调; 2.重新确定功能, 设计UI
 
 ### spring-server
 
@@ -240,11 +253,13 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 3天
   * 7月3~7月5
 
+todo 日志数据存储改为hive
+todo user行为记录改为aop; 数据记录位置改为hive(大数据仓库)
+todo 数据离线计算改为spark,flink
 todo JVM调参, 解决redis爆炸问题(已解决,redis.conf配置持久化路径问题, 在C盘出现没有权限写入问题)
 todo 学习dubbo;实现dubbo服务能够动态注册生产者,让消消费者动态获取生产者注册服务
 todo 提高系统的鲁棒性：（单点，各种场景考虑，性能分析，中间件分析）
 todo 推荐系统已经推荐的post编辑进入已推荐过,召回阶段不再选取
-todo 一定要加上Spark,Hive,Hadoop,实现大数据
 todo post获取权限筛选；评论权限筛选（AOP？）。
 todo 秒杀预约挂号系统
 todo 商品购物系统
@@ -255,6 +270,12 @@ todo 明天继续跑通IM和post
 todo 推荐页面加入部分购物推荐, 搜索商品, 挂号预约(秒杀)
 todo 如果想要走Android C++就需要完成NDK + RTMP实现直播推流
 todo Redisson 替换 Redis
+todo android的eventBus合理化
+todo 性能优化，考虑使用kotlin
+todo 使用链路追踪检查接口耗费时长问题
+
+~~todo 后续合并post-service和search-service~~ search-service和post-service暂时不能合并，因为：
+search-service依赖feature-service的规则，feature-service依赖post-service的数据
 
 ##### 重构+细化
 * spring学习
@@ -334,6 +355,7 @@ todo Redisson 替换 Redis
 8. oss优化, url存储在redis中,并且redis.ttl < oss.ttl
 9. 搜索,排序算法优化.
 10. 微服务分布式优化:集群,均衡负载,分布式锁,分布式事务,链路,服务注册,服务发现,服务熔断,服务限流
+11. nacos和dubbo的动态注册,能先启动消费者再启动生产者,实现生产者服务挂掉启动新的生产服务能被消费服务发现
 
 ## Android
 暂时取消DiffUtil，测试总是出bug，属于过度开发；归为性能优化点

@@ -41,6 +41,10 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
     @Override
     protected void setListener() {
         super.setListener();
+
+        // 返回
+        binding.topBar.setBack(v -> finish());
+
         // 发布
         binding.btnPublish.setOnClickListener(v -> {
             // 因为后端需要先检查是否合法

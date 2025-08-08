@@ -96,7 +96,8 @@ public class FileReadTests {
         String filePath = "D:\\CodeLearning\\smart-medicine\\爬取数据\\养生杂志\\5\\0.png";
         FileOptionResult result = importAuthorService.uploadFiles(
                 filePath,
-                testAuthorBucketName
+                testAuthorBucketName,
+                1L
         );
         System.out.println(result.toJsonString());
     }
@@ -112,10 +113,12 @@ public class FileReadTests {
     @Test
     public void storageUserTest(){
         importAuthorService.createUser(
+                123L,
                 "test",
                 "test",
                 "test",
-                102524534L
+                102524534L,
+                false
         );
 //        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount("test");
 //        System.out.println(loginUserDo.toJsonString());
@@ -196,12 +199,17 @@ public class FileReadTests {
         if (StringUtils.hasText(authorImagePath)){
             FileOptionResult result = importAuthorService.uploadFiles(
                     authorImagePath,
-                    testAuthorBucketName
+                    testAuthorBucketName,
+                    1L
             );
             if (!result.getSuccessFiles().isEmpty()){
                 authorImageId = result.getSuccessFiles().get(0).getFileId();
             }
         }
+
+        // 作者id
+        long userId = IdUtil.getSnowflakeNextId();
+
         // 2. 上传postFileList
         // 2.1 获取postFileList
         List<ArticleDo> articleDos = minUser.getArticleDos();
@@ -211,7 +219,8 @@ public class FileReadTests {
             if (StringUtils.hasText(articleImagePath)){
                 FileOptionResult result = importAuthorService.uploadFiles(
                         articleImagePath,
-                        testPostBucketName
+                        testPostBucketName,
+                        userId
                 );
                 if (!result.getSuccessFiles().isEmpty()){
                     List<Long> postFileIds = result.getSuccessFiles().stream()
@@ -228,18 +237,24 @@ public class FileReadTests {
             }
         }
 
+
+
         // 3.创建user
-        long userId = importAuthorService.createUser(
+        importAuthorService.createUser(
+                userId,
                 minUser.getAuthorInfoAo().getUserName(),
                 minUser.getUserAccount(),
                 String.valueOf(startTestPhone),
-                authorImageId
+                authorImageId,
+                true
         );
 
         // 4.创建post
         for (int i = 0; i < articleDos.size(); i++){
+            long postId = IdUtil.getSnowflakeNextId();
             ArticleDo articleDo = articleDos.get(i);
             importAuthorService.createPost(
+                    postId,
                     articleDo.getTitle(),
                     articleDo.getContent(),
                     getTimestamp(articleDo.getTime()),
@@ -538,8 +553,13 @@ public class FileReadTests {
 
         // 清除 MySQL（不能批量执行）
         jdbcTemplate.execute("START TRANSACTION;");
+        // user
         jdbcTemplate.execute("DELETE FROM login_user;");
+        // oss
         jdbcTemplate.execute("DELETE FROM oss_file;");
+        // post
+        jdbcTemplate.execute("DELETE FROM post_collect;");
+        jdbcTemplate.execute("DELETE FROM post_collect_folder;");
         jdbcTemplate.execute("DELETE FROM post_files;");
         jdbcTemplate.execute("DELETE FROM post_info;");
         jdbcTemplate.execute("COMMIT;");

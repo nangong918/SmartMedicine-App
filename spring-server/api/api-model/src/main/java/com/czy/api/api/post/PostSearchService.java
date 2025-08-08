@@ -5,10 +5,13 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
+import com.czy.api.domain.ao.recommend.PostScoreAo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author 13225
@@ -18,6 +21,13 @@ public interface PostSearchService {
 
     // 0~1级搜索：完全匹配~mysql like匹配（放一起是因为like能一起做了）
     List<Long> searchPostIdsByLikeTitle(String likeTitle);
+
+    /**
+     * 批量调用 searchPostIdsByLikeTitle；避免多次dubbo
+     * @param entityScoreMap    搜索词和搜索词scoreMap
+     * @return  帖子和帖子scoreMap
+     */
+    Map<Long, PostScoreAo> searchPostIdsByLikeTitle(Map<String, Double> entityScoreMap);
     // 2级搜索：分词匹配（分词器：IK/jieba）+ ElasticSearch
     List<Long> searchPostIdsByTokenizedTitle(String tokenizedTitle);
 
@@ -59,4 +69,10 @@ public interface PostSearchService {
     // 对外提供转换方法
     List<PostPreviewVo> getPostPreviewVosByIds(List<Long> postIds);
     PostVo getPostVoById(Long postId);
+
+    // 获取不在postIds中的帖子
+    List<Long> getNotInPostIds(Set<Long> postIds, int limitNum);
+
+    // 获取随机的id
+    List<Long> getRandomPosts(int randomNum);
 }

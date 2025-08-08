@@ -1,7 +1,6 @@
 package com.czy.smartmedicine.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -141,7 +140,7 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
                     .map(Editable::toString)
                     .orElse("");
             if (!TextUtils.isEmpty(url)){
-                ImageLoadUtil.loadImageViewByUrl(url, binding.imgvLoadImage);
+                ImageLoadUtil.loadImageViewByResource(url, binding.imgvLoadImage);
             }
         });
     }
@@ -169,11 +168,17 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
                     Intent data = result.getData();
                     if (data != null){
                         Uri imageUri = data.getData();
-                        viewModel.uriAtomicReference.set(imageUri);
-                        Bitmap bitmap = MainApplication.getInstance().getImageManager().uriToBitmapMediaStore(this, imageUri);
-                        if (bitmap != null){
-                            binding.imgvSelectImage.setImageBitmap(bitmap);
-                        }
+//                        viewModel.uriAtomicReference.set(imageUri);
+//                        Bitmap bitmap = MainApplication.getInstance().getImageManager().uriToBitmapMediaStore(this, imageUri);
+//                        if (bitmap != null){
+//                            binding.imgvSelectImage.setImageBitmap(bitmap);
+//                        }
+                        ImageLoadUtil.loadImageViewByResource(
+                                Optional.ofNullable(imageUri)
+                                        .map(Uri::toString)
+                                        .orElse(""),
+                                binding.imgvSelectImage
+                        );
                     }
                 }
         );
@@ -214,6 +219,8 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
             // 根据 message 的 type 执行对应的方法
             chatApiHandler.receiveUserText(response);
             Log.d("Socket", "onMessageReceived: " + response.getContent());
+            // 移除已处理的粘性事件
+            EventBus.getDefault().removeStickyEvent(response);
         }
     }
 

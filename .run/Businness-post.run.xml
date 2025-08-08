@@ -1,6 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Businness-post" type="CompoundRunConfigurationType">
-    <toRun name="PostServiceApplication" type="Application" />
-    <method v="2" />
-  </configuration>
-</component>

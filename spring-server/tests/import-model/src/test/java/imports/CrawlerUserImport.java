@@ -27,9 +27,18 @@ public class CrawlerUserImport {
     @Autowired
     private ImportAuthorService importAuthorService;
 
+    /**
+     * 批量导入：需要启动:
+     * user-relationship-service, post-service, oss-service
+     */
     @Test
     public void importAll(){
         importAuthorService.importAllData();
+    }
+
+    @Test
+    public void clearAllTestData(){
+        importAuthorService.clearAllTestData();
     }
 
 }

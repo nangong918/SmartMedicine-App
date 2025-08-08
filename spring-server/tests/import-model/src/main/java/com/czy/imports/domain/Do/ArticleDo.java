@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class ArticleDo {
+    private Long id;
     @JSONField(name = "Title")
     private String title;
     @JSONField(name = "Time")

@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="base" type="CompoundRunConfigurationType">
+    <toRun name="AuthSmsServiceApplication" type="Application" />
+    <toRun name="NettySocketApplication" type="Application" />
+    <toRun name="OssApplication" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

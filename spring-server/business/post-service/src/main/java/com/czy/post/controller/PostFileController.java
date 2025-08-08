@@ -3,11 +3,9 @@ package com.czy.post.controller;
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.user_relationship.UserService;
-import com.czy.api.constant.oss.FileConstant;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.post.PostConstant;
-import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.ao.post.PostAo;
@@ -52,7 +50,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(PostConstant.POST_FILE_CONTROLLER)
 public class PostFileController {
-    private final String postFileBucket = FileConstant.POST_FILE_BUCKET;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
@@ -89,7 +86,7 @@ public class PostFileController {
             return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
         }
 
-        String userPostImageBucket = UserConstant.USER_FILE_BUCKET + postId;
+        String postImageBucket = PostConstant.POST_FILE_BUCKET + postId;
         String ossKey = PostConstant.POST_PUBLISH_KEY + postId;
         String lockData = String.valueOf(userId);
         String lockPath = PostConstant.Post_CONTROLLER + PostConstant.POST_PUBLISH_FIRST;
@@ -118,7 +115,7 @@ public class PostFileController {
                 fileIsExistAo.setFileName(fileName);
                 fileIsExistAo.setFileSize(fileSize);
                 fileIsExistAo.setUserId(userId);
-                fileIsExistAo.setBucketName(userPostImageBucket);
+                fileIsExistAo.setBucketName(postImageBucket);
 
                 fileIsExistAos.add(fileIsExistAo);
             }
@@ -130,13 +127,13 @@ public class PostFileController {
             FileOptionResult fileOptionResult = minIOService.uploadFilesWithIdempotent(
                     files,
                     results,
-                    userPostImageBucket,
+                    postImageBucket,
                     userId,
                     true
             );
 
             // 上传记录数据到mysql
-            ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, userPostImageBucket);
+            ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, postImageBucket);
 
             // 获取成功ID
             List<Long> successIds = fileOptionResult.getSuccessFiles()
@@ -231,7 +228,7 @@ public class PostFileController {
             return BaseResponse.LogBackError(PostExceptions.POST_NOT_EXIST, String.format("postId: %s", postId));
         }
 
-        String userPostImageBucket = UserConstant.USER_FILE_BUCKET + postId;
+        String postImageBucket = PostConstant.POST_FILE_BUCKET + postId;
         String lockData = String.valueOf(userId);
         String lockPath = PostConstant.POST_FILE_CONTROLLER + PostConstant.POST_UPDATE_ALL;
 
@@ -284,7 +281,7 @@ public class PostFileController {
                         fileIsExistAo.setFileName(fileName);
                         fileIsExistAo.setFileSize(fileSize);
                         fileIsExistAo.setUserId(userId);
-                        fileIsExistAo.setBucketName(userPostImageBucket);
+                        fileIsExistAo.setBucketName(postImageBucket);
 
                         fileIsExistAos.add(fileIsExistAo);
                     }
@@ -295,13 +292,13 @@ public class PostFileController {
                     FileOptionResult fileOptionResult = minIOService.uploadFilesWithIdempotent(
                             files,
                             results,
-                            userPostImageBucket,
+                            postImageBucket,
                             userId,
                             true
                     );
 
                     // 上传记录数据到mysql
-                    ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, userPostImageBucket);
+                    ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, postImageBucket);
 
                     // 获取成功ID
                     List<Long> successIds = fileOptionResult.getSuccessFiles()

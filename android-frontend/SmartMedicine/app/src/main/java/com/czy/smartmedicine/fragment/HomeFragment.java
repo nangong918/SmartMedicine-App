@@ -13,8 +13,11 @@ import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
+import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.vo.fragmentActivity.HomeVo;
+import com.czy.dal.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
@@ -59,11 +62,23 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        // 初始化RecyclerView
-//        viewModel.initRecyclerView(
-//                binding.rclvRecommend,
-//                requireActivity()
-//        );
+        ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.HOME));
+
+        // 初始化RecyclerView
+        viewModel.initRecyclerView(binding.rclvRecommend, requireActivity());
+
+        // 初始化网络请求；网络请求之后会触发回调，回调会调用rclAdapter，所以在initRecyclerView之后初始化请求
+        viewModel.initialNetworkRequest(requireContext(), new SyncRequestCallback() {
+            @Override
+            public void onThrowable(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onAllRequestSuccess() {
+                binding.lyMain.setRefreshing(false);
+            }
+        });
     }
 
     @Override
@@ -77,7 +92,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
         binding.lyMain.setOnRefreshListener(() -> {
             NetworkLoadUtils.showDialog(requireContext());
-            viewModel.getRecommendPosts(requireContext(), new SyncRequestCallback() {
+            viewModel.getRecommendPostsP(requireContext(), new SyncRequestCallback() {
                 @Override
                 public void onThrowable(Throwable throwable) {
                     NetworkLoadUtils.dismissDialog();

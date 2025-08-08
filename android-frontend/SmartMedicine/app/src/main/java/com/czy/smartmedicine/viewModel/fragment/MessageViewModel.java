@@ -402,6 +402,8 @@ public class MessageViewModel extends ViewModel {
         if (response != null){
             chatApiHandler.receiveUserText(response);
         }
+        // 移除已处理的粘性事件
+        EventBus.getDefault().removeStickyEvent(response);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -409,6 +411,8 @@ public class MessageViewModel extends ViewModel {
         if (response != null){
             chatApiHandler.receiveGroupText(response);
         }
+        // 移除已处理的粘性事件
+        EventBus.getDefault().removeStickyEvent(response);
     }
 
     private void initEventBus() {

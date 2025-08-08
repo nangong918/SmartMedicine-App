@@ -1,13 +1,23 @@
 package com.czy.smartmedicine.viewModel.activity;
 
+import android.content.Context;
+import android.util.Log;
+
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.dal.dto.http.request.GetSinglePostRequest;
 import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.vo.fragmentActivity.post.PostActivityVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;
+
+import java.util.Optional;
 
 public class PostViewModel extends ViewModel {
 
@@ -37,22 +47,45 @@ public class PostViewModel extends ViewModel {
     private void initialNetworkRequest() {
     }
 
-    public void getSinglePost(Long postId, Long pageNum){
+    public void getSinglePost(Integer pageNum, Context context, SyncRequestCallback callback){
+        Long postId = Optional.ofNullable(postActivityVo)
+                        .map(vo -> vo.postVoLd)
+                        .map(pvo -> pvo.postIdLd)
+                        .map(LiveData::getValue)
+                        .orElse(null);
+
+        if (postId == null){
+            ToastUtils.showToast(context, context.getString(com.czy.customviewlib.R.string.system_error));
+            callback.onThrowable(new Throwable("post id is null"));
+            return;
+        }
+
+        GetSinglePostRequest request = new GetSinglePostRequest();
+        request.postId = postId;
+        request.pageNum = pageNum;
+
         apiRequestImpl.getSinglePost(
-                postId, pageNum,
-                this::handleSinglePost,
-                ViewModelUtil::globalThrowableToast
+                request,
+                response -> ResponseTool.handleSyncResponseEx(
+                        response,
+                        context,
+                        callback,
+                        this::handleSinglePost
+                ),
+                throwable -> {
+                    Log.w(TAG, throwable);
+                    ViewModelUtil.globalThrowableToast(throwable);
+                }
         );
     }
 
-    private void handleSinglePost(BaseResponse<SinglePostResponse> response){
-        if (ViewModelUtil.handleResponse(response)) {
-            SinglePostResponse singlePostResponse = response.getData();
-            postActivityVo.postVoLd.initByPostVo(singlePostResponse.postVo);
-            postActivityVo.commentVos = singlePostResponse.commentVos;
-            postActivityVo.commentNumLd.setValue(
-                    singlePostResponse.commentVos.size()
-            );
-        }
+    private void handleSinglePost(BaseResponse<SinglePostResponse> response, Context context, SyncRequestCallback callback){
+        SinglePostResponse singlePostResponse = response.getData();
+        postActivityVo.postVoLd.initByPostVo(singlePostResponse.postVo);
+        postActivityVo.commentVos = singlePostResponse.commentVos;
+        postActivityVo.commentNumLd.setValue(
+                singlePostResponse.commentVos.size()
+        );
+        callback.onAllRequestSuccess();
     }
 }

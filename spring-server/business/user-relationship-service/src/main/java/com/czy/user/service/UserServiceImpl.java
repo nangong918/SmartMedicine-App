@@ -181,8 +181,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Long importUser(String userName, String account, String password, String phone, Long fileId) {
-        long userId = IdUtil.getSnowflakeNextId();
+    public Long importUser(long userId, String userName, String account, String password, String phone, Long fileId, boolean haveToCheck) {
         LoginUserDo loginUserDo = new LoginUserDo();
         loginUserDo.setId(userId);
         loginUserDo.setUserName(userName);
@@ -196,7 +195,6 @@ public class UserServiceImpl implements UserService {
 
         // 存储到mysql
         loginUserMapper.insertLoginUser(loginUserDo);
-        log.info("用户注册成功，loginUserDo: {}", loginUserDo.toJsonString());
 
         // 基本信息 es + mysql
         UserDo userDo = new UserDo();
@@ -218,6 +216,25 @@ public class UserServiceImpl implements UserService {
         userFeatureNeo4jDo.setName(userName);
         userFeatureNeo4jDo.setAccount(account);
         userFeatureRepository.save(userFeatureNeo4jDo);
+
+        if (haveToCheck){
+            LoginUserDo userMysql = loginUserMapper.getLoginUser(userId);
+            List<UserDo> usersEs = userEsMapper.findByUserNameContaining(userName);
+            Optional<UserFeatureNeo4jDo> userNeo4j = userFeatureRepository.findByUserId(userId);
+            log.info("用户导入节点检查::[mysql: {}][es: {}][neo4j: {}]",
+                    userMysql,
+                    Optional.ofNullable(usersEs)
+                            .map(us -> {
+                                if (us.isEmpty()){
+                                    return null;
+                                }
+                                return us.get(0);
+                            })
+                            .orElse(null),
+                    userNeo4j.orElse(null)
+                    );
+        }
+
         return userId;
     }
 

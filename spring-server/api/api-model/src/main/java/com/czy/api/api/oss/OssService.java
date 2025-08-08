@@ -83,6 +83,7 @@ public interface OssService {
     /**
      * 成功的存储到数据库
      * 方法存储成功之后会对将files的id赋值
+     * 如果不想被自动赋值请先提前赋值，内部会检查文件id是否为null
      * @param files             文件List
      * @param userId            用户id
      * @param bucketName        bucketName

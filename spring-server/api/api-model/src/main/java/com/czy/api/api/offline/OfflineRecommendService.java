@@ -11,6 +11,11 @@ import java.util.List;
 
 public interface OfflineRecommendService {
 
+    /**
+     * 获取离线推荐
+     * @param userId    用户ID
+     * @return          推荐帖子ids
+     */
     List<PostScoreAo> getOfflineRecommend(Long userId);
 
 }

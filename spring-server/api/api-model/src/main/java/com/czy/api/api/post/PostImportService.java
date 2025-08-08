@@ -7,5 +7,5 @@ import java.util.List;
  * @date 2025/6/4 14:43
  */
 public interface PostImportService {
-    long importPost(String title, String content, Long publishTime, List<Long> fileIdList, Long userId);
+    void importPost(long postId, String title, String content, Long publishTime, List<Long> fileIdList, Long userId);
 }
