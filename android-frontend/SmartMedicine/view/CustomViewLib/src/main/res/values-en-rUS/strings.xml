@@ -69,4 +69,5 @@
     <string name="possible_diabetes">糖尿病可能</string>
     <string name="send_image_failed">图片发送失败</string>
     <string name="gain_permission_failed">获取权限失败</string>
+    <string name="system_error">系统错误</string>
 </resources>
