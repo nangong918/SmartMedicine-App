@@ -8,6 +8,8 @@ import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.customviewlib.databinding.ViewRecommendCardBinding;
 import com.czy.customviewlib.databinding.ViewRecommendCardPlusBinding;
 import com.czy.dal.ao.home.PostAo;
+import com.czy.dal.constant.home.RecommendButtonType;
+import com.czy.dal.constant.home.RecommendCardType;
 import com.czy.dal.vo.entity.home.PostVo;
 
 import java.util.Optional;
@@ -116,4 +118,130 @@ public class PostItemViewManager {
             }
         }, postAo, 1);
     }
+
+    public static void setClick(@NonNull ViewRecommendCardPlusBinding binding,
+                                @NonNull OnRecommendCardClick onClick,
+                                int currentPosition){
+        // basicCard
+        binding.basicCard.setOnClickListener(v -> {
+            onClick.onCardClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0
+            );
+        });
+
+        // like/hate
+        binding.favorite.setOnClickListener(v -> {
+            onClick.onButtonClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0,
+                    RecommendButtonType.LIKE
+            );
+        });
+
+        // collect/uncollected
+        binding.star.setOnClickListener(v -> {
+            onClick.onButtonClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0,
+                    RecommendButtonType.COLLECT
+            );
+        });
+
+        // hate/not hating
+        binding.unlike.setOnClickListener(v -> {
+            onClick.onButtonClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0,
+                    RecommendButtonType.DISLIKE
+            );
+        });
+    }
+
+    public static void setClick(@NonNull ViewRecommendCardBinding binding,
+                                @NonNull OnRecommendCardClick onClick,
+                                int currentPosition){
+        // basicCard
+        binding.basicCard.setOnClickListener(v -> {
+            onClick.onCardClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0
+            );
+        });
+
+        // like/hate
+        binding.favorite.setOnClickListener(v -> {
+            onClick.onButtonClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0,
+                    RecommendButtonType.LIKE
+            );
+        });
+
+        // collect/uncollected
+        binding.star.setOnClickListener(v -> {
+            onClick.onButtonClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0,
+                    RecommendButtonType.COLLECT
+            );
+        });
+
+        // hate/not hating
+        binding.unlike.setOnClickListener(v -> {
+            onClick.onButtonClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0,
+                    RecommendButtonType.DISLIKE
+            );
+        });
+
+        // basicCard
+        binding.basicCard2.setOnClickListener(v -> {
+            onClick.onCardClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0
+            );
+        });
+
+        // like/hate
+        binding.favorite2.setOnClickListener(v -> {
+            onClick.onButtonClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0,
+                    RecommendButtonType.LIKE
+            );
+        });
+
+        // collect/uncollected
+        binding.star2.setOnClickListener(v -> {
+            onClick.onButtonClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0,
+                    RecommendButtonType.COLLECT
+            );
+        });
+
+        // hate/not hating
+        binding.unlike2.setOnClickListener(v -> {
+            onClick.onButtonClick(
+                    currentPosition,
+                    RecommendCardType.SINGLE_BIG_CARD,
+                    0,
+                    RecommendButtonType.DISLIKE
+            );
+        });
+    }
+
 }

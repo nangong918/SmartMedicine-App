@@ -83,7 +83,7 @@ public class PostClickManager {
     public OnRecommendCardClick getOnRecommendCardClick(FragmentActivity activity) {
         return new OnRecommendCardClick() {
             @Override
-            public void onCardClick(int position, int cardType, int cardId) {
+            public void onCardClick(int position, RecommendCardType cardType, int cardId) {
                 PostVo postVo = getPostInfoByList(position, cardId);
                 Long postId = Optional.ofNullable(postVo)
                         .map(p -> p.postId)
@@ -98,18 +98,17 @@ public class PostClickManager {
             }
 
             @Override
-            public void onButtonClick(int position, int cardType, int cardId, int buttonType) {
+            public void onButtonClick(int position, RecommendCardType cardType, int cardId, RecommendButtonType buttonType) {
                 PostClickManager.this.onButtonClick(position, cardType, cardId, buttonType);
             }
         };
     }
 
-    public void onButtonClick(int position, int cardType, int cardId, int buttonType){
+    public void onButtonClick(int position, RecommendCardType cardType, int cardId, RecommendButtonType buttonType){
         PostVo postVo = getPostInfoByList(position, cardId);
-        RecommendButtonType recommendButtonType = RecommendButtonType.valueOf(buttonType);
 
         // 根据当前状态得出操作类型
-        PostOperation postOperation = postVo.clickChange(recommendButtonType);
+        PostOperation postOperation = postVo.clickChange(buttonType);
         // 状态切换
         postVo.clickChange(postOperation);
 

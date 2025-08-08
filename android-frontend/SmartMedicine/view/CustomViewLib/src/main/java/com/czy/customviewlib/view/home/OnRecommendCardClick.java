@@ -1,5 +1,8 @@
 package com.czy.customviewlib.view.home;
 
+import com.czy.dal.constant.home.RecommendButtonType;
+import com.czy.dal.constant.home.RecommendCardType;
+
 public interface OnRecommendCardClick {
     /**
      * 推荐卡片点击
@@ -8,7 +11,7 @@ public interface OnRecommendCardClick {
      * @see com.czy.dal.constant.home.RecommendCardType
      * @param cardId    卡片id：两个卡片中的哪个？0是第一个，1是第二个；但卡片情况此值无效
      */
-    void onCardClick(int position, int cardType, int cardId);
+    void onCardClick(int position, RecommendCardType cardType, int cardId);
 
     /**
      * 推荐卡片按钮点击
@@ -19,5 +22,5 @@ public interface OnRecommendCardClick {
      * @param buttonType    按钮类型：1 点赞，2 收藏，3 不喜欢
      * @see com.czy.dal.constant.home.RecommendButtonType
      */
-    void onButtonClick(int position, int cardType, int cardId, int buttonType);
+    void onButtonClick(int position, RecommendCardType cardType, int cardId, RecommendButtonType buttonType);
 }
