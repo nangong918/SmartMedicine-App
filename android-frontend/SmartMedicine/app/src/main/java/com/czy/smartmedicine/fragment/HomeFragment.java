@@ -62,12 +62,23 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        // 初始化RecyclerView
-//        viewModel.initRecyclerView(
-//                binding.rclvRecommend,
-//                requireActivity()
-//        );
         ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.HOME));
+
+        // 初始化RecyclerView
+        viewModel.initRecyclerView(binding.rclvRecommend, requireActivity());
+
+        // 初始化网络请求；网络请求之后会触发回调，回调会调用rclAdapter，所以在initRecyclerView之后初始化请求
+        viewModel.initialNetworkRequest(requireContext(), new SyncRequestCallback() {
+            @Override
+            public void onThrowable(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onAllRequestSuccess() {
+                binding.lyMain.setRefreshing(false);
+            }
+        });
     }
 
     @Override
@@ -107,18 +118,6 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
         // 初始化viewModel
         viewModel.init(new HomeVo());
-
-        viewModel.initialNetworkRequest(requireContext(), new SyncRequestCallback() {
-            @Override
-            public void onThrowable(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onAllRequestSuccess() {
-                binding.lyMain.setRefreshing(false);
-            }
-        });
     }
 
 

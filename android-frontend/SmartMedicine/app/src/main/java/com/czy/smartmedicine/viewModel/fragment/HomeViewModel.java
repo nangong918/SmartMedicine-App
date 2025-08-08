@@ -166,12 +166,7 @@ public class HomeViewModel extends ViewModel {
         int beforeSize = homeList.size();
         homeList.addAll(postAoList);
 
-        // 设置值，观察者模式会通知view更新
-//        homeVo.postListVo.postAoListLd.setValue(homeList);
-
-        // list都采用手动更新，而不是livedata观察
-        // 更新beforeSize ~ size
-//        this.postAdapter.notifyItemRangeChanged(beforeSize, homeList.size());
+        // adapter更新；注意此处RecyclerViewAdapter的更新逻辑跟其他地方的Adapter更新逻辑不一样，是直接由指针指向地址去更新
         for (int i = beforeSize; i < homeList.size(); i++) {
             postAdapter.notifyItemInserted(i);
         }
