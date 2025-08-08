@@ -37,13 +37,15 @@ public class PostItemViewManager {
         PostVo vo = postAo.postVos[index];
 
         // avatarUrl
-        viewBinding.setUserFace(Optional.ofNullable(vo.authorAvatarUrl).orElse(""));
+        String avatarUrl = Optional.ofNullable(vo.authorAvatarUrl).orElse("");
+        viewBinding.setUserFace(avatarUrl);
 
         // postUrl
-        viewBinding.setPostImage(Optional.ofNullable(vo.postImgUrls)
+        String postUrl = Optional.ofNullable(vo.postImgUrls)
                 .filter(urls -> !urls.isEmpty())
                 .map(urls -> urls.get(0))
-                .orElse(""));
+                .orElse("");
+        viewBinding.setPostImage(postUrl);
 
         // title
         viewBinding.setTitle(Optional.ofNullable(vo.postTitle).orElse(""));
@@ -81,6 +83,8 @@ public class PostItemViewManager {
     }
 
     public static void setView(@NonNull ViewRecommendCardBinding binding, @NonNull PostAo postAo) {
+
+        // card 1
         loadPostData(new ViewBinding() {
             @Override
             public void setUserFace(String url) {
@@ -103,25 +107,26 @@ public class PostItemViewManager {
             }
         }, postAo, 0);
 
+        // card 2
         loadPostData(new ViewBinding() {
             @Override
             public void setUserFace(String url) {
-                ImageLoadUtil.loadImageViewByResource(url, binding.cardUserFace);
+                ImageLoadUtil.loadImageViewByResource(url, binding.cardUserFace2);
             }
 
             @Override
             public void setPostImage(String url) {
-                ImageLoadUtil.loadImageViewByLocalFile(url, binding.cardImage);
+                ImageLoadUtil.loadImageViewByLocalFile(url, binding.cardImage2);
             }
 
             @Override
             public void setTitle(String title) {
-                binding.textTitle.setText(title);
+                binding.textTitle2.setText(title);
             }
 
             @Override
             public void setUserID(String userID) {
-                binding.cardUserID.setText(userID);
+                binding.cardUserID2.setText(userID);
             }
         }, postAo, 1);
     }
@@ -137,31 +142,32 @@ public class PostItemViewManager {
                                 @NonNull OnRecommendCardClick onClick,
                                 int currentPosition) {
         setCommonClickListeners(new ClickBinding() {
+            final int cardId = 0;
             @Override
             public void setBasicCardClick(OnRecommendCardClick onClick, int currentPosition) {
                 binding.basicCard.setOnClickListener(v ->
-                        onClick.onCardClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0)
+                        onClick.onCardClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId)
                 );
             }
 
             @Override
             public void setFavoriteClick(OnRecommendCardClick onClick, int currentPosition) {
                 binding.favorite.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.LIKE)
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
                 );
             }
 
             @Override
             public void setStarClick(OnRecommendCardClick onClick, int currentPosition) {
                 binding.star.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.COLLECT)
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
                 );
             }
 
             @Override
             public void setUnlikeClick(OnRecommendCardClick onClick, int currentPosition) {
                 binding.unlike.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.DISLIKE)
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
                 );
             }
         }, onClick, currentPosition);
@@ -170,32 +176,66 @@ public class PostItemViewManager {
     public static void setClick(@NonNull ViewRecommendCardBinding binding,
                                 @NonNull OnRecommendCardClick onClick,
                                 int currentPosition) {
+        // card 1
         setCommonClickListeners(new ClickBinding() {
+            final int cardId = 0;
             @Override
             public void setBasicCardClick(OnRecommendCardClick onClick, int currentPosition) {
                 binding.basicCard.setOnClickListener(v ->
-                        onClick.onCardClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0)
+                        onClick.onCardClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId)
                 );
             }
 
             @Override
             public void setFavoriteClick(OnRecommendCardClick onClick, int currentPosition) {
                 binding.favorite.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.LIKE)
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
                 );
             }
 
             @Override
             public void setStarClick(OnRecommendCardClick onClick, int currentPosition) {
                 binding.star.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.COLLECT)
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
                 );
             }
 
             @Override
             public void setUnlikeClick(OnRecommendCardClick onClick, int currentPosition) {
                 binding.unlike.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.DISLIKE)
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
+                );
+            }
+        }, onClick, currentPosition);
+
+        // card 2
+        setCommonClickListeners(new ClickBinding() {
+            final int cardId = 1;
+            @Override
+            public void setBasicCardClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.basicCard.setOnClickListener(v ->
+                        onClick.onCardClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId)
+                );
+            }
+
+            @Override
+            public void setFavoriteClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.favorite.setOnClickListener(v ->
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
+                );
+            }
+
+            @Override
+            public void setStarClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.star.setOnClickListener(v ->
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
+                );
+            }
+
+            @Override
+            public void setUnlikeClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.unlike.setOnClickListener(v ->
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
                 );
             }
         }, onClick, currentPosition);
