@@ -19,7 +19,9 @@
 
 ## 目前任务
 
-user行为记录改为hive存储
+1. 前后端联调：实现post搜索
+2. user行为记录改为hive存储
+
 公司: 日志数据源改为hive
 家: 重新确定功能, 设计UI
 
@@ -271,6 +273,9 @@ todo Redisson 替换 Redis
 todo android的eventBus合理化
 todo 性能优化，考虑使用kotlin
 todo 使用链路追踪检查接口耗费时长问题
+
+~~todo 后续合并post-service和search-service~~ search-service和post-service暂时不能合并，因为：
+search-service依赖feature-service的规则，feature-service依赖post-service的数据
 
 ##### 重构+细化
 * spring学习
