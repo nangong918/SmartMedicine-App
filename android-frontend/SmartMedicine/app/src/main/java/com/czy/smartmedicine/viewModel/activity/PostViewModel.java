@@ -10,6 +10,7 @@ import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.dal.dto.http.request.GetSinglePostRequest;
 import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.vo.fragmentActivity.post.PostActivityVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
@@ -46,7 +47,7 @@ public class PostViewModel extends ViewModel {
     private void initialNetworkRequest() {
     }
 
-    public void getSinglePost(Long pageNum, Context context, SyncRequestCallback callback){
+    public void getSinglePost(Integer pageNum, Context context, SyncRequestCallback callback){
         Long postId = Optional.ofNullable(postActivityVo)
                         .map(vo -> vo.postVoLd)
                         .map(pvo -> pvo.postIdLd)
@@ -59,8 +60,12 @@ public class PostViewModel extends ViewModel {
             return;
         }
 
+        GetSinglePostRequest request = new GetSinglePostRequest();
+        request.postId = postId;
+        request.pageNum = pageNum;
+
         apiRequestImpl.getSinglePost(
-                postId, pageNum,
+                request,
                 response -> ResponseTool.handleSyncResponseEx(
                         response,
                         context,

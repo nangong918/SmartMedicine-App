@@ -16,6 +16,7 @@ import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.GetPostPreviewListRequest;
+import com.czy.api.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import com.czy.api.domain.dto.http.response.GetPostCommentsResponse;
@@ -275,22 +276,23 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess(getPostResponse);
     }
 
-    @GetMapping("/getPost")
+    @PostMapping("/getPost")
     public BaseResponse<SinglePostResponse>
-    getPostNew(@RequestParam("postId") Long postId,
-            @RequestParam("pageNum") Integer pageNum){
-        if (ObjectUtils.isEmpty(postId)){
+    getPostNew(@Valid @RequestBody GetSinglePostRequest request){
+        if (ObjectUtils.isEmpty(request.getPostId())){
             return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
-        PostAo postAo = postService.findPostById(postId);
+        PostAo postAo = postService.findPostById(request.getPostId());
         if (postAo == null || postAo.getId() == null){
             return BaseResponse.LogBackError(PostExceptions.POST_NOT_EXIST);
         }
-        if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
-            pageNum = 1;
+        if (ObjectUtils.isEmpty(request.getPageNum()) || request.getPageNum() < 1){
+            request.setPageNum(1);
         }
-        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(postId, PostConstant.COMMENT_PAGE_SIZE, pageNum);
+        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(
+                request.getPostId(), PostConstant.COMMENT_PAGE_SIZE, request.getPageNum()
+        );
 
         SinglePostResponse singlePostResponse = new SinglePostResponse();
         // 转换为vo

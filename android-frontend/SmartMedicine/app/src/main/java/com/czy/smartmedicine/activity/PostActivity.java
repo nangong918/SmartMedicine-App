@@ -91,7 +91,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         binding.setLifecycleOwner(this);
 
         // 利用postId去网络请求帖子信息（先请求1页的评论内容）
-        viewModel.getSinglePost(1L, this, new SyncRequestCallback() {
+        viewModel.getSinglePost(1, this, new SyncRequestCallback() {
             @Override
             public void onThrowable(Throwable throwable) {
 

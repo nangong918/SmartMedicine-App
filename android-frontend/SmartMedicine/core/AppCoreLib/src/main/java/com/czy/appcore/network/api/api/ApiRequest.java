@@ -6,6 +6,7 @@ import com.czy.dal.constant.backEnd.BackEndConstant;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.FuzzySearchRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
+import com.czy.dal.dto.http.request.GetSinglePostRequest;
 import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
 import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
@@ -267,11 +268,8 @@ public interface ApiRequest {
      * @param pageNum   页码
      * @return          帖子
      */
-    @GET(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/post/getPost")
-    Observable<BaseResponse<SinglePostResponse>> getSinglePost(
-            @Query("postId") Long postId,
-            @Query("pageNum") Long pageNum
-    );
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/post/getPost")
+    Observable<BaseResponse<SinglePostResponse>> getSinglePost(@Body GetSinglePostRequest request);
 
     /**
      * 发布帖子（首次【因为1.需要审核是否发过，以及内容是否合法2.oss上传速度较慢，可以后台上传】）

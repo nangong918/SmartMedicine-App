@@ -9,6 +9,7 @@ import com.czy.baseUtilsLib.network.OnThrowableCallback;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.http.request.FuzzySearchRequest;
 import com.czy.dal.dto.http.request.GetMyFriendsRequest;
+import com.czy.dal.dto.http.request.GetSinglePostRequest;
 import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
 import com.czy.dal.dto.http.request.PhoneLoginInfoRequest;
@@ -339,17 +340,13 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
         );
     }
 
-    //    @GET("/post/getPost")
-    //    Observable<BaseResponse<SinglePostResponse>> getSinglePost(
-    //            @Query("postId") Long postId,
-    //            @Query("pageNum") Long pageNum
-    //    );
-
-    public void getSinglePost(Long postId, Long pageNum,
-                        OnSuccessCallback<BaseResponse<SinglePostResponse>> onSuccessCallback,
-                        OnThrowableCallback onThrowableCallback){
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/post/getPost")
+    //    Observable<BaseResponse<SinglePostResponse>> getSinglePost(@Body GetSinglePostRequest request);
+    public void getSinglePost(GetSinglePostRequest request,
+                              OnSuccessCallback<BaseResponse<SinglePostResponse>> onSuccessCallback,
+                              OnThrowableCallback onThrowableCallback){
         sendRequestCallback(
-                mApi.getSinglePost(postId, pageNum),
+                mApi.getSinglePost(request),
                 onSuccessCallback,
                 onThrowableCallback
         );
