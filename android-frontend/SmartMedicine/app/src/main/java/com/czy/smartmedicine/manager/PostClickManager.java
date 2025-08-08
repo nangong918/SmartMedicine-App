@@ -154,12 +154,31 @@ public class PostClickManager {
         if (postAoList.isEmpty()){
             return null;
         }
-        PostAo postAo = postAoList.get(position);
+        int realIndex = getPostRealIndexByPosition(position, cardId);
+        PostAo postAo = postAoList.get(realIndex);
         assert cardId >= 0 && cardId < 2;
         if (RecommendCardType.TWO_SMALL_CARD.value == postAo.viewType){
             return postAo.postVos[cardId];
         }
         return postAo.postVos[0];
+    }
+
+    /**
+     * 通过行索引获取list中真实的位置
+     * @param position  行索引
+     * @param cardId    卡片索引(列索引)
+     * @return  list中真实位置
+     */
+    private int getPostRealIndexByPosition(int position, int cardId){
+        if (position > postAoList.size() || position < 0 || (cardId != 0 && cardId != 1)){
+            Log.w(TAG, "getPostRealIndexByPosition: position out of range");
+            throw new IllegalArgumentException("position out of range");
+        }
+        int index = 0;
+        for (int i = 0; i < position; i++){
+            index += postAoList.get(i).postVos.length;
+        }
+        return index + cardId;
     }
 
     private void startPostActivityIntent(Long postId, FragmentActivity activity){
