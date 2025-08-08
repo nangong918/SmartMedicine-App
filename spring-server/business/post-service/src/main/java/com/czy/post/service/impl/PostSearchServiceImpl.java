@@ -15,6 +15,7 @@ import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
+import com.czy.api.domain.ao.recommend.PostScoreAo;
 import com.czy.api.domain.ao.user.AuthorAo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
@@ -45,8 +46,12 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -85,6 +90,46 @@ public class PostSearchServiceImpl implements PostSearchService {
             return new ArrayList<>();
         }
         return postIds;
+    }
+
+    @Override
+    public Map<Long, PostScoreAo> searchPostIdsByLikeTitle(Map<String, Double> entityScoreMap) {
+        if (CollectionUtils.isEmpty(entityScoreMap)){
+            return new HashMap<>();
+        }
+        Map<Long, PostScoreAo> finalResultMap = new HashMap<>();
+        for (Map.Entry<String, Double> entry : entityScoreMap.entrySet()){
+            // 搜索: string 对应的 postIds
+            List<Long> postIds = searchPostIdsByLikeTitle(entry.getKey());
+            // 无结果继续
+            if (CollectionUtils.isEmpty(postIds)){
+                continue;
+            }
+            // 逐个赋值
+            for (Long postId : postIds){
+                // 不包含就添加
+                if (finalResultMap.get(postId) == null){
+                    PostScoreAo ao = new PostScoreAo();
+                    ao.setPostId(postId);
+                    // 赋值当前分数
+                    ao.setScore(
+                            Optional.ofNullable(entityScoreMap.get(entry.getKey()))
+                                    .orElse(0.0)
+                    );
+                    finalResultMap.put(postId, ao);
+                }
+                // 包含叠加
+                else {
+                    PostScoreAo ao = finalResultMap.get(postId);
+                    ao.setScore(ao.getScore() +
+                            Optional.ofNullable(entityScoreMap.get(entry.getKey()))
+                                    .orElse(0.0)
+                    );
+                    finalResultMap.put(postId, ao);
+                }
+            }
+        }
+        return finalResultMap;
     }
 
     @Override
@@ -343,5 +388,24 @@ public class PostSearchServiceImpl implements PostSearchService {
             return null;
         }
         return postFrontService.postAoToPostVo(postAo);
+    }
+
+    @Override
+    public List<Long> getNotInPostIds(Set<Long> postIds, int limitNum) {
+        if (postIds == null){
+            postIds = new HashSet<>();
+        }
+        if (limitNum <= 0){
+            limitNum = 1;
+        }
+        return postInfoMapper.getNotInPostIds(postIds, limitNum);
+    }
+
+    @Override
+    public List<Long> getRandomPosts(int randomNum) {
+        if (randomNum <= 0){
+            return new ArrayList<>();
+        }
+        return postInfoMapper.getRandomPosts(randomNum);
     }
 }

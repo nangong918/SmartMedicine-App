@@ -15,7 +15,7 @@ public interface OfflineRedisConstant {
     Long OFFLINE_USER_HEAT_CALCULATE_FLAG_EXPIRE_TIME = ONE_DAY - 60L;
 
 
-    // userHistoryFeature的Key
+    // userHistoryFeature的Key (不加上":"是因为这个key需要作为RedisHash中的key)
     String USER_HISTORY_FEATURE_KEY = "user_history_feature";
     // userHistoryFeature的过期时间：5天；因为单天的话是近线层的临时特征
     Long USER_HISTORY_FEATURE_EXPIRE_TIME = ONE_DAY * 5;
@@ -29,4 +29,9 @@ public interface OfflineRedisConstant {
     String OFFLINE_POST_HEAT_KEY = "offline_post_heat";
     // offline计算热门帖子的过期时间：5天
     Long OFFLINE_POST_HEAT_EXPIRE_TIME = ONE_DAY * - 60L;
+
+    // 用户浏览过的帖子key的前缀
+    String USER_VIEWED_POSTS_PREFIX = "user_viewed_posts:";
+    // 浏览过的postId保存30天
+    Long USER_VIEWED_POSTS_EXPIRE_TIME = ONE_DAY * 30L;
 }

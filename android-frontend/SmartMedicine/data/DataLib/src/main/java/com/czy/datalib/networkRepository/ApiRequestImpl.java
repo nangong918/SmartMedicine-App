@@ -37,15 +37,12 @@ import com.czy.dal.dto.netty.response.FetchUserMessageResponse;
 import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
-import com.czy.dal.vo.entity.UserVo;
+import com.czy.dal.vo.entity.UserEntityVo;
 
 import java.util.List;
 
-import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
 
 public class ApiRequestImpl extends BaseApiRequestImpl {
 
@@ -94,7 +91,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @Multipart
     //    @POST("/registerUser/uploadImg")
-    //    Observable<BaseResponse<UserVo>> registerUserUploadImg(
+    //    Observable<BaseResponse<UserEntityVo>> registerUserUploadImg(
     //            @Part MultipartBody.Part img,
     //            @Part("phone") RequestBody phone,
     //            @Part("userId") RequestBody userId
@@ -103,7 +100,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
             MultipartBody.Part img,
             RequestBody phone,
             RequestBody userId,
-            OnSuccessCallback<BaseResponse<UserVo>> onSuccessCallback,
+            OnSuccessCallback<BaseResponse<UserEntityVo>> onSuccessCallback,
             OnThrowableCallback onErrorCallback
     ){
         sendRequestCallback(
@@ -307,6 +304,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
 
     //    @GET("/file/downloadImage")
     //    Observable<BaseResponse<FileDownloadBytesResponse>> downloadImage(@Query("url") String url);
+    @Deprecated
     public void downloadImage(String url,
                              OnSuccessCallback<BaseResponse<FileDownloadBytesResponse>> onSuccessCallback,
                              OnThrowableCallback onThrowableCallback){

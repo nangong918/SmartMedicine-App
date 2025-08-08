@@ -37,6 +37,11 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     }
 
     @Override
+    public ActivityRegisterBinding getBinding() {
+        return ActivityRegisterBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     protected void init() {
         super.init();
 

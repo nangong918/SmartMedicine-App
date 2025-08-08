@@ -2,6 +2,7 @@ package com.czy.dal.ao.chat;
 
 import android.util.Log;
 
+import com.czy.baseUtilsLib.algorithm.SortItem;
 import com.czy.baseUtilsLib.json.BaseBean;
 import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.vo.entity.contact.ChatContactItemVo;
@@ -11,7 +12,7 @@ import java.util.Objects;
 /**
  * @author 13225
  */
-public class ChatContactItemAo implements BaseBean {
+public class ChatContactItemAo extends SortItem implements BaseBean {
 
     // view
     // 单个联系人Vo信息
@@ -21,6 +22,7 @@ public class ChatContactItemAo implements BaseBean {
     // 联系人账号信息，用于搜索
     public String contactAccount;
     public Long userId;
+    public Long timestamp;
 
     public ChatContactItemAo() {
 
@@ -30,6 +32,8 @@ public class ChatContactItemAo implements BaseBean {
         this.contactAccount = ao.contactAccount;
         this.userId = ao.userId;
         this.chatContactItemVo = new ChatContactItemVo(ao.chatContactItemVo);
+        this.timestamp = ao.timestamp;
+        this.index = ao.index;
     }
 
     // 用于判断两个对象是否属于一个对象（用唯一标识符判断）

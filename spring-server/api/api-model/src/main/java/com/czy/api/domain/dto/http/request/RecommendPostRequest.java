@@ -1,9 +1,7 @@
 package com.czy.api.domain.dto.http.request;
 
-import com.czy.api.domain.ao.feature.FeatureContext;
 import lombok.Data;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -12,7 +10,8 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class RecommendPostRequest {
-    @Valid
-    @NotNull(message = "特征上下文不能为空")
-    private FeatureContext featureContext;
+    @NotNull(message = "用户ID不能为空")
+    public Long userId;
+    @NotNull(message = "时间戳不能为空")
+    public Long timestamp;
 }

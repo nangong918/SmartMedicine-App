@@ -8,10 +8,9 @@ import java.io.IOException;
 public class StartServices {
     public static void main(String[] args) {
         /**
-         * TODO 1.命令行启动SpringBoot项目
-         *      2.Java启动命令行
-         *      3.无关联服务异步启动
-         *      4.相关联服务同步启动
+         * TODO 新批量启动思路：创建Java或者python的死循环，循环监听.bat/.sh的调用，
+         *  每个微服务启动之后会将自己的名称作为参数告知并调用.bat/.sh脚本
+         *  这个脚本会回调给Java/python脚本。java、python根据内部自定义的顺序来启动微服务。
          */
     }
 

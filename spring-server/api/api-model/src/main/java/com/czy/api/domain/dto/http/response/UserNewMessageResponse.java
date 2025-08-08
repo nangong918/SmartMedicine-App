@@ -1,7 +1,7 @@
 package com.czy.api.domain.dto.http.response;
 
 
-import com.czy.api.domain.bo.message.UserChatLastMessageBo;
+import com.czy.api.domain.bo.message.UserChatLastViewMessageBo;
 import lombok.Data;
 
 import java.util.List;
@@ -12,5 +12,5 @@ import java.util.List;
  */
 @Data
 public class UserNewMessageResponse {
-    public List<UserChatLastMessageBo> lastMessageList;
+    public List<UserChatLastViewMessageBo> lastMessageList;
 }

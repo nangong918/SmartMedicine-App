@@ -26,20 +26,34 @@ public class OfflineRecommendServiceImpl implements OfflineRecommendService {
 
     private final RedissonService redissonService;
 
+    /**
+     * 获取离线推荐
+     * @param userId    用户ID
+     * @return          推荐帖子ids
+     */
     @Override
     public List<PostScoreAo> getOfflineRecommend(Long userId) {
+        // 获取缓存在redis的推荐帖子id
         String userRecommendKey = OfflineRedisConstant.USER_RECOMMEND_KEY + ":" + userId;
+
+        // 获取离线层计算出来的帖子
         if (redissonService.zCount(userRecommendKey) > 0){
-            List<Object> recommendPostScoreAos = redissonService.zPopTopNAndRemove(userRecommendKey, FeatureConstant.USER_RECOMMEND_GET_NUM);
+            // redis中取出指定数量的post, 并且从未推荐的post记录中删除
+            List<Object> recommendPostScoreAos = redissonService.zPopTopNAndRemove(
+                    userRecommendKey, FeatureConstant.USER_RECOMMEND_GET_NUM
+            );
+
             List<PostScoreAo> postScoreAoList = new ArrayList<>();
             if (CollectionUtils.isEmpty(recommendPostScoreAos)){
                 return new ArrayList<>();
             }
+
             for (Object recommendPostScoreAo : recommendPostScoreAos){
                 if (recommendPostScoreAo instanceof PostScoreAo){
                     postScoreAoList.add((PostScoreAo) recommendPostScoreAo);
                 }
             }
+
             return postScoreAoList;
         }
         return new ArrayList<>();

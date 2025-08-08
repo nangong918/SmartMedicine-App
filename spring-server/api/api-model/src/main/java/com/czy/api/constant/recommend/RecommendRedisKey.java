@@ -20,4 +20,6 @@ public interface RecommendRedisKey {
     String clickRecommendTimesKey = "click_recommend_times:";
     // 多次点击之后对用户进行冷静的时间：10s（锁定时间和失效时间）
     long clickRecommendSleepTimeout = 10L;
+    // 近线层redis key
+    String NEARLINE_RECOMMEND_KEY = "nearline_recommend:";
 }

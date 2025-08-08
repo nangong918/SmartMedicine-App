@@ -1,5 +1,6 @@
 package com.czy.api.api.feature;
 
+import com.czy.api.domain.ao.UserOnlineFeatureAo;
 import com.czy.api.domain.ao.feature.UserEntityScore;
 import com.czy.api.domain.ao.feature.UserHistoryFeatureAo;
 import com.czy.api.domain.ao.feature.UserTempFeatureAo;
@@ -50,4 +51,11 @@ public interface UserFeatureService {
 
     // 获取user在线特征
     List<Map<String, Double>> getUserOnlineFeature(Long userId);
+
+    /**
+     * getUserOnlineFeature 被调用存到redis中，这个方法就是从redis中获取
+     * @param userId    用户id
+     * @return          用户在线特征
+     */
+    UserOnlineFeatureAo getCacheUserOnlineFeature(Long userId);
 }

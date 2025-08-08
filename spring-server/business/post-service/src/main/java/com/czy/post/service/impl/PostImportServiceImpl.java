@@ -26,9 +26,8 @@ public class PostImportServiceImpl implements PostImportService {
     private final PostNerService postNerService;
 
     @Override
-    public long importPost(String title, String content, Long publishTime, List<Long> fileIdList, Long userId){
+    public void importPost(long postId, String title, String content, Long publishTime, List<Long> fileIdList, Long userId){
         log.info("开始远程调用importPost");
-        long postId = IdUtil.getSnowflakeNextId();
         PostAo postAo = new PostAo();
         postAo.setId(postId);
         postAo.setTitle(title);
@@ -59,7 +58,6 @@ public class PostImportServiceImpl implements PostImportService {
         // files
         postStorageService.storePostFilesToDatabase(postAo);
         log.info("导入数据成功");
-        return postId;
     }
 
 }

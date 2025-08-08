@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author 13225
@@ -120,6 +121,7 @@ public interface RedissonService {
     void saveObjectHashMap(String key, HashMap<String, Object> data, Long expireTimes);
     HashMap<String, String> getHashMap(String key);
     HashMap<String, Object> getObjectHaseMap(String key);
+    HashMap<Object, Object> getObjectObjectHashMap(String key);
     Object getObjectFromHashMap(String key, String hashKey);
     void updateHashMap(String hashKey, String field, String value);
     void updateObjectHashMap(String hashKey, String field, Object value);
@@ -127,6 +129,12 @@ public interface RedissonService {
     void deleteFieldFromHash(String redisKey, String hashKey);
     void deleteFieldFromObjectHashMap(String redisKey, String hashKey);
 
+    //---------------------Set---------------------
+
+    void addSet(String redisKey, Set<Object> objects, Long expireTime);
+    Set<Object> getSet(String redisKey);
+    void removeSet(String redisKey);
+    void removeFromSet(String redisKey, Object object);
 
     // ===================== 有序集合(ZSet)操作 =====================
 
@@ -148,6 +156,13 @@ public interface RedissonService {
      * @return 添加成功的数量
      */
     int zAddAll(String key, Map<Object, Double> values, Long expireTime);
+
+    /**
+     * 获取有序集合
+     * @param key   键
+     * @return      有序集合
+     */
+    Map<Object, Double> zGetAll(String key);
 
     /**
      * 获取某个元素的分数

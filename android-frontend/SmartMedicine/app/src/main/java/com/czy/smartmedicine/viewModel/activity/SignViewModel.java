@@ -145,19 +145,19 @@ public class SignViewModel extends ViewModel {
         // 数据解析
         LoginSignResponse loginSignResponse = response.getData();
         Long userId = Optional.ofNullable(loginSignResponse)
-                .map(re -> re.userVo)
+                .map(re -> re.userEntityVo)
                 .map(u -> u.userId)
                 .orElse(NettyConstants.ERROR_ID);
         String userAccount = Optional.ofNullable(loginSignResponse)
-                .map(re -> re.userVo)
+                .map(re -> re.userEntityVo)
                 .map(u -> u.account)
                 .orElse("");
         String userPhone = Optional.ofNullable(loginSignResponse)
-                .map(re -> re.userVo)
+                .map(re -> re.userEntityVo)
                 .map(u -> u.phone)
                 .orElse("");
         String userName = Optional.ofNullable(loginSignResponse)
-                .map(re -> re.userVo)
+                .map(re -> re.userEntityVo)
                 .map(u -> u.userName)
                 .orElse("");
         String accessToken = Optional.ofNullable(loginSignResponse)
@@ -222,19 +222,19 @@ public class SignViewModel extends ViewModel {
 
             LoginSignResponse loginSignResponse = response.getData();
             Long userId = Optional.ofNullable(loginSignResponse)
-                    .map(re -> re.userVo)
+                    .map(re -> re.userEntityVo)
                     .map(u -> u.userId)
                     .orElse(NettyConstants.ERROR_ID);
             String userAccount = Optional.ofNullable(loginSignResponse)
-                    .map(re -> re.userVo)
+                    .map(re -> re.userEntityVo)
                     .map(u -> u.account)
                     .orElse("");
             String userPhone = Optional.ofNullable(loginSignResponse)
-                    .map(re -> re.userVo)
+                    .map(re -> re.userEntityVo)
                     .map(u -> u.phone)
                     .orElse("");
             String userName = Optional.ofNullable(loginSignResponse)
-                    .map(re -> re.userVo)
+                    .map(re -> re.userEntityVo)
                     .map(u -> u.userName)
                     .orElse("");
             String accessToken = Optional.ofNullable(loginSignResponse)

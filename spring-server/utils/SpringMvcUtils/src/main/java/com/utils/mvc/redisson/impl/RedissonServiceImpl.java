@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
 import org.redisson.client.protocol.ScoredEntry;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -241,6 +243,12 @@ public class RedissonServiceImpl implements RedissonService {
     }
 
     @Override
+    public HashMap<Object, Object> getObjectObjectHashMap(String key) {
+        RMap<Object, Object> map = redissonClient.getMap(key);
+        return new HashMap<>(map.readAllMap());
+    }
+
+    @Override
     public Object getObjectFromHashMap(String key, String hashKey) {
         RMap<String, Object> map = redissonClient.getMap(key);
         return map.get(hashKey);
@@ -276,6 +284,38 @@ public class RedissonServiceImpl implements RedissonService {
         map.remove(hashKey);
     }
 
+    @Override
+    public void addSet(String redisKey, Set<Object> objects, Long expireTime) {
+        if (CollectionUtils.isEmpty(objects)){
+            return;
+        }
+        RSet<Object> rSet = redissonClient.getSet(redisKey);
+        rSet.addAll(objects);
+        if (expireTime != null && expireTime > 0){
+            rSet.expire(expireTime, TimeUnit.SECONDS);
+        }
+        else {
+            rSet.expire(EXPIRE_SECONDS, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public Set<Object> getSet(String redisKey) {
+        RSet<Object> rSet = redissonClient.getSet(redisKey);
+        return rSet.readAll(); // 返回所有对象
+    }
+
+    @Override
+    public void removeSet(String redisKey) {
+        redissonClient.getKeys().delete(redisKey); // 删除整个 Set
+    }
+
+    @Override
+    public void removeFromSet(String redisKey, Object object) {
+        RSet<Object> rSet = redissonClient.getSet(redisKey);
+        rSet.remove(object); // 从 Set 中删除指定对象
+    }
+
 
     private void setExpire(RScoredSortedSet<Object> zSet, Long expireTime) {
         if (expireTime == null) {
@@ -304,6 +344,20 @@ public class RedissonServiceImpl implements RedissonService {
         }
         setExpire(zSet, expireTime);
         return count;
+    }
+
+    @Override
+    public Map<Object, Double> zGetAll(String key) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        Map<Object, Double> resultMap = new HashMap<>();
+
+        // 遍历 ZSet 并填充结果 Map
+        for (Object member : zSet) {
+            Double score = zSet.getScore(member); // 获取分数
+            resultMap.put(member, score); // 加入到结果 Map
+        }
+
+        return resultMap;
     }
 
     @Override

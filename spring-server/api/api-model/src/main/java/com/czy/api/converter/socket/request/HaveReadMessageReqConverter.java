@@ -1,5 +1,6 @@
 package com.czy.api.converter.socket.request;
 
+import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.converter.base.BaseRequestConverter;
 import com.czy.api.domain.dto.socket.request.HaveReadMessageRequest;
 import com.czy.api.domain.entity.model.RequestBodyProto;
@@ -8,6 +9,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -29,7 +31,17 @@ public interface HaveReadMessageReqConverter {
         HaveReadMessageRequest request = new HaveReadMessageRequest();
         request.setBaseRequestData(BaseRequestConverter.INSTANCE.getBaseRequestData(requestBody));
         Map<String, String> data = requestBody.getDataMap();
-        request.setReceiverUserAccount(data.get("receiverUserAccount"));
+        request.setReceiverUserId(
+                Optional.ofNullable(data.get("receiverUserId"))
+                        .map(idSre -> {
+                            try {
+                                return Long.parseLong(idSre);
+                            } catch (Exception e){
+                                return NettyConstants.ERROR_ID;
+                            }
+                        })
+                        .orElse(NettyConstants.ERROR_ID)
+        );
         return request;
     }
 }

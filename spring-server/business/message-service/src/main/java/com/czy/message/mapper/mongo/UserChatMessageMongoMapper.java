@@ -124,6 +124,7 @@ public class UserChatMessageMongoMapper {
         // 创建查询条件
         Criteria criteria1 = Criteria.where("senderId").is(senderId)
                 .and("receiverId").is(receiverId)
+                // gte: 大于等于x，lt: 小于x
                 .and("timestamp").lt(timestamp);
         Criteria criteria2 = Criteria.where("senderId").is(receiverId)
                 .and("receiverId").is(senderId)
@@ -133,8 +134,8 @@ public class UserChatMessageMongoMapper {
         Criteria combinedCriteria = new Criteria().orOperator(criteria1, criteria2);
 
         Query query = Query.query(combinedCriteria)
-                 // 时间戳条件：降序
-                .with(Sort.by(Sort.Direction.ASC, "timestamp"))
+                // 时间戳条件：降序
+                .with(Sort.by(Sort.Direction.DESC, "timestamp")) // 改为 DESC 获取最新的消息
                 .limit(n);
 
         return mongoTemplate.find(query, UserChatMessageDo.class);

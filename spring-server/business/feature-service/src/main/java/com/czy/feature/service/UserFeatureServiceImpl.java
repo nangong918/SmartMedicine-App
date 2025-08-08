@@ -8,6 +8,7 @@ import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.constant.feature.UserActionRedisKey;
 import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.domain.Do.neo4j.rels.UserEntityRelation;
+import com.czy.api.domain.ao.UserOnlineFeatureAo;
 import com.czy.api.domain.ao.feature.*;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
@@ -574,4 +575,38 @@ public class UserFeatureServiceImpl implements UserFeatureService {
 
         return onlineFeature;
     }
+
+    /**
+     * getUserTempFeature 被调用存到redis中，这个方法就是从redis中获取
+     * @param userId    用户id
+     * @return          用户在线特征
+     */
+    @Override
+    public UserOnlineFeatureAo getCacheUserOnlineFeature(Long userId) {
+        String redisKey = UserActionRedisKey.USER_ONLINE_TEMP_REDIS_KEY;
+
+        String entityScoreMapRedisKey = redisKey + UserOnlineFeatureAo.RedisKey.ENTITY_SCORE_MAP + userId;
+        Map<Object, Object> entityScoreObjMap = redissonService.getObjectObjectHashMap(entityScoreMapRedisKey);
+        Map<String, Double> entityScoreMap = convertToEntityScoreMap(entityScoreObjMap);
+
+        // 创建 UserTempFeatureAo 对象并设置值
+        UserOnlineFeatureAo ao = new UserOnlineFeatureAo();
+        ao.setEntityScoreMap(entityScoreMap);
+
+        return ao;
+    }
+
+    private Map<String, Double> convertToEntityScoreMap(Map<Object, Object> entityScoreObjMap) {
+        Map<String, Double> entityScoreMap = new HashMap<>();
+        for (Map.Entry<Object, Object> entry : entityScoreObjMap.entrySet()) {
+            try {
+                entityScoreMap.put((String) entry.getKey(), (Double) entry.getValue());
+            } catch (Exception e){
+                log.error("convertToEntityScoreMap error: ", e);
+                return new HashMap<>();
+            }
+        }
+        return entityScoreMap;
+    }
+
 }

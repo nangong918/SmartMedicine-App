@@ -10,8 +10,12 @@ import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
+import com.czy.dal.constant.SelectItemEnum;
+import com.czy.dal.vo.view.mainTop.MainTopBarVo;
+import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.databinding.FragmentSearchBinding;
 
 /**
@@ -22,6 +26,11 @@ public class SearchFragment extends BaseFragment<FragmentSearchBinding> {
 
     public SearchFragment() {
         super(SearchFragment.class);
+    }
+
+    @Override
+    public FragmentSearchBinding getBinding() {
+        return FragmentSearchBinding.inflate(getLayoutInflater());
     }
 
     @Override
@@ -37,13 +46,15 @@ public class SearchFragment extends BaseFragment<FragmentSearchBinding> {
     }
 
     @Override
-    protected void init() {
-        super.init();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initView();
     }
 
+
     private final String[] mStrs = {"aaa", "bbb", "ccc", "abcdefg"};
     private void initView() {
+        ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.SEARCH));
         binding.listView.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, mStrs));
         binding.listView.setTextFilterEnabled(true);
     }

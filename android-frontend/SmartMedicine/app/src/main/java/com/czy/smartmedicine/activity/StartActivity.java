@@ -26,6 +26,11 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
         super(StartActivity.class);
     }
 
+    @Override
+    public ActivityStartBinding getBinding() {
+        return ActivityStartBinding.inflate(getLayoutInflater());
+    }
+
     // 启动页不用viewModel，请求不用livedata观察响应而是callback
     @Override
     protected void init() {

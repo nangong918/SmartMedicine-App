@@ -112,10 +112,12 @@ public class FileReadTests {
     @Test
     public void storageUserTest(){
         importAuthorService.createUser(
+                123L,
                 "test",
                 "test",
                 "test",
-                102524534L
+                102524534L,
+                false
         );
 //        LoginUserDo loginUserDo = loginUserMapper.getLoginUserByAccount("test");
 //        System.out.println(loginUserDo.toJsonString());
@@ -228,18 +230,24 @@ public class FileReadTests {
             }
         }
 
+        long userId = IdUtil.getSnowflakeNextId();
+
         // 3.创建user
-        long userId = importAuthorService.createUser(
+        importAuthorService.createUser(
+                userId,
                 minUser.getAuthorInfoAo().getUserName(),
                 minUser.getUserAccount(),
                 String.valueOf(startTestPhone),
-                authorImageId
+                authorImageId,
+                true
         );
 
         // 4.创建post
         for (int i = 0; i < articleDos.size(); i++){
+            long postId = IdUtil.getSnowflakeNextId();
             ArticleDo articleDo = articleDos.get(i);
             importAuthorService.createPost(
+                    postId,
                     articleDo.getTitle(),
                     articleDo.getContent(),
                     getTimestamp(articleDo.getTime()),
@@ -538,8 +546,13 @@ public class FileReadTests {
 
         // 清除 MySQL（不能批量执行）
         jdbcTemplate.execute("START TRANSACTION;");
+        // user
         jdbcTemplate.execute("DELETE FROM login_user;");
+        // oss
         jdbcTemplate.execute("DELETE FROM oss_file;");
+        // post
+        jdbcTemplate.execute("DELETE FROM post_collect;");
+        jdbcTemplate.execute("DELETE FROM post_collect_folder;");
         jdbcTemplate.execute("DELETE FROM post_files;");
         jdbcTemplate.execute("DELETE FROM post_info;");
         jdbcTemplate.execute("COMMIT;");

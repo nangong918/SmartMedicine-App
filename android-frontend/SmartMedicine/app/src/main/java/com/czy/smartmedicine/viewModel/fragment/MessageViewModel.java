@@ -1,21 +1,28 @@
 package com.czy.smartmedicine.viewModel.fragment;
 
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModel;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
+import com.czy.appcore.service.chat.ChatMessageManager;
+import com.czy.appcore.service.chat.OnRecentContactMessageChange;
 import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.customviewlib.view.chatCard.ChatContactAdapter;
+import com.czy.dal.OnPositionItemClick;
+import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.ao.chat.ChatContactItemAo;
-import com.czy.dal.bo.UserChatLastMessageBo;
+import com.czy.dal.bo.UserChatLastViewMessageBo;
 import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
@@ -24,9 +31,11 @@ import com.czy.dal.dto.netty.forwardMessage.UserTextDataResponse;
 import com.czy.dal.dto.netty.request.HaveReadMessageRequest;
 import com.czy.dal.dto.netty.response.HaveReadMessageResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
+import com.czy.dal.vo.entity.message.ChatContactListVo;
 import com.czy.dal.vo.fragmentActivity.MessageVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.ChatActivity;
 import com.czy.smartmedicine.fragment.MessageFragment;
 import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.czy.smartmedicine.utils.ViewModelUtil;
@@ -39,7 +48,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
+
 
 public class MessageViewModel extends ViewModel {
 
@@ -53,22 +62,83 @@ public class MessageViewModel extends ViewModel {
         this.socketMessageSender = socketMessageSender;
     }
 
-    public MessageVo messageVo = new MessageVo();
 
     public void init(MessageVo messageVo){
-        initVo(messageVo);
-        initReceiveMessageApi();
+        this.messageVo = messageVo;
+        initSocketReceiver();
         initialNetworkRequest();
+
+        MainApplication.getInstance().getChatMessageManager().setOnRecentContactMessageChange(
+                getOnRecentContactMessageChange()
+        );
     }
 
-    private void initVo(MessageVo messageVo){
-        this.messageVo = messageVo;
+    private OnRecentContactMessageChange getOnRecentContactMessageChange(){
+        return list -> {
+            // 先赋值
+            messageVo.chatContactListVo.chatContactList = list;
+            // 更新ui
+            chatContactAdapter.setCurrentList(
+                    messageVo.chatContactListVo.chatContactList
+            );
+        };
     }
 
     //---------------------------Vo Ld---------------------------
 
+    public MessageVo messageVo = new MessageVo();
+
+    public ChatContactAdapter chatContactAdapter;
+
+    public void initRecyclerView(@NonNull RecyclerView recyclerView, @NonNull FragmentActivity activity){
+        // 初始化Adapter
+        this.chatContactAdapter = new ChatContactAdapter(
+                getOnPositionClickListener(activity)
+        );
+
+        // 绑定Adapter
+        recyclerView.setAdapter(chatContactAdapter);
+
+        // 初始化view
+        chatContactAdapter.setCurrentList(messageVo.chatContactListVo.chatContactList);
+    }
+
+    private OnPositionItemClick getOnPositionClickListener(@NonNull FragmentActivity activity){
+        // TODO 点击之后netty通知后端消息已读
+        return position -> {
+            ChatContactListVo recyclerViewVo = Optional.ofNullable(messageVo)
+                    .map(vo -> vo.chatContactListVo)
+                    .orElse(new ChatContactListVo());
+
+            // 获取ChatActivity启动Ao
+            ChatActivityStartAo chatActivityStartAo = ChatActivityStartAo.getStartAoByChatContactItemAo(
+                    Optional.ofNullable(recyclerViewVo.chatContactList)
+                            .map(list -> list.get(position))
+                            .orElse(new ChatContactItemAo())
+                    ,
+                    ""
+            );
+
+            // 归零未读
+            List<ChatContactItemAo> list = recyclerViewVo.chatContactList;
+            list.get(position).chatContactItemVo.unreadCount = 0;
+            // 通知后端那一条被读了
+            Long userId = list.get(position).userId;
+            socketHaveReadMessage(userId);
+            // ui 更新
+//            messageVo.chatContactListVo.chatContactListLd.postValue(list);
+            chatContactAdapter.setCurrentList(list);
+
+            // 启动activity
+            // 启动ChatActivity
+            Intent intent = new Intent(activity, ChatActivity.class);
+            intent.putExtra(ChatActivityStartAo.class.getName(), chatActivityStartAo);
+            activity.startActivity(intent);
+        };
+    }
+
     ;
-    // 本地消息也要展示在List中
+    // 本地消息也要展示在List中 (以后有空闲的没事干再加入sqlite[估计做其他项目去了，懒得做这个项目])
 
     //---------------------------NetWork---------------------------
 
@@ -77,7 +147,7 @@ public class MessageViewModel extends ViewModel {
     // 消息队列：如果因为List是一个唯一资源，多线程情况下应该上锁，而上锁会导致阻塞或者CPU繁忙，应该将全部的消息交给消息队列处理；避免重要线程被普通任务阻塞
     private final Handler messageHandler = new Handler(Looper.getMainLooper());
 
-    private void initReceiveMessageApi(){
+    private void initSocketReceiver(){
         initEventBus();
         chatApiHandler = new ChatApiHandler() {
             @Override
@@ -107,27 +177,39 @@ public class MessageViewModel extends ViewModel {
         };
     }
 
-    // TODO 消息获取：外存获取，内存获取，Http网络获取，Socket获取
+    // 消息获取：外存获取，Http网络获取，Socket获取 -> 内存
 
     private void processUserTextDataResponse(UserTextDataResponse response){
         Log.d(TAG, "receiveUserText: " + response.toJsonString());
-        // TODO 匹配account -> 更新 messageList 消息气泡
         // contactAccount存在的话就更新RecyclerView(LiveData)
         // 不存在的话就添加一条到LiveData然后插入RecyclerView
         // 更新RecyclerView LiveData 和 DiffUtil
         // 非 contactAccount 作为索引方案
 
-        String contactAccount = response.account == null ? "" : response.account;
         ChatContactItemAo item = new ChatContactItemAo();
-        item.contactAccount = contactAccount;
-        item.chatContactItemVo.avatarUrlOrUri = response.avatarUrl;
+        item.contactAccount = Optional.ofNullable(response.account).orElse("");
+        // 应该替换为本地url加载
+        item.chatContactItemVo.avatarUrlOrUri = response.avatarUrls;
         item.chatContactItemVo.name = response.senderName;
         item.userId = response.senderId;
         item.chatContactItemVo.setMessagePreview(response.getContent());
-        item.chatContactItemVo.time = (DateUtils.getTime(new Date(Long.parseLong(response.timestamp))));
+        item.timestamp = Optional.ofNullable(response.timestamp)
+                .map(t -> {
+                    try {
+                        return Long.parseLong(t);
+                    } catch (Exception e){
+                        Log.w(TAG, "时间戳转化出错" + e);
+                        return System.currentTimeMillis();
+                    }
+                })
+                .orElse(System.currentTimeMillis());
+        item.index = item.timestamp;
+        item.chatContactItemVo.time = DateUtils.getTime(new Date(item.timestamp));
         List<ChatContactItemAo> list = new ArrayList<>();
         list.add(item);
-        handleUserChatLastMessage(list);
+        // 同步设置
+        ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
+        chatMessageManager.cacheMessage(list);
 
         // 存在contactAccount 暂时取消方案，Map索引数据结构在ChatList中先实现再说
 //                ChatContactItemAo contactItemAo = messageVo.chatContactListVo.findContactByAccount(contactAccount);
@@ -160,13 +242,30 @@ public class MessageViewModel extends ViewModel {
         ChatContactItemAo item = new ChatContactItemAo();
         item.contactAccount = contactAccount;
         item.userId = response.senderId;
-        item.chatContactItemVo.avatarUrlOrUri = response.avatarUrl;
+        item.timestamp = Optional.ofNullable(response.timestamp)
+                .map(t -> {
+                    try {
+                        return Long.parseLong(t);
+                    } catch (Exception e){
+                        Log.w(TAG, "时间戳转化出错" + e);
+                        return System.currentTimeMillis();
+                    }
+                })
+                .orElse(System.currentTimeMillis());
+//        item.chatContactItemVo.avatarUrlOrUri = response.avatarUrls;
         item.chatContactItemVo.name = response.senderName;
+        // 包含消息裁剪功能
         item.chatContactItemVo.setMessagePreview("图片消息");
-        item.chatContactItemVo.time = (DateUtils.getTime(new Date(Long.parseLong(response.timestamp))));
+        item.chatContactItemVo.time = DateUtils.getTime(new Date(item.timestamp));
+        item.chatContactItemVo.unreadCount = 0;
+
+        item.index = item.timestamp;
+
         List<ChatContactItemAo> list = new ArrayList<>();
         list.add(item);
-        handleUserChatLastMessage(list);
+        // 同步设置
+        ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
+        chatMessageManager.cacheMessage(list);
     }
 
     private void initialNetworkRequest(){
@@ -184,16 +283,41 @@ public class MessageViewModel extends ViewModel {
         }
         // 非首次打开，读取内存数据
         else {
-            List<ChatContactItemAo> cacheList = Optional.ofNullable(MainApplication.getInstance().chatContactList)
+            // 从缓存获取数据
+            messageVo.chatContactListVo.chatContactList = Optional.ofNullable(MainApplication.getInstance().getChatMessageManager())
+                    .map(ChatMessageManager::getRecentContactMessages)
                     .orElse(new ArrayList<>());
-            messageVo.chatContactListVo.chatContactListLd.postValue(cacheList);
+
+            // 通知adapter更新view
+            // 创建 Handler
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            // 定义 Runnable
+            Runnable checkAdapterRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (chatContactAdapter != null){
+                        // 更新 UI
+                        chatContactAdapter.setCurrentList(messageVo.chatContactListVo.chatContactList);
+                        Log.i(TAG, "chatContactAdapter is not null, 刷新ui");
+                    }
+                    else{
+                        // 如果 chatContactAdapter 仍然为 null，300 毫秒后继续检查
+                        Log.i(TAG, "chatContactAdapter is null 继续等待300");
+                        handler.postDelayed(this, 300);
+                    }
+                }
+            };
+
+            // 开始检查
+            handler.post(checkAdapterRunnable);
         }
     }
 
     //==========已读，socket通知service
 
-    public void socketHaveReadMessage(String contactAccount){
-        HaveReadMessageRequest request = new HaveReadMessageRequest(contactAccount);
+    public void socketHaveReadMessage(Long contactId){
+        HaveReadMessageRequest request = new HaveReadMessageRequest(contactId);
         socketMessageSender.readMessage(request);
     }
 
@@ -203,7 +327,10 @@ public class MessageViewModel extends ViewModel {
         apiRequestImpl.getUserNewMessage(
                 request,
                 this::handleGetUserNewMessage,
-                ViewModelUtil::globalThrowableToast
+                throwable -> {
+                    Log.i(TAG, "getUserNewMessage error: " + throwable);
+                    ViewModelUtil.globalThrowableToast(throwable);
+                }
         );
     }
 
@@ -211,58 +338,61 @@ public class MessageViewModel extends ViewModel {
         if (ViewModelUtil.handleResponse(response)){
             // Bo -> Ao
             List<ChatContactItemAo> chatContactList = new ArrayList<>();
-            for (UserChatLastMessageBo lastMessageBo : response.getData().lastMessageList) {
-                ChatContactItemAo chatContactItemAo = new ChatContactItemAo();
-                chatContactItemAo.chatContactItemVo.messagePreview = (lastMessageBo.msgContent);
-                chatContactItemAo.chatContactItemVo.time = (DateUtils.getTime(new Date(lastMessageBo.timestamp)));
-                chatContactItemAo.chatContactItemVo.unreadCount = (lastMessageBo.unreadCount);
-                chatContactItemAo.contactAccount = lastMessageBo.senderAccount;
-                // 暂时不设置avatarUrlOrUri，而是从MessageFragment传递
-//                chatContactItemAo.chatContactItemVo.avatarUrlOrUri = (lastMessageBo.contactPhoto);
-                chatContactItemAo.chatContactItemVo.name = TextUtils.isEmpty(lastMessageBo.receiverName) ? lastMessageBo.receiverAccount : lastMessageBo.receiverName;
-                chatContactList.add(chatContactItemAo);
+            for (UserChatLastViewMessageBo lastMessageBo : response.getData().lastMessageList) {
+                ChatContactItemAo ao = new ChatContactItemAo();
+                // view: ChatContactItemVo
+                // 头像 URL
+                ao.chatContactItemVo.avatarUrlOrUri =
+                        lastMessageBo.friendViewEntity.avatarUrl;
+                // name = name + (备注) ? 备注 : account
+                ao.chatContactItemVo.name = getFinalName(lastMessageBo);
+                ao.chatContactItemVo.messagePreview = lastMessageBo.msgContent;
+                ao.chatContactItemVo.time = DateUtils.getTime(
+                        new Date(
+                                Optional.ofNullable(lastMessageBo.timestamp)
+                                        .orElse(System.currentTimeMillis())
+                        )
+                );
+                ao.chatContactItemVo.unreadCount = lastMessageBo.unreadCount;
+                // data
+                ao.contactAccount = lastMessageBo.friendViewEntity.userAccount;
+                ao.userId = lastMessageBo.friendViewEntity.userId;
+                ao.timestamp = lastMessageBo.timestamp;
+
+                chatContactList.add(ao);
             }
+
             // 同步设置
-            messageHandler.post(() -> {
-                handleUserChatLastMessage(chatContactList);
-            });
+            ChatMessageManager chatMessageManager = MainApplication.getInstance().getChatMessageManager();
+            chatMessageManager.cacheMessage(chatContactList);
         }
     }
 
-    private synchronized void handleUserChatLastMessage(List<ChatContactItemAo> list){
-        if (list == null || list.isEmpty()){
-            return;
-        }
-        List<ChatContactItemAo> chatContactList = messageVo.chatContactListVo.chatContactListLd.getValue();
-        if (chatContactList == null || chatContactList.isEmpty()){
-            messageVo.chatContactListVo.chatContactListLd.setValue(new ArrayList<>());
-            chatContactList = messageVo.chatContactListVo.chatContactListLd.getValue();
-            chatContactList.addAll(list);
-        }
-        else {
-            for (ChatContactItemAo item : list){
-                AtomicBoolean isExist = new AtomicBoolean(false);
-                for (int i = 0; i < chatContactList.size(); i++){
-                    ChatContactItemAo chatContactItemAo = chatContactList.get(i);
-                    if (chatContactItemAo.contactAccount.equals(item.contactAccount)){
-                        ChatContactItemAo ao = new ChatContactItemAo(item);
-                        ao.chatContactItemVo.unreadCount =
-                                chatContactItemAo.chatContactItemVo.unreadCount + 1;
-                        chatContactList.remove(i);
-                        chatContactList.add(0, ao);
-                        isExist.set(true);
-                        break;
-                    }
-                }
-                if (!isExist.get()) {
-                    ChatContactItemAo ao = new ChatContactItemAo(item);
-                    ao.chatContactItemVo.unreadCount = 1;
-                    chatContactList.add(0, ao);
-                }
+    // name = name + (备注) ? 备注 : account
+    private String getFinalName(UserChatLastViewMessageBo bo) {
+        String name = Optional.ofNullable(bo.friendViewEntity)
+                .map(f -> f.userName)
+                .orElse("");
+        String remark = Optional.ofNullable(bo.friendViewEntity)
+                .map(f -> f.remark)
+                .orElse("");
+        String finalName = Optional.ofNullable(bo.friendViewEntity)
+                .map(f -> f.userAccount)
+                .orElse("");
+        if (!TextUtils.isEmpty(name)){
+            if (!TextUtils.isEmpty(remark)){
+                finalName = name + "(" + remark + ")";
+            }
+            else {
+                finalName = name;
             }
         }
-        // 更新 LiveData
-        messageVo.chatContactListVo.chatContactListLd.postValue(chatContactList);
+        else {
+            if (!TextUtils.isEmpty(name)){
+                finalName = name;
+            }
+        }
+        return finalName;
     }
 
     //---------------------------EventBus---------------------------
@@ -272,6 +402,8 @@ public class MessageViewModel extends ViewModel {
         if (response != null){
             chatApiHandler.receiveUserText(response);
         }
+        // 移除已处理的粘性事件
+        EventBus.getDefault().removeStickyEvent(response);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -279,6 +411,8 @@ public class MessageViewModel extends ViewModel {
         if (response != null){
             chatApiHandler.receiveGroupText(response);
         }
+        // 移除已处理的粘性事件
+        EventBus.getDefault().removeStickyEvent(response);
     }
 
     private void initEventBus() {
@@ -293,16 +427,16 @@ public class MessageViewModel extends ViewModel {
 
     ;
     // 存储List
-    public void storage(){
-        MainApplication.getInstance().chatContactList = Optional.ofNullable(messageVo)
-                .map(mvo -> mvo.chatContactListVo)
-                .map(cvo -> cvo.chatContactListLd)
-                .map(LiveData::getValue)
-                .orElse(new ArrayList<>());
-    }
+//    public void storage(){
+//        MainApplication.getInstance().chatContactList = Optional.ofNullable(messageVo)
+//                .map(mvo -> mvo.chatContactListVo)
+//                .map(cvo -> cvo.chatContactList)
+////                .map(LiveData::getValue)
+//                .orElse(new ArrayList<>());
+//    }
 
     public void onPause() {
-        storage();
+//        storage();
     }
 
     public void onDestroy() {

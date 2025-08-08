@@ -4,8 +4,8 @@ import com.czy.api.domain.Do.post.post.PostInfoDo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author 13225
@@ -61,4 +61,12 @@ public interface PostInfoMapper {
 
     // 通过title模糊查询postId
     List<Long> findPostIdByLikeTitle(String likeTitle);
+
+    // 查询不在postIds的postIds
+    List<Long> getNotInPostIds(
+            @Param("postIds") Set<Long> postIds,
+            @Param("limitNum") int limitNum
+    );
+
+    List<Long> getRandomPosts(int randomNum);
 }

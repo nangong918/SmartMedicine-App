@@ -7,13 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
+import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.vo.fragmentActivity.HomeVo;
+import com.czy.dal.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
@@ -31,27 +35,39 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     }
 
     @Override
+    public FragmentHomeBinding getBinding() {
+        return FragmentHomeBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 初始化viewModel
+        initViewModel();
+
+        // 初始化点击管理器
+        viewModel.initPostClickManager(this);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        // super中替换为了 return binding.getRoot();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
-    protected void init() {
-        super.init();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        initViewModel();
-
-        viewModel.initRecyclerView(
-                binding.rclvRecommend,
-                requireActivity()
-        );
+//        // 初始化RecyclerView
+//        viewModel.initRecyclerView(
+//                binding.rclvRecommend,
+//                requireActivity()
+//        );
+        ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.HOME));
     }
 
     @Override
@@ -90,7 +106,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, HomeViewModel.class);
 
         // 初始化viewModel
-        viewModel.init(new HomeVo(), requireActivity());
+        viewModel.init(new HomeVo());
     }
 
 
