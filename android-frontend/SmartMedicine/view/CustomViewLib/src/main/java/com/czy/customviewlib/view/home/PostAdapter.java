@@ -73,8 +73,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         RecommendCardType recommendCardType = RecommendCardType.valueOf(postAo.viewType);
         switch (recommendCardType){
-            case SINGLE_BIG_CARD -> ((PostItemPlusViewHolder)holder).setView();
-            case TWO_SMALL_CARD -> ((PostItemViewHolder)holder).setView();
+            case SINGLE_BIG_CARD -> ((PostItemPlusViewHolder)holder).setView(postAo);
+            case TWO_SMALL_CARD -> ((PostItemViewHolder)holder).setView(postAo);
             default -> Log.w(TAG, "未知的推荐卡片类型");
         }
     }

@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.customviewlib.databinding.ViewRecommendCardBinding;
+import com.czy.dal.ao.home.PostAo;
 
 public class PostItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -16,7 +17,7 @@ public class PostItemViewHolder extends RecyclerView.ViewHolder {
         this.binding = binding;
     }
 
-    public void setView(){
-
+    public void setView(@NonNull PostAo postAo){
+        PostItemViewManager.setView(binding, postAo);
     }
 }
