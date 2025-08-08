@@ -28,6 +28,20 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.onRecommendCardClick = onRecommendCardClick;
     }
 
+    /**
+     * 给出不同的viewType
+     * @param position position to query
+     * @return  不同的viewType
+     */
+    @Override
+    public int getItemViewType(int position) {
+        PostAo postAo = postAoList.get(position);
+        if (postAo != null) {
+            return postAo.viewType; // 确保 viewType 是枚举类型的整数值
+        }
+        return -1; // 或者其他默认值
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
