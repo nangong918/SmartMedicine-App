@@ -63,7 +63,6 @@ public class SearchActivityPostViewModel extends ViewModel {
     private void initPostClickManager(FragmentActivity activity){
         postClickManager = new PostClickManager(
                 this.searchPostVo.postAoList,
-                this.socketMessageSender,
                 activity
         );
     }

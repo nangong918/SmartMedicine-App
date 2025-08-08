@@ -47,10 +47,9 @@ public class PostClickManager {
     // 启动postActivity的IntentLauncher
     private ActivityResultLauncher<Intent> openPostActivityLauncher;
 
-    public PostClickManager(@NonNull List<PostAo> postAoList, @NonNull SocketMessageSender sender,
-                            @NonNull ActivityResultCaller activityResultCaller){
+    public PostClickManager(@NonNull List<PostAo> postAoList, @NonNull ActivityResultCaller activityResultCaller){
         this.postAoList = postAoList;
-        this.socketSender = sender;
+        this.socketSender = MainApplication.getInstance().getMessageSender();
         initActivityLauncher(activityResultCaller);
     }
 
@@ -171,8 +170,8 @@ public class PostClickManager {
      */
     private int getPostRealIndexByPosition(int position, int cardId){
         if (position > postAoList.size() || position < 0 || (cardId != 0 && cardId != 1)){
-            Log.w(TAG, "getPostRealIndexByPosition: position out of range");
-            throw new IllegalArgumentException("position out of range");
+            Log.w(TAG, "getPostRealIndexByPosition: position out of range, position: " + position + " cardId:" + cardId);
+            throw new IllegalArgumentException("position out of range, position: " + position + " cardId:" + cardId);
         }
         int index = 0;
         for (int i = 0; i < position; i++){

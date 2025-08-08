@@ -8,9 +8,9 @@ import com.czy.baseUtilsLib.debug.DebugEnvironment;
  */
 public class TestConfig {
 
-    public static final boolean IS_FORCE_NOT_TEST = true;
+    public static final boolean IS_FORCE_NOT_TEST = false;
 
-    public static final boolean IS_FORCE_TEST = false;
+    public static final boolean IS_FORCE_TEST = true;
 
     public static final boolean IS_TEST = (IS_FORCE_TEST ||
             DebugEnvironment.projectEnvironment == DebugEnvironment.Environment.LOCAL ||

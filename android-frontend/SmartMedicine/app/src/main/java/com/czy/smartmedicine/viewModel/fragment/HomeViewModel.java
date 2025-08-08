@@ -181,7 +181,6 @@ public class HomeViewModel extends ViewModel {
     public void initPostClickManager(ActivityResultCaller fragment){
         postClickManager = new PostClickManager(
                 homeVo.postListVo.postAoList,
-                this.socketMessageSender,
                 fragment
         );
     }

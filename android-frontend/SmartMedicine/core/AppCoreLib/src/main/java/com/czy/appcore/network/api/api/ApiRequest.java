@@ -264,9 +264,8 @@ public interface ApiRequest {
 
     /**
      * 获取单个帖子
-     * @param postId    帖子id
-     * @param pageNum   页码
-     * @return          帖子
+     * @param request    帖子id + 页码
+     * @return           帖子
      */
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/post/getPost")
     Observable<BaseResponse<SinglePostResponse>> getSinglePost(@Body GetSinglePostRequest request);
