@@ -11,7 +11,7 @@ import java.util.List;
 public interface ImportAuthorService {
 
     // 1.上传file（头像 + 文章）到minIO的oss + mysql的oss_info
-    FileOptionResult uploadFiles(String filePath, String bucketName);
+    FileOptionResult uploadFiles(String filePath, String bucketName, Long userId);
 
     // 2.创建user信息存储到login_user
     void createUser(long userId, String userName, String account, String phone, Long fileId, boolean haveToCheck);

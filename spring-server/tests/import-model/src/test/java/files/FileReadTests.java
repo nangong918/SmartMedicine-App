@@ -96,7 +96,8 @@ public class FileReadTests {
         String filePath = "D:\\CodeLearning\\smart-medicine\\爬取数据\\养生杂志\\5\\0.png";
         FileOptionResult result = importAuthorService.uploadFiles(
                 filePath,
-                testAuthorBucketName
+                testAuthorBucketName,
+                1L
         );
         System.out.println(result.toJsonString());
     }
@@ -198,12 +199,17 @@ public class FileReadTests {
         if (StringUtils.hasText(authorImagePath)){
             FileOptionResult result = importAuthorService.uploadFiles(
                     authorImagePath,
-                    testAuthorBucketName
+                    testAuthorBucketName,
+                    1L
             );
             if (!result.getSuccessFiles().isEmpty()){
                 authorImageId = result.getSuccessFiles().get(0).getFileId();
             }
         }
+
+        // 作者id
+        long userId = IdUtil.getSnowflakeNextId();
+
         // 2. 上传postFileList
         // 2.1 获取postFileList
         List<ArticleDo> articleDos = minUser.getArticleDos();
@@ -213,7 +219,8 @@ public class FileReadTests {
             if (StringUtils.hasText(articleImagePath)){
                 FileOptionResult result = importAuthorService.uploadFiles(
                         articleImagePath,
-                        testPostBucketName
+                        testPostBucketName,
+                        userId
                 );
                 if (!result.getSuccessFiles().isEmpty()){
                     List<Long> postFileIds = result.getSuccessFiles().stream()
@@ -230,7 +237,7 @@ public class FileReadTests {
             }
         }
 
-        long userId = IdUtil.getSnowflakeNextId();
+
 
         // 3.创建user
         importAuthorService.createUser(

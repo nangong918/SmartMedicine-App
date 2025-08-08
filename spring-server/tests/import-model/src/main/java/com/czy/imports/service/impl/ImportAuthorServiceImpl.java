@@ -57,7 +57,7 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
     private final org.neo4j.ogm.session.Session session;
 
     @Override
-    public FileOptionResult uploadFiles(String filePath, String bucketName) {
+    public FileOptionResult uploadFiles(String filePath, String bucketName, Long userId) {
         File file = new File(filePath);
 //        List<File> files = new ArrayList<>();
 //        files.add(file);
@@ -76,6 +76,7 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         List<OssFileDo> ossFileDos = new ArrayList<>();
         for (SuccessFile successFile : successFiles){
             OssFileDo ossFileDo = new OssFileDo();
+            ossFileDo.setUserId(userId);
             ossFileDo.setId(successFile.getFileId());
             log.info("fileId:{}", successFile.getFileId());
             ossFileDo.setFileName(successFile.getFileName());
@@ -138,11 +139,13 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
             log.info("importSingle::上传头像并获取id::节点检查，authorImagePath: {}", authorImagePath);
         }
 
+        // 作者id
         long userId = IdUtil.getSnowflakeNextId();
         if (StringUtils.hasText(authorImagePath)){
             FileOptionResult result = uploadFiles(
                     authorImagePath,
-                    UserConstant.USER_FILE_BUCKET + userId
+                    UserConstant.USER_FILE_BUCKET + userId,
+                    userId
             );
             if (!result.getSuccessFiles().isEmpty()){
                 // 默认取第0个
@@ -167,7 +170,9 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
             if (StringUtils.hasText(articleImagePath)){
                 FileOptionResult result = uploadFiles(
                         articleImagePath,
-                        PostConstant.POST_FILE_BUCKET + articleDo.getId()
+                        PostConstant.POST_FILE_BUCKET + articleDo.getId(),
+                        // ossMapper需要存储文件属于哪个user，此文件属于作者
+                        userId
                 );
                 if (!result.getSuccessFiles().isEmpty()){
                     List<Long> postFileIds = result.getSuccessFiles().stream()
