@@ -17,7 +17,7 @@ public class PostItemViewHolder extends RecyclerView.ViewHolder {
         this.binding = binding;
 
         // setClick
-        PostItemViewManager.setClick(binding, onClick, getAdapterPosition());
+        PostItemViewManager.setClick(binding, onClick, this);
     }
 
     public void setView(@NonNull PostAo postAo){

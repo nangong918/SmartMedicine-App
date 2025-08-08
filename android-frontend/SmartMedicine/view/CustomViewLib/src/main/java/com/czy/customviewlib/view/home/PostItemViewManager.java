@@ -3,6 +3,7 @@ package com.czy.customviewlib.view.home;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.customviewlib.databinding.ViewRecommendCardBinding;
@@ -23,11 +24,12 @@ public class PostItemViewManager {
         void setUserID(String userID);
     }
 
+    // currentPosition -> RecyclerView.ViewHolder; 因为创建时候的getAdapterPosition()是死值，需要动态的从ViewHolder获取
     private interface ClickBinding {
-        void setBasicCardClick(OnRecommendCardClick onClick, int currentPosition);
-        void setFavoriteClick(OnRecommendCardClick onClick, int currentPosition);
-        void setStarClick(OnRecommendCardClick onClick, int currentPosition);
-        void setUnlikeClick(OnRecommendCardClick onClick, int currentPosition);
+        void setBasicCardClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder);
+        void setFavoriteClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder);
+        void setStarClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder);
+        void setUnlikeClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder);
     }
 
     private static void loadPostData(ViewBinding viewBinding, PostAo postAo, int index) {
@@ -131,113 +133,113 @@ public class PostItemViewManager {
         }, postAo, 1);
     }
 
-    private static void setCommonClickListeners(ClickBinding clickBinding, OnRecommendCardClick onClick, int currentPosition) {
-        clickBinding.setBasicCardClick(onClick, currentPosition);
-        clickBinding.setFavoriteClick(onClick, currentPosition);
-        clickBinding.setStarClick(onClick, currentPosition);
-        clickBinding.setUnlikeClick(onClick, currentPosition);
+    private static void setCommonClickListeners(ClickBinding clickBinding, OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
+        clickBinding.setBasicCardClick(onClick, viewHolder);
+        clickBinding.setFavoriteClick(onClick, viewHolder);
+        clickBinding.setStarClick(onClick, viewHolder);
+        clickBinding.setUnlikeClick(onClick, viewHolder);
     }
 
     public static void setClick(@NonNull ViewRecommendCardPlusBinding binding,
                                 @NonNull OnRecommendCardClick onClick,
-                                int currentPosition) {
+                                RecyclerView.ViewHolder viewHolder) {
         setCommonClickListeners(new ClickBinding() {
             final int cardId = 0;
             @Override
-            public void setBasicCardClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setBasicCardClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.basicCard.setOnClickListener(v ->
-                        onClick.onCardClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId)
+                        onClick.onCardClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId)
                 );
             }
 
             @Override
-            public void setFavoriteClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setFavoriteClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.favorite.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
+                        onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
                 );
             }
 
             @Override
-            public void setStarClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setStarClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.star.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
+                        onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
                 );
             }
 
             @Override
-            public void setUnlikeClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setUnlikeClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.unlike.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
+                        onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
                 );
             }
-        }, onClick, currentPosition);
+        }, onClick, viewHolder);
     }
 
     public static void setClick(@NonNull ViewRecommendCardBinding binding,
                                 @NonNull OnRecommendCardClick onClick,
-                                int currentPosition) {
+                                RecyclerView.ViewHolder viewHolder) {
         // card 1
         setCommonClickListeners(new ClickBinding() {
             final int cardId = 0;
             @Override
-            public void setBasicCardClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setBasicCardClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.basicCard.setOnClickListener(v ->
-                        onClick.onCardClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId)
+                        onClick.onCardClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId)
                 );
             }
 
             @Override
-            public void setFavoriteClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setFavoriteClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.favorite.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
+                        onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
                 );
             }
 
             @Override
-            public void setStarClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setStarClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.star.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
+                        onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
                 );
             }
 
             @Override
-            public void setUnlikeClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setUnlikeClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.unlike.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
+                        onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
                 );
             }
-        }, onClick, currentPosition);
+        }, onClick, viewHolder);
 
         // card 2
         setCommonClickListeners(new ClickBinding() {
             final int cardId = 1;
             @Override
-            public void setBasicCardClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setBasicCardClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.basicCard.setOnClickListener(v ->
-                        onClick.onCardClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId)
+                        onClick.onCardClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId)
                 );
             }
 
             @Override
-            public void setFavoriteClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setFavoriteClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.favorite.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
+                        onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
                 );
             }
 
             @Override
-            public void setStarClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setStarClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.star.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
+                        onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
                 );
             }
 
             @Override
-            public void setUnlikeClick(OnRecommendCardClick onClick, int currentPosition) {
+            public void setUnlikeClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
                 binding.unlike.setOnClickListener(v ->
-                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
+                        onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
                 );
             }
-        }, onClick, currentPosition);
+        }, onClick, viewHolder);
     }
 }
