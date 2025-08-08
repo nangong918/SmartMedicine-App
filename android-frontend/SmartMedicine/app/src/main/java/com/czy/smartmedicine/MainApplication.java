@@ -114,6 +114,10 @@ public class MainApplication extends Application {
         if (apiRequestImplInstance == null){
             apiRequestImplInstance = new ApiRequestImpl(getApiRequestInstance());
         }
+        if (!ApiRequestProvider.isLogin()){
+            Log.i(TAG, "LoginToken空了");
+            setToken();
+        }
         return apiRequestImplInstance;
     }
 
@@ -267,7 +271,7 @@ public class MainApplication extends Application {
     private LoginTokenAo loginTokenAo;
 
     public LoginTokenAo getLoginTokenAo() {
-        if (loginTokenAo == null){
+        if (loginTokenAo == null || loginTokenAo.isEmpty()){
             loginTokenAo = new LoginTokenAo();
             try {
                 // SharePreferences

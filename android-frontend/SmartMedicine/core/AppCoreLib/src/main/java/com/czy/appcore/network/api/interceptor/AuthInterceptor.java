@@ -6,6 +6,7 @@ import com.czy.appcore.BaseConfig;
 import com.czy.dal.ao.login.LoginTokenAo;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -13,19 +14,21 @@ import okhttp3.Response;
 
 public class AuthInterceptor implements Interceptor {
 
+    private final static String TAG = AuthInterceptor.class.getName();
+
     private LoginTokenAo loginTokenAo = null;
 
     public void setLoginTokenAo(LoginTokenAo loginTokenAo){
         this.loginTokenAo = loginTokenAo;
     }
 
+    public boolean isLogin(){
+        return loginTokenAo != null && !loginTokenAo.isEmpty();
+    }
+
     @NonNull
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
-        // 如果 loginTokenAo 为 null，直接传递请求
-        if (loginTokenAo == null || loginTokenAo.isEmpty()) {
-            return chain.proceed(chain.request());
-        }
 
         // 获取原始请求
         Request originalRequest = chain.request();
@@ -37,8 +40,12 @@ public class AuthInterceptor implements Interceptor {
             String newUrl = url.replace(BaseConfig.AUTH_TOKEN_PREFIX, "");
 
             // 获取 token
-            String accessToken = loginTokenAo.accessToken;
-            String refreshToken = loginTokenAo.refreshToken;
+            String accessToken = Optional.ofNullable(loginTokenAo)
+                    .map(ao -> ao.accessToken)
+                    .orElse("");
+            String refreshToken = Optional.ofNullable(loginTokenAo)
+                    .map(ao -> ao.refreshToken)
+                    .orElse("");
 
             // 创建新的请求
             Request newRequest = originalRequest.newBuilder()
@@ -54,3 +61,4 @@ public class AuthInterceptor implements Interceptor {
         return chain.proceed(originalRequest);
     }
 }
+// todo bug: 1.数组越界 2.返回空指针问题 3.拦截器失效问题 4.未存储post数据

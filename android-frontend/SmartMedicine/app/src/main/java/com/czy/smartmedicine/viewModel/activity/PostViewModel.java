@@ -10,10 +10,13 @@ import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.GetSinglePostRequest;
+import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.response.SinglePostResponse;
 import com.czy.dal.vo.fragmentActivity.post.PostActivityVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
@@ -74,6 +77,21 @@ public class PostViewModel extends ViewModel {
                 ),
                 throwable -> {
                     Log.w(TAG, throwable);
+                    ViewModelUtil.globalThrowableToast(throwable);
+                }
+        );
+    }
+
+    public void testGetRandomPosts(Context context, SyncRequestCallback callback){
+        RecommendPostRequest request = new RecommendPostRequest();
+        request.userId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                .map(ao -> ao.userId)
+                .orElse(NettyConstants.ERROR_ID);
+        apiRequestImpl.recommendTestGetRandomPost(
+                request,
+                response -> {},
+                throwable -> {
+                    callback.onThrowable(throwable);
                     ViewModelUtil.globalThrowableToast(throwable);
                 }
         );

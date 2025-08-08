@@ -1,7 +1,6 @@
 package com.czy.smartmedicine.activity;
 
 
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -19,8 +18,8 @@ import com.czy.dal.vo.entity.home.CommentVo;
 import com.czy.dal.vo.fragmentActivity.post.PostActivityVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPostBinding;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.activity.PostViewModel;
+import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +46,19 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         initIntent();
         initViewModel();
         initRecyclerView();
+
+        // 利用postId去网络请求帖子信息（先请求1页的评论内容）
+        viewModel.getSinglePost(1, this, new SyncRequestCallback() {
+            @Override
+            public void onThrowable(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onAllRequestSuccess() {
+
+            }
+        });
     }
 
     @Override
@@ -89,19 +101,6 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         binding.setViewModel(viewModel);
         // 设置监听者
         binding.setLifecycleOwner(this);
-
-        // 利用postId去网络请求帖子信息（先请求1页的评论内容）
-        viewModel.getSinglePost(1, this, new SyncRequestCallback() {
-            @Override
-            public void onThrowable(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onAllRequestSuccess() {
-
-            }
-        });
     }
 
     private void initViewModelVo(){

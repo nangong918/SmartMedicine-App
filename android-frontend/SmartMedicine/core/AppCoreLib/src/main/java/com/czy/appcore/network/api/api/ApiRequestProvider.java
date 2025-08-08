@@ -8,6 +8,7 @@ import com.czy.dal.ao.login.LoginTokenAo;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import okhttp3.Interceptor;
 
@@ -61,6 +62,12 @@ public class ApiRequestProvider extends BaseApiRequestProvider {
         interceptors.add(new LoggingInterceptor(true));
 //        interceptors.add(new EncryptionInterceptor());
         return interceptors;
+    }
+
+    public static boolean isLogin(){
+        return Optional.ofNullable(authInterceptor)
+                .map(AuthInterceptor::isLogin)
+                .orElse(false);
     }
 
 }
