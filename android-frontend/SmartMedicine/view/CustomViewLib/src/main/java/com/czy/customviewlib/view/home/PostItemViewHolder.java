@@ -12,9 +12,12 @@ public class PostItemViewHolder extends RecyclerView.ViewHolder {
     private final ViewRecommendCardBinding binding;
 
     public PostItemViewHolder(@NonNull ViewRecommendCardBinding binding,
-                              OnRecommendCardClick onRecommendCardClick) {
+                              @NonNull OnRecommendCardClick onClick) {
         super(binding.getRoot());
         this.binding = binding;
+
+        // setClick
+        PostItemViewManager.setClick(binding, onClick, getAdapterPosition());
     }
 
     public void setView(@NonNull PostAo postAo){

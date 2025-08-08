@@ -16,33 +16,40 @@ import java.util.Optional;
 
 public class PostItemViewManager {
 
-    private interface Binding {
+    private interface ViewBinding {
         void setUserFace(String url);
         void setPostImage(String url);
         void setTitle(String title);
         void setUserID(String userID);
     }
 
-    private static void loadPostData(Binding binding, PostAo postAo, int index) {
+    private interface ClickBinding {
+        void setBasicCardClick(OnRecommendCardClick onClick, int currentPosition);
+        void setFavoriteClick(OnRecommendCardClick onClick, int currentPosition);
+        void setStarClick(OnRecommendCardClick onClick, int currentPosition);
+        void setUnlikeClick(OnRecommendCardClick onClick, int currentPosition);
+    }
+
+    private static void loadPostData(ViewBinding viewBinding, PostAo postAo, int index) {
         if (postAo.postVos == null || postAo.postVos.length <= index) {
             return;
         }
         PostVo vo = postAo.postVos[index];
 
         // avatarUrl
-        binding.setUserFace(Optional.ofNullable(vo.authorAvatarUrl).orElse(""));
+        viewBinding.setUserFace(Optional.ofNullable(vo.authorAvatarUrl).orElse(""));
 
         // postUrl
-        binding.setPostImage(Optional.ofNullable(vo.postImgUrls)
+        viewBinding.setPostImage(Optional.ofNullable(vo.postImgUrls)
                 .filter(urls -> !urls.isEmpty())
                 .map(urls -> urls.get(0))
                 .orElse(""));
 
         // title
-        binding.setTitle(Optional.ofNullable(vo.postTitle).orElse(""));
+        viewBinding.setTitle(Optional.ofNullable(vo.postTitle).orElse(""));
 
         // userID (其实就是username)
-        binding.setUserID(Optional.ofNullable(vo.authorName)
+        viewBinding.setUserID(Optional.ofNullable(vo.authorName)
                 .filter(name -> !TextUtils.isEmpty(name))
                 .orElseGet(() -> Optional.ofNullable(vo.authorId)
                         .map(String::valueOf)
@@ -50,7 +57,7 @@ public class PostItemViewManager {
     }
 
     public static void setView(@NonNull ViewRecommendCardPlusBinding binding, @NonNull PostAo postAo) {
-        loadPostData(new Binding() {
+        loadPostData(new ViewBinding() {
             @Override
             public void setUserFace(String url) {
                 ImageLoadUtil.loadImageViewByResource(url, binding.cardUserFace);
@@ -74,7 +81,7 @@ public class PostItemViewManager {
     }
 
     public static void setView(@NonNull ViewRecommendCardBinding binding, @NonNull PostAo postAo) {
-        loadPostData(new Binding() {
+        loadPostData(new ViewBinding() {
             @Override
             public void setUserFace(String url) {
                 ImageLoadUtil.loadImageViewByResource(url, binding.cardUserFace);
@@ -96,7 +103,7 @@ public class PostItemViewManager {
             }
         }, postAo, 0);
 
-        loadPostData(new Binding() {
+        loadPostData(new ViewBinding() {
             @Override
             public void setUserFace(String url) {
                 ImageLoadUtil.loadImageViewByResource(url, binding.cardUserFace);
@@ -119,129 +126,78 @@ public class PostItemViewManager {
         }, postAo, 1);
     }
 
+    private static void setCommonClickListeners(ClickBinding clickBinding, OnRecommendCardClick onClick, int currentPosition) {
+        clickBinding.setBasicCardClick(onClick, currentPosition);
+        clickBinding.setFavoriteClick(onClick, currentPosition);
+        clickBinding.setStarClick(onClick, currentPosition);
+        clickBinding.setUnlikeClick(onClick, currentPosition);
+    }
+
     public static void setClick(@NonNull ViewRecommendCardPlusBinding binding,
                                 @NonNull OnRecommendCardClick onClick,
-                                int currentPosition){
-        // basicCard
-        binding.basicCard.setOnClickListener(v -> {
-            onClick.onCardClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0
-            );
-        });
+                                int currentPosition) {
+        setCommonClickListeners(new ClickBinding() {
+            @Override
+            public void setBasicCardClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.basicCard.setOnClickListener(v ->
+                        onClick.onCardClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0)
+                );
+            }
 
-        // like/hate
-        binding.favorite.setOnClickListener(v -> {
-            onClick.onButtonClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0,
-                    RecommendButtonType.LIKE
-            );
-        });
+            @Override
+            public void setFavoriteClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.favorite.setOnClickListener(v ->
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.LIKE)
+                );
+            }
 
-        // collect/uncollected
-        binding.star.setOnClickListener(v -> {
-            onClick.onButtonClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0,
-                    RecommendButtonType.COLLECT
-            );
-        });
+            @Override
+            public void setStarClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.star.setOnClickListener(v ->
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.COLLECT)
+                );
+            }
 
-        // hate/not hating
-        binding.unlike.setOnClickListener(v -> {
-            onClick.onButtonClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0,
-                    RecommendButtonType.DISLIKE
-            );
-        });
+            @Override
+            public void setUnlikeClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.unlike.setOnClickListener(v ->
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.DISLIKE)
+                );
+            }
+        }, onClick, currentPosition);
     }
 
     public static void setClick(@NonNull ViewRecommendCardBinding binding,
                                 @NonNull OnRecommendCardClick onClick,
-                                int currentPosition){
-        // basicCard
-        binding.basicCard.setOnClickListener(v -> {
-            onClick.onCardClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0
-            );
-        });
+                                int currentPosition) {
+        setCommonClickListeners(new ClickBinding() {
+            @Override
+            public void setBasicCardClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.basicCard.setOnClickListener(v ->
+                        onClick.onCardClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0)
+                );
+            }
 
-        // like/hate
-        binding.favorite.setOnClickListener(v -> {
-            onClick.onButtonClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0,
-                    RecommendButtonType.LIKE
-            );
-        });
+            @Override
+            public void setFavoriteClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.favorite.setOnClickListener(v ->
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.LIKE)
+                );
+            }
 
-        // collect/uncollected
-        binding.star.setOnClickListener(v -> {
-            onClick.onButtonClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0,
-                    RecommendButtonType.COLLECT
-            );
-        });
+            @Override
+            public void setStarClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.star.setOnClickListener(v ->
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.COLLECT)
+                );
+            }
 
-        // hate/not hating
-        binding.unlike.setOnClickListener(v -> {
-            onClick.onButtonClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0,
-                    RecommendButtonType.DISLIKE
-            );
-        });
-
-        // basicCard
-        binding.basicCard2.setOnClickListener(v -> {
-            onClick.onCardClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0
-            );
-        });
-
-        // like/hate
-        binding.favorite2.setOnClickListener(v -> {
-            onClick.onButtonClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0,
-                    RecommendButtonType.LIKE
-            );
-        });
-
-        // collect/uncollected
-        binding.star2.setOnClickListener(v -> {
-            onClick.onButtonClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0,
-                    RecommendButtonType.COLLECT
-            );
-        });
-
-        // hate/not hating
-        binding.unlike2.setOnClickListener(v -> {
-            onClick.onButtonClick(
-                    currentPosition,
-                    RecommendCardType.SINGLE_BIG_CARD,
-                    0,
-                    RecommendButtonType.DISLIKE
-            );
-        });
+            @Override
+            public void setUnlikeClick(OnRecommendCardClick onClick, int currentPosition) {
+                binding.unlike.setOnClickListener(v ->
+                        onClick.onButtonClick(currentPosition, RecommendCardType.SINGLE_BIG_CARD, 0, RecommendButtonType.DISLIKE)
+                );
+            }
+        }, onClick, currentPosition);
     }
-
 }
