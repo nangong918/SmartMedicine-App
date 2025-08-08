@@ -21,6 +21,8 @@ import com.czy.dal.dto.http.response.RecommendPostResponse;
 import com.czy.dal.vo.fragmentActivity.HomeVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.fragment.HomeFragment;
+import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.czy.smartmedicine.manager.PostClickManager;
 import com.czy.smartmedicine.test.TestConfig;
 import com.czy.smartmedicine.utils.ResponseTool;
@@ -53,7 +55,6 @@ public class HomeViewModel extends ViewModel {
 
     public void init(HomeVo homeVo){
         this.homeVo = homeVo;
-        initialNetworkRequest();
     }
 
     //==========RecyclerView
@@ -77,7 +78,12 @@ public class HomeViewModel extends ViewModel {
     //---------------------------NetWork---------------------------
 
     // 初始化网络请求 todo 管理缓存，图片也要缓存在内存，避免重复网络请求
-    private void initialNetworkRequest() {
+    public void initialNetworkRequest(Context context, SyncRequestCallback callback) {
+        // app首次打开HomeFragment时，请求推荐帖子
+        if (HttpRequestManager.getIsFirstOpen(HomeFragment.class.getName())){
+            getRecommendPostsP(context, callback);
+        }
+        // 不是首次打开管都不用管
     }
 
     public void getRecommendPostsP(Context context, SyncRequestCallback callback){

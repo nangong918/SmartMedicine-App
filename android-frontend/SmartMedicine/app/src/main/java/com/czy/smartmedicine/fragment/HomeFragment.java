@@ -107,6 +107,18 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
         // 初始化viewModel
         viewModel.init(new HomeVo());
+
+        viewModel.initialNetworkRequest(requireContext(), new SyncRequestCallback() {
+            @Override
+            public void onThrowable(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onAllRequestSuccess() {
+                binding.lyMain.setRefreshing(false);
+            }
+        });
     }
 
 
