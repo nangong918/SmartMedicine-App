@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Business-user-message" type="CompoundRunConfigurationType">
+  <configuration default="false" name="user-message" type="CompoundRunConfigurationType">
     <toRun name="MessageServiceApplication" type="Application" />
     <toRun name="UserServiceApplication" type="Application" />
     <method v="2" />

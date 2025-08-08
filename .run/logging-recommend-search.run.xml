@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="logging-recommend-search" type="CompoundRunConfigurationType">
+    <toRun name="LoggingServiceApplication" type="Application" />
+    <toRun name="RecommendServiceApplication" type="Application" />
+    <toRun name="SearchApplication" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

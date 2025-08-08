@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Gateways" type="CompoundRunConfigurationType">
+  <configuration default="false" name="gateways" type="CompoundRunConfigurationType">
     <toRun name="GatewayApplication" type="Application" />
     <method v="2" />
   </configuration>

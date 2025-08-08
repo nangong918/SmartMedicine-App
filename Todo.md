@@ -355,6 +355,7 @@ search-service依赖feature-service的规则，feature-service依赖post-service
 8. oss优化, url存储在redis中,并且redis.ttl < oss.ttl
 9. 搜索,排序算法优化.
 10. 微服务分布式优化:集群,均衡负载,分布式锁,分布式事务,链路,服务注册,服务发现,服务熔断,服务限流
+11. nacos和dubbo的动态注册,能先启动消费者再启动生产者,实现生产者服务挂掉启动新的生产服务能被消费服务发现
 
 ## Android
 暂时取消DiffUtil，测试总是出bug，属于过度开发；归为性能优化点
