@@ -9,8 +9,8 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>RedisUtils</artifactId>
-    <description>RedisUtils</description>
+    <artifactId>RedissonUtils</artifactId>
+    <description>RedissonUtils</description>
 
     <dependencies>
 
