@@ -156,8 +156,8 @@ public class PostClickManager {
         if (postAoList.isEmpty()){
             return null;
         }
-        int realIndex = getPostRealIndexByPosition(position, cardId);
-        PostAo postAo = postAoList.get(realIndex);
+//        int realIndex = getPostRealIndexByPosition(position, cardId);
+        PostAo postAo = postAoList.get(position);
         assert cardId >= 0 && cardId < 2;
         if (RecommendCardType.TWO_SMALL_CARD.value == postAo.viewType){
             return postAo.postVos[cardId];
@@ -171,6 +171,7 @@ public class PostClickManager {
      * @param cardId    卡片索引(列索引)
      * @return  list中真实位置
      */
+    @Deprecated(since = "2025/8/11 [理解错误: postAoList是直接可用的, 并不需要进行转换]")
     private int getPostRealIndexByPosition(int position, int cardId){
         if (position > postAoList.size() || position < 0 || (cardId != 0 && cardId != 1)){
             Log.w(TAG, "getPostRealIndexByPosition: position out of range, position: " + position + " cardId:" + cardId);
