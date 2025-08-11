@@ -33,11 +33,11 @@
         </dependency>
 
         <!-- Spring Data Redis 默认使用 Jackson 作为 JSON 序列化的工具 -->
-        <!-- 注释因为redis用不到，redis内置 -->
-<!--        <dependency>-->
-<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--            <artifactId>jackson-databind</artifactId>-->
-<!--        </dependency>-->
+        <!-- RedisConfig: 重构redis序列化器为Json -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
 
         <!-- 集成redis依赖  -->
         <dependency>

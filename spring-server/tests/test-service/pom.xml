@@ -60,6 +60,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.utils</groupId>
+            <artifactId>RedissonUtils</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Lombok for domain -->
         <dependency>
             <groupId>org.projectlombok</groupId>

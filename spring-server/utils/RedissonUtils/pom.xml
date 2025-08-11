@@ -21,6 +21,18 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
+
         <!-- 实现对 Redisson 的自动化配置 【虽然好用但是Redisson这个傻逼里面藏着一个spring-mvc-starter；gateway是webflux用不了】-->
         <dependency>
             <groupId>org.redisson</groupId>
