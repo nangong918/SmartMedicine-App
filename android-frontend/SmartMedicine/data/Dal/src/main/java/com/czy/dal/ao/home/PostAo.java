@@ -1,9 +1,10 @@
 package com.czy.dal.ao.home;
 
+import com.czy.baseUtilsLib.algorithm.SortItem;
 import com.czy.dal.constant.home.RecommendCardType;
 import com.czy.dal.vo.entity.home.PostVo;
 
-public class PostAo {
+public class PostAo extends SortItem {
 
     // view
     // 单个post的信息

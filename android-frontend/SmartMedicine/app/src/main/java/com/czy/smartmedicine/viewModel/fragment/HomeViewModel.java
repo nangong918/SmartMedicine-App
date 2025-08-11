@@ -61,15 +61,11 @@ public class HomeViewModel extends ViewModel {
     //==========RecyclerView
 
     public void initRecyclerView(RecyclerView recyclerView, FragmentActivity activity){
-        List<PostAo> postAoList = Optional.ofNullable(homeVo)
-                .map(vo -> vo.postListVo)
-                .map(pvo -> pvo.postAoList)
-                .orElse(new ArrayList<>());
-
         OnRecommendCardClick onRecommendCardClick = postClickManager.getOnRecommendCardClick(activity);
 
+        // adapter的地址指针指向数据仓库
         postAdapter = new PostAdapter(
-                postAoList,
+                MainApplication.getInstance().getPostDataManager().recommendPosts,
                 onRecommendCardClick
         );
 
@@ -158,22 +154,26 @@ public class HomeViewModel extends ViewModel {
         }
 
         // postInfoUrlAo -> PostAo
-        List<PostAo> postAoList = this.postClickManager.getPostAoListByResponse(postInfoAos);
+        List<PostAo> newPostAoList = this.postClickManager.getPostAoListByResponse(postInfoAos);
 
         // homeList原先存在的列表
-        List<PostAo> homeList = Optional.ofNullable(homeVo.postListVo.postAoList)
-                        .orElse(new ArrayList<>());
+        List<PostAo> recommendPost = MainApplication.getInstance().getPostDataManager().recommendPosts;
 
-        int beforeSize = homeList.size();
-        homeList.addAll(postAoList);
+        if (recommendPost == null){
+            Log.w(TAG, "PostDataManager中的数据为空");
+            return;
+        }
+
+        int beforeSize = recommendPost.size();
+        recommendPost.addAll(newPostAoList);
 
         Log.i(TAG, "推荐数据检查：[原数据：" + beforeSize + "] " +
                 " [处理前 新数据：" + postInfoAos.size() + "] " +
-                " [处理后 新数据：" + postAoList.size() + "] " +
-                " [总数据：" + homeList.size() + "]");
+                " [处理后 新数据：" + newPostAoList.size() + "] " +
+                " [总数据：" + recommendPost.size() + "]");
 
         // adapter更新；注意此处RecyclerViewAdapter的更新逻辑跟其他地方的Adapter更新逻辑不一样，是直接由指针指向地址去更新
-        for (int i = beforeSize; i < homeList.size(); i++) {
+        for (int i = beforeSize; i < recommendPost.size(); i++) {
             postAdapter.notifyItemInserted(i);
         }
 
@@ -186,7 +186,7 @@ public class HomeViewModel extends ViewModel {
 
     public void initPostClickManager(ActivityResultCaller fragment){
         postClickManager = new PostClickManager(
-                homeVo.postListVo.postAoList,
+                MainApplication.getInstance().getPostDataManager().recommendPosts,
                 fragment
         );
     }

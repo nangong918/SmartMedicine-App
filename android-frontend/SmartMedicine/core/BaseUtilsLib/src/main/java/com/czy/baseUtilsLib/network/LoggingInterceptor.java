@@ -21,7 +21,7 @@ import okio.Buffer;
 
 public class LoggingInterceptor implements Interceptor {
 
-    private static final String TAG = Interceptor.class.getSimpleName();
+    private static final String TAG = LoggingInterceptor.class.getName();
 
     private boolean isShowHeader = true;
 

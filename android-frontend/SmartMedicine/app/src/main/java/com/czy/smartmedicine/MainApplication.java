@@ -22,6 +22,7 @@ import com.czy.appcore.network.netty.queue.SocketMessageQueue;
 import com.czy.appcore.network.netty.service.NettySocketService;
 import com.czy.appcore.network.netty.service.NettySocketServiceInitiator;
 import com.czy.appcore.service.chat.ChatMessageManager;
+import com.czy.appcore.service.post.PostDataManager;
 import com.czy.baseUtilsLib.file.SecuritySharedPreferencesUtils;
 import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.ui.ToastUtils;
@@ -67,6 +68,7 @@ public class MainApplication extends Application {
     private void initGlobal(){
         apiRequestInstance = getApiRequestInstance();
         this.chatMessageManager = getChatMessageManager();
+        this.postDataManager = getPostDataManager();
     }
 
     private ImageManager imageManager;
@@ -85,9 +87,21 @@ public class MainApplication extends Application {
     public ChatMessageManager getChatMessageManager(){
         if (chatMessageManager == null){
             chatMessageManager = new ChatMessageManager();
+            // 启动轮询 可以考虑取消thread使用线程池
             chatMessageManager.start();
         }
         return chatMessageManager;
+    }
+
+    // PostDataManager
+
+    private PostDataManager postDataManager;
+
+    public PostDataManager getPostDataManager(){
+        if (postDataManager == null){
+            postDataManager = new PostDataManager();
+        }
+        return postDataManager;
     }
 
     //==========ApiRequest

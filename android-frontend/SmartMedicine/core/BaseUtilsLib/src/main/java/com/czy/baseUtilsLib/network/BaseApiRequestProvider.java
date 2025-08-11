@@ -1,12 +1,13 @@
 package com.czy.baseUtilsLib.network;
 
 
+import androidx.multidex.BuildConfig;
+
 import java.io.File;
 import java.net.Proxy;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import de.hdodenhof.circleimageview.BuildConfig;
 import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -16,31 +17,6 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class BaseApiRequestProvider {
-
-    /**
-     * 创建 API 请求的 Retrofit 实例
-     *
-     * @param apiClass        API 接口的类类型
-     * @param mainUrl         服务器的基础 URL
-     * @param connectTimeOut  连接超时时间（秒）
-     * @param readTimeOut     读取超时时间（秒）
-     * @param writeTimeOut    写入超时时间（秒）
-     * @param callTimeOut     调用超时时间（秒）
-     * @param <T>            API 接口的类型
-     * @return               返回指定 API 接口的实例
-     */
-    protected static <T> T createApiRequest(Class<T> apiClass, String mainUrl,
-                                          long connectTimeOut, long readTimeOut, long writeTimeOut, long callTimeOut) {
-        OkHttpClient uploadOkHttpClient = createUploadOkHttpClient(connectTimeOut,readTimeOut,writeTimeOut,callTimeOut);
-
-        return new Retrofit.Builder()
-                .baseUrl(mainUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())  // Gson的序列化和反序列化
-                .client(uploadOkHttpClient)
-                .build()
-                .create(apiClass); // 使用传入的 Class 对象
-    }
 
     // 新增拦截器
     protected static <T> T createApiRequest(Class<T> apiClass, String mainUrl,

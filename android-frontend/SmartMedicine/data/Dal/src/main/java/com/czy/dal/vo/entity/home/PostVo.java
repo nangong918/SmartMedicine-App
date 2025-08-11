@@ -3,6 +3,7 @@ package com.czy.dal.vo.entity.home;
 
 import android.annotation.SuppressLint;
 
+import com.czy.baseUtilsLib.algorithm.SortItem;
 import com.czy.dal.ao.home.PostInfoUrlAo;
 import com.czy.dal.constant.home.PostOperation;
 import com.czy.dal.constant.home.RecommendButtonType;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PostVo {
+public class PostVo extends SortItem {
 
     // postId
     public Long postId = null;
