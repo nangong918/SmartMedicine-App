@@ -286,6 +286,7 @@ todo Redisson 替换 Redis
 todo android的eventBus合理化
 todo 性能优化，考虑使用kotlin
 todo 使用链路追踪检查接口耗费时长问题
+todo 需要记录HomeAdapter刚刚看到的位置, 此归为优化项
 
 ~~todo 后续合并post-service和search-service~~ search-service和post-service暂时不能合并，因为：
 search-service依赖feature-service的规则，feature-service依赖post-service的数据

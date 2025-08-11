@@ -14,6 +14,7 @@ import java.util.List;
  *  Home页面的PopularPosts (保留顶部时间戳)
  *  Community页面的CommunityPosts (保留顶部时间戳)
  * 数据源: http
+ * todo 需要记录刚刚看到的位置, 此归为优化项
  */
 public class PostDataManager {
 
