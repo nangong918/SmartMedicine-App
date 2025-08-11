@@ -50,6 +50,9 @@ public class PostClickManager {
     public PostClickManager(@NonNull List<PostAo> postAoList, @NonNull ActivityResultCaller activityResultCaller){
         this.postAoList = postAoList;
         this.socketSender = MainApplication.getInstance().getMessageSender();
+        Log.i(TAG, "PostClickManager init: this.socketSender : "
+                + this.socketSender + " this.socketSender == null?"
+                + (this.socketSender == null));
         initActivityLauncher(activityResultCaller);
     }
 
@@ -177,7 +180,22 @@ public class PostClickManager {
         for (int i = 0; i < position; i++){
             index += postAoList.get(i).postVos.length;
         }
-        return index + cardId;
+        /*
+         * eg: realList[size7] -> list[2,2,2,1]
+         * param:
+         *  (0,0) -> 0
+         *  (0,1) -> 1
+         *  (1,0) -> 2
+         *  (1,1) -> 3
+         *  (2,0) -> 4
+         *  (2,1) -> 5
+         *  (3,0) -> 6
+         * 没有问题
+         */
+        int realIndex = index + cardId;
+        Log.i(TAG, "param: [position: " + position + ", cardId: " + cardId
+                + "] result: [realIndex: " + realIndex + "]");
+        return realIndex;
     }
 
     private void startPostActivityIntent(Long postId, FragmentActivity activity){

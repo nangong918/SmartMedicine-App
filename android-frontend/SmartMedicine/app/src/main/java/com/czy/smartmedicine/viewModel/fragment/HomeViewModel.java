@@ -2,6 +2,7 @@ package com.czy.smartmedicine.viewModel.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.activity.result.ActivityResultCaller;
 import androidx.fragment.app.FragmentActivity;
@@ -165,6 +166,8 @@ public class HomeViewModel extends ViewModel {
 
         int beforeSize = homeList.size();
         homeList.addAll(postAoList);
+
+        Log.i(TAG, "推荐数据检查：[原数据：" + beforeSize + "] [新数据：" + postAoList.size() + "] [总数据：" + homeList.size() + "]");
 
         // adapter更新；注意此处RecyclerViewAdapter的更新逻辑跟其他地方的Adapter更新逻辑不一样，是直接由指针指向地址去更新
         for (int i = beforeSize; i < homeList.size(); i++) {
