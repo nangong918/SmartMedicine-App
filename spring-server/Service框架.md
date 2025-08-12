@@ -274,7 +274,7 @@ netty和message需要联合前端测试（netty环境只有Android前端能实�
 Todo：
 Android前端随便搞搞得了，重心不在Android
 1. 各个模块内部的搜索引擎：
-    1. user-relationship-service：账号like搜索，名称分词搜索
+    1. user-auth-relation-service：账号like搜索，名称分词搜索
     2. (先完成2)message-service：es搜索：a，b用户之间的聊天记录；a用户自己的全部相关聊天记录
     3. 搜索历史记录存储Redis
     4. 创建群聊

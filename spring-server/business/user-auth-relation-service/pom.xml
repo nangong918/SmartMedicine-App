@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>user-relationship-service</artifactId>
+    <artifactId>user-auth-relation-service</artifactId>
     <description>user relationship service:
         负责用户信息的管理。
         用户注册、登录、信息更新。

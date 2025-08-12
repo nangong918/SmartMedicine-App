@@ -1,7 +1,7 @@
 package com.czy.dal.constant.backEnd;
 
 public interface BackEndConstant {
-    String USER_RELATION = "/user-relationship-service";
+    String USER_RELATION = "/user-auth-relation-service";
     String MESSAGE = "/message-service";
     String OSS = "/oss-service";
     String SEARCH = "/search-service";

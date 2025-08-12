@@ -13,7 +13,7 @@ server:
 spring:
   #============ name
   application:
-    name: user-relationship-service
+    name: user-auth-relation-service
   #============ International i18n (国际化)
   messages:
     # @value

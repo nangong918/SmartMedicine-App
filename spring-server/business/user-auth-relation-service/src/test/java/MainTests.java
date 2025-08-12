@@ -30,7 +30,7 @@ import java.util.List;
 public class MainTests {
 
     // 测试环境，比如nacos，service依赖树，redis，mysql什么的
-    // 启动user-relationship-service服务之前需要先启动auth和sms Service
+    // 启动user-auth-relation-service服务之前需要先启动auth和sms Service
     @Test
     public void test() {
         System.out.println("hello world");

@@ -24,9 +24,9 @@ import org.springframework.context.annotation.Configuration;
 public class GatewayConfig {
 
     // 我已经关闭了nacos的自动服务发现，使用的是lb://serviceId这种形式的路由转发。
-    // 具体来说：http://localhost:8888/user-relationship-service/login/sendSms进入网关
-    // 被gateway的路由规则：/user-relationship-service/login/**发现
-    // 然后拼接：lb://serviceId + /user-relationship-service/login/**
+    // 具体来说：http://localhost:8888/user-auth-relation-service/login/sendSms进入网关
+    // 被gateway的路由规则：/user-auth-relation-service/login/**发现
+    // 然后拼接：lb://serviceId + /user-auth-relation-service/login/**
     // 但是由于重复的应用名所以需要截断：.stripPrefix(1)
     // 实际上此块应该配置在配置文件中而不是写死在Java代码
     // 优先级 0
@@ -38,7 +38,7 @@ public class GatewayConfig {
                                 .filter(ipGatewayFilterFactory.apply(new IpGatewayFilterFactory.Config()))
                                 .stripPrefix(1)// 移除第一段路径
                         )
-                                // 负载均衡访问user-relationship-service服务
+                                // 负载均衡访问user-auth-relation-service服务
                         .uri(UserConstant.serviceUri)
                         .id("login_ip_route")
                 )
@@ -102,7 +102,7 @@ public class GatewayConfig {
                                         .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
                                         .stripPrefix(1)// 移除第一段路径
                                 )
-                                // 负载均衡访问user-relationship-service服务
+                                // 负载均衡访问user-auth-relation-service服务
                                 .uri(UserConstant.serviceUri)
                                 .id("user_path_route")
                 )
@@ -113,7 +113,7 @@ public class GatewayConfig {
                                         .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
                                         .stripPrefix(1)// 移除第一段路径
                                 )
-                                // 负载均衡访问user-relationship-service服务
+                                // 负载均衡访问user-auth-relation-service服务
                                 .uri(MessageConstant.serviceUri)
                                 .id("message_path_route")
                 )
@@ -124,7 +124,7 @@ public class GatewayConfig {
                                         .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
                                         .stripPrefix(1)// 移除第一段路径
                                 )
-                                // 负载均衡访问user-relationship-service服务
+                                // 负载均衡访问user-auth-relation-service服务
                                 .uri(OssConstant.serviceUri)
                                 .id("oss_path_route")
                 )
@@ -135,7 +135,7 @@ public class GatewayConfig {
                                         .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
                                         .stripPrefix(1)// 移除第一段路径
                                 )
-                                // 负载均衡访问user-relationship-service服务
+                                // 负载均衡访问user-auth-relation-service服务
                                 .uri(SearchConstant.serviceUri)
                                 .id("search_path_route")
                 )
@@ -146,7 +146,7 @@ public class GatewayConfig {
                                         .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
                                         .stripPrefix(1)// 移除第一段路径
                                 )
-                                // 负载均衡访问user-relationship-service服务
+                                // 负载均衡访问user-auth-relation-service服务
                                 .uri(PostConstant.serviceUri)
                                 .id("post_path_route")
                 )
@@ -157,7 +157,7 @@ public class GatewayConfig {
                                         .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
                                         .stripPrefix(1)// 移除第一段路径
                                 )
-                                // 负载均衡访问user-relationship-service服务
+                                // 负载均衡访问user-auth-relation-service服务
                                 .uri(RecommendConstant.serviceUri)
                                 .id("recommend_path_route")
                 )

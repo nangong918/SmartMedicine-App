@@ -190,7 +190,7 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 4. 行为特征上传
 
 ##### 在家梳理
-梳理user-relationship-service；作流程图
+梳理user-auth-relation-service；作流程图
 参考《大麦》看看是否存在优化空间
 
 #### 排期

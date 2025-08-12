@@ -15,7 +15,7 @@
 
     <modules>
 <!--        <module>../SpringUtils</module>-->
-        <module>user-relationship-service</module>
+        <module>user-auth-relation-service</module>
         <module>message-service</module>
         <module>post-service</module>
         <module>recommend-service</module>
