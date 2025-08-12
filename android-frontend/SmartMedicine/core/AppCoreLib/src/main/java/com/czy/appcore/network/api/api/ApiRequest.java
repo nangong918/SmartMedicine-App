@@ -125,24 +125,6 @@ public interface ApiRequest {
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.USER_RELATION + "/relation/searchUser")
     Observable<BaseResponse<SearchUserResponse>> searchUsers(@Body SearchUserRequest request);
 
-//    /**
-//     * 添加用户
-//     * @param request    添加的用户信息
-//     * @return                  添加的用户信息
-//     */
-//    @Deprecated // 改为netty了
-//    @POST("/user/addUser")
-//    Observable<BaseResponse<Void>> addUserFriend(@Body AddUserRequest request);
-//
-//    /**
-//     * 处理添加用户
-//     * @param request   处理添加用户的请求
-//     * @return          处理添加用户的响应
-//     */
-//    @Deprecated // 改为netty了
-//    @POST("/user/handleAddedUser")
-//    Observable<BaseResponse<Void>> handleAddedUser(@Body HandleAddedUserRequest request);
-
     /**
      * 获取添加我的请求
      * @param request   用户基本信息
