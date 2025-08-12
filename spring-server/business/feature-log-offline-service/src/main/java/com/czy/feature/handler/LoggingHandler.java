@@ -1,4 +1,4 @@
-package com.czy.logging.handler;
+package com.czy.feature.handler;
 
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.netty.RequestMessageType;
@@ -7,10 +7,10 @@ import com.czy.api.domain.ao.feature.UserCityLocationInfoAo;
 import com.czy.api.domain.dto.socket.request.UserBrowseTimeRequest;
 import com.czy.api.domain.dto.socket.request.UserCityLocationRequest;
 import com.czy.api.domain.dto.socket.request.UserClickPostRequest;
-import com.czy.logging.handler.api.LoggingApi;
-import com.czy.logging.service.UserActionRecordService;
-import com.czy.springUtils.annotation.HandlerType;
-import com.czy.springUtils.debug.DebugConfig;
+import com.czy.feature.handler.api.LoggingApi;
+import com.czy.feature.service.UserActionRecordService;
+import com.utils.common.debug.DebugConfig;
+import com.utils.rabbitmq.annotation.HandlerType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;

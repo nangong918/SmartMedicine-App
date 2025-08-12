@@ -1,9 +1,9 @@
-package com.czy.logging.kafka;
+package com.czy.feature.kafka;
 
 import com.czy.api.constant.netty.KafkaConstant;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.event.BigDataEvent;
-import com.czy.logging.component.LoggingEventManager;
+import com.czy.feature.component.LoggingEventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;

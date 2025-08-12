@@ -1,8 +1,8 @@
-package com.czy.logging.handler.eventListener;
+package com.czy.feature.handler.eventListener;
 
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.event.BigDataEvent;
-import com.czy.logging.component.LoggingEventManager;
+import com.czy.feature.component.LoggingEventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

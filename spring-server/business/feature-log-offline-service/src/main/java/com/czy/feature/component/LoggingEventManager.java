@@ -1,9 +1,8 @@
-package com.czy.logging.component;
+package com.czy.feature.component;
 
 import com.czy.api.converter.base.BaseRequestConverter;
-import com.czy.logging.handler.LoggingHandler;
-import com.czy.springUtils.debug.DebugConfig;
-import com.utils.mvc.component.EventManager;
+import com.czy.feature.handler.LoggingHandler;
+import com.utils.rabbitmq.component.EventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,13 +22,12 @@ import java.util.List;
 public class LoggingEventManager<T> extends EventManager<T> {
 
     private final LoggingHandler loggingHandler;
-    private final DebugConfig debugConfig;
     private final BaseRequestConverter baseRequestConverter;
 
     private void initEventManager(){
         List<Object> handlerBeans = new ArrayList<>();
         handlerBeans.add(loggingHandler);
-        super.initEventManager(handlerBeans, debugConfig, baseRequestConverter);
+        super.initEventManager(handlerBeans, baseRequestConverter);
     }
 
     @PostConstruct

@@ -1,4 +1,4 @@
-package com.czy.logging.rule;
+package com.czy.feature.rule;
 
 import com.czy.api.constant.feature.PostOperation;
 import lombok.extern.slf4j.Slf4j;

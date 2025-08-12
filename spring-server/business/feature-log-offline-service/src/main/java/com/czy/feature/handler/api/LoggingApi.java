@@ -1,11 +1,11 @@
-package com.czy.logging.handler.api;
+package com.czy.feature.handler.api;
 
 
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.domain.dto.socket.request.UserBrowseTimeRequest;
 import com.czy.api.domain.dto.socket.request.UserCityLocationRequest;
 import com.czy.api.domain.dto.socket.request.UserClickPostRequest;
-import com.czy.springUtils.annotation.MessageType;
+import com.utils.rabbitmq.annotation.MessageType;
 
 
 /**

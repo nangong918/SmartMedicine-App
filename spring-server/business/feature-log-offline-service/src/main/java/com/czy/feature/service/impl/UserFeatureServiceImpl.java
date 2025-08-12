@@ -1,4 +1,4 @@
-package com.czy.feature.service;
+package com.czy.feature.service.impl;
 
 import com.czy.api.api.feature.PostFeatureService;
 import com.czy.api.api.feature.UserFeatureService;

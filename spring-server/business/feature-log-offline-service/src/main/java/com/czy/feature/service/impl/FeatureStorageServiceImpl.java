@@ -1,4 +1,4 @@
-package com.czy.logging.service.impl;
+package com.czy.feature.service.impl;
 
 import com.czy.api.api.feature.PostFeatureService;
 import com.czy.api.constant.feature.FeatureTypeChanger;
@@ -16,7 +16,7 @@ import com.czy.api.domain.ao.feature.ScoreAo;
 import com.czy.api.domain.ao.feature.UserEntityFeatureAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
-import com.czy.logging.service.FeatureStorageService;
+import com.czy.feature.service.FeatureStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;

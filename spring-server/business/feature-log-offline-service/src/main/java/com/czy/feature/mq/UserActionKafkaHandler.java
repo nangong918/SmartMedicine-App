@@ -1,4 +1,4 @@
-package com.czy.logging.mq;
+package com.czy.feature.mq;
 
 import com.czy.api.api.feature.NlpService;
 import com.czy.api.constant.feature.PostOperation;
@@ -7,8 +7,8 @@ import com.czy.api.domain.ao.feature.CommentEmotionAo;
 import com.czy.api.domain.entity.kafkaMessage.UserActionCommentPost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionOperatePost;
 import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
-import com.czy.logging.service.UserActionRecordService;
-import com.czy.springUtils.debug.DebugConfig;
+import com.czy.feature.service.UserActionRecordService;
+import com.utils.common.debug.DebugConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
