@@ -6,6 +6,7 @@
     <artifactId>oss-service</artifactId>
     <description>文件服务
         负责文件的上传、下载和管理。
+        此服务被拆为子模块, 废弃, 但是不删除, 供参考
     </description>
 
     <parent>

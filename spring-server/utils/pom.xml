@@ -15,6 +15,7 @@
     <module>JavaUtils</module>
     <module>RedisUtils</module>
     <module>RedissonUtils</module>
+    <module>MinioUtils</module>
     <module>SpringUtils</module>
     <module>SpringMvcUtils</module>
     <module>SpringWebfluxUtils</module>
