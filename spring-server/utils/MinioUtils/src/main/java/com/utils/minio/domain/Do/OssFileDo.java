@@ -1,4 +1,4 @@
-package domain.Do;
+package com.utils.minio.domain.Do;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

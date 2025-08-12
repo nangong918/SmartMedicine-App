@@ -1,9 +1,9 @@
-package service;
+package com.utils.minio.service;
 
 
-import domain.ao.FileIsExistResult;
-import domain.ao.FileOptionResult;
-import domain.ao.FileAo;
+import com.utils.minio.domain.ao.FileIsExistResult;
+import com.utils.minio.domain.ao.FileOptionResult;
+import com.utils.minio.domain.ao.FileAo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author 13225
  * @date 2025/4/22 15:39
  */
-public interface MinIOService {
+public interface MinioService {
 
     /**
      * 上传文件List

@@ -1,6 +1,6 @@
-package utils;
+package com.utils.minio.utils;
 
-import config.MinIOConfig;
+import com.utils.minio.config.MinIOConfig;
 import io.minio.*;
 import io.minio.errors.MinioException;
 import io.minio.http.Method;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class MinIOUtils {
+public class MinioUtils {
     @Autowired
     private MinIOConfig minIOConfig;
 //    @Resource

@@ -1,6 +1,6 @@
-package mapper;
+package com.utils.minio.mapper;
 
-import domain.Do.OssFileDo;
+import com.utils.minio.domain.Do.OssFileDo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

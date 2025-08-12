@@ -1,10 +1,12 @@
-package constant;
+package com.utils.minio.constant;
 
+import lombok.Getter;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public enum ViewContentTypeEnum {
     DEFAULT("default","application/octet-stream"),
     PNG("png", "image/png"),
@@ -59,12 +61,5 @@ public enum ViewContentTypeEnum {
         this.type = type;
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public String getType() {
-        return type;
-    }
 }
 

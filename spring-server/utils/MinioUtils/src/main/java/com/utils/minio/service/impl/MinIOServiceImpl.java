@@ -1,13 +1,13 @@
-package service.impl;
+package com.utils.minio.service.impl;
 
 
 import cn.hutool.core.util.IdUtil;
-import constant.ViewContentTypeEnum;
-import domain.ao.ErrorFile;
-import domain.ao.FileIsExistResult;
-import domain.ao.FileOptionResult;
-import domain.ao.SuccessFile;
-import domain.ao.FileAo;
+import com.utils.minio.constant.ViewContentTypeEnum;
+import com.utils.minio.domain.ao.ErrorFile;
+import com.utils.minio.domain.ao.FileIsExistResult;
+import com.utils.minio.domain.ao.FileOptionResult;
+import com.utils.minio.domain.ao.SuccessFile;
+import com.utils.minio.domain.ao.FileAo;
 import exception.OssException;
 import io.minio.ObjectWriteResponse;
 import io.minio.messages.Bucket;
@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import service.MinIOService;
-import utils.MinIOUtils;
+import com.utils.minio.service.MinioService;
+import com.utils.minio.utils.MinioUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,9 +36,9 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class MinIOServiceImpl implements MinIOService {
+public class MinIOServiceImpl implements MinioService {
 
-    private final MinIOUtils minIOUtils;
+    private final MinioUtils minIOUtils;
 
     @Override
     public FileOptionResult uploadLoadFiles(List<FileAo> filesAo, String bucketName){

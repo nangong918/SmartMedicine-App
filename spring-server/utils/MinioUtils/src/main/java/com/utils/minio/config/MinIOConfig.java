@@ -1,4 +1,4 @@
-package config;
+package com.utils.minio.config;
 
 import io.minio.MinioClient;
 import lombok.Getter;

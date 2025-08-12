@@ -1,24 +1,24 @@
-package service.impl;
+package com.utils.minio.service.impl;
 
 
-import domain.Do.OssFileDo;
-import domain.ao.FileOptionResult;
-import domain.ao.ErrorFile;
-import domain.ao.FileIsExistAo;
-import domain.ao.FileIsExistResult;
-import domain.ao.FileNameAo;
-import domain.ao.SuccessFile;
+import com.utils.minio.domain.Do.OssFileDo;
+import com.utils.minio.domain.ao.FileOptionResult;
+import com.utils.minio.domain.ao.ErrorFile;
+import com.utils.minio.domain.ao.FileIsExistAo;
+import com.utils.minio.domain.ao.FileIsExistResult;
+import com.utils.minio.domain.ao.FileNameAo;
+import com.utils.minio.domain.ao.SuccessFile;
 import exception.OssException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mapper.OssMapper;
+import com.utils.minio.mapper.OssMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import service.MinIOService;
-import service.OssService;
-import utils.MinIOUtils;
+import com.utils.minio.service.MinioService;
+import com.utils.minio.service.OssService;
+import com.utils.minio.utils.MinioUtils;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -43,8 +43,8 @@ import java.util.stream.Collectors;
 public class OssServiceImpl implements OssService {
 
     private final OssMapper ossMapper;
-    private final MinIOUtils minIOUtils;
-    private final MinIOService minIOService;
+    private final MinioUtils minioUtils;
+    private final MinioService minioService;
 
     @Override
     public OssFileDo getFileInfoByFileId(Long fileId) {
@@ -112,7 +112,7 @@ public class OssServiceImpl implements OssService {
             return false;
         }
         String fileStorageName = ossFileDo.getFileStorageName();
-        boolean isOssExist = minIOUtils.isObjectExist(bucketName, fileStorageName);
+        boolean isOssExist = minioUtils.isObjectExist(bucketName, fileStorageName);
         if (!isOssExist){
             log.warn("mysql和oss文件信息不一致，请检查");
         }
@@ -162,7 +162,7 @@ public class OssServiceImpl implements OssService {
                 files.remove(file);
             }
         });
-        FileOptionResult result = minIOService.uploadFiles(files, userId, bucketName);
+        FileOptionResult result = minioService.uploadFiles(files, userId, bucketName);
         // 成功的存储到数据库
         uploadFilesRecord(result.getSuccessFiles(), userId, bucketName);
         // 失败的加入到list
@@ -207,7 +207,7 @@ public class OssServiceImpl implements OssService {
     public InputStream downloadFileByStorageName(Long userId, String fileStorageName, String bucketName) {
         // userId鉴权
         try{
-            return minIOUtils.getObject(bucketName, fileStorageName);
+            return minioUtils.getObject(bucketName, fileStorageName);
         } catch (Exception e){
             log.warn("下载文件失败", e);
             throw new OssException("下载文件失败");
@@ -220,11 +220,11 @@ public class OssServiceImpl implements OssService {
         if (ossFileDo != null && ossFileDo.getId() != null){
 
             try{
-                boolean isBucketExist = minIOUtils.bucketExists(ossFileDo.getBucketName());
+                boolean isBucketExist = minioUtils.bucketExists(ossFileDo.getBucketName());
                 if (!isBucketExist){
                     throw new OssException("存储桶不存在");
                 }
-                return minIOUtils.getObject(ossFileDo.getBucketName(), ossFileDo.getFileStorageName());
+                return minioUtils.getObject(ossFileDo.getBucketName(), ossFileDo.getFileStorageName());
             } catch (Exception e){
                 log.warn("下载文件失败", e);
                 throw new OssException("下载文件失败");
@@ -239,11 +239,11 @@ public class OssServiceImpl implements OssService {
         if (ossFileDo != null && ossFileDo.getId() != null){
 
             try{
-                boolean isBucketExist = minIOUtils.bucketExists(ossFileDo.getBucketName());
+                boolean isBucketExist = minioUtils.bucketExists(ossFileDo.getBucketName());
                 if (!isBucketExist){
                     throw new OssException("存储桶不存在");
                 }
-                return minIOUtils.getObject(ossFileDo.getBucketName(), ossFileDo.getFileStorageName());
+                return minioUtils.getObject(ossFileDo.getBucketName(), ossFileDo.getFileStorageName());
             } catch (Exception e){
                 log.warn("下载文件失败", e);
                 throw new OssException("下载文件失败");
@@ -322,7 +322,7 @@ public class OssServiceImpl implements OssService {
             if (!StringUtils.hasText(fileStorageName)){
                 throw new OssException("文件不存在");
             }
-            return minIOUtils.getPresignedObjectUrl(bucketName, fileStorageName);
+            return minioUtils.getPresignedObjectUrl(bucketName, fileStorageName);
         } catch (Exception e){
             log.warn("获取文件地址失败", e);
             return "";
@@ -332,7 +332,7 @@ public class OssServiceImpl implements OssService {
     @Override
     public boolean deleteFileByStorageName(Long userId, String fileStorageName, String bucketName) {
         try{
-            minIOUtils.removeFile(bucketName, fileStorageName);
+            minioUtils.removeFile(bucketName, fileStorageName);
             ossMapper.deleteByFileStorageNameAndBucketName(fileStorageName, bucketName);
             return true;
         } catch (Exception e){
@@ -349,7 +349,7 @@ public class OssServiceImpl implements OssService {
                 return false;
             }
             try{
-                minIOUtils.removeFile(bucketName, ossFileDo.getFileStorageName());
+                minioUtils.removeFile(bucketName, ossFileDo.getFileStorageName());
                 ossMapper.deleteByFileStorageNameAndBucketName(ossFileDo.getFileStorageName(), bucketName);
                 return true;
             } catch (Exception e){
@@ -366,7 +366,7 @@ public class OssServiceImpl implements OssService {
         if (ossFileDo != null){
             try{
                 // oss删除
-                minIOUtils.removeFile(ossFileDo.getBucketName(), ossFileDo.getFileStorageName());
+                minioUtils.removeFile(ossFileDo.getBucketName(), ossFileDo.getFileStorageName());
                 // mysql删除
                 ossMapper.delete(fileId);
                 return true;
@@ -383,7 +383,7 @@ public class OssServiceImpl implements OssService {
         List<ErrorFile> errorFileNames = new LinkedList<>();
         fileStorageNames.forEach(fileStorageName -> {
             try{
-                minIOUtils.removeFile(bucketName, fileStorageName);
+                minioUtils.removeFile(bucketName, fileStorageName);
                 ossMapper.deleteByFileStorageNameAndBucketName(fileStorageName, bucketName);
             } catch (Exception e){
                 log.warn("删除文件失败", e);
