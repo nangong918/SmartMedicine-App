@@ -1,4 +1,4 @@
-package service;
+package com.utils.redisson.service;
 
 
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package manager;
+package com.utils.redis.manager;
 
 import lombok.NonNull;
 import org.springframework.data.redis.connection.RedisConnection;

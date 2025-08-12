@@ -19,7 +19,7 @@ import java.net.InetAddress;
 @Slf4j
 @Component
 @ConfigurationProperties(prefix = "minio")
-public class MinIOConfig {
+public class MinioConfig {
     /**
      * minio的endpoint (网段)
      */

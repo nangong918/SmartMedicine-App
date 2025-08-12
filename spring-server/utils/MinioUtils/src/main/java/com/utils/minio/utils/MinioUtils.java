@@ -1,6 +1,6 @@
 package com.utils.minio.utils;
 
-import com.utils.minio.config.MinIOConfig;
+import com.utils.minio.config.MinioConfig;
 import io.minio.*;
 import io.minio.errors.MinioException;
 import io.minio.http.Method;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Component
 public class MinioUtils {
     @Autowired
-    private MinIOConfig minIOConfig;
+    private MinioConfig minIOConfig;
 //    @Resource
 //    private MinioClient minioClient;
 //    @Resource

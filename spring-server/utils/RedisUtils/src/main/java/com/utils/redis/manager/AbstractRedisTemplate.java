@@ -1,4 +1,4 @@
-package manager;
+package com.utils.redis.manager;
 
 import lombok.Data;
 import org.springframework.data.redis.core.HashOperations;

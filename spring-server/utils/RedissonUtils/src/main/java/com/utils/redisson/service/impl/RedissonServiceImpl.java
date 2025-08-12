@@ -1,4 +1,4 @@
-package service.impl;
+package com.utils.redisson.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import lombok.RequiredArgsConstructor;
@@ -7,8 +7,8 @@ import org.redisson.api.*;
 import org.redisson.client.protocol.ScoredEntry;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import service.RedissonClusterLock;
-import service.RedissonService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 
 import java.util.ArrayList;
 import java.util.Arrays;

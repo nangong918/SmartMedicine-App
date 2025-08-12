@@ -1,9 +1,9 @@
-package domain;
+package com.utils.redis.domain;
 
 
 import lombok.Getter;
 import lombok.Setter;
-import manager.AbstractRedisTemplate;
+import com.utils.redis.manager.AbstractRedisTemplate;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;

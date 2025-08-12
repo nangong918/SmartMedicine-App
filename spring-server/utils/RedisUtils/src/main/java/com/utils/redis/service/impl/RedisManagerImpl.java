@@ -1,17 +1,17 @@
-package service.impl;
+package com.utils.redis.service.impl;
 
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import domain.RedisClusterLock;
-import domain.SysCache;
+import com.utils.redis.domain.RedisClusterLock;
+import com.utils.redis.domain.SysCache;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import service.RedisManagerService;
+import com.utils.redis.service.RedisManagerService;
 
 import java.time.Duration;
 import java.util.ArrayList;

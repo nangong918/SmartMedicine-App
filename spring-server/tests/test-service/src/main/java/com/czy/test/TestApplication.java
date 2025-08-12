@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(scanBasePackages = {
         "com.czy.springUtils",
         "com.utils.minio",
+        "com.utils.redisson",
         "com.czy.test",
         "com.czy.api",
 })

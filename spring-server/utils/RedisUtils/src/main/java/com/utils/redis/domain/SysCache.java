@@ -1,4 +1,4 @@
-package domain;
+package com.utils.redis.domain;
 
 
 import lombok.Data;
