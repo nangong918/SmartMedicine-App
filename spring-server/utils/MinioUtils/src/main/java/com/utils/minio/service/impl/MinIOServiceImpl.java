@@ -3,11 +3,13 @@ package com.utils.minio.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.utils.minio.constant.ViewContentTypeEnum;
-import com.utils.minio.domain.ao.ErrorFile;
-import com.utils.minio.domain.ao.FileIsExistResult;
-import com.utils.minio.domain.ao.FileOptionResult;
-import com.utils.minio.domain.ao.SuccessFile;
 import com.utils.minio.domain.ao.FileAo;
+import com.utils.minio.service.MinioService;
+import com.utils.minio.utils.MinioUtils;
+import domain.ErrorFile;
+import domain.FileIsExistResult;
+import domain.FileOptionResult;
+import domain.SuccessFile;
 import exception.OssException;
 import io.minio.ObjectWriteResponse;
 import io.minio.messages.Bucket;
@@ -17,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import com.utils.minio.service.MinioService;
-import com.utils.minio.utils.MinioUtils;
 
 import java.io.File;
 import java.io.IOException;

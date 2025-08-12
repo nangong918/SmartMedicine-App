@@ -2,23 +2,23 @@ package com.utils.minio.service.impl;
 
 
 import com.utils.minio.domain.Do.OssFileDo;
-import com.utils.minio.domain.ao.FileOptionResult;
-import com.utils.minio.domain.ao.ErrorFile;
 import com.utils.minio.domain.ao.FileIsExistAo;
-import com.utils.minio.domain.ao.FileIsExistResult;
 import com.utils.minio.domain.ao.FileNameAo;
-import com.utils.minio.domain.ao.SuccessFile;
+import com.utils.minio.mapper.OssMapper;
+import com.utils.minio.service.MinioService;
+import com.utils.minio.service.OssService;
+import com.utils.minio.utils.MinioUtils;
+import domain.ErrorFile;
+import domain.FileIsExistResult;
+import domain.FileOptionResult;
+import domain.SuccessFile;
 import exception.OssException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.utils.minio.mapper.OssMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import com.utils.minio.service.MinioService;
-import com.utils.minio.service.OssService;
-import com.utils.minio.utils.MinioUtils;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

@@ -2,12 +2,12 @@ package com.utils.minio.service;
 
 
 import com.utils.minio.domain.Do.OssFileDo;
-import com.utils.minio.domain.ao.ErrorFile;
 import com.utils.minio.domain.ao.FileIsExistAo;
-import com.utils.minio.domain.ao.FileIsExistResult;
 import com.utils.minio.domain.ao.FileNameAo;
-import com.utils.minio.domain.ao.FileOptionResult;
-import com.utils.minio.domain.ao.SuccessFile;
+import domain.ErrorFile;
+import domain.FileIsExistResult;
+import domain.FileOptionResult;
+import domain.SuccessFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;

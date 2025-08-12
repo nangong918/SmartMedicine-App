@@ -1,9 +1,9 @@
 package com.utils.minio.service;
 
 
-import com.utils.minio.domain.ao.FileIsExistResult;
-import com.utils.minio.domain.ao.FileOptionResult;
 import com.utils.minio.domain.ao.FileAo;
+import domain.FileIsExistResult;
+import domain.FileOptionResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
