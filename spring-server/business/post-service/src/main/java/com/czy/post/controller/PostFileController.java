@@ -2,7 +2,7 @@ package com.czy.post.controller;
 
 import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.post.PostConstant;

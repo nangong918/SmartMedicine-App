@@ -1,6 +1,6 @@
 package com.czy.post.controller;
 
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.dto.base.BaseResponse;

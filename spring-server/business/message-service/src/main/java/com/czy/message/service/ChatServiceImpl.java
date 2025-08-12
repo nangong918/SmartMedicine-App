@@ -3,8 +3,8 @@ package com.czy.message.service;
 
 import com.czy.api.api.message.ChatService;
 import com.czy.api.api.oss.OssService;
-import com.czy.api.api.user_relationship.UserRelationshipService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user_relationship.relation.UserRelationshipService;
+import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.MessageTypeEnum;
 import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.converter.domain.message.UserChatMessageConverter;

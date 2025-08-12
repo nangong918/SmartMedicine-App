@@ -1,7 +1,7 @@
 package com.czy.gateway.service.impl;
 
-import com.czy.api.api.auth.TokenGeneratorService;
-import com.czy.api.api.auth.TokenValidatorService;
+import com.czy.api.api.user_relationship.auth.TokenGeneratorService;
+import com.czy.api.api.user_relationship.auth.TokenValidatorService;
 import com.czy.api.constant.auth.JwtConstant;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.api.exception.GatewayExceptions;

@@ -2,7 +2,7 @@ package com.czy.message.handler;
 
 
 import com.czy.api.api.message.ChatService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.netty.MessageTypeTranslator;
 import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.RequestMessageType;

@@ -16,6 +16,14 @@
         * 群组会话管理
         * 添加，删除好友
         * 创建，删除群聊
+
+        auth service:
+        认证模块
+        1.Jwt认证
+        2.token生成
+        3.token校验
+        4.短信发送
+        5.短信校验
     </description>
 
     <parent>

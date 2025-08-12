@@ -2,7 +2,7 @@ package com.czy.user.service;
 
 import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.oss.OssService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.converter.domain.user.UserConverter;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;

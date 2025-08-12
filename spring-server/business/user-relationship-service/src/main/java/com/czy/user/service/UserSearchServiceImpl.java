@@ -1,6 +1,6 @@
 package com.czy.user.service;
 
-import com.czy.api.api.user_relationship.UserSearchService;
+import com.czy.api.api.user_relationship.user.UserSearchService;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.user.mapper.es.UserEsMapper;
 import com.czy.user.mapper.mysql.user.UserMapper;

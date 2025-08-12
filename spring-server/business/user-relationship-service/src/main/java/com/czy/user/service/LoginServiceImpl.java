@@ -2,8 +2,8 @@ package com.czy.user.service;
 
 
 import cn.hutool.core.util.IdUtil;
-import com.czy.api.api.auth.TokenGeneratorService;
-import com.czy.api.api.user_relationship.LoginService;
+import com.czy.api.api.user_relationship.auth.TokenGeneratorService;
+import com.czy.api.api.user_relationship.user.LoginService;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.converter.domain.user.UserConverter;
 import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
@@ -25,7 +25,6 @@ import exception.AppException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +44,7 @@ import org.springframework.util.StringUtils;
 public class LoginServiceImpl implements LoginService {
 
     // Dubbo远程调用Auth服务
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private TokenGeneratorService tokenGeneratorService;
+    private final TokenGeneratorService tokenGeneratorService;
     public static final String defaultPassword = "123456";
     private final LoginUserMapper loginUserMapper;
     private final UserEsMapper userEsMapper;

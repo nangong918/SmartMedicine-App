@@ -1,9 +1,9 @@
 package com.czy.user.controller;
 
 
-import com.czy.api.api.auth.SmsService;
-import com.czy.api.api.user_relationship.LoginService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user_relationship.auth.SmsService;
+import com.czy.api.api.user_relationship.user.LoginService;
+import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
@@ -27,7 +27,6 @@ import com.czy.api.exception.UserExceptions;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -109,8 +108,7 @@ public class LoginController {
 
     private final LoginService loginService;
     private final UserService userService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private SmsService smsService;
+    private final SmsService smsService;
 
 
     // Admin账号重置登录密码

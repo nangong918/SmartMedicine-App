@@ -4,7 +4,7 @@ import com.czy.api.api.feature.DiseasesNeo4jService;
 import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user_relationship.UserHealthDataService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import com.czy.api.constant.search.FuzzySearchResponseEnum;
 import com.czy.api.constant.search.NlpResultEnum;
