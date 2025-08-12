@@ -2,9 +2,9 @@ package com.czy.user.service.auth;
 
 
 import com.czy.api.api.user_relationship.auth.SmsService;
-import com.czy.springUtils.debug.DebugConfig;
-import com.czy.springUtils.service.RedisManagerService;
 import com.czy.user.constant.SmsConstant;
+import com.utils.common.debug.DebugConfig;
+import com.utils.redis.service.RedisManagerService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

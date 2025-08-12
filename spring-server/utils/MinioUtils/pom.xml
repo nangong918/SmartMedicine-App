@@ -10,7 +10,8 @@
     </parent>
 
     <artifactId>MinioUtils</artifactId>
-    <description>Minio的通用工具包</description>
+    <description>Minio的通用工具包, 内部包含数据库相关, 需要手动在启动配置内部的mapper扫描
+    </description>
 
     <dependencies>
 

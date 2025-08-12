@@ -1,7 +1,6 @@
 package com.czy.user.service;
 
 import cn.hutool.core.util.IdUtil;
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.converter.domain.user.UserConverter;
@@ -17,12 +16,12 @@ import com.czy.user.mapper.mysql.user.LoginUserMapper;
 import com.czy.user.mapper.mysql.user.UserMapper;
 import com.czy.user.service.front.UserFrontService;
 import com.czy.user.service.transactional.UserStorageService;
-import com.utils.mvc.redisson.RedissonClusterLock;
-import com.utils.mvc.redisson.RedissonService;
+import com.utils.minio.service.OssService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -56,8 +55,7 @@ public class UserServiceImpl implements UserService {
     private final UserFrontService userFrontService;
     private final RedissonService redissonService;
     private final UserConverter userConverter;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
 
     @Override
     public Integer checkAccountExist(String userAccount) {

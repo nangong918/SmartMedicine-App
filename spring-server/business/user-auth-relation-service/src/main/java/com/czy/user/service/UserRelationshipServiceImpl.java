@@ -1,6 +1,5 @@
 package com.czy.user.service;
 
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.relation.UserRelationshipService;
 import com.czy.api.api.user_relationship.user.UserSearchService;
 import com.czy.api.api.user_relationship.user.UserService;
@@ -32,10 +31,10 @@ import com.czy.user.mapper.mysql.relation.UserFriendMapper;
 import com.czy.user.mq.sender.ToSocketMqSender;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.utils.minio.service.OssService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -65,9 +64,7 @@ public class UserRelationshipServiceImpl implements UserRelationshipService {
     private final UserService userService;
     private final UserSearchService userSearchService;
     private final FriendApplyMapper friendApplyMapper;
-
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
 
     private final ObjectMapper objectMapper;
 

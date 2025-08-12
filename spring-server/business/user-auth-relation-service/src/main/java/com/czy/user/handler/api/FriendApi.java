@@ -1,12 +1,11 @@
 package com.czy.user.handler.api;
 
 
-
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.domain.dto.socket.request.AddUserRequest;
 import com.czy.api.domain.dto.socket.request.DeleteUserRequest;
 import com.czy.api.domain.dto.socket.request.HandleAddedUserRequest;
-import com.czy.springUtils.annotation.MessageType;
+import com.utils.rabbitmq.annotation.MessageType;
 
 
 /**

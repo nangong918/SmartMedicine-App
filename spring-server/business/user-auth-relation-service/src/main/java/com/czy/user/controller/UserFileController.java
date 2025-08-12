@@ -1,13 +1,12 @@
 package com.czy.user.controller;
 
-import com.czy.api.api.oss.OssService;
+
 import com.czy.api.api.user_relationship.user.LoginService;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.api.domain.Do.user.UserDo;
-import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.UserOssResponse;
 import com.czy.api.domain.vo.user.UserVo;
@@ -16,15 +15,16 @@ import com.czy.api.exception.UserExceptions;
 import com.czy.user.mapper.mysql.user.LoginUserMapper;
 import com.czy.user.mapper.mysql.user.UserMapper;
 import com.czy.user.service.front.UserFrontService;
-import com.utils.mvc.redisson.RedissonClusterLock;
-import com.utils.mvc.redisson.RedissonService;
-import com.utils.mvc.service.MinIOService;
+import com.utils.minio.domain.ao.FileIsExistAo;
+import com.utils.minio.service.MinioService;
+import com.utils.minio.service.OssService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,9 +47,8 @@ import java.util.stream.Collectors;
 @RequestMapping(UserConstant.User_File_CONTROLLER)
 public class UserFileController {
 
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
-    private final MinIOService minIOService;
+    private final OssService ossService;
+    private final MinioService minioService;
     private final RedissonService redissonService;
     private final LoginService loginService;
     private final UserMapper userMapper;
@@ -87,7 +86,7 @@ public class UserFileController {
         try {
             List<MultipartFile> multipartFiles = new ArrayList<>(1);
             multipartFiles.add(img);
-            FileOptionResult fileOptionResult = minIOService.uploadImages(
+            FileOptionResult fileOptionResult = minioService.uploadImages(
                     multipartFiles, userId, userImageBucket);
             ossService.uploadFilesRecord(fileOptionResult.getSuccessFiles(), userId, userImageBucket);
             List<Long> successIds = fileOptionResult.getSuccessFiles()
@@ -187,7 +186,7 @@ public class UserFileController {
             List<FileIsExistResult> results = ossService.checkFilesExistForResult(fileIsExistAos);
 
             // 上传到minIO
-            FileOptionResult fileOptionResult = minIOService.uploadFilesWithIdempotent(
+            FileOptionResult fileOptionResult = minioService.uploadFilesWithIdempotent(
                     files,
                     results,
                     userImageBucket,

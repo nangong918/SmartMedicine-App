@@ -1,8 +1,8 @@
 package com.czy.user.handler;
 
 
-import com.czy.api.api.user_relationship.user.LoginService;
 import com.czy.api.api.user_relationship.relation.UserRelationshipService;
+import com.czy.api.api.user_relationship.user.LoginService;
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
@@ -17,9 +17,9 @@ import com.czy.api.domain.dto.socket.request.DeleteUserRequest;
 import com.czy.api.domain.dto.socket.request.HandleAddedUserRequest;
 import com.czy.api.domain.dto.socket.response.DeleteUserResponse;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.springUtils.annotation.HandlerType;
 import com.czy.user.handler.api.FriendApi;
 import com.czy.user.mq.sender.ToSocketMqSender;
+import com.utils.rabbitmq.annotation.HandlerType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -1,13 +1,12 @@
 package com.czy.user.service.front.impl;
 
-import com.czy.api.api.oss.OssService;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.vo.user.UserVo;
 import com.czy.user.mapper.mysql.user.UserMapper;
 import com.czy.user.service.front.UserFrontService;
+import com.utils.minio.service.OssService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,8 +22,7 @@ import java.util.List;
 public class UserFrontServiceImpl implements UserFrontService {
 
     private final UserMapper userMapper;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
 
     // user id -> user vo
     @Override

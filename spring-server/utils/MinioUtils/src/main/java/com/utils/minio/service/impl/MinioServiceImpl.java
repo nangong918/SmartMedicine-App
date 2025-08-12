@@ -36,9 +36,9 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class MinIOServiceImpl implements MinioService {
+public class MinioServiceImpl implements MinioService {
 
-    private final MinioUtils minIOUtils;
+    private final MinioUtils minioUtils;
 
     @Override
     public FileOptionResult uploadLoadFiles(List<FileAo> filesAo, String bucketName){
@@ -48,7 +48,7 @@ public class MinIOServiceImpl implements MinioService {
         List<ErrorFile> errorFiles = new ArrayList<>();
 
         try {
-            minIOUtils.createBucket(bucketName);
+            minioUtils.createBucket(bucketName);
         } catch (Exception e) {
             log.error("创建存储桶失败", e);
             throw new OssException("创建存储桶失败");
@@ -60,7 +60,7 @@ public class MinIOServiceImpl implements MinioService {
             }
             String fileStorageMame = IdUtil.getSnowflakeNextId() + "_" + fileAo.getFileName();
             try {
-                ObjectWriteResponse response = minIOUtils.uploadLocalFile(
+                ObjectWriteResponse response = minioUtils.uploadLocalFile(
                         bucketName,
                         fileStorageMame,
                         fileAo.getFilePath()
@@ -83,7 +83,7 @@ public class MinIOServiceImpl implements MinioService {
 
     @Override
     public void deleteBucketAll(String bucketName) throws Exception{
-        minIOUtils.removeBucketAll(bucketName);
+        minioUtils.removeBucketAll(bucketName);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class MinIOServiceImpl implements MinioService {
         List<SuccessFile> successFiles = new ArrayList<>();
         List<ErrorFile> errorFiles = new ArrayList<>();
         try {
-            minIOUtils.createBucket(bucketName);
+            minioUtils.createBucket(bucketName);
         } catch (Exception e) {
             log.error("创建存储桶失败, bucketName: {}", bucketName, e);
             throw new OssException("创建存储桶失败");
@@ -110,7 +110,7 @@ public class MinIOServiceImpl implements MinioService {
             }
             try {
                 String fileStorageName = getFileStorageName(userId, fileName);
-                ObjectWriteResponse response = minIOUtils.uploadFile(bucketName, file, fileStorageName, file.getContentType());
+                ObjectWriteResponse response = minioUtils.uploadFile(bucketName, file, fileStorageName, file.getContentType());
                 if (response != null){
                     long fileId = IdUtil.getSnowflakeNextId();
                     successFiles.add(new SuccessFile(fileName, fileStorageName, file.getSize(), fileId));
@@ -134,7 +134,7 @@ public class MinIOServiceImpl implements MinioService {
         List<SuccessFile> successFiles = new ArrayList<>();
         List<ErrorFile> errorFiles = new ArrayList<>();
         try {
-            minIOUtils.createBucket(bucketName);
+            minioUtils.createBucket(bucketName);
         } catch (Exception e) {
             log.error("创建存储桶失败, bucketName: {}", bucketName, e);
             throw new OssException("创建存储桶失败");
@@ -151,7 +151,7 @@ public class MinIOServiceImpl implements MinioService {
             }
             try {
                 String fileStorageName = getFileStorageName(userId, fileName);
-                ObjectWriteResponse response = minIOUtils.uploadFile(
+                ObjectWriteResponse response = minioUtils.uploadFile(
                         bucketName,
                         file,
                         fileStorageName,
@@ -190,7 +190,7 @@ public class MinIOServiceImpl implements MinioService {
         }
         // 检查、创建存储桶
         try {
-            minIOUtils.createBucket(bucketName);
+            minioUtils.createBucket(bucketName);
         } catch (Exception e) {
             log.error("创建存储桶失败, bucketName: {}", bucketName, e);
             throw new OssException("创建存储桶失败");
@@ -227,11 +227,11 @@ public class MinIOServiceImpl implements MinioService {
                 String fileStorageName = getFileStorageName(userId, fileName);
                 ObjectWriteResponse response;
                 if (isImage){
-                    response = minIOUtils.uploadFile(
+                    response = minioUtils.uploadFile(
                             bucketName, multipartFile, fileStorageName, ViewContentTypeEnum.getContentType(fileName));
                 }
                 else {
-                    response = minIOUtils.uploadFile(
+                    response = minioUtils.uploadFile(
                             bucketName, multipartFile, fileStorageName, multipartFile.getContentType());
                 }
                 if (response != null){
@@ -276,7 +276,7 @@ public class MinIOServiceImpl implements MinioService {
             return fileOptionResult;
         }
         try {
-            minIOUtils.createBucket(bucketName);
+            minioUtils.createBucket(bucketName);
         } catch (Exception e) {
             log.error("创建存储桶失败", e);
             throw new OssException("创建存储桶失败");
@@ -297,7 +297,7 @@ public class MinIOServiceImpl implements MinioService {
                     data = inputStream.read();
                 }
                 fileName = IdUtil.getSnowflakeNextId() + "_" + fileName;
-                ObjectWriteResponse response = minIOUtils.uploadFile(
+                ObjectWriteResponse response = minioUtils.uploadFile(
                         bucketName,
                         fileName,
                         inputStream
@@ -331,7 +331,7 @@ public class MinIOServiceImpl implements MinioService {
             return fileOptionResult;
         }
         try {
-            minIOUtils.createBucket(bucketName);
+            minioUtils.createBucket(bucketName);
         } catch (Exception e) {
             log.error("创建存储桶失败", e);
             throw new OssException("创建存储桶失败");
@@ -346,7 +346,7 @@ public class MinIOServiceImpl implements MinioService {
             log.info("上传文件fileName：{}", fileName);
             try {
                 String fileStorageName = getFileStorageName(-1L, fileName);
-                ObjectWriteResponse response = minIOUtils.uploadFile(bucketName, file, fileStorageName, file.getContentType());
+                ObjectWriteResponse response = minioUtils.uploadFile(bucketName, file, fileStorageName, file.getContentType());
                 log.info("上传文件fileStorageName：{}", fileStorageName);
                 if (response != null){
                     long fileId = IdUtil.getSnowflakeNextId();
@@ -372,7 +372,7 @@ public class MinIOServiceImpl implements MinioService {
             return fileOptionResult;
         }
         try {
-            minIOUtils.createBucket(bucketName);
+            minioUtils.createBucket(bucketName);
         } catch (Exception e) {
             log.error("创建存储桶失败", e);
             throw new OssException("创建存储桶失败");
@@ -387,7 +387,7 @@ public class MinIOServiceImpl implements MinioService {
             log.info("上传文件fileName：{}", fileName);
             try {
                 String fileStorageName = getFileStorageName(-1L, fileName);
-                ObjectWriteResponse response = minIOUtils.uploadFile(
+                ObjectWriteResponse response = minioUtils.uploadFile(
                         bucketName, file,
                         fileStorageName,
                         ViewContentTypeEnum.getContentType(fileName)
@@ -410,7 +410,7 @@ public class MinIOServiceImpl implements MinioService {
 
     @Override
     public List<String> getAllBucketNames() throws Exception {
-        List<Bucket> buckets = minIOUtils.getAllBuckets();
+        List<Bucket> buckets = minioUtils.getAllBuckets();
         List<String> bucketNames = new ArrayList<>();
         for (Bucket bucket : buckets) {
             bucketNames.add(bucket.name());
@@ -420,7 +420,7 @@ public class MinIOServiceImpl implements MinioService {
 
     @Override
     public List<String> getAllBucketNames(String prefix) throws Exception {
-        List<Bucket> buckets = minIOUtils.getAllBuckets();
+        List<Bucket> buckets = minioUtils.getAllBuckets();
         List<String> bucketNames = new ArrayList<>();
         for (Bucket bucket : buckets) {
             if (bucket.name().startsWith(prefix)) {

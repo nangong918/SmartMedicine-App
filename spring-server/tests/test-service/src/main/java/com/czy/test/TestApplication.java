@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2025/1/10 18:25
  */
 @SpringBootApplication(scanBasePackages = {
-        "com.czy.springUtils",
         "com.utils.minio",
         "com.utils.redisson",
         "com.czy.test",

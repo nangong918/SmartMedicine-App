@@ -1,9 +1,10 @@
 package com.czy.api.converter.domain.relationship;
 
-import com.czy.api.domain.ao.oss.FileResAo;
+
 import com.czy.api.domain.ao.relationship.AddUserStatusAo;
 import com.czy.api.domain.ao.relationship.SearchFriendApplyAo;
 import com.czy.api.domain.bo.relationship.SearchFriendApplyBo;
+import domain.FileResAo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

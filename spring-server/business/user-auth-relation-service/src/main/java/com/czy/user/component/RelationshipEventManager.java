@@ -2,9 +2,8 @@ package com.czy.user.component;
 
 
 import com.czy.api.converter.base.BaseRequestConverter;
-import com.czy.springUtils.debug.DebugConfig;
 import com.czy.user.handler.FriendHandler;
-import com.utils.mvc.component.EventManager;
+import com.utils.rabbitmq.component.EventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,14 +18,13 @@ import java.util.List;
 public class RelationshipEventManager<T> extends EventManager<T> {
 
     private final FriendHandler friendHandler;
-    private final DebugConfig debugConfig;
     private final BaseRequestConverter baseRequestConverter;
 
 
     private void initEventManager(){
         List<Object> handlerBeans = new ArrayList<>();
         handlerBeans.add(friendHandler);
-        super.initEventManager(handlerBeans, debugConfig, baseRequestConverter);
+        super.initEventManager(handlerBeans, baseRequestConverter);
     }
 
     @PostConstruct

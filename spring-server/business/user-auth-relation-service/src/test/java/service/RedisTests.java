@@ -3,7 +3,7 @@ package service;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.LoginUserDo;
 import com.czy.user.UserServiceApplication;
-import com.utils.mvc.redisson.RedissonService;
+import com.utils.redisson.service.RedissonService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
