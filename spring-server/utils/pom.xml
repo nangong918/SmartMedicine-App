@@ -17,6 +17,7 @@
     <module>RedissonUtils</module>
     <module>MinioUtils</module>
     <module>RabbitMqUtils</module>
+    <module>CommonUtils</module>
     <module>SpringUtils</module>
     <module>SpringMvcUtils</module>
     <module>SpringWebfluxUtils</module>
