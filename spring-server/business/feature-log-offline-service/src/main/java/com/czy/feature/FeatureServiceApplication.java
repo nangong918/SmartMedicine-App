@@ -1,7 +1,8 @@
 package com.czy.feature;
 
-import com.czy.springUtils.debug.DebugConfig;
-import com.czy.springUtils.start.PortApplicationContextInitializer;
+
+import com.utils.common.debug.DebugConfig;
+import com.utils.common.start.PortApplicationContextInitializer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,8 +21,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
                 "com.czy.feature",
 //                // 扫描工具类 Webflux的异常处理
 //                "com.utils.webflux.handler",
-                // 扫描工具类springMvcUtils
-                "com.utils.mvc",
+                "com.utils.redis",
+                "com.utils.redisson",
         },
         // 排除
         exclude = {}

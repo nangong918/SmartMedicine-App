@@ -20,7 +20,7 @@
         <module>post-service</module>
         <module>recommend-service</module>
         <module>search-service</module>
-        <module>feature-service</module>
+        <module>feature-log-offline-service</module>
         <module>logging-service</module>
     </modules>
 
@@ -48,6 +48,7 @@
         <minio.version>8.2.2</minio.version>
         <hankcs.version>1.2.3</hankcs.version>
         <kafka.version>2.6.0</kafka.version>
+        <csv.version>1.8</csv.version>
     </properties>
 
     <dependencyManagement>
@@ -166,6 +167,13 @@
                 <groupId>org.springframework.kafka</groupId>
                 <artifactId>spring-kafka</artifactId>
                 <version>${kafka.version}</version>
+            </dependency>
+
+            <!-- commons-csv -->
+            <dependency>
+                <artifactId>commons-csv</artifactId>
+                <groupId>org.apache.commons</groupId>
+                <version>${csv.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

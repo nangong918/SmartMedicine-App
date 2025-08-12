@@ -22,8 +22,9 @@
 1. 前后端联调：实现post搜索  todo 合并service,service太多了 + jvm调参
    * oss 拆分为模块而不是微服务, 需要的服务就进行继承
    * 合并 user和auth认证
-   * 合并 post-search-recommend
    * 合并 feature-logging-offline并取消post依赖
+   * 合并 post-search-recommend
+   * 升级 message-live
    * 余下service分析:
      1. netty: netty的session需要统一管理, 底层服务, 无法合并
      2. user-auth-relationship: 用户,认证,关系,群组等信息;跟用户相关的一切,无法合并

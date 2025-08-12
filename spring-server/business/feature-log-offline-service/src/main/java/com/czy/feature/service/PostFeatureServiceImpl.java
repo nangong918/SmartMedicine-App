@@ -1,5 +1,6 @@
 package com.czy.feature.service;
 
+import com.czy.api.api.feature.PostFeatureService;
 import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.constant.feature.UserActionRedisKey;
@@ -23,8 +24,7 @@ import com.czy.api.domain.ao.feature.ScoreDaysAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.PostRepository;
 import com.czy.feature.rule.RulePostHeat;
-import com.czy.api.api.feature.PostFeatureService;
-import com.utils.mvc.redisson.RedissonService;
+import com.utils.redisson.service.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

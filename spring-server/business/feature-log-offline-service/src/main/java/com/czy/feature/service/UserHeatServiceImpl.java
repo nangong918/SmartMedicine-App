@@ -7,7 +7,7 @@ import com.czy.api.domain.ao.feature.HeatDaysAo;
 import com.czy.api.domain.ao.feature.UserHeatAo;
 import com.czy.api.domain.ao.feature.UserHeatRecordAo;
 import com.czy.feature.rule.RuleTempFeature;
-import com.utils.mvc.redisson.RedissonService;
+import com.utils.redisson.service.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

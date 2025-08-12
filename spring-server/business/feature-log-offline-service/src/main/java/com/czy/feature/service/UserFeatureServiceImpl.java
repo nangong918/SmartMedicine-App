@@ -14,7 +14,7 @@ import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.mapper.UserFeatureRepository;
 import com.czy.feature.rule.RuleHistoryFeature;
 import com.czy.feature.rule.RuleTempFeature;
-import com.utils.mvc.redisson.RedissonService;
+import com.utils.redisson.service.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
