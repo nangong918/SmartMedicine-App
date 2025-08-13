@@ -21,7 +21,6 @@
         <module>recommend-service</module>
         <module>search-service</module>
         <module>feature-log-offline-service</module>
-        <module>logging-service</module>
     </modules>
 
     <!--JDK版本：11-->
