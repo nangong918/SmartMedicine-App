@@ -11,7 +11,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * @author 13225
- * @date 2025/1/10 18:25 todo 合并post-search-recommend
+ * @date 2025/1/10 18:25
  */
 // mybatis-plus
 @MapperScan({"com.czy.post.mapper", "com.utils.minio.mapper", "com.api.mapper"})

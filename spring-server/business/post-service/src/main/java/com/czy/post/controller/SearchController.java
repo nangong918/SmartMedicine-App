@@ -33,7 +33,7 @@ import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.post.component.KafkaSender;
 import com.czy.post.config.SearchTestConfig;
-import com.czy.post.service.FuzzySearchService;
+import com.czy.post.service.search.FuzzySearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;

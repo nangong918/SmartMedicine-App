@@ -9,7 +9,7 @@ import com.czy.post.rule.Rule1AccompanyingDiseases;
 import com.czy.post.rule.Rule2AccompanyingSymptoms;
 import com.czy.post.rule.Rule3DiseasesHasSuggestions;
 import com.czy.post.rule.Rule4SymptomsFindDiseases;
-import com.czy.post.service.FuzzySearchService;
+import com.czy.post.service.search.FuzzySearchService;
 import com.utils.minio.service.OssService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

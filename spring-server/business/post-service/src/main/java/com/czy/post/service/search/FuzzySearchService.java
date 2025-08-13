@@ -1,4 +1,4 @@
-package com.czy.post.service;
+package com.czy.post.service.search;
 
 import com.czy.api.domain.ao.post.PostNerResult;
 
