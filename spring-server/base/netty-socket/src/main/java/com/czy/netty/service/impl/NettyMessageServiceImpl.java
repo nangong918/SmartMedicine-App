@@ -29,7 +29,10 @@ public class NettyMessageServiceImpl implements NettyMessageService {
     @Override
     public String getNettyMessageMq(Message message){
         String type = message.getType();
-        if (type.contains(RequestMessageType.Chat.root) || type.contains(RequestMessageType.Call.root)){
+        if (type.contains(RequestMessageType.Chat.root) ||
+                type.contains(RequestMessageType.Call.root) ||
+                // 取消oss -> oss的消息由message处理
+                type.contains(RequestMessageType.Oss.root)){
             return MqConstants.MessageQueue.ID;
         }
         else if (type.contains(RequestMessageType.Friend.root)){
@@ -38,9 +41,9 @@ public class NettyMessageServiceImpl implements NettyMessageService {
         else if (type.contains(RequestMessageType.Post.root)){
             return MqConstants.PostQueue.ID;
         }
-        else if (type.contains(RequestMessageType.Oss.root)){
-            return MqConstants.OssQueue.ID;
-        }
+//        else if (type.contains(RequestMessageType.Oss.root)){
+//            return MqConstants.OssQueue.ID;
+//        }
 
         else if (type.contains(RequestMessageType.Connect.root)
          || type.contains(RequestMessageType.ToServer.root)){

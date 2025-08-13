@@ -46,7 +46,7 @@ public interface MqConstants {
         String MESSAGE_EXCHANGE = MessageQueue.ID + EXCHANGE;
         String POST_EXCHANGE = PostQueue.ID + EXCHANGE;
         String RELATIONSHIP_EXCHANGE = RelationshipQueue.ID + EXCHANGE;
-        String OSS_EXCHANGE = OssQueue.ID + EXCHANGE;
+//        String OSS_EXCHANGE = OssQueue.ID + EXCHANGE;
         String LOGGING_EXCHANGE = LoggingQueue.ID + EXCHANGE;
         // 死信是小概率事件，所以死信单独设计交换机
         String DEAD_LETTER_EXCHANGE = DeadLetterQueue.ID + EXCHANGE;
@@ -156,21 +156,21 @@ public interface MqConstants {
     }
 
     /// oss
-    interface OssQueue {
-//        String OSS_QUEUE = "socket.oss.queue";
-        String ID = ".oss";
-        Long message_ttl = 10 * 1000L;
-        Integer message_max_length = 1000;
-        String message_ttl_str = "10000";
-        String max_length_str = "1000";
-
-        interface Routing {
-            String TO_SOCKET_ROUTING = TO_SOCKET + ID;
-            String TO_SERVICE_ROUTING = TO_SERVICE + ID;
-        }
-        String OSS_TO_SOCKET_QUEUE = Routing.TO_SOCKET_ROUTING + QUEUE;
-        String OSS_TO_SERVICE_QUEUE = Routing.TO_SERVICE_ROUTING + QUEUE;
-    }
+//    interface OssQueue {
+////        String OSS_QUEUE = "socket.oss.queue";
+//        String ID = ".oss";
+//        Long message_ttl = 10 * 1000L;
+//        Integer message_max_length = 1000;
+//        String message_ttl_str = "10000";
+//        String max_length_str = "1000";
+//
+//        interface Routing {
+//            String TO_SOCKET_ROUTING = TO_SOCKET + ID;
+//            String TO_SERVICE_ROUTING = TO_SERVICE + ID;
+//        }
+//        String OSS_TO_SOCKET_QUEUE = Routing.TO_SOCKET_ROUTING + QUEUE;
+//        String OSS_TO_SERVICE_QUEUE = Routing.TO_SERVICE_ROUTING + QUEUE;
+//    }
 
     /// logging
     interface LoggingQueue {
@@ -198,13 +198,13 @@ public interface MqConstants {
             String MESSAGE_DEAD_LETTER_ROUTING = MessageQueue.ID + ID;
             String POST_DEAD_LETTER_ROUTING = PostQueue.ID + ID;
             String RELATIONSHIP_DEAD_LETTER_ROUTING = RelationshipQueue.ID + ID;
-            String OSS_DEAD_LETTER_ROUTING = OssQueue.ID + ID;
+//            String OSS_DEAD_LETTER_ROUTING = OssQueue.ID + ID;
             String ALL_DEAD_LETTER_ROUTING = "#." + ID;
         }
         String MESSAGE_DEAD_LETTER_QUEUE = Routing.MESSAGE_DEAD_LETTER_ROUTING + QUEUE;
         String POST_DEAD_LETTER_QUEUE = Routing.POST_DEAD_LETTER_ROUTING + QUEUE;
         String RELATIONSHIP_DEAD_LETTER_QUEUE = Routing.RELATIONSHIP_DEAD_LETTER_ROUTING + QUEUE;
-        String OSS_DEAD_LETTER_QUEUE = Routing.OSS_DEAD_LETTER_ROUTING + QUEUE;
+//        String OSS_DEAD_LETTER_QUEUE = Routing.OSS_DEAD_LETTER_ROUTING + QUEUE;
         String ALL_DEAD_LETTER_QUEUE = Routing.ALL_DEAD_LETTER_ROUTING + QUEUE;
         // logging没有死信队列
 
@@ -229,6 +229,6 @@ public interface MqConstants {
         interface Routing {
             String TO_SOCKET_ROUTING = TO_SOCKET + ID;
         }
-        String ERROR_TO_SOCKET_QUEUE = OssQueue.Routing.TO_SOCKET_ROUTING + QUEUE;
+        String ERROR_TO_SOCKET_QUEUE = MessageQueue.Routing.TO_SOCKET_ROUTING + QUEUE;
     }
 }

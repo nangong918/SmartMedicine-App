@@ -1,6 +1,6 @@
 package com.czy.netty;
 
-import com.czy.springUtils.start.PortApplicationContextInitializer;
+import com.utils.common.start.PortApplicationContextInitializer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
@@ -23,7 +23,11 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 @SpringBootApplication(
         // 扫描指定包下的类
         scanBasePackages = {"com.czy.netty",
-                "com.czy.springUtils", "com.czy.api"},
+                "com.czy.spring",
+                "com.czy.api",
+                "com.utils.rabbitmq",
+                "com.utils.common"
+        },
         // 排除
         exclude = {}
 )

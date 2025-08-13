@@ -1,10 +1,9 @@
 package com.czy.netty.component;
 
 
-
 import com.czy.api.domain.entity.model.RequestBodyProto;
-import com.czy.springUtils.util.IpUtil;
 import com.czy.netty.handler.RequestMessageHandler;
+import com.utils.common.util.IpUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
