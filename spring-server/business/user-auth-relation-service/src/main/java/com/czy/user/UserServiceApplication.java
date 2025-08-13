@@ -14,7 +14,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
         // 扫描本模块
         "com.czy.user",
         // 扫描工具类
-//        "com.utils.mvc"
+        "com.utils.spring",
         "com.utils.common",
         "com.utils.redisson",
         "com.utils.minio",

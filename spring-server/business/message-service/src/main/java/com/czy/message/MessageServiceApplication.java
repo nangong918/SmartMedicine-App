@@ -1,9 +1,9 @@
 package com.czy.message;
 
-import com.czy.springUtils.debug.DebugConfig;
-import com.czy.springUtils.start.PortApplicationContextInitializer;
+
+import com.utils.common.debug.DebugConfig;
+import com.utils.common.start.PortApplicationContextInitializer;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,9 +24,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
                 "com.czy.message",
                 // 扫描工具类
 //                "com.utils.webflux.handler",
-                "com.utils.mvc",
+                "com.utils.spring",
                 // springUtils
-                "com.czy.springUtils"
+                "com.utils.common",
+                "com.utils.redisson",
+                "com.utils.minio",
+                "com.utils.redis",
+                "com.utils.rabbitmq",
         },
         // 排除
         exclude = {}

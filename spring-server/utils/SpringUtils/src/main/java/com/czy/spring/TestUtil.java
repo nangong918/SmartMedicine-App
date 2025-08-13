@@ -1,4 +1,4 @@
-package com.czy.springUtils;
+package com.czy.spring;
 
 /**
  * @author 13225
