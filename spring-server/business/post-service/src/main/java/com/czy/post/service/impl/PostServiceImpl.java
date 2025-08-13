@@ -45,8 +45,7 @@ public class PostServiceImpl implements PostService {
     private final ThreadPoolTaskExecutor globalTaskExecutor;
     private final RabbitMqSender rabbitMqSender;
     private final PostFileService postFileService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     private final PostInfoMapper postInfoMapper;
     private final PostCollectMapper postCollectMapper;
 

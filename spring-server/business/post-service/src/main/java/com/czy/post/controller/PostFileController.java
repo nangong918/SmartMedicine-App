@@ -52,8 +52,7 @@ import java.util.stream.Collectors;
 public class PostFileController {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     private final MinioService minioService;
     private final RedissonService redissonService;
     private final PostFrontService postFrontService;

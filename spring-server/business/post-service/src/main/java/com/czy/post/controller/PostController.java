@@ -74,8 +74,7 @@ public class PostController {
     private final PostService postService;
     private final PostCommentService postCommentService;
     private final PostCommentConverter postCommentConverter;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     private final PostNerService postNerService;
     private final PostSearchService postSearchService;
     private final PostFrontService postFrontService;

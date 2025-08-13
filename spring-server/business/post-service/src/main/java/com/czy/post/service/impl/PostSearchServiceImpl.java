@@ -75,8 +75,7 @@ public class PostSearchServiceImpl implements PostSearchService {
     private final RestHighLevelClient restHighLevelClient;
     private final PostDetailMongoMapper postDetailMongoMapper;
     private final PostStorageService postStorageService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     private final PostFrontService postFrontService;
