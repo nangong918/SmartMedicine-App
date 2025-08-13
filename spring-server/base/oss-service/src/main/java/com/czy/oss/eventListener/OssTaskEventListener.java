@@ -1,3 +1,4 @@
+/*
 package com.czy.oss.eventListener;
 
 import com.czy.api.api.oss.OssService;
@@ -14,12 +15,14 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 
+*/
 /**
  * @author 13225
  * @date 2025/4/2 14:57
  * 大数据收集监听者，事件驱动系统种一份事件能被多个监听者收到。
  * 此份监听者是用于监听用户的全部大数据数据，然后交给Kafka存入数据平台做统计用的监听者。
- */
+ *//*
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -66,3 +69,4 @@ public class OssTaskEventListener implements ApplicationListener<OssTaskEvent> {
         // netty通知前端删除成功
     }
 }
+*/

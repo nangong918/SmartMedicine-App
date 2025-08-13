@@ -42,21 +42,10 @@
             <artifactId>fastjson</artifactId>
         </dependency>
 
-        <!-- 数据库: minio的service需要往数据库存储minio存储桶存储文件等数据 -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <!-- MyBatis Plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-        </dependency>
-        <!-- druid数据库连接池 -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
         </dependency>
 
         <!-- MinIO 客户端 -->
