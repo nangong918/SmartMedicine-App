@@ -48,9 +48,7 @@ public class FeatureStorageServiceImpl implements FeatureStorageService {
 //    private final ProducersRepository producersRepository;
 //    private final RecipesRepository recipesRepository;
 //    private final SymptomsRepository symptomsRepository;
-
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private PostFeatureService postFeatureService;
+    private final PostFeatureService postFeatureService;
 
     private void saveUserRelation(UserFeatureNeo4jDo user) {
         Optional<UserFeatureNeo4jDo> result = userFeatureRepository.findByName(user.getName());

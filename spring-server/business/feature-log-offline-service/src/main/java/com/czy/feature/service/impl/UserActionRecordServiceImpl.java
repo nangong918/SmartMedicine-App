@@ -1,7 +1,7 @@
 package com.czy.feature.service.impl;
 
+import com.api.mapper.post.mongo.PostDetailMongoMapper;
 import com.czy.api.api.feature.PostFeatureService;
-import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.constant.feature.UserActionRedisKey;
@@ -21,7 +21,6 @@ import com.utils.common.debug.DebugConfig;
 import com.utils.redisson.service.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -60,11 +59,9 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     private final RedissonService redissonService;
     private final UserFeatureRepository userFeatureRepository;
     private final DebugConfig debugConfig;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private PostFeatureService postFeatureService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private PostSearchService postSearchService;
+    private final PostFeatureService postFeatureService;
     private final FeatureStorageService featureStorageService;
+    private final PostDetailMongoMapper postDetailMongoMapper;
     /// 隐性特征 前端主动http埋点
 
     private final RulePostReadTime rulePostReadTime;
@@ -354,7 +351,7 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
         String userFeatureKey = UserActionRedisKey.USER_FEATURE_BROWSE_POST_REDIS_KEY + userId + ":" + postId;
         String userHeatKey = UserActionRedisKey.USER_HEAT_REDIS_KEY + userId;
 
-        PostDetailDo postDetailDo = postSearchService.searchPostDetailById(postId);
+        PostDetailDo postDetailDo = postDetailMongoMapper.findPostDetailById(postId);
         if (postDetailDo == null){
             log.warn("上传用用的点击帖子 + 浏览时长特征失败，postDetailDo is null, postId:{}", postId);
             return;
