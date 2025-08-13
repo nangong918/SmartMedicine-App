@@ -206,6 +206,7 @@ interface CoroutineApiRequest {
      * @param timestamp 时间戳
      * @return          文件上传响应
      */
+    @Deprecated("直接去从响应体获取byte[]已成历史，后端把数据写入响应体会出现io阻塞")
     @Multipart
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.OSS + "/oss/upload")
     suspend fun fileUpload(
@@ -230,11 +231,11 @@ interface CoroutineApiRequest {
      * @param request   请求
      * @return          推荐帖子
      */
-    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/get")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/rec/post/get")
     suspend fun getRecommendPosts(@Body request: RecommendPostRequest): BaseResponse<RecommendPostResponse>
 
     // 前后端联调测试接口：获取随机post
-    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/test")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/rec/post/test")
     suspend fun recommendTestGetRandomPost(@Body request: RecommendPostRequest): BaseResponse<RecommendPostResponse>
 
     /**
@@ -274,7 +275,7 @@ interface CoroutineApiRequest {
      * @param request   请求
      * @return          模糊搜索帖子结果
      */
-    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.SEARCH + "/main/fuzzy")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/search/fuzzy")
     suspend fun fuzzySearch(@Body request: FuzzySearchRequest): BaseResponse<FuzzySearchResponse>
 
     //--------------Test--------------

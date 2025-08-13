@@ -289,6 +289,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
     //            @Part("name") RequestBody name,
     //            @Part("timestamp") RequestBody timestamp
     //    );
+    @Deprecated
     public void fileUpload(
             MultipartBody.Part file,
             RequestBody name,

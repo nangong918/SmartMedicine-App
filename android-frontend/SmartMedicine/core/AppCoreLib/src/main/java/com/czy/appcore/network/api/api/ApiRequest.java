@@ -212,6 +212,7 @@ public interface ApiRequest {
      * @return          文件上传响应
      */
     //@Part 注解用于标识 Multipart 请求体的一部分,这里的 file 就是文件部分
+    @Deprecated(since = "2025/8/1: 直接去从响应体获取byte[]已成历史，后端把数据写入响应体会出现io阻塞")
     @Multipart
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.OSS + "/oss/upload")
     Observable<BaseResponse<FileUploadResponse>> fileUpload(
@@ -237,11 +238,11 @@ public interface ApiRequest {
      * @param request   请求
      * @return          推荐帖子
      */
-    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/get")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/rec/post/get")
     Observable<BaseResponse<RecommendPostResponse>> getRecommendPosts(@Body RecommendPostRequest request);
 
     // 前后端联调测试接口：获取随机post
-    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.RECOMMEND + "/rec/post/test")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/rec/post/test")
     Observable<BaseResponse<RecommendPostResponse>> recommendTestGetRandomPost(@Body RecommendPostRequest request);
 
     /**
@@ -283,7 +284,7 @@ public interface ApiRequest {
      * @param request   请求
      * @return          模糊搜索帖子结果
      */
-    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.SEARCH + "/main/fuzzy")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/search/fuzzy")
     Observable<BaseResponse<FuzzySearchResponse>> fuzzySearch(
             @Body FuzzySearchRequest request
     );

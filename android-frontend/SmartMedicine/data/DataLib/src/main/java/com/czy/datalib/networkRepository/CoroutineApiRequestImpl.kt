@@ -246,6 +246,7 @@ open class CoroutineApiRequestImpl(val mApi: CoroutineApiRequest) : CoroutineBas
     //        @Part("name") name: RequestBody,
     //        @Part("timestamp") timestamp: RequestBody
     //    ): BaseResponse<FileUploadResponse>
+    @Deprecated(message = "直接去从响应体获取byte[]已成历史，后端把数据写入响应体会出现io阻塞")
     fun fileUpload(file: MultipartBody.Part,
                    name: RequestBody,
                    timestamp: RequestBody,
