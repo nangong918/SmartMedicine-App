@@ -2,7 +2,6 @@ package com.czy.message.service;
 
 
 import com.czy.api.api.message.ChatService;
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.relation.UserRelationshipService;
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.MessageTypeEnum;
@@ -19,7 +18,8 @@ import com.czy.api.exception.UserExceptions;
 import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
 import com.czy.message.mapper.mysql.UserChatMessageMapper;
 import com.czy.message.service.transactional.MessageStorageService;
-import com.czy.springUtils.service.RedisService;
+import com.utils.minio.service.OssService;
+import com.utils.redis.service.RedisService;
 import exception.AppException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,15 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -48,8 +56,7 @@ public class ChatServiceImpl implements ChatService {
     private final UserChatMessageConverter userChatMessageConverter;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserRelationshipService userRelationshipService;
 

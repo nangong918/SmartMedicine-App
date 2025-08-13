@@ -3,7 +3,6 @@ package com.czy.message.handler;
 
 import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.message.ChatService;
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.MessageTypeEnum;
 import com.czy.api.constant.message.MessageConstant;
@@ -27,9 +26,10 @@ import com.czy.message.handler.api.ChatApi;
 import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
 import com.czy.message.mq.sender.RabbitMqSender;
 import com.czy.message.queue.ChatMessageQueue;
-import com.czy.springUtils.annotation.HandlerType;
-import com.utils.mvc.component.RabbitMqErrorSender;
-import com.utils.mvc.redisson.RedissonService;
+import com.utils.minio.service.OssService;
+import com.utils.rabbitmq.annotation.HandlerType;
+import com.utils.rabbitmq.component.RabbitMqErrorSender;
+import com.utils.redisson.service.RedissonService;
 import exception.NettyException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +57,7 @@ public class ChatHandler implements ChatApi {
 
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     private final RabbitMqSender rabbitMqSender;
     private final RabbitMqErrorSender rabbitMqErrorSender;
     private final ChatService chatService;

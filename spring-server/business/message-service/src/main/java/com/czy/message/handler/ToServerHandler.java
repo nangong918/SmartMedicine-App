@@ -11,7 +11,7 @@ import com.czy.api.domain.dto.socket.response.HaveReadMessageResponse;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.message.handler.api.ToServiceApi;
 import com.czy.message.mq.sender.RabbitMqSender;
-import com.czy.springUtils.annotation.HandlerType;
+import com.utils.rabbitmq.annotation.HandlerType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;

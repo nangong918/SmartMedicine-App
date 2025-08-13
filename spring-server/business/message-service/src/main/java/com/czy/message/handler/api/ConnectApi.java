@@ -1,12 +1,10 @@
 package com.czy.message.handler.api;
 
 
-
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.domain.dto.http.request.DisconnectRequest;
 import com.czy.api.domain.dto.http.request.RegisterRequest;
-import com.czy.springUtils.annotation.MessageType;
-
+import com.utils.rabbitmq.annotation.MessageType;
 /**
  * @author 13225
  * @date 2025/3/10 15:23

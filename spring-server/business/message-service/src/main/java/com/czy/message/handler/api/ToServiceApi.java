@@ -3,7 +3,7 @@ package com.czy.message.handler.api;
 
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.domain.dto.socket.request.HaveReadMessageRequest;
-import com.czy.springUtils.annotation.MessageType;
+import com.utils.rabbitmq.annotation.MessageType;
 
 /**
  * @author 13225

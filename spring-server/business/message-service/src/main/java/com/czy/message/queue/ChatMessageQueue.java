@@ -3,8 +3,8 @@ package com.czy.message.queue;
 
 import com.czy.api.api.message.ChatService;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
-import com.czy.springUtils.debug.DebugConfig;
-import com.czy.springUtils.service.ScheduledTaskService;
+import com.utils.common.debug.DebugConfig;
+import com.utils.common.service.ScheduledTaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
