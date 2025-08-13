@@ -1,12 +1,7 @@
 package files;
 
 import cn.hutool.core.util.IdUtil;
-import com.czy.api.api.oss.OssService;
-import com.czy.api.domain.Do.neo4j.DiseaseDo;
-import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
-import com.czy.api.domain.Do.neo4j.ProducersDo;
-import com.czy.api.domain.Do.neo4j.TestNeo4jDo;
-import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
+import com.czy.api.domain.Do.neo4j.*;
 import com.czy.api.mapper.PostRepository;
 import com.czy.api.mapper.ProducersRepository;
 import com.czy.api.mapper.TestRepository;
@@ -20,11 +15,11 @@ import com.czy.imports.mapper.PostDetailMongoMapper;
 import com.czy.imports.mapperEs.PostDetailEsMapper;
 import com.czy.imports.mapperEs.UserEsMapper;
 import com.czy.imports.service.ImportAuthorService;
-import com.utils.mvc.service.MinIOService;
+import com.utils.minio.service.MinioService;
+import com.utils.minio.service.OssService;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,12 +29,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -508,7 +498,6 @@ public class FileReadTests {
         session.query(cql, parameters);
     }
 
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
 
     @Test
@@ -539,7 +528,7 @@ public class FileReadTests {
     private UserEsMapper userEsMapper;
 
     @Autowired
-    private MinIOService minIOService;
+    private MinioService minioService;
 
     @Test
     public void clearAllTestData(){
@@ -576,8 +565,8 @@ public class FileReadTests {
 
         // 删除minIO数据
         try {
-            minIOService.deleteBucketAll(testAuthorBucketName);
-            minIOService.deleteBucketAll(testPostBucketName);
+            minioService.deleteBucketAll(testAuthorBucketName);
+            minioService.deleteBucketAll(testPostBucketName);
         } catch (Exception e){
             log.error("Error deleting bucket all in MinIO", e);
         }

@@ -57,6 +57,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.utils</groupId>
+            <artifactId>MinioUtils</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.api</groupId>
             <artifactId>api-model</artifactId>
             <version>1.0.0-SNAPSHOT</version>
