@@ -1,13 +1,11 @@
 package com.czy.post.controller;
 
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.Do.user.UserDo;
-import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
@@ -20,9 +18,11 @@ import com.czy.api.exception.PostExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostService;
-import com.utils.mvc.redisson.RedissonClusterLock;
-import com.utils.mvc.redisson.RedissonService;
-import com.utils.mvc.service.MinIOService;
+import com.utils.minio.domain.ao.FileIsExistAo;
+import com.utils.minio.service.MinioService;
+import com.utils.minio.service.OssService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import domain.SuccessFile;
@@ -54,7 +54,7 @@ public class PostFileController {
     private UserService userService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
-    private final MinIOService minIOService;
+    private final MinioService minioService;
     private final RedissonService redissonService;
     private final PostFrontService postFrontService;
     private final PostService postService;
@@ -124,7 +124,7 @@ public class PostFileController {
             List<FileIsExistResult> results = ossService.checkFilesExistForResult(fileIsExistAos);
 
             // 上传到minIO
-            FileOptionResult fileOptionResult = minIOService.uploadFilesWithIdempotent(
+            FileOptionResult fileOptionResult = minioService.uploadFilesWithIdempotent(
                     files,
                     results,
                     postImageBucket,
@@ -289,7 +289,7 @@ public class PostFileController {
                     List<FileIsExistResult> results = ossService.checkFilesExistForResult(fileIsExistAos);
 
                     // 上传到minIO
-                    FileOptionResult fileOptionResult = minIOService.uploadFilesWithIdempotent(
+                    FileOptionResult fileOptionResult = minioService.uploadFilesWithIdempotent(
                             files,
                             results,
                             postImageBucket,

@@ -1,6 +1,5 @@
 package com.czy.post.controller;
 
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user_relationship.user.UserService;
@@ -33,8 +32,9 @@ import com.czy.api.exception.PostExceptions;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
-import com.utils.mvc.redisson.RedissonClusterLock;
-import com.utils.mvc.redisson.RedissonService;
+import com.utils.minio.service.OssService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

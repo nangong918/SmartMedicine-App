@@ -1,6 +1,5 @@
 package com.czy.post.front.impl;
 
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.user.UserDo;
@@ -11,6 +10,7 @@ import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostService;
+import com.utils.minio.service.OssService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

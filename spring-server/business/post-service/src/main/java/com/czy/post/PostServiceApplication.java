@@ -1,7 +1,9 @@
 package com.czy.post;
 
-import com.czy.springUtils.debug.DebugConfig;
-import com.czy.springUtils.start.PortApplicationContextInitializer;
+
+import com.utils.common.debug.DebugConfig;
+import com.utils.common.start.PortApplicationContextInitializer;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -9,8 +11,9 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * @author 13225
- * @date 2025/1/10 18:25
+ * @date 2025/1/10 18:25 todo 1.先拆分依赖,让post能启动, 2.然后改依赖api-mapper, 3.然后合并post-search-recommend
  */
+@MapperScan({"com.czy.post.mapper", "com.utils.minio.mapper"})
 @EnableAspectJAutoProxy // 启用aop
 @EnableConfigurationProperties(DebugConfig.class)
 @SpringBootApplication(
@@ -23,7 +26,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 //                // 扫描工具类 Webflux的异常处理
 //                "com.utils.webflux.handler",
                 // 扫描工具类springMvcUtils
-                "com.utils.mvc",
+                "com.utils.common",
+                "com.utils.redisson",
+                "com.utils.minio",
+                "com.utils.redis",
+                "com.utils.rabbitmq",
         },
         // 排除
         exclude = {}

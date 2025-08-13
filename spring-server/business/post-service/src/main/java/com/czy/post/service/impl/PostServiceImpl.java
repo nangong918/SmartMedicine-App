@@ -1,7 +1,6 @@
 package com.czy.post.service.impl;
 
 import cn.hutool.core.util.IdUtil;
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.Do.post.collect.PostCollectDo;
@@ -13,7 +12,8 @@ import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.service.PostFileService;
 import com.czy.post.service.PostService;
 import com.czy.post.service.PostStorageService;
-import com.utils.mvc.redisson.RedissonService;
+import com.utils.minio.service.OssService;
+import com.utils.redisson.service.RedissonService;
 import domain.FileOptionResult;
 import exception.AppException;
 import lombok.NonNull;

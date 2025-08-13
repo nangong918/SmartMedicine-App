@@ -41,7 +41,7 @@ import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostHandleService;
 import com.czy.post.service.PostService;
-import com.czy.springUtils.annotation.HandlerType;
+import com.utils.rabbitmq.annotation.HandlerType;
 import exception.ExceptionEnums;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

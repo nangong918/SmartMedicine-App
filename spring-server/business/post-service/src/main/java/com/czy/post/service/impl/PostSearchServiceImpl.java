@@ -1,6 +1,6 @@
 package com.czy.post.service.impl;
 
-import com.czy.api.api.oss.OssService;
+
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.es.FieldAnalyzer;
@@ -25,6 +25,7 @@ import com.czy.post.mapper.mongo.PostDetailMongoMapper;
 import com.czy.post.mapper.mysql.PostFilesMapper;
 import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.service.PostStorageService;
+import com.utils.minio.service.OssService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;

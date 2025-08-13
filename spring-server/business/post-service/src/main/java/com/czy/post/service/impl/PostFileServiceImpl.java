@@ -1,10 +1,8 @@
 package com.czy.post.service.impl;
 
-import com.czy.api.api.oss.OssService;
 import com.czy.api.domain.ao.post.PostAo;
-import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.service.PostFileService;
-import com.utils.mvc.service.MinIOService;
+import com.utils.minio.service.OssService;
 import domain.ErrorFile;
 import domain.FileOptionResult;
 import domain.SuccessFile;

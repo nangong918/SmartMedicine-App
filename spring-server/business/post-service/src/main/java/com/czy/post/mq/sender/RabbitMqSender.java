@@ -4,7 +4,6 @@ package com.czy.post.mq.sender;
 import com.czy.api.api.RabbitMqSenderInterface;
 import com.czy.api.constant.netty.MqConstants;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.api.domain.entity.event.OssTask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -22,14 +21,6 @@ public class RabbitMqSender implements RabbitMqSenderInterface {
 
     private final RabbitTemplate rabbitJsonTemplate;
 //    private final BaseResponseConverter baseResponseConverter;
-
-    public void pushToOss(OssTask ossTask){
-        rabbitJsonTemplate.convertAndSend(
-                MqConstants.Exchange.OSS_EXCHANGE,
-                MqConstants.OssQueue.Routing.TO_SERVICE_ROUTING,
-                ossTask
-        );
-    }
 
     @Override
     public void push(Message message){

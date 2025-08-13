@@ -7,7 +7,7 @@ import com.czy.api.domain.dto.socket.request.PostDisLikeRequest;
 import com.czy.api.domain.dto.socket.request.PostFolderRequest;
 import com.czy.api.domain.dto.socket.request.PostForwardRequest;
 import com.czy.api.domain.dto.socket.request.PostLikeRequest;
-import com.czy.springUtils.annotation.MessageType;
+import com.utils.rabbitmq.annotation.MessageType;
 
 /**
  * @author 13225
