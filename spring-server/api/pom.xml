@@ -119,6 +119,12 @@
                 <version>${hutool.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
             <!-- protobuf -->
             <dependency>
                 <groupId>com.google.protobuf</groupId>
