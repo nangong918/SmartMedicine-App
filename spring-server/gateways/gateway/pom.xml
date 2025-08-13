@@ -47,9 +47,21 @@
 
     <dependencies>
         <!--暂时不继承SpringUtils：它需要webflux环境，Redisson又继承SpringMvc-->
+<!--        <dependency>-->
+<!--            <groupId>com.utils</groupId>-->
+<!--            <artifactId>SpringWebfluxUtils</artifactId>-->
+<!--            <version>1.0.0-SNAPSHOT</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.utils</groupId>
-            <artifactId>SpringWebfluxUtils</artifactId>
+            <artifactId>CommonUtils</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.utils</groupId>
+            <artifactId>RedisUtils</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

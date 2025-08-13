@@ -1,10 +1,7 @@
 package com.czy.gateway.config;
 
 import com.czy.api.constant.message.MessageConstant;
-import com.czy.api.constant.oss.OssConstant;
 import com.czy.api.constant.post.PostConstant;
-import com.czy.api.constant.recommend.RecommendConstant;
-import com.czy.api.constant.search.SearchConstant;
 import com.czy.api.constant.user_relationship.RelationshipConstant;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.gateway.filter.IpGatewayFilterFactory;
@@ -117,28 +114,28 @@ public class GatewayConfig {
                                 .uri(MessageConstant.serviceUri)
                                 .id("message_path_route")
                 )
-                // oss
-                .route(r ->
-                        r.path(OssConstant.serviceRoute + "/**")
-                                .filters(f -> f
-                                        .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
-                                        .stripPrefix(1)// 移除第一段路径
-                                )
-                                // 负载均衡访问user-auth-relation-service服务
-                                .uri(OssConstant.serviceUri)
-                                .id("oss_path_route")
-                )
+//                // oss
+//                .route(r ->
+//                        r.path(OssConstant.serviceRoute + "/**")
+//                                .filters(f -> f
+//                                        .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
+//                                        .stripPrefix(1)// 移除第一段路径
+//                                )
+//                                // 负载均衡访问user-auth-relation-service服务
+//                                .uri(OssConstant.serviceUri)
+//                                .id("oss_path_route")
+//                )
                 // search
-                .route(r ->
-                        r.path(SearchConstant.serviceRoute + "/**")
-                                .filters(f -> f
-                                        .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
-                                        .stripPrefix(1)// 移除第一段路径
-                                )
-                                // 负载均衡访问user-auth-relation-service服务
-                                .uri(SearchConstant.serviceUri)
-                                .id("search_path_route")
-                )
+//                .route(r ->
+//                        r.path(SearchConstant.serviceRoute + "/**")
+//                                .filters(f -> f
+//                                        .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
+//                                        .stripPrefix(1)// 移除第一段路径
+//                                )
+//                                // 负载均衡访问user-auth-relation-service服务
+//                                .uri(SearchConstant.serviceUri)
+//                                .id("search_path_route")
+//                )
                 // post
                 .route(r ->
                         r.path(PostConstant.serviceRoute + "/**")
@@ -151,16 +148,16 @@ public class GatewayConfig {
                                 .id("post_path_route")
                 )
                 // recommend
-                .route(r ->
-                        r.path(RecommendConstant.serviceRoute + "/**")
-                                .filters(f -> f
-                                        .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
-                                        .stripPrefix(1)// 移除第一段路径
-                                )
-                                // 负载均衡访问user-auth-relation-service服务
-                                .uri(RecommendConstant.serviceUri)
-                                .id("recommend_path_route")
-                )
+//                .route(r ->
+//                        r.path(RecommendConstant.serviceRoute + "/**")
+//                                .filters(f -> f
+//                                        .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
+//                                        .stripPrefix(1)// 移除第一段路径
+//                                )
+//                                // 负载均衡访问user-auth-relation-service服务
+//                                .uri(RecommendConstant.serviceUri)
+//                                .id("recommend_path_route")
+//                )
                 .build();
     }
 

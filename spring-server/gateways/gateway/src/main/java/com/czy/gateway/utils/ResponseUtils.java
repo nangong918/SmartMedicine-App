@@ -1,4 +1,4 @@
-package utils;
+package com.czy.gateway.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.czy.api.domain.dto.base.BaseResponse;
