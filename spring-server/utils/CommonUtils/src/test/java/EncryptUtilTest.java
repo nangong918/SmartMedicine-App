@@ -1,6 +1,4 @@
-package com.czy.springUtils.util;
-
-import org.junit.jupiter.api.Test;
+import com.utils.common.util.EncryptUtil;
 
 
 /**
@@ -9,8 +7,8 @@ import org.junit.jupiter.api.Test;
  */
 class EncryptUtilTest {
 
-    @Test
-    void bcryptVerify() {
+
+    static void bcryptVerify() {
         String password = EncryptUtil.bcryptEncrypt("123456");
         String password2 = EncryptUtil.bcryptEncrypt("1234567");
         System.out.println(password);
@@ -18,5 +16,9 @@ class EncryptUtilTest {
         System.out.println(result);
         boolean result2 = EncryptUtil.bcryptVerify("123456", password2);
         System.out.println(result2);
+    }
+
+    public static void main(String[] args) {
+        bcryptVerify();
     }
 }
