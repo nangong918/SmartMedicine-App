@@ -1,6 +1,9 @@
 package com.czy.post.service.impl;
 
 
+import com.api.mapper.post.mongo.PostDetailMongoMapper;
+import com.api.mapper.post.mysql.PostFilesMapper;
+import com.api.mapper.post.mysql.PostInfoMapper;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.es.FieldAnalyzer;
@@ -21,9 +24,6 @@ import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 import com.czy.api.mapper.DiseaseRepository;
 import com.czy.post.front.PostFrontService;
-import com.czy.post.mapper.mongo.PostDetailMongoMapper;
-import com.czy.post.mapper.mysql.PostFilesMapper;
-import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.service.PostStorageService;
 import com.utils.minio.service.OssService;
 import lombok.RequiredArgsConstructor;

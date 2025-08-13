@@ -1,5 +1,6 @@
 package com.czy.post.handler;
 
+import com.api.mapper.post.mysql.PostInfoMapper;
 import com.czy.api.api.user_relationship.user.UserService;
 import com.czy.api.constant.feature.PostOperation;
 import com.czy.api.constant.netty.KafkaConstant;
@@ -36,7 +37,6 @@ import com.czy.api.exception.UserExceptions;
 import com.czy.api.utils.NettyUtils;
 import com.czy.post.component.KafkaSender;
 import com.czy.post.handler.api.PostApi;
-import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostHandleService;

@@ -1,14 +1,14 @@
 package com.czy.post.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.api.mapper.post.mongo.PostCommentMongoMapper;
+import com.api.mapper.post.mysql.PostCollectFolderMapper;
+import com.api.mapper.post.mysql.PostCollectMapper;
+import com.api.mapper.post.mysql.PostInfoMapper;
 import com.czy.api.domain.Do.post.collect.PostCollectDo;
 import com.czy.api.domain.Do.post.collect.PostCollectFolderDo;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
-import com.czy.post.mapper.mongo.PostCommentMongoMapper;
-import com.czy.post.mapper.mysql.PostCollectFolderMapper;
-import com.czy.post.mapper.mysql.PostCollectMapper;
-import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.service.PostHandleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
