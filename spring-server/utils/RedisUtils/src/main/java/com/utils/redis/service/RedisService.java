@@ -1,8 +1,8 @@
-package com.czy.springUtils.service;
+package com.utils.redis.service;
 
 
-import com.czy.springUtils.redis.RedisClusterLock;
-import com.czy.springUtils.redis.SysCache;
+import com.utils.redis.domain.RedisClusterLock;
+import com.utils.redis.domain.SysCache;
 import org.springframework.data.redis.connection.DataType;
 
 import java.util.List;

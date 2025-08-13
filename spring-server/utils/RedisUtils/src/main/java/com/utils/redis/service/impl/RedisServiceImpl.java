@@ -1,10 +1,10 @@
-package com.czy.springUtils.service.impl;
+package com.utils.redis.service.impl;
 
 
 import com.alibaba.fastjson.JSON;
-import com.czy.springUtils.redis.RedisClusterLock;
-import com.czy.springUtils.redis.SysCache;
-import com.czy.springUtils.service.RedisService;
+import com.utils.redis.domain.RedisClusterLock;
+import com.utils.redis.domain.SysCache;
+import com.utils.redis.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.RedisConnection;
