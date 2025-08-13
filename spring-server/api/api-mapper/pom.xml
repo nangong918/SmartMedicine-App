@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>api-model</artifactId>
-    <description>各个服务的通用domain + dubbo service接口</description>
+    <artifactId>api-mapper</artifactId>
+    <description>api各个服务的公共mapper</description>
 
     <parent>
         <groupId>com.api</groupId>
@@ -38,13 +38,12 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-        <!--继承工具类：有些工具类的类型api需要继承-->
-<!--        <dependency>-->
-<!--            <groupId>com.utils</groupId>-->
-<!--            <artifactId>SpringUtils</artifactId>-->
-<!--            <version>1.0.0-SNAPSHOT</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.api</groupId>
+            <artifactId>api-model</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Lombok for domain -->
         <dependency>
@@ -90,19 +89,19 @@
 
         <!-- Swagger 3：生成前后端Api文档-->
         <!--http://localhost:8080/swagger-ui/-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-boot-starter</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.springfox</groupId>-->
+        <!--            <artifactId>springfox-boot-starter</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.springdoc</groupId>-->
-<!--            <artifactId>springdoc-openapi-webflux-ui</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springdoc</groupId>-->
+        <!--            <artifactId>springdoc-openapi-webflux-ui</artifactId>-->
+        <!--        </dependency>-->
 
         <!-- validation -->
         <dependency>
