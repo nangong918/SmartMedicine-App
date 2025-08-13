@@ -52,7 +52,7 @@
         <!--公共工具类模块-->
         <dependency>
             <groupId>com.utils</groupId>
-            <artifactId>SpringMvcUtils</artifactId>
+            <artifactId>SpringUtils</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
