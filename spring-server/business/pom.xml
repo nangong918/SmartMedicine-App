@@ -18,8 +18,6 @@
         <module>user-auth-relation-service</module>
         <module>message-service</module>
         <module>post-service</module>
-        <module>recommend-service</module>
-        <module>search-service</module>
         <module>feature-log-offline-service</module>
     </modules>
 
