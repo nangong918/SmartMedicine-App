@@ -117,6 +117,7 @@ public class SearchPostVm extends ViewModel {
         }
         FuzzySearchRequest request = new FuzzySearchRequest();
         request.sentence = sentence;
+        request.userId = userId;
 
         apiRequestImpl.fuzzySearch(request,
                 response -> {
