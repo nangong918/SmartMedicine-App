@@ -40,6 +40,13 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
+        <!-- validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
         <!-- FastJSON -->
         <dependency>
             <groupId>com.alibaba</groupId>

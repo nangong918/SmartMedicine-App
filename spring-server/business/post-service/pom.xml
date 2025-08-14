@@ -125,6 +125,13 @@
             <artifactId>annotations</artifactId>
         </dependency>
 
+        <!-- validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
         <!--mapStruct依赖 高性能对象映射-->
         <!--mapstruct核心-->
         <dependency>
