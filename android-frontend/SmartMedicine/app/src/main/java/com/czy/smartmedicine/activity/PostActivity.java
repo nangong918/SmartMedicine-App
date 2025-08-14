@@ -43,6 +43,9 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     @Override
     protected void init() {
         super.init();
+
+        Log.i("check_netty", "PostActivity::MessageSender: " + MainApplication.getInstance().getMessageSender());
+
         initIntent();
         initViewModel();
         initRecyclerView();

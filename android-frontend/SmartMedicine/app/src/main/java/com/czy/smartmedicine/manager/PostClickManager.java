@@ -207,6 +207,9 @@ public class PostClickManager {
         postIntentAo.postId = postId;
         Intent intent = new Intent(activity, PostActivity.class);
         intent.putExtra(PostIntentAo.POST_OPEN_INTENT, postIntentAo);
+
+        Log.i("check_netty", "PostClickManager::MessageSender: " + MainApplication.getInstance().getMessageSender());
+
         openPostActivityLauncher.launch(intent);
 
         startReadPostTime = System.currentTimeMillis();
