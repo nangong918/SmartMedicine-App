@@ -1,7 +1,6 @@
 package com.czy.smartmedicine.activity;
 
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,13 +21,14 @@ import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.search.SearchPostActivity;
 import com.czy.smartmedicine.databinding.ActivityMainBinding;
 import com.czy.smartmedicine.fragment.AiFragment;
-import com.czy.smartmedicine.fragment.friends.FriendsFragment;
 import com.czy.smartmedicine.fragment.HomeFragment;
 import com.czy.smartmedicine.fragment.MessageFragment;
 import com.czy.smartmedicine.fragment.NoticeFragment;
 import com.czy.smartmedicine.fragment.SearchFragment;
+import com.czy.smartmedicine.fragment.friends.FriendsFragment;
 
 import java.util.Optional;
 
@@ -101,6 +101,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             } catch (Exception ignored){
             }
             changeFragment(fragmentType);
+        });
+
+        binding.mainTopBar.setSearchBarClickListener(v -> {
+            Intent intent = new Intent(this, SearchPostActivity.class);
+            startActivity(intent);
         });
 
         binding.mainTopBar.setImageClickListener(v -> {

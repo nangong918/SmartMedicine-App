@@ -16,9 +16,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.search.SearchBar
+        android:id="@+id/search_bar"
+        tools:visibility="visible"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cImgv_face"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ly_friend"
         android:layout_width="0dp"
+        tools:visibility="visible"
         android:visibility="gone"
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"

@@ -58,6 +58,9 @@ public class MainTopBar extends ConstraintLayout {
         SelectItemEnum sli = Optional.ofNullable(mainTopBarVo)
                 .map(vo -> vo.selectItemEnum)
                 .orElse(null);
+
+        binding.searchBar.setVisibility(GONE);
+
         if (sli == null){
             binding.lyFriend.setVisibility(GONE);
         }
@@ -71,7 +74,9 @@ public class MainTopBar extends ConstraintLayout {
             }
             // data
             switch (sli){
-                case HOME -> {}
+                case HOME -> {
+                    binding.searchBar.setVisibility(VISIBLE);
+                }
                 case SEARCH -> {}
                 case AI -> {}
                 case FRIENDS -> {
@@ -92,5 +97,9 @@ public class MainTopBar extends ConstraintLayout {
 
     public void setImageClickListener(OnClickListener listener){
         binding.cImgvFace.setOnClickListener(listener);
+    }
+
+    public void setSearchBarClickListener(OnClickListener listener){
+        binding.searchBar.setOnClickListener(listener);
     }
 }
