@@ -41,14 +41,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class SearchActivityPostViewModel extends ViewModel {
+public class SearchPostVm extends ViewModel {
 
-    private static final String TAG = SearchActivityPostViewModel.class.getName();
+    private static final String TAG = SearchPostVm.class.getName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public SearchActivityPostViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
+    public SearchPostVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

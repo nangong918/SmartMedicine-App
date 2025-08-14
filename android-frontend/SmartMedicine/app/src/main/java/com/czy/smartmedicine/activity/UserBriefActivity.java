@@ -16,7 +16,7 @@ import com.czy.dal.vo.fragmentActivity.UserBriefVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityUserBriefBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.activity.UserBriefViewModel;
+import com.czy.smartmedicine.viewModel.activity.UserBriefVm;
 
 import java.util.Optional;
 
@@ -45,7 +45,7 @@ public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
     }
 
     private void initRequest(){
-        viewModel.doGetUserBrief(this, new SyncRequestCallback() {
+        vm.doGetUserBrief(this, new SyncRequestCallback() {
             @Override
             public void onThrowable(Throwable throwable) {
                 ToastUtils.showToast(UserBriefActivity.this, "获取用户信息失败");
@@ -65,10 +65,10 @@ public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
             Optional.ofNullable(ao)
                     .ifPresent(a -> {
                         // 设置view数据给viewModel
-                        viewModel.userBriefVo.userAccount.setValue(a.userAccount);
-                        viewModel.userBriefVo.avatarUrl.setValue(a.avatarUrl);
-                        viewModel.userBriefVo.userName.setValue(a.userName);
-                        viewModel.userBriefVo.userId = a.userId;
+                        vm.userBriefVo.userAccount.setValue(a.userAccount);
+                        vm.userBriefVo.avatarUrl.setValue(a.avatarUrl);
+                        vm.userBriefVo.userName.setValue(a.userName);
+                        vm.userBriefVo.userId = a.userId;
                     });
         } catch (Exception e){
             Log.e(TAG, "initIntentData::get UserBriefIntentAo SerializableExtra Error: ", e);
@@ -82,10 +82,10 @@ public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
         binding.btnSendMessage.setOnClickListener(v -> {
             Intent intent = new Intent(this, ChatActivity.class);
             ChatActivityStartAo startAo = new ChatActivityStartAo();
-            startAo.contactAccount = viewModel.userBriefVo.userAccount.getValue();
-            startAo.contactName = viewModel.userBriefVo.userName.getValue();
-            startAo.avatarUrl = viewModel.userBriefVo.avatarUrl.getValue();
-            startAo.contactId = viewModel.userBriefVo.userId;
+            startAo.contactAccount = vm.userBriefVo.userAccount.getValue();
+            startAo.contactName = vm.userBriefVo.userName.getValue();
+            startAo.avatarUrl = vm.userBriefVo.avatarUrl.getValue();
+            startAo.contactId = vm.userBriefVo.userId;
             intent.putExtra(ChatActivityStartAo.class.getName(), startAo);
             startActivity(intent);
         });
@@ -95,11 +95,11 @@ public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
         });
     }
 
-    private UserBriefViewModel viewModel;
+    private UserBriefVm vm;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, UserBriefViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, UserBriefVm.class);
 
         initViewModelVo();
 
@@ -107,25 +107,25 @@ public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
     }
 
     private void observeData() {
-        viewModel.userBriefVo.userName.observe(this, userName -> {
+        vm.userBriefVo.userName.observe(this, userName -> {
             binding.tvName.setText(userName);
         });
 
-        viewModel.userBriefVo.userAccount.observe(this, userAccount -> {
+        vm.userBriefVo.userAccount.observe(this, userAccount -> {
             binding.tvAccount.setText(userAccount);
         });
 
-        viewModel.userBriefVo.userRemark.observe(this, userRemark -> {
+        vm.userBriefVo.userRemark.observe(this, userRemark -> {
             binding.tvNotes.setText(userRemark);
         });
 
-        viewModel.userBriefVo.avatarUrl.observe(this, avatarUrl -> {
+        vm.userBriefVo.avatarUrl.observe(this, avatarUrl -> {
             ImageLoadUtil.loadImageViewByUrl(avatarUrl, binding.circleImageView2);
         });
     }
 
     private void loadPostInfo(){
-        if (viewModel.userBriefVo.userPosts == null || viewModel.userBriefVo.userPosts.isEmpty()){
+        if (vm.userBriefVo.userPosts == null || vm.userBriefVo.userPosts.isEmpty()){
             return;
         }
         ImageView[] postImageViews = new ImageView[]{
@@ -135,8 +135,8 @@ public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
                 binding.imgvFriendMoments4
         };
         int imageIndex = 0;
-        for (int i = 0; i < viewModel.userBriefVo.userPosts.size(); i++){
-            String url = Optional.ofNullable(viewModel.userBriefVo.userPosts.get(i))
+        for (int i = 0; i < vm.userBriefVo.userPosts.size(); i++){
+            String url = Optional.ofNullable(vm.userBriefVo.userPosts.get(i))
                     .map(postVo -> postVo.postImgUrls)
                     .filter(urls -> !urls.isEmpty())
                     .map(urls_ -> urls_.get(0))
@@ -152,7 +152,7 @@ public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
     private void initViewModelVo() {
         UserBriefVo userBriefVo = new UserBriefVo();
 
-        viewModel.init(userBriefVo);
+        vm.init(userBriefVo);
 
 //        binding.setViewModel(viewModel);
 //        binding.setLifecycleOwner(this);

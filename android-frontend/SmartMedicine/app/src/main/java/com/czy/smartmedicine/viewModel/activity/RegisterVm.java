@@ -25,7 +25,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.timer.CountDownTimerUtil;
 import com.czy.baseUtilsLib.timer.CountdownCallback;
-import com.czy.dal.ao.intent.RegisterActivityIntentAo;
+import com.czy.dal.ao.intent.RegisterIntentAAo;
 import com.czy.dal.dto.http.request.RegisterUserRequest;
 import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.SendSmsResponse;
@@ -46,14 +46,14 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 
-public class RegisterViewModel extends ViewModel {
+public class RegisterVm extends ViewModel {
 
-    private final static String TAG = RegisterViewModel.class.getName();
+    private final static String TAG = RegisterVm.class.getName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public RegisterViewModel (ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
+    public RegisterVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }
@@ -61,7 +61,7 @@ public class RegisterViewModel extends ViewModel {
     //---------------------------Vo Ld---------------------------
 
     public RegisterVo registerVo = new RegisterVo();
-    public RegisterActivityIntentAo intentAo;
+    public RegisterIntentAAo intentAo;
     //===========Picture
 
     public AtomicReference<Uri> uriAtomicReference = new AtomicReference<>(null);

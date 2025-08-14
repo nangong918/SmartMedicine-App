@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.czy.smartmedicine.viewModel.activity.PublishViewModel" />
+            type="com.czy.smartmedicine.viewModel.activity.PublishPostVm" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

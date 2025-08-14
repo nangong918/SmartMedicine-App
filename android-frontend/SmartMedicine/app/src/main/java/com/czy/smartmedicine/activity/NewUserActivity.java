@@ -7,29 +7,29 @@ import android.util.Log;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.addContact.AddContactAdapter;
-import com.czy.dal.ao.intent.NewUserGroupActivityIntentAo;
+import com.czy.dal.ao.intent.NewUserActivityIntentAo;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
 import com.czy.dal.vo.entity.addContact.AddContactListVo;
 import com.czy.dal.vo.fragmentActivity.NewUserGroupVo;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.databinding.ActivityNewUserGroupBinding;
+import com.czy.smartmedicine.databinding.ActivityNewUserBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.activity.NewUserGroupViewModel;
+import com.czy.smartmedicine.viewModel.activity.NewUserVm;
 
 import java.util.Optional;
 
 /**
  * 新朋友/群组界面
  */
-public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBinding> {
+public class NewUserActivity extends BaseActivity<ActivityNewUserBinding> {
 
-    public NewUserGroupActivity() {
-        super(NewUserGroupActivity.class);
+    public NewUserActivity() {
+        super(NewUserActivity.class);
     }
 
     @Override
-    public ActivityNewUserGroupBinding getBinding() {
-        return ActivityNewUserGroupBinding.inflate(getLayoutInflater());
+    public ActivityNewUserBinding getBinding() {
+        return ActivityNewUserBinding.inflate(getLayoutInflater());
     }
 
     @Override
@@ -52,14 +52,14 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
 
     //-----------------------Intent Data-----------------------
 
-    private NewUserGroupActivityIntentAo intentAo = null;
+    private NewUserActivityIntentAo intentAo = null;
 
     private void initIntentData() {
         // 获取传递的对象
         try {
             Intent intent = getIntent();
             Optional.ofNullable(intent)
-                    .map(i -> (NewUserGroupActivityIntentAo)i.getSerializableExtra(NewUserGroupActivityIntentAo.INTENT_KEY))
+                    .map(i -> (NewUserActivityIntentAo)i.getSerializableExtra(NewUserActivityIntentAo.INTENT_KEY))
                     .ifPresent(ao -> {
                         this.intentAo = ao;
                         handleUserGroupEnum(ao.userGroupEnum);
@@ -97,28 +97,28 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
 
     private void initRecyclerView(){
 
-        newUserGroupViewModel.newUserGroupVo.addContactListVo = new AddContactListVo();
+        vm.newUserGroupVo.addContactListVo = new AddContactListVo();
         AddContactAdapter adapter = new AddContactAdapter(
-                newUserGroupViewModel.newUserGroupVo.addContactListVo.contactItemList,
+                vm.newUserGroupVo.addContactListVo.contactItemList,
                 position -> {
             Log.d(TAG, "position:" + position);
         });
-        newUserGroupViewModel.rclAdapter = adapter;
+        vm.rclAdapter = adapter;
         binding.rclvContent.setAdapter(adapter);
     }
 
     //-----------------------ViewModel-----------------------
 
-    private NewUserGroupViewModel newUserGroupViewModel;
+    private NewUserVm vm;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        newUserGroupViewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, NewUserGroupViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, NewUserVm.class);
 
         initViewModelVo();
 
 //        // 绑定viewModel
-//        binding.setViewModel(newUserGroupViewModel);
+//        binding.setViewModel(newUserVm);
 //        // 设置监听者
 //        binding.setLifecycleOwner(this);
 
@@ -133,7 +133,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
                 .map(userGroupEnum -> userGroupEnum.equals(UserGroupEnum.USER))
                 .orElse(true);
 
-        newUserGroupViewModel.init(newUserGroupVo);
+        vm.init(newUserGroupVo);
 
         // 初始化ViewModel之后申请Data
         initViewModelData();
@@ -141,7 +141,7 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
 
     private void observeData(){
         // 观察RecyclerView
-/*        Optional.ofNullable(newUserGroupViewModel)
+/*        Optional.ofNullable(newUserVm)
                 .map(vm -> vm.newUserGroupVo)
                 .map(newUserGroupVo -> newUserGroupVo.addContactListVo)
                 .map(addContactListVo -> addContactListVo.contactItemList)
@@ -154,14 +154,14 @@ public class NewUserGroupActivity extends BaseActivity<ActivityNewUserGroupBindi
 
     // 初始化ViewModel之后申请Data
     private void initViewModelData() {
-        newUserGroupViewModel.getNewUserData(this);
+        vm.getNewUserData(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (newUserGroupViewModel != null){
-            newUserGroupViewModel.onDestroy();
+        if (vm != null){
+            vm.onDestroy();
         }
     }
 }

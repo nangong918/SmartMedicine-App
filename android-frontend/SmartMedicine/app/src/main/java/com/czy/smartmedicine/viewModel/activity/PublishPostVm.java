@@ -22,14 +22,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.MultipartBody;
 
-public class PublishViewModel extends ViewModel {
+public class PublishPostVm extends ViewModel {
 
-    private static final String TAG = PublishViewModel.class.getName();
+    private static final String TAG = PublishPostVm.class.getName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public PublishViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
+    public PublishPostVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

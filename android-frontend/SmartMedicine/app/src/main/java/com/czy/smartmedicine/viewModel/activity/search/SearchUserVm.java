@@ -39,14 +39,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-public class SearchActivityUserViewModel extends ViewModel {
+public class SearchUserVm extends ViewModel {
 
-    private static final String TAG = SearchActivityUserViewModel.class.getSimpleName();
+    private static final String TAG = SearchUserVm.class.getSimpleName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public SearchActivityUserViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
+    public SearchUserVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

@@ -21,7 +21,7 @@ import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.fragment.HomeViewModel;
+import com.czy.smartmedicine.viewModel.fragment.HomeVm;
 
 
 /**
@@ -47,7 +47,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         initViewModel();
 
         // 初始化点击管理器
-        viewModel.initPostClickManager(this);
+        vm.initPostClickManager(this);
     }
 
     @Override
@@ -65,10 +65,10 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.HOME));
 
         // 初始化RecyclerView
-        viewModel.initRecyclerView(binding.rclvRecommend, requireActivity());
+        vm.initRecyclerView(binding.rclvRecommend, requireActivity());
 
         // 初始化网络请求；网络请求之后会触发回调，回调会调用rclAdapter，所以在initRecyclerView之后初始化请求
-        viewModel.initialNetworkRequest(requireContext(), new SyncRequestCallback() {
+        vm.initialNetworkRequest(requireContext(), new SyncRequestCallback() {
             @Override
             public void onThrowable(Throwable throwable) {
 
@@ -92,7 +92,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
         binding.lyMain.setOnRefreshListener(() -> {
             NetworkLoadUtils.showDialog(requireContext());
-            viewModel.getRecommendPostsP(requireContext(), new SyncRequestCallback() {
+            vm.getRecommendPostsP(requireContext(), new SyncRequestCallback() {
                 @Override
                 public void onThrowable(Throwable throwable) {
                     NetworkLoadUtils.dismissDialog();
@@ -109,15 +109,15 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
     //---------------------------viewModel---------------------------
 
-    private HomeViewModel viewModel;
+    private HomeVm vm;
 
     private void initViewModel(){
         // 创建viewModel
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, HomeViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, HomeVm.class);
 
         // 初始化viewModel
-        viewModel.init(new HomeVo());
+        vm.init(new HomeVo());
     }
 
 

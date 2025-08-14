@@ -44,7 +44,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.NewUserGroupActivity"
+            android:name=".activity.NewUserActivity"
             android:exported="false" />
 <!-- 取消process创建新的进城来提升性能，因为新的进程创建的变量主进程无感知，导致出现变量离奇变为null。目前暂时未学好Android的进程管理，后续需要提升性能再重构 -->
             <!-- todo 学习创建进程，学习操作系统，好好学习变量分析，进程管理，进程间消息通讯 -->

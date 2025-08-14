@@ -17,7 +17,7 @@ import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.databinding.FragmentMessageBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.fragment.MessageViewModel;
+import com.czy.smartmedicine.viewModel.fragment.MessageVm;
 
 
 /**
@@ -75,7 +75,7 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
         ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.MESSAGE));
 
         // 此处recyclerView才创建
-        viewModel.initRecyclerView(
+        vm.initRecyclerView(
                 binding.rclvMessage,
                 requireActivity()
         );
@@ -88,13 +88,13 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
 
     //---------------------------viewModel---------------------------
 
-    private MessageViewModel viewModel;
+    private MessageVm vm;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, MessageViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, MessageVm.class);
 
-        viewModel.init(new MessageVo());
+        vm.init(new MessageVo());
 
 //        // 绑定viewModel
 //        binding.setViewModel(signViewModel);
@@ -123,16 +123,16 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
     @Override
     public void onPause() {
         super.onPause();
-        if (viewModel != null){
-            viewModel.onPause();
+        if (vm != null){
+            vm.onPause();
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (viewModel != null){
-            viewModel.onDestroy();
+        if (vm != null){
+            vm.onDestroy();
         }
     }
 }

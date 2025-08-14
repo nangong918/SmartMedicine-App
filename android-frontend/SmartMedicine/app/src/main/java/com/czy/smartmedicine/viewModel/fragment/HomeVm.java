@@ -33,14 +33,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class HomeViewModel extends ViewModel {
+public class HomeVm extends ViewModel {
 
-    private static final String TAG = HomeViewModel.class.getName();
+    private static final String TAG = HomeVm.class.getName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public HomeViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
+    public HomeVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

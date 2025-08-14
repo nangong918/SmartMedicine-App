@@ -32,14 +32,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ContactUserGroupViewModel extends ViewModel {
+public class ContactUserVm extends ViewModel {
 
-    private static final String TAG = ContactUserGroupViewModel.class.getName();
+    private static final String TAG = ContactUserVm.class.getName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public ContactUserGroupViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
+    public ContactUserVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

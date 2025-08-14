@@ -19,8 +19,8 @@ import com.czy.dal.vo.fragmentActivity.search.SearchPostVo;
 import com.czy.dal.vo.fragmentActivity.search.SearchUserVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySearchBinding;
-import com.czy.smartmedicine.viewModel.activity.search.SearchActivityPostViewModel;
-import com.czy.smartmedicine.viewModel.activity.search.SearchActivityUserViewModel;
+import com.czy.smartmedicine.viewModel.activity.search.SearchPostVm;
+import com.czy.smartmedicine.viewModel.activity.search.SearchUserVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.Optional;
@@ -116,7 +116,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 //            Log.d(TAG, "position:" + position);
 //        });
 //        binding.rclvSearch.setAdapter(adapter);
-        ((SearchActivityUserViewModel)viewModel).initRecyclerAdapter(
+        ((SearchUserVm) vm).initRecyclerAdapter(
                 binding.rclvSearch,
                 position -> {
                     Log.d(TAG, "position:" + position);
@@ -142,25 +142,25 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
     //----------------------------viewModel----------------------------
 ;
     // 由于此页面是复用页面，所以可能需要多个viewModel适配，所以类型使用的是通用viewModel
-    private ViewModel viewModel;
+    private ViewModel vm;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
         switch (intentAo.searchType){
             case USER -> {
-                viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchActivityUserViewModel.class);
+                vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchUserVm.class);
 
-                SearchActivityUserViewModel searchActivityUserVo = (SearchActivityUserViewModel)viewModel;
+                SearchUserVm searchActivityUserVo = (SearchUserVm) vm;
                 searchActivityUserVo.init(new SearchUserVo());
             }
             case GROUP -> {}
             case POST -> {
-                viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchActivityPostViewModel.class);
+                vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchPostVm.class);
 
-                SearchActivityPostViewModel searchActivityPostViewModel = (SearchActivityPostViewModel)viewModel;
-                searchActivityPostViewModel.init(new SearchPostVo(), this);
-                searchActivityPostViewModel.initRecyclerAdapter(binding.rclvSearch, this);
-                searchActivityPostViewModel.initDialogAnswer(this, v -> {
+                SearchPostVm searchPostVm = (SearchPostVm) vm;
+                searchPostVm.init(new SearchPostVo(), this);
+                searchPostVm.initRecyclerAdapter(binding.rclvSearch, this);
+                searchPostVm.initDialogAnswer(this, v -> {
                     // todo 跳转到跟ai聊天的详情页
                 });
             }
@@ -172,7 +172,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
     private void initViewModelVo(){
         switch (intentAo.searchType){
             case USER -> {
-                SearchActivityUserViewModel searchActivityUserViewModel = (SearchActivityUserViewModel)viewModel;
+                SearchUserVm searchUserVm = (SearchUserVm) vm;
 
                 // 双向绑定
                 // SearchView -> LiveData
@@ -185,15 +185,15 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                     @Override
                     public boolean onQueryTextChange(String newText) {
                         // 更新 LiveData 数据
-                        SearchActivityUserViewModel searchActivityUserViewModel = (SearchActivityUserViewModel)viewModel;
-                        Optional.ofNullable(searchActivityUserViewModel.searchUserVo)
+                        SearchUserVm searchUserVm = (SearchUserVm) vm;
+                        Optional.ofNullable(searchUserVm.searchUserVo)
                                         .map(vo -> vo.edtvInputData)
                                         .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
                         return true;
                     }
                 });
                 // LiveData -> SearchView
-                searchActivityUserViewModel.searchUserVo.edtvInputData.observe(this, newText -> {
+                searchUserVm.searchUserVo.edtvInputData.observe(this, newText -> {
                     if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
                         binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
                     }
@@ -201,7 +201,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
             }
             case GROUP -> {}
             case POST -> {
-                SearchActivityPostViewModel searchActivityPostViewModel = (SearchActivityPostViewModel)viewModel;
+                SearchPostVm searchPostVm = (SearchPostVm) vm;
 
                 // 双向绑定
                 // SearchView -> LiveData
@@ -213,15 +213,15 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 
                     @Override
                     public boolean onQueryTextChange(String newText) {
-                        SearchActivityPostViewModel searchActivityPostViewModel = (SearchActivityPostViewModel)viewModel;
-                        Optional.ofNullable(searchActivityPostViewModel.searchPostVo)
+                        SearchPostVm searchPostVm = (SearchPostVm) vm;
+                        Optional.ofNullable(searchPostVm.searchPostVo)
                                 .map(vo -> vo.edtvInputData)
                                 .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
                         return true;
                     }
                 });
                 // LiveData -> SearchView
-                searchActivityPostViewModel.searchPostVo.edtvInputData.observe(this, newText -> {
+                searchPostVm.searchPostVo.edtvInputData.observe(this, newText -> {
                     if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
                         binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
                     }
@@ -252,14 +252,14 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
         }
         switch (intentAo.searchType){
             case USER -> {
-                SearchActivityUserViewModel searchActivityUserVo = (SearchActivityUserViewModel)viewModel;
+                SearchUserVm searchActivityUserVo = (SearchUserVm) vm;
                 searchActivityUserVo.searchUsers(query);
             }
             case GROUP -> {}
             case POST -> {
-                SearchActivityPostViewModel searchActivityPostViewModel = (SearchActivityPostViewModel)viewModel;
+                SearchPostVm searchPostVm = (SearchPostVm) vm;
                 NetworkLoadUtils.showDialog(this);
-                searchActivityPostViewModel.searchPosts(this, query, new SyncRequestCallback() {
+                searchPostVm.searchPosts(this, query, new SyncRequestCallback() {
                     @Override
                     public void onThrowable(Throwable throwable) {
                         NetworkLoadUtils.dismissDialog();

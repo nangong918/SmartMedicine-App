@@ -20,7 +20,7 @@ import com.czy.dal.vo.fragmentActivity.ContactUserGroupVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.UserBriefActivity;
 import com.czy.smartmedicine.databinding.FragmentContactUserGroupBinding;
-import com.czy.smartmedicine.viewModel.activity.ContactUserGroupViewModel;
+import com.czy.smartmedicine.viewModel.activity.ContactUserVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.ArrayList;
@@ -77,11 +77,11 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
 
     //-----------------------ViewModel-----------------------
 
-    private ContactUserGroupViewModel viewModel;
+    private ContactUserVm viewModel;
 
     private void initViewModel() {
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, ContactUserGroupViewModel.class);
+        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, ContactUserVm.class);
 
         initViewModelVo();
 

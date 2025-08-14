@@ -50,14 +50,14 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class MessageViewModel extends ViewModel {
+public class MessageVm extends ViewModel {
 
-    private static final String TAG = MessageViewModel.class.getName();
+    private static final String TAG = MessageVm.class.getName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public MessageViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
+    public MessageVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

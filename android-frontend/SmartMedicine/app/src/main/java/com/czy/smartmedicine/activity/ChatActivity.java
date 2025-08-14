@@ -13,7 +13,7 @@ import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.vo.fragmentActivity.chat.ChatVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityChatBinding;
-import com.czy.smartmedicine.viewModel.activity.ChatViewModel;
+import com.czy.smartmedicine.viewModel.activity.ChatVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.Optional;
@@ -43,8 +43,8 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
         initViewModel();
 
         // 初始化聊天数据请求
-        viewModel.initialNetworkRequest(
-                viewModel.chatVo.contactId
+        vm.initialNetworkRequest(
+                vm.chatVo.contactId
         );
     }
 
@@ -55,13 +55,13 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
         binding.imgvBack.setOnClickListener(v -> finish());
 
         binding.smSendMessage.setSendClickListener(v -> {
-            viewModel.sendMessage();
+            vm.sendMessage();
             binding.smSendMessage.setEditMessage("");
         });
 
         // 图片消息：1. 选择图片
         binding.smSendMessage.setImgClickListener(v ->
-                viewModel.beginSelectPicture(this)
+                vm.beginSelectPicture(this)
         );
     }
 
@@ -90,38 +90,38 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
     //-----------------------ViewModel-----------------------
 
-    private ChatViewModel viewModel;
+    private ChatVm vm;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, ChatViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, ChatVm.class);
 
         initViewModelVo();
 
         // 初始化图片选择器
-        viewModel.initPictureSelectorLauncher(this);
+        vm.initPictureSelectorLauncher(this);
 
         // 初始化recyclerView
-        viewModel.initRecyclerView(binding.rclvMessage);
+        vm.initRecyclerView(binding.rclvMessage);
     }
 
     private void initViewModelVo(){
         ChatVo chatVo = new ChatVo();
         chatVo.contactId = startAo.contactId;
 
-        viewModel.setStartAo(startAo);
-        viewModel.init(chatVo);
+        vm.setStartAo(startAo);
+        vm.init(chatVo);
 
         // 观察数据
         observeData();
 
-        binding.setViewModel(viewModel);
+        binding.setViewModel(vm);
         binding.setLifecycleOwner(this);
     }
 
     private void observeData(){
         // 标题
-        Optional.ofNullable(viewModel)
+        Optional.ofNullable(vm)
                 .map(vm -> vm.chatVo)
                 .map(cvo -> cvo.name)
                 .ifPresent(liveData -> {
@@ -130,7 +130,7 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
                     });
                 });
         // 头像
-        Optional.ofNullable(viewModel)
+        Optional.ofNullable(vm)
                 .map(vm -> vm.chatVo)
                 .map(cvo -> cvo.avatarUrlOrUri)
                 .ifPresent(liveData -> {
@@ -161,12 +161,12 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     @Override
     protected void onPause() {
         super.onPause();
-        viewModel.onPause();
+        vm.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        viewModel.onDestroy();
+        vm.onDestroy();
     }
 }

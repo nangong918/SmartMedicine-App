@@ -19,22 +19,16 @@
 
 ## 目前任务
 
-1. 前后端联调：实现post搜索  todo 合并service,service太多了 + jvm调参
-   * oss 拆分为模块而不是微服务, 需要的服务就进行继承
-   * 合并 user和auth认证
-   * 合并 feature-logging-offline并取消post依赖
-   * 合并 post-search-recommend
-   * 升级 message-live
-   * 余下service分析:
-     1. netty: netty的session需要统一管理, 底层服务, 无法合并
-     2. user-auth-relationship: 用户,认证,关系,群组等信息;跟用户相关的一切,无法合并
-     3. message-live: 消息, 直播服务, 跟其他服务无相关性, 无法合并
-     4. offline-feature-logging: 离线计算, 在线计算, 日志收集; 已经有些耦合,无法再合并
-     5. post-search-recommend: 与帖子相关的一切, 无法再合并
-     6. purchase-order: 购物订单服务, 无法合并
-     7. medicine-business: 其他与医疗相关的一切, 无法合并
-     8. gateways: 网关服务, 顶层服务, 无法合并
+1. jvm调参
 2. user行为记录改为hive存储
+
+search页面 -> 调用search api
+发布post
+hive记录行为特征
+评论，收藏
+购物
+医疗相关
+直播
 
 公司: 1. 日志数据源改为hive 2. 搞推荐算法
 家: todo:1. 搞联调; 2.重新确定功能, 设计UI
@@ -375,8 +369,16 @@ search-service依赖feature-service的规则，feature-service依赖post-service
 11. nacos和dubbo的动态注册,能先启动消费者再启动生产者,实现生产者服务挂掉启动新的生产服务能被消费服务发现
 
 ## Android
+
 暂时取消DiffUtil，测试总是出bug，属于过度开发；归为性能优化点
 List取消使用LiveData
+
+Android Remote Service
+
+## 已处理任务
+
+* 前后端联调：实现post搜索  todo 合并service
+
 
 ##### 问题
 尝试解决Redis RDB问题:

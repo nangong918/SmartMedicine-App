@@ -16,13 +16,13 @@ import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.DialogPrompt;
-import com.czy.dal.ao.intent.RegisterActivityIntentAo;
+import com.czy.dal.ao.intent.RegisterIntentAAo;
 import com.czy.dal.constant.intent.RegisterActivityType;
 import com.czy.dal.vo.fragmentActivity.SignVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySignBinding;
 import com.czy.smartmedicine.test.TestConfig;
-import com.czy.smartmedicine.viewModel.activity.SignViewModel;
+import com.czy.smartmedicine.viewModel.activity.SignVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 /**
@@ -61,7 +61,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         super.setListener();
 
         // 监听手机号变化
-        viewModel.onPhoneChanged(binding.edtvPhone, this);
+        vm.onPhoneChanged(binding.edtvPhone, this);
 
         // 注册
         binding.btnRegister.setOnClickListener(v -> {
@@ -75,7 +75,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
 
         // 忘记密码
         binding.btnForgetPassword.setOnClickListener(v -> {
-            if (Boolean.TRUE.equals(viewModel.signVo.isRegistered.getValue())){
+            if (Boolean.TRUE.equals(vm.signVo.isRegistered.getValue())){
                 resetPassword();
             }
             else {
@@ -84,8 +84,8 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         });
 
         View.OnClickListener agreeClickListener = v -> {
-            boolean isAgree = Boolean.TRUE.equals(viewModel.signVo.isAgree.getValue());
-            viewModel.signVo.isAgree.setValue(!isAgree);
+            boolean isAgree = Boolean.TRUE.equals(vm.signVo.isAgree.getValue());
+            vm.signVo.isAgree.setValue(!isAgree);
         };
 
         // 同意隐私协议
@@ -97,7 +97,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         binding.btvTest.setVisibility(TestConfig.IS_TEST ? View.VISIBLE : View.GONE);
         if (TestConfig.IS_TEST) {
             binding.btvTest.setOnClickListener(v -> {
-                viewModel.onTestClick(this);
+                vm.onTestClick(this);
             });
         }
 
@@ -125,10 +125,10 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
 //            return;
 //        }
         Intent intent = new Intent(this, RegisterActivity.class);
-        RegisterActivityIntentAo ao = new RegisterActivityIntentAo();
+        RegisterIntentAAo ao = new RegisterIntentAAo();
         ao.activityType = RegisterActivityType.REGISTER.getType();
-        ao.phone = viewModel.signVo.phone.getValue();
-        intent.putExtra(RegisterActivityIntentAo.INTENT_KEY, ao);
+        ao.phone = vm.signVo.phone.getValue();
+        intent.putExtra(RegisterIntentAAo.INTENT_KEY, ao);
         registerActivityResultLauncher.launch(intent);
         dialogPrompt.dismiss();
     }
@@ -139,10 +139,10 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
 //            return;
 //        }
         NetworkLoadUtils.showDialog(this);
-        viewModel.doSign(
+        vm.doSign(
                 this,
-                viewModel.signVo.phone.getValue(),
-                viewModel.signVo.pwd.getValue(),
+                vm.signVo.phone.getValue(),
+                vm.signVo.pwd.getValue(),
                 new SyncRequestCallback() {
                         @Override
                         public void onThrowable(Throwable throwable) {
@@ -163,10 +163,10 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
 
     private void resetPassword(){
         Intent intent = new Intent(this, RegisterActivity.class);
-        RegisterActivityIntentAo ao = new RegisterActivityIntentAo();
+        RegisterIntentAAo ao = new RegisterIntentAAo();
         ao.activityType = RegisterActivityType.RESET_PWD.getType();
-        ao.phone = viewModel.signVo.phone.getValue();
-        intent.putExtra(RegisterActivityIntentAo.INTENT_KEY, ao);
+        ao.phone = vm.signVo.phone.getValue();
+        intent.putExtra(RegisterIntentAAo.INTENT_KEY, ao);
         registerActivityResultLauncher.launch(intent);
         dialogPrompt.dismiss();
     }
@@ -178,18 +178,18 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
                 registerForActivityResult(
                         new ActivityResultContracts.StartActivityForResult(),
                         result -> {
-                            viewModel.doCheckIsRegistered(this);
+                            vm.doCheckIsRegistered(this);
                         }
                 );
     }
 
     //---------------------------viewModel---------------------------
 
-    private SignViewModel viewModel;
+    private SignVm vm;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, SignViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, SignVm.class);
 
         initViewModelVo();
 
@@ -197,12 +197,12 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         observeLivedata();
 
         // 绑定viewModel
-        binding.setViewModel(viewModel);
+        binding.setViewModel(vm);
         // 设置监听者
         binding.setLifecycleOwner(this);
 
         // 获取权限
-        viewModel.getPermission(this);
+        vm.getPermission(this);
     }
 
     private void initViewModelVo(){
@@ -215,11 +215,11 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         signVo.phone.setValue("");
         signVo.pwd.setValue("");
 
-        viewModel.initVo(signVo);
+        vm.initVo(signVo);
     }
 
     private void observeLivedata(){
-        viewModel.signVo.isPhoneValid.observe(this, isPhoneValid -> {
+        vm.signVo.isPhoneValid.observe(this, isPhoneValid -> {
             binding.btnLogin.setBackgroundResource(
                     isPhoneValid ?
                             com.czy.customviewlib.R.drawable.button_selected :
@@ -234,9 +234,9 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
             binding.btnRegister.setClickable(isPhoneValid);
         });
 
-        viewModel.signVo.isRegistered.observe(this, isRegistered -> {
+        vm.signVo.isRegistered.observe(this, isRegistered -> {
             // 合法前提
-            if (Boolean.TRUE.equals(viewModel.signVo.isPhoneValid.getValue())){
+            if (Boolean.TRUE.equals(vm.signVo.isPhoneValid.getValue())){
 
                 binding.btnLogin.setVisibility(
                         isRegistered ?
@@ -266,7 +266,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
             binding.lyPassword.setVisibility(isRegistered ? View.VISIBLE : View.GONE);
         });
 
-        viewModel.signVo.isAgree.observe(this, isAgree -> {
+        vm.signVo.isAgree.observe(this, isAgree -> {
             binding.vAgree.setImageResource(
                     isAgree ?
                             com.czy.customviewlib.R.mipmap.o :

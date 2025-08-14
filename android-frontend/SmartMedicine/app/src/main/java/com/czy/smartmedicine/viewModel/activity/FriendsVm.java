@@ -30,14 +30,14 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.Optional;
 
 
-public class FriendsViewModel extends ViewModel {
+public class FriendsVm extends ViewModel {
 
-    private static final String TAG = FriendsViewModel.class.getSimpleName();
+    private static final String TAG = FriendsVm.class.getSimpleName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public FriendsViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
+    public FriendsVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

@@ -28,7 +28,7 @@ import com.czy.dal.dto.netty.response.HaveReadMessageResponse;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityTestBinding;
 import com.czy.smartmedicine.test.TestConfig;
-import com.czy.smartmedicine.viewModel.activity.TestViewModel;
+import com.czy.smartmedicine.viewModel.activity.TestVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import org.greenrobot.eventbus.EventBus;
@@ -132,7 +132,7 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
         });
 
         binding.btnUpload.setOnClickListener(v -> {
-            viewModel.uploadImageTest(this);
+            vm.uploadImageTest(this);
         });
 
         binding.btnLoad.setOnClickListener(v -> {
@@ -147,11 +147,11 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
 
     //------------------viewModel------------------
 
-    private TestViewModel viewModel;
+    private TestVm vm;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, TestViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, TestVm.class);
 
 
     }

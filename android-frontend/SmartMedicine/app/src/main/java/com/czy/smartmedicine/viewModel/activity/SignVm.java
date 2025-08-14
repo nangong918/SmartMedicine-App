@@ -41,14 +41,14 @@ import java.util.Optional;
  * @author 13225
  * ViewModel用来保存数据，处理逻辑
  */
-public class SignViewModel extends ViewModel {
+public class SignVm extends ViewModel {
 
-    private static final String TAG = SignViewModel.class.getSimpleName();
+    private static final String TAG = SignVm.class.getSimpleName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public SignViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
+    public SignVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

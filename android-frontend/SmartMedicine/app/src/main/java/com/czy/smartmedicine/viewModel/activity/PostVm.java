@@ -22,14 +22,14 @@ import com.czy.smartmedicine.utils.ViewModelUtil;
 
 import java.util.Optional;
 
-public class PostViewModel extends ViewModel {
+public class PostVm extends ViewModel {
 
-    private static final String TAG = PostViewModel.class.getName();
+    private static final String TAG = PostVm.class.getName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public PostViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
+    public PostVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

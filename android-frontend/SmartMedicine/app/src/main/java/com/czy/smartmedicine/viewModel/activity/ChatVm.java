@@ -67,14 +67,14 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public class ChatViewModel extends ViewModel {
+public class ChatVm extends ViewModel {
 
-    private static final String TAG = ChatViewModel.class.getName();
+    private static final String TAG = ChatVm.class.getName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public ChatViewModel (ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
+    public ChatVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

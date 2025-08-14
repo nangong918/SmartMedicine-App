@@ -22,14 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserBriefViewModel extends ViewModel {
+public class UserBriefVm extends ViewModel {
 
-    private static final String TAG = UserBriefViewModel.class.getName();
+    private static final String TAG = UserBriefVm.class.getName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public UserBriefViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
+    public UserBriefVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

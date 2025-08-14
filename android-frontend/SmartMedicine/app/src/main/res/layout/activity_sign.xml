@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.czy.smartmedicine.viewModel.activity.SignViewModel" />
+            type="com.czy.smartmedicine.viewModel.activity.SignVm" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

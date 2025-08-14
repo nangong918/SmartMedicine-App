@@ -43,14 +43,14 @@ import java.util.List;
 import java.util.Optional;
 
 // ViewModel的作用，保存LiveData，LiveData在ViewModel才起作用
-public class NewUserGroupViewModel extends ViewModel {
+public class NewUserVm extends ViewModel {
 
-    private static final String TAG = NewUserGroupViewModel.class.getName();
+    private static final String TAG = NewUserVm.class.getName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public NewUserGroupViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
+    public NewUserVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender) {
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }

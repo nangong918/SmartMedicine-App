@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
@@ -20,14 +19,14 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public class TestViewModel extends ViewModel {
+public class TestVm extends ViewModel {
 
-    private static final String TAG = TestViewModel.class.getSimpleName();
+    private static final String TAG = TestVm.class.getSimpleName();
 
     private final ApiRequestImpl apiRequestImpl;
     private final SocketMessageSender socketMessageSender;
 
-    public TestViewModel(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
+    public TestVm(ApiRequestImpl apiRequestImpl, SocketMessageSender socketMessageSender){
         this.apiRequestImpl = apiRequestImpl;
         this.socketMessageSender = socketMessageSender;
     }
