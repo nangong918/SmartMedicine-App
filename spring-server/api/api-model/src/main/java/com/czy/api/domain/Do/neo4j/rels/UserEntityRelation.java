@@ -3,12 +3,14 @@ package com.czy.api.domain.Do.neo4j.rels;
 import com.czy.api.constant.post.DiseasesKnowledgeGraphEnum;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/5/19 14:31
  */
 @Data
-public class UserEntityRelation {
+public class UserEntityRelation implements Serializable {
 
     private Long userId;
 

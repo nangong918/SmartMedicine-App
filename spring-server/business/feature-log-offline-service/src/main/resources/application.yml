@@ -107,7 +107,7 @@ spring:
         spring:
           json:
             trusted:
-              packages: com.czy.api.domain
+              packages: "*"
         fetch.min.bytes: 1  # 立即返回
         fetch.max.wait.ms: 1  # 快速返回
         max.poll.records: 100  # 每次拉取100条

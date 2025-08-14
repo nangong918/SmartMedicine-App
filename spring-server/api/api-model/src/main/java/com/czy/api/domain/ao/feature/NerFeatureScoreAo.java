@@ -2,6 +2,8 @@ package com.czy.api.domain.ao.feature;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/5/5 16:25
@@ -9,7 +11,7 @@ import lombok.Data;
  * @see com.czy.api.domain.ao.post.PostNerResult
  */
 @Data
-public class NerFeatureScoreAo {
+public class NerFeatureScoreAo implements Serializable {
     private String keyWord;
     private String nerType;
     private ScoreAo score = new ScoreAo();

@@ -4,6 +4,7 @@ import com.czy.api.constant.feature.PostTypeEnum;
 import com.czy.api.domain.ao.post.PostNerResult;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * Post的特征
  */
 @Data
-public class PostFeatureAo {
+public class PostFeatureAo implements Serializable {
     private List<PostNerResult> postNerResultList;
     // 发表的时候审核识别分配
     private Integer postType = PostTypeEnum.OTHER.getCode();

@@ -2,6 +2,7 @@ package com.czy.api.domain.ao.feature;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * @see com.czy.api.domain.ao.post.PostNerResult
  */
 @Data
-public class NerFeatureScoreDaysAo {
+public class NerFeatureScoreDaysAo implements Serializable {
     private String keyWord;
     private String nerType;
     private List<ScoreDaysAo> scoreDaysAoList = new ArrayList<>();
