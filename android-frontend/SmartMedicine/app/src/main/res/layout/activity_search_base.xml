@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.SearchActivity">
+    tools:context=".activity.search.SearchUserActivity">
 
     <com.czy.customviewlib.view.InfoBarView
         android:id="@+id/top_bar"
