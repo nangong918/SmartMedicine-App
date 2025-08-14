@@ -210,7 +210,8 @@ public class PostClickManager {
 
         Log.i("check_netty", "PostClickManager::MessageSender: " + MainApplication.getInstance().getMessageSender());
 
-        openPostActivityLauncher.launch(intent);
+        activity.startActivity(intent);
+//        openPostActivityLauncher.launch(intent);
 
         startReadPostTime = System.currentTimeMillis();
         // 记录点击（浏览）post事件
@@ -227,6 +228,7 @@ public class PostClickManager {
         request.postId = postId;
         request.senderId = userId;
         request.timestamp = String.valueOf(time);
+        Log.i("check_netty", "recordPostView::MessageSender: " + MainApplication.getInstance().getMessageSender());
         this.socketSender.uploadClickEvent(request);
     }
 
@@ -240,6 +242,7 @@ public class PostClickManager {
         request.timestamp = String.valueOf(time);
         request.postId = postId;
         request.browseDuration = duration;
+        Log.i("check_netty", "recordViewingDuration::MessageSender: " + MainApplication.getInstance().getMessageSender());
         this.socketSender.uploadBrowseEvent(request);
     }
 

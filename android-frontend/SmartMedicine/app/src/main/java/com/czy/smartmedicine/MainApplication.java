@@ -199,10 +199,10 @@ public class MainApplication extends Application {
     //==========ServiceInitiator
     private NettySocketServiceInitiator nettySocketServiceInitiator;
 
-    // 连接WebSocket
+    // 启动连接Netty的Service
     public void startNettySocketService(Long senderId){
-        nettySocketServiceInitiator = new NettySocketServiceInitiator();
-        nettySocketServiceInitiator.initRemoteService(
+        this.nettySocketServiceInitiator = new NettySocketServiceInitiator();
+        this.nettySocketServiceInitiator.initRemoteService(
                 this,
                 senderId,
                 MainApplication.getMessageListener()
@@ -215,6 +215,7 @@ public class MainApplication extends Application {
     public void disconnectNettySocketService(){
         if (nettySocketServiceInitiator != null){
             nettySocketServiceInitiator.disconnectNetty();
+            Log.i(TAG, "断开链接netty的service");
         }
     }
 
@@ -222,11 +223,13 @@ public class MainApplication extends Application {
 
     // sendMessage
     public SocketMessageSender getMessageSender(){
-        if (nettySocketServiceInitiator == null){
+        Log.w("check_netty", "nettySocketServiceInitiator: " + this.nettySocketServiceInitiator);
+        Log.i(TAG, "getMessageSender, nettySocketServiceInitiator = " + this.nettySocketServiceInitiator);
+        if (this.nettySocketServiceInitiator == null){
             Log.w(TAG, "远程发送消息的Service未启动");
             return null;
         }
-        return nettySocketServiceInitiator.getMessageSender();
+        return this.nettySocketServiceInitiator.getMessageSender();
     }
 
     //==========user

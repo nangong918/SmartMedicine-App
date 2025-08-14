@@ -36,6 +36,9 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     @Override
     protected void init() {
         super.init();
+
+        Log.i("check_netty", "ChatActivity::MessageSender: " + MainApplication.getInstance().getMessageSender());
+
         initIntentData();
         initViewModel();
 

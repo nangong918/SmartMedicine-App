@@ -3,14 +3,18 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application>
-        <service
-            android:name="com.czy.appcore.network.netty.service.NettySocketService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="remoteMessaging"
-            android:process=":nettyService">
+<!--        <service-->
+<!--            android:name="com.czy.appcore.network.netty.service.NettySocketService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true"-->
+<!--            android:foregroundServiceType="remoteMessaging"-->
+<!--            android:process=":nettyService">-->
+<!--        <service-->
+<!--            android:name="com.czy.appcore.network.netty.service.NettySocketService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true">-->
 
-        </service>
+<!--        </service>-->
     </application>
 
 </manifest>
