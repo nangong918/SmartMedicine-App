@@ -33,7 +33,7 @@ public class PostSearchAdapter extends RecyclerView.Adapter<PostSearchViewHolder
     public PostSearchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         ViewPostSearchBinding binding = ViewPostSearchBinding.inflate(inflater, parent, false);
-        return new PostSearchViewHolder(binding);
+        return new PostSearchViewHolder(binding, onPostClick);
     }
 
     @Override
@@ -43,10 +43,8 @@ public class PostSearchAdapter extends RecyclerView.Adapter<PostSearchViewHolder
             Log.w(TAG, "postExVo数据为空");
             return;
         }
-        // 设置view数据
-        holder.setView(postExVo);
-        // 设置点击事件
-        this.onPostClick.onPostClick(position, postExVo.postId);
+        // 设置数据
+        holder.setAo(postExVo);
     }
 
     @Override

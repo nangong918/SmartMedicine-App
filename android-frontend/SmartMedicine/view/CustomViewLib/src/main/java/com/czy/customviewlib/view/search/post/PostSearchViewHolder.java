@@ -14,13 +14,20 @@ public class PostSearchViewHolder extends RecyclerView.ViewHolder {
 
     private final ViewPostSearchBinding binding;
 
-    public PostSearchViewHolder(@NonNull ViewPostSearchBinding binding) {
+    public PostSearchViewHolder(@NonNull ViewPostSearchBinding binding,
+                                @NonNull OnPostClick onPostClick
+    ) {
         super(binding.getRoot());
-
         this.binding = binding;
+        setClick(onPostClick);
     }
 
-    public void setView(@NonNull PostExVo postExVo){
+    public void setAo(@NonNull PostExVo postExVo){
+        setView(postExVo);
+        setData(postExVo);
+    }
+
+    private void setView(@NonNull PostExVo postExVo){
         // userFace
         Optional.ofNullable(postExVo.authorAvatarUrl)
                 .ifPresent(
@@ -45,5 +52,17 @@ public class PostSearchViewHolder extends RecyclerView.ViewHolder {
         // type
         String type = PostSearchResultListEnum.getEnum(postExVo.type).getName();
         binding.tvType.setText(type);
+    }
+
+    private Long postId;
+
+    private void setData(@NonNull PostExVo postExVo){
+        this.postId = postExVo.postId;
+    }
+
+    private void setClick(@NonNull OnPostClick onPostClick){
+        binding.basicCard.setOnClickListener(v -> {
+            onPostClick.onPostClick(getAdapterPosition(), postId);
+        });
     }
 }
