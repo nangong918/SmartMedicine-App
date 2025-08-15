@@ -17,7 +17,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.customviewlib.view.DialogAnswer;
 import com.czy.customviewlib.view.home.OnRecommendCardClick;
-import com.czy.customviewlib.view.home.PostAdapter;
+import com.czy.customviewlib.view.home.PostHomeAdapter;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
@@ -71,7 +71,7 @@ public class SearchPostVm extends ViewModel {
 
     public SearchPostVo searchPostVo = new SearchPostVo();
 
-    public PostAdapter postAdapter;
+    public PostHomeAdapter postHomeAdapter;
 
     public DialogAnswer dialogAnswer;
 
@@ -82,12 +82,12 @@ public class SearchPostVm extends ViewModel {
 
         OnRecommendCardClick onRecommendCardClick = postClickManager.getOnRecommendCardClick(activity);
 
-        postAdapter = new PostAdapter(
+        postHomeAdapter = new PostHomeAdapter(
                 postAoList,
                 onRecommendCardClick
         );
 
-        recyclerView.setAdapter(postAdapter);
+        recyclerView.setAdapter(postHomeAdapter);
     }
 
     public void initDialogAnswer(FragmentActivity activity, View.OnClickListener onViewDetailsClickListener){
@@ -197,7 +197,7 @@ public class SearchPostVm extends ViewModel {
                     List<PostAo> postAoList = postClickManager.getPostAoListByResponse(postInfoUrlAos);
                     searchPostVo.postAoList.clear();
                     searchPostVo.postAoList.addAll(postAoList);
-                    postAdapter.notifyDataSetChanged();
+                    postHomeAdapter.notifyDataSetChanged();
                 }
             }
             case APP_FUNCTION_RESULT -> {
@@ -239,6 +239,6 @@ public class SearchPostVm extends ViewModel {
         searchPostVo.postAoList.addAll(recommendPostAoList);
 
         // ui通知items变化
-        postAdapter.notifyDataSetChanged();
+        postHomeAdapter.notifyDataSetChanged();
     }
 }

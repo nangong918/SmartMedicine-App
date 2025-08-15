@@ -15,7 +15,7 @@ import com.czy.dal.vo.entity.home.PostVo;
 
 import java.util.Optional;
 
-public class PostItemViewManager {
+public class PostHomeItemViewManager {
 
     private interface ViewBinding {
         void setUserFace(String url);

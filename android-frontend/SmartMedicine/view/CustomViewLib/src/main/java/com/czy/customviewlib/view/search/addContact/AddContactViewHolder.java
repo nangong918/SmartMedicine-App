@@ -1,11 +1,10 @@
-package com.czy.customviewlib.view.addContact;
+package com.czy.customviewlib.view.search.addContact;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
@@ -13,21 +12,19 @@ import com.czy.customviewlib.databinding.ViewAddContactCardItemBinding;
 import com.czy.dal.OnPositionItemClick;
 import com.czy.dal.constant.newUserGroup.ApplyButtonStatusEnum;
 import com.czy.dal.constant.newUserGroup.HandleButtonStatusEnum;
-import com.czy.dal.constant.newUserGroup.HandleStatusEnum;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
 
-import java.util.List;
 import java.util.Optional;
 
 
 /**
  * @author 13225
  */
-public class AddContactItemViewHolder extends RecyclerView.ViewHolder{
+public class AddContactViewHolder extends RecyclerView.ViewHolder{
 
     private final ViewAddContactCardItemBinding binding;
 
-    public AddContactItemViewHolder(@NonNull ViewAddContactCardItemBinding binding) {
+    public AddContactViewHolder(@NonNull ViewAddContactCardItemBinding binding) {
         super(binding.getRoot());
         this.binding = binding;
     }
@@ -47,7 +44,7 @@ public class AddContactItemViewHolder extends RecyclerView.ViewHolder{
 
     private void updateAddFriendButton(Integer[] buttonState, AddContactItemVo addContactItemVo) {
         if (buttonState == null || buttonState.length == 0){
-            Log.w(AddContactItemViewHolder.class.getName(), "isAddedStates is null or empty");
+            Log.w(AddContactViewHolder.class.getName(), "isAddedStates is null or empty");
             return;
         }
 
@@ -62,12 +59,12 @@ public class AddContactItemViewHolder extends RecyclerView.ViewHolder{
             try {
                 setButton(binding.btn2, addContactItemVo.isBeAdd, buttonState[1], addContactItemVo, "");
             } catch (Exception e){
-                Log.e(AddContactItemViewHolder.class.getName(), "binding.btn2 set Error");
+                Log.e(AddContactViewHolder.class.getName(), "binding.btn2 set Error");
             }
             try {
                 setButton(binding.btn3, addContactItemVo.isBeAdd, buttonState[2], addContactItemVo, "");
             } catch (Exception e){
-                Log.e(AddContactItemViewHolder.class.getName(), "binding.btn3 set Error");
+                Log.e(AddContactViewHolder.class.getName(), "binding.btn3 set Error");
             }
         }
     }

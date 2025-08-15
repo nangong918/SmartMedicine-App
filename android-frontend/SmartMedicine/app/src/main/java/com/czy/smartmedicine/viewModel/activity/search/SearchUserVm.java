@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.service.AddUserStateHandler;
 import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.customviewlib.view.addContact.AddContactAdapter;
+import com.czy.customviewlib.view.search.addContact.AddContactAdapter;
 import com.czy.dal.OnPositionItemButtonContentClick;
 import com.czy.dal.OnPositionItemClick;
 import com.czy.dal.ao.newUser.AddUserStatusAo;

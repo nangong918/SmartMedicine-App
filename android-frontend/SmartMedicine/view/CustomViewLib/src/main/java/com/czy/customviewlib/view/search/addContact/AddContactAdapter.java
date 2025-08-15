@@ -1,4 +1,4 @@
-package com.czy.customviewlib.view.addContact;
+package com.czy.customviewlib.view.search.addContact;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -64,7 +64,7 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         ViewAddContactCardItemBinding binding = ViewAddContactCardItemBinding.inflate(
                 LayoutInflater.from(context), parent, false
         );
-        return new AddContactItemViewHolder(binding);
+        return new AddContactViewHolder(binding);
     }
 
     @Override
@@ -73,8 +73,8 @@ public class AddContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 .filter(list -> list.size() >= position)
                 .map(list -> list.get(position))
                 .orElse(new AddContactItemVo());
-        ((AddContactItemViewHolder)holder).bind(vo);
-        ((AddContactItemViewHolder)holder).setPositionClick(onPositionItemClick);
+        ((AddContactViewHolder)holder).bind(vo);
+        ((AddContactViewHolder)holder).setPositionClick(onPositionItemClick);
     }
 
     @Override

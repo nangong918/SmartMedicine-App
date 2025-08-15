@@ -13,7 +13,7 @@ import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.customviewlib.view.home.OnRecommendCardClick;
-import com.czy.customviewlib.view.home.PostAdapter;
+import com.czy.customviewlib.view.home.PostHomeAdapter;
 import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
 import com.czy.dal.constant.NettyConstants;
@@ -52,7 +52,7 @@ public class HomeVm extends ViewModel {
     //---------------------------Vo Ld---------------------------
 
     public HomeVo homeVo = new HomeVo();
-    public PostAdapter postAdapter;
+    public PostHomeAdapter postHomeAdapter;
 
     public void init(HomeVo homeVo){
         this.homeVo = homeVo;
@@ -64,12 +64,12 @@ public class HomeVm extends ViewModel {
         OnRecommendCardClick onRecommendCardClick = postClickManager.getOnRecommendCardClick(activity);
 
         // adapter的地址指针指向数据仓库
-        postAdapter = new PostAdapter(
+        postHomeAdapter = new PostHomeAdapter(
                 MainApplication.getInstance().getPostDataManager().recommendPosts,
                 onRecommendCardClick
         );
 
-        recyclerView.setAdapter(postAdapter);
+        recyclerView.setAdapter(postHomeAdapter);
     }
 
     //---------------------------NetWork---------------------------
@@ -174,7 +174,7 @@ public class HomeVm extends ViewModel {
 
         // adapter更新；注意此处RecyclerViewAdapter的更新逻辑跟其他地方的Adapter更新逻辑不一样，是直接由指针指向地址去更新
         for (int i = beforeSize; i < recommendPost.size(); i++) {
-            postAdapter.notifyItemInserted(i);
+            postHomeAdapter.notifyItemInserted(i);
         }
 
         callback.onAllRequestSuccess();

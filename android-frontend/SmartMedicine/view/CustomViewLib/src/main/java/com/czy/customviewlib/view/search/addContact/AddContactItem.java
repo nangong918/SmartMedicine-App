@@ -1,4 +1,4 @@
-package com.czy.customviewlib.view.addContact;
+package com.czy.customviewlib.view.search.addContact;
 
 import android.content.Context;
 import android.util.AttributeSet;

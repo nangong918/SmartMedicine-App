@@ -15,15 +15,15 @@ import com.czy.dal.constant.home.RecommendCardType;
 import java.util.List;
 import java.util.Optional;
 
-public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PostHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final static String TAG = PostAdapter.class.getName();
+    private final static String TAG = PostHomeAdapter.class.getName();
 
     private final List<PostAo> postAoList;
     private final OnRecommendCardClick onRecommendCardClick;
 
-    public PostAdapter(List<PostAo> postAoList,
-                       OnRecommendCardClick onRecommendCardClick) {
+    public PostHomeAdapter(List<PostAo> postAoList,
+                           OnRecommendCardClick onRecommendCardClick) {
         this.postAoList = postAoList;
         this.onRecommendCardClick = onRecommendCardClick;
     }
@@ -51,12 +51,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // 大的卡片
             case SINGLE_BIG_CARD -> {
                 ViewRecommendCardPlusBinding binding = ViewRecommendCardPlusBinding.inflate(inflater, parent, false);
-                return new PostItemPlusViewHolder(binding, onRecommendCardClick);
+                return new PostHomePlusViewHolder(binding, onRecommendCardClick);
             }
             // 两个小卡片
             case TWO_SMALL_CARD -> {
                 ViewRecommendCardBinding binding = ViewRecommendCardBinding.inflate(inflater, parent, false);
-                return new PostItemViewHolder(binding, onRecommendCardClick);
+                return new PostHomeViewHolder(binding, onRecommendCardClick);
             }
             default -> {
                 Log.w(TAG, "未知的推荐卡片类型");
@@ -73,8 +73,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         RecommendCardType recommendCardType = RecommendCardType.valueOf(postAo.viewType);
         switch (recommendCardType){
-            case SINGLE_BIG_CARD -> ((PostItemPlusViewHolder)holder).setView(postAo);
-            case TWO_SMALL_CARD -> ((PostItemViewHolder)holder).setView(postAo);
+            case SINGLE_BIG_CARD -> ((PostHomePlusViewHolder)holder).setView(postAo);
+            case TWO_SMALL_CARD -> ((PostHomeViewHolder)holder).setView(postAo);
             default -> Log.w(TAG, "未知的推荐卡片类型");
         }
     }

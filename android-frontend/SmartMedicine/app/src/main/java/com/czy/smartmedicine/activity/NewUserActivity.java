@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.addContact.AddContactAdapter;
+import com.czy.customviewlib.view.search.addContact.AddContactAdapter;
 import com.czy.dal.ao.intent.NewUserActivityIntentAo;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
 import com.czy.dal.vo.entity.addContact.AddContactListVo;
