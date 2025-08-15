@@ -101,7 +101,7 @@ public class PostController {
         PostAo postAo = postConverter.requestToAo(request, request.getSenderId());
         // 审核 目前只有防止刷帖；没有自然语言审核
         if (!postService.isLegalPost(postAo)) {
-            return BaseResponse.LogBackError("帖子内容不合规，请修改");
+            return BaseResponse.LogBackError(PostExceptions.POST_CONTENT_REJECTED);
         }
         // 自然语言标签分析 + 标签存储 todo 4大基本分区
         // 不需要上传文件的情况

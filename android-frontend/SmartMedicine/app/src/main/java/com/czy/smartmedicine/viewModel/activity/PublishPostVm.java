@@ -57,7 +57,7 @@ public class PublishPostVm extends ViewModel {
     private void initialNetworkRequest() {
     }
 
-    public void doPostPublishFirst(boolean isHaveFile, Context context, SyncRequestCallback callback){
+    public void doPostPublishFirst(Context context, SyncRequestCallback callback){
         String title = Optional.ofNullable(publishPostVo)
                 .map(vo -> vo.postTitleLd)
                 .map(LiveData::getValue)
@@ -75,6 +75,11 @@ public class PublishPostVm extends ViewModel {
             callback.onThrowable(new Throwable(errorMessage));
             return;
         }
+
+        boolean isHaveFile = Optional.ofNullable(publishPostVo)
+                .map(vo -> vo.imageUriLd)
+                .map(ld -> ld.getValue() != null)
+                .orElse(false);
 
         PostPublishRequest request = new PostPublishRequest();
         request.title = title;

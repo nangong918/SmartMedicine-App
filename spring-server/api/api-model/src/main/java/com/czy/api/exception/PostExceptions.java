@@ -34,6 +34,10 @@ public enum PostExceptions implements ExceptionEnums {
     COLLECT_FOLDER_OPERATION_FAILED("P_10011", "收藏夹操作失败"),
     // 创建收藏夹失败
     CREATE_COLLECT_FOLDER_FAILED("P_10012", "创建收藏夹失败"),
+    // 发布相同帖子内容被驳回
+    POST_CONTENT_REJECTED("P_10013", "发布相同帖子内容被驳回"),
+    // 帖子内容违规，请修改
+    POST_CONTENT_VIOLATION("P_10014", "帖子内容违规，请修改"),
     ;
 
     private final String code;

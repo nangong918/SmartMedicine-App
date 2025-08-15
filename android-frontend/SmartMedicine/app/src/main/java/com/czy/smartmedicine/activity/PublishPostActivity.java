@@ -51,10 +51,9 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
         binding.btnPublish.setOnClickListener(v -> {
             // 因为后端需要先检查是否合法
             // 所以前端需要调用第一个接口
-            boolean isHaveFile = !(vm.publishPostVo.imageUriLd.getValue() == null);
+
             NetworkLoadUtils.showDialog(this);
             vm.doPostPublishFirst(
-                    isHaveFile,
                     this,
                     new SyncRequestCallback() {
                         @Override
