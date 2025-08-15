@@ -93,6 +93,8 @@ dependencies {
 
     // Gson
     implementation libs.converter.gson
+    // fastJson
+//    implementation libs.fastjson
 
     /**
      * 自定义Module

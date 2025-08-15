@@ -7,6 +7,7 @@ import com.czy.dal.vo.entity.home.PostVo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -43,7 +44,7 @@ public class PostSearchResultAo {
                     postExVo.type = PostSearchResultListEnum.LIKE_MATCH_RESULT.getValue();
                     return postExVo;
                 })
-                .toList();
+                .collect(Collectors.toList());
         List<PostExVo> list2 = tokenizedPostPreviewVoList.stream()
                 .map(postVo -> {
                     PostExVo postExVo = new PostExVo();
@@ -51,7 +52,7 @@ public class PostSearchResultAo {
                     postExVo.type = PostSearchResultListEnum.TOKENIZED_MATCH_RESULT.getValue();
                     return postExVo;
                 })
-                .toList();
+                .collect(Collectors.toList());
         List<PostExVo> list3 = similarPostPreviewVoList.stream()
                 .map(postVo -> {
                     PostExVo postExVo = new PostExVo();
@@ -59,7 +60,7 @@ public class PostSearchResultAo {
                     postExVo.type = PostSearchResultListEnum.SIMILAR_MATCH_RESULT.getValue();
                     return postExVo;
                 })
-                .toList();
+                .collect(Collectors.toList());
         List<PostExVo> list4 = recommendPostPreviewVoList.stream()
                 .map(postVo -> {
                     PostExVo postExVo = new PostExVo();
@@ -67,7 +68,7 @@ public class PostSearchResultAo {
                     postExVo.type = PostSearchResultListEnum.RECOMMEND_MATCH_RESULT.getValue();
                     return postExVo;
                 })
-                .toList();
+                .collect(Collectors.toList());
 
         allList.addAll(list1);
         allList.addAll(list2);

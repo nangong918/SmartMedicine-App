@@ -174,20 +174,23 @@ public class SearchPostVm extends ViewModel {
             }
             case SEARCH_POST_RESULT -> {
                 try {
-                    PostSearchResultAo ao = MainApplication.getGson().fromJson(
-                            data.toString(), PostSearchResultAo.class
-                    );
+                    // 将 Object 类型的 data 转换为 JSON 字符串 (不能使用data.toString(), 因为Java的toString是=而不是:)
+                    String jsonString = MainApplication.getGson().toJson(data);
+                    // 解析 JSON 字符串为 PostSearchResultAo 对象
+                    PostSearchResultAo ao = MainApplication.getGson().fromJson(jsonString, PostSearchResultAo.class);
+
 
                     // 搜索
                     searchPostAAo.postExVoList.addAll(ao.getPostExVoList());
-                } catch (Exception e){
-                    Log.e(TAG, "模糊搜索::error[类型gson转换错误] enumType：" + enumType, e);
+                } catch (Exception e) {
+                    Log.e(TAG, "模糊搜索::error[类型fastJson转换错误] enumType：" + enumType, e);
                 }
             }
             case QUESTION_RESULT -> {
                 try {
+                    String jsonString = MainApplication.getGson().toJson(data);
                     QuestionAo ao = MainApplication.getGson().fromJson(
-                            data.toString(), QuestionAo.class
+                            jsonString, QuestionAo.class
                     );
                     PostSearchResultAo postSearchResultAo = ao.postSearchResultAo;
 
@@ -210,8 +213,9 @@ public class SearchPostVm extends ViewModel {
             }
             case RECOMMEND_QUESTION_RESULT -> {
                 try {
+                    String jsonString = MainApplication.getGson().toJson(data);
                     PostRecommendAo ao = MainApplication.getGson().fromJson(
-                            data.toString(), PostRecommendAo.class
+                            jsonString, PostRecommendAo.class
                     );
                     List<PostInfoUrlAo> postInfoUrlAos = ao.postInfoUrlAos;
                     List<PostExVo> recommendPostVoList = new ArrayList<>();
@@ -234,8 +238,9 @@ public class SearchPostVm extends ViewModel {
             }
             case APP_FUNCTION_RESULT -> {
                 try {
+                    String jsonString = MainApplication.getGson().toJson(data);
                     AppFunctionAo ao = MainApplication.getGson().fromJson(
-                            data.toString(), AppFunctionAo.class
+                            jsonString, AppFunctionAo.class
                     );
                     // 暂未开发
                     ToastUtils.showToast(context, ao.message);
@@ -245,8 +250,9 @@ public class SearchPostVm extends ViewModel {
             }
             case PERSONAL_QUESTION_RESULT -> {
                 try {
+                    String jsonString = MainApplication.getGson().toJson(data);
                     PersonalEvaluateAo ao = MainApplication.getGson().fromJson(
-                            data.toString(), PersonalEvaluateAo.class
+                            jsonString, PersonalEvaluateAo.class
                     );
                     PersonalResultIntent intentType = PersonalResultIntent.getByType(ao.intent);
                     Double heartDisease = Optional.ofNullable(ao.heartDisease)
