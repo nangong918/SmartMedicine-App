@@ -107,6 +107,7 @@ public class PostController {
         // 不需要上传文件的情况
         if (!request.getIsHaveFiles()){
             snowflakeId = postService.releasePostWithoutFile(postAo);
+            log.info("[post不包含文件发布][帖子id为：{}]", snowflakeId);
         }
         else {
             // 1.给用户id上分布式锁
@@ -128,6 +129,10 @@ public class PostController {
                 // 2.1特征提取
                 // 使用知识图谱实体 + AcTree进行知识图谱特征提取
                 List<PostNerResult> resultList = postNerService.getPostNerResults(postAo.getTitle());
+
+                log.info("[post包含文件发布][userId: {}][发布post title: {}]\n[nerSize: {}][nerResults: {}]",
+                        request.getSenderId(), request.getTitle(), resultList.size(), resultList);
+
                 // acTree 进行Topic特征提取 todo
                 postAo.setNerResults(resultList);
                 // 特征存储在mongodb；mysql不适合存储非结构化数据
