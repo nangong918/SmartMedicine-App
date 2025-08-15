@@ -70,4 +70,5 @@
     <string name="send_image_failed">图片发送失败</string>
     <string name="gain_permission_failed">获取权限失败</string>
     <string name="system_error">系统错误</string>
+    <string name="post_id_is_null">帖子不存在</string>
 </resources>

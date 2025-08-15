@@ -1,5 +1,6 @@
 package com.czy.smartmedicine.activity.search;
 
+import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.SearchView;
 
@@ -8,8 +9,10 @@ import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
+import com.czy.dal.ao.home.PostIntentAo;
 import com.czy.dal.fragmentActivityAo.search.SearchPostAAo;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.PostActivity;
 import com.czy.smartmedicine.databinding.ActivitySearchBaseBinding;
 import com.czy.smartmedicine.viewModel.activity.search.SearchPostVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
@@ -71,9 +74,7 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
         vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchPostVm.class);
 
         vm.init(new SearchPostAAo(), this);
-        vm.initRecyclerAdapter(binding.rclvSearch, (position, postId) -> {
-
-        });
+        vm.initRecyclerAdapter(binding.rclvSearch, this::openSearchPostDetailActivity);
         vm.initDialogAnswer(this, v -> {
             // todo 跳转到跟ai聊天的详情页
         });
@@ -127,5 +128,20 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
     }
 
     private void observeData(){
+    }
+    
+    private void openSearchPostDetailActivity(int position, Long postId){
+        if (postId == null){
+            ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.post_id_is_null));
+            return;
+        }
+        Intent intent = new Intent(this, PostActivity.class);
+
+        PostIntentAo postIntentAo = new PostIntentAo();
+        postIntentAo.postId = postId;
+
+        intent.putExtra(PostIntentAo.POST_OPEN_INTENT, postIntentAo);
+
+        startActivity(intent);
     }
 }
