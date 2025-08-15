@@ -10,7 +10,7 @@ import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
-import com.czy.dal.vo.fragmentActivity.chat.ChatVo;
+import com.czy.dal.fragmentActivityAo.chat.ChatVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityChatBinding;
 import com.czy.smartmedicine.viewModel.activity.ChatVm;

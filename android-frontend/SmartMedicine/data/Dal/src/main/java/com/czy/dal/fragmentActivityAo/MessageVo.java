@@ -1,4 +1,4 @@
-package com.czy.dal.vo.fragmentActivity;
+package com.czy.dal.fragmentActivityAo;
 
 import com.czy.dal.vo.entity.message.ChatContactListVo;
 

@@ -15,7 +15,7 @@ import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.post.CommentAdapter;
 import com.czy.dal.ao.home.PostIntentAo;
 import com.czy.dal.vo.entity.home.CommentVo;
-import com.czy.dal.vo.fragmentActivity.post.PostActivityVo;
+import com.czy.dal.fragmentActivityAo.post.PostActivityVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPostBinding;
 import com.czy.smartmedicine.viewModel.activity.PostVm;

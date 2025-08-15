@@ -18,7 +18,7 @@ import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.customviewlib.view.DialogPrompt;
 import com.czy.dal.ao.intent.RegisterIntentAAo;
 import com.czy.dal.constant.intent.RegisterActivityType;
-import com.czy.dal.vo.fragmentActivity.SignVo;
+import com.czy.dal.fragmentActivityAo.SignVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySignBinding;
 import com.czy.smartmedicine.test.TestConfig;

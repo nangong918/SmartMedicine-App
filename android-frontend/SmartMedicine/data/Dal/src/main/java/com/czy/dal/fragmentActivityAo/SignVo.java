@@ -1,4 +1,4 @@
-package com.czy.dal.vo.fragmentActivity;
+package com.czy.dal.fragmentActivityAo;
 
 
 import androidx.lifecycle.MutableLiveData;

@@ -14,7 +14,7 @@ import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.GetSinglePostRequest;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.response.SinglePostResponse;
-import com.czy.dal.vo.fragmentActivity.post.PostActivityVo;
+import com.czy.dal.fragmentActivityAo.post.PostActivityVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ResponseTool;

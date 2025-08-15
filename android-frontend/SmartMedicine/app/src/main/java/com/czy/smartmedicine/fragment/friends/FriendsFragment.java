@@ -21,7 +21,7 @@ import com.czy.customviewlib.view.viewPager.ViewPagerConstant;
 import com.czy.dal.ao.intent.NewUserActivityIntentAo;
 import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
-import com.czy.dal.vo.fragmentActivity.FriendsVo;
+import com.czy.dal.fragmentActivityAo.FriendsVo;
 import com.czy.dal.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.MainActivity;

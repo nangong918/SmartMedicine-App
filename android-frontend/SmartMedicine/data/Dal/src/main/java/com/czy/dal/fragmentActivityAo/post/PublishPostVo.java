@@ -1,4 +1,4 @@
-package com.czy.dal.vo.fragmentActivity.post;
+package com.czy.dal.fragmentActivityAo.post;
 
 import android.net.Uri;
 

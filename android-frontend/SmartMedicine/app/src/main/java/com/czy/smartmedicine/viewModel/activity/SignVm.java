@@ -29,7 +29,7 @@ import com.czy.dal.dto.http.request.IsRegisterRequest;
 import com.czy.dal.dto.http.request.LoginUserRequest;
 import com.czy.dal.dto.http.response.IsRegisterResponse;
 import com.czy.dal.dto.http.response.LoginSignResponse;
-import com.czy.dal.vo.fragmentActivity.SignVo;
+import com.czy.dal.fragmentActivityAo.SignVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.MainActivity;

@@ -1,4 +1,4 @@
-package com.czy.dal.vo.fragmentActivity.chat;
+package com.czy.dal.fragmentActivityAo.chat;
 
 import com.czy.dal.vo.entity.message.ChatMessageItemVo;
 

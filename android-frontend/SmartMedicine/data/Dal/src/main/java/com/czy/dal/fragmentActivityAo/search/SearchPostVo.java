@@ -1,4 +1,4 @@
-package com.czy.dal.vo.fragmentActivity.search;
+package com.czy.dal.fragmentActivityAo.search;
 
 import androidx.lifecycle.MutableLiveData;
 

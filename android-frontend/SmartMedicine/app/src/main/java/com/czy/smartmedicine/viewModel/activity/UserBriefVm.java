@@ -13,7 +13,7 @@ import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.UserBriefRequest;
 import com.czy.dal.dto.http.response.UserBriefResponse;
 import com.czy.dal.vo.entity.home.PostVo;
-import com.czy.dal.vo.fragmentActivity.UserBriefVo;
+import com.czy.dal.fragmentActivityAo.UserBriefVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ResponseTool;

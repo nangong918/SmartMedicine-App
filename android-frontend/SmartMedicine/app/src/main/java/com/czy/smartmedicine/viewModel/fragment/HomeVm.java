@@ -19,7 +19,7 @@ import com.czy.dal.ao.home.PostInfoUrlAo;
 import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.dto.http.request.RecommendPostRequest;
 import com.czy.dal.dto.http.response.RecommendPostResponse;
-import com.czy.dal.vo.fragmentActivity.HomeVo;
+import com.czy.dal.fragmentActivityAo.HomeVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.fragment.HomeFragment;

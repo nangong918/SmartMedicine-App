@@ -31,7 +31,7 @@ import com.czy.dal.dto.http.request.SendSmsRequest;
 import com.czy.dal.dto.http.response.SendSmsResponse;
 import com.czy.dal.dto.http.response.UserRegisterResponse;
 import com.czy.dal.vo.entity.UserEntityVo;
-import com.czy.dal.vo.fragmentActivity.RegisterVo;
+import com.czy.dal.fragmentActivityAo.RegisterVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.test.TestConfig;

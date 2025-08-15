@@ -31,7 +31,7 @@ import com.czy.dal.constant.search.FuzzySearchResponseEnum;
 import com.czy.dal.constant.search.PersonalResultIntent;
 import com.czy.dal.dto.http.request.FuzzySearchRequest;
 import com.czy.dal.dto.http.response.FuzzySearchResponse;
-import com.czy.dal.vo.fragmentActivity.search.SearchPostVo;
+import com.czy.dal.fragmentActivityAo.search.SearchPostVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.manager.PostClickManager;

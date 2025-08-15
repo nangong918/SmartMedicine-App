@@ -29,7 +29,7 @@ import com.czy.dal.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.dal.dto.netty.request.AddUserRequest;
 import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
 import com.czy.dal.vo.entity.addContact.AddContactItemVo;
-import com.czy.dal.vo.fragmentActivity.NewUserGroupVo;
+import com.czy.dal.fragmentActivityAo.NewUserGroupVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.AsyncRequestManager;

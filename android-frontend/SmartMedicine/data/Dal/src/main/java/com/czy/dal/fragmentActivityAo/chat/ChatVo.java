@@ -1,4 +1,4 @@
-package com.czy.dal.vo.fragmentActivity.chat;
+package com.czy.dal.fragmentActivityAo.chat;
 
 import androidx.lifecycle.MutableLiveData;
 

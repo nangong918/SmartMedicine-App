@@ -19,7 +19,7 @@ import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.ao.intent.RegisterIntentAAo;
 import com.czy.dal.constant.intent.RegisterActivityType;
-import com.czy.dal.vo.fragmentActivity.RegisterVo;
+import com.czy.dal.fragmentActivityAo.RegisterVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityRegisterBinding;
 import com.czy.smartmedicine.viewModel.activity.RegisterVm;
