@@ -15,6 +15,7 @@ import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.dal.dto.http.request.PostPublishRequest;
 import com.czy.dal.dto.http.response.PostPublishResponse;
 import com.czy.dal.fragmentActivityAo.post.PublishPostVo;
+import com.czy.dal.vo.entity.home.PostVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ResponseTool;
@@ -136,15 +137,23 @@ public class PublishPostVm extends ViewModel {
                     parts,
                     postId,
                     userId,
-                    response -> {
-                        ToastUtils.showToastActivity(context, response.getMessage());
-                        // 完成
-                        callback.onAllRequestSuccess();
-                    },
+                    response ->
+                            ResponseTool.handleSyncResponseEx(
+                            response,
+                            context,
+                            callback,
+                            this::handleUploadPostFile
+                    ),
                     callback::onThrowable
             );
         } catch (Exception e){
             callback.onThrowable(e);
         }
+    }
+
+    private void handleUploadPostFile(BaseResponse<PostVo> response, Context context, SyncRequestCallback callback){
+        ToastUtils.showToastActivity(context, response.getMessage());
+        // 完成
+        callback.onAllRequestSuccess();
     }
 }

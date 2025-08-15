@@ -36,6 +36,7 @@ import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
 import com.czy.dal.vo.entity.UserEntityVo;
+import com.czy.dal.vo.entity.home.PostVo;
 
 import java.util.List;
 
@@ -271,7 +272,7 @@ public interface ApiRequest {
      * @return              发布帖子
      */
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/postFile/uploadPost/immediately")
-    Observable<BaseResponse<String>> uploadPostFile(
+    Observable<BaseResponse<PostVo>> uploadPostFile(
             @Part List<MultipartBody.Part> files,
             @Part("postId") Long postId,
             @Part("userId") Long userId

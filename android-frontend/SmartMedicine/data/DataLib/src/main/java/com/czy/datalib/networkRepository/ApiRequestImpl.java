@@ -39,6 +39,7 @@ import com.czy.dal.dto.netty.response.FileDownloadBytesResponse;
 import com.czy.dal.dto.netty.response.FileUploadResponse;
 import com.czy.dal.dto.netty.response.UserNewMessageResponse;
 import com.czy.dal.vo.entity.UserEntityVo;
+import com.czy.dal.vo.entity.home.PostVo;
 
 import java.util.List;
 
@@ -368,7 +369,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
     }
 
     //    @POST("/postFile/uploadPost")
-    //    Observable<BaseResponse<String>> uploadPostFile(
+    //    Observable<BaseResponse<PostVo>> uploadPostFile(
     //            @Part("files") List<MultipartBody.Part> files,
     //            @Part("postId") Long postId,
     //            @Part("userId") Long userId
@@ -377,7 +378,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
     public void uploadPostFile(List<MultipartBody.Part> files,
                                Long postId,
                                Long userId,
-                               OnSuccessCallback<BaseResponse<String>> onSuccessCallback,
+                               OnSuccessCallback<BaseResponse<PostVo>> onSuccessCallback,
                                OnThrowableCallback onThrowableCallback){
         this.sendRequestCallback(
                 mApi.uploadPostFile(files, postId, userId),
