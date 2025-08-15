@@ -98,7 +98,13 @@ spring:
           config:
             multi-statement-allow:  true # 是否允许多语句执行
 
-
+  #-------------------------elasticsearch-------------------------
+  elasticsearch:
+    rest:
+      uris: http://127.0.0.1:9200
+      connection-timeout: 5000
+      username: ${ES_USER:elastic}
+      password: ${ES_PWD:akQiB0-u9wHv4YjcUU9k}
   #-------------------------RabbitMq-------------------------
   # RabbitMQ 配置项，对应 RabbitProperties 配置类
   rabbitmq:

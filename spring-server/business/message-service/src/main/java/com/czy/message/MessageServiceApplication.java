@@ -7,6 +7,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 /**
  * @author 13225
@@ -35,6 +36,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
         // 排除
         exclude = {}
 )
+// es
+@EnableElasticsearchRepositories(basePackages = "com.api.mapper")
 public class MessageServiceApplication {
     public static void main(String[] args) {
         new SpringApplicationBuilder(MessageServiceApplication.class)

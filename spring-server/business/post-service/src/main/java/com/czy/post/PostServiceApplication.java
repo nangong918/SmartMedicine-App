@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
  * @author 13225
@@ -16,7 +18,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 // mybatis-plus
 @MapperScan({"com.czy.post.mapper", "com.utils.minio.mapper", "com.api.mapper"})
 // mongodb
-//@EnableMongoRepositories(basePackages = "com.api.mapper")
+@EnableMongoRepositories(basePackages = "com.api.mapper")
 @EnableAspectJAutoProxy // 启用aop
 @EnableConfigurationProperties(DebugConfig.class)
 @SpringBootApplication(
@@ -40,6 +42,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
         // 排除
         exclude = {}
 )
+// es
+@EnableElasticsearchRepositories(basePackages = "com.api.mapper")
 public class PostServiceApplication {
     public static void main(String[] args) {
         new SpringApplicationBuilder(PostServiceApplication.class)
