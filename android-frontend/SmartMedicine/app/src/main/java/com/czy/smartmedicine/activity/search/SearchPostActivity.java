@@ -8,7 +8,7 @@ import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.dal.fragmentActivityAo.search.SearchPostVo;
+import com.czy.dal.fragmentActivityAo.search.SearchPostAAo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySearchBaseBinding;
 import com.czy.smartmedicine.viewModel.activity.search.SearchPostVm;
@@ -59,8 +59,6 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
 
         initViewModelVo();
 
-        initRecyclerView();
-
         observeData();
     }
 
@@ -72,8 +70,10 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
         vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchPostVm.class);
 
-        vm.init(new SearchPostVo(), this);
-        vm.initRecyclerAdapter(binding.rclvSearch, this);
+        vm.init(new SearchPostAAo(), this);
+        vm.initRecyclerAdapter(binding.rclvSearch, (position, postId) -> {
+
+        });
         vm.initDialogAnswer(this, v -> {
             // todo 跳转到跟ai聊天的详情页
         });
@@ -93,14 +93,14 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
             @Override
             public boolean onQueryTextChange(String newText) {
                 SearchPostVm searchPostVm = vm;
-                Optional.ofNullable(searchPostVm.searchPostVo)
+                Optional.ofNullable(searchPostVm.searchPostAAo)
                         .map(vo -> vo.edtvInputData)
                         .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
                 return true;
             }
         });
         // LiveData -> SearchView
-        searchPostVm.searchPostVo.edtvInputData.observe(this, newText -> {
+        searchPostVm.searchPostAAo.edtvInputData.observe(this, newText -> {
             if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
                 binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
             }
@@ -124,13 +124,6 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
                 NetworkLoadUtils.dismissDialog();
             }
         });
-    }
-
-    private void initRecyclerView(){
-        vm.initRecyclerAdapter(
-                binding.rclvSearch,
-                this
-        );
     }
 
     private void observeData(){

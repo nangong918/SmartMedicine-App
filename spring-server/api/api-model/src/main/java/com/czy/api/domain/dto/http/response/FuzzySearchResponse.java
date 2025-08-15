@@ -4,12 +4,14 @@ import com.czy.api.constant.search.FuzzySearchResponseEnum;
 import json.BaseBean;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/4/30 18:29
  */
 @Data
-public class FuzzySearchResponse implements BaseBean {
+public class FuzzySearchResponse implements BaseBean, Serializable {
     /**
      * 结果类型：
      * 1：0~1级 mysql like搜索结果

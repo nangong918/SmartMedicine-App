@@ -55,6 +55,26 @@ public class PostVo extends SortItem {
     // 当前用户是否不喜欢
     public Boolean isDislike = false;
 
+    public void setByPostVo(PostVo vo){
+        super.index = vo.index;
+        this.postId = vo.postId;
+        this.postImgUrls = vo.postImgUrls;
+        this.postTitle = vo.postTitle;
+        this.postContent = vo.postContent;
+        this.authorId = vo.authorId;
+        this.authorName = vo.authorName;
+        this.authorAvatarUrl = vo.authorAvatarUrl;
+        this.likeNum = vo.likeNum;
+        this.collectNum = vo.collectNum;
+        this.commentNum = vo.commentNum;
+        this.readNum = vo.readNum;
+        this.forwardNum = vo.forwardNum;
+        this.postPublishTimestamp = vo.postPublishTimestamp;
+        this.isLike = vo.isLike;
+        this.isCollect = vo.isCollect;
+        this.isDislike = vo.isDislike;
+    }
+
     public PostOperation clickChange(RecommendButtonType recommendButtonType){
         if (recommendButtonType == null || recommendButtonType == RecommendButtonType.NULL){
             return PostOperation.NULL;

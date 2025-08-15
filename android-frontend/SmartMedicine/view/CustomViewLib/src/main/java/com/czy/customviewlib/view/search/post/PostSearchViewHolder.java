@@ -5,7 +5,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.customviewlib.databinding.ViewPostSearchBinding;
-import com.czy.dal.vo.entity.home.PostVo;
+import com.czy.dal.constant.search.PostSearchResultListEnum;
+import com.czy.dal.vo.entity.home.PostExVo;
 
 import java.util.Optional;
 
@@ -19,26 +20,30 @@ public class PostSearchViewHolder extends RecyclerView.ViewHolder {
         this.binding = binding;
     }
 
-    public void setView(@NonNull PostVo postVo){
+    public void setView(@NonNull PostExVo postExVo){
         // userFace
-        Optional.ofNullable(postVo.authorAvatarUrl)
+        Optional.ofNullable(postExVo.authorAvatarUrl)
                 .ifPresent(
                         url -> ImageLoadUtil.loadImageViewByResource(url, binding.cardUserFace)
                 );
 
         // postImage
-        Optional.ofNullable(postVo.postImgUrls)
+        Optional.ofNullable(postExVo.postImgUrls)
                 .filter(urls -> !urls.isEmpty())
                 .ifPresent(
                         urls -> ImageLoadUtil.loadImageViewByResource(urls.get(0), binding.cardImage)
                 );
 
         // title
-        String title = Optional.ofNullable(postVo.postTitle).orElse("");
+        String title = Optional.ofNullable(postExVo.postTitle).orElse("");
         binding.textTitle.setText(title);
 
         // userID (其实就是username)
-        String userID = Optional.ofNullable(postVo.authorName).orElse("");
+        String userID = Optional.ofNullable(postExVo.authorName).orElse("");
         binding.cardUserID.setText(userID);
+
+        // type
+        String type = PostSearchResultListEnum.getEnum(postExVo.type).getName();
+        binding.tvType.setText(type);
     }
 }

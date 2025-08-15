@@ -8,22 +8,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.customviewlib.databinding.ViewPostSearchBinding;
-import com.czy.dal.vo.entity.home.PostVo;
+import com.czy.dal.vo.entity.home.PostExVo;
 
 import java.util.List;
+
 
 public class PostSearchAdapter extends RecyclerView.Adapter<PostSearchViewHolder>{
 
     private final static String TAG = PostSearchAdapter.class.getName();
 
     // list指针
-    private final List<PostVo> postVoListPointer;
+    private final List<PostExVo> postExVosPointer;
 
     private final OnPostClick onPostClick;
 
-    public PostSearchAdapter(@NonNull List<PostVo> postVoList,
+    public PostSearchAdapter(@NonNull List<PostExVo> postSearchResultAo,
                              @NonNull OnPostClick onPostClick){
-        this.postVoListPointer = postVoList;
+        this.postExVosPointer = postSearchResultAo;
         this.onPostClick = onPostClick;
     }
 
@@ -37,19 +38,19 @@ public class PostSearchAdapter extends RecyclerView.Adapter<PostSearchViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostSearchViewHolder holder, int position) {
-        PostVo postVo = postVoListPointer.get(position);
-        if (postVo == null){
-            Log.w(TAG, "Post数据为空");
+        PostExVo postExVo = postExVosPointer.get(position);
+        if (postExVo == null){
+            Log.w(TAG, "postExVo数据为空");
             return;
         }
         // 设置view数据
-        holder.setView(postVo);
+        holder.setView(postExVo);
         // 设置点击事件
-        this.onPostClick.onPostClick(position, postVo.postId);
+        this.onPostClick.onPostClick(position, postExVo.postId);
     }
 
     @Override
     public int getItemCount() {
-        return postVoListPointer.size();
+        return postExVosPointer.size();
     }
 }

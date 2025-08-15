@@ -2,14 +2,14 @@ package com.czy.dal.fragmentActivityAo.search;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.czy.dal.ao.home.PostAo;
+import com.czy.dal.vo.entity.home.PostExVo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchPostVo {
+public class SearchPostAAo {
     // 搜索结果
-    public List<PostAo> postAoList = new ArrayList<>();
+    public List<PostExVo> postExVoList = new ArrayList<>();
     // 输入框内容
     public final MutableLiveData<String> edtvInputData = new MutableLiveData<>();
 }

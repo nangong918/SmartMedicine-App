@@ -16,10 +16,9 @@ import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.customviewlib.view.DialogAnswer;
-import com.czy.customviewlib.view.home.OnRecommendCardClick;
-import com.czy.customviewlib.view.home.PostHomeAdapter;
+import com.czy.customviewlib.view.search.post.OnPostClick;
+import com.czy.customviewlib.view.search.post.PostSearchAdapter;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
-import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
 import com.czy.dal.ao.search.AppFunctionAo;
 import com.czy.dal.ao.search.PersonalEvaluateAo;
@@ -29,12 +28,14 @@ import com.czy.dal.ao.search.QuestionAo;
 import com.czy.dal.constant.NettyConstants;
 import com.czy.dal.constant.search.FuzzySearchResponseEnum;
 import com.czy.dal.constant.search.PersonalResultIntent;
+import com.czy.dal.constant.search.PostSearchResultListEnum;
 import com.czy.dal.dto.http.request.FuzzySearchRequest;
 import com.czy.dal.dto.http.response.FuzzySearchResponse;
-import com.czy.dal.fragmentActivityAo.search.SearchPostVo;
+import com.czy.dal.fragmentActivityAo.search.SearchPostAAo;
+import com.czy.dal.vo.entity.home.PostExVo;
+import com.czy.dal.vo.entity.home.PostVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.manager.PostClickManager;
 import com.czy.smartmedicine.utils.ResponseTool;
 
 import java.util.ArrayList;
@@ -53,41 +54,26 @@ public class SearchPostVm extends ViewModel {
         this.socketMessageSender = socketMessageSender;
     }
 
-    public PostClickManager postClickManager;
-
-    public void init(SearchPostVo searchPostVo, FragmentActivity activity){
-        this.searchPostVo = searchPostVo;
-        initPostClickManager(activity);
-    }
-
-    private void initPostClickManager(FragmentActivity activity){
-        postClickManager = new PostClickManager(
-                this.searchPostVo.postAoList,
-                activity
-        );
+    public void init(SearchPostAAo searchPostAAo, FragmentActivity activity){
+        this.searchPostAAo = searchPostAAo;
     }
 
     //---------------------------Vo Ld---------------------------
 
-    public SearchPostVo searchPostVo = new SearchPostVo();
+    public SearchPostAAo searchPostAAo = new SearchPostAAo();
 
-    public PostHomeAdapter postHomeAdapter;
+    public PostSearchAdapter adapter;
 
     public DialogAnswer dialogAnswer;
 
-    public void initRecyclerAdapter(RecyclerView recyclerView, FragmentActivity activity){
-        List<PostAo> postAoList = Optional.ofNullable(searchPostVo)
-                .map(vo -> vo.postAoList)
-                .orElse(new ArrayList<>());
+    public void initRecyclerAdapter(RecyclerView recyclerView, OnPostClick onPostClick){
 
-        OnRecommendCardClick onRecommendCardClick = postClickManager.getOnRecommendCardClick(activity);
-
-        postHomeAdapter = new PostHomeAdapter(
-                postAoList,
-                onRecommendCardClick
+        adapter = new PostSearchAdapter(
+                searchPostAAo.postExVoList,
+                onPostClick
         );
 
-        recyclerView.setAdapter(postHomeAdapter);
+        recyclerView.setAdapter(adapter);
     }
 
     public void initDialogAnswer(FragmentActivity activity, View.OnClickListener onViewDetailsClickListener){
@@ -134,7 +120,8 @@ public class SearchPostVm extends ViewModel {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void handleSearchPosts(BaseResponse<FuzzySearchResponse> response, Context context, SyncRequestCallback callback, Object param) {
+    private void handleSearchPosts(BaseResponse<FuzzySearchResponse> response, Context context,
+                                   SyncRequestCallback callback, Object param) {
         Integer fuzzySearchType = Optional.ofNullable(response)
                 .map(BaseResponse::getData)
                 .map(data -> data.type)
@@ -149,9 +136,15 @@ public class SearchPostVm extends ViewModel {
                 .map(p -> (String) p)
                 .orElse("");
 
+        // 清理数据
+        searchPostAAo.postExVoList.clear();
+
         if (data == null){
             callback.onAllRequestSuccess();
             ToastUtils.showToast(context, "没有搜索结果");
+
+            // 更新空数据
+            adapter.notifyDataSetChanged();
             return;
         }
         FuzzySearchResponseEnum enumType = FuzzySearchResponseEnum.getByType(fuzzySearchType);
@@ -173,15 +166,19 @@ public class SearchPostVm extends ViewModel {
             case SEARCH_POST_RESULT -> {
                 PostSearchResultAo ao = (PostSearchResultAo) data;
 
-                loadSearchResult(ao);
+                // 搜索
+                searchPostAAo.postExVoList.addAll(ao.getPostExVoList());
             }
             case QUESTION_RESULT -> {
                 QuestionAo ao = (QuestionAo) data;
                 PostSearchResultAo postSearchResultAo = ao.postSearchResultAo;
 
+                // 问题
                 if (postSearchResultAo != null){
-                    loadSearchResult(postSearchResultAo);
+                    List<PostExVo> postExVoList = postSearchResultAo.getPostExVoList();
+                    searchPostAAo.postExVoList.addAll(postExVoList);
                 }
+
                 String answer = Optional.ofNullable(ao.diseaseQuestionAo)
                         .map(dao -> dao.answer)
                         .orElse("");
@@ -193,11 +190,19 @@ public class SearchPostVm extends ViewModel {
             case RECOMMEND_QUESTION_RESULT -> {
                 PostRecommendAo ao = (PostRecommendAo) data;
                 List<PostInfoUrlAo> postInfoUrlAos = ao.postInfoUrlAos;
-                if(postInfoUrlAos != null && !postInfoUrlAos.isEmpty()){
-                    List<PostAo> postAoList = postClickManager.getPostAoListByResponse(postInfoUrlAos);
-                    searchPostVo.postAoList.clear();
-                    searchPostVo.postAoList.addAll(postAoList);
-                    postHomeAdapter.notifyDataSetChanged();
+                List<PostExVo> recommendPostVoList = new ArrayList<>();
+                // 转换
+                for (PostInfoUrlAo postInfoUrlAo : postInfoUrlAos){
+                    PostVo vo = PostVo.getRecommendPostVoFromPostInfoUrlAo(postInfoUrlAo);
+                    PostExVo exVo = new PostExVo();
+                    exVo.setByPostVo(vo);
+                    exVo.type = PostSearchResultListEnum.RECOMMEND_MATCH_RESULT.getValue();
+                    recommendPostVoList.add(exVo);
+                }
+
+                // 推荐
+                if (!recommendPostVoList.isEmpty()){
+                    searchPostAAo.postExVoList.addAll(recommendPostVoList);
                 }
             }
             case APP_FUNCTION_RESULT -> {
@@ -222,23 +227,10 @@ public class SearchPostVm extends ViewModel {
                 ToastUtils.showToast(context, message);
             }
         }
-        callback.onAllRequestSuccess();
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private void loadSearchResult(PostSearchResultAo ao){
-        searchPostVo.postAoList.clear();
-        List<PostAo> likePostAoList = postClickManager.getPostAoByPostVo(ao.likePostPreviewVoList);
-        List<PostAo> tokenizedPostAoList = postClickManager.getPostAoByPostVo(ao.tokenizedPostPreviewVoList);
-        List<PostAo> similarPostAoList = postClickManager.getPostAoByPostVo(ao.similarPostPreviewVoList);
-        List<PostAo> recommendPostAoList = postClickManager.getPostAoByPostVo(ao.recommendPostPreviewVoList);
-
-        searchPostVo.postAoList.addAll(likePostAoList);
-        searchPostVo.postAoList.addAll(tokenizedPostAoList);
-        searchPostVo.postAoList.addAll(similarPostAoList);
-        searchPostVo.postAoList.addAll(recommendPostAoList);
 
         // ui通知items变化
-        postHomeAdapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
+
+        callback.onAllRequestSuccess();
     }
 }
