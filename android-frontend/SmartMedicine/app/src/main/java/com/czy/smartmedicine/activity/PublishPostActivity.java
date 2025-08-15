@@ -2,13 +2,15 @@ package com.czy.smartmedicine.activity;
 
 
 import android.content.Intent;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 
+import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.image.ImageManager;
+import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.photo.SelectPhotoUtil;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
 import com.czy.dal.fragmentActivityAo.post.PublishPostVo;
@@ -49,16 +51,23 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
         binding.btnPublish.setOnClickListener(v -> {
             // 因为后端需要先检查是否合法
             // 所以前端需要调用第一个接口
-            String title = vm.publishPostVo.postTitleLd.getValue();
-            String content = vm.publishPostVo.postContentLd.getValue();
-            if (TextUtils.isEmpty(title) || TextUtils.isEmpty(content)){
-                return;
-            }
             boolean isHaveFile = !(vm.publishPostVo.imageUriLd.getValue() == null);
+            NetworkLoadUtils.showDialog(this);
             vm.doPostPublishFirst(
-                    title, content,
                     isHaveFile,
-                    this
+                    this,
+                    new SyncRequestCallback() {
+                        @Override
+                        public void onThrowable(Throwable throwable) {
+                            Log.e(TAG, "发布异常：", throwable);
+                            NetworkLoadUtils.dismissDialog();
+                        }
+
+                        @Override
+                        public void onAllRequestSuccess() {
+                            NetworkLoadUtils.dismissDialog();
+                        }
+                    }
             );
             // 再调用第二个接口（viewModel内部调用）
         });

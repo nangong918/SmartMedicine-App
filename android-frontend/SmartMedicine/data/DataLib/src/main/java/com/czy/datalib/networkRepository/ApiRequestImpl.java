@@ -371,16 +371,16 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
     //    Observable<BaseResponse<String>> uploadPostFile(
     //            @Part("files") List<MultipartBody.Part> files,
     //            @Part("postId") Long postId,
-    //            @Part("userAccount") String userAccount
+    //            @Part("userId") Long userId
     //    );
 
     public void uploadPostFile(List<MultipartBody.Part> files,
                                Long postId,
-                               String userAccount,
+                               Long userId,
                                OnSuccessCallback<BaseResponse<String>> onSuccessCallback,
                                OnThrowableCallback onThrowableCallback){
         this.sendRequestCallback(
-                mApi.uploadPostFile(files, postId, userAccount),
+                mApi.uploadPostFile(files, postId, userId),
                 onSuccessCallback,
                 onThrowableCallback
         );

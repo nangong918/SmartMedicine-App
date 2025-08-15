@@ -22,7 +22,6 @@
 1. jvm调参
 2. user行为记录改为hive存储
 
-search页面 -> 调用search api
 发布post
 hive记录行为特征
 评论，收藏

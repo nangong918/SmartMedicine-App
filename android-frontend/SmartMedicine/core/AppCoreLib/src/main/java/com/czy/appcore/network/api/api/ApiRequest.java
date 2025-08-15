@@ -267,14 +267,14 @@ public interface ApiRequest {
      * 发布帖子（首次结束拿到雪花id之后上传file到oss）
      * @param files         文件
      * @param postId        帖子id
-     * @param userAccount   用户账号
+     * @param userId        userId
      * @return              发布帖子
      */
-    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/postFile/uploadPost")
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/postFile/uploadPost/immediately")
     Observable<BaseResponse<String>> uploadPostFile(
             @Part List<MultipartBody.Part> files,
             @Part("postId") Long postId,
-            @Part("userAccount") String userAccount
+            @Part("userId") Long userId
     );
 
     //-------------搜索相关--------------

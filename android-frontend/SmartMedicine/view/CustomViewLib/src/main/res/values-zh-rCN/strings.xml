@@ -71,4 +71,5 @@
     <string name="gain_permission_failed">获取权限失败</string>
     <string name="system_error">系统错误</string>
     <string name="post_id_is_null">帖子不存在</string>
+    <string name="publish_post_title_or_content_not_empty">请输入完整的标题和内容</string>
 </resources>
