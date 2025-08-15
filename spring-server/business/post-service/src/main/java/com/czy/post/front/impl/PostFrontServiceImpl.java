@@ -96,7 +96,9 @@ public class PostFrontServiceImpl implements PostFrontService {
             }
             PostPreviewVo postPreviewVo = new PostPreviewVo();
             postPreviewVo.setPostId(postInfoAo.getId());
-            postPreviewVo.setPostImgUrl(fileUrls.get(i));
+            List<String> postImgUrls = new ArrayList<>();
+            postImgUrls.add(fileUrls.get(i));
+            postPreviewVo.setPostImgUrls(postImgUrls);
             postPreviewVo.setPostTitle(postInfoAo.getTitle());
             postPreviewVo.setAuthorId(postInfoAo.getAuthorId());
             String authorName = null;

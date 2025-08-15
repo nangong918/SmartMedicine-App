@@ -3,6 +3,7 @@ package com.czy.api.domain.vo.post;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author 13225
@@ -15,7 +16,7 @@ public class PostPreviewVo implements Serializable {
     public Long postId = null;
 
     // 文章图片
-    public String postImgUrl = null;
+    public List<String> postImgUrls = null;
 
     // 文章标题
     public String postTitle = "";
