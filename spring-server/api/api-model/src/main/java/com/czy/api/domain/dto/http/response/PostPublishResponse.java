@@ -1,16 +1,16 @@
 package com.czy.api.domain.dto.http.response;
 
-import com.czy.api.domain.dto.http.base.BaseHttpResponse;
+import json.BaseBean;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
  * @author 13225
  * @date 2025/4/21 11:32
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class PostPublishResponse extends BaseHttpResponse {
+public class PostPublishResponse implements BaseBean, Serializable {
     // 雪花id
     public Long snowflakeId;
 }

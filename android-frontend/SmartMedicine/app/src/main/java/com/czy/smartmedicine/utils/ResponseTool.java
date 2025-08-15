@@ -2,8 +2,8 @@ package com.czy.smartmedicine.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
-
 
 import com.czy.appcore.CodeConstant;
 import com.czy.appcore.network.api.handle.AsyncRequestCallback;
@@ -17,11 +17,12 @@ import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.SignActivity;
 
-
 import java.util.function.BiConsumer;
 
 public abstract class ResponseTool extends ResponseUtil {
 
+    private static final String TAG = ResponseTool.class.getName();
+    
     /**
      * 基础响应处理
      * @param response   响应
@@ -42,6 +43,7 @@ public abstract class ResponseTool extends ResponseUtil {
                 return true;
             }
             else if(needLoginAgain){
+                Log.i(TAG, "need login again");
                 MainApplication.getInstance().clearAllSharePreferences();
                 if(context instanceof Activity){
                     ((Activity) context).runOnUiThread(() -> ToastUtils.showToast(context, response.getMessage()));
