@@ -271,6 +271,7 @@ public interface ApiRequest {
      * @param userId        userId
      * @return              发布帖子
      */
+    @Multipart
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.POST + "/postFile/uploadPost/immediately")
     Observable<BaseResponse<PostVo>> uploadPostFile(
             @Part List<MultipartBody.Part> files,
