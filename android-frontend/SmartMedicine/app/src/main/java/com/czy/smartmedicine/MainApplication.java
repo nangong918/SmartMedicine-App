@@ -35,6 +35,7 @@ import com.czy.dal.dto.http.request.BaseHttpRequest;
 import com.czy.dal.netty.Message;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.manager.HttpRequestManager;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -441,6 +442,17 @@ public class MainApplication extends Application {
             Log.w(TAG, "showGlobalToast::resId is not exist " + resId, e);
         }
         return message;
+    }
+
+    //----------------------------utils----------------------------
+
+    private static Gson GSON;
+
+    public static Gson getGson() {
+        if (GSON == null) {
+            GSON = new Gson();
+        }
+        return GSON;
     }
 
     //----------------------------APP终止的时候调用----------------------------

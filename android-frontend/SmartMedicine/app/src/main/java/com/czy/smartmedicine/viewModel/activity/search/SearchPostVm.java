@@ -3,6 +3,7 @@ package com.czy.smartmedicine.viewModel.activity.search;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -159,72 +160,110 @@ public class SearchPostVm extends ViewModel {
                 ToastUtils.showToast(context, "没有搜索结果");
             }
             case NOT_NATURAL_LANGUAGE_RESULT, TALK_RESULT -> {
-                String answer = (String) data;
+                String answer;
+
+                try {
+                    answer = data.toString();
+                } catch (Exception e){
+                    answer = "";
+                    Log.e(TAG, "模糊搜索::error[类型gson转换错误] enumType：" + enumType, e);
+                }
+
                 dialogAnswer.setContent(question, answer);
                 dialogAnswer.show();
             }
             case SEARCH_POST_RESULT -> {
-                PostSearchResultAo ao = (PostSearchResultAo) data;
+                try {
+                    PostSearchResultAo ao = MainApplication.getGson().fromJson(
+                            data.toString(), PostSearchResultAo.class
+                    );
 
-                // 搜索
-                searchPostAAo.postExVoList.addAll(ao.getPostExVoList());
+                    // 搜索
+                    searchPostAAo.postExVoList.addAll(ao.getPostExVoList());
+                } catch (Exception e){
+                    Log.e(TAG, "模糊搜索::error[类型gson转换错误] enumType：" + enumType, e);
+                }
             }
             case QUESTION_RESULT -> {
-                QuestionAo ao = (QuestionAo) data;
-                PostSearchResultAo postSearchResultAo = ao.postSearchResultAo;
+                try {
+                    QuestionAo ao = MainApplication.getGson().fromJson(
+                            data.toString(), QuestionAo.class
+                    );
+                    PostSearchResultAo postSearchResultAo = ao.postSearchResultAo;
 
-                // 问题
-                if (postSearchResultAo != null){
-                    List<PostExVo> postExVoList = postSearchResultAo.getPostExVoList();
-                    searchPostAAo.postExVoList.addAll(postExVoList);
-                }
+                    // 问题
+                    if (postSearchResultAo != null){
+                        List<PostExVo> postExVoList = postSearchResultAo.getPostExVoList();
+                        searchPostAAo.postExVoList.addAll(postExVoList);
+                    }
 
-                String answer = Optional.ofNullable(ao.diseaseQuestionAo)
-                        .map(dao -> dao.answer)
-                        .orElse("");
-                if (!TextUtils.isEmpty(answer)){
-                    dialogAnswer.setContent(question, answer);
-                    dialogAnswer.show();
+                    String answer = Optional.ofNullable(ao.diseaseQuestionAo)
+                            .map(dao -> dao.answer)
+                            .orElse("");
+                    if (!TextUtils.isEmpty(answer)){
+                        dialogAnswer.setContent(question, answer);
+                        dialogAnswer.show();
+                    }
+                } catch (Exception e){
+                    Log.e(TAG, "模糊搜索::error[类型gson转换错误] enumType：" + enumType, e);
                 }
             }
             case RECOMMEND_QUESTION_RESULT -> {
-                PostRecommendAo ao = (PostRecommendAo) data;
-                List<PostInfoUrlAo> postInfoUrlAos = ao.postInfoUrlAos;
-                List<PostExVo> recommendPostVoList = new ArrayList<>();
-                // 转换
-                for (PostInfoUrlAo postInfoUrlAo : postInfoUrlAos){
-                    PostVo vo = PostVo.getRecommendPostVoFromPostInfoUrlAo(postInfoUrlAo);
-                    PostExVo exVo = new PostExVo();
-                    exVo.setByPostVo(vo);
-                    exVo.type = PostSearchResultListEnum.RECOMMEND_MATCH_RESULT.getValue();
-                    recommendPostVoList.add(exVo);
-                }
+                try {
+                    PostRecommendAo ao = MainApplication.getGson().fromJson(
+                            data.toString(), PostRecommendAo.class
+                    );
+                    List<PostInfoUrlAo> postInfoUrlAos = ao.postInfoUrlAos;
+                    List<PostExVo> recommendPostVoList = new ArrayList<>();
+                    // 转换
+                    for (PostInfoUrlAo postInfoUrlAo : postInfoUrlAos){
+                        PostVo vo = PostVo.getRecommendPostVoFromPostInfoUrlAo(postInfoUrlAo);
+                        PostExVo exVo = new PostExVo();
+                        exVo.setByPostVo(vo);
+                        exVo.type = PostSearchResultListEnum.RECOMMEND_MATCH_RESULT.getValue();
+                        recommendPostVoList.add(exVo);
+                    }
 
-                // 推荐
-                if (!recommendPostVoList.isEmpty()){
-                    searchPostAAo.postExVoList.addAll(recommendPostVoList);
+                    // 推荐
+                    if (!recommendPostVoList.isEmpty()){
+                        searchPostAAo.postExVoList.addAll(recommendPostVoList);
+                    }
+                } catch (Exception e){
+                    Log.e(TAG, "模糊搜索::error[类型gson转换错误] enumType：" + enumType, e);
                 }
             }
             case APP_FUNCTION_RESULT -> {
-                AppFunctionAo ao = (AppFunctionAo) data;
-                // 暂未开发
-                ToastUtils.showToast(context, ao.message);
+                try {
+                    AppFunctionAo ao = MainApplication.getGson().fromJson(
+                            data.toString(), AppFunctionAo.class
+                    );
+                    // 暂未开发
+                    ToastUtils.showToast(context, ao.message);
+                } catch (Exception e){
+                    Log.e(TAG, "模糊搜索::error[类型gson转换错误] enumType：" + enumType, e);
+                }
             }
             case PERSONAL_QUESTION_RESULT -> {
-                PersonalEvaluateAo ao = (PersonalEvaluateAo) data;
-                PersonalResultIntent intentType = PersonalResultIntent.getByType(ao.intent);
-                Double heartDisease = Optional.ofNullable(ao.heartDisease)
-                        .orElse(0.0) * 100.0;
-                Double diabetes = Optional.ofNullable(ao.diabetes)
-                        .orElse(0.0) * 100.0;
-                @SuppressLint("DefaultLocale") String message = String.format("%s \n %s: %.2f%%\n %s: %.2f%%",
-                        intentType.getName(),
-                        context.getString(com.czy.customviewlib.R.string.possible_heart_disease),
-                        heartDisease,
-                        context.getString(com.czy.customviewlib.R.string.possible_diabetes),
-                        diabetes
-                );
-                ToastUtils.showToast(context, message);
+                try {
+                    PersonalEvaluateAo ao = MainApplication.getGson().fromJson(
+                            data.toString(), PersonalEvaluateAo.class
+                    );
+                    PersonalResultIntent intentType = PersonalResultIntent.getByType(ao.intent);
+                    Double heartDisease = Optional.ofNullable(ao.heartDisease)
+                            .orElse(0.0) * 100.0;
+                    Double diabetes = Optional.ofNullable(ao.diabetes)
+                            .orElse(0.0) * 100.0;
+                    @SuppressLint("DefaultLocale") String message = String.format("%s \n %s: %.2f%%\n %s: %.2f%%",
+                            intentType.getName(),
+                            context.getString(com.czy.customviewlib.R.string.possible_heart_disease),
+                            heartDisease,
+                            context.getString(com.czy.customviewlib.R.string.possible_diabetes),
+                            diabetes
+                    );
+                    ToastUtils.showToast(context, message);
+                } catch (Exception e){
+                    Log.e(TAG, "模糊搜索::error[类型gson转换错误] enumType：" + enumType, e);
+                }
             }
         }
 

@@ -91,6 +91,9 @@ dependencies {
     // MultiDexApplication
     implementation libs.multidex
 
+    // Gson
+    implementation libs.converter.gson
+
     /**
      * 自定义Module
      * 基本依赖关系：
