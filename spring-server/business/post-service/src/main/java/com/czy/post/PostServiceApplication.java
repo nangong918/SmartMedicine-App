@@ -30,7 +30,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 //                // 扫描工具类 Webflux的异常处理
 //                "com.utils.webflux.handler",
                 // 扫描工具类springMvcUtils
-                "com.utils.spring",
+                "com.czy.spring",
                 "com.utils.common",
                 "com.utils.redisson",
                 "com.utils.minio",

@@ -24,7 +24,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
                 "com.czy.message",
                 // 扫描工具类
 //                "com.utils.webflux.handler",
-                "com.utils.spring",
+                "com.czy.spring",
                 // springUtils
                 "com.utils.common",
                 "com.utils.redisson",

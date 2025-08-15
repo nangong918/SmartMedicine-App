@@ -14,7 +14,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
         // 扫描本模块
         "com.czy.user",
         // 扫描工具类
-        "com.utils.spring",
+        "com.czy.spring",
         "com.utils.common",
         "com.utils.redisson",
         "com.utils.minio",
@@ -28,3 +28,4 @@ public class UserServiceApplication {
                 .run(args);
     }
 }
+// todo 解决校验不生效问题 test-service
