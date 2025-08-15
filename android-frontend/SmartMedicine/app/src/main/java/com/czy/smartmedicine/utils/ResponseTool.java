@@ -22,7 +22,7 @@ import java.util.function.BiConsumer;
 public abstract class ResponseTool extends ResponseUtil {
 
     private static final String TAG = ResponseTool.class.getName();
-    
+
     /**
      * 基础响应处理
      * @param response   响应

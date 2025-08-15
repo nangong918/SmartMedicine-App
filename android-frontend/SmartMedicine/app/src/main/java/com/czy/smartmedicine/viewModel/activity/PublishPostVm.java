@@ -22,6 +22,7 @@ import com.czy.smartmedicine.utils.ResponseTool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -76,10 +77,11 @@ public class PublishPostVm extends ViewModel {
             return;
         }
 
-        boolean isHaveFile = Optional.ofNullable(publishPostVo)
-                .map(vo -> vo.imageUriLd)
-                .map(ld -> ld.getValue() != null)
+        boolean isHaveFile = Optional.ofNullable(selectImageUriAtomic.get())
+                .map(Objects::nonNull)
                 .orElse(false);
+
+        Log.i(TAG, "isHaveFile1: " + isHaveFile + "\n" + "uri: " + selectImageUriAtomic.get());
 
         PostPublishRequest request = new PostPublishRequest();
         request.title = title;
@@ -106,6 +108,9 @@ public class PublishPostVm extends ViewModel {
             (BaseResponse<PostPublishResponse> response, Context context, SyncRequestCallback callback, Object param) {
         try {
             Boolean isHaveFile = (Boolean) param;
+
+            Log.i(TAG, "isHaveFile2: " + isHaveFile);
+
             PostPublishResponse postPublishResponse = response.getData();
             Long postId = postPublishResponse.snowflakeId;
             if (postId != null){
