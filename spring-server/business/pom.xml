@@ -14,11 +14,11 @@
     <packaging>pom</packaging>
 
     <modules>
-<!--        <module>../SpringUtils</module>-->
         <module>user-auth-relation-service</module>
         <module>message-service</module>
         <module>post-service</module>
         <module>feature-log-offline-service</module>
+        <module>purchase-service</module>
     </modules>
 
     <!--JDK版本：11-->
