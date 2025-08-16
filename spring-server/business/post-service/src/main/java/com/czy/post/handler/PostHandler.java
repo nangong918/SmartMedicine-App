@@ -135,10 +135,15 @@ public class PostHandler implements PostApi{
             case DELETE: {
                 Long folderId = request.getFolderId();
                 if (folderId == null){
+                    NettyUtils.sendErrorMessage(
+                            request.getSenderId(),
+                            PostExceptions.COLLECT_FOLDER_NOT_EXIST,
+                            rabbitMqSender
+                    );
                     return;
                 }
 
-                // 取消收藏
+                // 取消收藏 (不用传递userId，因为folderId跟userId存在关系)
                 postHandleService.deletePostCollect(request.getPostId(), folderId);
 
                 // 发送消息

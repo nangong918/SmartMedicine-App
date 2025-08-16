@@ -40,6 +40,8 @@ public enum PostExceptions implements ExceptionEnums {
     POST_CONTENT_VIOLATION("P_10014", "帖子内容违规，请修改"),
     // 评论过长
     COMMENT_TOO_LONG("P_10015", "评论过长"),
+    // 收藏夹不存在
+    COLLECT_FOLDER_NOT_EXIST("P_10016", "收藏夹不存在"),
     ;
 
     private final String code;

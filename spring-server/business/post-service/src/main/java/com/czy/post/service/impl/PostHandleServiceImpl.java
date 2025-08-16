@@ -126,6 +126,7 @@ public class PostHandleServiceImpl implements PostHandleService {
 
     @Override
     public Long createPostCollectFolder(Long userId, String collectFolderName) {
+        // 判断是否已存在
         PostCollectFolderDo postCollectFolderDo = postCollectFolderMapper.findPostCollectFolderByUserIdAndName(
                 userId,
                 collectFolderName
@@ -138,7 +139,8 @@ public class PostHandleServiceImpl implements PostHandleService {
             postCollectFolderDo.setId(IdUtil.getSnowflakeNextId());
             postCollectFolderDo.setUserId(userId);
             postCollectFolderDo.setCollectFolderName(collectFolderName);
-            return postCollectFolderMapper.savePostCollectFolder(postCollectFolderDo);
+            postCollectFolderMapper.savePostCollectFolder(postCollectFolderDo);
+            return postCollectFolderDo.getId();
         }
     }
 
