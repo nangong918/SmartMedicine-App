@@ -13,6 +13,8 @@ import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.PostCommentDto;
+import com.czy.api.domain.dto.http.request.GetComment1Request;
+import com.czy.api.domain.dto.http.request.GetComment2Request;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.GetPostPreviewListRequest;
 import com.czy.api.domain.dto.http.request.GetSinglePostRequest;
@@ -308,22 +310,19 @@ public class PostController {
     }
 
     // 获取下拉一级评论（pageNum）
-    @GetMapping("/getPostLevel1Comments")
+    @PostMapping("/getPostLevel1Comments")
     public BaseResponse<GetPostCommentsResponse>
-    getPostLevel1Comments(@RequestParam("postId") Long postId,
-                    @RequestParam("pageSize") Integer pageSize,
-                    @RequestParam("pageNum") Integer pageNum){
-        return getPostComments(postId, null, pageSize, pageNum);
+    getPostLevel1Comments(@Validated @RequestBody GetComment1Request request){
+        return getPostComments(request.getPostId(), null,
+                request.getPageSize(), request.getPageNum());
     }
 
     // 获取二级评论（commentId + pageNum）
-    @GetMapping("/getPostLevel2Comments")
+    @PostMapping("/getPostLevel2Comments")
     public BaseResponse<GetPostCommentsResponse>
-    getPostLevel2Comments(@RequestParam("postId") Long postId,
-                    @RequestParam("level1commentId") Long level1commentId,
-                    @RequestParam("pageSize") Integer pageSize,
-                    @RequestParam("pageNum") Integer pageNum){
-        return getPostComments(postId, level1commentId, pageSize, pageNum);
+    getPostLevel2Comments(@Validated @RequestBody GetComment2Request request){
+        return getPostComments(request.getPostId(), request.getLevel1commentId(),
+                request.getPageSize(), request.getPageNum());
     }
 
     private BaseResponse<GetPostCommentsResponse> getPostComments(
@@ -370,5 +369,5 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess(getPostCommentsResponse);
     }
 
-    // 发表评论 todo
+    // 发表评论
 }
