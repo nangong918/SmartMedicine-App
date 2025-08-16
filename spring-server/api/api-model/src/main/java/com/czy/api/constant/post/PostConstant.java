@@ -31,4 +31,6 @@ public class PostConstant {
     public static final Integer COMMENT_PAGE_SIZE = 20;
     // post的minio的 bucket
     public static final String POST_FILE_BUCKET = "post-file-";
+    // 评论最大长度
+    public static final Integer COMMENT_MAX_LENGTH = 200;
 }

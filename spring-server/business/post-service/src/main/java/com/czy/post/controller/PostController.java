@@ -13,8 +13,6 @@ import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.PostCommentDto;
-import com.czy.api.domain.dto.http.base.BaseHttpResponse;
-import com.czy.api.domain.dto.http.request.CommentRequest;
 import com.czy.api.domain.dto.http.request.GetCommentRequest;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.GetPostPreviewListRequest;
@@ -362,5 +360,10 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess(getPostCommentsResponse);
     }
 
-
+    // 发表评论 逻辑在postHandler实现
+//    @Deprecated
+//    @PostMapping("/comment")
+//    public BaseResponse<BaseHttpResponse> comment(@Validated @RequestBody CommentRequest request) {
+//
+//    }
 }

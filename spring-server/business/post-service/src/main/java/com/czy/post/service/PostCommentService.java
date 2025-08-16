@@ -4,6 +4,7 @@ import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.dto.service.CommentResultDto;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -38,10 +39,11 @@ public interface PostCommentService {
      * @param postId             帖子id
      * @param replyCommentId     回复的评论id (null则为一级评论，存在则是二级评论（回复）)
      * @param content            评论内容
+     * @param timestamp          时间戳
      * @return                   评论结果
      */
     @NotNull
-    CommentResultDto comment(Long senderId, Long postId, Long replyCommentId, String content);
+    CommentResultDto comment(Long senderId, Long postId, @Nullable Long replyCommentId, @NotNull String content, Long timestamp);
 
     // 删除评论
     void deleteComment(Long postId, Long commentId, Long senderId);

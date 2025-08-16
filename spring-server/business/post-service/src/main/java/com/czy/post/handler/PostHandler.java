@@ -314,13 +314,32 @@ public class PostHandler implements PostApi{
                         PostExceptions.EMPTY_COMMENT_ERROR,
                         rabbitMqSender
                 );
+                return;
+            }
+            if (content.length() > PostConstant.COMMENT_MAX_LENGTH){
+                NettyUtils.sendErrorMessage(
+                        request.getSenderId(),
+                        PostExceptions.COMMENT_TOO_LONG,
+                        rabbitMqSender
+                );
+                return;
             }
             Long senderId = request.getSenderId();
             Long postId = request.getPostId();
             Long replyCommentId = request.getReplyCommentId();
 
+            Long timestamp = Optional.ofNullable(request.getTimestamp())
+                    .map(tstr -> {
+                        try {
+                            return Long.valueOf(tstr);
+                        } catch (Exception e) {
+                            return System.currentTimeMillis();
+                        }
+                    })
+                    .orElse(System.currentTimeMillis());
+
             // 执行评论
-            CommentResultDto resultDto = postCommentService.comment(senderId, postId, replyCommentId, content);
+            CommentResultDto resultDto = postCommentService.comment(senderId, postId, replyCommentId, content, timestamp);
 
             if (resultDto.isSuccess()){
                 // 获取返回对象

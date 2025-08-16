@@ -38,6 +38,8 @@ public enum PostExceptions implements ExceptionEnums {
     POST_CONTENT_REJECTED("P_10013", "发布相同帖子内容被驳回"),
     // 帖子内容违规，请修改
     POST_CONTENT_VIOLATION("P_10014", "帖子内容违规，请修改"),
+    // 评论过长
+    COMMENT_TOO_LONG("P_10015", "评论过长"),
     ;
 
     private final String code;
