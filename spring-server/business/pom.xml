@@ -19,6 +19,7 @@
         <module>post-service</module>
         <module>feature-log-offline-service</module>
         <module>purchase-service</module>
+        <module>medicine-service</module>
     </modules>
 
     <!--JDK版本：11-->
