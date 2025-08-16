@@ -33,4 +33,6 @@ public class PostConstant {
     public static final String POST_FILE_BUCKET = "post-file-";
     // 评论最大长度
     public static final Integer COMMENT_MAX_LENGTH = 200;
+    public static final int COMMENT_MIN_PAGE_SIZE = 10;
+    public static final int COMMENT_MAX_PAGE_SIZE = 20;
 }

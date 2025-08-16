@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.api.mapper.post.mongo.PostCommentMongoMapper;
 import com.api.mapper.post.mysql.PostInfoMapper;
 import com.czy.api.api.user_relationship.user.UserService;
+import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.user.UserDo;
@@ -48,11 +49,11 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Override
     public List<PostCommentDo> getLevel2PostComments(Long postId, Long level2CommentId, Integer pageSize, Integer pageNum) {
         int finalPageNum = pageNum;
-        if (finalPageNum < 10){
-            finalPageNum = 10;
+        if (finalPageNum < PostConstant.COMMENT_MIN_PAGE_SIZE){
+            finalPageNum = PostConstant.COMMENT_MIN_PAGE_SIZE;
         }
-        else if (finalPageNum > 20){
-            finalPageNum = 20;
+        else if (finalPageNum > PostConstant.COMMENT_MAX_PAGE_SIZE){
+            finalPageNum = PostConstant.COMMENT_MAX_PAGE_SIZE;
         }
         return postCommentMongoMapper.findLevel2CommentsByPostIdAndReplyCommentIdPaging(postId, level2CommentId, pageSize, finalPageNum);
     }
