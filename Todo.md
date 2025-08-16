@@ -20,6 +20,9 @@
 ## 日志记录
 
 暂时取消hive，hive较难集成，引入中间件较多。成本较高，可以考虑替换为TimescaleDB
+暂时不开启vue3去后台配置各种活动数据, 使用java脚本直接往数据库导入和删除数据, 在import-model实现: [import-model](spring-server/tests/import-model)
+项目全部完成写: 项目总结, bug总结, 优化总结.
+优化要在学完java设计模式之后再进行优化, 优化之前要熟悉全部代码, todo标注痛点, 然后确定数据结构再进行优化
 
 ## 目前任务
 
