@@ -13,8 +13,9 @@ import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.PostCommentDto;
-import com.czy.api.domain.dto.http.request.GetComment1Request;
-import com.czy.api.domain.dto.http.request.GetComment2Request;
+import com.czy.api.domain.dto.http.base.BaseHttpResponse;
+import com.czy.api.domain.dto.http.request.CommentRequest;
+import com.czy.api.domain.dto.http.request.GetCommentRequest;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.GetPostPreviewListRequest;
 import com.czy.api.domain.dto.http.request.GetSinglePostRequest;
@@ -310,17 +311,9 @@ public class PostController {
     }
 
     // 获取下拉一级评论（pageNum）
-    @PostMapping("/getPostLevel1Comments")
+    @PostMapping("/getPostComments")
     public BaseResponse<GetPostCommentsResponse>
-    getPostLevel1Comments(@Validated @RequestBody GetComment1Request request){
-        return getPostComments(request.getPostId(), null,
-                request.getPageSize(), request.getPageNum());
-    }
-
-    // 获取二级评论（commentId + pageNum）
-    @PostMapping("/getPostLevel2Comments")
-    public BaseResponse<GetPostCommentsResponse>
-    getPostLevel2Comments(@Validated @RequestBody GetComment2Request request){
+    getPostLevel1Comments(@Validated @RequestBody GetCommentRequest request){
         return getPostComments(request.getPostId(), request.getLevel1commentId(),
                 request.getPageSize(), request.getPageNum());
     }
@@ -369,5 +362,5 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess(getPostCommentsResponse);
     }
 
-    // 发表评论
+
 }
