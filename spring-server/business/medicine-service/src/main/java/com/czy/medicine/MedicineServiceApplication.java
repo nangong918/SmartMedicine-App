@@ -30,4 +30,3 @@ public class MedicineServiceApplication {
                 .run(args);
     }
 }
-// todo 解决校验不生效问题 test-service
