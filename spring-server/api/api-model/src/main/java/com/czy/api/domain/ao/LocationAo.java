@@ -2,6 +2,8 @@ package com.czy.api.domain.ao;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
+
 /**
  * @author 13225
  * @date 2025/8/18 10:35
@@ -10,6 +12,7 @@ import lombok.Data;
  */
 @Data
 public class LocationAo {
+    @NotEmpty(message = "省不能为空")
     public String province;
     public String city;
     public String region;
