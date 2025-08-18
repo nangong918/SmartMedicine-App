@@ -19,6 +19,9 @@ public class RegisterAppointmentDoctorCardVo {
     public Integer RemainCount;
     // 费用 BigDecimal
     public String cost;
+    // 预约时间区间 yyyy-MM-dd HH:mm:ss -洗数据-> HH:mm（只保留此部分）
+    public String beginDate;
+    public String endDate;
 
     /// 计算填充值
     // 医院距离
