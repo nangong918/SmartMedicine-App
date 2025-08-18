@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.mapper.medicine.DoctorRegisterAppointmentMapper">
+
+    <select id="getDoctorCardBosByDos"
+            resultType="com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo">
+        SELECT
+            dt.avatarFileId AS doctorAvatarFileId,
+            dt.name AS doctorName,
+            dt.title AS doctorTitle,
+            ht.name AS hospitalName,
+            ht.level AS hospitalLevel,
+            ht.province AS locationProvince,
+            ht.city AS locationCity,
+            ht.region AS locationRegion,
+            ht.longitude AS longitude,
+            ht.latitude AS latitude,
+            drat.remainCount AS remainCount,
+            drat.cost AS cost,
+            drat.beginDate AS beginDate,
+            drat.endDate AS endDate,
+            drat.status AS status
+        FROM doctor_register_appointment AS drat
+        LEFT JOIN doctor AS dt ON drat.doctorId = dt.id
+        LEFT JOIN hospital AS ht ON drat.hospitalId = ht.id
+        WHERE drat.doctorId IN
+        <foreach item="item" index="index" collection="dos" open="(" separator="," close=")">
+            #{item.doctorId}
+        </foreach>
+    </select>
+
+</mapper>
