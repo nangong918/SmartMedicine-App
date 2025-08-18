@@ -8,8 +8,8 @@ import lombok.Data;
  */
 @Data
 public class FileResAo {
-    public String fileName;
     public Long fileId;
     public String fileUrl;
+    // 暂未使用
     public Long uploadUserId;
 }
