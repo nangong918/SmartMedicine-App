@@ -1,6 +1,7 @@
 package com.czy.api.constant.medicine;
 
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author 13225
@@ -119,5 +120,40 @@ public enum DepartmentEnum {
             }
         }
         return INTERNAL_MEDICINE; // 默认返回
+    }
+
+    // o -> json
+    public String toJsonString() {
+        return "{" +
+                "\n \"name\":\"" + name + "\"," +
+                "\n \"code\":\"" + code + "\"," +
+                "\n \"subjectEnums\":" + SubjectEnum.toListJsonString(subjectEnums) +
+                "\n}";
+    }
+
+    // list -> json list
+    @NotNull
+    public static String toListJsonString(DepartmentEnum[] departmentEnums) {
+        if (departmentEnums == null || departmentEnums.length == 0) {
+            return "[]";
+        }
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < departmentEnums.length; i++) {
+            json.append(departmentEnums[i].toJsonString());
+            if (i != departmentEnums.length - 1) {
+                json.append(",\n");
+            }
+        }
+        json.append("]");
+        return json.toString();
+    }
+
+    public static void main(String[] args) {
+        // 获取所有科室并转换为 JSON
+//        System.out.println(INTERNAL_MEDICINE.toJsonString());
+
+
+        String json = toListJsonString(DepartmentEnum.values());
+        System.out.println("json = " + json);
     }
 }

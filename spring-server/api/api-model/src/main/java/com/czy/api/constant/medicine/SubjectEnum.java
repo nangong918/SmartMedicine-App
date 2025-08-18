@@ -1,6 +1,7 @@
 package com.czy.api.constant.medicine;
 
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author 13225
@@ -59,6 +60,33 @@ public enum SubjectEnum {
     SubjectEnum(String name, int code) {
         this.name = name;
         this.code = code;
+    }
+
+    // o -> json
+    public String toJsonString() {
+        return "{\n \"name\":\"" + name + "\",\n \"code\":" + code + "\n}";
+    }
+
+    // list -> json list
+    @NotNull
+    public static String toListJsonString(SubjectEnum[] subjectEnums){
+        if (subjectEnums == null || subjectEnums.length == 0){
+            return "[]";
+        }
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < subjectEnums.length; i++) {
+            json.append(subjectEnums[i].toJsonString());
+            if (i != subjectEnums.length - 1){
+                json.append(",\n");
+            }
+        }
+        json.append("]");
+        return json.toString();
+    }
+
+    public static void main(String[] args) {
+        String json = toListJsonString(SubjectEnum.values());
+        System.out.println("json = " + json);
     }
 
 }
