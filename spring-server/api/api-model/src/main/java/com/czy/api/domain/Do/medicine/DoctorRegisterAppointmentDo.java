@@ -4,6 +4,7 @@ import com.czy.api.constant.medicine.DoctorRegisterAppointmentStatusEnum;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -26,7 +27,7 @@ public class DoctorRegisterAppointmentDo {
     private Long subjectId;
 
     // 价格
-    private String cost;
+    private BigDecimal cost;
     // 剩余
     private Integer remainCount;
 

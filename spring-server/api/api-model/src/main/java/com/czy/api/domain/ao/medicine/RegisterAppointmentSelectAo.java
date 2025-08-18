@@ -17,9 +17,10 @@ import javax.validation.constraints.NotNull;
 @Data
 public class RegisterAppointmentSelectAo {
     @Valid
+    @NotNull(message = "挂号地点不能为空")
     public LocationAo registerLocation;
     // 9月19日：yyyy-MM-dd格式
-    @NotEmpty(message = "registerTime不能为空")
+    @NotEmpty(message = "挂号时间不能为空")
     public String registerTime;
     /**
      * 挂号部门code
