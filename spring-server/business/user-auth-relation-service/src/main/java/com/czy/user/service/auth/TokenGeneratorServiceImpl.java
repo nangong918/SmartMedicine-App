@@ -1,6 +1,6 @@
 package com.czy.user.service.auth;
 
-import com.czy.api.api.user_relationship.auth.TokenGeneratorService;
+import com.czy.api.api.user.auth.TokenGeneratorService;
 import com.czy.api.constant.auth.JwtConstant;
 import com.czy.api.constant.gateway.EncryptConstant;
 import com.czy.user.utils.JwtGenerator;

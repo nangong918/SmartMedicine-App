@@ -1,8 +1,8 @@
 package com.czy.user.controller;
 
 
-import com.czy.api.api.user_relationship.relation.UserRelationshipService;
-import com.czy.api.api.user_relationship.user.UserService;
+import com.czy.api.api.user.relation.UserRelationshipService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.user_relationship.RelationshipConstant;
 import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
 import com.czy.api.constant.user_relationship.newUserGroup.HandleStatusEnum;

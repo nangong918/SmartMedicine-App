@@ -1,6 +1,6 @@
 package service;
 
-import com.czy.api.api.user_relationship.relation.UserRelationshipService;
+import com.czy.api.api.user.relation.UserRelationshipService;
 import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
 import com.czy.api.constant.user_relationship.newUserGroup.HandleStatusEnum;
 import com.czy.api.domain.ao.relationship.*;

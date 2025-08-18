@@ -2,7 +2,7 @@ package com.czy.imports.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.post.PostImportService;
-import com.czy.api.api.user_relationship.user.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.imports.ImportsConstant;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.constant.user_relationship.UserConstant;

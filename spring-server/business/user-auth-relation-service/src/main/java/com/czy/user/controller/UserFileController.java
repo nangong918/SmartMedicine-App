@@ -1,7 +1,7 @@
 package com.czy.user.controller;
 
 
-import com.czy.api.api.user_relationship.user.LoginService;
+import com.czy.api.api.user.user.LoginService;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.user_relationship.UserConstant;

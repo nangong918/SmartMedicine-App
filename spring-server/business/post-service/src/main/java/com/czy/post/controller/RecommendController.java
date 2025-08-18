@@ -1,7 +1,7 @@
 package com.czy.post.controller;
 
 import com.czy.api.api.post.PostSearchService;
-import com.czy.api.api.user_relationship.user.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.recommend.RecommendConstant;
 import com.czy.api.constant.recommend.RecommendRedisKey;

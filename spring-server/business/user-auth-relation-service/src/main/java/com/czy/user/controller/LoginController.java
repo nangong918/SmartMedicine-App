@@ -1,9 +1,9 @@
 package com.czy.user.controller;
 
 
-import com.czy.api.api.user_relationship.auth.SmsService;
-import com.czy.api.api.user_relationship.user.LoginService;
-import com.czy.api.api.user_relationship.user.UserService;
+import com.czy.api.api.user.auth.SmsService;
+import com.czy.api.api.user.user.LoginService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;

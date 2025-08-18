@@ -1,4 +1,4 @@
-package com.czy.api.api.user_relationship.user;
+package com.czy.api.api.user.user;
 
 import com.czy.api.domain.Do.user.UserDo;
 

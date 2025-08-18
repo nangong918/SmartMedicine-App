@@ -3,7 +3,7 @@ package com.czy.post.service.impl;
 import cn.hutool.core.util.IdUtil;
 import com.api.mapper.post.mongo.PostCommentMongoMapper;
 import com.api.mapper.post.mysql.PostInfoMapper;
-import com.czy.api.api.user_relationship.user.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;

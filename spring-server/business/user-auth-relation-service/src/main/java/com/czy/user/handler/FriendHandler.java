@@ -1,9 +1,9 @@
 package com.czy.user.handler;
 
 
-import com.czy.api.api.user_relationship.relation.UserRelationshipService;
-import com.czy.api.api.user_relationship.user.LoginService;
-import com.czy.api.api.user_relationship.user.UserService;
+import com.czy.api.api.user.relation.UserRelationshipService;
+import com.czy.api.api.user.user.LoginService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
 import com.czy.api.converter.domain.relationship.AddUserConverter;

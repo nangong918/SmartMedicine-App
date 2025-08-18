@@ -1,4 +1,4 @@
-package com.czy.api.api.user_relationship.relation;
+package com.czy.api.api.user.relation;
 
 import com.czy.api.domain.ao.relationship.AddUserAo;
 import com.czy.api.domain.ao.relationship.HandleAddedMeAo;

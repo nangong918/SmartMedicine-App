@@ -1,6 +1,6 @@
 package com.czy.user.service;
 
-import com.czy.api.api.user_relationship.UserHealthDataService;
+import com.czy.api.api.user.UserHealthDataService;
 import com.czy.api.domain.Do.user.UserHealthDataDo;
 import com.czy.user.mapper.mysql.user.UserHealthDataMapper;
 import lombok.RequiredArgsConstructor;

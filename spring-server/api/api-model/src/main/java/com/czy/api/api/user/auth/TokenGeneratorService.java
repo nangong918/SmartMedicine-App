@@ -1,4 +1,4 @@
-package com.czy.api.api.user_relationship.auth;
+package com.czy.api.api.user.auth;
 
 
 import jwt.BaseJwtPayloadAo;

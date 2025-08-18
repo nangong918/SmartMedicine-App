@@ -1,8 +1,8 @@
 package com.czy.user.service;
 
-import com.czy.api.api.user_relationship.relation.UserRelationshipService;
-import com.czy.api.api.user_relationship.user.UserSearchService;
-import com.czy.api.api.user_relationship.user.UserService;
+import com.czy.api.api.user.relation.UserRelationshipService;
+import com.czy.api.api.user.user.UserSearchService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.constant.user_relationship.ListAddOrDeleteStatusEnum;

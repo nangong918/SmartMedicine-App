@@ -1,6 +1,6 @@
 package com.czy.user.service.auth;
 
-import com.czy.api.api.user_relationship.auth.TokenValidatorService;
+import com.czy.api.api.user.auth.TokenValidatorService;
 import com.czy.api.domain.ao.auth.LoginJwtPayloadAo;
 import com.czy.user.utils.JwtValidUtil;
 import com.czy.user.validator.JwtValidator;

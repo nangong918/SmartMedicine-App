@@ -3,7 +3,7 @@ package com.czy.message.handler;
 
 import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.message.ChatService;
-import com.czy.api.api.user_relationship.user.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.MessageTypeEnum;
 import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.constant.netty.NettyConstants;

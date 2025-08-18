@@ -1,7 +1,7 @@
 package com.czy.user.service.auth;
 
 
-import com.czy.api.api.user_relationship.auth.SmsService;
+import com.czy.api.api.user.auth.SmsService;
 import com.czy.user.constant.SmsConstant;
 import com.utils.common.debug.DebugConfig;
 import com.utils.redis.service.RedisManagerService;

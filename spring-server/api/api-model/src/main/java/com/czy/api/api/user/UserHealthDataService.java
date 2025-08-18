@@ -1,4 +1,4 @@
-package com.czy.api.api.user_relationship;
+package com.czy.api.api.user;
 
 import com.czy.api.domain.Do.user.UserHealthDataDo;
 
