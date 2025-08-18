@@ -11,4 +11,7 @@
 11.recommend-service            10110-10119
 12.search-service               10120-10129
 
+medicine-service                10130-10139
+purchase-service                10140-10149
+
 n.gateway                       8888

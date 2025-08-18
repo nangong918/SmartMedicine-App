@@ -1,5 +1,7 @@
 package com.czy.api.constant.medicine;
 
+import com.czy.api.constant.BaseEnum;
+import com.czy.api.constant.BaseParentEnum;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -148,12 +150,26 @@ public enum DepartmentEnum {
         return json.toString();
     }
 
+    // o -> BaseParentEnum
+    public BaseParentEnum getBaseParentEnum() {
+        BaseEnum[] children = new BaseEnum[this.subjectEnums.length];
+        for (int i = 0; i < this.subjectEnums.length; i++) {
+            BaseEnum child = this.subjectEnums[i].toBaseEnum();
+            children[i] = child;
+        }
+        return new BaseParentEnum(this.name, this.code, children);
+    }
+
     public static void main(String[] args) {
         // 获取所有科室并转换为 JSON
 //        System.out.println(INTERNAL_MEDICINE.toJsonString());
 
 
-        String json = toListJsonString(DepartmentEnum.values());
-        System.out.println("json = " + json);
+//        String json = toListJsonString(DepartmentEnum.values());
+//        System.out.println("json = " + json);
+
+        for (DepartmentEnum value : values()){
+            System.out.println(value.getBaseParentEnum().toJsonString());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.czy.api.constant.medicine;
 
+import com.czy.api.constant.BaseEnum;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,6 +83,11 @@ public enum SubjectEnum {
         }
         json.append("]");
         return json.toString();
+    }
+
+    // o -> BaseEnum
+    public BaseEnum toBaseEnum() {
+        return new BaseEnum(name, code);
     }
 
     public static void main(String[] args) {
