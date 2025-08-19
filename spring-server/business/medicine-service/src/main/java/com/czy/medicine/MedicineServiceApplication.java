@@ -8,7 +8,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 
-@MapperScan({"com.czy.medicine.mapper", "com.utils.minio.mapper", "com.api.mapper"})    // 扫描mapper
+@MapperScan({"com.czy.medicine.mapper",
+        "com.utils.minio.mapper",
+        "com.api.mapper"})    // 扫描mapper
 @SpringBootApplication(scanBasePackages = {
         // 扫描api模块
         "com.czy.api",

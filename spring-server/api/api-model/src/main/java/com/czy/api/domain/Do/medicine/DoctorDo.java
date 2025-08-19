@@ -17,5 +17,5 @@ public class DoctorDo {
     // title 职称
     private String title;
     // avatar 头像 fileId
-    private String avatarFileId;
+    private Long avatarFileId;
 }
