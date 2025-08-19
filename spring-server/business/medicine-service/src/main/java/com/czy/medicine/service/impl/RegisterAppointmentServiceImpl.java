@@ -9,11 +9,14 @@ import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.medicine.service.RegisterAppointmentService;
+import com.utils.minio.service.OssService;
 import date.DateUtils;
+import domain.FileResAo;
 import exception.AppException;
 import location.GeoUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -42,6 +46,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     private final DoctorMapper doctorMapper;
     private final DoctorRegisterAppointmentMapper doctorRegisterAppointmentMapper;
     private final RegisterAppointmentDoctorCardConverter registerAppointmentDoctorCardConverter;
+    private final OssService ossService;
 
     // 获取PageList
     @NotNull
@@ -74,6 +79,10 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         List<RegisterAppointmentDoctorCardVo> cardVos = getDoctorCardVo(doctorRegisterAppointmentDos);
         pageVo.setCardVos(cardVos);
 
+        if (CollectionUtils.isEmpty(cardVos)){
+            return pageVo;
+        }
+
         /// 数据填充（数据库查询出来的数据继续计算）
         // 距离填充
         if (ao.getLatitude() == null || ao.getLongitude() == null){
@@ -104,6 +113,18 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
 
         // oss填充
+        List<Long> doctorAvatarFileIds = cardVos.stream()
+                .map(RegisterAppointmentDoctorCardVo::getDoctorVo)
+                .map(DoctorVo::getDoctorAvatarFileAo)
+                .map(FileResAo::getFileId)
+                .collect(Collectors.toList());
+
+        List<String> fileUrls = ossService.getFileUrlsByFileIds(doctorAvatarFileIds);
+
+        for (int i = 0; i < cardVos.size(); i++){
+            RegisterAppointmentDoctorCardVo cardVo = cardVos.get(i);
+            cardVo.getDoctorVo().getDoctorAvatarFileAo().setFileUrl(fileUrls.get(i));
+        }
 
         return pageVo;
     }
@@ -176,7 +197,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         return registerAppointmentDoctorCardConverter.bosToVos(bos);
     }
 
-    // 获取DataVoList todo
+    // 获取DataVoList
     public List<RegisterAppointmentDataVo> getDataVoList(@NotNull RegisterAppointmentSelectAo ao) throws AppException{
         if (!StringUtils.hasText(ao.getRegisterTime())){
             return new ArrayList<>();

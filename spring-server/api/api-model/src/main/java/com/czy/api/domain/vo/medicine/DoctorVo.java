@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class DoctorVo {
     // 头像
-    public FileResAo doctorAvatarFileAo;
+    public FileResAo doctorAvatarFileAo = new FileResAo();
     // 姓名
     public String doctorName;
     // 职称
