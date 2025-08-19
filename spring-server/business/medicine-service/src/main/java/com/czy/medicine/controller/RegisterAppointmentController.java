@@ -3,6 +3,7 @@ package com.czy.medicine.controller;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.AppointmentDoctorRequest;
+import com.czy.api.domain.dto.http.request.GetUserAppointmentRecordRequest;
 import com.czy.api.domain.dto.http.request.GetRegisterAppointmentListRequest;
 import com.czy.api.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
 import com.czy.api.domain.dto.http.response.GetRegisterAppointmentListResponse;
@@ -66,6 +67,12 @@ public class RegisterAppointmentController {
     }
 
     // 获取user预约订单列表
+    @PostMapping("/getAppointmentRecord")
+    public BaseResponse<Object>
+    getAppointmentRecord
+    (@Validated @RequestBody GetUserAppointmentRecordRequest request){
+        return null;
+    }
 
 
     /// 增：预约
