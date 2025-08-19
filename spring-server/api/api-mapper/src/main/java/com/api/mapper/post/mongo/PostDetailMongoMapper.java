@@ -68,4 +68,12 @@ public class PostDetailMongoMapper {
                 PostDetailDo.class
         );
     }
+
+    // 删除全部已有的帖子
+    public void deleteAllPostDetails() {
+        mongoTemplate.remove(
+                Query.query(Criteria.where("id").exists(true)),
+                PostDetailDo.class
+        );
+    }
 }

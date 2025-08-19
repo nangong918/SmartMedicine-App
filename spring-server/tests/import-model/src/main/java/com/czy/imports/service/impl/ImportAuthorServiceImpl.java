@@ -1,6 +1,8 @@
 package com.czy.imports.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.api.mapper.post.es.PostDetailEsMapper;
+import com.api.mapper.post.mongo.PostDetailMongoMapper;
 import com.czy.api.api.post.PostImportService;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.imports.ImportsConstant;
@@ -9,8 +11,6 @@ import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.imports.domain.Do.ArticleDo;
 import com.czy.imports.domain.ao.AuthorAo;
 import com.czy.imports.manager.CrawlerDataManager;
-import com.czy.imports.mapper.PostDetailMongoMapper;
-import com.czy.imports.mapperEs.PostDetailEsMapper;
 import com.czy.imports.mapperEs.UserEsMapper;
 import com.czy.imports.service.ImportAuthorService;
 import com.utils.minio.domain.Do.OssFileDo;

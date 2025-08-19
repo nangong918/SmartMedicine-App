@@ -1,6 +1,6 @@
 package com.czy.api.domain.Do.medicine;
 
-import com.czy.api.constant.medicine.UserRegisterAppointmentStatusEnum;
+import com.czy.api.constant.medicine.AppointmentStatusEnum;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -25,7 +25,7 @@ public class UserRegisterAppointmentOrderDo {
 
     /**
      * 预约状态
-     * @see UserRegisterAppointmentStatusEnum
+     * @see AppointmentStatusEnum
      */
-    private Integer status = UserRegisterAppointmentStatusEnum.AVAILABLE.getCode();
+    private Integer status = AppointmentStatusEnum.AVAILABLE.getCode();
 }

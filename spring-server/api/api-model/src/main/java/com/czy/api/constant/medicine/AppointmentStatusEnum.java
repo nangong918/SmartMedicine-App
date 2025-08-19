@@ -5,14 +5,17 @@ import lombok.Getter;
 /**
  * @author 13225
  * @date 2025/8/19 15:07
- * 可预约，已结束，售罄，等待开放
+ * 可预约，已结束，售罄，等待开放, 已取消, 预约过期, 预约失败
  */
 @Getter
 public enum AppointmentStatusEnum {
     AVAILABLE(0, "可预约"),
     ENDED(1, "已结束"),
     SOLD_OUT(2, "售罄"),
-    WAITING_OPEN(3, "等待开放")
+    WAITING_OPEN(3, "等待开放"),
+    CANCELED(4, "已取消"),
+    EXPIRED(5, "预约过期"),
+    FAILED(6, "预约失败"),
     ;
 
     private final int code;

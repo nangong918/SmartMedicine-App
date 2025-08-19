@@ -68,6 +68,12 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.api</groupId>
+            <artifactId>api-mapper</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.business</groupId>-->
 <!--            <artifactId>post-service</artifactId>-->

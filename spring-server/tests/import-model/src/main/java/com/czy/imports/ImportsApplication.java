@@ -3,18 +3,29 @@ package com.czy.imports;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
  * @author 13225
  * @date 2025/1/10 18:25
  */
-@MapperScan({"com.czy.imports.mapper", "com.utils.minio.mapper"})
+// mybatis-plus
+@MapperScan({"com.czy.imports.mapper", "com.utils.minio.mapper", "com.api.mapper"})
+// mongodb
+@EnableMongoRepositories(basePackages = {"com.api.mapper", "com.czy.imports"})
+// es
+@EnableElasticsearchRepositories(basePackages = {"com.api.mapper", "com.czy.imports"})
 @SpringBootApplication(scanBasePackages = {
         "com.utils.mvc",
         "com.czy.imports",
         "com.czy.api",
-        "com.utils.minio"
+        "com.utils.minio",
+        // mapper
+        "com.api.mapper"
 })
+@EnableAspectJAutoProxy // 启用aop
 public class ImportsApplication {
     public static void main(String[] args) {
         SpringApplication.run(ImportsApplication.class, args);

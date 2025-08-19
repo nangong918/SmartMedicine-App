@@ -1,7 +1,13 @@
 package files;
 
 import cn.hutool.core.util.IdUtil;
-import com.czy.api.domain.Do.neo4j.*;
+import com.api.mapper.post.es.PostDetailEsMapper;
+import com.api.mapper.post.mongo.PostDetailMongoMapper;
+import com.czy.api.domain.Do.neo4j.DiseaseDo;
+import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
+import com.czy.api.domain.Do.neo4j.ProducersDo;
+import com.czy.api.domain.Do.neo4j.TestNeo4jDo;
+import com.czy.api.domain.Do.neo4j.UserFeatureNeo4jDo;
 import com.czy.api.mapper.PostRepository;
 import com.czy.api.mapper.ProducersRepository;
 import com.czy.api.mapper.TestRepository;
@@ -11,8 +17,6 @@ import com.czy.imports.domain.Do.ArticleDo;
 import com.czy.imports.domain.ao.AuthorAo;
 import com.czy.imports.manager.CrawlerDataManager;
 import com.czy.imports.manager.FileReadManager;
-import com.czy.imports.mapper.PostDetailMongoMapper;
-import com.czy.imports.mapperEs.PostDetailEsMapper;
 import com.czy.imports.mapperEs.UserEsMapper;
 import com.czy.imports.service.ImportAuthorService;
 import com.utils.minio.service.MinioService;
@@ -29,7 +33,12 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
