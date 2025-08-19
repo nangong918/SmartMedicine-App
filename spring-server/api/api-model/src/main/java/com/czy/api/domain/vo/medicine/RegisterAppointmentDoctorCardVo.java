@@ -24,6 +24,6 @@ public class RegisterAppointmentDoctorCardVo {
     public String endDate;
 
     /// 计算填充值
-    // 医院距离
-    public String distance;
+    // 医院距离 (用double因为需要排序)
+    public Double distance;
 }

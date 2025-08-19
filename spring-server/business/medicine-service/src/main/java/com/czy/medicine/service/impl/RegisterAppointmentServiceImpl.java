@@ -6,6 +6,7 @@ import com.czy.api.constant.ErrorConstant;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
 import com.czy.api.domain.Do.medicine.DoctorRegisterAppointmentDo;
 import com.czy.api.domain.ao.LocationAo;
+import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
@@ -14,6 +15,7 @@ import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.medicine.service.RegisterAppointmentService;
 import date.DateUtils;
 import exception.AppException;
+import location.GeoUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +74,36 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         List<RegisterAppointmentDoctorCardVo> cardVos = getDoctorCardVo(doctorRegisterAppointmentDos);
         pageVo.setCardVos(cardVos);
 
-        // 数据填充（数据库查询出来的数据继续计算）
+        /// 数据填充（数据库查询出来的数据继续计算）
+        // 距离填充
+        if (ao.getLatitude() == null || ao.getLongitude() == null){
+            for (RegisterAppointmentDoctorCardVo cardVo : pageVo.getCardVos()){
+                // 设置值是错误值
+                cardVo.setDistance(-1.0);
+            }
+        }
+        else {
+            for (RegisterAppointmentDoctorCardVo cardVo : pageVo.getCardVos()){
+                Double longitude = Optional.ofNullable(cardVo)
+                        .map(RegisterAppointmentDoctorCardVo::getHospitalAo)
+                        .map(HospitalAo::getLongitude)
+                        .orElse(null);
+                Double latitude = Optional.ofNullable(cardVo)
+                        .map(RegisterAppointmentDoctorCardVo::getHospitalAo)
+                        .map(HospitalAo::getLatitude)
+                        .orElse(null);
+                if (longitude != null && latitude != null){
+                    double distance = GeoUtils.calculateDistance(
+                            latitude, longitude,
+                            cardVo.getHospitalAo().getLatitude(),
+                            cardVo.getHospitalAo().getLongitude()
+                    );
+                    cardVo.setDistance(distance);
+                }
+            }
+        }
+
+        // oss填充
 
         return pageVo;
     }
