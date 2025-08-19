@@ -25,6 +25,14 @@ import java.util.List;
  * @author 13225
  * @date 2025/8/18 14:23
  * 本来需要pay-service，但是为了内存只能将pay-service和purchase-service合并
+ * todo 1.虚拟数据导入脚本（1.根据当前时间生成4天，2.每天至少生成5条 3.生成地址定位为：广东-深圳-南山）
+ *      2.获取可预约列表，获取所有预约时间：mysql查数据查询测试
+ *      3.user预约：mysql插入数据测试（redis缓存 + mysql避免超卖问题）
+ *      4.purchase的支付服务；订单生成，超时未支付关闭订单；商户状态/订单状态变化
+ *      5.获取user预约订单列表
+ *      6.获取订单详情
+ *      7.取消预约 + 退款
+ *      8.再次预约
  */
 @Slf4j
 @CrossOrigin(origins = "*") // 跨域

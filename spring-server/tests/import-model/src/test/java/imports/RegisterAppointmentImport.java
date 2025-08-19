@@ -5,13 +5,17 @@ import com.api.mapper.medicine.HospitalMapper;
 import com.czy.api.domain.Do.medicine.DoctorDo;
 import com.czy.api.domain.Do.medicine.HospitalDo;
 import com.czy.imports.ImportsApplication;
+import location.GeoUtils;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -46,13 +50,54 @@ public class RegisterAppointmentImport {
         doctorMapper.insert(doctorDo);
     }
 
-    private List<DoctorDo> createDoctors(){
-        return null;
+    private static final int DOCTOR_COUNT = 5;
+    private static final Long START_ID = 1234567890L;
+    private static final String[] DOCTOR_NAMES = {"张医生", "王医生", "李医生", "赵医生", "孙医生"};
+    private static final String[] DOCTOR_TITLES = {"主治医师", "副主任医师", "主任医师", "副主任医师", "主治医师"};
+
+    private List<DoctorDo> createDoctors(@NonNull Long avatarId){
+        List<DoctorDo> doctorDos = new ArrayList<>();
+        for (int i = 0; i < DOCTOR_COUNT; i++){
+            DoctorDo doctorDo = new DoctorDo();
+            int finalI = i;
+            String name = Optional.of(DOCTOR_NAMES)
+                            .filter(names -> names.length > finalI)
+                            .map(names -> names[finalI])
+                            .orElse(DOCTOR_NAMES[DOCTOR_NAMES.length - 1]);
+            doctorDo.setName(name);
+            String title = DOCTOR_TITLES[i % DOCTOR_TITLES.length];
+            doctorDo.setTitle(title);
+            doctorDo.setAvatarFileId(avatarId);
+            doctorDo.setId(START_ID + i);
+            doctorDos.add(doctorDo);
+        }
+        return doctorDos;
     }
 
+    private static final int HOSPITAL_COUNT = 5;
+    private static final String[] HOSPITAL_NAMES = {"广东省人民医院","深圳市第一医院","深圳大学第一附属医院","上海交通大学附属医院","广州医院"};
+    private static final String[] HOSPITAL_LEVELS = {"三级甲等", "三级乙等", "二级甲等", "二级乙等", "二级丙等"};
+    // 22.32,19N, 114.01.17E
+    private static final double[] LOCATION = {22.63667, 114.01472};
+    private static final double RADIUS = 5000;
     private List<HospitalDo> createHospitals(){
-        HospitalDo hospitalDo = new HospitalDo();
-
+        List<HospitalDo> hospitalDos = new ArrayList<>();
+        for (int i = 0; i < HOSPITAL_COUNT; i++) {
+            HospitalDo hospitalDo = new HospitalDo();
+            hospitalDo.setId(START_ID + i);
+            hospitalDo.setName(HOSPITAL_NAMES[i % HOSPITAL_NAMES.length]);
+            hospitalDo.setLevel(HOSPITAL_LEVELS[i % HOSPITAL_LEVELS.length]);
+            hospitalDo.setProvince("广东省");
+            hospitalDo.setCity("深圳市");
+            hospitalDo.setRegion("南山区");
+            Double[] coordinates = GeoUtils.generateRandomCoordinates(
+                    LOCATION[0],
+                    LOCATION[1],
+                    RADIUS
+            );
+            hospitalDo.setLongitude(coordinates[0]);
+            hospitalDo.setLatitude(coordinates[1]);
+        }
         return null;
     }
 

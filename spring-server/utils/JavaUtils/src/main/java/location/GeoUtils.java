@@ -1,5 +1,7 @@
 package location;
 
+import java.util.Random;
+
 /**
  * @author 13225
  * @date 2025/8/19 14:09
@@ -40,6 +42,27 @@ public class GeoUtils {
 
         double distance = GeoUtils.calculateDistance(userLat, userLon, hospitalLat, hospitalLon);
         System.out.println("距离：" + distance + " 米");
+    }
+
+    /**
+     * 生成随机经纬度
+     * @param centerLat 中心点纬度
+     * @param centerLon 中心点经度
+     * @param radius 半径（单位：米）
+     * @return 随机经纬度数组 [纬度, 经度]
+     */
+    public static Double[] generateRandomCoordinates(double centerLat, double centerLon, double radius) {
+        Random random = new Random();
+        double distance = radius * Math.sqrt(random.nextDouble());
+        double theta = random.nextDouble() * 2 * Math.PI;
+
+        double deltaLat = distance * Math.cos(theta) / EARTH_RADIUS;
+        double deltaLon = distance * Math.sin(theta) / (EARTH_RADIUS * Math.cos(Math.toRadians(centerLat)));
+
+        double randomLat = centerLat + Math.toDegrees(deltaLat);
+        double randomLon = centerLon + Math.toDegrees(deltaLon);
+
+        return new Double[]{randomLat, randomLon};
     }
 
 }

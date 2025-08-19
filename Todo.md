@@ -271,6 +271,14 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 3天
   * 7月3~7月5
 
+* todo 1.虚拟数据导入脚本（1.根据当前时间生成4天，2.每天至少生成5条 3.生成地址定位为：广东-深圳-南山）
+*      2.获取可预约列表，获取所有预约时间：mysql查数据查询测试
+*      3.user预约：mysql插入数据测试（redis缓存 + mysql避免超卖问题）
+*      4.purchase的支付服务；订单生成，超时未支付关闭订单；商户状态/订单状态变化
+*      5.获取user预约订单列表
+*      6.获取订单详情
+*      7.取消预约 + 退款
+*      8.再次预约
 todo 日志数据存储改为hive
 todo user行为记录改为aop; 数据记录位置改为hive(大数据仓库)
 todo 数据离线计算改为spark,flink
@@ -279,8 +287,6 @@ todo 学习dubbo;实现dubbo服务能够动态注册生产者,让消消费者动
 todo 提高系统的鲁棒性：（单点，各种场景考虑，性能分析，中间件分析）
 todo 推荐系统已经推荐的post编辑进入已推荐过,召回阶段不再选取
 todo post获取权限筛选；评论权限筛选（AOP？）。
-todo 秒杀预约挂号系统
-todo 商品购物系统
 todo 点赞(netty)，评论(netty+http)，收藏(netty)，转发(netty)
 todo 明天继续跑通IM和post
 商品购物系统需要加入(后台配置秒杀活动)
