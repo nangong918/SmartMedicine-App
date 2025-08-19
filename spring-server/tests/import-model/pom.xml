@@ -52,13 +52,13 @@
         <!--公共工具类模块-->
         <dependency>
             <groupId>com.utils</groupId>
-            <artifactId>SpringUtils</artifactId>
+            <artifactId>CommonUtils</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.utils</groupId>
-            <artifactId>MinioUtils</artifactId>
+            <artifactId>SpringUtils</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
@@ -74,18 +74,12 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.business</groupId>-->
-<!--            <artifactId>post-service</artifactId>-->
-<!--            <version>1.0.0-SNAPSHOT</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.business</groupId>-->
-<!--            <artifactId>user-auth-relation-service</artifactId>-->
-<!--            <version>1.0.0-SNAPSHOT</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.utils</groupId>
+            <artifactId>MinioUtils</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Lombok for domain -->
         <dependency>

@@ -12,18 +12,26 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  * @date 2025/1/10 18:25
  */
 // mybatis-plus
-@MapperScan({"com.czy.imports.mapper", "com.utils.minio.mapper", "com.api.mapper"})
+@MapperScan({"com.czy.imports.mapper",
+        "com.utils.minio.mapper",
+        "com.api.mapper"})
 // mongodb
 @EnableMongoRepositories(basePackages = {"com.api.mapper", "com.czy.imports"})
 // es
 @EnableElasticsearchRepositories(basePackages = {"com.api.mapper", "com.czy.imports"})
 @SpringBootApplication(scanBasePackages = {
-        "com.utils.mvc",
-        "com.czy.imports",
+        // 扫描api模块
         "com.czy.api",
+        "com.api.mapper",
+        // 扫描本模块
+        "com.czy.imports",
+        // 扫描工具类
+        "com.czy.spring",
+        "com.utils.common",
+//        "com.utils.redisson",
         "com.utils.minio",
-        // mapper
-        "com.api.mapper"
+//        "com.utils.redis",
+//        "com.utils.rabbitmq",
 })
 @EnableAspectJAutoProxy // 启用aop
 public class ImportsApplication {

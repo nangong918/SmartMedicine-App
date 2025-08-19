@@ -182,7 +182,7 @@ minio:
 
 mybatis-plus:
   type-aliases-package: com.czy.api.domain, # com.czy.imports.domain # 扫描实体类
-  mapper-locations: classpath*:mybatis/*Mapper.xml, classpath*:mybatis-plus/*Mapper.xml #指定多个 Mapper XML 文件的路径
+  mapper-locations: classpath*:mybatis/*Mapper.xml, classpath*:mybatis-plus/*Mapper.xml
   global-config:
     db-config:
       id-type: auto # 数据库主键策略配置
