@@ -2,7 +2,7 @@ package com.czy.api.domain.bo.medicine;
 
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
   SELECT   dt.avatarFileId as doctorAvatarFileId,
@@ -48,8 +48,8 @@ public class RegisterAppointmentDoctorCardBo {
     // 费用
     private String cost;
     // 预约时间区间
-    private LocalDate beginDate;
-    private LocalDate endDate;
+    private LocalDateTime beginDate;
+    private LocalDateTime endDate;
     // 状态
     private Integer status;
 

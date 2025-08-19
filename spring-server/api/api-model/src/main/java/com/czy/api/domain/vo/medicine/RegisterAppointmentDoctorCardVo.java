@@ -19,7 +19,7 @@ public class RegisterAppointmentDoctorCardVo {
     public Integer remainCount;
     // 费用 BigDecimal
     public String cost;
-    // 预约时间区间 yyyy-MM-dd HH:mm:ss -洗数据-> HH:mm（只保留此部分）
+    // 预约时间区间 yyyy-MM-dd HH:mm:ss -洗数据-> HH:mm（只保留此部分） 他妈的前端自己去洗，自己没手吗妈了个逼的
     public String beginDate;
     public String endDate;
 
