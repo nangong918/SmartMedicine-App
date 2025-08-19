@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -70,6 +71,8 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         // cardVos
         List<RegisterAppointmentDoctorCardVo> cardVos = getDoctorCardVo(doctorRegisterAppointmentDos);
         pageVo.setCardVos(cardVos);
+
+        // 数据填充（数据库查询出来的数据继续计算）
 
         return pageVo;
     }
@@ -143,5 +146,47 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     }
 
     // 获取DataVoList todo
+    public List<RegisterAppointmentDataVo> getDataVoList(@NotNull RegisterAppointmentSelectAo ao) throws AppException{
+        if (!StringUtils.hasText(ao.getRegisterTime())){
+            return new ArrayList<>();
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime registerTime;
+        try {
+            registerTime = DateUtils.getLocalDateTime(ao.getRegisterTime(), formatter);
+        } catch (Exception e) {
+            String errorMessage = "时间转换错误, timeStr: " + ao.getRegisterTime();
+            log.error(errorMessage, e);
+            throw new AppException(errorMessage, e);
+        }
 
+        // 获取今天~3天后挂号列表
+        LocalDateTime[] registerDates = new LocalDateTime[]{
+                // 今天
+                registerTime,
+                // 明天
+                registerTime.plusDays(1),
+                // 后天
+                registerTime.plusDays(2),
+                // 3天后
+                registerTime.plusDays(3),
+        };
+
+        // 获取数据
+        List<RegisterAppointmentDataVo> dataVos = new ArrayList<>();
+        for (LocalDateTime registerDate : registerDates) {
+            // 获取可挂号的记录列表
+            List<DoctorRegisterAppointmentDo> doctorRegisterAppointmentDos = getDoctorRegisterAppointmentDo(
+                    ao.registerLocation,
+                    registerDate,
+                    ao.registerDepartmentCode,
+                    ao.registerSubjectCode
+            );
+
+            // dataVo
+            RegisterAppointmentDataVo dataVo = getDataVo(doctorRegisterAppointmentDos, ao.getRegisterTime());
+            dataVos.add(dataVo);
+        }
+        return dataVos;
+    }
 }

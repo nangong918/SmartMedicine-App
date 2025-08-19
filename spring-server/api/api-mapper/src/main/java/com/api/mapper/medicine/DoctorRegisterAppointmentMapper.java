@@ -16,7 +16,7 @@ import java.util.List;
 @Mapper
 public interface DoctorRegisterAppointmentMapper {
 
-    // 根据do记录获取 cardVo的bo
+    // 根据do记录获取 cardVo的bo todo 待测试
 
     /**
      *
@@ -49,6 +49,7 @@ public interface DoctorRegisterAppointmentMapper {
             List<DoctorRegisterAppointmentDo> dos
     );
 
+    //  todo 待测试
     /**
      * 根据参数获取do
      * @param registerLocation                  地点

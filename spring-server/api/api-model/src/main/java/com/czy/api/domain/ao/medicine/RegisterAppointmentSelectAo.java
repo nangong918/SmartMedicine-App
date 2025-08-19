@@ -34,4 +34,7 @@ public class RegisterAppointmentSelectAo {
      */
     @NotNull(message = "科目不能为空")
     public Integer registerSubjectCode;
+    /// 经纬度
+    public Double longitude;
+    public Double latitude;
 }
