@@ -3,7 +3,11 @@ package com.czy.medicine.controller;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.GetRegisterAppointmentListRequest;
-import com.czy.api.exception.CommonExceptions;
+import com.czy.api.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
+import com.czy.api.domain.dto.http.response.GetRegisterAppointmentListResponse;
+import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
+import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.medicine.service.RegisterAppointmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -13,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author 13225
@@ -27,21 +31,34 @@ import java.util.Date;
 @RequestMapping(MedicineConstant.RegisterAppointment_CONTROLLER)
 public class RegisterAppointmentController {
 
-    @PostMapping("/getList")
-    public BaseResponse<Object> getList(@Validated @RequestBody GetRegisterAppointmentListRequest request){
-        // 参数校验 （此处ao中部分参数因为复用没写校验所以需要单独校验逻辑）
-        // registerTime是否可用 String -> Date
-        Date registerTime = null;
-        try {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            registerTime = formatter.parse(request.getRequestAo().getRegisterTime());
-        } catch (Exception e){
-            log.error("获取挂号列表失败，时间转换异常: {}", request.getRequestAo().getRegisterTime());
-            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
-        }
+    private final RegisterAppointmentService registerAppointmentService;
 
-        // todo
-        return null;
+    @PostMapping("/getList")
+    public BaseResponse<GetRegisterAppointmentListResponse>
+    getList(@Validated @RequestBody GetRegisterAppointmentListRequest request){
+        // 参数校验 （此处ao中部分参数因为复用没写校验所以需要单独校验逻辑）
+        RegisterAppointmentPageVo pageVo = registerAppointmentService.getPage(
+                request.getRequestAo()
+        );
+
+        GetRegisterAppointmentListResponse response = new GetRegisterAppointmentListResponse();
+        response.setPageVo(pageVo);
+        return BaseResponse.getResponseEntitySuccess(response);
+    }
+
+    @PostMapping("/getAllDate")
+    public BaseResponse<GetAllRegisterAppointmentDateResponse> getAllDate(
+            @RequestBody @Valid GetRegisterAppointmentListRequest request) {
+
+        List<RegisterAppointmentDataVo> dataVos = registerAppointmentService.getDataVoList(
+                request.getRequestAo()
+        );
+
+        GetAllRegisterAppointmentDateResponse response = new GetAllRegisterAppointmentDateResponse();
+
+        response.setDataVos(dataVos);
+
+        return BaseResponse.getResponseEntitySuccess(response);
     }
 
 }

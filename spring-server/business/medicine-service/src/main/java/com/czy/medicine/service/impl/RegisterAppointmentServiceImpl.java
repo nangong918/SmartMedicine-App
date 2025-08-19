@@ -1,11 +1,9 @@
 package com.czy.medicine.service.impl;
 
-import com.api.mapper.medicine.DoctorMapper;
 import com.api.mapper.medicine.DoctorRegisterAppointmentMapper;
 import com.czy.api.constant.ErrorConstant;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
 import com.czy.api.domain.Do.medicine.DoctorRegisterAppointmentDo;
-import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
@@ -43,13 +41,13 @@ import java.util.stream.Collectors;
 @Service
 public class RegisterAppointmentServiceImpl implements RegisterAppointmentService {
 
-    private final DoctorMapper doctorMapper;
     private final DoctorRegisterAppointmentMapper doctorRegisterAppointmentMapper;
     private final RegisterAppointmentDoctorCardConverter registerAppointmentDoctorCardConverter;
     private final OssService ossService;
 
     // 获取PageList
     @NotNull
+    @Override
     public RegisterAppointmentPageVo getPage(@NotNull RegisterAppointmentSelectAo ao) throws AppException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime registerTime;
@@ -64,11 +62,12 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         RegisterAppointmentPageVo pageVo = new RegisterAppointmentPageVo();
 
         // 获取可挂号的记录列表
-        List<DoctorRegisterAppointmentDo> doctorRegisterAppointmentDos = getDoctorRegisterAppointmentDo(
-                ao.registerLocation,
-                registerTime,
-                ao.registerDepartmentCode,
-                ao.registerSubjectCode
+        List<DoctorRegisterAppointmentDo> doctorRegisterAppointmentDos =
+                doctorRegisterAppointmentMapper.getDosByParam(
+                    ao.registerLocation,
+                    registerTime,
+                    ao.registerDepartmentCode,
+                    ao.registerSubjectCode
         );
 
         // dataVo
@@ -129,21 +128,6 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         return pageVo;
     }
 
-    @NotNull
-    public List<DoctorRegisterAppointmentDo> getDoctorRegisterAppointmentDo(
-            @NotNull LocationAo registerLocation,
-            @NotNull LocalDateTime registerDate,
-            @NotNull Integer registerDepartmentCode,
-            @NotNull Integer registerSubjectCode
-            ){
-        return doctorRegisterAppointmentMapper.getDosByParam(
-                registerLocation,
-                registerDate,
-                registerDepartmentCode,
-                registerSubjectCode
-        );
-    }
-
     // 获取DataVo
     private RegisterAppointmentDataVo getDataVo
             (List<DoctorRegisterAppointmentDo> dos, String dateStr){
@@ -179,6 +163,8 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         return dataVo;
     }
 
+    @NotNull
+    @Override
     public List<RegisterAppointmentDoctorCardVo> getDoctorCardVo
             (@NotNull List<DoctorRegisterAppointmentDo> dos){
         if (CollectionUtils.isEmpty(dos)){
@@ -198,6 +184,8 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     }
 
     // 获取DataVoList
+    @NotNull
+    @Override
     public List<RegisterAppointmentDataVo> getDataVoList(@NotNull RegisterAppointmentSelectAo ao) throws AppException{
         if (!StringUtils.hasText(ao.getRegisterTime())){
             return new ArrayList<>();
@@ -228,11 +216,12 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         List<RegisterAppointmentDataVo> dataVos = new ArrayList<>();
         for (LocalDateTime registerDate : registerDates) {
             // 获取可挂号的记录列表
-            List<DoctorRegisterAppointmentDo> doctorRegisterAppointmentDos = getDoctorRegisterAppointmentDo(
-                    ao.registerLocation,
-                    registerDate,
-                    ao.registerDepartmentCode,
-                    ao.registerSubjectCode
+            List<DoctorRegisterAppointmentDo> doctorRegisterAppointmentDos =
+                    doctorRegisterAppointmentMapper.getDosByParam(
+                        ao.registerLocation,
+                        registerDate,
+                        ao.registerDepartmentCode,
+                        ao.registerSubjectCode
             );
 
             // dataVo
