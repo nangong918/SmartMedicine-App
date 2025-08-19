@@ -26,4 +26,6 @@ public class RegisterAppointmentDoctorCardVo {
     /// 计算填充值
     // 医院距离 (用double因为需要排序)
     public Double distance;
+    // 记录本身状态: 可预约，已结束，售罄，等待开放
+    // 用户预约状态: 待支付，待使用，待评价，退款中，退款失败，已取消
 }

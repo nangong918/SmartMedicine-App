@@ -2,6 +2,7 @@ package com.czy.medicine.controller;
 
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.domain.dto.base.BaseResponse;
+import com.czy.api.domain.dto.http.request.AppointmentDoctorRequest;
 import com.czy.api.domain.dto.http.request.GetRegisterAppointmentListRequest;
 import com.czy.api.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
 import com.czy.api.domain.dto.http.response.GetRegisterAppointmentListResponse;
@@ -17,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
  * @author 13225
  * @date 2025/8/18 14:23
+ * 本来需要pay-service，但是为了内存只能将pay-service和purchase-service合并
  */
 @Slf4j
 @CrossOrigin(origins = "*") // 跨域
@@ -33,6 +34,9 @@ public class RegisterAppointmentController {
 
     private final RegisterAppointmentService registerAppointmentService;
 
+    /// 查：获取
+
+    // 获取可预约列表
     @PostMapping("/getList")
     public BaseResponse<GetRegisterAppointmentListResponse>
     getList(@Validated @RequestBody GetRegisterAppointmentListRequest request){
@@ -46,10 +50,10 @@ public class RegisterAppointmentController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
+    // 获取所有预约时间
     @PostMapping("/getAllDate")
-    public BaseResponse<GetAllRegisterAppointmentDateResponse> getAllDate(
-            @RequestBody @Valid GetRegisterAppointmentListRequest request) {
-
+    public BaseResponse<GetAllRegisterAppointmentDateResponse>
+    getAllDate(@Validated @RequestBody GetRegisterAppointmentListRequest request) {
         List<RegisterAppointmentDataVo> dataVos = registerAppointmentService.getDataVoList(
                 request.getRequestAo()
         );
@@ -61,4 +65,20 @@ public class RegisterAppointmentController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
+    // 获取user预约订单列表
+
+
+    /// 增：预约
+    @PostMapping("/appointment")
+    public BaseResponse<Object> appointment
+    (@Validated @RequestBody AppointmentDoctorRequest request){
+        return null;
+    }
+
+    /// 改（删）：取消预约
+    @PostMapping("/cancel")
+    public BaseResponse<Object> cancelAppointment
+    (@Validated @RequestBody AppointmentDoctorRequest request){
+        return null;
+    }
 }
