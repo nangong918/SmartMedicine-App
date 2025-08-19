@@ -1,6 +1,9 @@
 package com.api.mapper.medicine;
 
+import com.czy.api.domain.Do.medicine.DoctorDo;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * @author 13225
@@ -8,4 +11,19 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface DoctorMapper {
+
+    /// 增
+    void insert(DoctorDo doctorDo);
+
+    void insertBatch(List<DoctorDo> doctorDos);
+
+    /// 删
+
+    /// 改
+
+    /// 查
+    DoctorDo getById(Long id);
+
+    List<DoctorDo> getByIds(List<Long> ids);
+
 }
