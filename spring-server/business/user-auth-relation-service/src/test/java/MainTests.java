@@ -1,3 +1,4 @@
+import com.api.mapper.user.mysql.user.LoginUserMapper;
 import com.czy.api.api.user.user.LoginService;
 import com.czy.api.api.user.user.UserSearchService;
 import com.czy.api.api.user.user.UserService;
@@ -10,7 +11,6 @@ import com.czy.api.domain.dto.http.request.LoginUserRequest;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
 import com.czy.api.domain.vo.user.UserVo;
 import com.czy.user.UserServiceApplication;
-import com.czy.user.mapper.mysql.user.LoginUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

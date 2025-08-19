@@ -1,4 +1,4 @@
-package com.czy.user.mapper.mysql.user;
+package com.api.mapper.user.mysql.user;
 
 
 import com.czy.api.domain.Do.user.UserDo;

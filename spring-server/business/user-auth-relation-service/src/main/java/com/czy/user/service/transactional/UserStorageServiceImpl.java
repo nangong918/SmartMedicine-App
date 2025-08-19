@@ -1,8 +1,8 @@
 package com.czy.user.service.transactional;
 
+import com.api.mapper.user.es.UserEsMapper;
+import com.api.mapper.user.mysql.user.UserMapper;
 import com.czy.api.domain.Do.user.UserDo;
-import com.czy.user.mapper.es.UserEsMapper;
-import com.czy.user.mapper.mysql.user.UserMapper;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

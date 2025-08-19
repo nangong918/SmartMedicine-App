@@ -1,9 +1,9 @@
 package com.czy.user.service;
 
+import com.api.mapper.user.es.UserEsMapper;
+import com.api.mapper.user.mysql.user.UserMapper;
 import com.czy.api.api.user.user.UserSearchService;
 import com.czy.api.domain.Do.user.UserDo;
-import com.czy.user.mapper.es.UserEsMapper;
-import com.czy.user.mapper.mysql.user.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

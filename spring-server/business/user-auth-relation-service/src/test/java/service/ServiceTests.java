@@ -1,14 +1,18 @@
 package service;
 
+import com.api.mapper.user.mysql.relation.UserFriendMapper;
 import com.czy.api.api.user.relation.UserRelationshipService;
 import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
 import com.czy.api.constant.user_relationship.newUserGroup.HandleStatusEnum;
-import com.czy.api.domain.ao.relationship.*;
+import com.czy.api.domain.ao.relationship.AddUserAo;
+import com.czy.api.domain.ao.relationship.HandleAddedMeAo;
+import com.czy.api.domain.ao.relationship.MyFriendItemAo;
+import com.czy.api.domain.ao.relationship.NewUserItemAo;
+import com.czy.api.domain.ao.relationship.SearchFriendApplyAo;
 import com.czy.api.domain.entity.FriendViewEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.user.UserServiceApplication;
-import com.czy.user.mapper.mysql.relation.UserFriendMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

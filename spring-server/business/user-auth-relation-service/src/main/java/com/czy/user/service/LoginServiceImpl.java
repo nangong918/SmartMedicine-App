@@ -2,6 +2,8 @@ package com.czy.user.service;
 
 
 import cn.hutool.core.util.IdUtil;
+import com.api.mapper.user.es.UserEsMapper;
+import com.api.mapper.user.mysql.user.LoginUserMapper;
 import com.czy.api.api.user.auth.TokenGeneratorService;
 import com.czy.api.api.user.user.LoginService;
 import com.czy.api.constant.user_relationship.UserConstant;
@@ -15,8 +17,6 @@ import com.czy.api.domain.dto.http.request.LoginUserRequest;
 import com.czy.api.domain.dto.http.response.LoginSignResponse;
 import com.czy.api.domain.vo.user.UserVo;
 import com.czy.api.mapper.UserFeatureRepository;
-import com.czy.user.mapper.es.UserEsMapper;
-import com.czy.user.mapper.mysql.user.LoginUserMapper;
 import com.czy.user.service.front.UserFrontService;
 import com.utils.common.util.EncryptUtil;
 import com.utils.redisson.service.RedissonClusterLock;

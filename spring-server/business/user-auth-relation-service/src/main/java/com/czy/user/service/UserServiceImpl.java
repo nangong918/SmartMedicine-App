@@ -1,6 +1,9 @@
 package com.czy.user.service;
 
 import cn.hutool.core.util.IdUtil;
+import com.api.mapper.user.es.UserEsMapper;
+import com.api.mapper.user.mysql.user.LoginUserMapper;
+import com.api.mapper.user.mysql.user.UserMapper;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.converter.domain.user.UserConverter;
@@ -11,9 +14,6 @@ import com.czy.api.domain.ao.user.UserInfoAo;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.vo.user.UserVo;
 import com.czy.api.mapper.UserFeatureRepository;
-import com.czy.user.mapper.es.UserEsMapper;
-import com.czy.user.mapper.mysql.user.LoginUserMapper;
-import com.czy.user.mapper.mysql.user.UserMapper;
 import com.czy.user.service.front.UserFrontService;
 import com.czy.user.service.transactional.UserStorageService;
 import com.utils.minio.service.OssService;

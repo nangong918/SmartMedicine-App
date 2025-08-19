@@ -6,12 +6,19 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 
-@MapperScan({"com.czy.user.mapper", "com.utils.minio.mapper"})    // 扫描mapper
+// mybatis-plus
+@MapperScan({"com.czy.user.mapper", "com.utils.minio.mapper", "com.api.mapper"})    // 扫描mapper
+// mongodb
+@EnableMongoRepositories(basePackages = {"com.api.mapper", "com.czy.user"})
+// es
+@EnableElasticsearchRepositories(basePackages = {"com.api.mapper", "com.czy.user"})
 @SpringBootApplication(scanBasePackages = {
         // 扫描api模块
         "com.czy.api",
+        "com.api.mapper",
         // 扫描本模块
         "com.czy.user",
         // 扫描工具类
@@ -22,7 +29,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
         "com.utils.redis",
         "com.utils.rabbitmq",
 }) // 扫描bean
-@EnableElasticsearchRepositories(basePackages = "com.api.mapper")
 public class UserServiceApplication {
     public static void main(String[] args) {
         new SpringApplicationBuilder(UserServiceApplication.class)

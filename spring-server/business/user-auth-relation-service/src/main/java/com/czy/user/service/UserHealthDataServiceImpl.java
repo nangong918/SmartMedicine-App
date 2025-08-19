@@ -1,8 +1,8 @@
 package com.czy.user.service;
 
+import com.api.mapper.user.mysql.user.UserHealthDataMapper;
 import com.czy.api.api.user.UserHealthDataService;
 import com.czy.api.domain.Do.user.UserHealthDataDo;
-import com.czy.user.mapper.mysql.user.UserHealthDataMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

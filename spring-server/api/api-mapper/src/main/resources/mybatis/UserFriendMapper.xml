@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.czy.user.mapper.mysql.relation.UserFriendMapper">
+<mapper namespace="com.api.mapper.user.mysql.relation.UserFriendMapper">
 
     <resultMap id="friendViewResultMap" type="com.czy.api.domain.entity.FriendViewEntity">
         <!-- 父类 UserViewEntity 的字段 -->

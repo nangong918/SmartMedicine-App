@@ -1,6 +1,8 @@
 package com.czy.user.controller;
 
 
+import com.api.mapper.user.mysql.user.LoginUserMapper;
+import com.api.mapper.user.mysql.user.UserMapper;
 import com.czy.api.api.user.user.LoginService;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
@@ -12,8 +14,6 @@ import com.czy.api.domain.entity.event.UserOssResponse;
 import com.czy.api.domain.vo.user.UserVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.UserExceptions;
-import com.czy.user.mapper.mysql.user.LoginUserMapper;
-import com.czy.user.mapper.mysql.user.UserMapper;
 import com.czy.user.service.front.UserFrontService;
 import com.utils.minio.domain.ao.FileIsExistAo;
 import com.utils.minio.service.MinioService;

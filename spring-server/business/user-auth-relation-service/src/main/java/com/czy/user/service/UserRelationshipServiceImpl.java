@@ -1,5 +1,7 @@
 package com.czy.user.service;
 
+import com.api.mapper.user.mysql.relation.FriendApplyMapper;
+import com.api.mapper.user.mysql.relation.UserFriendMapper;
 import com.czy.api.api.user.relation.UserRelationshipService;
 import com.czy.api.api.user.user.UserSearchService;
 import com.czy.api.api.user.user.UserService;
@@ -26,8 +28,6 @@ import com.czy.api.domain.entity.FriendViewEntity;
 import com.czy.api.domain.entity.MessageEntity;
 import com.czy.api.domain.entity.UserViewEntity;
 import com.czy.api.domain.entity.event.Message;
-import com.czy.user.mapper.mysql.relation.FriendApplyMapper;
-import com.czy.user.mapper.mysql.relation.UserFriendMapper;
 import com.czy.user.mq.sender.ToSocketMqSender;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
