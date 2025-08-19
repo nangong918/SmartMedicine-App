@@ -29,5 +29,26 @@
             #{item.doctorId}
         </foreach>
     </select>
+    <select id="getDosByParam" resultType="com.czy.api.domain.Do.medicine.DoctorRegisterAppointmentDo">
+        SELECT *
+        FROM doctor_register_appointment AS drat
+        LEFT JOIN hospital AS hos ON drat.hospital_id = hos.id
+        WHERE
+            hos.province = #{location.province} -- 地区非空
+            <if test="location.city != null">
+                AND hos.city = #{location.city}
+            </if>
+            <if test="location.region != null">
+                AND hos.region = #{location.region}
+            </if>
+            AND drat.department_id = #{departmentCode}
+            <if test="SubjectCode != null">
+                AND drat.subject_id = #{SubjectCode}
+            </if>
+            <if test="date != null">
+                AND drat.begin_date &lt;= #{date}
+                AND drat.end_date &gt;= #{date}
+            </if>
+    </select>
 
 </mapper>
