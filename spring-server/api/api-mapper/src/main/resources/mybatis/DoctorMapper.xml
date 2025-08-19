@@ -13,13 +13,13 @@
 
     <insert id="insert">
         insert into doctor
-        <include refid="doColumns"/>
+        (<include refid="doColumns"/>)
         values (#{id}, #{name}, #{title}, #{avatarFileId})
     </insert>
 
     <insert id="insertBatch">
         insert into doctor
-        <include refid="doColumns"/>
+        (<include refid="doColumns"/>)
         values
         <foreach collection="dos" item="do" separator=",">
             (#{do.id},

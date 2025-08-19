@@ -11,7 +11,7 @@
 
     <insert id="insert">
         insert into hospital
-        <include refid="doColumns"/>
+        (<include refid="doColumns"/>)
         values
         (#{id}, #{name}, #{level},
         #{province}, #{city}, #{region},
@@ -19,7 +19,7 @@
     </insert>
     <insert id="insertBatch">
         insert into hospital
-        <include refid="doColumns"/>
+        (<include refid="doColumns"/>)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.id}, #{item.name}, #{item.level},
