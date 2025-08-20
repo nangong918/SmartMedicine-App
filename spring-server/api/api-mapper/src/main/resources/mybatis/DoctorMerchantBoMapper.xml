@@ -6,7 +6,7 @@
     <select id="getDoctorCardBosByDos"
             resultType="com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo">
         SELECT
-            dt.avatarFileId AS doctorAvatarFileId,
+            dt.avatar_file_id AS doctorAvatarFileId,
             dt.name AS doctorName,
             dt.title AS doctorTitle,
             ht.name AS hospitalName,
@@ -16,17 +16,16 @@
             ht.region AS locationRegion,
             ht.longitude AS longitude,
             ht.latitude AS latitude,
-            dma.remainCount AS remainCount,
+            dma.remain_count AS remainCount,
             dma.cost AS cost,
-            dma.beginDate AS beginDate,
-            dma.endDate AS endDate,
-            dma.status AS status
+            dma.begin_date AS beginDate,
+            dma.end_date AS endDate
         FROM doctor_merchant_appointment AS dma
-        LEFT JOIN doctor AS dt ON dma.doctorId = dt.id
-        LEFT JOIN hospital AS ht ON dma.hospitalId = ht.id
-        WHERE dma.doctorId IN
+        INNER JOIN doctor AS dt ON dma.doctor_id = dt.id
+        INNER JOIN hospital AS ht ON dma.hospital_id = ht.id
+        WHERE dma.id IN
         <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
-            #{item.doctorId}
+            #{item.id}
         </foreach>
     </select>
 </mapper>

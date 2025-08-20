@@ -4,6 +4,7 @@ import com.czy.api.constant.medicine.DepartmentEnum;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
+import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
 import com.czy.medicine.MedicineServiceApplication;
 import date.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +87,19 @@ public class RegisterAppointmentTests {
 
     @Test
     public void doctorMerchantBoTest(){
+        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+        LocalDateTime now = LocalDateTime.now();
+        List<DoctorMerchantAppointmentDo> dos = doctorMerchantAppointmentMapper.getDosByParam(
+                ao.getRegisterLocation(),
+                now,
+                ao.registerDepartmentCode,
+                ao.registerSubjectCode
+        );
 
+        List<RegisterAppointmentDoctorCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDos(dos);
+        for (RegisterAppointmentDoctorCardBo bo : boList){
+            log.info("bo: {}", bo);
+        }
     }
 
 }

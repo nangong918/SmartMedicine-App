@@ -82,7 +82,7 @@
     <select id="getDosByParam" resultType="com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo">
         SELECT *
         FROM doctor_merchant_appointment AS dma
-        LEFT JOIN hospital AS hos ON dma.hospital_id = hos.id
+        INNER JOIN hospital AS hos ON dma.hospital_id = hos.id
         WHERE
             hos.province = #{location.province} <!-- 地区非空 -->
             <if test="location.city != null">

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface DoctorMerchantBoMapper {
 
-    // 根据do记录获取 cardVo的bo todo 待测试
+    // 根据do记录获取 cardVo的bo 已测试
     /**
      *
      * @param list   doList
