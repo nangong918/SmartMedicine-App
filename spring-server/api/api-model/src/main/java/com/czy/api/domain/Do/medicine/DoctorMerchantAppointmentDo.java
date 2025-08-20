@@ -1,5 +1,6 @@
 package com.czy.api.domain.Do.medicine;
 
+import json.BaseBean;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
  * 医生的可挂号预约记录 list(下拉列表list，等待预约)
  */
 @Data
-public class DoctorMerchantAppointmentDo {
+public class DoctorMerchantAppointmentDo implements BaseBean {
     @Id
     private Long id;
     // 医生id

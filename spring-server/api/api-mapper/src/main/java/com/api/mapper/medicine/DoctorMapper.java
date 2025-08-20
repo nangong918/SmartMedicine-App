@@ -27,4 +27,7 @@ public interface DoctorMapper {
 
     List<DoctorDo> getByIds(@Param("ids") List<Long> ids);
 
+    int getCount();
+
+    List<DoctorDo> getRandomByLimit(@Param("limit") int limit);
 }

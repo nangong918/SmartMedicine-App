@@ -26,4 +26,8 @@ public interface HospitalMapper {
     HospitalDo getById(Long id);
 
     List<HospitalDo> getByIds(@Param("ids") List<Long> ids);
+
+    int getCount();
+
+    List<HospitalDo> getRandomByLimit(@Param("limit") int limit);
 }

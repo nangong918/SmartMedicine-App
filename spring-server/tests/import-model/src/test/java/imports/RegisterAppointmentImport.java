@@ -3,6 +3,7 @@ package imports;
 import com.api.mapper.medicine.DoctorMapper;
 import com.api.mapper.medicine.HospitalMapper;
 import com.api.mapper.user.mysql.user.UserMapper;
+import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.imports.ImportsApplication;
 import com.czy.imports.service.ImportDoctorMerchantAppointmentService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.List;
 
 /**
  * @author 13225
@@ -42,6 +45,16 @@ public class RegisterAppointmentImport {
     @Test
     public void createDoctorsHospital(){
         importDoctorMerchantAppointmentService.createDoctorsHospital();
+    }
+
+
+    @Test
+    public void generatorDoctorsMerchantAppointmentDos(){
+        List<DoctorMerchantAppointmentDo> dos = importDoctorMerchantAppointmentService.generatorDoctorMerchantAppointmentDos(10);
+
+        dos.forEach(d -> {
+            System.out.println("item: " + d.toJsonString());
+        });
     }
 
 }

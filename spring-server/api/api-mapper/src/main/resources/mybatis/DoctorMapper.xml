@@ -41,4 +41,14 @@
             #{id}
         </foreach>
     </select>
+    <select id="getCount" resultType="java.lang.Integer">
+        select count(*)
+        from doctor
+    </select>
+    <select id="getRandomByLimit" resultType="com.czy.api.domain.Do.medicine.DoctorDo">
+        select *
+        from doctor
+        order by RAND()
+        limit #{limit}
+    </select>
 </mapper>
