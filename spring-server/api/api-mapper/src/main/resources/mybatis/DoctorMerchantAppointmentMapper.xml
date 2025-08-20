@@ -7,7 +7,7 @@
         id, doctor_id, hospital_id,
         department_id, subject_id,
         cost, remain_count,
-        begin_date, end_date, status
+        begin_date, end_date
     </sql>
 
     <sql id="setValue">
@@ -19,13 +19,12 @@
         remain_count = #{remainCount},
         begin_date = #{beginDate},
         end_date = #{endDate},
-        status = #{status}
     </sql>
 
     <sql id="insertValue">
         #{doctorId}, #{hospitalId}, #{departmentId},
         #{subjectId}, #{cost}, #{remainCount},
-        #{beginDate}, #{endDate}, #{status}
+        #{beginDate}, #{endDate}
     </sql>
 
     <insert id="insertDoctorMerchantAppointment">
@@ -43,7 +42,7 @@
             <foreach item="item" index="index" collection="list" separator=",">
                 (#{item.id}, #{item.doctorId}, #{item.hospitalId}, #{item.departmentId},
                 #{item.subjectId}, #{item.cost}, #{item.remainCount},
-                #{item.beginDate}, #{item.endDate}, #{item.status})
+                #{item.beginDate}, #{item.endDate}
             </foreach>
         </if>
     </insert>

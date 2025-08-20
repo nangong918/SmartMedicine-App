@@ -1,11 +1,10 @@
 package com.czy.api.domain.Do.medicine;
 
-import com.czy.api.constant.medicine.DoctorRegisterAppointmentStatusEnum;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author 13225
@@ -22,10 +21,10 @@ public class DoctorMerchantAppointmentDo {
     // 医院id
     private Long hospitalId;
 
-    // 部门id
-    private Long departmentId;
-    // 科室id
-    private Long subjectId;
+    // 部门id(code; 是int)
+    private Integer departmentId;
+    // 科室id(code; 是int)
+    private Integer subjectId;
 
     // 价格
     private BigDecimal cost;
@@ -33,12 +32,6 @@ public class DoctorMerchantAppointmentDo {
     private Integer remainCount;
 
     // 预约时间区间 yyyy-MM-dd HH:mm:ss
-    private LocalDate beginDate;
-    private LocalDate endDate;
-
-    /**
-     * 状态
-     * @see DoctorRegisterAppointmentStatusEnum
-     */
-    private Integer status = DoctorRegisterAppointmentStatusEnum.WAITING_OPEN.getCode();
+    private LocalDateTime beginDate;
+    private LocalDateTime endDate;
 }
