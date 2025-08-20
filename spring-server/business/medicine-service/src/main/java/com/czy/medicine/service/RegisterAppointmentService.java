@@ -38,4 +38,16 @@ public interface RegisterAppointmentService {
      * @throws AppException     AppException
      */
     @NotNull List<RegisterAppointmentDataVo> getDataVoList(@NotNull RegisterAppointmentSelectAo ao) throws AppException;
+
+    /**
+     * 预约
+     * @param doctorMerchantAppointmentId   医生商户id
+     * @param userId                        用户id
+     * @param orderId                       订单id        (因为此方法是消息队列监听者异步调用的，
+     * 但是在此之前user不能没有订单id信息，不然就找不到订单了，
+     * 所以由上游创建订单id，如果此处处理失败了，就将redis的数据清除)
+     * @throws AppException                 预约失败的异常
+     */
+    void appointment(
+            @NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId) throws AppException;
 }

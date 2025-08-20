@@ -3,6 +3,7 @@ package com.czy.medicine.controller;
 import cn.hutool.core.util.IdUtil;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.purchase.PurchaseConstant;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.AppointmentDoctorRequest;
 import com.czy.api.domain.dto.http.request.GetRegisterAppointmentListRequest;
@@ -12,6 +13,7 @@ import com.czy.api.domain.dto.http.response.GetRegisterAppointmentListResponse;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.api.exception.PurchaseExceptions;
+import com.czy.medicine.mq.AppointmentMqSender;
 import com.czy.medicine.service.RegisterAppointmentService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
@@ -48,6 +50,7 @@ public class RegisterAppointmentController {
 
     private final RegisterAppointmentService registerAppointmentService;
     private final RedissonService redissonService;
+    private final AppointmentMqSender appointmentMqSender;
 
     /// 查：获取
 
@@ -114,6 +117,11 @@ public class RegisterAppointmentController {
 
         /// 加入消息队列，避免数据库qps过高
         // 使用rabbitmq，避免jvm单机挂掉消息丢失，出现分布式死锁。
+        AppointmentDoctorAo message = new AppointmentDoctorAo();
+        message.setUserId(request.getUserId());
+        message.setDoctorMerchantAppointmentId(request.getDoctorMerchantAppointmentId());
+        message.setOrderId(orderId);
+        appointmentMqSender.push(message);
 
         // 查询redis数据，redis原子操作，避免频繁访问数据库，频繁io
 

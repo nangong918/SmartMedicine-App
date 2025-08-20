@@ -52,6 +52,10 @@ public interface MqConstants {
         String DEAD_LETTER_EXCHANGE = DeadLetterQueue.ID + EXCHANGE;
         // error
         String ERROR_EXCHANGE = ErrorQueue.ID + EXCHANGE;
+        // appointment (预约)
+        String APPOINTMENT_EXCHANGE = AppointmentQueue.ID + EXCHANGE;
+        // purchase (购物)
+        // pay (支付)
     }
 
 
@@ -174,17 +178,23 @@ public interface MqConstants {
 
     /// logging
     interface LoggingQueue {
-//        interface R {
-//            String LOGGING = ".logging";
-//            String EXPLICIT = R.LOGGING + ".explicit";
-//            String IMPLICIT = R.LOGGING + ".implicit";
-//        }
 //
 //        String EXPLICIT_BEHAVIOR_QUEUE = "socket" + R.EXPLICIT + QUEUE_KEY;
 //        String IMPLICIT_BEHAVIOR_QUEUE = "socket" + R.IMPLICIT + QUEUE_KEY;
         String ID = ".logging";
         String LOGGING_TO_SOCKET_QUEUE = TO_SOCKET + ID + QUEUE;
         String LOGGING_TO_SERVICE_QUEUE = TO_SERVICE + ID + QUEUE;
+    }
+
+    /// 预约队列
+    interface AppointmentQueue {
+        String ID = ".appointment";
+
+        interface Routing {
+            String DOCTOR_MERCHANT_ROUTING = ".doctorMerchant" + ID;
+        }
+
+        String DOCTOR_MERCHANT_QUEUE = Routing.DOCTOR_MERCHANT_ROUTING + QUEUE;
     }
 
     /**

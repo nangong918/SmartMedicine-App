@@ -246,20 +246,20 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
 
     /**
      * 预约
-     * @param doctorMerchantId              医生商户id
+     * @param doctorMerchantAppointmentId   医生商户id
      * @param userId                        用户id
      * @param orderId                       订单id        (因为此方法是消息队列监听者异步调用的，
      * 但是在此之前user不能没有订单id信息，不然就找不到订单了，
      * 所以由上游创建订单id，如果此处处理失败了，就将redis的数据清除)
-     * @return                              订单
      * @throws AppException                 预约失败的异常
      */
-    public long appointment(
-            @NotNull Long doctorMerchantId, @NotNull Long userId, long orderId) throws AppException{
+    @Override
+    public void appointment(
+            @NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId) throws AppException{
         // 检查当前状态是否是可预约
-        DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorRegisterAppointmentMapper.getById(doctorMerchantId);
+        DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorRegisterAppointmentMapper.getById(doctorMerchantAppointmentId);
         if (doctorRegisterAppointmentDo == null || doctorRegisterAppointmentDo.getId() == null){
-            log.warn("预约医生商户{} 不存在", doctorMerchantId);
+            log.warn("预约医生商户{} 不存在", doctorMerchantAppointmentId);
             throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
         }
 
@@ -292,7 +292,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
 
         UserCustomerAppointmentDo userCustomerAppointmentDo = new UserCustomerAppointmentDo();
         userCustomerAppointmentDo.setId(orderId);
-        userCustomerAppointmentDo.setDoctorMerchantAppointmentId(doctorMerchantId);
+        userCustomerAppointmentDo.setDoctorMerchantAppointmentId(doctorMerchantAppointmentId);
         userCustomerAppointmentDo.setUserId(userId);
         userCustomerAppointmentDo.setTimestamp(timestamp);
 
@@ -300,7 +300,6 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
                 userCustomerAppointmentDo
         );
 
-        return orderId;
     }
     
     // 获取list
