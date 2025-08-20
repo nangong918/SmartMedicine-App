@@ -5,7 +5,10 @@ import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
+import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.medicine.MedicineServiceApplication;
+import com.czy.medicine.service.RegisterAppointmentService;
 import date.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -100,6 +103,31 @@ public class RegisterAppointmentTests {
         for (RegisterAppointmentDoctorCardBo bo : boList){
             log.info("bo: {}", bo);
         }
+    }
+
+    @Autowired
+    private RegisterAppointmentService registerAppointmentService;
+
+    @Test
+    public void getListRegisterAppointment(){
+        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+
+        RegisterAppointmentPageVo pageVo = registerAppointmentService.getPage(
+                ao
+        );
+
+        log.info("pageVo: {}", pageVo.toJsonString());
+    }
+
+    @Test
+    public void getAllDateRegisterAppointment(){
+        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+
+        List<RegisterAppointmentDataVo> dataVos = registerAppointmentService.getDataVoList(
+                ao
+        );
+
+        log.info("dataVos: {}", dataVos);
     }
 
 }

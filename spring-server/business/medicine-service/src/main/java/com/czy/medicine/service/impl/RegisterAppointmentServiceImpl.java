@@ -226,8 +226,10 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
                         ao.registerSubjectCode
             );
 
+            String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
+
             // dataVo
-            RegisterAppointmentDataVo dataVo = getDataVo(doctorRegisterAppointmentDos, ao.getRegisterTime());
+            RegisterAppointmentDataVo dataVo = getDataVo(doctorRegisterAppointmentDos, dateStr);
             dataVos.add(dataVo);
         }
         return dataVos;
