@@ -6,6 +6,7 @@ import lombok.Getter;
  * @author 13225
  * @date 2025/8/19 15:08
  * 待支付，待使用，待评价，退款中，退款失败，已取消
+ * 用户状态：user_status
  */
 @Getter
 public enum UserOrderStatusEnum {
