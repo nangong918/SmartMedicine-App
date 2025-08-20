@@ -256,6 +256,10 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     @Override
     public void appointment(
             @NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId) throws AppException{
+        // 查询redis数据，redis原子操作，避免频繁访问数据库，频繁io
+
+        // redis击穿：使用事务查询数据库，并且锁行。用乐观锁，悲观锁的锁行性能低，然后对数据做处理返回结果
+
         // 检查当前状态是否是可预约
         DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorRegisterAppointmentMapper.getById(doctorMerchantAppointmentId);
         if (doctorRegisterAppointmentDo == null || doctorRegisterAppointmentDo.getId() == null){
