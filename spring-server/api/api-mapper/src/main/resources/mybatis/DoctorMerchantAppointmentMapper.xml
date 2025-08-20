@@ -65,6 +65,28 @@
         </if>
     </update>
 
+    <update id="compareAndDecrement">
+        UPDATE doctor_merchant_appointment
+        SET remain_count = remain_count - 1
+        WHERE id = #{id}
+        AND remain_count = #{expectedCount} <!-- 乐观锁：先前查询的数据必须和当前库存相等 -->
+    </update>
+
+    <update id="decrementRemainCount">
+        UPDATE doctor_merchant_appointment
+        SET remain_count = remain_count - 1
+        WHERE id = #{id}
+        AND remain_count > 0
+    </update>
+
+    <update id="decrementWithPessimisticLock">
+        UPDATE doctor_merchant_appointment
+        SET remain_count = remain_count - 1
+        WHERE id = #{id}
+        AND remain_count > 0
+        FOR UPDATE
+    </update>
+
     <delete id="deleteDoctorMerchantAppointment">
         DELETE FROM doctor_merchant_appointment
         WHERE id = #{id}
@@ -105,6 +127,14 @@
         SELECT *
         FROM doctor_merchant_appointment
         WHERE id = #{id}
+    </select>
+
+    <!-- 行锁定 SELECT FOR UPDATE -->
+    <select id="getByIdForUpdate" resultType="com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo">
+        SELECT *
+        FROM doctor_merchant_appointment
+        WHERE id = #{id}
+        FOR UPDATE
     </select>
 
 </mapper>

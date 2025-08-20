@@ -32,6 +32,30 @@ public interface DoctorMerchantAppointmentMapper {
 
     void updateDoctorMerchantAppointments(@Param("list") List<DoctorMerchantAppointmentDo> list);
 
+    /**
+     * 乐观锁更新库存
+     * 乐观锁是先计算后进行原子操作，然后为了避免原子操作的错误，要进行库存跟计算之间的校验
+     * @param id                 id
+     * @param expectedCount      期望库存
+     * @return                   更新结果
+     */
+    int compareAndDecrement(@Param("id") Long id, @Param("expectedCount") int expectedCount);
+
+    /**
+     * 悲观锁更新库存
+     * 悲观锁在操作开始时直接加锁，确保其他事务无法访问相关数据。
+     * @param id                 id
+     * @return                   更新结果
+     */
+    int decrementWithPessimisticLock(@Param("id") Long id);
+
+    /**
+     * 直接减少库存
+     * @param id    商品id
+     * @return      减库存结果 0:失败 1:成功
+     */
+    int decrementRemainCount(Long id);
+
     /// 查询
 
     //  已测试
@@ -62,4 +86,7 @@ public interface DoctorMerchantAppointmentMapper {
 
     // 获取指定id的预约记录
     DoctorMerchantAppointmentDo getById(@Param("id") Long doctorMerchantId);
+
+    // 添加行级锁查询
+    DoctorMerchantAppointmentDo getByIdForUpdate(@Param("id") Long id);
 }
