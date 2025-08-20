@@ -1,4 +1,4 @@
-package com.czy.api.constant.netty;
+package com.czy.api;
 
 /**
  * @author 13225

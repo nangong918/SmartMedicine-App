@@ -1,6 +1,6 @@
 package com.czy.netty.service.impl;
 
-import com.czy.api.constant.netty.MqConstants;
+import com.czy.api.MqConstants;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.netty.service.NettyMessageService;
@@ -24,7 +24,7 @@ public class NettyMessageServiceImpl implements NettyMessageService {
      * 普配依据：
      * @see com.czy.api.constant.netty.RequestMessageType
      * 目标类型：
-     * @see com.czy.api.constant.netty.MqConstants
+     * @see MqConstants
      */
     @Override
     public String getNettyMessageMq(Message message){

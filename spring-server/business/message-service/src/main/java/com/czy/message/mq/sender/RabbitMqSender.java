@@ -1,7 +1,7 @@
 package com.czy.message.mq.sender;
 
 import com.czy.api.api.RabbitMqSenderInterface;
-import com.czy.api.constant.netty.MqConstants;
+import com.czy.api.MqConstants;
 import com.czy.api.domain.entity.event.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

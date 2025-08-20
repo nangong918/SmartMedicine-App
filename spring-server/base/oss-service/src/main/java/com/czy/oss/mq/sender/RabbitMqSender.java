@@ -2,7 +2,7 @@
 //
 //
 //import com.czy.api.constant.netty.MessageTypeTranslator;
-//import com.czy.api.constant.netty.MqConstants;
+//import com.czy.api.MqConstants;
 //import com.czy.api.constant.netty.ResponseMessageType;
 //import com.czy.api.converter.base.BaseResponseConverter;
 //import com.czy.api.domain.dto.base.BaseResponseData;

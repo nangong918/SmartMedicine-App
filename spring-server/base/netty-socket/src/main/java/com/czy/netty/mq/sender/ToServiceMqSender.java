@@ -1,6 +1,6 @@
 package com.czy.netty.mq.sender;
 
-import com.czy.api.constant.netty.MqConstants;
+import com.czy.api.MqConstants;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.netty.service.NettyMessageService;
 import lombok.RequiredArgsConstructor;

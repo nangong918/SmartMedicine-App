@@ -1,7 +1,7 @@
 package com.czy.user.mq.handler;
 
 
-import com.czy.api.constant.netty.MqConstants;
+import com.czy.api.MqConstants;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.api.domain.entity.event.event.MessageRouteEvent;
 import com.rabbitmq.client.Channel;
