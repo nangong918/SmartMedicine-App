@@ -1,6 +1,7 @@
 package com.czy.medicine.service.impl;
 
 import com.api.mapper.medicine.DoctorMerchantAppointmentMapper;
+import com.api.mapper.medicine.bo.DoctorMerchantBoMapper;
 import com.czy.api.constant.ErrorConstant;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
@@ -43,6 +44,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
 
     private final DoctorMerchantAppointmentMapper doctorRegisterAppointmentMapper;
     private final RegisterAppointmentDoctorCardConverter registerAppointmentDoctorCardConverter;
+    private final DoctorMerchantBoMapper doctorMerchantBoMapper;
     private final OssService ossService;
 
     // 获取PageList
@@ -172,7 +174,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
 
         // 用dos批量查询 -> do; 避免逐个查询产生多余的io (Mybatis不会添加null对象)
-        List<RegisterAppointmentDoctorCardBo> bos = doctorRegisterAppointmentMapper.getDoctorCardBosByDos(
+        List<RegisterAppointmentDoctorCardBo> bos = doctorMerchantBoMapper.getDoctorCardBosByDos(
                 dos
         );
         if (CollectionUtils.isEmpty(bos)){

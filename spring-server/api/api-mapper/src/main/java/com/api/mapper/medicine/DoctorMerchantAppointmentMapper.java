@@ -2,7 +2,6 @@ package com.api.mapper.medicine;
 
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.LocationAo;
-import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,38 +15,24 @@ import java.util.List;
 @Mapper
 public interface DoctorMerchantAppointmentMapper {
 
-    // 根据do记录获取 cardVo的bo todo 待测试
+    /// 增加
+    void insertDoctorMerchantAppointment(DoctorMerchantAppointmentDo doctorMerchantAppointmentDo);
 
-    /**
-     *
-     * @param dos   doList
-     * @return      boList
-        SELECT
-            dt.avatarFileId as doctorAvatarFileId,
-            dt.name as doctorName,
-            dt.title as doctorTitle,
-
-            ht.name as hospitalName,
-            ht.level as hospitalLevel,
-            ht.province as locationProvince,
-            ht.city as locationCity,
-            ht.region as locationRegion,
-            ht.longitude as longitude,
-            ht.latitude as latitude,
-
-            dma.remainCount as remainCount,
-            dma.cost as cost,
-            dma.beginDate as beginDate,
-            dma.endDate as endDate,
-            dma.status as status
-        FROM doctor_merchant_appointment AS dma
-        LEFT JOIN doctor AS dt ON dma.doctorId = dt.id
-        LEFT JOIN hospital AS ht ON dma.hospitalId = ht.id
-        WHERE dma.doctorId in (item.doctorId)
-     */
-    List<RegisterAppointmentDoctorCardBo> getDoctorCardBosByDos(
-            List<DoctorMerchantAppointmentDo> dos
+    void insertDoctorMerchantAppointmentBatch(
+            @Param("list") List<DoctorMerchantAppointmentDo> list
     );
+
+    /// 删除
+    void deleteDoctorMerchantAppointment(Long id);
+
+    void deleteDoctorMerchantAppointments(@Param("list") List<Long> ids);
+
+    /// 修改
+    void updateDoctorMerchantAppointment(DoctorMerchantAppointmentDo item);
+
+    void updateDoctorMerchantAppointments(@Param("list") List<DoctorMerchantAppointmentDo> list);
+
+    /// 查询
 
     //  todo 待测试
     /**

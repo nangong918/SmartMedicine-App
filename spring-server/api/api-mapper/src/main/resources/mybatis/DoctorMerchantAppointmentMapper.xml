@@ -3,32 +3,83 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.api.mapper.medicine.DoctorMerchantAppointmentMapper">
 
-    <select id="getDoctorCardBosByDos"
-            resultType="com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo">
-        SELECT
-            dt.avatarFileId AS doctorAvatarFileId,
-            dt.name AS doctorName,
-            dt.title AS doctorTitle,
-            ht.name AS hospitalName,
-            ht.level AS hospitalLevel,
-            ht.province AS locationProvince,
-            ht.city AS locationCity,
-            ht.region AS locationRegion,
-            ht.longitude AS longitude,
-            ht.latitude AS latitude,
-            dma.remainCount AS remainCount,
-            dma.cost AS cost,
-            dma.beginDate AS beginDate,
-            dma.endDate AS endDate,
-            dma.status AS status
-        FROM doctor_merchant_appointment AS dma
-        LEFT JOIN doctor AS dt ON dma.doctorId = dt.id
-        LEFT JOIN hospital AS ht ON dma.hospitalId = ht.id
-        WHERE dma.doctorId IN
-        <foreach item="item" index="index" collection="dos" open="(" separator="," close=")">
-            #{item.doctorId}
-        </foreach>
-    </select>
+    <sql id="doColumns">
+        id, doctor_id, hospital_id,
+        department_id, subject_id,
+        cost, remain_count,
+        begin_date, end_date, status
+    </sql>
+
+    <sql id="setValue">
+        doctor_id = #{doctorId},
+        hospital_id = #{hospitalId},
+        department_id = #{departmentId},
+        subject_id = #{subjectId},
+        cost = #{cost},
+        remain_count = #{remainCount},
+        begin_date = #{beginDate},
+        end_date = #{endDate},
+        status = #{status}
+    </sql>
+
+    <sql id="insertValue">
+        #{doctorId}, #{hospitalId}, #{departmentId},
+        #{subjectId}, #{cost}, #{remainCount},
+        #{beginDate}, #{endDate}, #{status}
+    </sql>
+
+    <insert id="insertDoctorMerchantAppointment">
+        INSERT INTO doctor_merchant_appointment
+        (<include refid="doColumns"/>)
+        VALUES
+        (<include refid="insertValue"/>)
+    </insert>
+
+    <insert id="insertDoctorMerchantAppointmentBatch">
+        <if test="list != null and list.size() > 0">
+            INSERT INTO doctor_merchant_appointment
+            (<include refid="doColumns"/>)
+            VALUES
+            <foreach item="item" index="index" collection="list" separator=",">
+                (#{item.id}, #{item.doctorId}, #{item.hospitalId}, #{item.departmentId},
+                #{item.subjectId}, #{item.cost}, #{item.remainCount},
+                #{item.beginDate}, #{item.endDate}, #{item.status})
+            </foreach>
+        </if>
+    </insert>
+
+    <update id="updateDoctorMerchantAppointment">
+        UPDATE doctor_merchant_appointment
+        SET
+            <include refid="setValue"/>
+        WHERE id = #{id}
+    </update>
+    <update id="updateDoctorMerchantAppointments">
+        <if test="list != null and list.size() > 0">
+            UPDATE doctor_merchant_appointment
+            SET
+                <include refid="setValue"/>
+            WHERE id IN
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item.id}
+            </foreach>
+        </if>
+    </update>
+
+    <delete id="deleteDoctorMerchantAppointment">
+        DELETE FROM doctor_merchant_appointment
+        WHERE id = #{id}
+    </delete>
+    <delete id="deleteDoctorMerchantAppointments">
+        <if test="list != null and list.size() > 0">
+            DELETE FROM doctor_merchant_appointment
+            WHERE id IN
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+
     <select id="getDosByParam" resultType="com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo">
         SELECT *
         FROM doctor_merchant_appointment AS dma
