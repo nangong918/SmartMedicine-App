@@ -15,6 +15,7 @@ import com.czy.api.domain.Do.user.UserDo;
 import com.czy.imports.service.ImportDoctorMerchantAppointmentService;
 import com.czy.imports.utils.RandomDateTimeGenerator;
 import location.GeoUtils;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -127,6 +128,7 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
     };
 
     private static final int MAX_REMAIN_COUNT = 20;
+    private static final int TEST_DATA_COUNT = 4;
 
     @Override
     public void createDoctorMerchantAppointmentDos(int count){
@@ -166,7 +168,7 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
         Random random = new Random();
         List<DoctorMerchantAppointmentDo> result = new ArrayList<>();
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count + TEST_DATA_COUNT; i++) {
             int randomDoctorIndex = random.nextInt(doctorDos.size());
             int randomHospitalIndex = random.nextInt(hospitalDos.size());
 
@@ -195,7 +197,21 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
             result.add(doctorMerchantAppointmentDo);
         }
 
+        // 添加一定生成的数据，避免在测试的时候找不到数据的情况
+        getMustGenerateDoctorMerchantAppointmentDos(result);
+
         return result;
+    }
+
+    private void getMustGenerateDoctorMerchantAppointmentDos
+            (@NonNull List<DoctorMerchantAppointmentDo> list) {
+        assert list.size() >= TEST_DATA_COUNT;
+        for (int i = 0; i < TEST_DATA_COUNT; i++){
+            // 内科
+            list.get(i).setDepartmentId(DepartmentEnum.INTERNAL_MEDICINE.getCode());
+            // 心脏内科
+            list.get(i).setSubjectId(DepartmentEnum.INTERNAL_MEDICINE.getSubjectEnums()[0].getCode());
+        }
     }
 
     private List<BaseParentEnum> getDepartmentDict (){
