@@ -4,9 +4,11 @@ import com.czy.api.MqConstants;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.purchase.PurchaseConstant;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorAo;
+import com.czy.api.utils.NettyUtils;
 import com.czy.medicine.service.RegisterAppointmentService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
+import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -27,6 +29,7 @@ public class DoctorMerchantAppointmentMqHandler {
 
     private final RegisterAppointmentService registerAppointmentService;
     private final RedissonService redissonService;
+    private final AppointmentMqSender appointmentMqSender;
 
     @RabbitListener(
             bindings = @QueueBinding(
@@ -75,8 +78,16 @@ public class DoctorMerchantAppointmentMqHandler {
 
 
 
+        } catch (AppException appe){
+            log.error("用户预约失败", appe);
+            NettyUtils.sendErrorMessage(
+                    userId,
+                    appe,
+                    appointmentMqSender
+            );
         } catch (Exception e){
-
+            log.error("[预约 消息队列错误][userId: {}][merchantId: {}][orderId: {}]",
+                    userId, doctorMerchantAppointmentId, orderId, e);
         } finally {
             // 解除分布式锁 （无论成功还是失败都解除）
             redissonService.unlock(appointmentLock);
