@@ -10,6 +10,8 @@ import lombok.Getter;
 @Getter
 public enum PurchaseExceptions implements ExceptionEnums {
 
+    // 重复申请，请耐心等待
+    REPEAT_APPLY_LOCK("PUR_10001", "重复申请，请耐心等待"),
     ;
 
     private final String code;

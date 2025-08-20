@@ -5,6 +5,7 @@ package com.czy.api.constant.medicine;
  * @date 2025/4/18 18:20
  */
 public class MedicineConstant {
+    /// service
     public static final String serviceName = "medicine-service";
     // serviceRoute
     public static final String serviceRoute = "/" + serviceName;
@@ -16,6 +17,11 @@ public class MedicineConstant {
     // serviceUri
     public static final String serviceUri = "lb://" + serviceName;
 
+    /// api
+    // 预约
+    public static final String APPOINTMENT = "/appointment";
+
+    /// constant
     // 一共多少日期可看
     public static final int TOTAL_APPOINTMENT_DATE = 4;
     // 可开放的天数

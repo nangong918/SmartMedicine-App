@@ -13,7 +13,7 @@ public class RedissonClusterLock {
     private String id;
     // 锁的ID
     private String lockId;
-    // 锁定失效时间
+    // 锁定失效时间 (秒)
     private long lockTimeout;
 
     public RedissonClusterLock(){

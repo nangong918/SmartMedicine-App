@@ -1,15 +1,19 @@
 package com.czy.medicine.controller;
 
 import com.czy.api.constant.medicine.MedicineConstant;
+import com.czy.api.constant.purchase.PurchaseConstant;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.AppointmentDoctorRequest;
-import com.czy.api.domain.dto.http.request.GetUserAppointmentRecordRequest;
 import com.czy.api.domain.dto.http.request.GetRegisterAppointmentListRequest;
+import com.czy.api.domain.dto.http.request.GetUserAppointmentRecordRequest;
 import com.czy.api.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
 import com.czy.api.domain.dto.http.response.GetRegisterAppointmentListResponse;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.api.exception.PurchaseExceptions;
 import com.czy.medicine.service.RegisterAppointmentService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -42,6 +46,7 @@ import java.util.List;
 public class RegisterAppointmentController {
 
     private final RegisterAppointmentService registerAppointmentService;
+    private final RedissonService redissonService;
 
     /// 查：获取
 
@@ -84,11 +89,23 @@ public class RegisterAppointmentController {
 
 
     /// 增：预约
-    @PostMapping("/appointment")
+    @PostMapping(MedicineConstant.APPOINTMENT)
     public BaseResponse<Object> appointment
     (@Validated @RequestBody AppointmentDoctorRequest request){
 
-        // 分布式锁（避免重复预约；避免死锁设置 5分钟自动锁消除）
+        /// 分布式锁（避免重复预约；避免死锁设置 5分钟自动锁消除）
+        String dataId = request.getDoctorMerchantAppointmentId().toString() + ":" + request.getUserId().toString();
+        String mappingPath = MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
+        RedissonClusterLock appointmentLock = new RedissonClusterLock(
+                dataId,
+                mappingPath,
+                PurchaseConstant.PAY_TIMEOUT
+        );
+        // 获取分布式锁
+        if (!redissonService.tryLock(appointmentLock)){
+            log.warn("[预约挂号][获取分布式锁失败][user: {}][商户: {}]", request.getUserId(), request.getDoctorMerchantAppointmentId());
+            BaseResponse.LogBackError(PurchaseExceptions.REPEAT_APPLY_LOCK);
+        }
 
         // 加入消息队列，避免数据库qps过高
         // 使用rabbitmq，避免jvm单机挂掉消息丢失，出现分布式死锁。
