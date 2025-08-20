@@ -1,5 +1,6 @@
 package com.czy.medicine.controller;
 
+import cn.hutool.core.util.IdUtil;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.purchase.PurchaseConstant;
 import com.czy.api.domain.dto.base.BaseResponse;
@@ -108,7 +109,10 @@ public class RegisterAppointmentController {
             BaseResponse.LogBackError(PurchaseExceptions.REPEAT_APPLY_LOCK);
         }
 
-        // 加入消息队列，避免数据库qps过高
+        // 在加入消息队列之前先生成订单id然后缓存到redis避免找不到。
+        long orderId = IdUtil.getSnowflakeNextId();
+
+        /// 加入消息队列，避免数据库qps过高
         // 使用rabbitmq，避免jvm单机挂掉消息丢失，出现分布式死锁。
 
         // 查询redis数据，redis原子操作，避免频繁访问数据库，频繁io

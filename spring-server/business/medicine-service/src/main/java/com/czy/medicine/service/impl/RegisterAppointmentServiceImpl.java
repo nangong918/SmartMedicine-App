@@ -1,6 +1,5 @@
 package com.czy.medicine.service.impl;
 
-import cn.hutool.core.util.IdUtil;
 import com.api.mapper.medicine.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.bo.DoctorMerchantBoMapper;
@@ -249,11 +248,14 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
      * 预约
      * @param doctorMerchantId              医生商户id
      * @param userId                        用户id
+     * @param orderId                       订单id        (因为此方法是消息队列监听者异步调用的，
+     * 但是在此之前user不能没有订单id信息，不然就找不到订单了，
+     * 所以由上游创建订单id，如果此处处理失败了，就将redis的数据清除)
      * @return                              订单
      * @throws AppException                 预约失败的异常
      */
     public long appointment(
-            @NotNull Long doctorMerchantId, @NotNull Long userId) throws AppException{
+            @NotNull Long doctorMerchantId, @NotNull Long userId, long orderId) throws AppException{
         // 检查当前状态是否是可预约
         DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorRegisterAppointmentMapper.getById(doctorMerchantId);
         if (doctorRegisterAppointmentDo == null || doctorRegisterAppointmentDo.getId() == null){
@@ -287,9 +289,6 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
 
         // 对商品上锁，库减少（模拟减少，因为有5分钟的支付时间，未支付的话就库存数据增）
-
-        // 生成订单id
-        long orderId = IdUtil.getSnowflakeNextId();
 
         UserCustomerAppointmentDo userCustomerAppointmentDo = new UserCustomerAppointmentDo();
         userCustomerAppointmentDo.setId(orderId);
