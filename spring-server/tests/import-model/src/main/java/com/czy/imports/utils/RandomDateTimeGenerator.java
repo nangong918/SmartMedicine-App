@@ -29,7 +29,7 @@ public class RandomDateTimeGenerator {
 
     public static LocalDateTime[] getRandomStartAndEndDateTimes() {
         LocalDate nowDate = LocalDate.now();
-        LocalDate randomDate = nowDate.plusDays(new Random().nextInt(MAX_DAYS - 1));
+        LocalDate randomDate = nowDate.plusDays(new Random().nextInt(MAX_DAYS));
         int randomIndex = new Random().nextInt(startTimes.length);
         return new LocalDateTime[]{
                 LocalDateTime.of(randomDate, startTimes[randomIndex]),

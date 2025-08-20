@@ -207,6 +207,8 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
             (@NonNull List<DoctorMerchantAppointmentDo> list) {
         assert list.size() >= TEST_DATA_COUNT;
         for (int i = 0; i < TEST_DATA_COUNT; i++){
+            // 设置日期
+            list.get(i).setBeginDate(LocalDateTime.now().plusDays(i));
             // 内科
             list.get(i).setDepartmentId(DepartmentEnum.INTERNAL_MEDICINE.getCode());
             // 心脏内科
