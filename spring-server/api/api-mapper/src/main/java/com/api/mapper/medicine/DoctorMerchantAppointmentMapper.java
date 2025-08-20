@@ -1,6 +1,6 @@
 package com.api.mapper.medicine;
 
-import com.czy.api.domain.Do.medicine.DoctorRegisterAppointmentDo;
+import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +14,7 @@ import java.util.List;
  * @date 2025/8/18 17:16
  */
 @Mapper
-public interface DoctorRegisterAppointmentMapper {
+public interface DoctorMerchantAppointmentMapper {
 
     // 根据do记录获取 cardVo的bo todo 待测试
 
@@ -35,18 +35,18 @@ public interface DoctorRegisterAppointmentMapper {
             ht.longitude as longitude,
             ht.latitude as latitude,
 
-            drat.remainCount as remainCount,
-            drat.cost as cost,
-            drat.beginDate as beginDate,
-            drat.endDate as endDate,
-            drat.status as status
-        FROM doctor_register_appointment AS drat
-        LEFT JOIN doctor AS dt ON drat.doctorId = dt.id
-        LEFT JOIN hospital AS ht ON drat.hospitalId = ht.id
-        WHERE drat.doctorId in (item.doctorId)
+            dma.remainCount as remainCount,
+            dma.cost as cost,
+            dma.beginDate as beginDate,
+            dma.endDate as endDate,
+            dma.status as status
+        FROM doctor_merchant_appointment AS dma
+        LEFT JOIN doctor AS dt ON dma.doctorId = dt.id
+        LEFT JOIN hospital AS ht ON dma.hospitalId = ht.id
+        WHERE dma.doctorId in (item.doctorId)
      */
     List<RegisterAppointmentDoctorCardBo> getDoctorCardBosByDos(
-            List<DoctorRegisterAppointmentDo> dos
+            List<DoctorMerchantAppointmentDo> dos
     );
 
     //  todo 待测试
@@ -58,17 +58,17 @@ public interface DoctorRegisterAppointmentMapper {
      * @param registerSubjectCode               科目
      * @return  doctorRegisterAppointmentDo
        SELECT *
-       FROM doctor_register_appointment AS drat
-       LEFT JOIN hospital AS hos ON drat.hospital_id = hos.id
+       FROM doctor_merchant_appointment AS dma
+       LEFT JOIN hospital AS hos ON dma.hospital_id = hos.id
        WHERE hos.province = #{registerLocation.province}
        AND hos.city = #{registerLocation.city}
        AND hos.region = #{registerLocation.region}
-       AND drat.department_id = #{registerDepartmentCode}
-       AND drat.subject_id = #{registerSubjectCode}
-       AND drat.begin_date <= #{registerDate}
-       AND drat.end_date >= #{registerDate}
+       AND dma.department_id = #{registerDepartmentCode}
+       AND dma.subject_id = #{registerSubjectCode}
+       AND dma.begin_date <= #{registerDate}
+       AND dma.end_date >= #{registerDate}
      */
-    List<DoctorRegisterAppointmentDo> getDosByParam(
+    List<DoctorMerchantAppointmentDo> getDosByParam(
             @Param("location") LocationAo registerLocation,
             @Param("date") LocalDateTime registerDate,
             @Param("departmentCode") Integer registerDepartmentCode,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.api.mapper.medicine.DoctorRegisterAppointmentMapper">
+<mapper namespace="com.api.mapper.medicine.DoctorMerchantAppointmentMapper">
 
     <select id="getDoctorCardBosByDos"
             resultType="com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo">
@@ -16,23 +16,23 @@
             ht.region AS locationRegion,
             ht.longitude AS longitude,
             ht.latitude AS latitude,
-            drat.remainCount AS remainCount,
-            drat.cost AS cost,
-            drat.beginDate AS beginDate,
-            drat.endDate AS endDate,
-            drat.status AS status
-        FROM doctor_register_appointment AS drat
-        LEFT JOIN doctor AS dt ON drat.doctorId = dt.id
-        LEFT JOIN hospital AS ht ON drat.hospitalId = ht.id
-        WHERE drat.doctorId IN
+            dma.remainCount AS remainCount,
+            dma.cost AS cost,
+            dma.beginDate AS beginDate,
+            dma.endDate AS endDate,
+            dma.status AS status
+        FROM doctor_merchant_appointment AS dma
+        LEFT JOIN doctor AS dt ON dma.doctorId = dt.id
+        LEFT JOIN hospital AS ht ON dma.hospitalId = ht.id
+        WHERE dma.doctorId IN
         <foreach item="item" index="index" collection="dos" open="(" separator="," close=")">
             #{item.doctorId}
         </foreach>
     </select>
-    <select id="getDosByParam" resultType="com.czy.api.domain.Do.medicine.DoctorRegisterAppointmentDo">
+    <select id="getDosByParam" resultType="com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo">
         SELECT *
-        FROM doctor_register_appointment AS drat
-        LEFT JOIN hospital AS hos ON drat.hospital_id = hos.id
+        FROM doctor_merchant_appointment AS dma
+        LEFT JOIN hospital AS hos ON dma.hospital_id = hos.id
         WHERE
             hos.province = #{location.province} <!-- 地区非空 -->
             <if test="location.city != null">
@@ -41,14 +41,14 @@
             <if test="location.region != null">
                 AND hos.region = #{location.region}
             </if>
-            AND drat.department_id = #{departmentCode}
+            AND dma.department_id = #{departmentCode}
             <if test="SubjectCode != null">
-                AND drat.subject_id = #{SubjectCode}
+                AND dma.subject_id = #{SubjectCode}
             </if>
             <if test="date != null">
-                AND (DATE(drat.begin_date) = DATE(#{date}) OR   <!-- 开始日期是今天 -->
-                DATE(drat.end_date) = DATE(#{date}) OR          <!-- 结束日期是今天 -->
-                (drat.begin_date &lt;= #{date} AND drat.end_date &gt;= #{date}))    <!-- 今天在日期区间中 -->
+                AND (DATE(dma.begin_date) = DATE(#{date}) OR   <!-- 开始日期是今天 -->
+                DATE(dma.end_date) = DATE(#{date}) OR          <!-- 结束日期是今天 -->
+                (dma.begin_date &lt;= #{date} AND dma.end_date &gt;= #{date}))    <!-- 今天在日期区间中 -->
             </if>
     </select>
 

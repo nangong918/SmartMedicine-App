@@ -1,9 +1,9 @@
 package com.czy.medicine.service.impl;
 
-import com.api.mapper.medicine.DoctorRegisterAppointmentMapper;
+import com.api.mapper.medicine.DoctorMerchantAppointmentMapper;
 import com.czy.api.constant.ErrorConstant;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
-import com.czy.api.domain.Do.medicine.DoctorRegisterAppointmentDo;
+import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Service
 public class RegisterAppointmentServiceImpl implements RegisterAppointmentService {
 
-    private final DoctorRegisterAppointmentMapper doctorRegisterAppointmentMapper;
+    private final DoctorMerchantAppointmentMapper doctorRegisterAppointmentMapper;
     private final RegisterAppointmentDoctorCardConverter registerAppointmentDoctorCardConverter;
     private final OssService ossService;
 
@@ -62,7 +62,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         RegisterAppointmentPageVo pageVo = new RegisterAppointmentPageVo();
 
         // 获取可挂号的记录列表
-        List<DoctorRegisterAppointmentDo> doctorRegisterAppointmentDos =
+        List<DoctorMerchantAppointmentDo> doctorRegisterAppointmentDos =
                 doctorRegisterAppointmentMapper.getDosByParam(
                     ao.registerLocation,
                     registerTime,
@@ -130,7 +130,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
 
     // 获取DataVo
     private RegisterAppointmentDataVo getDataVo
-            (List<DoctorRegisterAppointmentDo> dos, String dateStr){
+            (List<DoctorMerchantAppointmentDo> dos, String dateStr){
         RegisterAppointmentDataVo dataVo = new RegisterAppointmentDataVo();
         dataVo.setData(dateStr);
 
@@ -142,7 +142,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
 
         int allRemainCount = 0;
         BigDecimal minCost = null;
-        for (DoctorRegisterAppointmentDo doctorRegisterAppointmentDo : dos){
+        for (DoctorMerchantAppointmentDo doctorRegisterAppointmentDo : dos){
             int remainCount = doctorRegisterAppointmentDo.getRemainCount();
             allRemainCount += remainCount;
 
@@ -166,7 +166,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     @NotNull
     @Override
     public List<RegisterAppointmentDoctorCardVo> getDoctorCardVo
-            (@NotNull List<DoctorRegisterAppointmentDo> dos){
+            (@NotNull List<DoctorMerchantAppointmentDo> dos){
         if (CollectionUtils.isEmpty(dos)){
             return new ArrayList<>();
         }
@@ -216,7 +216,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         List<RegisterAppointmentDataVo> dataVos = new ArrayList<>();
         for (LocalDateTime registerDate : registerDates) {
             // 获取可挂号的记录列表
-            List<DoctorRegisterAppointmentDo> doctorRegisterAppointmentDos =
+            List<DoctorMerchantAppointmentDo> doctorRegisterAppointmentDos =
                     doctorRegisterAppointmentMapper.getDosByParam(
                         ao.registerLocation,
                         registerDate,

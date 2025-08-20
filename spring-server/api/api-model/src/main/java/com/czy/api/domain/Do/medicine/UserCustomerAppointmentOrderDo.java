@@ -7,10 +7,11 @@ import org.springframework.data.annotation.Id;
 /**
  * @author 13225
  * @date 2025/8/18 15:37
+ * 用户客户记录
  * user挂号预约订单记录
  */
 @Data
-public class UserRegisterAppointmentOrderDo {
+public class UserCustomerAppointmentOrderDo {
     @Id
     private Long id;
     // userId

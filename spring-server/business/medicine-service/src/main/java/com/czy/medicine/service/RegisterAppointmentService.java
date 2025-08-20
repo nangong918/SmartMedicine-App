@@ -1,6 +1,6 @@
 package com.czy.medicine.service;
 
-import com.czy.api.domain.Do.medicine.DoctorRegisterAppointmentDo;
+import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
@@ -29,7 +29,7 @@ public interface RegisterAppointmentService {
      * @return      DoctorCardVo
      */
     @NotNull List<RegisterAppointmentDoctorCardVo> getDoctorCardVo
-            (@NotNull List<DoctorRegisterAppointmentDo> dos);
+            (@NotNull List<DoctorMerchantAppointmentDo> dos);
 
     /**
      * 获取四天的日期vo

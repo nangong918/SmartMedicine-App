@@ -10,10 +10,11 @@ import java.time.LocalDate;
 /**
  * @author 13225
  * @date 2025/8/18 15:32
+ * 医生商家记录
  * 医生的可挂号预约记录 list(下拉列表list，等待预约)
  */
 @Data
-public class DoctorRegisterAppointmentDo {
+public class DoctorMerchantAppointmentDo {
     @Id
     private Long id;
     // 医生id
