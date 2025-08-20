@@ -11,12 +11,13 @@ import lombok.Getter;
 @Getter
 public enum UserOrderStatusEnum {
 
-    WAITING_PAYMENT(0, "待支付"),
-    WAITING_USE(1, "待使用"),
-    WAITING_EVALUATION(2, "待评价"),
-    REFUNDING(3, "退款中"),
-    REFUND_FAILED(4, "退款失败"),
-    CANCELED(5, "已取消")
+    NOT_ORDERED(0, "未订购"),
+    WAITING_PAYMENT(1, "待支付"),
+    WAITING_USE(2, "待使用"),
+    WAITING_EVALUATION(3, "待评价"),
+    REFUNDING(4, "退款中"),
+    REFUND_FAILED(5, "退款失败"),
+    CANCELED(6, "已取消")
     ;
 
     private final int code;
@@ -34,6 +35,6 @@ public enum UserOrderStatusEnum {
                 return value;
             }
         }
-        return WAITING_PAYMENT;
+        return NOT_ORDERED;
     }
 }
