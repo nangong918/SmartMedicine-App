@@ -21,11 +21,11 @@
         insert into doctor
         (<include refid="doColumns"/>)
         values
-        <foreach collection="dos" item="do" separator=",">
-            (#{do.id},
-             #{do.name},
-             #{do.title},
-             #{do.avatarFileId})
+        <foreach collection="doctorDos" item="item" separator=",">
+            (#{item.id},
+             #{item.name},
+             #{item.title},
+             #{item.avatarFileId})
         </foreach>
     </insert>
     <select id="getById" resultType="com.czy.api.domain.Do.medicine.DoctorDo">

@@ -44,6 +44,13 @@ public interface UserMapper {
     UserDo getUserByAccount(String account);
 
     /**
+     * fuzzyGetUserByName
+     * @param name   name
+     * @return       UserDo
+     */
+    List<UserDo> fuzzyGetUserByName(String name);
+
+    /**
      * getUserByPhone
      * @param phone phone
      * @return  UserDo

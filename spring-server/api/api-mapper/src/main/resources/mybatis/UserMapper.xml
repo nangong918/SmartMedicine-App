@@ -101,4 +101,10 @@
             </foreach>
         </if>
     </select>
+    <select id="fuzzyGetUserByName" resultType="com.czy.api.domain.Do.user.UserDo">
+        SELECT
+        <include refid="UserDoColumns"/>
+        FROM login_user
+        WHERE user_name LIKE CONCAT('%', #{userName}, '%')
+    </select>
 </mapper>

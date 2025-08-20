@@ -18,14 +18,16 @@
         #{longitude}, #{latitude})
     </insert>
     <insert id="insertBatch">
-        insert into hospital
-        (<include refid="doColumns"/>)
-        values
-        <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.id}, #{item.name}, #{item.level},
-            #{item.province}, #{item.city}, #{item.region},
-            #{item.longitude}, #{item.latitude})
-        </foreach>
+        <if test="hospitalDos != null and hospitalDos.size() > 0">
+            insert into hospital
+            (<include refid="doColumns"/>)
+            values
+            <foreach collection="hospitalDos" item="item" index="index" separator=",">
+                (#{item.id}, #{item.name}, #{item.level},
+                #{item.province}, #{item.city}, #{item.region},
+                #{item.longitude}, #{item.latitude})
+            </foreach>
+        </if>
     </insert>
     <select id="getById" resultType="com.czy.api.domain.Do.medicine.HospitalDo">
         select *

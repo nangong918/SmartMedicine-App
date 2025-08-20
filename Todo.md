@@ -22,19 +22,26 @@
 暂时取消hive，hive较难集成，引入中间件较多。成本较高，可以考虑替换为TimescaleDB
 
 关于TimeScaleDB，无论使用还是不使用，在Java层代码都一样，只需要最后把PostgreSQL升级TimeScaleDB插件
-所以可以直接使用PostgreSQL进行开发
+所以可以直接使用PostgreSQL进行开发（timeScaleDb可以取代mongodb而不是Hive）
 
 暂时不开启vue3去后台配置各种活动数据, 使用java脚本直接往数据库导入和删除数据, 在import-model实现: [import-model](spring-server/tests/import-model)
 项目全部完成写: 项目总结, bug总结, 优化总结.
 优化要在学完java设计模式之后再进行优化, 优化之前要熟悉全部代码, todo标注痛点, 然后确定数据结构再进行优化
 
+推荐算法放在最后；
+
 ## 目前任务
 
-* TimescaleDB记录行为特征 (安装PostgreSQL + TimescaleDB)
-* 评论，收藏 (继续此部分)
-* 购物 (等待UI)
-* 医疗相关 (等待UI)
+* 医疗预约 + 订单系统
+* 购物 + 支付系统
+* 医疗百科
+* 个人帖子
+* 评论，收藏
+↑ 上述结束之后进行整体优化
+↓ 待开发：在整体优化结束之后
+* ~~提醒~~
 * ~~直播~~ (在全部优化完成再执行, 没必要直接加入, 当然如果对C++感兴趣可以额外去做)
+* ~~TimescaleDB记录行为特征 (安装PostgreSQL + TimescaleDB)~~ 还是使用hive
 
 1. jvm调参
 2. user行为记录改为hive存储
