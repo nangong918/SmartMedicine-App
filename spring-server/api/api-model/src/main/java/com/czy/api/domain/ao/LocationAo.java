@@ -16,4 +16,13 @@ public class LocationAo {
     public String province;
     public String city;
     public String region;
+
+    public LocationAo() {
+    }
+
+    public LocationAo(String province, String city, String region) {
+        this.province = province;
+        this.city = city;
+        this.region = region;
+    }
 }

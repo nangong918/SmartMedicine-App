@@ -34,7 +34,7 @@ public interface DoctorMerchantAppointmentMapper {
 
     /// 查询
 
-    //  todo 待测试
+    //  已测试
     /**
      * 根据参数获取do
      * @param registerLocation                  地点

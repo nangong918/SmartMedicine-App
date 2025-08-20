@@ -1,0 +1,92 @@
+import com.api.mapper.medicine.DoctorMerchantAppointmentMapper;
+import com.api.mapper.medicine.bo.DoctorMerchantBoMapper;
+import com.czy.api.constant.medicine.DepartmentEnum;
+import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
+import com.czy.api.domain.ao.LocationAo;
+import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
+import com.czy.medicine.MedicineServiceApplication;
+import date.DateUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.CollectionUtils;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * @author 13225
+ * @date 2025/8/20 13:42
+ */
+@Slf4j
+@SpringBootTest(classes = MedicineServiceApplication.class)
+@TestPropertySource("classpath:application.yml")
+public class RegisterAppointmentTests {
+
+    @Autowired
+    private DoctorMerchantAppointmentMapper doctorMerchantAppointmentMapper;
+    @Autowired
+    private DoctorMerchantBoMapper doctorMerchantBoMapper;
+
+    private RegisterAppointmentSelectAo getRegisterAppointmentSelectAo(){
+        RegisterAppointmentSelectAo ao = new RegisterAppointmentSelectAo();
+        LocationAo locationAo = new LocationAo("广东省", "深圳市", "南山区");
+        LocalDateTime now = LocalDateTime.now();
+        ao.setRegisterLocation(locationAo);
+        String nowTimeStr = DateUtils.yyyyMMddHHmmssToString(now);
+        ao.setRegisterTime(nowTimeStr);
+        ao.setRegisterDepartmentCode(DepartmentEnum.INTERNAL_MEDICINE.getCode());
+        ao.setRegisterSubjectCode(DepartmentEnum.INTERNAL_MEDICINE.getSubjectEnums()[0].getCode());
+        return ao;
+    }
+
+    /**
+     * SELECT *
+     * FROM doctor_merchant_appointment AS dma
+     * LEFT JOIN hospital AS hos ON dma.hospital_id = hos.id
+     * WHERE
+     *     hos.province = '广东省'  -- 地区非空
+     *     AND hos.city = '深圳市'  -- 如果 location.city 非空
+     *     AND hos.region = '南山区' -- 如果 location.region 非空
+     *     AND dma.department_id = 1  -- DepartmentEnum.INTERNAL_MEDICINE.getCode()
+     *     AND dma.subject_id = 1     -- DepartmentEnum.INTERNAL_MEDICINE.getSubjectEnums()[0].getCode()
+     *     AND (
+     *         DATE(dma.begin_date) = DATE('2023-08-20') OR   -- 如果 date 非空
+     *         DATE(dma.end_date) = DATE('2023-08-20') OR
+     *         (dma.begin_date <= '2023-08-20' AND dma.end_date >= '2023-08-20')
+     *     );
+     */
+    @Test
+    public void doctorMerchantAppointmentTest(){
+        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+        LocalDateTime now = LocalDateTime.now();
+
+        for (int i = 0; i < 4; i++){
+            LocalDateTime newDate = now.plusDays(i);
+            List<DoctorMerchantAppointmentDo> dos = doctorMerchantAppointmentMapper.getDosByParam(
+                    ao.getRegisterLocation(),
+                    newDate,
+                    ao.registerDepartmentCode,
+                    ao.registerSubjectCode
+            );
+            if (CollectionUtils.isEmpty(dos)){
+                log.info("[{}] 没有查询到数据", i);
+            }
+            else {
+                log.info("[{}] 查询到数据", i);
+                for (DoctorMerchantAppointmentDo d : dos) {
+                    log.info(d.toJsonString());
+                }
+            }
+        }
+
+    }
+
+    @Test
+    public void doctorMerchantBoTest(){
+
+    }
+
+}
