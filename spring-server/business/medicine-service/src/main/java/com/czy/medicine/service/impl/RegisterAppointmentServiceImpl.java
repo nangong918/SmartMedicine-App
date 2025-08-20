@@ -34,6 +34,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -248,13 +249,11 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
      * 预约
      * @param doctorMerchantId              医生商户id
      * @param userId                        用户id
-     * @param appointmentTime               预约时间
      * @return                              订单
      * @throws AppException                 预约失败的异常
      */
     public long appointment(
-            @NotNull Long doctorMerchantId, @NotNull Long userId,
-            @NotNull LocalDateTime appointmentTime) throws AppException{
+            @NotNull Long doctorMerchantId, @NotNull Long userId) throws AppException{
         // 检查当前状态是否是可预约
         DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorRegisterAppointmentMapper.getById(doctorMerchantId);
         if (doctorRegisterAppointmentDo == null || doctorRegisterAppointmentDo.getId() == null){
@@ -262,10 +261,14 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
         }
 
+        // 当前时间；在此处获取，因为业务可能呗等待，入参的时间应该是错误的
+        LocalDateTime now = LocalDateTime.now();
+        long timestamp = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
         // 检查当前状态是否是可预约
         AppointmentMerchantStatusEnum status = AppointmentMerchantStatusCalculator.calculate(
                 doctorRegisterAppointmentDo.getRemainCount(),
-                appointmentTime,
+                now,
                 MedicineConstant.APPOINTMENT_OPEN_DAYS,
                 doctorRegisterAppointmentDo.getBeginDate(),
                 doctorRegisterAppointmentDo.getEndDate()
@@ -292,7 +295,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         userCustomerAppointmentDo.setId(orderId);
         userCustomerAppointmentDo.setDoctorMerchantAppointmentId(doctorMerchantId);
         userCustomerAppointmentDo.setUserId(userId);
-        userCustomerAppointmentDo.setTimestamp(System.currentTimeMillis());
+        userCustomerAppointmentDo.setTimestamp(timestamp);
 
         userCustomerAppointmentOrderMapper.insert(
                 userCustomerAppointmentDo

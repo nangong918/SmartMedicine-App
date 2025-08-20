@@ -87,6 +87,16 @@ public class RegisterAppointmentController {
     @PostMapping("/appointment")
     public BaseResponse<Object> appointment
     (@Validated @RequestBody AppointmentDoctorRequest request){
+
+        // 分布式锁（避免重复预约；避免死锁设置 5分钟自动锁消除）
+
+        // 加入消息队列，避免数据库qps过高
+        // 使用rabbitmq，避免jvm单机挂掉消息丢失，出现分布式死锁。
+
+        // 查询redis数据，redis原子操作，避免频繁访问数据库，频繁io
+
+        // redis击穿：使用事务查询数据库，并且锁行，用悲观锁，然后对数据做处理返回结果
+
         return null;
     }
 
