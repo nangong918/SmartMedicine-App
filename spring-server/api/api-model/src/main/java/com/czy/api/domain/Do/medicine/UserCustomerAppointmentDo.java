@@ -11,6 +11,7 @@ import org.springframework.data.annotation.Id;
  */
 @Data
 public class UserCustomerAppointmentDo implements BaseBean {
+    // 订单id
     @Id
     private Long id;
     // doctor商户id

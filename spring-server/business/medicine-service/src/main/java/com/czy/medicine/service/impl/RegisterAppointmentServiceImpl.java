@@ -1,10 +1,15 @@
 package com.czy.medicine.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.api.mapper.medicine.DoctorMerchantAppointmentMapper;
+import com.api.mapper.medicine.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.bo.DoctorMerchantBoMapper;
 import com.czy.api.constant.ErrorConstant;
+import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
+import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
+import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
@@ -12,7 +17,9 @@ import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.api.exception.MedicineExceptions;
 import com.czy.medicine.service.RegisterAppointmentService;
+import com.czy.medicine.utils.AppointmentMerchantStatusCalculator;
 import com.utils.minio.service.OssService;
 import date.DateUtils;
 import domain.FileResAo;
@@ -46,6 +53,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     private final RegisterAppointmentDoctorCardConverter registerAppointmentDoctorCardConverter;
     private final DoctorMerchantBoMapper doctorMerchantBoMapper;
     private final OssService ossService;
+    private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
 
     // 获取PageList
     @NotNull
@@ -165,6 +173,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         return dataVo;
     }
 
+    // 获取doctorCardVo
     @NotNull
     @Override
     public List<RegisterAppointmentDoctorCardVo> getDoctorCardVo
@@ -234,4 +243,64 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
         return dataVos;
     }
+
+    /**
+     * 预约
+     * @param doctorMerchantId              医生商户id
+     * @param userId                        用户id
+     * @param appointmentTime               预约时间
+     * @return                              订单
+     * @throws AppException                 预约失败的异常
+     */
+    public long appointment(
+            @NotNull Long doctorMerchantId, @NotNull Long userId,
+            @NotNull LocalDateTime appointmentTime) throws AppException{
+        // 检查当前状态是否是可预约
+        DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorRegisterAppointmentMapper.getById(doctorMerchantId);
+        if (doctorRegisterAppointmentDo == null || doctorRegisterAppointmentDo.getId() == null){
+            log.warn("预约医生商户{} 不存在", doctorMerchantId);
+            throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
+        }
+
+        // 检查当前状态是否是可预约
+        AppointmentMerchantStatusEnum status = AppointmentMerchantStatusCalculator.calculate(
+                doctorRegisterAppointmentDo.getRemainCount(),
+                appointmentTime,
+                MedicineConstant.APPOINTMENT_OPEN_DAYS,
+                doctorRegisterAppointmentDo.getBeginDate(),
+                doctorRegisterAppointmentDo.getEndDate()
+        );
+
+        // 异常
+        switch (status){
+            case AVAILABLE:
+                break;
+            case EXPIRED:
+                throw new AppException(MedicineExceptions.MERCHANT_INFO_EXPIRED);
+            case NO_AVAILABLE:
+                throw new AppException(MedicineExceptions.NO_AVAILABLE_MERCHANT);
+            case WAITING_OPEN:
+                throw new AppException(MedicineExceptions.WAITING_OPEN);
+        }
+
+        // 对商品上锁，库减少（模拟减少，因为有5分钟的支付时间，未支付的话就库存数据增）
+
+        // 生成订单id
+        long orderId = IdUtil.getSnowflakeNextId();
+
+        UserCustomerAppointmentDo userCustomerAppointmentDo = new UserCustomerAppointmentDo();
+        userCustomerAppointmentDo.setId(orderId);
+        userCustomerAppointmentDo.setDoctorMerchantAppointmentId(doctorMerchantId);
+        userCustomerAppointmentDo.setUserId(userId);
+        userCustomerAppointmentDo.setTimestamp(System.currentTimeMillis());
+
+        userCustomerAppointmentOrderMapper.insert(
+                userCustomerAppointmentDo
+        );
+
+        return orderId;
+    }
+    
+    // 获取list
+
 }

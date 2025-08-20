@@ -101,5 +101,10 @@
                 (dma.begin_date &lt;= #{date} AND dma.end_date &gt;= #{date}))    <!-- 今天在日期区间中 -->
             </if>
     </select>
+    <select id="getById" resultType="com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo">
+        SELECT *
+        FROM doctor_merchant_appointment
+        WHERE id = #{id}
+    </select>
 
 </mapper>

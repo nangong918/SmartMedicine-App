@@ -59,4 +59,7 @@ public interface DoctorMerchantAppointmentMapper {
             @Param("departmentCode") Integer registerDepartmentCode,
             @Param("SubjectCode") Integer registerSubjectCode
     );
+
+    // 获取指定id的预约记录
+    DoctorMerchantAppointmentDo getById(@Param("id") Long doctorMerchantId);
 }

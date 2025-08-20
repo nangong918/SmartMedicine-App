@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public class DoctorMerchantAppointmentDo implements BaseBean {
+    // 医生商户id
     @Id
     private Long id;
     // 医生id

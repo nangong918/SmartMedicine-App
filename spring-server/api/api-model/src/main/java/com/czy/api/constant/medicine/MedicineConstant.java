@@ -15,4 +15,9 @@ public class MedicineConstant {
 
     // serviceUri
     public static final String serviceUri = "lb://" + serviceName;
+
+    // 一共多少日期可看
+    public static final int TOTAL_APPOINTMENT_DATE = 4;
+    // 可开放的天数
+    public static final int APPOINTMENT_OPEN_DAYS = 3;
 }

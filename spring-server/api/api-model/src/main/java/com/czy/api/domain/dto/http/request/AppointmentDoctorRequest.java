@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 public class AppointmentDoctorRequest {
     // 公开给全部用户的预约医生记录的id
     @NotNull(message = "预约医生记录的id不能为空")
-    public Long doctorAppointmentId;
+    public Long doctorMerchantAppointmentId;
     // userId
     @NotNull(message = "申请预约的用户id不能为空")
     public Long userId;
