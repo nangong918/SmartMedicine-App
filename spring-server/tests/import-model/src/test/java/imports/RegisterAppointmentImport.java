@@ -57,4 +57,12 @@ public class RegisterAppointmentImport {
         });
     }
 
+    /**
+     * 脚本：创建可预约商户信息
+     */
+    @Test
+    public void createDoctorsMerchantAppointmentDos(){
+        importDoctorMerchantAppointmentService.createDoctorMerchantAppointmentDos(50);
+    }
+
 }

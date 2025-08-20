@@ -42,7 +42,7 @@
             <foreach item="item" index="index" collection="list" separator=",">
                 (#{item.id}, #{item.doctorId}, #{item.hospitalId}, #{item.departmentId},
                 #{item.subjectId}, #{item.cost}, #{item.remainCount},
-                #{item.beginDate}, #{item.endDate}
+                #{item.beginDate}, #{item.endDate})
             </foreach>
         </if>
     </insert>

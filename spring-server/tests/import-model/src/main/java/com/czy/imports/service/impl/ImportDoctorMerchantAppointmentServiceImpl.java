@@ -128,8 +128,15 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
 
     private static final int MAX_REMAIN_COUNT = 20;
 
+    @Override
     public void createDoctorMerchantAppointmentDos(int count){
         List<DoctorMerchantAppointmentDo> doctorMerchantAppointmentDos = generatorDoctorMerchantAppointmentDos(count);
+
+        if (!CollectionUtils.isEmpty(doctorMerchantAppointmentDos)){
+            doctorMerchantAppointmentMapper.insertDoctorMerchantAppointmentBatch(
+                    doctorMerchantAppointmentDos
+            );
+        }
     }
 
     @Override
@@ -159,7 +166,7 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
         Random random = new Random();
         List<DoctorMerchantAppointmentDo> result = new ArrayList<>();
 
-        for (int i = 0; i < doctorDos.size(); i++) {
+        for (int i = 0; i < count; i++) {
             int randomDoctorIndex = random.nextInt(doctorDos.size());
             int randomHospitalIndex = random.nextInt(hospitalDos.size());
 

@@ -11,5 +11,7 @@ import java.util.List;
 public interface ImportDoctorMerchantAppointmentService {
     void createDoctorsHospital();
 
+    void createDoctorMerchantAppointmentDos(int count);
+
     List<DoctorMerchantAppointmentDo> generatorDoctorMerchantAppointmentDos(int count);
 }
