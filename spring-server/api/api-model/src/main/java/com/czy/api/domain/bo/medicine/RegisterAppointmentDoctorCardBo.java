@@ -53,4 +53,7 @@ public class RegisterAppointmentDoctorCardBo {
 
     /// 后续计算填充
     private String distance;
+
+    ///  data
+    private Long doctorMerchantId;
 }

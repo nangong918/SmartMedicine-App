@@ -79,7 +79,7 @@ public interface RegisterAppointmentDoctorCardConverter {
     default RegisterAppointmentDoctorCardAo boToAo(RegisterAppointmentDoctorCardBo bo){
         RegisterAppointmentDoctorCardVo vo = boToVo(bo);
         RegisterAppointmentDoctorCardAo ao = new RegisterAppointmentDoctorCardAo();
-        ao.setDoctorMerchantAppointmentId(bo.getDoctorAvatarFileId());
+        ao.setDoctorMerchantAppointmentId(bo.getDoctorMerchantId());
         ao.setVo(vo);
         return ao;
     }

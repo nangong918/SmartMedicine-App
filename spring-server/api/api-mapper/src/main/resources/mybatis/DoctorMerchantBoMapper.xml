@@ -19,7 +19,8 @@
             dma.remain_count AS remainCount,
             dma.cost AS cost,
             dma.begin_date AS beginDate,
-            dma.end_date AS endDate
+            dma.end_date AS endDate,
+            dma.id AS doctorMerchantId
         FROM doctor_merchant_appointment AS dma
         INNER JOIN doctor AS dt ON dma.doctor_id = dt.id
         INNER JOIN hospital AS ht ON dma.hospital_id = ht.id
