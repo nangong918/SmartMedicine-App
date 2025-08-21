@@ -18,3 +18,9 @@
 | RLock             | Distributed Lock | 分布式锁，适合需要在分布式环境中保护共享资源的场景。                                                               |
 | RCountDownLatch   | CountDownLatch   | 实现倒计时功能，适合需要协调多个线程或任务的场景。                                                                 |
 | RSemaphore        | Semaphore        | 实现信号量，适合控制并发访问的场景，如限制同时访问的客户端数量。                                                   |
+
+
+## Spring中类似redis的机制
+@Cacheable(value = "getDataVoList", key = "#ao")
+
+虽然可以实现缓存,但是不是分布式共享

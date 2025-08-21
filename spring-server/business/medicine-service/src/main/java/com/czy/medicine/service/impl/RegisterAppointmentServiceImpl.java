@@ -4,14 +4,18 @@ import com.api.mapper.medicine.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.bo.DoctorMerchantBoMapper;
 import com.czy.api.constant.ErrorConstant;
+import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
+import com.czy.api.constant.medicine.MedicineRedisKey;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
@@ -20,6 +24,8 @@ import com.czy.api.exception.MedicineExceptions;
 import com.czy.medicine.service.RegisterAppointmentService;
 import com.czy.medicine.utils.AppointmentMerchantStatusCalculator;
 import com.utils.minio.service.OssService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 import date.DateUtils;
 import domain.FileResAo;
 import exception.AppException;
@@ -49,16 +55,18 @@ import java.util.stream.Collectors;
 @Service
 public class RegisterAppointmentServiceImpl implements RegisterAppointmentService {
 
-    private final DoctorMerchantAppointmentMapper doctorRegisterAppointmentMapper;
+    private final DoctorMerchantAppointmentMapper doctorMerchantAppointment;
     private final RegisterAppointmentDoctorCardConverter registerAppointmentDoctorCardConverter;
     private final DoctorMerchantBoMapper doctorMerchantBoMapper;
     private final OssService ossService;
     private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
+    private final RedissonService redissonService;
 
     // 获取PageList
     @NotNull
     @Override
     public RegisterAppointmentPageVo getPage(@NotNull RegisterAppointmentSelectAo ao) throws AppException {
+        /// 参数校验
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime registerTime;
         try {
@@ -69,17 +77,24 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             throw new AppException(errorMessage, e);
         }
 
-        RegisterAppointmentPageVo pageVo = new RegisterAppointmentPageVo();
+        /// 数据源
+        /*
+            首先查询Redis缓存，如果Redis缓存未查询到再查询 Mysql
+            由于时间处理会比较特殊，所以redis_key不存储时间参数，而是获取时间参数之外的数据然后计算时间参数
+            如果不按照上述方式去处理的话会出现的bug: 每次传入的时间参数都是当前时间，那么每次都找不到缓存不说还会产生大量垃圾缓存。
+         */
+        StringBuilder keyBuilder = new StringBuilder();
 
         // 获取可挂号的记录列表
         List<DoctorMerchantAppointmentDo> doctorRegisterAppointmentDos =
-                doctorRegisterAppointmentMapper.getDosByParam(
+                doctorMerchantAppointment.getDosByParam(
                     ao.registerLocation,
                     registerTime,
                     ao.registerDepartmentCode,
                     ao.registerSubjectCode
         );
 
+        RegisterAppointmentPageVo pageVo = new RegisterAppointmentPageVo();
         // dataVo
         RegisterAppointmentDataVo dataVo = getDataVo(doctorRegisterAppointmentDos, ao.getRegisterTime());
         pageVo.setDataVo(dataVo);
@@ -138,7 +153,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         return pageVo;
     }
 
-    // 获取DataVo
+    // 获取DataVo (此do -> vo无需查询数据库, 无需redis缓存)
     private RegisterAppointmentDataVo getDataVo
             (List<DoctorMerchantAppointmentDo> dos, String dateStr){
         RegisterAppointmentDataVo dataVo = new RegisterAppointmentDataVo();
@@ -198,6 +213,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     @NotNull
     @Override
     public List<RegisterAppointmentDataVo> getDataVoList(@NotNull RegisterAppointmentSelectAo ao) throws AppException{
+        /// 参数校验
         if (!StringUtils.hasText(ao.getRegisterTime())){
             return new ArrayList<>();
         }
@@ -210,6 +226,27 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             log.error(errorMessage, e);
             throw new AppException(errorMessage, e);
         }
+
+        /// 数据源
+        /*
+            首先查询Redis缓存，如果Redis缓存未查询到再查询 Mysql
+            由于时间处理会比较特殊，所以redis_key不存储时间参数，而是获取时间参数之外的数据然后计算时间参数
+            如果不按照上述方式去处理的话会出现的bug: 每次传入的时间参数都是当前时间，那么每次都找不到缓存不说还会产生大量垃圾缓存。
+            Key: key = PREFIX:${province}:${city}:${region}:${departmentCode}:${subjectCode}
+            过期时间设计: 预约数据只能查询0~3天的数据, 所以应该设计4天为过期时间
+            缓存对象: 缓存对象为Do, 因为Vo涉及对Do的计算, 如果只因为数据存在就返回数据, 那么一定会出现缓存Vo和Do计算出来的Vo不一致
+            如果缓存对象为Vo, 那么每次更新Do的时候都要删除缓存, 避免返回过时的Vo这一问题
+         */
+        StringBuilder keyBuilder = new StringBuilder(MedicineRedisKey.Appointment.getDataVoList_KEY_PREFIX);
+
+        // 添加地点信息
+        keyBuilder.append(ao.getRegisterLocation().getProvince()).append(":");
+        keyBuilder.append(ao.getRegisterLocation().getCity() == null ? "null" : ao.getRegisterLocation().getCity()).append(":");
+        keyBuilder.append(ao.getRegisterLocation().getRegion() == null ? "null" : ao.getRegisterLocation().getRegion()).append(":");
+
+        // 添加科室和科目代码
+        keyBuilder.append(ao.getRegisterDepartmentCode()).append(":");
+        keyBuilder.append(ao.getRegisterSubjectCode() == null ? "null" : ao.getRegisterSubjectCode()).append(":");
 
         // 获取今天~3天后挂号列表
         LocalDateTime[] registerDates = new LocalDateTime[]{
@@ -228,7 +265,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         for (LocalDateTime registerDate : registerDates) {
             // 获取可挂号的记录列表
             List<DoctorMerchantAppointmentDo> doctorRegisterAppointmentDos =
-                    doctorRegisterAppointmentMapper.getDosByParam(
+                    doctorMerchantAppointment.getDosByParam(
                         ao.registerLocation,
                         registerDate,
                         ao.registerDepartmentCode,
@@ -261,7 +298,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         // redis击穿：使用事务查询数据库，并且锁行。用乐观锁，悲观锁的锁行性能低，然后对数据做处理返回结果
 
         // 检查当前状态是否是可预约
-        DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorRegisterAppointmentMapper.getById(doctorMerchantAppointmentId);
+        DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorMerchantAppointment.getById(doctorMerchantAppointmentId);
         if (doctorRegisterAppointmentDo == null || doctorRegisterAppointmentDo.getId() == null){
             log.warn("预约医生商户{} 不存在", doctorMerchantAppointmentId);
             throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
@@ -293,7 +330,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
 
         // 对商品上锁，库减少（模拟减少，因为有5分钟的支付时间，未支付的话就库存数据增）
-
+        // 缓存减少
         UserCustomerAppointmentDo userCustomerAppointmentDo = new UserCustomerAppointmentDo();
         userCustomerAppointmentDo.setId(orderId);
         userCustomerAppointmentDo.setDoctorMerchantAppointmentId(doctorMerchantAppointmentId);
@@ -304,8 +341,81 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
                 userCustomerAppointmentDo
         );
 
+        // mq -> 传参并告知purchase-service生成待支付的订单 -> purchase-service直接将消息交给netty通知user，并且直接在purchase调用mapper或者dubbo修改数据库
+        // 消息队列生成的未支付的订单如果回到死信队列就将其删掉，并且归还数据库的数据
+        // todo 稍后开发 支付服务
     }
     
     // 获取list
 
+
+    /// 缓存
+    // 生成订单缓存
+    @Override
+    public void generateOrderCache(@NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId, @NotNull RedissonClusterLock appointmentLock) throws AppException {
+        DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointment.getById(doctorMerchantAppointmentId);
+        if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null){
+            // 异常则解开分布式锁
+            redissonService.unlock(appointmentLock);
+            log.warn("[userId: {}][doctorMerchantAppointmentId: {}] 申请失败，不存在此预约信息", userId, doctorMerchantAppointmentId);
+            throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
+        }
+        List<DoctorMerchantAppointmentDo> dos = new ArrayList<>();
+        dos.add(doctorMerchantAppointmentDo);
+        List<RegisterAppointmentDoctorCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDos(dos);
+        if (CollectionUtils.isEmpty(boList) || boList.get(0) == null){
+            // 异常则解开分布式锁
+            redissonService.unlock(appointmentLock);
+            log.warn("[userId: {}][doctorMerchantAppointmentId: {}] 申请失败，bo inner join 联合查询数据不完整", userId, doctorMerchantAppointmentId);
+            throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
+        }
+
+        RegisterAppointmentDoctorCardVo vo = registerAppointmentDoctorCardConverter.boToVo(boList.get(0));
+
+        LocalDateTime registerDate = LocalDateTime.now();
+        String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
+        AppointmentDoctorOrderListVo listVo;
+        try {
+            listVo = registerAppointmentDoctorCardConverter.getAppointmentDoctorOrderListVo(vo,
+                        dateStr,
+                        AppointmentMerchantStatusEnum.NULL.getCode(),
+                        UserOrderStatusEnum.NULL.getCode()
+                    );
+        } catch (CloneNotSupportedException e) {
+            // 异常则解开分布式锁
+            redissonService.unlock(appointmentLock);
+            log.error("[userId: {}][doctorMerchantAppointmentId: {}] 申请失败，生成缓存失败, copy失败", userId, doctorMerchantAppointmentId);
+            throw new AppException("系统错误, 生成订单失败", e);
+        }
+
+        // 生成缓存
+        AppointmentDoctorOrderListAo ao = new AppointmentDoctorOrderListAo();
+        ao.setListVo(listVo);
+        ao.setOrderId(orderId);
+        ao.setDoctorMerchantId(doctorMerchantAppointmentId);
+
+        String keyBuilder = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX + userId + ":" + orderId + ":";
+
+        // 缓存到redis
+        boolean isCached = redissonService.setObjectByJson(
+                keyBuilder,
+                ao,
+                MedicineRedisKey.Appointment.appointmentOrder_EXPIRE_TIME
+        );
+
+        if (isCached){
+            // 检查
+            AppointmentDoctorOrderListAo cacheObject = redissonService.getObjectFromJson(
+                    keyBuilder,
+                    AppointmentDoctorOrderListAo.class
+            );
+            log.info("[user: {}]申请商户[merchantId: {}][orderId: {}], 缓存订单成功, 等待后续处理. 缓存结果: {}",
+                    userId, doctorMerchantAppointmentId, orderId, cacheObject);
+        }
+        else {
+            log.error("[系统错误, Redis缓存异常][user: {}]申请商户[merchantId: {}][orderId: {}], 缓存订单失败",
+                    userId, doctorMerchantAppointmentId, orderId);
+        }
+
+    }
 }
