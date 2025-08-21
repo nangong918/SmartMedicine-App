@@ -1,7 +1,10 @@
 package com.czy.medicine.mq;
 
 import com.czy.api.MqConstants;
+import com.czy.api.api.RabbitMqSenderInterface;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorAo;
+import com.czy.api.domain.dto.base.BaseResponseData;
+import com.czy.api.domain.entity.event.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -14,21 +17,34 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class AppointmentMqSender {
+public class AppointmentMqSender implements RabbitMqSenderInterface {
 
     // 以JSON发送
     private final RabbitTemplate rabbitJsonTemplate;
 
-    public void push(AppointmentDoctorAo message){
-        if (message == null){
+    public void push(AppointmentDoctorAo appointmentDoctorAo){
+        if (appointmentDoctorAo == null){
             log.error("[预约]参数错误");
             return;
         }
         rabbitJsonTemplate.convertAndSend(
                 MqConstants.Exchange.APPOINTMENT_EXCHANGE,
                 MqConstants.AppointmentQueue.Routing.DOCTOR_MERCHANT_ROUTING,
+                appointmentDoctorAo
+        );
+    }
+    // 消息发送给netty，只需要发送消息给netty，不需要接收netty的消息
+    @Override
+    public void push(Message message) {
+        rabbitJsonTemplate.convertAndSend(
+                MqConstants.Exchange.APPOINTMENT_EXCHANGE,
+                MqConstants.AppointmentQueue.Routing.TO_SOCKET_ROUTING,
                 message
         );
     }
 
+    @Override
+    public <T extends BaseResponseData> void push(T t) {
+        RabbitMqSenderInterface.super.push(t);
+    }
 }

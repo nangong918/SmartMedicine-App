@@ -170,6 +170,11 @@ public class ResponseMessageType {
         public final static String NETTY_ERROR = responseRoot + root + "netty";
     }
 
+    public final static class Appointment{
+        public final static String root = "Appointment:";
+        public final static String APPOINTMENT_RESULT = responseRoot + root + "appointmentResult";
+    }
+
     public final static class Success{
         public final static String root = "Success:";
         public final static String NETTY_SUCCESS = responseRoot + root + "netty";

@@ -160,8 +160,8 @@ public class SocketToClientMqHandler {
             bindings = @QueueBinding(
                     value = @Queue(
                             name = MqConstants.ErrorQueue.ERROR_TO_SOCKET_QUEUE,
-                            // 持久化队列
-                            durable = "true",
+                            // 通知类型：非持久化队列
+                            durable = "false",
                             // 排他队列
                             exclusive = "false",
                             // 自动删除：通知类型队列
@@ -185,6 +185,30 @@ public class SocketToClientMqHandler {
             )
     )
     public void handleErrorMessage(@Valid Message message) {
+        // 监听到消息校验之后就发送
+        sendMessage(message);
+    }
+
+    @RabbitListener(
+            bindings = @QueueBinding(
+                    value = @Queue(
+                            name = MqConstants.AppointmentQueue.APPOINTMENT_TO_SOCKET_QUEUE,
+                            // 通知类型：非持久化队列
+                            durable = "false",
+                            // 排他队列
+                            exclusive = "false",
+                            // 自动删除：通知类型队列；非持久化
+                            autoDelete = "true"
+                    ),
+                    exchange = @Exchange(
+                            value = MqConstants.Exchange.APPOINTMENT_EXCHANGE,
+                            type = ExchangeTypes.TOPIC,
+                            durable = "true"  // 持久化交换机
+                    ),
+                    key = MqConstants.AppointmentQueue.Routing.TO_SOCKET_ROUTING
+            )
+    )
+    public void handleAppointmentMessage(Message message) {
         // 监听到消息校验之后就发送
         sendMessage(message);
     }

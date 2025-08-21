@@ -2,8 +2,11 @@ package com.czy.medicine.mq;
 
 import com.czy.api.MqConstants;
 import com.czy.api.constant.medicine.MedicineConstant;
+import com.czy.api.constant.netty.NettyConstants;
+import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.constant.purchase.PurchaseConstant;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorAo;
+import com.czy.api.domain.dto.socket.response.AppointmentResultResponse;
 import com.czy.api.utils.NettyUtils;
 import com.czy.medicine.service.RegisterAppointmentService;
 import com.utils.redisson.service.RedissonClusterLock;
@@ -59,6 +62,10 @@ public class DoctorMerchantAppointmentMqHandler {
             log.warn("[预约 消息队列错误]用户id或预约记录id为空");
             return;
         }
+        if (orderId == null){
+            log.warn("[预约 订单id为空]");
+            return;
+        }
 
         String dataId = doctorMerchantAppointmentId + ":" + userId;
         String mappingPath = MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
@@ -69,6 +76,15 @@ public class DoctorMerchantAppointmentMqHandler {
                 PurchaseConstant.PAY_TIMEOUT
         );
 
+        // netty通知前端结果
+        AppointmentResultResponse response = new AppointmentResultResponse();
+        response.setSenderId(NettyConstants.SERVER_ID);
+        response.setType(ResponseMessageType.Appointment.APPOINTMENT_RESULT);
+        response.setReceiverId(userId);
+        appointmentMqSender.push(response);
+        response.setOrderId(orderId);
+        response.setIsSuccess(false);
+
         try {
             registerAppointmentService.appointment(
                     doctorMerchantAppointmentId,
@@ -76,10 +92,15 @@ public class DoctorMerchantAppointmentMqHandler {
                     orderId
             );
 
-
+            // 用netty通知前端某个的处理结果
+            response.setIsSuccess(true);
+            appointmentMqSender.push(response);
 
         } catch (AppException appe){
             log.error("用户预约失败", appe);
+            // 将枚举错误填充
+            response.setMessage(appe.getExceptionEnums().getMessage());
+            // 通知失败原因
             NettyUtils.sendErrorMessage(
                     userId,
                     appe,
@@ -88,11 +109,17 @@ public class DoctorMerchantAppointmentMqHandler {
         } catch (Exception e){
             log.error("[预约 消息队列错误][userId: {}][merchantId: {}][orderId: {}]",
                     userId, doctorMerchantAppointmentId, orderId, e);
+            // 通知订单失败消息
+            response.setMessage(e.getMessage());
+            registerAppointmentService.appointment(
+                    doctorMerchantAppointmentId,
+                    userId,
+                    orderId
+            );
         } finally {
             // 解除分布式锁 （无论成功还是失败都解除）
             redissonService.unlock(appointmentLock);
         }
-
     }
 
 }

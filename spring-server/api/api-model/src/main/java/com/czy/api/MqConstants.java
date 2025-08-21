@@ -192,9 +192,11 @@ public interface MqConstants {
 
         interface Routing {
             String DOCTOR_MERCHANT_ROUTING = ".doctorMerchant" + ID;
+            String TO_SOCKET_ROUTING = TO_SOCKET + ID;
         }
 
         String DOCTOR_MERCHANT_QUEUE = Routing.DOCTOR_MERCHANT_ROUTING + QUEUE;
+        String APPOINTMENT_TO_SOCKET_QUEUE = Routing.TO_SOCKET_ROUTING + QUEUE;
     }
 
     /**
