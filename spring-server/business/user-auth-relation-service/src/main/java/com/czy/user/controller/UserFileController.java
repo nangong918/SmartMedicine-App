@@ -1,8 +1,8 @@
 package com.czy.user.controller;
 
 
-import com.api.mapper.user.mysql.user.LoginUserMapper;
-import com.api.mapper.user.mysql.user.UserMapper;
+import com.api.mapper.user.mybatis.user.LoginUserMapper;
+import com.api.mapper.user.mybatis.user.UserMapper;
 import com.czy.api.api.user.user.LoginService;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;

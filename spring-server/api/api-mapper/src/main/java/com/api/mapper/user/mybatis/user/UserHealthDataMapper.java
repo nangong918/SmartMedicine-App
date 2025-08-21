@@ -1,4 +1,4 @@
-package com.api.mapper.user.mysql.user;
+package com.api.mapper.user.mybatis.user;
 
 import com.czy.api.domain.Do.user.UserHealthDataDo;
 import org.apache.ibatis.annotations.Mapper;

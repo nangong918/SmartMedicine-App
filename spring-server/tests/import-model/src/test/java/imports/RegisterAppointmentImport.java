@@ -1,8 +1,8 @@
 package imports;
 
-import com.api.mapper.medicine.DoctorMapper;
-import com.api.mapper.medicine.HospitalMapper;
-import com.api.mapper.user.mysql.user.UserMapper;
+import com.api.mapper.medicine.mybatis.DoctorMapper;
+import com.api.mapper.medicine.mybatis.HospitalMapper;
+import com.api.mapper.user.mybatis.user.UserMapper;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.imports.ImportsApplication;
 import com.czy.imports.service.ImportDoctorMerchantAppointmentService;

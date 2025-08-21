@@ -23,11 +23,15 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
         "com.utils.redis",
         "com.utils.rabbitmq",
 })
-// mybatis
+// mybatis (注意mybatis一定要特别限定区间，因为这个傻逼会把其他的接口也视为它的接口，明明都没用@Mapper但是这个傻逼还是会绝对接口是它的)
 @MapperScan({
-    "com.czy.medicine.mapper",
-    "com.utils.minio.mapper",
-    "com.api.mapper"
+        // this
+        "com.czy.medicine.mapper",
+        // minio
+        "com.utils.minio.mapper",
+        // api.mapper
+        "com.api.mapper.user.mybatis",
+        "com.api.mapper.medicine.mybatis",
 })
 // es
 @EnableElasticsearchRepositories(basePackages = "com.api.mapper")

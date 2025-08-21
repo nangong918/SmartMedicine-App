@@ -1,4 +1,4 @@
-package com.api.mapper.medicine;
+package com.api.mapper.medicine.mybatis;
 
 import com.czy.api.domain.Do.medicine.DoctorDo;
 import org.apache.ibatis.annotations.Mapper;

@@ -1,6 +1,6 @@
 package service;
 
-import com.api.mapper.user.mysql.relation.UserFriendMapper;
+import com.api.mapper.user.mybatis.relation.UserFriendMapper;
 import com.czy.api.api.user.relation.UserRelationshipService;
 import com.czy.api.constant.user_relationship.newUserGroup.ApplyStatusEnum;
 import com.czy.api.constant.user_relationship.newUserGroup.HandleStatusEnum;

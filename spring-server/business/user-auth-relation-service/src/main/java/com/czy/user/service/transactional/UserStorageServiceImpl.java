@@ -1,7 +1,7 @@
 package com.czy.user.service.transactional;
 
 import com.api.mapper.user.es.UserEsMapper;
-import com.api.mapper.user.mysql.user.UserMapper;
+import com.api.mapper.user.mybatis.user.UserMapper;
 import com.czy.api.domain.Do.user.UserDo;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;

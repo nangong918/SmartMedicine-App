@@ -1,7 +1,7 @@
 package com.czy.user.service;
 
-import com.api.mapper.user.mysql.relation.FriendApplyMapper;
-import com.api.mapper.user.mysql.relation.UserFriendMapper;
+import com.api.mapper.user.mybatis.relation.FriendApplyMapper;
+import com.api.mapper.user.mybatis.relation.UserFriendMapper;
 import com.czy.api.api.user.relation.UserRelationshipService;
 import com.czy.api.api.user.user.UserSearchService;
 import com.czy.api.api.user.user.UserService;

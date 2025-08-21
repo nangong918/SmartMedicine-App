@@ -1,7 +1,7 @@
 package com.czy.user.service;
 
 import com.api.mapper.user.es.UserEsMapper;
-import com.api.mapper.user.mysql.user.UserMapper;
+import com.api.mapper.user.mybatis.user.UserMapper;
 import com.czy.api.api.user.user.UserSearchService;
 import com.czy.api.domain.Do.user.UserDo;
 import lombok.RequiredArgsConstructor;

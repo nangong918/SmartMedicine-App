@@ -2,8 +2,8 @@ package com.czy.user.service;
 
 import cn.hutool.core.util.IdUtil;
 import com.api.mapper.user.es.UserEsMapper;
-import com.api.mapper.user.mysql.user.LoginUserMapper;
-import com.api.mapper.user.mysql.user.UserMapper;
+import com.api.mapper.user.mybatis.user.LoginUserMapper;
+import com.api.mapper.user.mybatis.user.UserMapper;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.user_relationship.UserConstant;
 import com.czy.api.converter.domain.user.UserConverter;

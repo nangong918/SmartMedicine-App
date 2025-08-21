@@ -1,6 +1,6 @@
 package com.czy.user.service.front.impl;
 
-import com.api.mapper.user.mysql.user.UserMapper;
+import com.api.mapper.user.mybatis.user.UserMapper;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.vo.user.UserVo;
 import com.czy.user.service.front.UserFrontService;

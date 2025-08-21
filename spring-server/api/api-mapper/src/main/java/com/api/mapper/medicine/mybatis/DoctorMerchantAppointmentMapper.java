@@ -1,4 +1,4 @@
-package com.api.mapper.medicine;
+package com.api.mapper.medicine.mybatis;
 
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.LocationAo;

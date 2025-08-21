@@ -1,10 +1,10 @@
 package com.czy.imports.service.impl;
 
 import cn.hutool.core.util.IdUtil;
-import com.api.mapper.medicine.DoctorMapper;
-import com.api.mapper.medicine.DoctorMerchantAppointmentMapper;
-import com.api.mapper.medicine.HospitalMapper;
-import com.api.mapper.user.mysql.user.UserMapper;
+import com.api.mapper.medicine.mybatis.DoctorMapper;
+import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
+import com.api.mapper.medicine.mybatis.HospitalMapper;
+import com.api.mapper.user.mybatis.user.UserMapper;
 import com.czy.api.constant.BaseEnum;
 import com.czy.api.constant.BaseParentEnum;
 import com.czy.api.constant.medicine.DepartmentEnum;

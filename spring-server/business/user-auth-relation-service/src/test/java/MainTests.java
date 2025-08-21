@@ -1,4 +1,4 @@
-import com.api.mapper.user.mysql.user.LoginUserMapper;
+import com.api.mapper.user.mybatis.user.LoginUserMapper;
 import com.czy.api.api.user.user.LoginService;
 import com.czy.api.api.user.user.UserSearchService;
 import com.czy.api.api.user.user.UserService;

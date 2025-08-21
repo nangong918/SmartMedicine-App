@@ -1,8 +1,8 @@
 package com.czy.medicine.service.impl;
 
-import com.api.mapper.medicine.DoctorMerchantAppointmentMapper;
-import com.api.mapper.medicine.UserCustomerAppointmentOrderMapper;
-import com.api.mapper.medicine.bo.DoctorMerchantBoMapper;
+import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
+import com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper;
+import com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper;
 import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
 import com.czy.api.constant.ErrorConstant;
 import com.czy.api.constant.UserOrderStatusEnum;

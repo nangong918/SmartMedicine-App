@@ -1,4 +1,4 @@
-package com.api.mapper.user.mysql.relation;
+package com.api.mapper.user.mybatis.relation;
 
 
 
