@@ -8,9 +8,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 
-@MapperScan({"com.czy.medicine.mapper",
-        "com.utils.minio.mapper",
-        "com.api.mapper"})    // 扫描mapper
+// 扫描bean
 @SpringBootApplication(scanBasePackages = {
         // 扫描api模块
         "com.czy.api",
@@ -24,7 +22,14 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
         "com.utils.minio",
         "com.utils.redis",
         "com.utils.rabbitmq",
-}) // 扫描bean
+})
+// mybatis
+@MapperScan({
+    "com.czy.medicine.mapper",
+    "com.utils.minio.mapper",
+    "com.api.mapper"
+})
+// es
 @EnableElasticsearchRepositories(basePackages = "com.api.mapper")
 public class MedicineServiceApplication {
     public static void main(String[] args) {

@@ -1,10 +1,15 @@
 import com.api.mapper.medicine.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.bo.DoctorMerchantBoMapper;
+import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
 import com.czy.api.constant.medicine.DepartmentEnum;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.LocationAo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
+import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
+import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.medicine.MedicineServiceApplication;
@@ -128,6 +133,29 @@ public class RegisterAppointmentTests {
         );
 
         log.info("dataVos: {}", dataVos);
+    }
+
+    @Autowired
+    private RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+
+    @Test
+    public void testRegisterAppointmentRedisMapper(){
+        AppointmentDoctorOrderListAo ao = new AppointmentDoctorOrderListAo();
+        ao.setDoctorMerchantId(1L);
+        ao.setOrderId(1L);
+        AppointmentDoctorOrderListVo vo = new AppointmentDoctorOrderListVo();
+        vo.setDoctorVo(new DoctorVo());
+        vo.setHospitalAo(new HospitalAo());
+        vo.setCost("10");
+        vo.setBeginDate("2021-01-01");
+        vo.setEndDate("2021-01-01");
+        vo.setApproveDate("2021-01-01");
+        vo.setMerchantStatus(1);
+        ao.setListVo(vo);
+
+        registerAppointmentRedisMapper.saveAppointmentDoctorOrderListAo(1L, 1L, 1L, ao);
+        AppointmentDoctorOrderListAo ao1 = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAo(1L, 1L, 1L);
+        log.info("{}", ao1);
     }
 
 }
