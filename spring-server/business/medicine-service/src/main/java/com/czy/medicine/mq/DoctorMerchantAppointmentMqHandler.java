@@ -111,11 +111,7 @@ public class DoctorMerchantAppointmentMqHandler {
                     userId, doctorMerchantAppointmentId, orderId, e);
             // 通知订单失败消息
             response.setMessage(e.getMessage());
-            registerAppointmentService.appointment(
-                    doctorMerchantAppointmentId,
-                    userId,
-                    orderId
-            );
+            appointmentMqSender.push(response);
         } finally {
             // 解除分布式锁 （无论成功还是失败都解除）
             redissonService.unlock(appointmentLock);
