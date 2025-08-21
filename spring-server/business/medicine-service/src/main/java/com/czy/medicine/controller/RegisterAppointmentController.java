@@ -8,6 +8,7 @@ import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.AppointmentDoctorRequest;
 import com.czy.api.domain.dto.http.request.GetRegisterAppointmentListRequest;
 import com.czy.api.domain.dto.http.request.GetUserAppointmentRecordRequest;
+import com.czy.api.domain.dto.http.response.AppointmentDoctorResponse;
 import com.czy.api.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
 import com.czy.api.domain.dto.http.response.GetRegisterAppointmentListResponse;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
@@ -91,10 +92,11 @@ public class RegisterAppointmentController {
         return null;
     }
 
+    // 获取某个预约订单的详情
 
     /// 增：预约
     @PostMapping(MedicineConstant.APPOINTMENT)
-    public BaseResponse<Object> appointment
+    public BaseResponse<AppointmentDoctorResponse> appointment
     (@Validated @RequestBody AppointmentDoctorRequest request){
 
         /// 分布式锁（避免重复预约；避免死锁设置 5分钟自动锁消除）
@@ -117,13 +119,17 @@ public class RegisterAppointmentController {
 
         /// 加入消息队列，避免数据库qps过高
         // 使用rabbitmq，避免jvm单机挂掉消息丢失，出现分布式死锁。
-        AppointmentDoctorAo message = new AppointmentDoctorAo();
-        message.setUserId(request.getUserId());
-        message.setDoctorMerchantAppointmentId(request.getDoctorMerchantAppointmentId());
-        message.setOrderId(orderId);
-        appointmentMqSender.push(message);
+        AppointmentDoctorAo appointmentDoctorAo = new AppointmentDoctorAo();
+        appointmentDoctorAo.setUserId(request.getUserId());
+        appointmentDoctorAo.setDoctorMerchantAppointmentId(request.getDoctorMerchantAppointmentId());
+        appointmentDoctorAo.setOrderId(orderId);
+        appointmentMqSender.push(appointmentDoctorAo);
 
-        return null;
+        // 通知前端耐心等待预约结果
+        return BaseResponse.getResponseEntitySuccess(new AppointmentDoctorResponse(
+                request.getDoctorMerchantAppointmentId(),
+                orderId
+        ));
     }
 
     /// 改（删）：取消预约
