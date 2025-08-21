@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2025/8/18 14:48
  */
 @Data
-public class HospitalVo {
+public class HospitalVo implements Cloneable {
     // name
     public String name;
     // 等级

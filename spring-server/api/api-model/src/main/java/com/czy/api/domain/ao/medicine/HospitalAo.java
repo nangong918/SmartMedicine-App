@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2025/8/18 14:47
  */
 @Data
-public class HospitalAo {
+public class HospitalAo implements Cloneable {
     // vo
     public HospitalVo hospitalVo;
 

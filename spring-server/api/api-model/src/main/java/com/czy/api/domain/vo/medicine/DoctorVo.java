@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2025/8/18 14:44
  */
 @Data
-public class DoctorVo {
+public class DoctorVo implements Cloneable {
     // 头像
     public FileResAo doctorAvatarFileAo = new FileResAo();
     // 姓名

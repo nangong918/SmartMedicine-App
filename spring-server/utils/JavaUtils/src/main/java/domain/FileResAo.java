@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2025/8/12 17:43
  */
 @Data
-public class FileResAo {
+public class FileResAo implements Cloneable {
     public Long fileId;
     // bo无法获得，需要通过minio获取
     public String fileUrl;
