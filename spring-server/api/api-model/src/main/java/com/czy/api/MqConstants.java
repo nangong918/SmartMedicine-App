@@ -211,12 +211,15 @@ public interface MqConstants {
             String POST_DEAD_LETTER_ROUTING = PostQueue.ID + ID;
             String RELATIONSHIP_DEAD_LETTER_ROUTING = RelationshipQueue.ID + ID;
 //            String OSS_DEAD_LETTER_ROUTING = OssQueue.ID + ID;
-            String ALL_DEAD_LETTER_ROUTING = "#." + ID;
+            String APPOINTMENT_DEAD_LETTER_ROUTING = AppointmentQueue.ID + ID;
+            String ALL_DEAD_LETTER_ROUTING = ".#" + ID;
         }
         String MESSAGE_DEAD_LETTER_QUEUE = Routing.MESSAGE_DEAD_LETTER_ROUTING + QUEUE;
         String POST_DEAD_LETTER_QUEUE = Routing.POST_DEAD_LETTER_ROUTING + QUEUE;
         String RELATIONSHIP_DEAD_LETTER_QUEUE = Routing.RELATIONSHIP_DEAD_LETTER_ROUTING + QUEUE;
 //        String OSS_DEAD_LETTER_QUEUE = Routing.OSS_DEAD_LETTER_ROUTING + QUEUE;
+        String APPOINTMENT_DEAD_LETTER_QUEUE = Routing.APPOINTMENT_DEAD_LETTER_ROUTING + QUEUE;
+        // all
         String ALL_DEAD_LETTER_QUEUE = Routing.ALL_DEAD_LETTER_ROUTING + QUEUE;
         // logging没有死信队列
 

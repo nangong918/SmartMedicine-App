@@ -32,6 +32,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
         exclude = {}
 )
 public class NettySocketApplication {
+    // 启动如果约到PRECONDITION_FAILED, 应该删除已经创建的mq和交换器
     public static void main(String[] args) {
         new SpringApplicationBuilder(NettySocketApplication.class)
                 .initializers(new PortApplicationContextInitializer())

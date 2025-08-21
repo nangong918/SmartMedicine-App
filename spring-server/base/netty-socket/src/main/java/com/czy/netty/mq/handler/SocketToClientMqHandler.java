@@ -203,7 +203,12 @@ public class SocketToClientMqHandler {
                     exchange = @Exchange(
                             value = MqConstants.Exchange.APPOINTMENT_EXCHANGE,
                             type = ExchangeTypes.TOPIC,
-                            durable = "true"  // 持久化交换机
+                            // 持久化交换机
+                            durable = "true",
+                            arguments = {
+                                    @Argument(name = "x-dead-letter-exchange", value = MqConstants.Exchange.DEAD_LETTER_EXCHANGE),
+                                    @Argument(name = "x-dead-letter-routing-key", value = MqConstants.DeadLetterQueue.APPOINTMENT_DEAD_LETTER_QUEUE)
+                            }
                     ),
                     key = MqConstants.AppointmentQueue.Routing.TO_SOCKET_ROUTING
             )
