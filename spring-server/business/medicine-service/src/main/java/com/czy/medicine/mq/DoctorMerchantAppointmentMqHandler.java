@@ -54,6 +54,7 @@ public class DoctorMerchantAppointmentMqHandler {
             )
     )
     public void handleDoctorMerchantAppointmentMessage(AppointmentDoctorAo message){
+        log.info("DoctorMerchantAppointmentMessage::接收到预约消息：{}", message);
         Long userId = message.getUserId();
         Long doctorMerchantAppointmentId = message.getDoctorMerchantAppointmentId();
         Long orderId = message.getOrderId();
@@ -94,6 +95,7 @@ public class DoctorMerchantAppointmentMqHandler {
 
             // 用netty通知前端某个的处理结果
             response.setIsSuccess(true);
+            log.info("netty发送消息给前端: {}", response);
             appointmentMqSender.push(response);
 
         } catch (AppException appe){
@@ -115,6 +117,7 @@ public class DoctorMerchantAppointmentMqHandler {
         } finally {
             // 解除分布式锁 （无论成功还是失败都解除）
             redissonService.unlock(appointmentLock);
+            log.info("【订单】结束处理订单消息，userId: {}, doctorMerchantAppointmentId: {}, orderId: {}", userId, doctorMerchantAppointmentId, orderId);
         }
     }
 

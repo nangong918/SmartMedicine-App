@@ -2,6 +2,7 @@ package com.czy.api.converter.domain.medicine;
 
 import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
+import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.DoctorVo;
@@ -75,12 +76,29 @@ public interface RegisterAppointmentDoctorCardConverter {
         return vo;
     }
 
+    default RegisterAppointmentDoctorCardAo boToAo(RegisterAppointmentDoctorCardBo bo){
+        RegisterAppointmentDoctorCardVo vo = boToVo(bo);
+        RegisterAppointmentDoctorCardAo ao = new RegisterAppointmentDoctorCardAo();
+        ao.setDoctorMerchantAppointmentId(bo.getDoctorAvatarFileId());
+        ao.setVo(vo);
+        return ao;
+    }
+
     default List<RegisterAppointmentDoctorCardVo> bosToVos(List<RegisterAppointmentDoctorCardBo> bos){
         if (CollectionUtils.isEmpty(bos)){
             return new ArrayList<>();
         }
         return bos.stream()
                 .map(this::boToVo)
+                .collect(Collectors.toList());
+    }
+
+    default List<RegisterAppointmentDoctorCardAo> bosToAos(List<RegisterAppointmentDoctorCardBo> bos){
+        if (CollectionUtils.isEmpty(bos)){
+            return new ArrayList<>();
+        }
+        return bos.stream()
+                .map(this::boToAo)
                 .collect(Collectors.toList());
     }
 

@@ -14,6 +14,7 @@ import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
+import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
@@ -101,45 +102,48 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         RegisterAppointmentDataVo dataVo = getDataVo(doctorRegisterAppointmentDos, ao.getRegisterTime());
         pageVo.setDataVo(dataVo);
 
-        // cardVos
-        List<RegisterAppointmentDoctorCardVo> cardVos = getDoctorCardVo(doctorRegisterAppointmentDos);
-        pageVo.setCardVos(cardVos);
+        // cardAos
+        List<RegisterAppointmentDoctorCardAo> cardAos = getDoctorCardAo(doctorRegisterAppointmentDos);
+        pageVo.setCardAos(cardAos);
 
-        if (CollectionUtils.isEmpty(cardVos)){
+        if (CollectionUtils.isEmpty(cardAos)){
             return pageVo;
         }
 
         /// 数据填充（数据库查询出来的数据继续计算）
         // 距离填充
         if (ao.getLatitude() == null || ao.getLongitude() == null){
-            for (RegisterAppointmentDoctorCardVo cardVo : pageVo.getCardVos()){
+            for (RegisterAppointmentDoctorCardAo cardAo : pageVo.getCardAos()){
                 // 设置值是错误值
-                cardVo.setDistance(-1.0);
+                cardAo.getVo().setDistance(-1.0);
             }
         }
         else {
-            for (RegisterAppointmentDoctorCardVo cardVo : pageVo.getCardVos()){
-                Double longitude = Optional.ofNullable(cardVo)
+            for (RegisterAppointmentDoctorCardAo cardAo : pageVo.getCardAos()){
+                Double longitude = Optional.ofNullable(cardAo)
+                        .map(RegisterAppointmentDoctorCardAo::getVo)
                         .map(RegisterAppointmentDoctorCardVo::getHospitalAo)
                         .map(HospitalAo::getLongitude)
                         .orElse(null);
-                Double latitude = Optional.ofNullable(cardVo)
+                Double latitude = Optional.ofNullable(cardAo)
+                        .map(RegisterAppointmentDoctorCardAo::getVo)
                         .map(RegisterAppointmentDoctorCardVo::getHospitalAo)
                         .map(HospitalAo::getLatitude)
                         .orElse(null);
                 if (longitude != null && latitude != null){
                     double distance = GeoUtils.calculateDistance(
                             latitude, longitude,
-                            cardVo.getHospitalAo().getLatitude(),
-                            cardVo.getHospitalAo().getLongitude()
+                            cardAo.getVo().getHospitalAo().getLatitude(),
+                            cardAo.getVo().getHospitalAo().getLongitude()
                     );
-                    cardVo.setDistance(distance);
+                    cardAo.getVo().setDistance(distance);
                 }
             }
         }
 
         // oss填充
-        List<Long> doctorAvatarFileIds = cardVos.stream()
+        List<Long> doctorAvatarFileIds = cardAos.stream()
+                .map(RegisterAppointmentDoctorCardAo::getVo)
                 .map(RegisterAppointmentDoctorCardVo::getDoctorVo)
                 .map(DoctorVo::getDoctorAvatarFileAo)
                 .map(FileResAo::getFileId)
@@ -147,9 +151,9 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
 
         List<String> fileUrls = ossService.getFileUrlsByFileIds(doctorAvatarFileIds);
 
-        for (int i = 0; i < cardVos.size(); i++){
-            RegisterAppointmentDoctorCardVo cardVo = cardVos.get(i);
-            cardVo.getDoctorVo().getDoctorAvatarFileAo().setFileUrl(fileUrls.get(i));
+        for (int i = 0; i < cardAos.size(); i++){
+            RegisterAppointmentDoctorCardAo cardAo = cardAos.get(i);
+            cardAo.getVo().getDoctorVo().getDoctorAvatarFileAo().setFileUrl(fileUrls.get(i));
         }
 
         return pageVo;
@@ -190,10 +194,10 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         return dataVo;
     }
 
-    // 获取doctorCardVo
+    // 获取doctorCardAo
     @NotNull
     @Override
-    public List<RegisterAppointmentDoctorCardVo> getDoctorCardVo
+    public List<RegisterAppointmentDoctorCardAo> getDoctorCardAo
             (@NotNull List<DoctorMerchantAppointmentDo> dos){
         if (CollectionUtils.isEmpty(dos)){
             return new ArrayList<>();
@@ -208,7 +212,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
 
         // converter: bo -> vo
-        return registerAppointmentDoctorCardConverter.bosToVos(bos);
+        return registerAppointmentDoctorCardConverter.bosToAos(bos);
     }
 
     // 获取DataVoList
@@ -297,7 +301,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             @NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId) throws AppException{
         // 查询redis数据，redis原子操作，避免频繁访问数据库，频繁io
 
-        // redis击穿：使用事务查询数据库，并且锁行。用乐观锁，悲观锁的锁行性能低，然后对数据做处理返回结果
+        // redis击穿：使用事务查询数据库，并且锁行。用乐观锁，悲观锁的锁行性能低，然后对数据做处理返回结果 todo, 最后做, 因为需要订单完成之后更新数据库的时候删除缓存
 
         // 检查当前状态是否是可预约
         DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorMerchantAppointment.getById(doctorMerchantAppointmentId);

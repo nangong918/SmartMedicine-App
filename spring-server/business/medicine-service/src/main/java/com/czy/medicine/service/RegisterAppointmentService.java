@@ -1,9 +1,9 @@
 package com.czy.medicine.service;
 
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
+import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.utils.redisson.service.RedissonClusterLock;
 import exception.AppException;
@@ -25,11 +25,11 @@ public interface RegisterAppointmentService {
     @NotNull RegisterAppointmentPageVo getPage(@NotNull RegisterAppointmentSelectAo ao) throws AppException;
 
     /**
-     * 获取DoctorCardVo
+     * 获取DoctorCardAo(Vo)
      * @param dos   DoctorRegisterAppointmentDo
      * @return      DoctorCardVo
      */
-    @NotNull List<RegisterAppointmentDoctorCardVo> getDoctorCardVo
+    @NotNull List<RegisterAppointmentDoctorCardAo> getDoctorCardAo
             (@NotNull List<DoctorMerchantAppointmentDo> dos);
 
     /**

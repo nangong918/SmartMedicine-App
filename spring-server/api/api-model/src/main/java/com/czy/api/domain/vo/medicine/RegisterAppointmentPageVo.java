@@ -1,5 +1,6 @@
 package com.czy.api.domain.vo.medicine;
 
+import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
 import json.BaseBean;
 import lombok.Data;
 
@@ -15,5 +16,5 @@ public class RegisterAppointmentPageVo implements BaseBean {
     // 日期vo
     private RegisterAppointmentDataVo dataVo;
     // 医生卡片voList
-    private List<RegisterAppointmentDoctorCardVo> cardVos = new ArrayList<>();
+    private List<RegisterAppointmentDoctorCardAo> cardAos = new ArrayList<>();
 }
