@@ -25,4 +25,9 @@ public class LocationAo {
         this.city = city;
         this.region = region;
     }
+
+    @Override
+    public LocationAo clone() throws CloneNotSupportedException {
+        return (LocationAo) super.clone();
+    }
 }

@@ -50,8 +50,6 @@ public class RegisterAppointmentDoctorCardBo {
     // 预约时间区间
     private LocalDateTime beginDate;
     private LocalDateTime endDate;
-    // 状态
-    private Integer status;
 
     /// 后续计算填充
     private String distance;

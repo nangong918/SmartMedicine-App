@@ -3,6 +3,7 @@ package com.czy.api.converter.domain.medicine;
 import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.HospitalVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
@@ -81,5 +82,24 @@ public interface RegisterAppointmentDoctorCardConverter {
         return bos.stream()
                 .map(this::boToVo)
                 .collect(Collectors.toList());
+    }
+
+    // RegisterAppointmentDoctorCardVo -> AppointmentDoctorOrderListVo
+    default AppointmentDoctorOrderListVo getAppointmentDoctorOrderListVo(
+            RegisterAppointmentDoctorCardVo sourceVo,
+            String approveDate,
+            Integer merchantStatus,
+            Integer customerStatus
+    ) throws CloneNotSupportedException {
+        AppointmentDoctorOrderListVo targetVo = new AppointmentDoctorOrderListVo();
+        targetVo.doctorVo = sourceVo.doctorVo.clone();
+        targetVo.hospitalAo = sourceVo.hospitalAo.clone();
+        targetVo.cost = sourceVo.cost;
+        targetVo.beginDate = sourceVo.beginDate;
+        targetVo.endDate = sourceVo.endDate;
+        targetVo.approveDate = approveDate;
+        targetVo.merchantStatus = merchantStatus;
+        targetVo.customerStatus = customerStatus;
+        return targetVo;
     }
 }

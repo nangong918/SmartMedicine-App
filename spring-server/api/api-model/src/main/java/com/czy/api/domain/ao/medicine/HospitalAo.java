@@ -19,4 +19,12 @@ public class HospitalAo {
     // 经纬度
     public Double longitude;
     public Double latitude;
+
+    @Override
+    public HospitalAo clone() throws CloneNotSupportedException {
+        HospitalAo cloned = (HospitalAo) super.clone();
+        cloned.hospitalVo = hospitalVo.clone();
+        cloned.locationAo = locationAo.clone();
+        return cloned;
+    }
 }

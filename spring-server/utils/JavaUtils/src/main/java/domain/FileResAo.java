@@ -13,4 +13,9 @@ public class FileResAo {
     public String fileUrl;
     // 暂未使用
     public Long uploadUserId;
+
+    @Override
+    public FileResAo clone() throws CloneNotSupportedException {
+        return (FileResAo) super.clone();
+    }
 }

@@ -12,4 +12,9 @@ public class HospitalVo {
     public String name;
     // 等级
     public String level;
+
+    @Override
+    public HospitalVo clone() throws CloneNotSupportedException {
+        return (HospitalVo) super.clone();
+    }
 }

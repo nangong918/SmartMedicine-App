@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 public enum UserOrderStatusEnum {
-
+    NULL(-1, "暂未查询到状态"),
     NOT_ORDERED(0, "未订购"),
     WAITING_PAYMENT(1, "待支付"),
     WAITING_USE(2, "待使用"),

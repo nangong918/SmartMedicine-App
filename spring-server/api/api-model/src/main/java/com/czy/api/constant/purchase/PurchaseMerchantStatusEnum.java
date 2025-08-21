@@ -12,6 +12,7 @@ import lombok.Getter;
  */
 @Getter
 public enum PurchaseMerchantStatusEnum {
+    NULL(-1, "暂未查询到状态"),
 
     AVAILABLE(0, "可购买"),
 

@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @Getter
 public enum AppointmentMerchantStatusEnum {
-
+    NULL("暂未查询到状态", -1),
     // 可预约
     AVAILABLE("可预约", 0),
     // 已过期
