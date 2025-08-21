@@ -3,6 +3,7 @@ package com.czy.medicine.service.impl;
 import com.api.mapper.medicine.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.bo.DoctorMerchantBoMapper;
+import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
 import com.czy.api.constant.ErrorConstant;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
@@ -61,6 +62,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     private final OssService ossService;
     private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
     private final RedissonService redissonService;
+    private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
 
     // 获取PageList
     @NotNull
@@ -394,21 +396,17 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         ao.setOrderId(orderId);
         ao.setDoctorMerchantId(doctorMerchantAppointmentId);
 
-        String keyBuilder = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX + userId + ":" + orderId + ":";
-
         // 缓存到redis
-        boolean isCached = redissonService.setObjectByJson(
-                keyBuilder,
-                ao,
-                MedicineRedisKey.Appointment.appointmentOrder_EXPIRE_TIME
+        boolean isCached = registerAppointmentRedisMapper.saveAppointmentDoctorOrderListAo(
+                userId, doctorMerchantAppointmentId, orderId, ao
         );
 
         if (isCached){
             // 检查
-            AppointmentDoctorOrderListAo cacheObject = redissonService.getObjectFromJson(
-                    keyBuilder,
-                    AppointmentDoctorOrderListAo.class
-            );
+            AppointmentDoctorOrderListAo cacheObject =
+                    registerAppointmentRedisMapper.getAppointmentDoctorOrderListAo(
+                            userId, doctorMerchantAppointmentId, orderId
+                    );
             log.info("[user: {}]申请商户[merchantId: {}][orderId: {}], 缓存订单成功, 等待后续处理. 缓存结果: {}",
                     userId, doctorMerchantAppointmentId, orderId, cacheObject);
         }
