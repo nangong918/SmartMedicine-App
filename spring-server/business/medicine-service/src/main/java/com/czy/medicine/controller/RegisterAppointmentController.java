@@ -4,6 +4,8 @@ import cn.hutool.core.util.IdUtil;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.purchase.PurchaseConstant;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorAo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderDetailsAo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.AppointmentDoctorRequest;
 import com.czy.api.domain.dto.http.request.GetRegisterAppointmentListRequest;
@@ -22,9 +24,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -85,10 +89,18 @@ public class RegisterAppointmentController {
     }
 
     // 获取user预约订单列表
-    @PostMapping("/getAppointmentRecord")
-    public BaseResponse<Object>
-    getAppointmentRecord
+    @PostMapping("/getCustomerList")
+    public BaseResponse<AppointmentDoctorOrderListAo>
+    getAppointmentRecordList
     (@Validated @RequestBody GetUserAppointmentRecordRequest request){
+        return null;
+    }
+
+    @GetMapping("/getCustomerDetails")
+    public BaseResponse<AppointmentDoctorOrderDetailsAo>
+    getAppointmentRecordDetails
+            (@RequestParam("userId") Long userId,
+             @RequestParam("orderId") Long orderId){
         return null;
     }
 

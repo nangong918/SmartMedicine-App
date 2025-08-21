@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2025/8/21 10:49
  */
 @Data
-public class AppointmentDoctorOrderVo {
+public class AppointmentDoctorOrderListVo {
     /// 医生视图
     public DoctorVo doctorVo;
     /// 医院视图 + data
