@@ -72,6 +72,7 @@ public interface MqConstants {
 
 
         Long message_ttl = 10 * 60 * 3000L;
+        // 30min
         String message_ttl_str = "1800000";
         Integer message_max_length = 1000_000;
 
@@ -244,6 +245,6 @@ public interface MqConstants {
         interface Routing {
             String TO_SOCKET_ROUTING = TO_SOCKET + ID;
         }
-        String ERROR_TO_SOCKET_QUEUE = MessageQueue.Routing.TO_SOCKET_ROUTING + QUEUE;
+        String ERROR_TO_SOCKET_QUEUE = ErrorQueue.Routing.TO_SOCKET_ROUTING + QUEUE;
     }
 }

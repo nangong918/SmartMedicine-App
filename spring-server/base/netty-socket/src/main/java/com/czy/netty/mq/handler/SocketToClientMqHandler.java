@@ -214,6 +214,7 @@ public class SocketToClientMqHandler {
             )
     )
     public void handleAppointmentMessage(Message message) {
+        log.info("接收到预约消息：{}", message);
         // 监听到消息校验之后就发送
         sendMessage(message);
     }
