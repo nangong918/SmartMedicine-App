@@ -302,9 +302,12 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         // 执行事务
         // 对商品上锁，库减少（模拟减少，因为有5分钟的支付时间，未支付的话就库存数据增）
         // 缓存减少 事务sql
+        long startTime = System.currentTimeMillis();
+        log.info("[用户{}]开始预约事务", userId);
         appointmentTransactionalService.createAppointmentOrder(
                 orderId, doctorMerchantAppointmentId, userId
         );
+        log.info("[用户{}]预约事务完成，耗时{}ms", userId, System.currentTimeMillis() - startTime);
 
         // mq -> 传参并告知purchase-service生成待支付的订单 -> purchase-service直接将消息交给netty通知user，并且直接在purchase调用mapper或者dubbo修改数据库
         // 消息队列生成的未支付的订单如果回到死信队列就将其删掉，并且归还数据库的数据

@@ -68,7 +68,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         }
         String keyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX +
                 doctorMerchantAppointmentDo.getId();
-        return redissonService.setObjectBySerializable(keyBuilder, doctorMerchantAppointmentDo,
+        return redissonService.setObjectByJson(keyBuilder, doctorMerchantAppointmentDo,
                 MedicineRedisKey.Appointment.DoctorMerchant_EXPIRE_TIME);
     }
 
@@ -76,6 +76,6 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
     public DoctorMerchantAppointmentDo getDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId) {
         String keyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX +
                 doctorMerchantAppointmentId;
-        return redissonService.getObjectFromSerializable(keyBuilder, DoctorMerchantAppointmentDo.class);
+        return redissonService.getObjectFromJson(keyBuilder, DoctorMerchantAppointmentDo.class);
     }
 }
