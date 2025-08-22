@@ -29,6 +29,6 @@ public interface UserCustomerAppointmentOrderMapper {
     List<UserCustomerAppointmentDo> getDosByUserId(Long userId);
     List<UserCustomerAppointmentDo> getDosByUserIdAndMerchantId(
             @Param("userId") Long userId,
-            @Param("merchantId") Long merchantId
+            @Param("doctorMerchantId") Long doctorMerchantId
     );
 }
