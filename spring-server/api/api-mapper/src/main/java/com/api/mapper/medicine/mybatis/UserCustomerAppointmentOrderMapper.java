@@ -14,8 +14,8 @@ import java.util.List;
 public interface UserCustomerAppointmentOrderMapper {
 
     /// 增加
-    void insert(UserCustomerAppointmentDo userCustomerAppointmentDo);
-    void insertBatch(@Param("list") List<UserCustomerAppointmentDo> list);
+    int insert(UserCustomerAppointmentDo userCustomerAppointmentDo);
+    int insertBatch(@Param("list") List<UserCustomerAppointmentDo> list);
     /// 删除
     void delete(Long id);
     void deleteBatch(@Param("list") List<Long> ids);

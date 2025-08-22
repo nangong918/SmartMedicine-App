@@ -12,21 +12,21 @@ import lombok.Getter;
  */
 @Getter
 public enum AppointmentMerchantStatusEnum {
-    NULL("暂未查询到状态", -1),
+    NULL(-1, "暂未查询到状态"),
     // 可预约
-    AVAILABLE("可预约", 0),
+    AVAILABLE(0, "可预约"),
     // 已过期
-    EXPIRED("已过期", 1),
+    EXPIRED(1, "已过期"),
     // 已无可预约数量
-    NO_AVAILABLE( "已无可预约数量", 2),
+    NO_AVAILABLE(2, "已无可预约数量"),
     // 等待开放预约
-    WAITING_OPEN("等待开放预约", 3),
+    WAITING_OPEN(3, "等待开放预约"),
     ;
 
     private final String name;
     private final int code;
 
-    AppointmentMerchantStatusEnum(String name, int code) {
+    AppointmentMerchantStatusEnum(int code, String name) {
         this.name = name;
         this.code = code;
     }

@@ -3,10 +3,12 @@ package com.czy.medicine.service.transactional.impl;
 import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
+import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.MedicineExceptions;
 import com.czy.api.exception.PurchaseExceptions;
 import com.czy.medicine.service.transactional.AppointmentTransactionalService;
@@ -96,10 +98,13 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         userCustomerAppointmentDo.setDoctorMerchantAppointmentId(doctorMerchantId);
         userCustomerAppointmentDo.setUserId(userId);
         userCustomerAppointmentDo.setRecordTimestamp(timestamp);
+        // 设置为审核中
+        userCustomerAppointmentDo.setUserOrderStatus(UserOrderStatusEnum.WAITING_AUDIT.getCode());
 
-        userCustomerAppointmentOrderMapper.insert(
-                userCustomerAppointmentDo
-        );
+        int insertResult = userCustomerAppointmentOrderMapper.insert(userCustomerAppointmentDo);
+        if (insertResult <= 0){
+            throw new AppException(CommonExceptions.SYSTEM_SQL_ERROR);
+        }
 
         /// 5.删除/更新redis缓存
         // redis的库存扣减

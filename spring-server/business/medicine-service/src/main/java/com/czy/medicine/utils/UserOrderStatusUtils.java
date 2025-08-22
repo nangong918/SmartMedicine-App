@@ -42,7 +42,9 @@ public class UserOrderStatusUtils {
         Integer status = Optional.ofNullable(orderDo.getUserOrderStatus())
                 .orElse(UserOrderStatusEnum.NULL.getCode());
 
-        return  // 待支付
+        return  // 审核中
+                status == UserOrderStatusEnum.WAITING_AUDIT.getCode() ||
+                // 待支付
                 status.equals(UserOrderStatusEnum.WAITING_PAYMENT.getCode()) ||
                 // 待使用
                 status.equals(UserOrderStatusEnum.WAITING_USE.getCode()) ||
