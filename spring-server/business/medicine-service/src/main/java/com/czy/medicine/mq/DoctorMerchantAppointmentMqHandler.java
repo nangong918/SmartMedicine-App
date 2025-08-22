@@ -82,7 +82,6 @@ public class DoctorMerchantAppointmentMqHandler {
         response.setSenderId(NettyConstants.SERVER_ID);
         response.setType(ResponseMessageType.Appointment.APPOINTMENT_RESULT);
         response.setReceiverId(userId);
-        appointmentMqSender.push(response);
         response.setOrderId(orderId);
         response.setIsSuccess(false);
 

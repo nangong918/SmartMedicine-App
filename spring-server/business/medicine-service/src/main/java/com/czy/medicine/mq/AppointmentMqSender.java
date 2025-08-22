@@ -27,6 +27,7 @@ public class AppointmentMqSender implements RabbitMqSenderInterface {
             log.error("[预约]参数错误");
             return;
         }
+        log.info("[预约]开始发送消息，appointmentDoctorAo: {}", appointmentDoctorAo);
         rabbitJsonTemplate.convertAndSend(
                 MqConstants.Exchange.APPOINTMENT_EXCHANGE,
                 MqConstants.AppointmentQueue.Routing.DOCTOR_MERCHANT_ROUTING,
@@ -36,6 +37,7 @@ public class AppointmentMqSender implements RabbitMqSenderInterface {
     // 消息发送给netty，只需要发送消息给netty，不需要接收netty的消息
     @Override
     public void push(Message message) {
+        log.info("发送消息给netty：{}", message);
         rabbitJsonTemplate.convertAndSend(
                 MqConstants.Exchange.APPOINTMENT_EXCHANGE,
                 MqConstants.AppointmentQueue.Routing.TO_SOCKET_ROUTING,
