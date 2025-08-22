@@ -78,4 +78,11 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
                 doctorMerchantAppointmentId;
         return redissonService.getObjectFromJson(keyBuilder, DoctorMerchantAppointmentDo.class);
     }
+
+    @Override
+    public boolean deleteDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId) {
+        String keyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX +
+                doctorMerchantAppointmentId;
+        return redissonService.deleteObject(keyBuilder);
+    }
 }

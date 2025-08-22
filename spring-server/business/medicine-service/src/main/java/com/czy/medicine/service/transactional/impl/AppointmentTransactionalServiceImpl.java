@@ -109,7 +109,15 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         /// 5.删除/更新redis缓存
         // redis的库存扣减
         DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointmentMapper.getById(doctorMerchantId);
-        registerAppointmentRedisMapper.saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo);
+        if (!registerAppointmentRedisMapper.saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo)){
+            // 缓存更新失败的话不需要回滚事务, 直接删除缓存就好, 等待之后查询发现没缓存就来查询数据了
+            log.warn("缓存更新失败, 删除缓存");
+            boolean result = registerAppointmentRedisMapper.deleteDoctorMerchantAppointmentDo(doctorMerchantId);
+            if (!result){
+                // 如果删除都删除失败了, 就要用error日志, 去排查问题, 估计是redis挂了
+                log.error("删除缓存也删除失败了失败");
+            }
+        }
     }
 
 }

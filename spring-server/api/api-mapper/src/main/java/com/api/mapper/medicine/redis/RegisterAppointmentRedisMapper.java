@@ -46,4 +46,6 @@ public interface RegisterAppointmentRedisMapper {
     boolean saveDoctorMerchantAppointmentDo(@NotNull DoctorMerchantAppointmentDo doctorMerchantAppointmentDo);
 
     DoctorMerchantAppointmentDo getDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
+
+    boolean deleteDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
 }
