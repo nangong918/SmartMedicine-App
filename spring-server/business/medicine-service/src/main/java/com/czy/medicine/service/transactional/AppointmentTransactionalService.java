@@ -9,6 +9,5 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface AppointmentTransactionalService {
     @Transactional(rollbackFor = Exception.class)
-    void createAppointmentOrder(long orderId, long doctorMerchantId, long userId,
-                                long recordTimestamp) throws AppException;
+    void createAppointmentOrder(long orderId, long doctorMerchantId, long userId) throws AppException;
 }

@@ -7,7 +7,6 @@ import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
 import com.czy.api.constant.ErrorConstant;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
-import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.medicine.MedicineRedisKey;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
@@ -24,7 +23,6 @@ import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.api.exception.MedicineExceptions;
 import com.czy.medicine.service.RegisterAppointmentService;
 import com.czy.medicine.service.transactional.AppointmentTransactionalService;
-import com.czy.medicine.utils.AppointmentMerchantStatusCalculator;
 import com.utils.minio.service.OssService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
@@ -41,7 +39,6 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -298,48 +295,15 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
      * @throws AppException                 预约失败的异常
      */
     @Override
-    public void appointment(
-            @NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId) throws AppException{
-        // 查询redis数据，redis原子操作，避免频繁访问数据库，频繁io
+    public void appointment
+    (@NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId) throws AppException{
+        // 检查当前状态是否是可预约 todo 查询改为redis 缓存查询
 
-        // redis击穿：使用事务查询数据库，并且锁行。用乐观锁，悲观锁的锁行性能低，然后对数据做处理返回结果 todo, 最后做, 因为需要订单完成之后更新数据库的时候删除缓存
-
-        // 检查当前状态是否是可预约
-        DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorMerchantAppointment.getById(doctorMerchantAppointmentId);
-        if (doctorRegisterAppointmentDo == null || doctorRegisterAppointmentDo.getId() == null){
-            log.warn("预约医生商户{} 不存在", doctorMerchantAppointmentId);
-            throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
-        }
-
-        // 当前时间；在此处获取，因为业务可能呗等待，入参的时间应该是错误的
-        LocalDateTime now = LocalDateTime.now();
-        long timestamp = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        // 检查当前状态是否是可预约
-        AppointmentMerchantStatusEnum status = AppointmentMerchantStatusCalculator.calculate(
-                doctorRegisterAppointmentDo.getRemainCount(),
-                now,
-                MedicineConstant.APPOINTMENT_OPEN_DAYS,
-                doctorRegisterAppointmentDo.getBeginDate(),
-                doctorRegisterAppointmentDo.getEndDate()
-        );
-
-        // 异常
-        switch (status){
-            case AVAILABLE:
-                break;
-            case EXPIRED:
-                throw new AppException(MedicineExceptions.MERCHANT_INFO_EXPIRED);
-            case NO_AVAILABLE:
-                throw new AppException(MedicineExceptions.NO_AVAILABLE_MERCHANT);
-            case WAITING_OPEN:
-                throw new AppException(MedicineExceptions.WAITING_OPEN);
-        }
-
+        // 执行事务
         // 对商品上锁，库减少（模拟减少，因为有5分钟的支付时间，未支付的话就库存数据增）
         // 缓存减少 事务sql
         appointmentTransactionalService.createAppointmentOrder(
-                orderId, doctorMerchantAppointmentId, userId, timestamp
+                orderId, doctorMerchantAppointmentId, userId
         );
 
         // mq -> 传参并告知purchase-service生成待支付的订单 -> purchase-service直接将消息交给netty通知user，并且直接在purchase调用mapper或者dubbo修改数据库
