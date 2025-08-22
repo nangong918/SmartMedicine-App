@@ -1,5 +1,6 @@
 package com.api.mapper.medicine.redis;
 
+import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,4 +36,14 @@ public interface RegisterAppointmentRedisMapper {
             @NotNull Long doctorMerchantAppointmentId,
             @NotNull Long orderId
     );
+
+    /// DoctorMerchantAppointmentDo
+    /**
+     * 保存/更新商户信息
+     * @param doctorMerchantAppointmentDo   DoctorMerchantAppointmentDo
+     * @return                              boolean
+     */
+    boolean saveDoctorMerchantAppointmentDo(@NotNull DoctorMerchantAppointmentDo doctorMerchantAppointmentDo);
+
+    DoctorMerchantAppointmentDo getDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
 }

@@ -42,12 +42,18 @@ public interface DoctorMerchantAppointmentMapper {
     int compareAndDecrement(@Param("id") Long id, @Param("expectedCount") int expectedCount);
 
     /**
-     * 悲观锁更新库存
+     * 悲观锁更新库存 (在执行之前需要先确定执行了: getRemainCountWithLock)
      * 悲观锁在操作开始时直接加锁，确保其他事务无法访问相关数据。
+     * FOR UPDATE只能加入在SELECT语句中, 如果加入在UPDATE语句中, 则会报错.因为UPDATE语句本身就会加锁
      * @param id                 id
      * @return                   更新结果
      */
     int decrementWithPessimisticLock(@Param("id") Long id);
+
+    /**
+     * 加锁查询剩余数量
+     */
+    int getRemainCountWithLock(@Param("id") Long id);
 
     /**
      * 直接减少库存

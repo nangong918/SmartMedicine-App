@@ -2,6 +2,7 @@ package com.api.mapper.medicine.redis.impl;
 
 import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
 import com.czy.api.constant.medicine.MedicineRedisKey;
+import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.utils.redisson.service.RedissonService;
 import lombok.RequiredArgsConstructor;
@@ -58,5 +59,23 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
                 keyBuilder,
                 AppointmentDoctorOrderListAo.class
         );
+    }
+
+    @Override
+    public boolean saveDoctorMerchantAppointmentDo(@NotNull DoctorMerchantAppointmentDo doctorMerchantAppointmentDo) {
+        if (doctorMerchantAppointmentDo.getId() == null){
+            return false;
+        }
+        String keyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX +
+                doctorMerchantAppointmentDo.getId();
+        return redissonService.setObjectBySerializable(keyBuilder, doctorMerchantAppointmentDo,
+                MedicineRedisKey.Appointment.DoctorMerchant_EXPIRE_TIME);
+    }
+
+    @Override
+    public DoctorMerchantAppointmentDo getDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId) {
+        String keyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX +
+                doctorMerchantAppointmentId;
+        return redissonService.getObjectFromSerializable(keyBuilder, DoctorMerchantAppointmentDo.class);
     }
 }

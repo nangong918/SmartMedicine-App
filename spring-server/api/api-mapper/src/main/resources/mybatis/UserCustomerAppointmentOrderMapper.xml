@@ -108,5 +108,13 @@
         from <include refid="table"/>
         where user_id = #{userId}
     </select>
+    <select id="getDosByUserIdAndMerchantId"
+            resultType="com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo">
+        select
+        <include refid="columns"/>
+        from <include refid="table"/>
+        where user_id = #{userId}
+        and doctor_merchant_appointment_id = #{doctorMerchantId}
+    </select>
 
 </mapper>

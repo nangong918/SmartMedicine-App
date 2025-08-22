@@ -84,7 +84,6 @@
         SET remain_count = remain_count - 1
         WHERE id = #{id}
         AND remain_count > 0
-        FOR UPDATE
     </update>
 
     <delete id="deleteDoctorMerchantAppointment">
@@ -132,6 +131,13 @@
     <!-- 行锁定 SELECT FOR UPDATE -->
     <select id="getByIdForUpdate" resultType="com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo">
         SELECT *
+        FROM doctor_merchant_appointment
+        WHERE id = #{id}
+        FOR UPDATE
+    </select>
+
+    <select id="getRemainCountWithLock" resultType="java.lang.Integer">
+        SELECT remain_count
         FROM doctor_merchant_appointment
         WHERE id = #{id}
         FOR UPDATE

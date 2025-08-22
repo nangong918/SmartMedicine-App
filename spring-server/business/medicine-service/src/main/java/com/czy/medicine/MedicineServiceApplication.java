@@ -6,6 +6,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 // 扫描bean
@@ -34,6 +35,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
         "com.api.mapper.medicine.mybatis",
 })
 // es
+@EnableTransactionManagement // 启用事务管理
 @EnableElasticsearchRepositories(basePackages = "com.api.mapper")
 public class MedicineServiceApplication {
     public static void main(String[] args) {

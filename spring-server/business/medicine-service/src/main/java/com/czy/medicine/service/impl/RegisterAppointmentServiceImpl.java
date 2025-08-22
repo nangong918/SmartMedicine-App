@@ -11,7 +11,6 @@ import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.medicine.MedicineRedisKey;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
-import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
@@ -24,6 +23,7 @@ import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.api.exception.MedicineExceptions;
 import com.czy.medicine.service.RegisterAppointmentService;
+import com.czy.medicine.service.transactional.AppointmentTransactionalService;
 import com.czy.medicine.utils.AppointmentMerchantStatusCalculator;
 import com.utils.minio.service.OssService;
 import com.utils.redisson.service.RedissonClusterLock;
@@ -64,6 +64,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
     private final RedissonService redissonService;
     private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+    private final AppointmentTransactionalService appointmentTransactionalService;
 
     // 获取PageList
     @NotNull
@@ -336,15 +337,9 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
 
         // 对商品上锁，库减少（模拟减少，因为有5分钟的支付时间，未支付的话就库存数据增）
-        // 缓存减少
-        UserCustomerAppointmentDo userCustomerAppointmentDo = new UserCustomerAppointmentDo();
-        userCustomerAppointmentDo.setId(orderId);
-        userCustomerAppointmentDo.setDoctorMerchantAppointmentId(doctorMerchantAppointmentId);
-        userCustomerAppointmentDo.setUserId(userId);
-        userCustomerAppointmentDo.setRecordTimestamp(timestamp);
-
-        userCustomerAppointmentOrderMapper.insert(
-                userCustomerAppointmentDo
+        // 缓存减少 事务sql
+        appointmentTransactionalService.createAppointmentOrder(
+                orderId, doctorMerchantAppointmentId, userId, timestamp
         );
 
         // mq -> 传参并告知purchase-service生成待支付的订单 -> purchase-service直接将消息交给netty通知user，并且直接在purchase调用mapper或者dubbo修改数据库
@@ -353,7 +348,10 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     }
     
     // 获取list
-
+/*
+我的意思是不直接写出sql存储过程,而是创建一个新的mapper,就叫做appointmentMapper吧,在这里面写新的方法, 事务操作doctor_merchant_appointment数量扣减和user_customer_appointment_order订单创建.
+sql存储过程的话我不是很好管理. 此外, 我没用过@Transactional注解, 我希望你完整的告诉我怎么使用,包括如何启用, 我记得它属于Aop,那么aop是要对对象执行的,这个方法是不是要单独创建一个service,不然aop在本对象是不生效的对吗
+ */
 
     /// 缓存
     // 生成订单缓存
