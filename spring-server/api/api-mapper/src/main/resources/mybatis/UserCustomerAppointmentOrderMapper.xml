@@ -3,15 +3,15 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper">
 
-    <sql id="table"
-         >user_customer_appointment_order
+    <sql id="table">
+        user_customer_appointment_order
     </sql>
 
     <sql id="columns">
         id,
         doctor_merchant_appointment_id,
         user_id,
-        timestamp,
+        record_timestamp,
         user_order_status
     </sql>
 
@@ -19,7 +19,7 @@
         #{id},
         #{doctorMerchantAppointmentId},
         #{userId},
-        #{timestamp},
+        #{recordTimestamp},
         #{userOrderStatus}
     </sql>
 
@@ -27,7 +27,7 @@
         #{item.id},
         #{item.doctorMerchantAppointmentId},
         #{item.userId},
-        #{item.timestamp},
+        #{item.recordTimestamp},
         #{item.userOrderStatus}
     </sql>
 
@@ -38,8 +38,8 @@
         <if test="userId != null">
             user_id = #{userId},
         </if>
-        <if test="timestamp != null">
-            timestamp = #{timestamp},
+        <if test="recordTimestamp != null">
+            record_timestamp = #{recordTimestamp},
         </if>
         <if test="userOrderStatus != null">
             user_order_status = #{userOrderStatus}

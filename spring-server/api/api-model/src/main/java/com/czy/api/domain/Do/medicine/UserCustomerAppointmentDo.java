@@ -19,7 +19,7 @@ public class UserCustomerAppointmentDo implements BaseBean {
     // 用户id
     private Long userId;
     // 记录时间
-    private Long timestamp;
+    private Long recordTimestamp;
     // 订单状态
     private Integer userOrderStatus = UserOrderStatusEnum.NOT_ORDERED.getCode();
 }

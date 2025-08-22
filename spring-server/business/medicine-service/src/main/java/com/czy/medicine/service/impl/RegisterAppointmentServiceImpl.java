@@ -341,7 +341,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         userCustomerAppointmentDo.setId(orderId);
         userCustomerAppointmentDo.setDoctorMerchantAppointmentId(doctorMerchantAppointmentId);
         userCustomerAppointmentDo.setUserId(userId);
-        userCustomerAppointmentDo.setTimestamp(timestamp);
+        userCustomerAppointmentDo.setRecordTimestamp(timestamp);
 
         userCustomerAppointmentOrderMapper.insert(
                 userCustomerAppointmentDo
