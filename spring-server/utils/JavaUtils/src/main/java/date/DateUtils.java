@@ -18,12 +18,12 @@ import java.time.format.DateTimeFormatter;
  */
 public class DateUtils {
 
+    public static final DateTimeFormatter yyyyMMddHHmmss = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
     @NonNull
     public static String yyyyMMddHHmmssToString(@NonNull LocalDateTime date){
-        // 定义日期格式
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         // 转换 LocalDateTime 为格式化字符串
-        return date.format(formatter);
+        return date.format(yyyyMMddHHmmss);
     }
 
     @NonNull

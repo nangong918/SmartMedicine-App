@@ -1,6 +1,7 @@
 package com.czy.medicine.controller;
 
 import cn.hutool.core.util.IdUtil;
+import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.purchase.PurchaseConstant;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorAo;
@@ -15,6 +16,7 @@ import com.czy.api.domain.dto.http.response.GetAllRegisterAppointmentDateRespons
 import com.czy.api.domain.dto.http.response.GetRegisterAppointmentListResponse;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PurchaseExceptions;
 import com.czy.medicine.mq.AppointmentMqSender;
 import com.czy.medicine.service.RegisterAppointmentService;
@@ -90,9 +92,23 @@ public class RegisterAppointmentController {
 
     // 获取user预约订单列表
     @PostMapping("/getCustomerList")
-    public BaseResponse<AppointmentDoctorOrderListAo>
+    public BaseResponse<List<AppointmentDoctorOrderListAo>>
     getAppointmentRecordList
     (@Validated @RequestBody GetUserAppointmentRecordRequest request){
+        // 参数校验
+        int sortType = request.getSortType();
+        boolean sortTypeLegal = false;
+
+        for (AppointmentSortTypeEnum value : AppointmentSortTypeEnum.values()) {
+            if (value.getCode() == sortType){
+                sortTypeLegal = true;
+                break;
+            }
+        }
+        if (!sortTypeLegal){
+            return BaseResponse.LogBackError(CommonExceptions.SORT_TYPE_NOT_FOUND);
+        }
+
         return null;
     }
 

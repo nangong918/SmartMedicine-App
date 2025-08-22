@@ -22,6 +22,8 @@ public enum CommonExceptions implements ExceptionEnums {
     SYSTEM_REDIS_ERROR("C_10002.3", "系统异常-Redis异常"),
     // 频繁点击
     FREQUENTLY_CLICK("C_10003", "频繁点击，请稍后再试"),
+    // 排序方式未找到
+    SORT_TYPE_NOT_FOUND("C_10004", "排序方式未找到"),
     ;
 
     private final String code;

@@ -18,6 +18,8 @@ public enum MedicineExceptions implements ExceptionEnums {
     NO_AVAILABLE_MERCHANT("MD_10003", "已全部预约完毕，无可预约的商户"),
     // 等待开放，在开放预约之后在进行预约
     WAITING_OPEN("MD_10004", "等待开放，在开放预约之后在进行预约"),
+    // 用户经纬度位置不能为空
+    LOCATION_NOT_NULL("MD_10005", "用户经纬度位置不能为空"),
     ;
 
     private final String code;

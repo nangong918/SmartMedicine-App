@@ -315,11 +315,6 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     }
     
     // 获取list
-/*
-我的意思是不直接写出sql存储过程,而是创建一个新的mapper,就叫做appointmentMapper吧,在这里面写新的方法, 事务操作doctor_merchant_appointment数量扣减和user_customer_appointment_order订单创建.
-sql存储过程的话我不是很好管理. 此外, 我没用过@Transactional注解, 我希望你完整的告诉我怎么使用,包括如何启用, 我记得它属于Aop,那么aop是要对对象执行的,这个方法是不是要单独创建一个service,不然aop在本对象是不生效的对吗
- */
-
     /// 缓存
     // 生成订单缓存
     @Override
@@ -384,5 +379,11 @@ sql存储过程的话我不是很好管理. 此外, 我没用过@Transactional�
                     userId, doctorMerchantAppointmentId, orderId);
         }
 
+    }
+
+    // 获取user预约订单列表
+    @NotNull
+    public List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType) throws AppException {
+        return new ArrayList<>();
     }
 }

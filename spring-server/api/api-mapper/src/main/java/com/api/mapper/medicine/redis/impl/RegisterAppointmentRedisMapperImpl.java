@@ -1,14 +1,29 @@
 package com.api.mapper.medicine.redis.impl;
 
 import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.MedicineRedisKey;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
+import com.czy.api.exception.CommonExceptions;
+import com.czy.api.exception.MedicineExceptions;
 import com.utils.redisson.service.RedissonService;
+import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.redisson.api.RScoredSortedSet;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -20,6 +35,7 @@ import org.springframework.stereotype.Component;
 public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRedisMapper {
 
     private final RedissonService redissonService;
+    private final RedissonClient redissonClient;
 
     /**
      * 缓存预约申请信息
@@ -84,5 +100,108 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         String keyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX +
                 doctorMerchantAppointmentId;
         return redissonService.deleteObject(keyBuilder);
+    }
+
+    /// List<AppointmentDoctorOrderListAo>
+    /**
+     * 获取用户预约记录
+     * @param userId        用户id
+     * @param sortType      排序方式
+     * @see AppointmentSortTypeEnum
+     * @param userLongitude 用户经度
+     * @param userLatitude  用户纬度
+     * @return              预约记录
+     * @throws AppException 错误
+     */
+    @Nullable
+    @Override
+    public List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType, Double userLongitude, Double userLatitude) throws AppException {
+        String keyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + sortType;
+        // 不存在key返回null; null和empty是两个概念, 一个是缓存未命中, 一个是缓存命中，但结果为空
+        if (!redissonService.hasKey(keyBuilder)){
+            return null;
+        }
+
+        // 获取缓存数据
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(keyBuilder);
+        List<Object> allItems = new ArrayList<>(zSet.readAll());
+        if (CollectionUtils.isEmpty(allItems)){
+            return new ArrayList<>();
+        }
+
+        // 过滤null
+        allItems = allItems.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        AppointmentSortTypeEnum sortTypeEnum = AppointmentSortTypeEnum.getByCode(sortType);
+        // 查询 ZSet 中的所有项
+
+        // 排序方式
+        switch (sortTypeEnum){
+            // 默认, 时间: 从大到小
+            case DEFAULT:
+            case TIME:{
+                allItems.sort((o1, o2) -> {
+                    LocalDateTime beginDate1 = ((AppointmentDoctorOrderListAo) o1).getBeginDate();
+                    LocalDateTime beginDate2 = ((AppointmentDoctorOrderListAo) o2).getBeginDate();
+                    return beginDate2.compareTo(beginDate1);
+                });
+                break;
+            }
+            // 距离, 花费: 从小到大
+            case DISTANCE:{
+                if (userLatitude == null || userLongitude == null){
+                    // 通知前端; 根据前端的code: MD_10005 来提示用户给予定位权限
+                    throw new AppException(MedicineExceptions.LOCATION_NOT_NULL);
+                }
+                allItems.sort((o1, o2) -> {
+                    double distance1 = ((AppointmentDoctorOrderListAo) o1).getDistance(
+                            userLongitude, userLatitude
+                    );
+                    double distance2 = ((AppointmentDoctorOrderListAo) o2).getDistance(
+                            userLongitude, userLatitude
+                    );
+                    // 比较距离
+                    int comparison = Double.compare(distance1, distance2);
+
+                    // 如果距离相等，返回 0；可以添加额外的次要排序逻辑，例如按时间排序
+                    if (comparison == 0) {
+                        LocalDateTime beginDate1 = ((AppointmentDoctorOrderListAo) o1).getBeginDate();
+                        LocalDateTime beginDate2 = ((AppointmentDoctorOrderListAo) o2).getBeginDate();
+                        return beginDate1.compareTo(beginDate2); // 次要排序：按时间升序
+                    }
+
+                    return comparison; // 返回距离比较结果
+                });
+                break;
+            }
+            case COST:{
+                allItems.sort((o1, o2) -> {
+                    BigDecimal cost1 = ((AppointmentDoctorOrderListAo) o1).getCost();
+                    BigDecimal cost2 = ((AppointmentDoctorOrderListAo) o2).getCost();
+
+                    // 处理 null 的情况
+                    if (cost1 == null && cost2 == null) {
+                        return 0; // 两者均为 null，视为相等
+                    }
+                    else if (cost1 == null) {
+                        return 1; // cost1 为 null，排到后面
+                    }
+                    else if (cost2 == null) {
+                        return -1; // cost2 为 null，排到后面
+                    }
+
+                    // 两者均不为 null，正常比较
+                    return cost1.compareTo(cost2);
+                });
+                break;
+            }
+            default:
+                throw new AppException(CommonExceptions.SORT_TYPE_NOT_FOUND);
+        }
+
+        // 类型转换
+        // 收集到列表中
+        return allItems.stream()
+                .map(item -> (AppointmentDoctorOrderListAo) item)
+                .collect(Collectors.toList());
     }
 }

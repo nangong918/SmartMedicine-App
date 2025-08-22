@@ -2,7 +2,11 @@ package com.api.mapper.medicine.redis;
 
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
+import exception.AppException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * @author 13225
@@ -48,4 +52,6 @@ public interface RegisterAppointmentRedisMapper {
     DoctorMerchantAppointmentDo getDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
 
     boolean deleteDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
+
+    @Nullable List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType, Double userLongitude, Double userLatitude) throws AppException;
 }
