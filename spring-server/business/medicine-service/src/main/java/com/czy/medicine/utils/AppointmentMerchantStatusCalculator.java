@@ -27,9 +27,10 @@ public class AppointmentMerchantStatusCalculator {
         if (gapDays < 0){
             gapDays = 0;
         }
-        // 检查是否开放可购买
-        LocalDateTime beginAppointmentTime = beginDate.plusDays(gapDays);
-        if (now.isBefore(beginAppointmentTime)){
+        // 检查是否开放可购买: 提前开放n天
+        // 计算出n天后的今天, 看看now + n days < beginDate ?
+        LocalDateTime afterGapDays = now.plusDays(gapDays);
+        if (afterGapDays.isBefore(beginDate)){
             return AppointmentMerchantStatusEnum.WAITING_OPEN;
         }
         // 检查是否结束
