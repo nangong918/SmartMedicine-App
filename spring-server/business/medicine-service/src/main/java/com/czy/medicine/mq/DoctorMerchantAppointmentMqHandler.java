@@ -100,7 +100,7 @@ public class DoctorMerchantAppointmentMqHandler {
         } catch (AppException appe){
             log.error("用户预约失败", appe);
             // 将枚举错误填充
-            response.setMessage(appe.getExceptionEnums().getMessage());
+            response.setException(appe.getExceptionEnums());
             // 通知失败原因
             NettyUtils.sendErrorMessage(
                     userId,

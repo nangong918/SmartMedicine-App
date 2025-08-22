@@ -17,7 +17,6 @@ import java.util.Map;
 public class AppointmentResultResponse extends BaseResponseData implements BaseBean {
     public Long orderId;
     public Boolean isSuccess = false;
-    public String message;
 
     public AppointmentResultResponse() {
         super();
@@ -31,7 +30,6 @@ public class AppointmentResultResponse extends BaseResponseData implements BaseB
         Map<String, String> map = super.toDataMap();
         map.put("orderId", String.valueOf(orderId));
         map.put("isSuccess", String.valueOf(isSuccess));
-        map.put("message", message);
         return map;
     }
 }

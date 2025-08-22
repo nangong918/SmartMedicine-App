@@ -83,13 +83,13 @@ public class PostHandler implements PostApi{
         }
         if (request.getSenderId() == null){
             NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
-            nettyServerResponse.setError(UserExceptions.USER_NOT_EXIST);
+            nettyServerResponse.setException(UserExceptions.USER_NOT_EXIST);
             return false;
         }
         if (request.getOptionCode() == NettyOptionEnum.NULL.getCode()){
             NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
             // 操作行为异常
-            nettyServerResponse.setError(PostExceptions.OPERATION_TYPE_NOT_EXIST);
+            nettyServerResponse.setException(PostExceptions.OPERATION_TYPE_NOT_EXIST);
             rabbitMqSender.push(nettyServerResponse);
             return false;
         }
@@ -106,7 +106,7 @@ public class PostHandler implements PostApi{
         if (ObjectUtils.isEmpty(request.getPostId())){
             NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
             // 帖子参数不存在
-            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
+            nettyServerResponse.setException(CommonExceptions.PARAM_ERROR);
             rabbitMqSender.push(nettyServerResponse);
             return;
         }
@@ -550,7 +550,7 @@ public class PostHandler implements PostApi{
         if (ObjectUtils.isEmpty(request.getPostId())){
             NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
             // 帖子参数不存在
-            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
+            nettyServerResponse.setException(CommonExceptions.PARAM_ERROR);
             rabbitMqSender.push(nettyServerResponse);
             return;
         }
