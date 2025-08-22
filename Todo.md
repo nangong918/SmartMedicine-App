@@ -304,6 +304,7 @@ todo android的eventBus合理化
 todo 性能优化，考虑使用kotlin
 todo 使用链路追踪检查接口耗费时长问题
 todo 需要记录HomeAdapter刚刚看到的位置, 此归为优化项
+todo JSON中传递的Long改为String, 避免精度丢失
 
 ~~todo 后续合并post-service和search-service~~ search-service和post-service暂时不能合并，因为：
 search-service依赖feature-service的规则，feature-service依赖post-service的数据
@@ -411,3 +412,6 @@ Android Remote Service
 1160:M 26 Jun 2025 11:18:11.123 * Background saving started by pid 10054
 10054:C 26 Jun 2025 11:18:11.128 # Failed opening the RDB file dump.rdb (in server root dir /Redis) for saving: No error
 1160:M 26 Jun 2025 11:18:11.253 # Background saving error`
+
+
+Json返回Long类型出现精度丢失, 全部改为String

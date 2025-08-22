@@ -10,5 +10,5 @@ import lombok.Data;
 @Data
 public class RegisterAppointmentDoctorCardAo {
     private RegisterAppointmentDoctorCardVo vo;
-    private Long doctorMerchantAppointmentId;
+    private String doctorMerchantAppointmentId;
 }
