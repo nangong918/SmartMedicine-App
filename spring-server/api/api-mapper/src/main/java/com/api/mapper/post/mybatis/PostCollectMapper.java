@@ -1,4 +1,4 @@
-package com.api.mapper.post.mysql;
+package com.api.mapper.post.mybatis;
 
 import com.czy.api.domain.Do.post.collect.PostCollectDo;
 import org.apache.ibatis.annotations.Mapper;

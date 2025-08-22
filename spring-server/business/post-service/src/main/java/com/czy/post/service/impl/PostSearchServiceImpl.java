@@ -2,8 +2,8 @@ package com.czy.post.service.impl;
 
 
 import com.api.mapper.post.mongo.PostDetailMongoMapper;
-import com.api.mapper.post.mysql.PostFilesMapper;
-import com.api.mapper.post.mysql.PostInfoMapper;
+import com.api.mapper.post.mybatis.PostFilesMapper;
+import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.es.FieldAnalyzer;

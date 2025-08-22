@@ -13,7 +13,7 @@ public class RandomDateTimeGenerator {
     public static void main(String[] args) {
         for (int i = 0; i < 10; i++){
             LocalDateTime[] startAndEndDateTimes = getRandomStartAndEndDateTimes();
-            System.out.println("开始时间：" + startAndEndDateTimes[0]);
+            System.out.println("\n开始时间：" + startAndEndDateTimes[0]);
             System.out.println("结束时间：" + startAndEndDateTimes[1]);
         }
     }
@@ -34,6 +34,14 @@ public class RandomDateTimeGenerator {
         return new LocalDateTime[]{
                 LocalDateTime.of(randomDate, startTimes[randomIndex]),
                 LocalDateTime.of(randomDate, endTimes[randomIndex])
+        };
+    }
+
+    public static LocalDateTime[] getTodayTimes(LocalDate targetNowDate){
+        int randomIndex = new Random().nextInt(startTimes.length);
+        return new LocalDateTime[]{
+                LocalDateTime.of(targetNowDate, startTimes[randomIndex]),
+                LocalDateTime.of(targetNowDate, endTimes[randomIndex])
         };
     }
 }

@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -207,8 +208,10 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
             (@NonNull List<DoctorMerchantAppointmentDo> list) {
         assert list.size() >= TEST_DATA_COUNT;
         for (int i = 0; i < TEST_DATA_COUNT; i++){
+            LocalDateTime[] resetTimes = RandomDateTimeGenerator.getTodayTimes(LocalDate.now().plusDays(i));
             // 设置日期
-            list.get(i).setBeginDate(LocalDateTime.now().plusDays(i));
+            list.get(i).setBeginDate(resetTimes[0]);
+            list.get(i).setEndDate(resetTimes[1]);
             // 内科
             list.get(i).setDepartmentId(DepartmentEnum.INTERNAL_MEDICINE.getCode());
             // 心脏内科

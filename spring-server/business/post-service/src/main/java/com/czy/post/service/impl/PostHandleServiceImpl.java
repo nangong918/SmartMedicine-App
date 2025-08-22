@@ -2,9 +2,9 @@ package com.czy.post.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.api.mapper.post.mongo.PostCommentMongoMapper;
-import com.api.mapper.post.mysql.PostCollectFolderMapper;
-import com.api.mapper.post.mysql.PostCollectMapper;
-import com.api.mapper.post.mysql.PostInfoMapper;
+import com.api.mapper.post.mybatis.PostCollectFolderMapper;
+import com.api.mapper.post.mybatis.PostCollectMapper;
+import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.domain.Do.post.collect.PostCollectDo;
 import com.czy.api.domain.Do.post.collect.PostCollectFolderDo;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;

@@ -12,9 +12,14 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  * @date 2025/1/10 18:25
  */
 // mybatis-plus
-@MapperScan({"com.czy.imports.mapper",
+@MapperScan({
+        "com.czy.imports.mapper",
         "com.utils.minio.mapper",
-        "com.api.mapper"})
+        // api.mapper
+        "com.api.mapper.medicine.mybatis",
+        "com.api.mapper.post.mybatis",
+        "com.api.mapper.user.mybatis",
+})
 // mongodb
 @EnableMongoRepositories(basePackages = {"com.api.mapper", "com.czy.imports"})
 // es
@@ -28,9 +33,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
         // 扫描工具类
         "com.czy.spring",
         "com.utils.common",
-//        "com.utils.redisson",
         "com.utils.minio",
-//        "com.utils.redis",
+        "com.utils.redis",
+        "com.utils.redisson",
 //        "com.utils.rabbitmq",
 })
 @EnableAspectJAutoProxy // 启用aop

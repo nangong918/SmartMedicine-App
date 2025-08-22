@@ -2,8 +2,8 @@ package com.czy.post.service.impl;
 
 import com.api.mapper.post.es.PostDetailEsMapper;
 import com.api.mapper.post.mongo.PostDetailMongoMapper;
-import com.api.mapper.post.mysql.PostFilesMapper;
-import com.api.mapper.post.mysql.PostInfoMapper;
+import com.api.mapper.post.mybatis.PostFilesMapper;
+import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.constant.exception.StorageException;
 import com.czy.api.converter.domain.post.PostConverter;
 import com.czy.api.domain.Do.neo4j.ChecksDo;

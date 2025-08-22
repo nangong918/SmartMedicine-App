@@ -1,8 +1,7 @@
 package com.czy.feature.service.impl;
 
-import com.api.mapper.post.mysql.PostInfoMapper;
+import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.api.feature.UserFeatureService;
-import com.czy.api.api.post.PostSearchService;
 import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.feature.FeatureTypeChanger;
 import com.czy.api.constant.offline.OfflineConstant;
@@ -17,7 +16,6 @@ import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

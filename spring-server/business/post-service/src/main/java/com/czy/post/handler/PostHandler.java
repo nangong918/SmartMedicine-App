@@ -1,6 +1,6 @@
 package com.czy.post.handler;
 
-import com.api.mapper.post.mysql.PostInfoMapper;
+import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.feature.PostOperation;
 import com.czy.api.constant.netty.KafkaConstant;

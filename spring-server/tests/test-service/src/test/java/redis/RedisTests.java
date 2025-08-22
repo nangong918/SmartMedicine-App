@@ -1,6 +1,5 @@
 package redis;
 
-import com.api.mapper.common.redis.FileRedisMapper;
 import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
@@ -9,7 +8,6 @@ import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.test.TestApplication;
 import com.czy.test.domain.Do.TestDo;
 import com.czy.test.mapper.TestRedisMapper;
-import domain.FileResAo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,20 +22,6 @@ import java.util.Optional;
 @Slf4j
 @SpringBootTest(classes = TestApplication.class)
 public class RedisTests {
-
-    @Autowired
-    private FileRedisMapper fileRedisMapper;
-
-    @Test
-    public void fileRedisMapperTest() {
-        FileResAo resAo = new FileResAo();
-        String redisKey = "fileRedisKey:";
-        resAo.setFileId(1L);
-        resAo.setFileUrl("fileUrl");
-        System.out.println(fileRedisMapper.insertFileResAo(redisKey, resAo, 5L));
-        FileResAo resAo1 = fileRedisMapper.getFileResAo(redisKey);
-        log.info("resAo1: {}", resAo1);
-    }
 
     @Autowired
     private TestRedisMapper testRedisMapper;

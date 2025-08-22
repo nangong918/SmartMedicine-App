@@ -1,6 +1,6 @@
 package com.czy.post.service.impl;
 
-import com.api.mapper.post.mysql.PostInfoMapper;
+import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.api.post.PostUserRelationService;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.post.post.UserPostBrowseDo;
