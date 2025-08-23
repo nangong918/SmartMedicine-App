@@ -2,11 +2,11 @@ package com.czy.appcore.network.netty.api.receive;
 
 import androidx.annotation.NonNull;
 
-import com.czy.dal.annotation.MessageType;
-import com.czy.dal.constant.netty.ResponseMessageType;
-import com.czy.dal.dto.netty.response.PostCommentResponse;
-import com.czy.dal.dto.netty.response.PostForwardResponse;
-import com.czy.dal.dto.netty.response.PostLikeResponse;
+import com.czy.domain.annotation.MessageType;
+import com.czy.domain.constant.netty.ResponseMessageType;
+import com.czy.domain.dto.netty.response.PostCommentResponse;
+import com.czy.domain.dto.netty.response.PostForwardResponse;
+import com.czy.domain.dto.netty.response.PostLikeResponse;
 
 public interface PostApiHandler {
     @MessageType(value = ResponseMessageType.Post.LIKE_POST, desc = "post被点赞")

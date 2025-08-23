@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.czy.dal.Do.UserDo;
+import com.czy.domain.Do.UserDo;
 
 import java.util.List;
 

@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewCommentBinding;
-import com.czy.dal.vo.entity.home.CommentVo;
+import com.czy.domain.vo.entity.home.CommentVo;
 
 import java.util.List;
 import java.util.Optional;

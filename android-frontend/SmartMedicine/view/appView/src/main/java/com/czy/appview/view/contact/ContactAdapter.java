@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewContactItemBinding;
-import com.czy.dal.OnPositionItemClick;
-import com.czy.dal.ao.chat.ChatContactItemAo;
-import com.czy.dal.vo.entity.contact.ContactDiffCallback;
+import com.czy.domain.OnPositionItemClick;
+import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.vo.entity.contact.ContactDiffCallback;
 
 
 import java.util.ArrayList;

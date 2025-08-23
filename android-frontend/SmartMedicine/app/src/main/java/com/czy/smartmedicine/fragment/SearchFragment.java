@@ -13,8 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
-import com.czy.dal.constant.SelectItemEnum;
-import com.czy.dal.vo.view.mainTop.MainTopBarVo;
+import com.czy.domain.constant.SelectItemEnum;
+import com.czy.domain.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.databinding.FragmentSearchBinding;
 

@@ -6,9 +6,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 
-import com.czy.dal.constant.netty.ResponseMessageType;
+import com.czy.domain.constant.netty.ResponseMessageType;
 import com.czy.appcore.network.netty.event.OnReceiveMessage;
-import com.czy.dal.model.ResponseBodyProto;
+import com.czy.domain.model.ResponseBodyProto;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

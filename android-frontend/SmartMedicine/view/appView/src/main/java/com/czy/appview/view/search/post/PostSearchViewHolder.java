@@ -5,8 +5,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewPostSearchBinding;
-import com.czy.dal.constant.search.PostSearchResultListEnum;
-import com.czy.dal.vo.entity.home.PostExVo;
+import com.czy.domain.constant.search.PostSearchResultListEnum;
+import com.czy.domain.vo.entity.home.PostExVo;
 
 import java.util.Optional;
 

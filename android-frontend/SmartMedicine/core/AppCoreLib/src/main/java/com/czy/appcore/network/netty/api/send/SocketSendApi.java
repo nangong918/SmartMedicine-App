@@ -3,26 +3,26 @@ package com.czy.appcore.network.netty.api.send;
 
 
 
-import com.czy.dal.annotation.MessageType;
-import com.czy.dal.constant.netty.RequestMessageType;
-import com.czy.dal.dto.netty.forwardMessage.SendImageRequest;
-import com.czy.dal.dto.netty.request.AddUserRequest;
-import com.czy.dal.dto.netty.request.DeleteAllMessageRequest;
-import com.czy.dal.dto.netty.request.DeleteUserRequest;
-import com.czy.dal.dto.netty.request.DisconnectRequest;
-import com.czy.dal.dto.netty.request.HandleAddedUserRequest;
-import com.czy.dal.dto.netty.request.HaveReadMessageRequest;
-import com.czy.dal.dto.netty.request.PostCollectRequest;
-import com.czy.dal.dto.netty.request.PostCommentRequest;
-import com.czy.dal.dto.netty.request.PostDisLikeRequest;
-import com.czy.dal.dto.netty.request.PostFolderRequest;
-import com.czy.dal.dto.netty.request.PostForwardRequest;
-import com.czy.dal.dto.netty.request.PostLikeRequest;
-import com.czy.dal.dto.netty.request.RegisterRequest;
-import com.czy.dal.dto.netty.forwardMessage.SendTextDataRequest;
-import com.czy.dal.dto.netty.request.UserBrowseTimeRequest;
-import com.czy.dal.dto.netty.request.UserCityLocationRequest;
-import com.czy.dal.dto.netty.request.UserClickPostRequest;
+import com.czy.domain.annotation.MessageType;
+import com.czy.domain.constant.netty.RequestMessageType;
+import com.czy.domain.dto.netty.forwardMessage.SendImageRequest;
+import com.czy.domain.dto.netty.request.AddUserRequest;
+import com.czy.domain.dto.netty.request.DeleteAllMessageRequest;
+import com.czy.domain.dto.netty.request.DeleteUserRequest;
+import com.czy.domain.dto.netty.request.DisconnectRequest;
+import com.czy.domain.dto.netty.request.HandleAddedUserRequest;
+import com.czy.domain.dto.netty.request.HaveReadMessageRequest;
+import com.czy.domain.dto.netty.request.PostCollectRequest;
+import com.czy.domain.dto.netty.request.PostCommentRequest;
+import com.czy.domain.dto.netty.request.PostDisLikeRequest;
+import com.czy.domain.dto.netty.request.PostFolderRequest;
+import com.czy.domain.dto.netty.request.PostForwardRequest;
+import com.czy.domain.dto.netty.request.PostLikeRequest;
+import com.czy.domain.dto.netty.request.RegisterRequest;
+import com.czy.domain.dto.netty.forwardMessage.SendTextDataRequest;
+import com.czy.domain.dto.netty.request.UserBrowseTimeRequest;
+import com.czy.domain.dto.netty.request.UserCityLocationRequest;
+import com.czy.domain.dto.netty.request.UserClickPostRequest;
 
 import io.reactivex.annotations.NonNull;
 

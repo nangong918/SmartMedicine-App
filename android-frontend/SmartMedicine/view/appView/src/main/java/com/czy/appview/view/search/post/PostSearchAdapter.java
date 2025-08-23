@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewPostSearchBinding;
-import com.czy.dal.vo.entity.home.PostExVo;
+import com.czy.domain.vo.entity.home.PostExVo;
 
 import java.util.List;
 

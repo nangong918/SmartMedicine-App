@@ -2,10 +2,10 @@ package com.czy.appcore.network.netty.api.receive;
 
 import androidx.annotation.NonNull;
 
-import com.czy.dal.annotation.MessageType;
-import com.czy.dal.constant.netty.ResponseMessageType;
-import com.czy.dal.dto.netty.response.AddUserToTargetUserResponse;
-import com.czy.dal.dto.netty.response.HandleAddUserResponse;
+import com.czy.domain.annotation.MessageType;
+import com.czy.domain.constant.netty.ResponseMessageType;
+import com.czy.domain.dto.netty.response.AddUserToTargetUserResponse;
+import com.czy.domain.dto.netty.response.HandleAddUserResponse;
 
 public interface FriendApiHandler {
 

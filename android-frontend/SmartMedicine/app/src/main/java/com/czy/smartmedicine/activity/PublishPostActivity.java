@@ -13,7 +13,7 @@ import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.photo.SelectPhotoUtil;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.dal.fragmentActivityAo.post.PublishPostVo;
+import com.czy.domain.fragmentActivityAo.post.PublishPostVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPublishPostBinding;
 import com.czy.smartmedicine.viewModel.activity.PublishPostVm;

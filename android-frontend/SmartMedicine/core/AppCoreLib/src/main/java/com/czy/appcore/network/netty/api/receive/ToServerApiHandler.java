@@ -2,10 +2,10 @@ package com.czy.appcore.network.netty.api.receive;
 
 import androidx.annotation.NonNull;
 
-import com.czy.dal.annotation.MessageType;
-import com.czy.dal.constant.netty.ResponseMessageType;
-import com.czy.dal.dto.netty.response.HaveReadMessageResponse;
-import com.czy.dal.netty.Message;
+import com.czy.domain.annotation.MessageType;
+import com.czy.domain.constant.netty.ResponseMessageType;
+import com.czy.domain.dto.netty.response.HaveReadMessageResponse;
+import com.czy.domain.netty.Message;
 
 public interface ToServerApiHandler {
     @MessageType(value = ResponseMessageType.ToServer.PONG, desc = "心跳响应")

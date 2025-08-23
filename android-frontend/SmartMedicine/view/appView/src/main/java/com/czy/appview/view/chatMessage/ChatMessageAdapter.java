@@ -13,9 +13,9 @@ import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.appview.R;
 import com.czy.appview.databinding.ViewReceivedMessageItemBinding;
 import com.czy.appview.databinding.ViewSendMessageItemBinding;
-import com.czy.dal.constant.MessageTypeEnum;
-import com.czy.dal.vo.entity.chat.ChatMessageDiffCallback;
-import com.czy.dal.vo.entity.message.ChatMessageItemVo;
+import com.czy.domain.constant.MessageTypeEnum;
+import com.czy.domain.vo.entity.chat.ChatMessageDiffCallback;
+import com.czy.domain.vo.entity.message.ChatMessageItemVo;
 
 import java.util.ArrayList;
 import java.util.List;

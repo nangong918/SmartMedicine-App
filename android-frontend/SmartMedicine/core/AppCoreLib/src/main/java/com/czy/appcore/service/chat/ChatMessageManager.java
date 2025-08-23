@@ -8,8 +8,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.czy.baseUtilsLib.algorithm.SortUtils;
-import com.czy.dal.ao.chat.ChatContactItemAo;
-import com.czy.dal.constant.NettyConstants;
+import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.constant.NettyConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

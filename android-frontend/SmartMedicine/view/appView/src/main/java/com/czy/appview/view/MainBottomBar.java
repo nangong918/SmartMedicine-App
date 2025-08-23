@@ -14,8 +14,8 @@ import androidx.core.content.ContextCompat;
 
 import com.czy.appview.R;
 import com.czy.appview.databinding.ViewMainBottomBarBinding;
-import com.czy.dal.OnPositionItemClick;
-import com.czy.dal.constant.SelectItemEnum;
+import com.czy.domain.OnPositionItemClick;
+import com.czy.domain.constant.SelectItemEnum;
 
 /**
  * @author 13225

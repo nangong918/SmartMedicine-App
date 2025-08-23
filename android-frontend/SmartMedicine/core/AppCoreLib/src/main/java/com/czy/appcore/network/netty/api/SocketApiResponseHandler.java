@@ -7,9 +7,9 @@ import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
 import com.czy.appcore.network.netty.api.receive.FriendApiHandler;
 import com.czy.appcore.network.netty.api.receive.OssApiHandler;
 import com.czy.appcore.network.netty.queue.SocketMessageQueue;
-import com.czy.dal.annotation.MessageType;
-import com.czy.dal.dto.netty.base.BaseResponseData;
-import com.czy.dal.netty.Message;
+import com.czy.domain.annotation.MessageType;
+import com.czy.domain.dto.netty.base.BaseResponseData;
+import com.czy.domain.netty.Message;
 
 import org.greenrobot.eventbus.EventBus;
 

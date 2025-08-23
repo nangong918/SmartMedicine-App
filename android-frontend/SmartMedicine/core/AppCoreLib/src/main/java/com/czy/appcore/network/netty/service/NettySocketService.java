@@ -15,9 +15,9 @@ import com.czy.appcore.network.netty.connect.ConnectNettyCallback;
 import com.czy.appcore.network.netty.connect.NettyConnectChangeCallback;
 import com.czy.appcore.network.netty.event.OnReceiveMessage;
 import com.czy.appcore.network.netty.manager.NettySocketManager;
-import com.czy.dal.constant.NettyConstants;
-import com.czy.dal.model.RequestBodyProto;
-import com.czy.dal.netty.Message;
+import com.czy.domain.constant.NettyConstants;
+import com.czy.domain.model.RequestBodyProto;
+import com.czy.domain.netty.Message;
 
 /**
  * RemoteService独立进程管理链接；避免在Application阻塞主线程出现无响应ANR(Android Not Responding)

@@ -4,9 +4,9 @@ package com.czy.appcore.network.netty.constant;
 
 import android.text.TextUtils;
 
-import com.czy.dal.annotation.MsgTranslator;
-import com.czy.dal.constant.NettyConstants;
-import com.czy.dal.constant.netty.RequestMessageType;
+import com.czy.domain.annotation.MsgTranslator;
+import com.czy.domain.constant.NettyConstants;
+import com.czy.domain.constant.netty.RequestMessageType;
 
 import java.lang.reflect.Field;
 

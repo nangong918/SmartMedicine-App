@@ -114,7 +114,7 @@ dependencies {
      */
     implementation project(':core:BaseUtilsLib')
     implementation project(':core:AppCoreLib')
-    implementation project(':data:Dal')
+    implementation project(':data:domain')
     implementation project(':view:appView')
     implementation project(':data:DataLib')
 

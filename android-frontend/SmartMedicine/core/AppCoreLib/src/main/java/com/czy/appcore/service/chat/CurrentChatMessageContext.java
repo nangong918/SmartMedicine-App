@@ -3,7 +3,7 @@ package com.czy.appcore.service.chat;
 
 import androidx.annotation.NonNull;
 
-import com.czy.dal.constant.NettyConstants;
+import com.czy.domain.constant.NettyConstants;
 
 /**
  * 用于记录当前chatActivity上下文的工具

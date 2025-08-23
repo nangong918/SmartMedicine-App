@@ -9,8 +9,8 @@ import com.czy.appcore.BaseConfig;
 import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.dal.ao.login.LoginTokenAo;
-import com.czy.dal.constant.NettyConstants;
+import com.czy.domain.ao.login.LoginTokenAo;
+import com.czy.domain.constant.NettyConstants;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityStartBinding;
 

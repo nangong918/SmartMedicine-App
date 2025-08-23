@@ -3,7 +3,7 @@ package com.czy.appcore.network.netty.queue;
 import android.util.Log;
 
 import com.czy.appcore.BaseConfig;
-import com.czy.dal.netty.Message;
+import com.czy.domain.netty.Message;
 
 import java.util.ArrayList;
 import java.util.List;

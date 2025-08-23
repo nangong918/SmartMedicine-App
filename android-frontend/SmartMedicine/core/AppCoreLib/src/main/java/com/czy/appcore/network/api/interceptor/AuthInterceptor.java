@@ -3,7 +3,7 @@ package com.czy.appcore.network.api.interceptor;
 import androidx.annotation.NonNull;
 
 import com.czy.appcore.BaseConfig;
-import com.czy.dal.ao.login.LoginTokenAo;
+import com.czy.domain.ao.login.LoginTokenAo;
 
 import java.io.IOException;
 import java.util.Optional;

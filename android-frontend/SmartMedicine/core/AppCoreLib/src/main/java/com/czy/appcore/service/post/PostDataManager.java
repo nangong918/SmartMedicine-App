@@ -1,8 +1,8 @@
 package com.czy.appcore.service.post;
 
 
-import com.czy.dal.ao.home.PostAo;
-import com.czy.dal.vo.entity.home.PostVo;
+import com.czy.domain.ao.home.PostAo;
+import com.czy.domain.vo.entity.home.PostVo;
 
 import java.util.ArrayList;
 import java.util.List;

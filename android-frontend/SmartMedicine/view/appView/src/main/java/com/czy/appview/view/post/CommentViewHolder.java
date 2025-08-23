@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewCommentBinding;
-import com.czy.dal.vo.entity.home.CommentVo;
+import com.czy.domain.vo.entity.home.CommentVo;
 
 
 public class CommentViewHolder extends RecyclerView.ViewHolder{

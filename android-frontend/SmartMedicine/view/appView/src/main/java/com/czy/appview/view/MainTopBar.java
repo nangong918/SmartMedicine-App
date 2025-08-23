@@ -10,8 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.czy.appview.databinding.ViewMainTopBarBinding;
-import com.czy.dal.constant.SelectItemEnum;
-import com.czy.dal.vo.view.mainTop.MainTopBarVo;
+import com.czy.domain.constant.SelectItemEnum;
+import com.czy.domain.vo.view.mainTop.MainTopBarVo;
 
 import java.util.Optional;
 

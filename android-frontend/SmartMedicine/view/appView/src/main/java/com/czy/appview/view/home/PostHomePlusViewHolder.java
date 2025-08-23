@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewRecommendCardPlusBinding;
-import com.czy.dal.ao.home.PostAo;
+import com.czy.domain.ao.home.PostAo;
 
 public class PostHomePlusViewHolder extends RecyclerView.ViewHolder{
 

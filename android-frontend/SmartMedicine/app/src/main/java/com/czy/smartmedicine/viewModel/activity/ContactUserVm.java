@@ -12,14 +12,14 @@ import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 
 import com.czy.baseUtilsLib.network.BaseResponse;
 
-import com.czy.dal.ao.chat.ChatContactItemAo;
-import com.czy.dal.ao.newUser.MyFriendItemAo;
-import com.czy.dal.ao.userBrief.UserBriefIntentAo;
-import com.czy.dal.constant.NettyConstants;
-import com.czy.dal.dto.http.request.GetMyFriendsRequest;
-import com.czy.dal.dto.http.response.GetMyFriendsResponse;
-import com.czy.dal.entity.UserViewEntity;
-import com.czy.dal.fragmentActivityAo.ContactUserGroupVo;
+import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.ao.newUser.MyFriendItemAo;
+import com.czy.domain.ao.userBrief.UserBriefIntentAo;
+import com.czy.domain.constant.NettyConstants;
+import com.czy.domain.dto.http.request.GetMyFriendsRequest;
+import com.czy.domain.dto.http.response.GetMyFriendsResponse;
+import com.czy.domain.entity.UserViewEntity;
+import com.czy.domain.fragmentActivityAo.ContactUserGroupVo;
 import com.czy.datalib.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.fragment.friends.ContactUserGroupFragment;

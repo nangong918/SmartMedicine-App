@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewAddContactCardItemBinding;
-import com.czy.dal.OnPositionItemClick;
-import com.czy.dal.constant.newUserGroup.ApplyButtonStatusEnum;
-import com.czy.dal.constant.newUserGroup.HandleButtonStatusEnum;
-import com.czy.dal.vo.entity.addContact.AddContactItemVo;
+import com.czy.domain.OnPositionItemClick;
+import com.czy.domain.constant.newUserGroup.ApplyButtonStatusEnum;
+import com.czy.domain.constant.newUserGroup.HandleButtonStatusEnum;
+import com.czy.domain.vo.entity.addContact.AddContactItemVo;
 
 import java.util.Optional;
 

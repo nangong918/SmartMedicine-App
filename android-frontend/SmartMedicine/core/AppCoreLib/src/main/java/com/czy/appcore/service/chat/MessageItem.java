@@ -3,12 +3,12 @@ package com.czy.appcore.service.chat;
 import android.text.TextUtils;
 
 import com.czy.baseUtilsLib.algorithm.SortItem;
-import com.czy.dal.bo.UserChatMessageBo;
-import com.czy.dal.constant.MessageTypeEnum;
-import com.czy.dal.dto.netty.forwardMessage.SendTextDataRequest;
-import com.czy.dal.dto.netty.forwardMessage.UserImageResponse;
-import com.czy.dal.dto.netty.forwardMessage.UserTextDataResponse;
-import com.czy.dal.vo.entity.message.ChatMessageItemVo;
+import com.czy.domain.bo.UserChatMessageBo;
+import com.czy.domain.constant.MessageTypeEnum;
+import com.czy.domain.dto.netty.forwardMessage.SendTextDataRequest;
+import com.czy.domain.dto.netty.forwardMessage.UserImageResponse;
+import com.czy.domain.dto.netty.forwardMessage.UserTextDataResponse;
+import com.czy.domain.vo.entity.message.ChatMessageItemVo;
 
 import java.util.Objects;
 import java.util.Optional;

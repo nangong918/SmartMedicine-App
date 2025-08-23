@@ -81,7 +81,7 @@ dependencies {
      * 2.Dal
      */
     implementation project(':core:BaseUtilsLib')
-    implementation project(':data:Dal')
+    implementation project(':data:domain')
 
     /**
      * 其他依赖库

@@ -4,7 +4,7 @@ package com.czy.appcore.network.api.api;
 import com.czy.appcore.network.api.interceptor.AuthInterceptor;
 import com.czy.baseUtilsLib.network.BaseApiRequestProvider;
 import com.czy.baseUtilsLib.network.LoggingInterceptor;
-import com.czy.dal.ao.login.LoginTokenAo;
+import com.czy.domain.ao.login.LoginTokenAo;
 
 import java.util.LinkedList;
 import java.util.List;

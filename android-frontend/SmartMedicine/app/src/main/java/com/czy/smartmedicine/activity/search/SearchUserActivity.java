@@ -8,7 +8,7 @@ import android.widget.SearchView;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.dal.fragmentActivityAo.search.SearchUserVo;
+import com.czy.domain.fragmentActivityAo.search.SearchUserVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySearchBaseBinding;
 import com.czy.smartmedicine.viewModel.activity.search.SearchUserVm;

@@ -1,10 +1,10 @@
 package com.czy.appcore.service;
 
-import com.czy.dal.ao.newUser.AddUserStatusAo;
-import com.czy.dal.constant.newUserGroup.ApplyButtonStatusEnum;
-import com.czy.dal.constant.newUserGroup.ApplyStatusEnum;
-import com.czy.dal.constant.newUserGroup.HandleButtonStatusEnum;
-import com.czy.dal.constant.newUserGroup.HandleStatusEnum;
+import com.czy.domain.ao.newUser.AddUserStatusAo;
+import com.czy.domain.constant.newUserGroup.ApplyButtonStatusEnum;
+import com.czy.domain.constant.newUserGroup.ApplyStatusEnum;
+import com.czy.domain.constant.newUserGroup.HandleButtonStatusEnum;
+import com.czy.domain.constant.newUserGroup.HandleStatusEnum;
 
 public class AddUserStateHandler {
 

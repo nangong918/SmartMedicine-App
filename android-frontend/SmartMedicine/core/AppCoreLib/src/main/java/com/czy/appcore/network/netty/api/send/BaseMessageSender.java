@@ -3,8 +3,8 @@ package com.czy.appcore.network.netty.api.send;
 import android.util.Log;
 
 
-import com.czy.dal.annotation.MessageType;
-import com.czy.dal.netty.Message;
+import com.czy.domain.annotation.MessageType;
+import com.czy.domain.netty.Message;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;

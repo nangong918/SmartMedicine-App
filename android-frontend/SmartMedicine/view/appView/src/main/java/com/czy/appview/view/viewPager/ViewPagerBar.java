@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat;
 
 import com.czy.appview.R;
 import com.czy.appview.databinding.ViewViewpagerBarBinding;
-import com.czy.dal.OnPositionItemClick;
+import com.czy.domain.OnPositionItemClick;
 
 
 public class ViewPagerBar extends ConstraintLayout {

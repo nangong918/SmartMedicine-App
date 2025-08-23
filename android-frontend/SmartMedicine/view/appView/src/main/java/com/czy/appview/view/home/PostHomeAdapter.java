@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewRecommendCardBinding;
 import com.czy.appview.databinding.ViewRecommendCardPlusBinding;
-import com.czy.dal.ao.home.PostAo;
-import com.czy.dal.constant.home.RecommendCardType;
+import com.czy.domain.ao.home.PostAo;
+import com.czy.domain.constant.home.RecommendCardType;
 
 import java.util.List;
 import java.util.Optional;

@@ -9,8 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewAddContactCardItemBinding;
-import com.czy.dal.OnPositionItemClick;
-import com.czy.dal.vo.entity.addContact.AddContactItemVo;
+import com.czy.domain.OnPositionItemClick;
+import com.czy.domain.vo.entity.addContact.AddContactItemVo;
 
 import java.util.List;
 import java.util.Optional;

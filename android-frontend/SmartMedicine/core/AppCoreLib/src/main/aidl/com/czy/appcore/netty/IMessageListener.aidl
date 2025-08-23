@@ -3,7 +3,7 @@ package com.czy.appcore.netty;
 
 // Declare any non-default types here with import statements
 
-import com.czy.dal.netty.Message;
+import com.czy.domain.netty.Message;
 
 
 /**
