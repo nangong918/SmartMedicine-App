@@ -18,7 +18,7 @@ import com.czy.appcore.service.chat.ChatMessageManager;
 import com.czy.appcore.service.chat.OnRecentContactMessageChange;
 import com.czy.baseUtilsLib.date.DateUtils;
 import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.customviewlib.view.chatCard.ChatContactAdapter;
+import com.czy.appview.view.chatCard.ChatContactAdapter;
 import com.czy.dal.OnPositionItemClick;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.ao.chat.ChatContactItemAo;

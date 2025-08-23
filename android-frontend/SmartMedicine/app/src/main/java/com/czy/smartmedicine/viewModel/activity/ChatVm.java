@@ -31,7 +31,7 @@ import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.permission.GainPermissionCallback;
 import com.czy.baseUtilsLib.permission.PermissionUtil;
 import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.customviewlib.view.chatMessage.ChatMessageAdapter;
+import com.czy.appview.view.chatMessage.ChatMessageAdapter;
 import com.czy.dal.ao.chat.ChatActivityStartAo;
 import com.czy.dal.bo.UserChatMessageBo;
 import com.czy.dal.constant.MessageTypeEnum;
@@ -391,7 +391,7 @@ public class ChatVm extends ViewModel {
                         );
                     }
                     else {
-                        ToastUtils.showToast(activity, activity.getString(com.czy.customviewlib.R.string.send_image_failed));
+                        ToastUtils.showToast(activity, activity.getString(com.czy.appview.R.string.send_image_failed));
                     }
                 }
         );
@@ -412,7 +412,7 @@ public class ChatVm extends ViewModel {
             @Override
             public void notGranted(String[] notGrantedPermissions) {
                 ToastUtils.showToastActivity(activity,
-                        activity.getString(com.czy.customviewlib.R.string.gain_permission_failed)
+                        activity.getString(com.czy.appview.R.string.gain_permission_failed)
                 );
             }
         });

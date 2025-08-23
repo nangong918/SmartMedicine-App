@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.search.SearchUserActivity">
 
-    <com.czy.customviewlib.view.InfoBarView
+    <com.czy.appview.view.InfoBarView
         android:id="@+id/top_bar"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"

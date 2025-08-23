@@ -58,7 +58,7 @@ public class PostVm extends ViewModel {
                         .orElse(null);
 
         if (postId == null){
-            ToastUtils.showToast(context, context.getString(com.czy.customviewlib.R.string.system_error));
+            ToastUtils.showToast(context, context.getString(com.czy.appview.R.string.system_error));
             callback.onThrowable(new Throwable("post id is null"));
             return;
         }

@@ -15,7 +15,7 @@
 
         <!--  home,search,AI,friends,notice,message  -->
 
-        <com.czy.customviewlib.view.MainTopBar
+        <com.czy.appview.view.MainTopBar
             android:id="@+id/main_top_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
             app:layout_constraintTop_toBottomOf="@+id/main_top_bar"
             app:layout_constraintBottom_toTopOf="@+id/main_bottom_bar"/>
 
-        <com.czy.customviewlib.view.MainBottomBar
+        <com.czy.appview.view.MainBottomBar
             android:id="@+id/main_bottom_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

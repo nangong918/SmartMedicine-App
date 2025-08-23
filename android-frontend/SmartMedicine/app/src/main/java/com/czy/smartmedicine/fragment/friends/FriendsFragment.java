@@ -17,7 +17,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.viewPager.ViewPagerConstant;
+import com.czy.appview.view.viewPager.ViewPagerConstant;
 import com.czy.dal.ao.intent.NewUserActivityIntentAo;
 import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
@@ -136,7 +136,7 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
         };
         ((MainActivity)requireActivity()).setMainTopBar(mainTopBarVo);
 
-        binding.vpb.setText(new String[]{getString(com.czy.customviewlib.R.string.friends), getString(com.czy.customviewlib.R.string.groups)});
+        binding.vpb.setText(new String[]{getString(com.czy.appview.R.string.friends), getString(com.czy.appview.R.string.groups)});
 
         initViewPager2();
     }

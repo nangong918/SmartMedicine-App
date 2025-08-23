@@ -90,20 +90,20 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
         binding.btnConfirm.setOnClickListener(v -> {
             if (Boolean.FALSE.equals(vm.registerVo.isPhoneValid.getValue())){
                 
-                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.please_enter_right_phone));
+                ToastUtils.showToast(this, getString(com.czy.appview.R.string.please_enter_right_phone));
                 return;
             }
             else if (Boolean.FALSE.equals(vm.registerVo.isVcodeValid.getValue())){
-                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.please_enter_right_vcode));
+                ToastUtils.showToast(this, getString(com.czy.appview.R.string.please_enter_right_vcode));
                 return;
             }
             else if (Boolean.FALSE.equals(vm.registerVo.isPwdValid.getValue())){
-                String message = getString(com.czy.customviewlib.R.string.pwdNotLegal);
+                String message = getString(com.czy.appview.R.string.pwdNotLegal);
                 ToastUtils.showToast(this, message);
                 return;
             }
             else if (vm.uriAtomicReference == null || vm.uriAtomicReference.get() == null){
-                String message = getString(com.czy.customviewlib.R.string.avatarNotSelected);
+                String message = getString(com.czy.appview.R.string.avatarNotSelected);
                 ToastUtils.showToast(this, message);
                  return;
             }
@@ -218,7 +218,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
                 binding.btnGetVcode.setText(time);
             }
             else {
-                binding.btnGetVcode.setText(getText(com.czy.customviewlib.R.string.get_vcode));
+                binding.btnGetVcode.setText(getText(com.czy.appview.R.string.get_vcode));
             }
             checkConfirmIsEnable();
         });
@@ -243,8 +243,8 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
                 isConfirmBtnEnable -> {
                     binding.btnConfirm.setBackgroundResource(
                             isConfirmBtnEnable ?
-                                    com.czy.customviewlib.R.drawable.button_selected :
-                                    com.czy.customviewlib.R.drawable.button_not_select
+                                    com.czy.appview.R.drawable.button_selected :
+                                    com.czy.appview.R.drawable.button_not_select
                     );
 //                    binding.btnConfirm.setClickable(isConfirmBtnEnable);
                 }

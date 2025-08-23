@@ -71,7 +71,7 @@ public class PublishPostVm extends ViewModel {
 
         // 参数校验
         if (title.isEmpty() || content.isEmpty()){
-            String errorMessage = context.getString(com.czy.customviewlib.R.string.publish_post_title_or_content_not_empty);
+            String errorMessage = context.getString(com.czy.appview.R.string.publish_post_title_or_content_not_empty);
             ToastUtils.showToastActivity(context, errorMessage);
             callback.onThrowable(new Throwable(errorMessage));
             return;
@@ -118,7 +118,7 @@ public class PublishPostVm extends ViewModel {
                 if (!isHaveFile){
                     ToastUtils.showToastActivity(
                             context,
-                            context.getString(com.czy.customviewlib.R.string.publish_post_success)
+                            context.getString(com.czy.appview.R.string.publish_post_success)
                     );
                     callback.onAllRequestSuccess();
                     return;

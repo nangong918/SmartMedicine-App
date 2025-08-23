@@ -57,7 +57,7 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
 
     private void initView(){
         binding.topBar.setTitle(
-                getString(com.czy.customviewlib.R.string.search_post)
+                getString(com.czy.appview.R.string.search_post)
         );
 
         initViewModelVo();
@@ -132,7 +132,7 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
     
     private void openSearchPostDetailActivity(int position, Long postId){
         if (postId == null){
-            ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.post_id_is_null));
+            ToastUtils.showToast(this, getString(com.czy.appview.R.string.post_id_is_null));
             return;
         }
         Intent intent = new Intent(this, PostActivity.class);

@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.czy.baseUtilsLib.activity.BaseFragment;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.contact.ContactAdapter;
+import com.czy.appview.view.contact.ContactAdapter;
 import com.czy.dal.ao.userBrief.UserBriefIntentAo;
 import com.czy.dal.vo.entity.contact.ContactListVo;
 import com.czy.dal.fragmentActivityAo.ContactUserGroupVo;

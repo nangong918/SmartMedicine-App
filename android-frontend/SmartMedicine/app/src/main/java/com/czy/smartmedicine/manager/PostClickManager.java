@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.customviewlib.view.home.OnRecommendCardClick;
+import com.czy.appview.view.home.OnRecommendCardClick;
 import com.czy.dal.ao.home.PostAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
 import com.czy.dal.ao.home.PostIntentAo;
@@ -92,7 +92,7 @@ public class PostClickManager {
                         .orElse(null);
                 if (postId == null){
                     Log.e(TAG, "帖子id为空");
-                    Toast.makeText(activity, activity.getString(com.czy.customviewlib.R.string.post_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getString(com.czy.appview.R.string.post_error), Toast.LENGTH_SHORT).show();
                     return;
                 }
 

@@ -12,7 +12,7 @@ import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.image.ImageLoadUtil;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.post.CommentAdapter;
+import com.czy.appview.view.post.CommentAdapter;
 import com.czy.dal.ao.home.PostIntentAo;
 import com.czy.dal.vo.entity.home.CommentVo;
 import com.czy.dal.fragmentActivityAo.post.PostActivityVo;
@@ -195,9 +195,9 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         vm.postActivityVo.postVoLd.isLikeLd.observe(
                 this, isLike -> {
                     if (isLike){
-                        binding.imgFavorite.setImageResource(com.czy.customviewlib.R.drawable.favorite_full);
+                        binding.imgFavorite.setImageResource(com.czy.appview.R.drawable.favorite_full);
                     }else{
-                        binding.imgFavorite.setImageResource(com.czy.customviewlib.R.drawable.favorite_border);
+                        binding.imgFavorite.setImageResource(com.czy.appview.R.drawable.favorite_border);
                     }
                 }
         );
@@ -205,10 +205,10 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         vm.postActivityVo.postVoLd.isCollectLd.observe(
                 this, isCollect -> {
                     if (isCollect){
-                        binding.imgvStar.setImageResource(com.czy.customviewlib.R.drawable.star_full);
+                        binding.imgvStar.setImageResource(com.czy.appview.R.drawable.star_full);
                     }
                     else{
-                        binding.imgvStar.setImageResource(com.czy.customviewlib.R.drawable.star_border);
+                        binding.imgvStar.setImageResource(com.czy.appview.R.drawable.star_border);
                     }
                 }
         );

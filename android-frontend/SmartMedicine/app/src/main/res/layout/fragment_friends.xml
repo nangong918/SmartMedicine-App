@@ -48,7 +48,7 @@
                     app:layout_constraintStart_toEndOf="@+id/iv_friendsCircle"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.czy.customviewlib.view.MessagePrompt
+                <com.czy.appview.view.MessagePrompt
                     android:id="@+id/v_messagePrompt_friendsMoment"
                     android:layout_width="21dp"
                     android:layout_height="21dp"
@@ -93,7 +93,7 @@
                     android:background="@color/red_1000"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
-                <com.czy.customviewlib.view.MessagePrompt
+                <com.czy.appview.view.MessagePrompt
                     android:id="@+id/v_messagePrompt_newFriends"
                     android:layout_width="21dp"
                     android:layout_height="21dp"
@@ -104,7 +104,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.czy.customviewlib.view.viewPager.ViewPagerBar
+            <com.czy.appview.view.viewPager.ViewPagerBar
                 android:id="@+id/vpb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

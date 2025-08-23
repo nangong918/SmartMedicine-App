@@ -16,9 +16,9 @@ import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.network.BaseResponse;
 import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.customviewlib.view.DialogAnswer;
-import com.czy.customviewlib.view.search.post.OnPostClick;
-import com.czy.customviewlib.view.search.post.PostSearchAdapter;
+import com.czy.appview.view.DialogAnswer;
+import com.czy.appview.view.search.post.OnPostClick;
+import com.czy.appview.view.search.post.PostSearchAdapter;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.home.PostInfoUrlAo;
 import com.czy.dal.ao.search.AppFunctionAo;
@@ -261,9 +261,9 @@ public class SearchPostVm extends ViewModel {
                             .orElse(0.0) * 100.0;
                     @SuppressLint("DefaultLocale") String message = String.format("%s \n %s: %.2f%%\n %s: %.2f%%",
                             intentType.getName(),
-                            context.getString(com.czy.customviewlib.R.string.possible_heart_disease),
+                            context.getString(com.czy.appview.R.string.possible_heart_disease),
                             heartDisease,
-                            context.getString(com.czy.customviewlib.R.string.possible_diabetes),
+                            context.getString(com.czy.appview.R.string.possible_diabetes),
                             diabetes
                     );
                     ToastUtils.showToast(context, message);

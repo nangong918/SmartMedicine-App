@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.search.addContact.AddContactAdapter;
+import com.czy.appview.view.search.addContact.AddContactAdapter;
 import com.czy.dal.ao.intent.NewUserActivityIntentAo;
 import com.czy.dal.constant.newUserGroup.UserGroupEnum;
 import com.czy.dal.vo.entity.addContact.AddContactListVo;
@@ -76,10 +76,10 @@ public class NewUserActivity extends BaseActivity<ActivityNewUserBinding> {
 
     private void handleUserGroupEnum(UserGroupEnum userGroupEnum) {
         if (UserGroupEnum.USER.equals(userGroupEnum)){
-            title = getString(com.czy.customviewlib.R.string.new_friends);
+            title = getString(com.czy.appview.R.string.new_friends);
         }
         else if (UserGroupEnum.GROUP.equals(userGroupEnum)){
-            title = getString(com.czy.customviewlib.R.string.new_group);
+            title = getString(com.czy.appview.R.string.new_group);
         }
         else {
             Log.e(TAG, "handleUserGroupEnum::userGroupEnum is null or not in UserGroupEnum");

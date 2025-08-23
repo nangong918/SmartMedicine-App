@@ -15,7 +15,7 @@ import com.czy.baseUtilsLib.activity.BaseActivity;
 import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseUtilsLib.ui.ToastUtils;
 import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.DialogPrompt;
+import com.czy.appview.view.DialogPrompt;
 import com.czy.dal.ao.intent.RegisterIntentAAo;
 import com.czy.dal.constant.intent.RegisterActivityType;
 import com.czy.dal.fragmentActivityAo.SignVo;
@@ -79,7 +79,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
                 resetPassword();
             }
             else {
-                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.please_register_first));
+                ToastUtils.showToast(this, getString(com.czy.appview.R.string.please_register_first));
             }
         });
 
@@ -222,13 +222,13 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         vm.signVo.isPhoneValid.observe(this, isPhoneValid -> {
             binding.btnLogin.setBackgroundResource(
                     isPhoneValid ?
-                            com.czy.customviewlib.R.drawable.button_selected :
-                            com.czy.customviewlib.R.drawable.button_not_select
+                            com.czy.appview.R.drawable.button_selected :
+                            com.czy.appview.R.drawable.button_not_select
             );
             binding.btnRegister.setBackgroundResource(
                     isPhoneValid ?
-                            com.czy.customviewlib.R.drawable.button_selected :
-                            com.czy.customviewlib.R.drawable.button_not_select
+                            com.czy.appview.R.drawable.button_selected :
+                            com.czy.appview.R.drawable.button_not_select
             );
             binding.btnLogin.setClickable(isPhoneValid);
             binding.btnRegister.setClickable(isPhoneValid);
@@ -269,8 +269,8 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         vm.signVo.isAgree.observe(this, isAgree -> {
             binding.vAgree.setImageResource(
                     isAgree ?
-                            com.czy.customviewlib.R.mipmap.o :
-                            com.czy.customviewlib.R.drawable.circle_corners_bg_grey
+                            com.czy.appview.R.mipmap.o :
+                            com.czy.appview.R.drawable.circle_corners_bg_grey
             );
         });
     }

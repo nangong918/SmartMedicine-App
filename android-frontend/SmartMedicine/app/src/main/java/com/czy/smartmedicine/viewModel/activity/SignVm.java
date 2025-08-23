@@ -327,7 +327,7 @@ public class SignVm extends ViewModel {
                     public void notGranted(String[] notGrantedPermissions) {
                         ToastUtils.showToastActivity(
                                 fragmentActivity,
-                                fragmentActivity.getString(com.czy.customviewlib.R.string.please_give_permission)
+                                fragmentActivity.getString(com.czy.appview.R.string.please_give_permission)
                         );
                     }
                 }

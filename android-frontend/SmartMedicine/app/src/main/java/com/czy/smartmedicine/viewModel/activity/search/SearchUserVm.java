@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.service.AddUserStateHandler;
 import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.customviewlib.view.search.addContact.AddContactAdapter;
+import com.czy.appview.view.search.addContact.AddContactAdapter;
 import com.czy.dal.OnPositionItemButtonContentClick;
 import com.czy.dal.OnPositionItemClick;
 import com.czy.dal.ao.newUser.AddUserStatusAo;
@@ -159,10 +159,10 @@ public class SearchUserVm extends ViewModel {
 
     private void uiUpdateAddUserFriend(Integer applyType, String handlerAccount){
         if (applyType != null && applyType == ApplyStatusEnum.APPLYING.code){
-            MainApplication.getInstance().showGlobalToast(com.czy.customviewlib.R.string.have_send_add_user_request);
+            MainApplication.getInstance().showGlobalToast(com.czy.appview.R.string.have_send_add_user_request);
         }
         else if(applyType != null && applyType == ApplyStatusEnum.NOT_APPLY.code){
-            MainApplication.getInstance().showGlobalToast(com.czy.customviewlib.R.string.have_cancel_add_user_request);
+            MainApplication.getInstance().showGlobalToast(com.czy.appview.R.string.have_cancel_add_user_request);
         }
         updateUiByApplyTypeAndApplierAccount(applyType, handlerAccount);
     }
@@ -192,7 +192,7 @@ public class SearchUserVm extends ViewModel {
 
     private void uiUpdateHandleAddUser(Integer handleType, String applierAccount){
         if (handleType != null && handleType == HandleStatusEnum.NOT_HANDLE.code){
-            MainApplication.getInstance().showGlobalToast(com.czy.customviewlib.R.string.have_cancel_add_user_request);
+            MainApplication.getInstance().showGlobalToast(com.czy.appview.R.string.have_cancel_add_user_request);
         }
         updateUiByHandleTypeAndApplierAccount(handleType, applierAccount);
     }
@@ -351,7 +351,7 @@ public class SearchUserVm extends ViewModel {
                 // 已添加
                 else if (ApplyButtonStatusEnum.ADDED.code == buttonId){
                     Log.i(TAG, "已添加");
-                    MainApplication.getInstance().showGlobalToast(com.czy.customviewlib.R.string.have_added_user);
+                    MainApplication.getInstance().showGlobalToast(com.czy.appview.R.string.have_added_user);
                 }
                 // 再次申请
                 else if (ApplyButtonStatusEnum.BE_REFUSED.code == buttonId){
@@ -369,7 +369,7 @@ public class SearchUserVm extends ViewModel {
                 // 被拉黑
                 else if (ApplyButtonStatusEnum.BE_BLACK.code == buttonId){
                     Log.i(TAG, "被拉黑");
-                    MainApplication.getInstance().showGlobalToast(com.czy.customviewlib.R.string.be_blacked_user);
+                    MainApplication.getInstance().showGlobalToast(com.czy.appview.R.string.be_blacked_user);
                 }
 
             }
@@ -399,12 +399,12 @@ public class SearchUserVm extends ViewModel {
                 // 已同意
                 else if (HandleButtonStatusEnum.HAVE_AGREED.code == buttonId){
                     Log.i(TAG, "已同意");
-                    MainApplication.getInstance().showGlobalToast(com.czy.customviewlib.R.string.have_agreed_user);
+                    MainApplication.getInstance().showGlobalToast(com.czy.appview.R.string.have_agreed_user);
                 }
                 // 已拒绝
                 else if (HandleButtonStatusEnum.HAVE_REFUSED.code == buttonId){
                     Log.i(TAG, "已拒绝");
-                    MainApplication.getInstance().showGlobalToast(com.czy.customviewlib.R.string.have_refused_user);
+                    MainApplication.getInstance().showGlobalToast(com.czy.appview.R.string.have_refused_user);
                 }
                 // 拉黑
                 else if (HandleButtonStatusEnum.BLACK.code == buttonId){
@@ -429,7 +429,7 @@ public class SearchUserVm extends ViewModel {
                 // 已取消
                 else if (HandleButtonStatusEnum.BE_CANCELED.code == buttonId){
                     Log.i(TAG, "对方已取消");
-                    MainApplication.getInstance().showGlobalToast(com.czy.customviewlib.R.string.be_canceled_add);
+                    MainApplication.getInstance().showGlobalToast(com.czy.appview.R.string.be_canceled_add);
                 }
             }
         };

@@ -26,7 +26,7 @@ import com.czy.appcore.service.post.PostDataManager;
 import com.czy.baseUtilsLib.file.SecuritySharedPreferencesUtils;
 import com.czy.baseUtilsLib.image.ImageManager;
 import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.customviewlib.view.GlobalDialogFragment;
+import com.czy.appview.view.GlobalDialogFragment;
 import com.czy.dal.ao.chat.ChatContactItemAo;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.ao.login.LoginTokenAo;

@@ -19,7 +19,7 @@ public class ViewModelUtil {
         Log.w(TAG, throwable);
         Context context = MainApplication.getInstance().getApplicationContext();
         if (context != null) {
-            String error = context.getString(com.czy.customviewlib.R.string.network_error);
+            String error = context.getString(com.czy.appview.R.string.network_error);
             new Handler(Looper.getMainLooper()).post(() -> {
                 MainApplication.getInstance().showGlobalDialog(error);
             });
@@ -29,7 +29,7 @@ public class ViewModelUtil {
     //==========Toast
 
     public static void globalThrowableToast(Throwable throwable){
-        globalThrowableToast(throwable, com.czy.customviewlib.R.string.network_error);
+        globalThrowableToast(throwable, com.czy.appview.R.string.network_error);
     }
 
     public static void globalThrowableToast(Throwable throwable, int resId){

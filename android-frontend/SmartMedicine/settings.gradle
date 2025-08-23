@@ -45,6 +45,6 @@ rootProject.name = "SmartMedicine"
 include ':app'
 include ':core:AppCoreLib'
 include ':core:BaseUtilsLib'
-include ':view:CustomViewLib'
+include ':view:appView'
 include ':data:DataLib'
 include ':data:Dal'

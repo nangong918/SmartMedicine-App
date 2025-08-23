@@ -62,7 +62,7 @@ public abstract class ResponseTool extends ResponseUtil {
         }
         else {
             if(context instanceof Activity){
-                ((Activity) context).runOnUiThread(() -> Toast.makeText(context, context.getString(com.czy.customviewlib.R.string.please_check_your_network), Toast.LENGTH_LONG).show());
+                ((Activity) context).runOnUiThread(() -> Toast.makeText(context, context.getString(com.czy.appview.R.string.please_check_your_network), Toast.LENGTH_LONG).show());
             }
             return false;
         }

@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
 import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.customviewlib.view.DialogConfirm;
+import com.czy.appview.view.DialogConfirm;
 import com.czy.dal.ao.chat.UserLoginInfoAo;
 import com.czy.dal.constant.SelectItemEnum;
 import com.czy.dal.vo.view.mainTop.MainTopBarVo;
@@ -63,12 +63,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     private void initView(){
         exitDialog = new DialogConfirm(this);
-        exitDialog.setContent(getString(com.czy.customviewlib.R.string.are_you_sure_to_exit),0xFFF94040);
+        exitDialog.setContent(getString(com.czy.appview.R.string.are_you_sure_to_exit),0xFFF94040);
 
         View headerView = binding.mainNavigationView.getHeaderView(0);
-        TextView nameTv = headerView.findViewById(com.czy.customviewlib.R.id.nagi_name);
-        TextView accountTv = headerView.findViewById(com.czy.customviewlib.R.id.nagi_account);
-        TextView phoneTv = headerView.findViewById(com.czy.customviewlib.R.id.nagi_phone);
+        TextView nameTv = headerView.findViewById(com.czy.appview.R.id.nagi_name);
+        TextView accountTv = headerView.findViewById(com.czy.appview.R.id.nagi_account);
+        TextView phoneTv = headerView.findViewById(com.czy.appview.R.id.nagi_phone);
 
         UserLoginInfoAo userLoginInfoAo = MainApplication.getInstance().getUserLoginInfoAo();
 
@@ -119,7 +119,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         });
 
         binding.mainNavigationView.setNavigationItemSelectedListener(item -> {
-            if (com.czy.customviewlib.R.id.setting_logOut == item.getItemId()){
+            if (com.czy.appview.R.id.setting_logOut == item.getItemId()){
                 exitDialog.show();
                 return true;
             }

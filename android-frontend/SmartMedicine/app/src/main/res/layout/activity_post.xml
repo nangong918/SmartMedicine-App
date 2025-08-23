@@ -96,7 +96,7 @@
                     android:layout_gravity="center"
                     android:layout_height="wrap_content"/>
 
-                <com.czy.customviewlib.view.RoundedImage
+                <com.czy.appview.view.RoundedImage
                     android:id="@+id/articlePicture"
                     android:padding="10dp"
                     android:layout_width="300dp"
