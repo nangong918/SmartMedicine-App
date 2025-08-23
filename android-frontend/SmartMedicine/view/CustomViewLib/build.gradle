@@ -36,6 +36,14 @@ android {
         dataBinding = true
         aidl = BuildConfig.BuildFeature.aidl
     }
+
+    sourceSets {
+        main {
+            assets.srcDirs += ['src/main/assets']
+            // Aidl 文件；配置之后Java文件夹可以使用AIDL文件夹下的.java
+            java.srcDirs = ['src/main/java', 'src/main/aidl']
+        }
+    }
 }
 
 dependencies {

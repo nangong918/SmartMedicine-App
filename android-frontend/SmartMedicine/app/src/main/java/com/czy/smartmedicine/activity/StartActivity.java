@@ -2,6 +2,7 @@ package com.czy.smartmedicine.activity;
 
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.util.Log;
 
 import com.czy.appcore.BaseConfig;
@@ -35,8 +36,14 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
     @Override
     protected void init() {
         super.init();
-
+        initView();
         initTimer();
+    }
+
+    private void initView() {
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "Arial-Black.ttf");
+        Typeface italicTypeface = Typeface.create(typeface, Typeface.ITALIC);
+        binding.tvAppName.setTypeface(italicTypeface);
     }
 
     // 请求缓存数据，用户数据，用refreshToken刷新accessToken，验证刷新token是否过期等等
