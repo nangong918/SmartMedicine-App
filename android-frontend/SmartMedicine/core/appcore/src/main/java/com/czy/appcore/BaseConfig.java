@@ -35,7 +35,7 @@ public class BaseConfig extends com.czy.baseutil.config.BaseConfig {
     public static final int SEARCH_FIELD_MAX_LENGTH = 15;
 
     // StartActivity 等待时长
-    public static final int DELAY_TIME = 2000;
+    public static final int DELAY_TIME = 1200;
     // 默认一次获取消息数量
     public static final int DEFAULT_MESSAGE_FETCH_COUNT = 20;
 

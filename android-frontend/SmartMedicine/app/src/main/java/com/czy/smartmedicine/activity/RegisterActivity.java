@@ -3,6 +3,7 @@ package com.czy.smartmedicine.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.Log;
 
@@ -260,6 +261,10 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
         vm.registerVo.phone.setValue(vm.intentAo.phone);
         binding.edtvPhone.setText(vm.intentAo.phone);
         vm.registerVo.isPhoneValid.setValue(true);
+
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "Arial-Black.ttf");
+        Typeface italicTypeface = Typeface.create(typeface, Typeface.ITALIC);
+        binding.tvAppName.setTypeface(italicTypeface);
     }
 
     private void checkConfirmIsEnable(){
