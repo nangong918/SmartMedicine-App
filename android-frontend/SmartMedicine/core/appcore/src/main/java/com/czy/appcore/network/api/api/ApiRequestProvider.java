@@ -4,6 +4,7 @@ package com.czy.appcore.network.api.api;
 import com.czy.appcore.network.api.interceptor.AuthInterceptor;
 import com.czy.baseutil.network.BaseApiRequestProvider;
 import com.czy.baseutil.network.LoggingInterceptor;
+import com.czy.baseutil.network.TimeoutInterceptor;
 import com.czy.domain.ao.login.LoginTokenAo;
 
 import java.util.LinkedList;
@@ -20,8 +21,11 @@ public class ApiRequestProvider extends BaseApiRequestProvider {
     private static volatile ApiRequest apiRequest;
     private static volatile AuthInterceptor authInterceptor;
 
-    private static final long CONNECT_TIMEOUT = 10;
+    // 连接超时：5秒
+    private static final long CONNECT_TIMEOUT = 5;
+    // 读取超时：10秒
     private static final long READ_TIMEOUT = 10;
+    // 写入超时：10秒
     private static final long WRITE_TIMEOUT = 10;
     //响应处理超时时间：30秒
     private static final long CALL_TIMEOUT = 30;
@@ -58,6 +62,7 @@ public class ApiRequestProvider extends BaseApiRequestProvider {
 
     public static List<Interceptor> getInterceptors() {
         List<Interceptor> interceptors = new LinkedList<>();
+        interceptors.add(new TimeoutInterceptor());
         interceptors.add(getAuthInterceptor(null));
         interceptors.add(new LoggingInterceptor(true));
 //        interceptors.add(new EncryptionInterceptor());
