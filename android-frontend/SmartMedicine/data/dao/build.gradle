@@ -89,8 +89,8 @@ dependencies {
     implementation libs.androidx.room.rxjava2
     annotationProcessor libs.androidx.room.room.compiler
     implementation project(':data:domain')
+    implementation project(':core:appcore')
 
 
-    implementation project(':core:AppCoreLib')
     implementation project(':core:baseUtil')
 }
