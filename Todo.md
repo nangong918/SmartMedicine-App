@@ -308,6 +308,7 @@ todo JSON中传递的Long改为String, 避免精度丢失
 
 ~~todo 后续合并post-service和search-service~~ search-service和post-service暂时不能合并，因为：
 search-service依赖feature-service的规则，feature-service依赖post-service的数据
+todo 代码升级: SpringBoot3, Jdk 23, PostgreSQL
 
 ##### 重构+细化
 * spring学习
