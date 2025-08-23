@@ -116,6 +116,6 @@ dependencies {
     implementation project(':core:AppCoreLib')
     implementation project(':data:domain')
     implementation project(':view:appView')
-    implementation project(':data:DataLib')
+    implementation project(':data:dao')
 
 }

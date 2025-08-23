@@ -20,7 +20,7 @@ import com.czy.domain.dto.http.request.GetMyFriendsRequest;
 import com.czy.domain.dto.http.response.GetMyFriendsResponse;
 import com.czy.domain.entity.UserViewEntity;
 import com.czy.domain.fragmentActivityAo.ContactUserGroupVo;
-import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.fragment.friends.ContactUserGroupFragment;
 import com.czy.smartmedicine.manager.HttpRequestManager;

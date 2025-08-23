@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace 'com.czy.datalib'
+    namespace 'com.czy.dao'
     compileSdk BuildConfig.Version.compileVersion
 
     defaultConfig {

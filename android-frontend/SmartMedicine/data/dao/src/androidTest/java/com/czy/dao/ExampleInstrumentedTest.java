@@ -1,4 +1,4 @@
-package com.czy.datalib;
+package com.czy.dao;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.czy.datalib.test", appContext.getPackageName());
+        assertEquals("com.czy.dao.test", appContext.getPackageName());
     }
 }

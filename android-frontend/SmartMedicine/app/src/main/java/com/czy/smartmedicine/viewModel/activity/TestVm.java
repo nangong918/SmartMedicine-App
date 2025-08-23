@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 
 import java.io.File;

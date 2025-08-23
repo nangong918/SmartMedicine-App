@@ -30,7 +30,7 @@ import com.czy.domain.dto.http.request.LoginUserRequest;
 import com.czy.domain.dto.http.response.IsRegisterResponse;
 import com.czy.domain.dto.http.response.LoginSignResponse;
 import com.czy.domain.fragmentActivityAo.SignVo;
-import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.utils.ResponseTool;

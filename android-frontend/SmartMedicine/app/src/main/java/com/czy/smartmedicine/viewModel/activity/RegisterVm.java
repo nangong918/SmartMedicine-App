@@ -32,7 +32,7 @@ import com.czy.domain.dto.http.response.SendSmsResponse;
 import com.czy.domain.dto.http.response.UserRegisterResponse;
 import com.czy.domain.vo.entity.UserEntityVo;
 import com.czy.domain.fragmentActivityAo.RegisterVo;
-import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.test.TestConfig;
 import com.czy.smartmedicine.utils.ResponseTool;

@@ -20,7 +20,7 @@ import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.dto.http.request.RecommendPostRequest;
 import com.czy.domain.dto.http.response.RecommendPostResponse;
 import com.czy.domain.fragmentActivityAo.HomeVo;
-import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.fragment.HomeFragment;
 import com.czy.smartmedicine.manager.HttpRequestManager;

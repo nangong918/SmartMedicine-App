@@ -1,4 +1,4 @@
-package com.czy.datalib.databaseRepository;
+package com.czy.dao.databaseRepository;
 
 import androidx.room.Dao;
 import androidx.room.Insert;

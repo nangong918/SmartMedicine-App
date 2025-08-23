@@ -15,7 +15,7 @@ import com.czy.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.domain.dto.http.request.RecommendPostRequest;
 import com.czy.domain.dto.http.response.SinglePostResponse;
 import com.czy.domain.fragmentActivityAo.post.PostActivityVo;
-import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;

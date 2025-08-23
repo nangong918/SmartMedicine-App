@@ -35,7 +35,7 @@ import com.czy.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.domain.fragmentActivityAo.search.SearchPostAAo;
 import com.czy.domain.vo.entity.home.PostExVo;
 import com.czy.domain.vo.entity.home.PostVo;
-import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ResponseTool;
 

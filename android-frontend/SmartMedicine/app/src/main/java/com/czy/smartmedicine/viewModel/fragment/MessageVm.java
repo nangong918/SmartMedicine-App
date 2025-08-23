@@ -33,7 +33,7 @@ import com.czy.domain.dto.netty.response.HaveReadMessageResponse;
 import com.czy.domain.dto.netty.response.UserNewMessageResponse;
 import com.czy.domain.vo.entity.message.ChatContactListVo;
 import com.czy.domain.fragmentActivityAo.MessageVo;
-import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.ChatActivity;
 import com.czy.smartmedicine.fragment.MessageFragment;

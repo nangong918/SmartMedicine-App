@@ -33,7 +33,7 @@ import com.czy.domain.ao.login.LoginTokenAo;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
 import com.czy.domain.netty.Message;
-import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.google.gson.Gson;
 
