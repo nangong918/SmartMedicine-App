@@ -67,7 +67,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         vm.onPhoneChanged(binding.edtvPhone, this);
 
         // 注册
-        binding.btnRegister.setOnClickListener(v -> {
+        binding.btnGoRegister.setOnClickListener(v -> {
             register();
         });
 
@@ -237,13 +237,13 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
                             com.czy.appview.R.drawable.button_selected :
                             com.czy.appview.R.drawable.button_not_select
             );
-            binding.btnRegister.setBackgroundResource(
+            binding.btnGoRegister.setBackgroundResource(
                     isPhoneValid ?
                             com.czy.appview.R.drawable.button_selected :
                             com.czy.appview.R.drawable.button_not_select
             );
             binding.btnLogin.setClickable(isPhoneValid);
-            binding.btnRegister.setClickable(isPhoneValid);
+            binding.btnGoRegister.setClickable(isPhoneValid);
         });
 
         vm.signVo.isRegistered.observe(this, isRegistered -> {
@@ -256,7 +256,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
                                 View.GONE
 
                 );
-                binding.btnRegister.setVisibility(
+                binding.btnGoRegister.setVisibility(
                         isRegistered ?
                                 View.GONE :
                                 View.VISIBLE
@@ -271,7 +271,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
             }
             else {
                 binding.btnLogin.setVisibility(View.VISIBLE);
-                binding.btnRegister.setVisibility(View.GONE);
+                binding.btnGoRegister.setVisibility(View.GONE);
                 binding.edtvPassword.setVisibility(View.GONE);
             }
 

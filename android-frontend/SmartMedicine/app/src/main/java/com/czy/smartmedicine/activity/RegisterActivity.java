@@ -9,7 +9,6 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
-import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseutil.activity.BaseActivity;
 import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
@@ -58,7 +57,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     protected void setListener() {
         super.setListener();
 
-        binding.infoBar.setBack(v -> finish());
+        binding.btnBack.setOnClickListener(v -> finish());
 
         vm.onPhoneChanged(binding.edtvPhone, this);
         vm.onVcodeChanged(binding.edtvVcode, this);
@@ -253,7 +252,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     }
 
     private void initView(){
-        binding.tvPrefix.setText(BaseConfig.phonePrefix);
+//        binding.tvPrefix.setText(BaseConfig.phonePrefix);
 
         vm.registerVo.phone.setValue(vm.intentAo.phone);
         binding.edtvPhone.setText(vm.intentAo.phone);
