@@ -51,7 +51,7 @@
     <string name="pwdAgainNotConsist">再次输入的密码不合法</string>
     <string name="avatarNotSelected">请选择一张图片作为头像上传</string>
     <string name="go_register">去注册</string>
-    <string name="forget_pwd">忘记密码</string>
+    <string name="forget_pwd">忘记密码?</string>
     <string name="password">密码</string>
     <string name="please_register_first">请先注册</string>
     <string name="please_agree_privacy_and_agreement">请先同意隐私协议</string>
@@ -78,4 +78,5 @@
     <string name="please_enter_phone">请输入手机号</string>
     <string name="set_user_name">设置用户名称</string>
     <string name="register_now">立刻注册!</string>
+    <string name="have_no_account_go_register">没有账号? 现在去注册!</string>
 </resources>

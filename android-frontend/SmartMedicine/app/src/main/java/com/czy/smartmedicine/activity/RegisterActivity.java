@@ -242,8 +242,8 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
                 isConfirmBtnEnable -> {
                     binding.btnConfirm.setBackgroundResource(
                             isConfirmBtnEnable ?
-                                    com.czy.appview.R.drawable.button_selected :
-                                    com.czy.appview.R.drawable.button_not_select
+                                    com.czy.appview.R.drawable.button_selected2 :
+                                    com.czy.appview.R.drawable.button_not_select2
                     );
 //                    binding.btnConfirm.setClickable(isConfirmBtnEnable);
                 }
