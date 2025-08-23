@@ -93,6 +93,7 @@ dependencies {
 
     // Gson
     implementation libs.converter.gson
+    implementation project(':core:baseUtilLib')
     // fastJson
 //    implementation libs.fastjson
 
@@ -112,7 +113,6 @@ dependencies {
      * 6.app：               Application
      *      BaseUtilsLib，AppCoreLib，DataLib，CustomViewLib，Dal
      */
-    implementation project(':core:BaseUtilsLib')
     implementation project(':core:AppCoreLib')
     implementation project(':data:domain')
     implementation project(':view:appView')

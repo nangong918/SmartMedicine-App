@@ -3,7 +3,7 @@ package com.czy.domain.vo.entity.home;
 
 import android.annotation.SuppressLint;
 
-import com.czy.baseUtilsLib.algorithm.SortItem;
+import com.czy.baseUtilLib.algorithm.SortItem;
 import com.czy.domain.ao.home.PostInfoUrlAo;
 import com.czy.domain.constant.home.PostOperation;
 import com.czy.domain.constant.home.RecommendButtonType;

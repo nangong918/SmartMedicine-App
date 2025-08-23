@@ -1,6 +1,6 @@
 package com.czy.domain.dto.netty.request;
 
-import com.czy.baseUtilsLib.json.BaseBean;
+import com.czy.baseUtilLib.json.BaseBean;
 import com.czy.domain.dto.netty.base.BaseRequestData;
 
 public class HandleAddedUserRequest extends BaseRequestData implements BaseBean {

@@ -26,11 +26,11 @@ import com.czy.appcore.service.chat.ChatMessageManager;
 import com.czy.appcore.service.chat.CurrentChatMessageContext;
 import com.czy.appcore.service.chat.MessageItem;
 import com.czy.appcore.service.chat.OnChatMessageChange;
-import com.czy.baseUtilsLib.image.ImageManager;
-import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.baseUtilsLib.permission.GainPermissionCallback;
-import com.czy.baseUtilsLib.permission.PermissionUtil;
-import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.baseUtilLib.image.ImageManager;
+import com.czy.baseUtilLib.network.BaseResponse;
+import com.czy.baseUtilLib.permission.GainPermissionCallback;
+import com.czy.baseUtilLib.permission.PermissionUtil;
+import com.czy.baseUtilLib.ui.ToastUtils;
 import com.czy.appview.view.chatMessage.ChatMessageAdapter;
 import com.czy.domain.ao.chat.ChatActivityStartAo;
 import com.czy.domain.bo.UserChatMessageBo;
@@ -406,7 +406,7 @@ public class ChatVm extends ViewModel {
         }, new GainPermissionCallback() {
             @Override
             public void allGranted() {
-                com.czy.baseUtilsLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
+                com.czy.baseUtilLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
             }
 
             @Override
@@ -537,7 +537,7 @@ public class ChatVm extends ViewModel {
 //                String fileExtension = originalFilename.contains(".") ?
 //                        originalFilename.substring(originalFilename.lastIndexOf(".")) : ""; // 获取扩展名
 
-                MultipartBody.Part filePart = com.czy.baseUtilsLib.file.FileUtil.createMultipartBodyPart(
+                MultipartBody.Part filePart = com.czy.baseUtilLib.file.FileUtil.createMultipartBodyPart(
                         file,
                         "file"
                 );

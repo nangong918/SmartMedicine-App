@@ -5,8 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.baseUtilsLib.network.ResponseUtil;
+import com.czy.baseUtilLib.network.BaseResponse;
+import com.czy.baseUtilLib.network.ResponseUtil;
 import com.czy.smartmedicine.MainApplication;
 
 public class ViewModelUtil {

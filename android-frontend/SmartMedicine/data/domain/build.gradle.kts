@@ -74,8 +74,8 @@ dependencies {
     kapt(libs.androidx.room.room.compiler)
     implementation(libs.room.runtime)
     implementation(libs.androidx.room.rxjava2)
-    annotationProcessor(libs.androidx.room.room.compiler) // 如果您仍然使用 annotationProcessor
+    annotationProcessor(libs.androidx.room.room.compiler)
+    implementation(project(":core:baseUtilLib")) // 如果您仍然使用 annotationProcessor
 
     // 自定义依赖
-    implementation(project(":core:BaseUtilsLib"))
 }

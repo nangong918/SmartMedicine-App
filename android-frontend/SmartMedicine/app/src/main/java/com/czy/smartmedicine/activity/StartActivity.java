@@ -6,9 +6,9 @@ import android.graphics.Typeface;
 import android.util.Log;
 
 import com.czy.appcore.BaseConfig;
-import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
-import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.baseUtilLib.activity.ActivityLaunchUtils;
+import com.czy.baseUtilLib.activity.BaseActivity;
+import com.czy.baseUtilLib.ui.ToastUtils;
 import com.czy.domain.ao.login.LoginTokenAo;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.smartmedicine.MainApplication;

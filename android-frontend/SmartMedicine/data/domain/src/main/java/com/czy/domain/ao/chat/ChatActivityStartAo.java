@@ -1,6 +1,6 @@
 package com.czy.domain.ao.chat;
 
-import com.czy.baseUtilsLib.json.BaseBean;
+import com.czy.baseUtilLib.json.BaseBean;
 import com.czy.domain.vo.entity.message.ChatMessageItemVo;
 
 import java.io.Serializable;

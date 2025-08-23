@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.baseUtilLib.network.BaseResponse;
 import com.czy.appview.view.home.OnRecommendCardClick;
 import com.czy.appview.view.home.PostHomeAdapter;
 import com.czy.domain.ao.home.PostAo;

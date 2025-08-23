@@ -2,7 +2,7 @@ package com.czy.appcore.service.chat;
 
 import android.text.TextUtils;
 
-import com.czy.baseUtilsLib.algorithm.SortItem;
+import com.czy.baseUtilLib.algorithm.SortItem;
 import com.czy.domain.bo.UserChatMessageBo;
 import com.czy.domain.constant.MessageTypeEnum;
 import com.czy.domain.dto.netty.forwardMessage.SendTextDataRequest;

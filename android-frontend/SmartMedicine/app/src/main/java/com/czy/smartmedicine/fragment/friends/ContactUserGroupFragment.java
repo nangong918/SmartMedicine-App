@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.czy.baseUtilsLib.activity.BaseFragment;
-import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
+import com.czy.baseUtilLib.activity.BaseFragment;
+import com.czy.baseUtilLib.viewModel.ViewModelUtil;
 import com.czy.appview.view.contact.ContactAdapter;
 import com.czy.domain.ao.userBrief.UserBriefIntentAo;
 import com.czy.domain.vo.entity.contact.ContactListVo;

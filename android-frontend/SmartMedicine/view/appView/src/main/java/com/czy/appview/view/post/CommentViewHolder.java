@@ -4,8 +4,8 @@ package com.czy.appview.view.post;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.czy.baseUtilsLib.date.DateUtils;
-import com.czy.baseUtilsLib.image.ImageLoadUtil;
+import com.czy.baseUtilLib.date.DateUtils;
+import com.czy.baseUtilLib.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewCommentBinding;
 import com.czy.domain.vo.entity.home.CommentVo;
 

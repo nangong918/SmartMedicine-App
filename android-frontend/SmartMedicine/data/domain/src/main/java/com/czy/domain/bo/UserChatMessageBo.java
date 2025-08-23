@@ -1,7 +1,7 @@
 package com.czy.domain.bo;
 
 
-import com.czy.baseUtilsLib.json.BaseBean;
+import com.czy.baseUtilLib.json.BaseBean;
 
 import java.io.Serializable;
 

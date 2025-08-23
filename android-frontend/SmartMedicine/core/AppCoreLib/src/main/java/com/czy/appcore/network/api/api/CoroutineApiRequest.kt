@@ -1,7 +1,7 @@
 package com.czy.appcore.network.api.api
 
 import com.czy.appcore.BaseConfig
-import com.czy.baseUtilsLib.network.BaseResponse
+import com.czy.baseUtilLib.network.BaseResponse
 import com.czy.domain.constant.backEnd.BackEndConstant
 import com.czy.domain.dto.http.request.BaseHttpRequest
 import com.czy.domain.dto.http.request.FuzzySearchRequest

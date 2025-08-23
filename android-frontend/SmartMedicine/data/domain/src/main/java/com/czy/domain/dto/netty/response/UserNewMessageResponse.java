@@ -1,7 +1,7 @@
 package com.czy.domain.dto.netty.response;
 
 
-import com.czy.baseUtilsLib.json.BaseBean;
+import com.czy.baseUtilLib.json.BaseBean;
 import com.czy.domain.bo.UserChatLastViewMessageBo;
 
 import java.util.List;

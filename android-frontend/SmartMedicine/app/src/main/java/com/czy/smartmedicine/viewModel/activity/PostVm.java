@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.baseUtilsLib.ui.ToastUtils;
+import com.czy.baseUtilLib.network.BaseResponse;
+import com.czy.baseUtilLib.ui.ToastUtils;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.domain.dto.http.request.RecommendPostRequest;

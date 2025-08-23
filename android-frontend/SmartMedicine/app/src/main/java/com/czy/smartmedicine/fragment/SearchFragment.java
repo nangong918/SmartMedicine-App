@@ -12,7 +12,7 @@ import android.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.czy.baseUtilsLib.activity.BaseFragment;
+import com.czy.baseUtilLib.activity.BaseFragment;
 import com.czy.domain.constant.SelectItemEnum;
 import com.czy.domain.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.activity.MainActivity;

@@ -4,8 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.czy.baseUtilsLib.json.BaseBean;
-import com.czy.baseUtilsLib.object.BeanUtil;
+import com.czy.baseUtilLib.json.BaseBean;
+import com.czy.baseUtilLib.object.BeanUtil;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.model.RequestBodyProto;
 import com.czy.domain.model.ResponseBodyProto;

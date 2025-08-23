@@ -2,8 +2,8 @@ package com.czy.domain.ao.chat;
 
 import android.util.Log;
 
-import com.czy.baseUtilsLib.algorithm.SortItem;
-import com.czy.baseUtilsLib.json.BaseBean;
+import com.czy.baseUtilLib.algorithm.SortItem;
+import com.czy.baseUtilLib.json.BaseBean;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.vo.entity.contact.ChatContactItemVo;
 

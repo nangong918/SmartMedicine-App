@@ -1,6 +1,6 @@
 package com.czy.appcore.network;
 
-import com.czy.baseUtilsLib.network.ResponseUtil;
+import com.czy.baseUtilLib.network.ResponseUtil;
 
 public class AppResponseUtil extends ResponseUtil {
 

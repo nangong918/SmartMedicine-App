@@ -92,5 +92,5 @@ dependencies {
 
 
     implementation project(':core:AppCoreLib')
-    implementation project(':core:BaseUtilsLib')
+    implementation project(':core:baseUtilLib')
 }

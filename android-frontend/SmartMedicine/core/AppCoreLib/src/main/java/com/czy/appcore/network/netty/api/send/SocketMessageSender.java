@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import com.alibaba.fastjson.JSON;
 import com.czy.appcore.netty.IMessageService;
 import com.czy.domain.constant.NettyConstants;
-import com.czy.baseUtilsLib.object.BeanUtil;
+import com.czy.baseUtilLib.object.BeanUtil;
 import com.czy.domain.dto.netty.forwardMessage.SendImageRequest;
 import com.czy.domain.dto.netty.request.AddUserRequest;
 import com.czy.domain.dto.netty.request.DeleteAllMessageRequest;

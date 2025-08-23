@@ -3,7 +3,7 @@ package com.czy.appview.view.contact;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.czy.baseUtilsLib.image.ImageLoadUtil;
+import com.czy.baseUtilLib.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewContactItemBinding;
 import com.czy.domain.OnPositionItemClick;
 import com.czy.domain.ao.chat.ChatContactItemAo;

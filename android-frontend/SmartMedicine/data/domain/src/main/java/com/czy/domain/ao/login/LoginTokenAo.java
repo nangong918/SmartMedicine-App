@@ -3,8 +3,8 @@ package com.czy.domain.ao.login;
 
 import android.text.TextUtils;
 
-import com.czy.baseUtilsLib.json.BaseBean;
-import com.czy.baseUtilsLib.object.BaseSharedPreferencesBean;
+import com.czy.baseUtilLib.json.BaseBean;
+import com.czy.baseUtilLib.object.BaseSharedPreferencesBean;
 
 /**
  * @author 13225

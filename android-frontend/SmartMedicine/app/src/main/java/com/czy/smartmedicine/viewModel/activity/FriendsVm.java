@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.receive.FriendApiHandler;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.baseUtilLib.network.BaseResponse;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
 import com.czy.domain.dto.netty.response.AddUserToTargetUserResponse;

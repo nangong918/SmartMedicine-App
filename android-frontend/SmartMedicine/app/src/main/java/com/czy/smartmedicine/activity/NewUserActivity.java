@@ -4,8 +4,8 @@ package com.czy.smartmedicine.activity;
 import android.content.Intent;
 import android.util.Log;
 
-import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
+import com.czy.baseUtilLib.activity.BaseActivity;
+import com.czy.baseUtilLib.viewModel.ViewModelUtil;
 import com.czy.appview.view.search.addContact.AddContactAdapter;
 import com.czy.domain.ao.intent.NewUserActivityIntentAo;
 import com.czy.domain.constant.newUserGroup.UserGroupEnum;

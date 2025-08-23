@@ -1,6 +1,6 @@
 package com.czy.domain.ao.userBrief;
 
-import com.czy.baseUtilsLib.json.BaseBean;
+import com.czy.baseUtilLib.json.BaseBean;
 
 import java.io.Serializable;
 

@@ -6,10 +6,10 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
-import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.baseUtilsLib.image.ImageLoadUtil;
-import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
+import com.czy.baseUtilLib.activity.BaseActivity;
+import com.czy.baseUtilLib.image.ImageLoadUtil;
+import com.czy.baseUtilLib.ui.ToastUtils;
+import com.czy.baseUtilLib.viewModel.ViewModelUtil;
 import com.czy.domain.ao.chat.ChatActivityStartAo;
 import com.czy.domain.ao.userBrief.UserBriefIntentAo;
 import com.czy.domain.fragmentActivityAo.UserBriefVo;

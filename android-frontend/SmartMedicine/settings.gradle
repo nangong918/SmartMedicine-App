@@ -44,7 +44,7 @@ dependencyResolutionManagement {
 rootProject.name = "SmartMedicine"
 include ':app'
 include ':core:AppCoreLib'
-include ':core:BaseUtilsLib'
+include ':core:baseUtilLib'
 include ':view:appView'
 include ':data:dao'
 include ':data:domain'

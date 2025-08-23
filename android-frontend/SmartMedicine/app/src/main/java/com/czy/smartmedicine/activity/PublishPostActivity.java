@@ -8,11 +8,11 @@ import android.view.View;
 import androidx.activity.result.ActivityResultLauncher;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
-import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.baseUtilsLib.image.ImageManager;
-import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
-import com.czy.baseUtilsLib.photo.SelectPhotoUtil;
-import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
+import com.czy.baseUtilLib.activity.BaseActivity;
+import com.czy.baseUtilLib.image.ImageManager;
+import com.czy.baseUtilLib.network.networkLoad.NetworkLoadUtils;
+import com.czy.baseUtilLib.photo.SelectPhotoUtil;
+import com.czy.baseUtilLib.viewModel.ViewModelUtil;
 import com.czy.domain.fragmentActivityAo.post.PublishPostVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPublishPostBinding;

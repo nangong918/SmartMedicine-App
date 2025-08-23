@@ -58,6 +58,6 @@ dependencies {
     implementation libs.circleimageview
 
     implementation project(':core:AppCoreLib')
-    implementation project(':core:BaseUtilsLib')
+    implementation project(':core:baseUtilLib')
     implementation project(':data:domain')
 }

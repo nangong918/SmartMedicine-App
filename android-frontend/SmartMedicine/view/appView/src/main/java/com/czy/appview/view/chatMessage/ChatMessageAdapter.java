@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.czy.baseUtilsLib.image.ImageLoadUtil;
+import com.czy.baseUtilLib.image.ImageLoadUtil;
 import com.czy.appview.R;
 import com.czy.appview.databinding.ViewReceivedMessageItemBinding;
 import com.czy.appview.databinding.ViewSendMessageItemBinding;

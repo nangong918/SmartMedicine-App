@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 
-import com.czy.baseUtilsLib.network.BaseResponse;
+import com.czy.baseUtilLib.network.BaseResponse;
 
 import com.czy.domain.ao.chat.ChatContactItemAo;
 import com.czy.domain.ao.newUser.MyFriendItemAo;
