@@ -1,6 +1,5 @@
 package com.czy.smartmedicine.viewModel.activity;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
@@ -11,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModel;
 
+import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.utils.OnTextInputEnd;
@@ -22,6 +22,7 @@ import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseutil.permission.GainPermissionCallback;
 import com.czy.baseutil.permission.PermissionUtil;
 import com.czy.baseutil.ui.ToastUtils;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.ao.login.LoginTokenAo;
 import com.czy.domain.constant.NettyConstants;
@@ -30,11 +31,11 @@ import com.czy.domain.dto.http.request.LoginUserRequest;
 import com.czy.domain.dto.http.response.IsRegisterResponse;
 import com.czy.domain.dto.http.response.LoginSignResponse;
 import com.czy.domain.fragmentActivityAo.SignVo;
-import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.utils.ResponseTool;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -311,12 +312,8 @@ public class SignVm extends ViewModel {
     public void getPermission(FragmentActivity fragmentActivity){
         PermissionUtil.requestPermissionSelectX(
                 fragmentActivity,
-                new String[]{
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.READ_PHONE_STATE,
-                },
-                new String[]{},
+                BaseConfig.MUST_PERMISSIONS,
+                BaseConfig.NOT_MUST_PERMISSIONS,
                 new GainPermissionCallback() {
                     @Override
                     public void allGranted() {
@@ -325,6 +322,7 @@ public class SignVm extends ViewModel {
 
                     @Override
                     public void notGranted(String[] notGrantedPermissions) {
+                        Log.w(TAG, "权限获取失败::" + Arrays.toString(notGrantedPermissions));
                         ToastUtils.showToastActivity(
                                 fragmentActivity,
                                 fragmentActivity.getString(com.czy.appview.R.string.please_give_permission)

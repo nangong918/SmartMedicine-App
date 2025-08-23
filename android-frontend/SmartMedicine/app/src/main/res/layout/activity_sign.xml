@@ -248,16 +248,6 @@
                 android:layout_marginTop="45dp"
                 android:textColor="@color/green_500"/>
 
-            <TextView
-                android:id="@+id/btn_forgetPassword2"
-                android:layout_width="250dp"
-                android:layout_height="30dp"
-                android:gravity="center"
-                android:text="@string/forget_pwd"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="@color/green_500"/>
-
             <LinearLayout
                 android:id="@+id/ly_test"
                 android:layout_marginTop="20dp"

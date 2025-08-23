@@ -1,5 +1,7 @@
 package com.czy.appcore;
 
+import android.Manifest;
+
 public class BaseConfig extends com.czy.baseutil.config.BaseConfig {
     public static final String DNS = "192.168.1.2";// 192.168.101.176  192.168.1.2
     // netty socket：netty长连接的端口号，后期改为http请求获取可用端口号，而不是写死在前端
@@ -52,4 +54,14 @@ public class BaseConfig extends com.czy.baseutil.config.BaseConfig {
 
     // 请求是否加认证token前缀 最后要在拦截器检查去掉; 定义一些不像url的命名避免出现与后端路由重合
     public static final String AUTH_TOKEN_PREFIX = "/has-0!0-token";
+
+
+    // permission
+    public static final String[] MUST_PERMISSIONS = new String[]{
+            Manifest.permission.CAMERA,
+    };
+    public static final String[] NOT_MUST_PERMISSIONS = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+    };
 }

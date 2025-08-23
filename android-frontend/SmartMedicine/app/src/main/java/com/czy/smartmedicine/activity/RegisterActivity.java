@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseutil.activity.BaseActivity;
 import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
@@ -24,6 +25,7 @@ import com.czy.smartmedicine.databinding.ActivityRegisterBinding;
 import com.czy.smartmedicine.viewModel.activity.RegisterVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -153,10 +155,10 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
         });
 
         binding.imvgAvatar.setOnClickListener(v -> {
-            PermissionUtil.requestPermissionsX(this, new String[]{
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, new GainPermissionCallback() {
+            PermissionUtil.requestPermissionSelectX(this,
+                   new String[]{},
+                    BaseConfig.NOT_MUST_PERMISSIONS,
+                    new GainPermissionCallback() {
                 @Override
                 public void allGranted() {
                     com.czy.baseutil.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
@@ -164,6 +166,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
                 @Override
                 public void notGranted(String[] notGrantedPermissions) {
+                    Log.w(TAG, "权限获取失败::" + Arrays.toString(notGrantedPermissions));
                     ToastUtils.showToastActivity(RegisterActivity.this, "获取权限失败");
                 }
             });
