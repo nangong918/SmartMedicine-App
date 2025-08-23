@@ -50,7 +50,7 @@
                 android:layout_width="323dp"
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/round_corners_bg_grey"
+                android:background="@drawable/round_corners_bg_white"
                 app:layout_goneMarginTop="20dp">
 
                 <ImageView
@@ -88,7 +88,7 @@
                 android:layout_width="323dp"
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/round_corners_bg_grey"
+                android:background="@drawable/round_corners_bg_white"
                 app:layout_goneMarginTop="20dp">
 
                 <ImageView
@@ -126,7 +126,7 @@
                 android:layout_width="323dp"
                 android:layout_height="52dp"
                 android:layout_marginTop="26dp"
-                android:background="@drawable/round_corners_bg_grey">
+                android:background="@drawable/round_corners_bg_white">
 
                 <TextView
                     android:id="@+id/tv_prefix"
@@ -171,7 +171,7 @@
                     android:layout_width="248dp"
                     android:layout_height="52dp"
 
-                    android:background="@drawable/round_corners_bg_grey"
+                    android:background="@drawable/round_corners_bg_white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -226,7 +226,7 @@
                 android:layout_width="323dp"
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/round_corners_bg_grey"
+                android:background="@drawable/round_corners_bg_white"
                 app:layout_goneMarginTop="20dp">
 
                 <ImageView
@@ -265,7 +265,7 @@
                 android:layout_width="323dp"
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/round_corners_bg_grey"
+                android:background="@drawable/round_corners_bg_white"
                 app:layout_goneMarginTop="20dp">
 
                 <ImageView

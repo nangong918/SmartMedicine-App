@@ -55,7 +55,7 @@
                         android:layout_marginTop="20dp"
                         android:layout_gravity="center_horizontal"
                         android:padding="10dp"
-                        android:src="@mipmap/background"
+                        android:src="@mipmap/logo"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

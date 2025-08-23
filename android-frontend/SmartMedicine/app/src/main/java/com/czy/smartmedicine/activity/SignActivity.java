@@ -3,19 +3,21 @@ package com.czy.smartmedicine.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
+import com.czy.appview.view.DialogPrompt;
 import com.czy.baseutil.activity.ActivityLaunchUtils;
 import com.czy.baseutil.activity.BaseActivity;
 import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseutil.ui.ToastUtils;
 import com.czy.baseutil.viewModel.ViewModelUtil;
-import com.czy.appview.view.DialogPrompt;
 import com.czy.domain.ao.intent.RegisterIntentAAo;
 import com.czy.domain.constant.intent.RegisterActivityType;
 import com.czy.domain.fragmentActivityAo.SignVo;
@@ -46,6 +48,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         super.init();
 
         initViewModel();
+        initView();
 
         initRegisterLauncher();
 
@@ -94,13 +97,13 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         binding.tvAgree.setOnClickListener(agreeClickListener);
 
         // Test
+        binding.lyTest.setVisibility(TestConfig.IS_TEST ? View.VISIBLE : View.GONE);
         binding.btvTest.setVisibility(TestConfig.IS_TEST ? View.VISIBLE : View.GONE);
         if (TestConfig.IS_TEST) {
             binding.btvTest.setOnClickListener(v -> {
                 vm.onTestClick(this);
             });
         }
-
         binding.btvTest2.setVisibility(TestConfig.IS_TEST ? View.VISIBLE : View.GONE);
         if (TestConfig.IS_TEST) {
             binding.btvTest2.setOnClickListener(v -> {
@@ -203,6 +206,15 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
 
         // 获取权限
         vm.getPermission(this);
+    }
+
+    private void initView() {
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "Arial-Black.ttf");
+        Typeface italicTypeface = Typeface.create(typeface, Typeface.ITALIC);
+        binding.tvAppName.setTypeface(italicTypeface);
+        binding.tvTitle.setTypeface(typeface);
+
+        binding.tvPrefix.setText(BaseConfig.phonePrefix);
     }
 
     private void initViewModelVo(){

@@ -73,4 +73,6 @@
     <string name="post_id_is_null">帖子不存在</string>
     <string name="publish_post_title_or_content_not_empty">请输入完整的标题和内容</string>
     <string name="start_prompt">Provide healthy lifestyle and ensure your healthy life</string>
+    <string name="sign_in_tip">登录</string>
+    <string name="sign_in_prompt">register an account for free!</string>
 </resources>
