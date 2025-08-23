@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">SmartMedicine</string>
+    <string name="app_name" translatable="false">Clover Care</string>
     <string name="phone_number">手机号</string>
     <string name="phone_prefix">(+86)</string>
     <string name="please_enter">请输入</string>
