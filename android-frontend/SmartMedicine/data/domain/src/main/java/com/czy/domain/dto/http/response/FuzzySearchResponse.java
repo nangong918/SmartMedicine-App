@@ -1,6 +1,6 @@
 package com.czy.domain.dto.http.response;
 
-import com.czy.baseUtilLib.json.BaseBean;
+import com.czy.baseutil.json.BaseBean;
 import com.czy.domain.constant.search.FuzzySearchResponseEnum;
 
 /**

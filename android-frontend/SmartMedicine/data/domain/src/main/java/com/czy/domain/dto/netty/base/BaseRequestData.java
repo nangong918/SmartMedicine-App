@@ -3,8 +3,8 @@ package com.czy.domain.dto.netty.base;
 import android.util.Log;
 
 
-import com.czy.baseUtilLib.json.BaseBean;
-import com.czy.baseUtilLib.object.BeanUtil;
+import com.czy.baseutil.json.BaseBean;
+import com.czy.baseutil.object.BeanUtil;
 import com.czy.domain.model.RequestBodyProto;
 import com.czy.domain.netty.Message;
 

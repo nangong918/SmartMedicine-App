@@ -11,12 +11,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
-import com.czy.baseUtilLib.activity.BaseActivity;
-import com.czy.baseUtilLib.network.networkLoad.NetworkLoadUtils;
-import com.czy.baseUtilLib.permission.GainPermissionCallback;
-import com.czy.baseUtilLib.permission.PermissionUtil;
-import com.czy.baseUtilLib.ui.ToastUtils;
-import com.czy.baseUtilLib.viewModel.ViewModelUtil;
+import com.czy.baseutil.activity.BaseActivity;
+import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
+import com.czy.baseutil.permission.GainPermissionCallback;
+import com.czy.baseutil.permission.PermissionUtil;
+import com.czy.baseutil.ui.ToastUtils;
+import com.czy.baseutil.viewModel.ViewModelUtil;
 import com.czy.domain.ao.intent.RegisterIntentAAo;
 import com.czy.domain.constant.intent.RegisterActivityType;
 import com.czy.domain.fragmentActivityAo.RegisterVo;
@@ -160,7 +160,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
             }, new GainPermissionCallback() {
                 @Override
                 public void allGranted() {
-                    com.czy.baseUtilLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
+                    com.czy.baseutil.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
                 }
 
                 @Override

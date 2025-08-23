@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.czy.baseUtilLib.activity.BaseActivity;
-import com.czy.baseUtilLib.image.ImageLoadUtil;
-import com.czy.baseUtilLib.ui.ToastUtils;
-import com.czy.baseUtilLib.viewModel.ViewModelUtil;
+import com.czy.baseutil.activity.BaseActivity;
+import com.czy.baseutil.image.ImageLoadUtil;
+import com.czy.baseutil.ui.ToastUtils;
+import com.czy.baseutil.viewModel.ViewModelUtil;
 import com.czy.domain.ao.chat.ChatActivityStartAo;
 import com.czy.domain.fragmentActivityAo.chat.ChatVo;
 import com.czy.smartmedicine.MainApplication;

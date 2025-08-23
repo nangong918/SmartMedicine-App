@@ -3,8 +3,8 @@ package com.czy.domain.ao.chat;
 //import android.content.SharedPreferences;
 //import android.text.TextUtils;
 
-import com.czy.baseUtilLib.json.BaseBean;
-import com.czy.baseUtilLib.object.BaseSharedPreferencesBean;
+import com.czy.baseutil.json.BaseBean;
+import com.czy.baseutil.object.BaseSharedPreferencesBean;
 
 public class UserLoginInfoAo extends BaseSharedPreferencesBean implements BaseBean {
     public Long userId = -1L;

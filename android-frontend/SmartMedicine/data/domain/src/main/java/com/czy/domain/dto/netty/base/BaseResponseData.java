@@ -4,7 +4,7 @@ package com.czy.domain.dto.netty.base;
 import android.util.Log;
 
 
-import com.czy.baseUtilLib.object.BeanUtil;
+import com.czy.baseutil.object.BeanUtil;
 import com.czy.domain.model.ResponseBodyProto;
 import com.czy.domain.netty.Message;
 

@@ -74,7 +74,7 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
-    implementation project(':core:baseUtilLib')
+    implementation project(':core:baseUtil')
 
     /**
      * 自定义依赖

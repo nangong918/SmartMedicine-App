@@ -10,10 +10,10 @@ import com.czy.appcore.network.api.handle.AsyncRequestCallback;
 import com.czy.appcore.network.api.handle.FourConsumer;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.api.handle.TriConsumer;
-import com.czy.baseUtilLib.activity.ActivityLaunchUtils;
-import com.czy.baseUtilLib.network.BaseResponse;
-import com.czy.baseUtilLib.network.ResponseUtil;
-import com.czy.baseUtilLib.ui.ToastUtils;
+import com.czy.baseutil.activity.ActivityLaunchUtils;
+import com.czy.baseutil.network.BaseResponse;
+import com.czy.baseutil.network.ResponseUtil;
+import com.czy.baseutil.ui.ToastUtils;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.SignActivity;
 

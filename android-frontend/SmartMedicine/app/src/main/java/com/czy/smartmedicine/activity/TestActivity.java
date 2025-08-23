@@ -13,12 +13,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
-import com.czy.baseUtilLib.activity.BaseActivity;
-import com.czy.baseUtilLib.image.ImageLoadUtil;
-import com.czy.baseUtilLib.permission.GainPermissionCallback;
-import com.czy.baseUtilLib.permission.PermissionUtil;
-import com.czy.baseUtilLib.ui.ToastUtils;
-import com.czy.baseUtilLib.viewModel.ViewModelUtil;
+import com.czy.baseutil.activity.BaseActivity;
+import com.czy.baseutil.image.ImageLoadUtil;
+import com.czy.baseutil.permission.GainPermissionCallback;
+import com.czy.baseutil.permission.PermissionUtil;
+import com.czy.baseutil.ui.ToastUtils;
+import com.czy.baseutil.viewModel.ViewModelUtil;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.dto.netty.forwardMessage.GroupTextDataResponse;
 import com.czy.domain.dto.netty.forwardMessage.SendTextDataRequest;
@@ -121,7 +121,7 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
             }, new GainPermissionCallback() {
                 @Override
                 public void allGranted() {
-                    com.czy.baseUtilLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
+                    com.czy.baseutil.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
                 }
 
                 @Override

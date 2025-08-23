@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 
-import com.czy.baseUtilLib.view.viewPager.GenericPagerAdapter;
+import com.czy.baseutil.view.viewPager.GenericPagerAdapter;
 
 public class ViewPagerUserGroupAdapter extends GenericPagerAdapter<ContactUserGroupFragment> {
 

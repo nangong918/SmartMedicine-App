@@ -1,6 +1,6 @@
 package com.czy.appcore;
 
-public class BaseConfig extends com.czy.baseUtilLib.config.BaseConfig {
+public class BaseConfig extends com.czy.baseutil.config.BaseConfig {
     public static final String DNS = "192.168.1.2";// 192.168.101.176  192.168.1.2
     // netty socket：netty长连接的端口号，后期改为http请求获取可用端口号，而不是写死在前端
     public static final int webSocketPort = 30020;

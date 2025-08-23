@@ -14,8 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.czy.baseUtilLib.activity.ActivityLaunchUtils;
-import com.czy.baseUtilLib.activity.BaseActivity;
+import com.czy.baseutil.activity.ActivityLaunchUtils;
+import com.czy.baseutil.activity.BaseActivity;
 import com.czy.appview.view.DialogConfirm;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.constant.SelectItemEnum;

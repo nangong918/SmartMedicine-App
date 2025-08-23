@@ -21,10 +21,10 @@ import com.czy.appcore.utils.TextChangeLegalCallback;
 import com.czy.appcore.utils.password.PasswordTextUtil;
 import com.czy.appcore.utils.phone.PhoneTextUtil;
 import com.czy.appcore.utils.vcode.VcodeTextUtil;
-import com.czy.baseUtilLib.network.BaseResponse;
-import com.czy.baseUtilLib.network.networkLoad.NetworkLoadUtils;
-import com.czy.baseUtilLib.timer.CountDownTimerUtil;
-import com.czy.baseUtilLib.timer.CountdownCallback;
+import com.czy.baseutil.network.BaseResponse;
+import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
+import com.czy.baseutil.timer.CountDownTimerUtil;
+import com.czy.baseutil.timer.CountdownCallback;
 import com.czy.domain.ao.intent.RegisterIntentAAo;
 import com.czy.domain.dto.http.request.RegisterUserRequest;
 import com.czy.domain.dto.http.request.SendSmsRequest;
@@ -172,7 +172,7 @@ public class RegisterVm extends ViewModel {
         String fileExtension = originalFilename.contains(".") ?
                 originalFilename.substring(originalFilename.lastIndexOf(".")) : ""; // 获取扩展名
 
-        MultipartBody.Part filePart = com.czy.baseUtilLib.file.FileUtil.createMultipartBodyPart(imageFile, "img");
+        MultipartBody.Part filePart = com.czy.baseutil.file.FileUtil.createMultipartBodyPart(imageFile, "img");
         // 文件名称，方便后端保存
         String phone = Optional.ofNullable(registerVo.phone)
                         .map(LiveData::getValue)

@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.czy.baseUtilLib.activity.BaseFragment;
+import com.czy.baseutil.activity.BaseFragment;
 import com.czy.domain.constant.SelectItemEnum;
 import com.czy.domain.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.activity.MainActivity;

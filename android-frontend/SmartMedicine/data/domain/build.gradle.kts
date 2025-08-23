@@ -75,7 +75,8 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.androidx.room.rxjava2)
     annotationProcessor(libs.androidx.room.room.compiler)
-    implementation(project(":core:baseUtilLib")) // 如果您仍然使用 annotationProcessor
+    implementation(project(":core:baseUtil"))
+    // 如果您仍然使用 annotationProcessor
 
     // 自定义依赖
 }

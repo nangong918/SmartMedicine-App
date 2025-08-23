@@ -3,7 +3,7 @@ package com.czy.appview.view.search.post;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.czy.baseUtilLib.image.ImageLoadUtil;
+import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewPostSearchBinding;
 import com.czy.domain.constant.search.PostSearchResultListEnum;
 import com.czy.domain.vo.entity.home.PostExVo;

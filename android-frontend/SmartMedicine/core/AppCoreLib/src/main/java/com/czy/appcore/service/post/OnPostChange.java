@@ -1,6 +1,6 @@
 package com.czy.appcore.service.post;
 
-import com.czy.baseUtilLib.algorithm.SortItem;
+import com.czy.baseutil.algorithm.SortItem;
 
 import java.util.List;
 

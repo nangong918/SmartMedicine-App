@@ -4,7 +4,7 @@ package com.czy.appview.view.chatCard;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.czy.baseUtilLib.image.ImageLoadUtil;
+import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewChatCardItemBinding;
 import com.czy.domain.OnPositionItemClick;
 import com.czy.domain.ao.chat.ChatContactItemAo;

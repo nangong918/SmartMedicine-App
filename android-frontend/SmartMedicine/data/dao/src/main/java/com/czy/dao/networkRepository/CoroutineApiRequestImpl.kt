@@ -1,6 +1,6 @@
 package com.czy.dao.networkRepository
 
-import com.czy.baseUtilLib.network.BaseResponse
+import com.czy.baseutil.network.BaseResponse
 
 import com.czy.domain.dto.http.request.BaseHttpRequest
 import com.czy.domain.dto.http.request.FuzzySearchRequest
@@ -35,9 +35,9 @@ import com.czy.domain.vo.entity.UserEntityVo
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import com.czy.appcore.network.api.api.CoroutineApiRequest
-import com.czy.baseUtilLib.network.CoroutineBaseApiRequestImpl
-import com.czy.baseUtilLib.network.OnSuccessCallback
-import com.czy.baseUtilLib.network.OnThrowableCallback
+import com.czy.baseutil.network.CoroutineBaseApiRequestImpl
+import com.czy.baseutil.network.OnSuccessCallback
+import com.czy.baseutil.network.OnThrowableCallback
 import com.czy.domain.dto.http.request.SendSmsRequest
 import com.czy.domain.dto.http.response.IsRegisterResponse
 

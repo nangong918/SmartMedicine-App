@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appcore.service.AddUserStateHandler;
-import com.czy.baseUtilLib.network.BaseResponse;
+import com.czy.baseutil.network.BaseResponse;
 import com.czy.appview.view.search.addContact.AddContactAdapter;
 import com.czy.domain.OnPositionItemButtonContentClick;
 import com.czy.domain.OnPositionItemClick;

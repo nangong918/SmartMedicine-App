@@ -1,7 +1,7 @@
 package com.czy.domain.dto.http.request;
 
 
-import com.czy.baseUtilLib.json.BaseBean;
+import com.czy.baseutil.json.BaseBean;
 
 
 /**

@@ -15,8 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.czy.baseUtilLib.activity.BaseFragment;
-import com.czy.baseUtilLib.viewModel.ViewModelUtil;
+import com.czy.baseutil.activity.BaseFragment;
+import com.czy.baseutil.viewModel.ViewModelUtil;
 import com.czy.appview.view.viewPager.ViewPagerConstant;
 import com.czy.domain.ao.intent.NewUserActivityIntentAo;
 import com.czy.domain.constant.SelectItemEnum;

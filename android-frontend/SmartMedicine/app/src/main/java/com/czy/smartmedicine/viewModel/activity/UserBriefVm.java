@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.baseUtilLib.network.BaseResponse;
+import com.czy.baseutil.network.BaseResponse;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.dto.http.request.UserBriefRequest;

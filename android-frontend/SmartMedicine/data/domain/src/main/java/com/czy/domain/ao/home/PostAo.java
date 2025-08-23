@@ -1,6 +1,6 @@
 package com.czy.domain.ao.home;
 
-import com.czy.baseUtilLib.algorithm.SortItem;
+import com.czy.baseutil.algorithm.SortItem;
 import com.czy.domain.constant.home.RecommendCardType;
 import com.czy.domain.vo.entity.home.PostVo;
 

@@ -3,7 +3,7 @@ package com.czy.appcore.network.api.api;
 
 
 import com.czy.appcore.BaseConfig;
-import com.czy.baseUtilLib.debug.DebugEnvironment;
+import com.czy.baseutil.debug.DebugEnvironment;
 
 public class ApiUrlConfig {
 

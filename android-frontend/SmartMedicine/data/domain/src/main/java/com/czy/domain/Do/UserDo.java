@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.czy.baseUtilLib.json.BaseBean;
+import com.czy.baseutil.json.BaseBean;
 
 @Entity(tableName = "user")
 public class UserDo implements BaseBean {

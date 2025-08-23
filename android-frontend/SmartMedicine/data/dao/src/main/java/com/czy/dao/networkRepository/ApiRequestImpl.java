@@ -2,10 +2,10 @@ package com.czy.dao.networkRepository;
 
 
 import com.czy.appcore.network.api.api.ApiRequest;
-import com.czy.baseUtilLib.network.BaseApiRequestImpl;
-import com.czy.baseUtilLib.network.BaseResponse;
-import com.czy.baseUtilLib.network.OnSuccessCallback;
-import com.czy.baseUtilLib.network.OnThrowableCallback;
+import com.czy.baseutil.network.BaseApiRequestImpl;
+import com.czy.baseutil.network.BaseResponse;
+import com.czy.baseutil.network.OnSuccessCallback;
+import com.czy.baseutil.network.OnThrowableCallback;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
 import com.czy.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.domain.dto.http.request.GetMyFriendsRequest;

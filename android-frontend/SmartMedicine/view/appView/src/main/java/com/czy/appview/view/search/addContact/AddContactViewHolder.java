@@ -7,7 +7,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.czy.baseUtilLib.image.ImageLoadUtil;
+import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewAddContactCardItemBinding;
 import com.czy.domain.OnPositionItemClick;
 import com.czy.domain.constant.newUserGroup.ApplyButtonStatusEnum;

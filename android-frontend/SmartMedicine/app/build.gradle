@@ -93,7 +93,7 @@ dependencies {
 
     // Gson
     implementation libs.converter.gson
-    implementation project(':core:baseUtilLib')
+    implementation project(':core:baseUtil')
     // fastJson
 //    implementation libs.fastjson
 

@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
-import com.czy.baseUtilLib.activity.BaseFragment;
-import com.czy.baseUtilLib.network.networkLoad.NetworkLoadUtils;
-import com.czy.baseUtilLib.viewModel.ViewModelUtil;
+import com.czy.baseutil.activity.BaseFragment;
+import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
+import com.czy.baseutil.viewModel.ViewModelUtil;
 import com.czy.domain.constant.SelectItemEnum;
 import com.czy.domain.fragmentActivityAo.HomeVo;
 import com.czy.domain.vo.view.mainTop.MainTopBarVo;

@@ -2,7 +2,7 @@ package com.czy.domain.dto.netty.forwardMessage;
 
 
 
-import com.czy.baseUtilLib.json.BaseBean;
+import com.czy.baseutil.json.BaseBean;
 import com.czy.domain.dto.netty.base.BaseResponseData;
 
 /**

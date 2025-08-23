@@ -3,7 +3,7 @@ package com.czy.domain.vo.entity.message;
 
 import android.util.Log;
 
-import com.czy.baseUtilLib.date.DateUtils;
+import com.czy.baseutil.date.DateUtils;
 import com.czy.domain.constant.MessageTypeEnum;
 
 import java.io.Serializable;
