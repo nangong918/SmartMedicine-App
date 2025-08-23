@@ -65,125 +65,120 @@
                 android:textColor="@color/green_900"
                 android:text="@string/sign_in_prompt"/>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ly_phone"
+                android:layout_width="match_parent"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_height="70dp"
+                android:layout_marginTop="45dp"
+                android:background="@drawable/round_corners_bg_white">
+
+                <TextView
+                    android:id="@+id/tv_prefix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/green_900"
+                    android:layout_marginStart="18dp"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="+86" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtv_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    tools:hint="手机号码"
+                    android:background="@android:color/transparent"
+                    android:text="@={viewModel.signVo.phone}"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:hint="@string/phone_number"
+                    android:textColorHint="@color/white"
+                    android:textColor="@color/green_900"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="60dp"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/view"
+                android:id="@+id/ly_password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent">
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_height="70dp"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:background="@drawable/round_corners_bg_white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ly_phone"
+                app:layout_goneMarginTop="20dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/ly_phone"
-                    android:layout_width="match_parent"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginEnd="30dp"
-                    android:layout_height="70dp"
-                    android:layout_marginTop="60dp"
-                    android:background="@drawable/round_corners_bg_white"
-                    app:layout_constraintEnd_toEndOf="parent"
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@mipmap/password"
+                    android:layout_marginStart="18dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/tv_prefix"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/green_900"
-                        android:layout_marginStart="18dp"
-                        android:textSize="14sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="+86" />
-
-                    <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/edtv_phone"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        tools:hint="手机号码"
-                        android:background="@android:color/transparent"
-                        android:text="@={viewModel.signVo.phone}"
-                        android:inputType="number"
-                        android:maxLines="1"
-                        android:hint="@string/phone_number"
-                        android:textColorHint="@color/white"
-                        android:textColor="@color/green_900"
-                        android:textSize="14sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginStart="60dp"/>
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/ly_password"
-                    android:layout_width="match_parent"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginEnd="30dp"
-                    android:layout_height="70dp"
-                    android:layout_marginTop="20dp"
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    android:background="@drawable/round_corners_bg_white"
-                    app:layout_constraintEnd_toEndOf="parent"
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtv_password"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="60dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:text="@={viewModel.signVo.pwd}"
+                    android:textColorHint="@color/white"
+                    android:textColor="@color/green_900"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_forgetPassword"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ly_phone"
-                    app:layout_goneMarginTop="20dp">
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:hint="密码" />
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@mipmap/password"
-                        android:layout_marginStart="18dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/btn_forgetPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="@string/forget_pwd"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@color/green_500"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/edtv_password"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/edtv_password"
+                    tools:text="忘记密码?" />
 
-                    <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/edtv_password"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="60dp"
-                        android:background="@android:color/transparent"
-                        android:hint="@string/password"
-                        android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:text="@={viewModel.signVo.pwd}"
-                        android:textColorHint="@color/white"
-                        android:textColor="@color/green_900"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_forgetPassword"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:hint="密码" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <TextView
-                        android:id="@+id/btn_forgetPassword"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:gravity="center"
-                        android:text="@string/forget_pwd"
-                        android:layout_marginEnd="10dp"
-                        android:textColor="@color/green_500"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@+id/edtv_password"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/edtv_password"
-                        tools:text="忘记密码?" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/v_agree"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
-                    app:layout_constraintTop_toBottomOf="@+id/ly_password"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginTop="41dp"
                     android:layout_marginStart="26dp"
                     android:src="@drawable/circle_corners_bg_grey" />
 
@@ -222,26 +217,26 @@
                     app:layout_constraintStart_toEndOf="@+id/tv_agree"
                     app:layout_constraintTop_toTopOf="@+id/tv_agree" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_login"
-                    android:layout_width="match_parent"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginEnd="30dp"
-                    android:layout_height="70dp"
-                    android:textAllCaps="false"
-                    android:layout_marginTop="33dp"
-                    tools:text="登录"
-                    android:gravity="center"
-                    android:text="@string/login"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="26sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:background="@drawable/button_selected"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_privacy" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_height="70dp"
+                android:textAllCaps="false"
+                android:layout_marginTop="33dp"
+                tools:text="登录"
+                android:gravity="center"
+                android:text="@string/login"
+                android:textColor="#FFFFFFFF"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:background="@drawable/button_selected"
+                app:layout_constraintTop_toBottomOf="@+id/tv_privacy" />
 
             <TextView
                 android:id="@+id/btn_go_register"
