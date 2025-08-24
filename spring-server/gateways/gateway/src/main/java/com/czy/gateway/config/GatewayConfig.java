@@ -1,5 +1,6 @@
 package com.czy.gateway.config;
 
+import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.constant.user_relationship.RelationshipConstant;
@@ -158,6 +159,18 @@ public class GatewayConfig {
 //                                .uri(RecommendConstant.serviceUri)
 //                                .id("recommend_path_route")
 //                )
+                // medicine
+                .route(r ->
+                        r.path(MedicineConstant.serviceRoute + "/**")
+                                .filters(f -> f
+                                        .filter(pathGatewayFilterFactory.apply(new PathGatewayFilterFactory.Config()))
+                                        .stripPrefix(1)// 移除第一段路径
+                                )
+                                // 负载均衡访问user-auth-relation-service服务
+                                .uri(MedicineConstant.serviceUri)
+                                .id("medicine_path_route")
+                )
+                // purchase
                 .build();
     }
 
