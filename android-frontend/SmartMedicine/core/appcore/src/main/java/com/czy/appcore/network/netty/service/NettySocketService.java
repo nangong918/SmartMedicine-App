@@ -124,7 +124,7 @@ public class NettySocketService extends Service {
     private void initNettySocketManager() {
 
         nettySocketManager = new NettySocketManager(
-                BaseConfig.DNS,
+                BaseConfig.LOCAL_DNS,
                 BaseConfig.webSocketPort,
                 connectNettyCallback,
                 onReceiveMessage,

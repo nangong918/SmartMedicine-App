@@ -61,6 +61,11 @@ public class TimeoutInterceptor implements Interceptor {
         if (message.contains("call timed out")) {
             return "调用超时(callTimeout)";
         }
+
+        // 5. connection closed
+        if (message.contains("connection closed")) {
+            return "连接已关闭(connectionClosed)";
+        }
         else {
             return "未知超时类型: " + message;
         }

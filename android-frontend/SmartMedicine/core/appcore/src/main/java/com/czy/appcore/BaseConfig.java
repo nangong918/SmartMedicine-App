@@ -3,22 +3,23 @@ package com.czy.appcore;
 import android.Manifest;
 
 public class BaseConfig extends com.czy.baseutil.config.BaseConfig {
-    public static final String DNS = "192.168.1.2";// 192.168.101.176  192.168.1.2
+    public static final String LOCAL_DNS = "192.168.1.2";// 192.168.101.176  192.168.1.2
+    /**
+     * Android 无法直接解析http://smart-medicine 因为Android的hosts文件没有配置其IP解析。如果要使用有两个方案
+     * 1. 配置hosts文件
+     * 2. 创建局域网DNS服务器 设置 DHCP 服务器
+     */
+    public static final String TEST_DNS = "smart-medicine";
     // netty socket：netty长连接的端口号，后期改为http请求获取可用端口号，而不是写死在前端
     public static final int webSocketPort = 30020;
     // local Address：Spring Cloud Gateway的网关端口号，在没有DNS的时候使用它来统一后端的一系列微服务
-    private static final String LOCAL_ADDRESS = DNS + ":8888/";
+    private static final String LOCAL_ADDRESS = LOCAL_DNS + ":8888/";
     // Local Url
     public static final String LOCAL_URL = "http://" + LOCAL_ADDRESS;
     // Test Url
-    public static final String TEST_URL = "https://smartmedicine/test/";
+    public static final String TEST_URL = "http://" + TEST_DNS;
     // Production Url
-    public static final String PRODUCTION_URL = "https://smartmedicine/api/";
-
-    // Local webSocket Url
-    public static final String LOCAL_WEB_SOCKET_URL = "ws://" + LOCAL_ADDRESS + "ws/";
-    public static final String TEST_WEB_SOCKET_URL = "ws://smartmedicine/ws/";
-    public static final String PRODUCTION_WEB_SOCKET_URL = "ws://smartmedicine/ws/";
+    public static final String PRODUCTION_URL = "https://smart-medicine/";
 
     // 包名
     public static final String PACKAGE_NAME = "com.czy.smartmedicine";
