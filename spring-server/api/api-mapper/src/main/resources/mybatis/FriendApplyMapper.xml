@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.api.mapper.user.mysql.relation.FriendApplyMapper">
+<mapper namespace="com.api.mapper.user.mybatis.relation.FriendApplyMapper">
 
     <!-- 插入好友申请 -->
     <insert id="insertFriendApply">

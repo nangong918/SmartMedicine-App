@@ -132,7 +132,7 @@ public class LoginController {
 //        }
 //    }
 
-    // 1.检查手机号是否注册 (频繁调用，可能要ip拦截)
+    // 1.检查手机号是否注册 (频繁调用，可能要ip拦截) todo 1. Redis 缓存 2. JMeter压测 3.Redis存储数据状态检查工具
     @PostMapping(UserConstant.Check_Phone_Is_Register)
     public BaseResponse<IsRegisterResponse>
     checkPhoneIsRegister(@RequestBody @Validated IsRegisterRequest request) {

@@ -10,11 +10,24 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 
 // mybatis-plus
-@MapperScan({"com.czy.user.mapper", "com.utils.minio.mapper", "com.api.mapper"})    // 扫描mapper
+@MapperScan({
+        // this
+        "com.czy.user.mapper",
+        // minio
+        "com.utils.minio.mapper",
+        // api.mapper
+        "com.api.mapper.user.mybatis"
+})
 // mongodb
-@EnableMongoRepositories(basePackages = {"com.api.mapper", "com.czy.user"})
+@EnableMongoRepositories(basePackages = {
+        "com.api.mapper.user",
+        "com.czy.user"
+})
 // es
-@EnableElasticsearchRepositories(basePackages = {"com.api.mapper", "com.czy.user"})
+@EnableElasticsearchRepositories(basePackages = {
+        "com.api.mapper.user",
+        "com.czy.user"
+})
 @SpringBootApplication(scanBasePackages = {
         // 扫描api模块
         "com.czy.api",

@@ -34,8 +34,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         "com.api.mapper.user.mybatis",
         "com.api.mapper.medicine.mybatis",
 })
+// 启用事务管理
+@EnableTransactionManagement
 // es
-@EnableTransactionManagement // 启用事务管理
 @EnableElasticsearchRepositories(basePackages = "com.api.mapper")
 public class MedicineServiceApplication {
     public static void main(String[] args) {
