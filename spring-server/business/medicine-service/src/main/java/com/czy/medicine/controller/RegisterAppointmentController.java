@@ -113,7 +113,7 @@ public class RegisterAppointmentController {
                 request.getUserId(), sortType,
                 request.getUserLongitude(), request.getUserLatitude()
         );
-        // 获取未处理的待审核订单
+        // 获取未处理的待审核订单 此部分订单只会维持 5分钟 (待重构: 失效订单落库问题[rabbitmq死信队列; 在开发支付系统的时候完成])
         List<AppointmentDoctorOrderListAo> unprocessedOrders = registerAppointmentRedisMapper.getAllAppointmentRecordList(
                 request.getUserId()
         );

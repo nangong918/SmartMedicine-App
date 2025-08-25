@@ -2,26 +2,33 @@ package com.czy.medicine.service.transactional.impl;
 
 import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper;
+import com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper;
 import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
+import com.czy.api.converter.domain.medicine.AppointmentDoctorOrderConverter;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
+import com.czy.api.domain.bo.medicine.UserAppointmentOrderBo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.MedicineExceptions;
 import com.czy.api.exception.PurchaseExceptions;
 import com.czy.medicine.service.transactional.AppointmentTransactionalService;
 import com.czy.medicine.utils.AppointmentMerchantStatusCalculator;
 import com.czy.medicine.utils.UserOrderStatusUtils;
+import date.DateUtils;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,7 +43,10 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
     private final DoctorMerchantAppointmentMapper doctorMerchantAppointmentMapper;
     private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
     private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+    private final DoctorMerchantBoMapper doctorMerchantBoMapper;
+    private final AppointmentDoctorOrderConverter appointmentDoctorOrderConverter;
 
+    // todo 升级方向: 1. 可以使用优化合并sql来提升速度,避免多次IO 2.使用Redis的信号量
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void createAppointmentOrder(long orderId, long doctorMerchantId, long userId) throws AppException {
@@ -107,7 +117,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         }
 
         /// 5.删除/更新redis缓存
-        // redis的库存扣减
+        // 库存扣减 todo 升级方向: 使用RSemaphore 信号量; 初步架构暂时使用Redis存储Json
         DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointmentMapper.getById(doctorMerchantId);
         if (!registerAppointmentRedisMapper.saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo)){
             // 缓存更新失败的话不需要回滚事务, 直接删除缓存就好, 等待之后查询发现没缓存就来查询数据了
@@ -117,6 +127,29 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
                 // 如果删除都删除失败了, 就要用error日志, 去排查问题, 估计是redis挂了
                 log.error("删除缓存也删除失败了失败");
             }
+        }
+        // 订单插入userOrderList
+        List<UserCustomerAppointmentDo> userOrderList = new ArrayList<>();
+        userOrderList.add(userCustomerAppointmentDo);
+        List<UserAppointmentOrderBo> bos = doctorMerchantBoMapper.getDoctorCardBosByUserCustomerAppointmentDos(userOrderList);
+        if (CollectionUtils.isEmpty(bos)){
+            log.warn("缓存用户预约order失败: bo为空");
+        }
+
+        // 数据计算填充: MerchantStatus
+        AppointmentMerchantStatusCalculator.calculateFillUserAppointmentOrderBos(
+                bos
+        );
+
+        LocalDateTime registerDate = LocalDateTime.now();
+        String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
+        AppointmentDoctorOrderListAo ao = appointmentDoctorOrderConverter.getAoByBo(bos.get(0), dateStr);
+        boolean result = registerAppointmentRedisMapper.saveSingleAppointmentDoctorOrderListAo(
+                userId,
+                ao
+        );
+        if (!result){
+            log.warn("缓存用户预约order失败, redis存储失败");
         }
     }
 

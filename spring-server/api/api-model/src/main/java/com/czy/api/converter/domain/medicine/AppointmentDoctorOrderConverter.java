@@ -28,7 +28,7 @@ public interface AppointmentDoctorOrderConverter {
 
     AppointmentDoctorOrderConverter INSTANCE = Mappers.getMapper(AppointmentDoctorOrderConverter.class);
 
-    default AppointmentDoctorOrderListAo getVoByBo(UserAppointmentOrderBo bo, String approveDate) {
+    default AppointmentDoctorOrderListAo getAoByBo(UserAppointmentOrderBo bo, String approveDate) {
         if (bo == null){
             return null;
         }
@@ -71,7 +71,7 @@ public interface AppointmentDoctorOrderConverter {
         }
         return bos.stream()
                 .filter(Objects::nonNull)
-                .map(bo -> getVoByBo(bo, approveDate))
+                .map(bo -> getAoByBo(bo, approveDate))
                 .collect(Collectors.toList());
     }
 
