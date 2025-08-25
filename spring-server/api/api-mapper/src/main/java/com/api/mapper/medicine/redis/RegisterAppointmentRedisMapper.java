@@ -61,4 +61,8 @@ public interface RegisterAppointmentRedisMapper {
     );
 
     boolean saveAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull List<AppointmentDoctorOrderListAo> aoList) throws AppException;
+
+    boolean saveSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo ao) throws AppException;
+
+    void deleteSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo ao);
 }

@@ -25,6 +25,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -268,6 +269,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         /// 创建有序集合
         // time
         RScoredSortedSet<AppointmentDoctorOrderListAo> timeZSet = redissonClient.getScoredSortedSet(timeKeyBuilder);
+        timeZSet.expire(MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_EXPIRE_TIME, TimeUnit.SECONDS);
         for (AppointmentDoctorOrderListAo ao : aoList){
             // 获取评分，可以选择时间、距离或成本等
             LocalDateTime beginDate = ao.getBeginDate();
@@ -283,6 +285,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
 
         // distance (普通set, 避免刻舟求剑)
         RSet<AppointmentDoctorOrderListAo> distanceSet = redissonClient.getSet(distanceKeyBuilder);
+        distanceSet.expire(MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_EXPIRE_TIME, TimeUnit.SECONDS);
         if (!distanceSet.addAll(aoList)){
             log.error("[存储用户{}distance订单数据到缓存失败]添加订单失败", userId);
             throw new AppException(CommonExceptions.SYSTEM_REDIS_ERROR);
@@ -290,6 +293,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
 
         // cost
         RScoredSortedSet<AppointmentDoctorOrderListAo> costZSet = redissonClient.getScoredSortedSet(costKeyBuilder);
+        costZSet.expire(MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_EXPIRE_TIME, TimeUnit.SECONDS);
         for (AppointmentDoctorOrderListAo ao : aoList) {
             // 获取价格
             BigDecimal cost = ao.getCost();
@@ -311,5 +315,86 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         }
 
         return true;
+    }
+
+    /**
+     * 存储用户预约订单列表
+     * @param userId    用户id
+     * @param ao        预约订单列表
+     * @return          存储结果
+     */
+    @Override
+    public boolean saveSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo ao) throws AppException{
+        String timeKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.TIME.getCode();
+        String distanceKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.DISTANCE.getCode();
+        String costKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.COST.getCode();
+
+        // 创建时间有序集合
+        RScoredSortedSet<AppointmentDoctorOrderListAo> timeZSet = redissonClient.getScoredSortedSet(timeKeyBuilder);
+        // 过期时间
+        if (!timeZSet.isExists()){
+            timeZSet.expire(MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_EXPIRE_TIME, TimeUnit.SECONDS);
+        }
+        LocalDateTime beginDate = ao.getBeginDate();
+        long timestamp = beginDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        if (!timeZSet.add((double) timestamp, ao)) {
+            log.error("[存储用户{}时间订单数据到缓存失败]添加订单{}失败", userId, ao.getOrderId());
+            throw new AppException(CommonExceptions.SYSTEM_REDIS_ERROR);
+        }
+
+        // 存储距离到普通集合
+        RSet<AppointmentDoctorOrderListAo> distanceSet = redissonClient.getSet(distanceKeyBuilder);
+        if (!distanceSet.isExists()){
+            distanceSet.expire(MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_EXPIRE_TIME, TimeUnit.SECONDS);
+        }
+        if (!distanceSet.add(ao)) {
+            log.error("[存储用户{}距离订单数据到缓存失败]添加订单失败", userId);
+            throw new AppException(CommonExceptions.SYSTEM_REDIS_ERROR);
+        }
+
+        // 创建成本有序集合
+        RScoredSortedSet<AppointmentDoctorOrderListAo> costZSet = redissonClient.getScoredSortedSet(costKeyBuilder);
+        if (!costZSet.isExists()){
+            costZSet.expire(MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_EXPIRE_TIME, TimeUnit.SECONDS);
+        }
+        BigDecimal cost = ao.getCost();
+        double score = (cost == null) ? Double.MAX_VALUE : cost.doubleValue();
+
+        if (!costZSet.add(score, ao)) {
+            log.error("[存储用户{}成本订单数据到缓存失败]添加订单失败", userId);
+            throw new AppException(CommonExceptions.SYSTEM_REDIS_ERROR);
+        }
+
+        return true;
+    }
+
+    /**
+     * 删除用户的指定预约订单
+     * @param userId 用户id
+     * @param ao     要删除的预约订单对象
+     */
+    @Override
+    public void deleteSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo ao) {
+        String timeKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.TIME.getCode();
+        String distanceKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.DISTANCE.getCode();
+        String costKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.COST.getCode();
+
+        // 删除时间有序集合中的指定订单
+        RScoredSortedSet<AppointmentDoctorOrderListAo> timeZSet = redissonClient.getScoredSortedSet(timeKeyBuilder);
+        if (timeZSet.isExists()) {
+            timeZSet.remove(ao);
+        }
+
+        // 删除距离集合中的指定订单
+        RSet<AppointmentDoctorOrderListAo> distanceSet = redissonClient.getSet(distanceKeyBuilder);
+        if (distanceSet.isExists()) {
+            distanceSet.remove(ao);
+        }
+
+        // 删除成本有序集合中的指定订单
+        RScoredSortedSet<AppointmentDoctorOrderListAo> costZSet = redissonClient.getScoredSortedSet(costKeyBuilder);
+        if (costZSet.isExists()) {
+            costZSet.remove(ao);
+        }
     }
 }
