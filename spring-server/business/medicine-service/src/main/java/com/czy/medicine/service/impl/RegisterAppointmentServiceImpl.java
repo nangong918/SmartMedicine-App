@@ -388,9 +388,9 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     }
 
     /// List<AppointmentDoctorOrderListAo>
-
     // 获取user预约订单列表
     @NotNull
+    @Override
     public List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType,
                                                                        @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException {
         /// 查询redis缓存

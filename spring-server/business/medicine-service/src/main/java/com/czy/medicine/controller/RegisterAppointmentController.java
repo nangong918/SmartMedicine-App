@@ -109,7 +109,12 @@ public class RegisterAppointmentController {
             return BaseResponse.LogBackError(CommonExceptions.SORT_TYPE_NOT_FOUND);
         }
 
-        return null;
+        List<AppointmentDoctorOrderListAo> aos = registerAppointmentService.getAppointmentRecordList(
+                request.getUserId(), sortType,
+                request.getUserLongitude(), request.getUserLatitude()
+        );
+
+        return BaseResponse.getResponseEntitySuccess(aos);
     }
 
     @GetMapping("/getCustomerDetails")
@@ -117,6 +122,7 @@ public class RegisterAppointmentController {
     getAppointmentRecordDetails
             (@RequestParam("userId") Long userId,
              @RequestParam("orderId") Long orderId){
+        // 暂时不开发
         return null;
     }
 

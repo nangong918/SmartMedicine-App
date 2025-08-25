@@ -1,6 +1,7 @@
 package com.czy.medicine.service;
 
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
@@ -8,6 +9,7 @@ import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.utils.redisson.service.RedissonClusterLock;
 import exception.AppException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -54,4 +56,8 @@ public interface RegisterAppointmentService {
 
     // 生成订单缓存
     void generateOrderCache(@NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId, @NotNull RedissonClusterLock appointmentLock) throws AppException;
+
+    // 获取user预约订单列表
+    @NotNull List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType,
+                                                                         @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException;
 }
