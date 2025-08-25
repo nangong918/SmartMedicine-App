@@ -124,23 +124,17 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
             return null;
         }
 
-        // 获取缓存数据
-        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(keyBuilder);
-        List<Object> allItems = new ArrayList<>(zSet.readAll());
-        if (CollectionUtils.isEmpty(allItems)){
-            return new ArrayList<>();
-        }
-
-        // 过滤null
-        allItems = allItems.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        // 获取排序方法
         AppointmentSortTypeEnum sortTypeEnum = AppointmentSortTypeEnum.getByCode(sortType);
-        // 查询 ZSet 中的所有项
+        List<Object> allItems = new ArrayList<>();
 
         // 排序方式
         switch (sortTypeEnum){
             // 默认, 时间: 从大到小
             case DEFAULT:
             case TIME:{
+                // 时间是有序Set
+                allItems = getZSetList(keyBuilder);
                 allItems.sort((o1, o2) -> {
                     LocalDateTime beginDate1 = ((AppointmentDoctorOrderListAo) o1).getBeginDate();
                     LocalDateTime beginDate2 = ((AppointmentDoctorOrderListAo) o2).getBeginDate();
@@ -154,6 +148,8 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
                     // 通知前端; 根据前端的code: MD_10005 来提示用户给予定位权限
                     throw new AppException(MedicineExceptions.LOCATION_NOT_NULL);
                 }
+                // 距离是无序Set
+                allItems = getSetList(keyBuilder);
                 allItems.sort((o1, o2) -> {
                     double distance1 = ((AppointmentDoctorOrderListAo) o1).getDistance(
                             userLongitude, userLatitude
@@ -176,6 +172,8 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
                 break;
             }
             case COST:{
+                // 花费是有序Set
+                allItems = getZSetList(keyBuilder);
                 allItems.sort((o1, o2) -> {
                     BigDecimal cost1 = ((AppointmentDoctorOrderListAo) o1).getCost();
                     BigDecimal cost2 = ((AppointmentDoctorOrderListAo) o2).getCost();
@@ -205,6 +203,28 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         return allItems.stream()
                 .map(item -> (AppointmentDoctorOrderListAo) item)
                 .collect(Collectors.toList());
+    }
+
+    private List<Object> getZSetList(String key) {
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        List<Object> allItems = new ArrayList<>(zSet.readAll());
+        if (CollectionUtils.isEmpty(allItems)){
+            return new ArrayList<>();
+        }
+
+        // 过滤null
+        return allItems.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    private List<Object> getSetList(String key) {
+        RSet<Object> set = redissonClient.getSet(key);
+        List<Object> allItems = new ArrayList<>(set.readAll());
+        if (CollectionUtils.isEmpty(allItems)){
+            return new ArrayList<>();
+        }
+
+        // 过滤null
+        return allItems.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     /**
