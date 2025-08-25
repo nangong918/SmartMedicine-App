@@ -5,6 +5,7 @@ import date.DateUtils;
 import location.GeoUtils;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -14,7 +15,7 @@ import java.util.Optional;
  * @date 2025/8/21 11:03
  */
 @Data
-public class AppointmentDoctorOrderListAo {
+public class AppointmentDoctorOrderListAo implements Serializable {
     public AppointmentDoctorOrderListVo listVo;
     public Long orderId;
     public Long doctorMerchantId;

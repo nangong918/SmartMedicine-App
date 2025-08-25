@@ -393,7 +393,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     @Override
     public List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType,
                                                                        @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException {
-        /// 查询redis缓存
+        /// 查询redis缓存   redis: 11ms
         List<AppointmentDoctorOrderListAo> listAos = registerAppointmentRedisMapper.getAppointmentRecordList(
                 userId, sortType, userLongitude, userLatitude
         );
@@ -403,7 +403,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             log.info("[获取user预约订单列表]缓存命中: userId: {}", userId);
             return listAos;
         }
-        /// 缓存未命中, 查询数据库
+        /// 缓存未命中, 查询数据库    mysql: 816ms
         else {
             List<UserCustomerAppointmentDo> dos = userCustomerAppointmentOrderMapper.getDosByUserId(userId);
             if (CollectionUtils.isEmpty(dos)){

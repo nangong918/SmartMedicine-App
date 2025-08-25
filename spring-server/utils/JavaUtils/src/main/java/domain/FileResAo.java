@@ -2,12 +2,14 @@ package domain;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/8/12 17:43
  */
 @Data
-public class FileResAo implements Cloneable {
+public class FileResAo implements Cloneable, Serializable {
     public Long fileId;
     // bo无法获得，需要通过minio获取
     public String fileUrl;

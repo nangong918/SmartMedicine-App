@@ -3,12 +3,14 @@ package com.czy.api.domain.vo.medicine;
 import domain.FileResAo;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/8/18 14:44
  */
 @Data
-public class DoctorVo implements Cloneable {
+public class DoctorVo implements Cloneable , Serializable {
     // 头像
     public FileResAo doctorAvatarFileAo = new FileResAo();
     // 姓名

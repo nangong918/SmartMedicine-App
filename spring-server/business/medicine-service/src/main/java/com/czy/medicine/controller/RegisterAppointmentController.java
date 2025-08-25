@@ -90,7 +90,7 @@ public class RegisterAppointmentController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
-    // 获取user预约订单列表
+    // 获取user预约订单列表 mysql: 816ms; redis: 11ms
     @PostMapping("/getCustomerList")
     public BaseResponse<List<AppointmentDoctorOrderListAo>>
     getAppointmentRecordList
@@ -117,6 +117,7 @@ public class RegisterAppointmentController {
         return BaseResponse.getResponseEntitySuccess(aos);
     }
 
+    @Deprecated
     @GetMapping("/getCustomerDetails")
     public BaseResponse<AppointmentDoctorOrderDetailsAo>
     getAppointmentRecordDetails
@@ -183,6 +184,19 @@ public class RegisterAppointmentController {
     @PostMapping("/cancel")
     public BaseResponse<Object> cancelAppointment
     (@Validated @RequestBody AppointmentDoctorRequest request){
+
+        // 获取分布式锁; MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
+        String dataId = request.getDoctorMerchantAppointmentId().toString() + ":" + request.getUserId().toString();
+        String mappingPath = MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
+        RedissonClusterLock appointmentLock = new RedissonClusterLock(
+                dataId,
+                mappingPath,
+                // 5分钟(300s)，单位：秒
+                PurchaseConstant.PAY_TIMEOUT
+        );
+
+        // 取消预约 todo
+
         return null;
     }
 }

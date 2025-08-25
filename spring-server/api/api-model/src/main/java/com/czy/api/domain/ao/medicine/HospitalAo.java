@@ -4,12 +4,14 @@ import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.vo.medicine.HospitalVo;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/8/18 14:47
  */
 @Data
-public class HospitalAo implements Cloneable {
+public class HospitalAo implements Cloneable , Serializable {
     // vo
     public HospitalVo hospitalVo;
 

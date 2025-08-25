@@ -3,12 +3,14 @@ package com.czy.api.domain.vo.medicine;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/8/21 10:49
  */
 @Data
-public class AppointmentDoctorOrderListVo {
+public class AppointmentDoctorOrderListVo implements Serializable {
     /// 医生视图
     public DoctorVo doctorVo;
     /// 医院视图 + data

@@ -62,7 +62,10 @@
             INNER JOIN doctor_merchant_appointment AS dma ON ucao.doctor_merchant_appointment_id = dma.id
             INNER JOIN doctor AS dt ON dma.doctor_id = dt.id
             INNER JOIN hospital AS ht ON dma.hospital_id = ht.id
-            WHERE dma.id IN (#{item.doctorMerchantAppointmentId})
+            WHERE dma.id IN
+            <foreach item="item" collection="list" open="(" separator="," close=")">
+                #{item.doctorMerchantAppointmentId}
+            </foreach>
         </if>
     </select>
 </mapper>
