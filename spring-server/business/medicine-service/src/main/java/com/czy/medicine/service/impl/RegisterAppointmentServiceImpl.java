@@ -33,6 +33,7 @@ import location.GeoUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -202,7 +203,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
 
         // 用dos批量查询 -> do; 避免逐个查询产生多余的io (Mybatis不会添加null对象)
-        List<RegisterAppointmentDoctorCardBo> bos = doctorMerchantBoMapper.getDoctorCardBosByDos(
+        List<RegisterAppointmentDoctorCardBo> bos = doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(
                 dos
         );
         if (CollectionUtils.isEmpty(bos)){
@@ -328,7 +329,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
         List<DoctorMerchantAppointmentDo> dos = new ArrayList<>();
         dos.add(doctorMerchantAppointmentDo);
-        List<RegisterAppointmentDoctorCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDos(dos);
+        List<RegisterAppointmentDoctorCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(dos);
         if (CollectionUtils.isEmpty(boList) || boList.get(0) == null){
             // 异常则解开分布式锁
             redissonService.unlock(appointmentLock);
@@ -381,9 +382,25 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
 
     }
 
+    /// List<AppointmentDoctorOrderListAo>
+
     // 获取user预约订单列表
     @NotNull
-    public List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType) throws AppException {
+    public List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType,
+                                                                       @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException {
+        /// 查询redis缓存
+        List<AppointmentDoctorOrderListAo> listAos = registerAppointmentRedisMapper.getAppointmentRecordList(
+                userId, sortType, userLongitude, userLatitude
+        );
+        // 不为null说明命中, empty也是命中
+        if (listAos != null){
+            return listAos;
+        }
+
+        /// 缓存未命中, 查询数据库
+        userCustomerAppointmentOrderMapper.getDosByUserId(userId);
         return new ArrayList<>();
     }
+
+
 }

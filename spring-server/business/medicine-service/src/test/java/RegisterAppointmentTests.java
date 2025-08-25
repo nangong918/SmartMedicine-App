@@ -104,7 +104,7 @@ public class RegisterAppointmentTests {
                 ao.registerSubjectCode
         );
 
-        List<RegisterAppointmentDoctorCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDos(dos);
+        List<RegisterAppointmentDoctorCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(dos);
         for (RegisterAppointmentDoctorCardBo bo : boList){
             log.info("bo: {}", bo);
         }

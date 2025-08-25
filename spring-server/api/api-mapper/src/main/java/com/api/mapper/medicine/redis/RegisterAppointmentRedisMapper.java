@@ -53,7 +53,7 @@ public interface RegisterAppointmentRedisMapper {
 
     boolean deleteDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
 
-    @Nullable List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType, Double userLongitude, Double userLatitude) throws AppException;
+    @Nullable List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType, @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException;
 
     void deleteAppointmentDoctorOrderListAo(
             @NotNull Long userId,

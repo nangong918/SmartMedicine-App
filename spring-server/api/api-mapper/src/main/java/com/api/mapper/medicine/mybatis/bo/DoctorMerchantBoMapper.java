@@ -40,8 +40,12 @@ public interface DoctorMerchantBoMapper {
     LEFT JOIN hospital AS ht ON dma.hospitalId = ht.id
     WHERE dma.doctorId in (item.doctorId)
      */
-    List<RegisterAppointmentDoctorCardBo> getDoctorCardBosByDos(
+    List<RegisterAppointmentDoctorCardBo> getDoctorCardBosByDoctorMerchantDos(
             @Param("list") List<DoctorMerchantAppointmentDo> list
     );
+
+//    List<RegisterAppointmentDoctorCardBo> getDoctorCardBosByUserCustomerAppointmentDos(
+//            @Param("list") List<UserCustomerAppointmentDo> list
+//    );
 
 }

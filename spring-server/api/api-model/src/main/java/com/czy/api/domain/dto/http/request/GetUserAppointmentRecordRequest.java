@@ -16,4 +16,7 @@ public class GetUserAppointmentRecordRequest {
     // 排序方式
     @NotNull(message = "排序方式不能为空")
     private Integer sortType = AppointmentSortTypeEnum.DEFAULT.getCode();
+    // 当前经纬度
+    private Double userLongitude;
+    private Double userLatitude;
 }

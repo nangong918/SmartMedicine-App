@@ -118,7 +118,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
      */
     @Nullable
     @Override
-    public List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType, Double userLongitude, Double userLatitude) throws AppException {
+    public List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType, @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException {
         String keyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + sortType;
         // 不存在key返回null; null和empty是两个概念, 一个是缓存未命中, 一个是缓存命中，但结果为空
         if (!redissonService.hasKey(keyBuilder)){
