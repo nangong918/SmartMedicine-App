@@ -344,7 +344,7 @@
                 android:textSize="26sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:background="@drawable/button_selected2"
+                android:background="@drawable/button_not_select2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ly_confirm_password" />
 

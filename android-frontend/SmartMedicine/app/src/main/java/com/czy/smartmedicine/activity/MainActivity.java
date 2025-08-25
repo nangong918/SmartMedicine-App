@@ -72,15 +72,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
         UserLoginInfoAo userLoginInfoAo = MainApplication.getInstance().getUserLoginInfoAo();
 
-        String name = Optional.ofNullable(userLoginInfoAo)
-                .map(ao -> ao.account)
-                .orElse("");
         String account = Optional.ofNullable(userLoginInfoAo)
                 .map(ao -> ao.account)
                 .orElse("");
+        String name = Optional.ofNullable(userLoginInfoAo)
+                .map(ao -> ao.userName)
+                .orElse(account);
         String phone = Optional.ofNullable(userLoginInfoAo)
                 .map(ao -> ao.phone)
                 .orElse("");
+
         // 设置文本
         nameTv.setText(name);
         accountTv.setText(account);
@@ -131,7 +132,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         exitDialog.setButtonClickListener(v -> {
             exitDialog.dismiss();
             // 清除用户信息
-            MainApplication.getInstance().clearUserLoginInfoAo();
+            MainApplication.getInstance().clearAllUserData();
             // 断开socket
             MainApplication.getInstance().disconnectNettySocketService();
             // 跳转到登录界面

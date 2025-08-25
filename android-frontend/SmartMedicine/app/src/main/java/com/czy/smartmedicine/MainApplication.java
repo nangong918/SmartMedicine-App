@@ -332,6 +332,12 @@ public class MainApplication extends Application {
         }
     }
 
+    // 清除sp的文件数据 和 MainApplication的Java对象缓存
+    public void clearAllUserData() {
+        // todo
+        clearUserLoginInfoAo();
+    }
+
     //==========messageList
 
 //    public List<ChatContactItemAo> chatContactList = new ArrayList<>();

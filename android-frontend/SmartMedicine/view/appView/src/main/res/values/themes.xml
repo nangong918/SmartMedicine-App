@@ -21,6 +21,8 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_gravity">start</item>
         <item name="android:background">@drawable/shape_navi_view</item>
+        <item name="itemTextColor">@color/green_500</item> <!-- 设置字体颜色为黑色 -->
+        <item name="itemIconTint">@color/green_500</item> <!-- 设置图标颜色为黑色 -->
     </style>
 
     <style name="My_AppCompat_Dialog_Theme" parent="Theme.AppCompat.Dialog">

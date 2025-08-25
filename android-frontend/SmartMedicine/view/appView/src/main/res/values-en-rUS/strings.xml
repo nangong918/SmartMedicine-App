@@ -79,4 +79,7 @@
     <string name="set_user_name">设置用户名称</string>
     <string name="register_now">立刻注册!</string>
     <string name="have_no_account_go_register">没有账号? 现在去注册!</string>
+    <string name="setting">设置</string>
+    <string name="log_out">登出</string>
+    <string name="night_mode">夜间模式</string>
 </resources>

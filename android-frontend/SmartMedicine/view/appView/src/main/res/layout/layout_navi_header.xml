@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:background="@color/red_10"
+    android:background="@color/green_50"
     android:layout_height="130dp">
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -17,6 +17,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
         android:maxLines="1"
+        android:textColor="@color/green_500"
         android:layout_toEndOf="@id/nagi_logo"
         tools:text="鸦鸭鸭鸭羽天下第一！"
         android:textStyle="bold"
@@ -29,6 +30,7 @@
         android:layout_marginTop="5dp"
         android:layout_width="300dp"
         android:maxLines="1"
+        android:textColor="@color/green_500"
         android:layout_height="wrap_content"
         tools:text="czyczy918"
         android:textSize="14sp" />
@@ -40,6 +42,7 @@
         android:layout_marginTop="5dp"
         android:layout_width="300dp"
         android:maxLines="1"
+        android:textColor="@color/green_500"
         android:layout_height="wrap_content"
         tools:text="1322596900"
         android:textSize="14sp" />
@@ -51,6 +54,7 @@
         android:layout_marginTop="5dp"
         app:layout_constraintStart_toStartOf="@+id/nagi_phone"
         app:layout_constraintTop_toBottomOf="@+id/nagi_phone"
+        app:tint="@color/green_900"
         android:src="@drawable/settings_24px" />
 
     <de.hdodenhof.circleimageview.CircleImageView

@@ -177,6 +177,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
     private ActivityResultLauncher<Intent> registerActivityResultLauncher;
 
     private void initRegisterLauncher(){
+        //语言设置
         registerActivityResultLauncher =
                 registerForActivityResult(
                         new ActivityResultContracts.StartActivityForResult(),
