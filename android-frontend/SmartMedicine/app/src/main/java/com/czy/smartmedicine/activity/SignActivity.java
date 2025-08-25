@@ -97,7 +97,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         binding.tvAgree.setOnClickListener(agreeClickListener);
 
         // Test
-        binding.lyTest.setVisibility(TestConfig.IS_TEST ? View.VISIBLE : View.GONE);
+//        binding.lyTest.setVisibility(TestConfig.IS_TEST ? View.VISIBLE : View.GONE);
         binding.btvTest.setVisibility(TestConfig.IS_TEST ? View.VISIBLE : View.GONE);
         if (TestConfig.IS_TEST) {
             binding.btvTest.setOnClickListener(v -> {
@@ -181,7 +181,19 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
                 registerForActivityResult(
                         new ActivityResultContracts.StartActivityForResult(),
                         result -> {
-                            vm.doCheckIsRegistered(this);
+                            NetworkLoadUtils.showDialog(this);
+                            vm.doCheckIsRegistered(this, new SyncRequestCallback() {
+                                @Override
+                                public void onThrowable(Throwable throwable) {
+                                    NetworkLoadUtils.dismissDialog();
+                                    Log.e(TAG, "注册检查异常：", throwable);
+                                }
+
+                                @Override
+                                public void onAllRequestSuccess() {
+                                    NetworkLoadUtils.dismissDialog();
+                                }
+                            });
                         }
                 );
     }

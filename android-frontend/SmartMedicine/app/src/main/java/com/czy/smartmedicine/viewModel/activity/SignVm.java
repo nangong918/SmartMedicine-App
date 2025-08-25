@@ -86,7 +86,18 @@ public class SignVm extends ViewModel {
             @Override
             public void legal() {
                 signVo.isPhoneValid.setValue(true);
-                doCheckIsRegistered(context);
+                doCheckIsRegistered(context, new SyncRequestCallback() {
+                    @Override
+                    public void onThrowable(Throwable throwable) {
+                        NetworkLoadUtils.dismissDialogSafe(context);
+                        Log.e(TAG, "注册检查异常：", throwable);
+                    }
+
+                    @Override
+                    public void onAllRequestSuccess() {
+                        NetworkLoadUtils.dismissDialogSafe(context);
+                    }
+                });
             }
 
             @Override
@@ -99,28 +110,29 @@ public class SignVm extends ViewModel {
     //---------------------------NetWork---------------------------
     ;
     // checkIsRegistered
-    public void doCheckIsRegistered(Context context){
+    public void doCheckIsRegistered(Context context, SyncRequestCallback callback){
         String phone = signVo.phone.getValue();
         IsRegisterRequest request = new IsRegisterRequest();
         request.phone = phone;
         apiRequestImpl.isPhoneRegistered(
                 request,
-                response -> {
-                    handleCheckIsRegisteredResponse(response, context);
-                }
+                response -> ResponseTool.handleSyncResponseEx(
+                        response,
+                        context,
+                        callback,
+                        this::handleCheckIsRegisteredResponse
+                )
                 ,
-                throwable -> {
-                    NetworkLoadUtils.dismissDialog();
-                    Log.e(TAG, "error：" + throwable.getMessage());
-                }
+                callback::onThrowable
         );
     }
 
-    private void handleCheckIsRegisteredResponse(BaseResponse<IsRegisterResponse> response, Context context){
+    private void handleCheckIsRegisteredResponse(BaseResponse<IsRegisterResponse> response, Context context, SyncRequestCallback callback){
         this.signVo.isRegistered.setValue(Optional.ofNullable(response.getData())
                 .map(res -> res.isRegister)
                 .orElse(false)
         );
+        callback.onAllRequestSuccess();
     }
 
     // sign

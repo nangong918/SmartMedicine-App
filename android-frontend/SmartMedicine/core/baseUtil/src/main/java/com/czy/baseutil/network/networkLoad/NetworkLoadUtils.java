@@ -1,11 +1,14 @@
 package com.czy.baseutil.network.networkLoad;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 
 import androidx.annotation.StyleRes;
 import androidx.multidex.MultiDexApplication;
+
+import org.jetbrains.annotations.NotNull;
 
 // TODO 思考为什么要使用 MultiDexApplication
 // TODO 全局网络请求的NetworkLoadUtils封装
@@ -77,6 +80,16 @@ public class NetworkLoadUtils extends MultiDexApplication {
                 Log.e(TAG, "关闭对话框时发生异常: " + ex.getMessage(), ex);
             }
             sProcessDialog = null;
+        }
+    }
+
+    public static void dismissDialogSafe(@NotNull Context context){
+        if (context instanceof Activity){
+            ((Activity) context).runOnUiThread(NetworkLoadUtils::dismissDialog);
+        }
+        else {
+            Log.w(TAG, "dismissDialogSafe: context is not an Activity");
+            dismissDialog();
         }
     }
 
