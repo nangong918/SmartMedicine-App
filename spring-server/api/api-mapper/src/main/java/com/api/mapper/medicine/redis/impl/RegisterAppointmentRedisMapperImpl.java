@@ -14,12 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.redisson.api.RScoredSortedSet;
+import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -102,7 +104,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         return redissonService.deleteObject(keyBuilder);
     }
 
-    /// List<AppointmentDoctorOrderListAo>
+    /// List<AppointmentDoctorOrderListAo> 用户预约订单
     /**
      * 获取用户预约记录
      * @param userId        用户id
@@ -203,5 +205,91 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         return allItems.stream()
                 .map(item -> (AppointmentDoctorOrderListAo) item)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 删除全部缓存list
+     * @param userId        用户id
+     * @param sortType      排序类型
+     */
+    @Override
+    public void deleteAppointmentDoctorOrderListAo(
+            @NotNull Long userId,
+            int sortType
+    ) {
+        String keyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + sortType;
+
+        if (!redissonService.hasKey(keyBuilder)){
+            return;
+        }
+
+        redissonService.removeSet(keyBuilder);
+    }
+
+    /**
+     * 保存预约
+     * @param userId                        用户id
+     * @param aoList                        预约
+     * @return                              是否成功
+     * @throws AppException                 保存失败的异常
+     */
+    @Override
+    public boolean saveAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull List<AppointmentDoctorOrderListAo> aoList) throws AppException{
+        String timeKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.TIME.getCode();
+        String distanceKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.DISTANCE.getCode();
+        String costKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.COST.getCode();
+
+        /// 存储的list是空 -> 清空缓存
+        if (aoList.isEmpty()){
+            redissonClient.getKeys().delete(timeKeyBuilder, distanceKeyBuilder, costKeyBuilder);
+            return true;
+        }
+
+        /// 创建有序集合
+        // time
+        RScoredSortedSet<AppointmentDoctorOrderListAo> timeZSet = redissonClient.getScoredSortedSet(timeKeyBuilder);
+        for (AppointmentDoctorOrderListAo ao : aoList){
+            // 获取评分，可以选择时间、距离或成本等
+            LocalDateTime beginDate = ao.getBeginDate();
+            // 默认时区
+            long timestamp = beginDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+            // 将对象存入有序集合
+            if (!timeZSet.add((double)timestamp, ao)){
+                log.error("[存储用户{}time订单数据到缓存失败]添加订单{}失败", userId, ao.getOrderId());
+                throw new AppException(CommonExceptions.SYSTEM_REDIS_ERROR);
+            }
+        }
+
+        // distance (普通set, 避免刻舟求剑)
+        RSet<AppointmentDoctorOrderListAo> distanceSet = redissonClient.getSet(distanceKeyBuilder);
+        if (!distanceSet.addAll(aoList)){
+            log.error("[存储用户{}distance订单数据到缓存失败]添加订单失败", userId);
+            throw new AppException(CommonExceptions.SYSTEM_REDIS_ERROR);
+        }
+
+        // cost
+        RScoredSortedSet<AppointmentDoctorOrderListAo> costZSet = redissonClient.getScoredSortedSet(costKeyBuilder);
+        for (AppointmentDoctorOrderListAo ao : aoList) {
+            // 获取价格
+            BigDecimal cost = ao.getCost();
+
+            double score;
+
+            if (cost == null) {
+                score = Double.MAX_VALUE; // 使用最大值表示缺失的成本
+            }
+            else {
+                score = cost.doubleValue(); // 将成本转换为 double
+            }
+
+            // 将对象存入 ZSet
+            if (!costZSet.add(score, ao)){
+                log.error("[存储用户{}cost订单数据到缓存失败]添加订单失败", userId);
+                throw new AppException(CommonExceptions.SYSTEM_REDIS_ERROR);
+            }
+        }
+
+        return true;
     }
 }
