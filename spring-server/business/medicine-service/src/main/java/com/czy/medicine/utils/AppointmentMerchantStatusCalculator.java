@@ -1,9 +1,12 @@
 package com.czy.medicine.utils;
 
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
+import com.czy.api.constant.medicine.MedicineConstant;
+import com.czy.api.domain.bo.medicine.UserAppointmentOrderBo;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author 13225
@@ -38,6 +41,24 @@ public class AppointmentMerchantStatusCalculator {
             return AppointmentMerchantStatusEnum.EXPIRED;
         }
         return AppointmentMerchantStatusEnum.AVAILABLE;
+    }
+
+    public static void calculateFillUserAppointmentOrderBos(
+            @NotNull List<UserAppointmentOrderBo> bos
+    ){
+        for (UserAppointmentOrderBo bo : bos){
+            if (bo == null || bo.getRemainCount() == null || bo.getBeginDate() == null || bo.getEndDate() == null){
+                continue;
+            }
+            AppointmentMerchantStatusEnum merchantStatusEnum = calculate(
+                    bo.getRemainCount(),
+                    LocalDateTime.now(),
+                    MedicineConstant.APPOINTMENT_OPEN_DAYS,
+                    bo.getBeginDate(),
+                    bo.getEndDate()
+            );
+            bo.setMerchantStatus(merchantStatusEnum.getCode());
+        }
     }
 
 }

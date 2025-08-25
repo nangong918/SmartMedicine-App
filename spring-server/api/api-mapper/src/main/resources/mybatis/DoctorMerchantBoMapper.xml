@@ -35,7 +35,7 @@
 
     </select>
     <select id="getDoctorCardBosByUserCustomerAppointmentDos"
-            resultType="com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo">
+            resultType="com.czy.api.domain.bo.medicine.UserAppointmentOrderBo">
         <if test="list != null and list.size() > 0">
             SELECT
                 dt.avatar_file_id AS doctorAvatarFileId,
@@ -54,7 +54,10 @@
                 dma.cost AS cost,
                 dma.begin_date AS beginDate,
                 dma.end_date AS endDate,
-                dma.id AS doctorMerchantId
+                dma.id AS doctorMerchantId,
+
+                ucao.user_order_status AS customerStatus,
+                ucao.id AS orderId
             FROM user_customer_appointment_order AS ucao
             INNER JOIN doctor_merchant_appointment AS dma ON ucao.doctor_merchant_appointment_id = dma.id
             INNER JOIN doctor AS dt ON dma.doctor_id = dt.id

@@ -3,6 +3,7 @@ package com.api.mapper.medicine.mybatis.bo;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.bo.medicine.UserAppointmentOrderBo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -74,7 +75,7 @@ public interface DoctorMerchantBoMapper {
     INNER JOIN hospital AS ht ON dma.hospital_id = ht.id
     WHERE dma.id in (item.doctorMerchantAppointmentId)
      */
-    List<RegisterAppointmentDoctorCardBo> getDoctorCardBosByUserCustomerAppointmentDos(
+    List<UserAppointmentOrderBo> getDoctorCardBosByUserCustomerAppointmentDos(
             @Param("list") List<UserCustomerAppointmentDo> list
     );
 

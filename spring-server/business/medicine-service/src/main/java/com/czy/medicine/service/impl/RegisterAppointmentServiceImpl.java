@@ -8,13 +8,16 @@ import com.czy.api.constant.ErrorConstant;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
 import com.czy.api.constant.medicine.MedicineRedisKey;
+import com.czy.api.converter.domain.medicine.AppointmentDoctorOrderConverter;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
+import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.bo.medicine.UserAppointmentOrderBo;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
@@ -23,6 +26,7 @@ import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.api.exception.MedicineExceptions;
 import com.czy.medicine.service.RegisterAppointmentService;
 import com.czy.medicine.service.transactional.AppointmentTransactionalService;
+import com.czy.medicine.utils.AppointmentMerchantStatusCalculator;
 import com.utils.minio.service.OssService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
@@ -63,6 +67,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     private final RedissonService redissonService;
     private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
     private final AppointmentTransactionalService appointmentTransactionalService;
+    private final AppointmentDoctorOrderConverter appointmentDoctorOrderConverter;
 
     // 获取PageList
     @NotNull
@@ -394,12 +399,52 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         );
         // 不为null说明命中, empty也是命中
         if (listAos != null){
+            // 缓存命中
+            log.info("[获取user预约订单列表]缓存命中: userId: {}", userId);
             return listAos;
         }
-
         /// 缓存未命中, 查询数据库
-        userCustomerAppointmentOrderMapper.getDosByUserId(userId);
-        return new ArrayList<>();
+        else {
+            List<UserCustomerAppointmentDo> dos = userCustomerAppointmentOrderMapper.getDosByUserId(userId);
+            if (CollectionUtils.isEmpty(dos)){
+                return new ArrayList<>();
+            }
+
+            List<UserAppointmentOrderBo> bos = doctorMerchantBoMapper.getDoctorCardBosByUserCustomerAppointmentDos(
+                     dos
+            );
+            if (CollectionUtils.isEmpty(bos)){
+                return new ArrayList<>();
+            }
+
+
+            // 数据计算填充: MerchantStatus
+            AppointmentMerchantStatusCalculator.calculateFillUserAppointmentOrderBos(
+                    bos
+            );
+
+            LocalDateTime registerDate = LocalDateTime.now();
+            String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
+            // bos -> aos
+            listAos = appointmentDoctorOrderConverter.getAosByBos(
+                    bos,
+                    dateStr
+            );
+            if (CollectionUtils.isEmpty(listAos)){
+                listAos = new ArrayList<>();
+            }
+
+            // 缓存
+            boolean result = registerAppointmentRedisMapper.saveAppointmentDoctorOrderListAo(
+                    userId,
+                    listAos
+            );
+
+            if (!result){
+                log.error("Redis错误:getAppointmentRecordList查询到mysql数据但是Redis缓存失败");
+            }
+        }
+        return listAos;
     }
 
 
