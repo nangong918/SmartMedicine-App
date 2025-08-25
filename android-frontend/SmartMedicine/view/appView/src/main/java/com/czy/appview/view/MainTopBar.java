@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,6 +53,10 @@ public class MainTopBar extends ConstraintLayout {
             return;
         }
         binding.cImgvFace.setImageBitmap(bitmap);
+    }
+
+    public ImageView getImageView(){
+        return binding.cImgvFace;
     }
 
     public void setView(MainTopBarVo mainTopBarVo){

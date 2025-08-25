@@ -4,7 +4,7 @@ import com.czy.domain.ao.login.LoginTokenAo;
 import com.czy.domain.vo.entity.UserEntityVo;
 
 public class LoginSignResponse {
-    public UserEntityVo userEntityVo;
+    public UserEntityVo userVo;
     public LoginTokenAo loginTokenAo;
     public boolean comeConnectWebsocket;
 }

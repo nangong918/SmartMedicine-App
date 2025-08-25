@@ -149,14 +149,14 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
                 new SyncRequestCallback() {
                         @Override
                         public void onThrowable(Throwable throwable) {
-                            NetworkLoadUtils.dismissDialog();
+                            NetworkLoadUtils.dismissDialogSafe(SignActivity.this);
                             ToastUtils.showToastActivity(SignActivity.this, throwable.getMessage());
                             Log.w(TAG, "onThrowable: " + throwable);
                         }
 
                         @Override
                         public void onAllRequestSuccess() {
-                            NetworkLoadUtils.dismissDialog();
+                            NetworkLoadUtils.dismissDialogSafe(SignActivity.this);
                             Intent intent = new Intent(SignActivity.this, MainActivity.class);
                             ActivityLaunchUtils.launchNewTask(SignActivity.this, intent, null);
                         }

@@ -12,6 +12,8 @@ public class UserLoginInfoAo extends BaseSharedPreferencesBean implements BaseBe
     public String phone;
     public String userName;
     public Boolean isLogin = false;
+    public String avatarUrl;
+
     public UserLoginInfoAo() {}
 
     public UserLoginInfoAo(Long userId, String account, String phone, String userName) {
@@ -61,25 +63,4 @@ public class UserLoginInfoAo extends BaseSharedPreferencesBean implements BaseBe
         isLogin = login;
     }
 
-    //    public void saveToSharePreferences(SharedPreferences sp) {
-//        if (sp != null){
-//            if (!TextUtils.isEmpty(account)){
-//                sp.edit().putString("account", account).apply();
-//            }
-//            if (!TextUtils.isEmpty(phone)){
-//                sp.edit().putString("phone", phone).apply();
-//            }
-//            if (!TextUtils.isEmpty(userName)){
-//                sp.edit().putString("userName", userName).apply();
-//            }
-//        }
-//    }
-//
-//    public void getFromSharePreferences(SharedPreferences sp) {
-//        if (sp != null){
-//            this.account = sp.getString("account", "");
-//            this.phone = sp.getString("phone", "");
-//            this.userName = sp.getString("userName", "");
-//        }
-//    }
 }

@@ -3,8 +3,10 @@ package com.czy.smartmedicine.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
@@ -17,6 +19,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.czy.baseutil.activity.ActivityLaunchUtils;
 import com.czy.baseutil.activity.BaseActivity;
 import com.czy.appview.view.DialogConfirm;
+import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.constant.SelectItemEnum;
 import com.czy.domain.vo.view.mainTop.MainTopBarVo;
@@ -69,6 +72,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         TextView nameTv = headerView.findViewById(com.czy.appview.R.id.nagi_name);
         TextView accountTv = headerView.findViewById(com.czy.appview.R.id.nagi_account);
         TextView phoneTv = headerView.findViewById(com.czy.appview.R.id.nagi_phone);
+        ImageView avatarIv = headerView.findViewById(com.czy.appview.R.id.nagi_logo);
 
         UserLoginInfoAo userLoginInfoAo = MainApplication.getInstance().getUserLoginInfoAo();
 
@@ -81,11 +85,27 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         String phone = Optional.ofNullable(userLoginInfoAo)
                 .map(ao -> ao.phone)
                 .orElse("");
+        String avatarUrl = Optional.ofNullable(userLoginInfoAo)
+                .map(ao -> ao.avatarUrl)
+                .orElse("");
 
         // 设置文本
         nameTv.setText(name);
         accountTv.setText(account);
         phoneTv.setText(phone);
+
+        // 加载头像
+        if (!TextUtils.isEmpty(avatarUrl)){
+            ImageLoadUtil.loadImageViewByResource(
+                    avatarUrl,
+                    avatarIv
+            );
+            ImageLoadUtil.loadImageViewByResource(
+                    avatarUrl,
+                    binding.mainTopBar.getImageView()
+            );
+        }
+
     }
 
     public void setMainTopBar(@NonNull MainTopBarVo mainTopBarVo) {

@@ -158,19 +158,19 @@ public class SignVm extends ViewModel {
         // 数据解析
         LoginSignResponse loginSignResponse = response.getData();
         Long userId = Optional.ofNullable(loginSignResponse)
-                .map(re -> re.userEntityVo)
+                .map(re -> re.userVo)
                 .map(u -> u.userId)
                 .orElse(NettyConstants.ERROR_ID);
         String userAccount = Optional.ofNullable(loginSignResponse)
-                .map(re -> re.userEntityVo)
+                .map(re -> re.userVo)
                 .map(u -> u.account)
                 .orElse("");
         String userPhone = Optional.ofNullable(loginSignResponse)
-                .map(re -> re.userEntityVo)
+                .map(re -> re.userVo)
                 .map(u -> u.phone)
                 .orElse("");
         String userName = Optional.ofNullable(loginSignResponse)
-                .map(re -> re.userEntityVo)
+                .map(re -> re.userVo)
                 .map(u -> u.userName)
                 .orElse("");
         String accessToken = Optional.ofNullable(loginSignResponse)
@@ -181,6 +181,11 @@ public class SignVm extends ViewModel {
                 .map(re -> re.loginTokenAo)
                 .map(t -> t.refreshToken)
                 .orElse("");
+        String avtarUrl = Optional.ofNullable(loginSignResponse)
+                .map(re -> re.userVo)
+                .map(u -> u.avatarUrl)
+                .orElse("");
+
         // save
         Log.i(TAG, "handleLogin: " + response.toJsonString());
         UserLoginInfoAo userLoginInfoAo = MainApplication.getInstance().getUserLoginInfoAo();
@@ -189,6 +194,7 @@ public class SignVm extends ViewModel {
         userLoginInfoAo.setPhone(userPhone);
         userLoginInfoAo.setUserName(userName);
         userLoginInfoAo.setLogin(true);
+        userLoginInfoAo.avatarUrl = avtarUrl;
         Log.i(TAG, "设置结果::userLoginInfoAo: " + userLoginInfoAo.toJsonString());
         MainApplication.getInstance().setUserLoginInfoAo(userLoginInfoAo);
         LoginTokenAo loginTokenAo = MainApplication.getInstance().getLoginTokenAo();
