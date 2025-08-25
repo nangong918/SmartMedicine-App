@@ -351,7 +351,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             listVo = registerAppointmentDoctorCardConverter.getAppointmentDoctorOrderListVo(vo,
                         dateStr,
                         AppointmentMerchantStatusEnum.NULL.getCode(),
-                        UserOrderStatusEnum.NULL.getCode()
+                        UserOrderStatusEnum.WAITING_AUDIT.getCode()
                     );
         } catch (CloneNotSupportedException e) {
             // 异常则解开分布式锁
@@ -405,6 +405,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
         /// 缓存未命中, 查询数据库    mysql: 816ms
         else {
+            log.info("[获取user预约订单列表]缓存未命中, 开始查询数据库: userId: {}", userId);
             List<UserCustomerAppointmentDo> dos = userCustomerAppointmentOrderMapper.getDosByUserId(userId);
             if (CollectionUtils.isEmpty(dos)){
                 return new ArrayList<>();

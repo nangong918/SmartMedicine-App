@@ -1,6 +1,7 @@
 package com.czy.medicine.controller;
 
 import cn.hutool.core.util.IdUtil;
+import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
 import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.purchase.PurchaseConstant;
@@ -14,6 +15,7 @@ import com.czy.api.domain.dto.http.request.GetUserAppointmentRecordRequest;
 import com.czy.api.domain.dto.http.response.AppointmentDoctorResponse;
 import com.czy.api.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
 import com.czy.api.domain.dto.http.response.GetRegisterAppointmentListResponse;
+import com.czy.api.domain.dto.http.response.GetUserAppointmentRecordResponse;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.api.exception.CommonExceptions;
@@ -39,14 +41,10 @@ import java.util.List;
  * @author 13225
  * @date 2025/8/18 14:23
  * 本来需要pay-service，但是为了内存只能将pay-service和purchase-service合并
- * todo 1.虚拟数据导入脚本（1.根据当前时间生成4天，2.每天至少生成5条 3.生成地址定位为：广东-深圳-南山）
- *      2.获取可预约列表，获取所有预约时间：mysql查数据查询测试
- *      3.user预约：mysql插入数据测试（redis缓存 + mysql避免超卖问题）
- *      4.purchase的支付服务；订单生成，超时未支付关闭订单；商户状态/订单状态变化
- *      5.获取user预约订单列表
- *      6.获取订单详情
- *      7.取消预约 + 退款
- *      8.再次预约
+ * todo 增删缓存
+ *      purchase的支付服务；订单生成，超时未支付关闭订单；商户状态/订单状态变化
+ *      取消预约 + 退款
+ *      再次预约
  */
 @Slf4j
 @CrossOrigin(origins = "*") // 跨域
@@ -58,6 +56,7 @@ public class RegisterAppointmentController {
     private final RegisterAppointmentService registerAppointmentService;
     private final RedissonService redissonService;
     private final AppointmentMqSender appointmentMqSender;
+    private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
 
     /// 查：获取
 
@@ -92,7 +91,7 @@ public class RegisterAppointmentController {
 
     // 获取user预约订单列表 mysql: 816ms; redis: 11ms
     @PostMapping("/getCustomerList")
-    public BaseResponse<List<AppointmentDoctorOrderListAo>>
+    public BaseResponse<GetUserAppointmentRecordResponse>
     getAppointmentRecordList
     (@Validated @RequestBody GetUserAppointmentRecordRequest request){
         // 参数校验
@@ -109,12 +108,21 @@ public class RegisterAppointmentController {
             return BaseResponse.LogBackError(CommonExceptions.SORT_TYPE_NOT_FOUND);
         }
 
-        List<AppointmentDoctorOrderListAo> aos = registerAppointmentService.getAppointmentRecordList(
+        // 获取订单记录
+        List<AppointmentDoctorOrderListAo> currentOrders = registerAppointmentService.getAppointmentRecordList(
                 request.getUserId(), sortType,
                 request.getUserLongitude(), request.getUserLatitude()
         );
+        // 获取未处理的待审核订单
+        List<AppointmentDoctorOrderListAo> unprocessedOrders = registerAppointmentRedisMapper.getAllAppointmentRecordList(
+                request.getUserId()
+        );
 
-        return BaseResponse.getResponseEntitySuccess(aos);
+        GetUserAppointmentRecordResponse response = new GetUserAppointmentRecordResponse();
+        response.setCurrentOrders(currentOrders);
+        response.setUnprocessedOrders(unprocessedOrders);
+
+        return BaseResponse.getResponseEntitySuccess(response);
     }
 
     @Deprecated
@@ -199,4 +207,6 @@ public class RegisterAppointmentController {
 
         return null;
     }
+
+    /// 再次预约
 }

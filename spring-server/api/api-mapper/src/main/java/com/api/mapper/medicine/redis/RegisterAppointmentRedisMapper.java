@@ -42,6 +42,8 @@ public interface RegisterAppointmentRedisMapper {
     );
 
     /// DoctorMerchantAppointmentDo
+    @NotNull List<AppointmentDoctorOrderListAo> getAllAppointmentRecordList(@NotNull Long userId);
+
     /**
      * 保存/更新商户信息
      * @param doctorMerchantAppointmentDo   DoctorMerchantAppointmentDo

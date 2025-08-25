@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.redisson.api.RKeys;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
@@ -55,7 +56,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         String keyBuilder = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX +
                 userId + ":" +
                 doctorMerchantAppointmentId + ":" +
-                orderId + ":";
+                orderId;
         return redissonService.setObjectByJson(
                 keyBuilder,
                 ao,
@@ -73,11 +74,32 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         String keyBuilder = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX +
                 userId + ":" +
                 doctorMerchantAppointmentId + ":" +
-                orderId + ":";
+                orderId;
         return redissonService.getObjectFromJson(
                 keyBuilder,
                 AppointmentDoctorOrderListAo.class
         );
+    }
+
+    @NotNull
+    @Override
+    public List<AppointmentDoctorOrderListAo> getAllAppointmentRecordList(@NotNull Long userId) {
+        String keyPattern = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX + userId + ":*:*";
+        RKeys rKeys = redissonClient.getKeys();
+
+        // 获取匹配的所有键
+        Iterable<String> keysIterable = rKeys.getKeysByPattern(keyPattern);
+        List<AppointmentDoctorOrderListAo> aoList = new ArrayList<>();
+
+        // 将 Iterable 转换为 List
+        for (String key : keysIterable) {
+            AppointmentDoctorOrderListAo ao = redissonService.getObjectFromJson(key, AppointmentDoctorOrderListAo.class);
+            if (ao != null) {
+                aoList.add(ao);
+            }
+        }
+
+        return aoList;
     }
 
     @Override
