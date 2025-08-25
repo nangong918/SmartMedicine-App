@@ -2,6 +2,8 @@ package com.czy.api.constant;
 
 import lombok.Getter;
 
+import java.io.Serializable;
+
 /**
  * @author 13225
  * @date 2025/8/19 15:08
@@ -9,7 +11,7 @@ import lombok.Getter;
  * 用户状态：user_status
  */
 @Getter
-public enum UserOrderStatusEnum {
+public enum UserOrderStatusEnum implements Serializable {
     NULL(-1, "暂未查询到状态"),
     NOT_ORDERED(0, "未订购"),
     WAITING_AUDIT(1, "审核中"),

@@ -18,12 +18,14 @@ import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
 import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
 import com.czy.api.domain.bo.medicine.UserAppointmentOrderBo;
+import com.czy.api.domain.dto.mq.AppointmentOrderDto;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.api.exception.MedicineExceptions;
+import com.czy.medicine.mq.AppointmentMqSender;
 import com.czy.medicine.service.RegisterAppointmentService;
 import com.czy.medicine.service.transactional.AppointmentTransactionalService;
 import com.czy.medicine.utils.AppointmentMerchantStatusCalculator;
@@ -68,6 +70,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
     private final AppointmentTransactionalService appointmentTransactionalService;
     private final AppointmentDoctorOrderConverter appointmentDoctorOrderConverter;
+    private final AppointmentMqSender appointmentMqSender;
 
     // 获取PageList
     @NotNull
@@ -317,7 +320,16 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
 
         // mq -> 传参并告知purchase-service生成待支付的订单 -> purchase-service直接将消息交给netty通知user，并且直接在purchase调用mapper或者dubbo修改数据库
         // 消息队列生成的未支付的订单如果回到死信队列就将其删掉，并且归还数据库的数据
-        // todo 稍后开发 支付服务
+        // 支付服务
+
+        AppointmentOrderDto orderDto = new AppointmentOrderDto();
+        orderDto.setDoctorMerchantAppointmentId(doctorMerchantAppointmentId);
+        orderDto.setUserId(userId);
+        orderDto.setOrderId(orderId);
+        orderDto.setOrderStatusEnum(UserOrderStatusEnum.WAITING_PAYMENT);
+        orderDto.setEffectiveTime(MedicineRedisKey.Appointment.appointmentOrder_EXPIRE_TIME);
+
+        appointmentMqSender.push(orderDto);
     }
     
     // 获取list

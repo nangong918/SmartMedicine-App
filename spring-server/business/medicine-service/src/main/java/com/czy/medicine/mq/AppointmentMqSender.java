@@ -4,6 +4,7 @@ import com.czy.api.MqConstants;
 import com.czy.api.api.RabbitMqSenderInterface;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorAo;
 import com.czy.api.domain.dto.base.BaseResponseData;
+import com.czy.api.domain.dto.mq.AppointmentOrderDto;
 import com.czy.api.domain.entity.event.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,20 @@ public class AppointmentMqSender implements RabbitMqSenderInterface {
                 appointmentDoctorAo
         );
     }
+
+    public void push(AppointmentOrderDto appointmentOrderDto){
+        if (appointmentOrderDto == null){
+            log.error("[支付]参数错误");
+            return;
+        }
+        log.info("[支付]开始发送消息，appointmentOrderDto: {}", appointmentOrderDto);
+        rabbitJsonTemplate.convertAndSend(
+                MqConstants.Exchange.PAY_EXCHANGE,
+                MqConstants.PayQueue.Routing.APPOINTMENT_ORDER_ROUTING,
+                appointmentOrderDto
+        );
+    }
+
     // 消息发送给netty，只需要发送消息给netty，不需要接收netty的消息
     @Override
     public void push(Message message) {
