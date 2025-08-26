@@ -38,6 +38,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <!-- 他妈的傻逼Android, 非要设置一些傻逼属性, 他妈的自己设定的时候这些属性找他妈的都找不到, 操你妈的傻逼Android, 操你妈的傻逼Google -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:itemBackground="@color/green_90"
+            app:itemRippleColor="@color/green_90"
+            app:itemTextColor="@color/green_500"
+            app:itemIconTint="@color/green_500"
+            app:menu="@menu/bottom_nav_menu" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
