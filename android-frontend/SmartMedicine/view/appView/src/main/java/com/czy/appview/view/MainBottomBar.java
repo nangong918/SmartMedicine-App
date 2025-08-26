@@ -43,8 +43,12 @@ public class MainBottomBar extends ConstraintLayout {
     private void init(Context context){
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewMainBottomBarBinding.inflate(inflater, this, true);
-        clickLys = new LinearLayout[]{binding.lyClick1, binding.lyClick2, binding.lyClick3, binding.lyClick4, binding.lyClick5, binding.lyClick6};
-        imageViews = new ImageView[]{binding.imgvHome, binding.imgvSearch, binding.imgvAi, binding.imgvFriends, binding.imgvNotifications, binding.imgvMessage};
+        clickLys = new LinearLayout[]{
+                binding.lyClick1, binding.lyClick2, binding.lyClick3, binding.lyClick4
+        };
+        imageViews = new ImageView[]{
+                binding.imgvHome, binding.imgvMedicine, binding.imgvMessage, binding.imgvMine
+        };
         updateUi(0);
     }
 
@@ -65,7 +69,7 @@ public class MainBottomBar extends ConstraintLayout {
         boolean[] isClick = new boolean[imageViews.length];
         isClick[clickPosition] = true;
         for (int i = 0; i < imageViews.length; i++) {
-            int color = isClick[i] ? R.color.red_800 : R.color.dark_red_900;
+            int color = isClick[i] ? R.color.green_300 : R.color.green_900;
             imageViews[i].setColorFilter(ContextCompat.getColor(getContext(), color), PorterDuff.Mode.SRC_IN);
         }
     }

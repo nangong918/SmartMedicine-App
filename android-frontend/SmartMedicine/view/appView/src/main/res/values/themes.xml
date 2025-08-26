@@ -13,7 +13,7 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <!-- 设置窗口背景颜色 -->
-        <item name="android:windowBackground">@color/green_50</item>
+        <item name="android:windowBackground">@color/green_10</item>
     </style>
 
     <style name="MyNavigationViewStyle" parent="Widget.Design.NavigationView">

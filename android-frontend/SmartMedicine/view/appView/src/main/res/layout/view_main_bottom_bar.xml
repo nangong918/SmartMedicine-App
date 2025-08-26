@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:background="@color/red_20"
+    android:layout_height="40dp"
+    android:background="@color/green_50"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -41,11 +41,11 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/imgv_search"
+                android:id="@+id/imgv_medicine"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginBottom="4dp"
-                android:src="@drawable/search_24px"
+                android:src="@drawable/pill_24px"
                 tools:tint="@color/black"/>
 
         </LinearLayout>
@@ -59,11 +59,11 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/imgv_ai"
+                android:id="@+id/imgv_message"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginBottom="4dp"
-                android:src="@drawable/emoji_objects_24px"
+                android:src="@drawable/mail_24px"
                 tools:tint="@color/black"/>
         </LinearLayout>
 
@@ -76,47 +76,11 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/imgv_friends"
+                android:id="@+id/imgv_mine"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginBottom="4dp"
-                android:src="@drawable/group_24px"
-                tools:tint="@color/black"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ly_click5"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/imgv_notifications"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginBottom="4dp"
-                android:src="@drawable/notifications_24px"
-                tools:tint="@color/black"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ly_click6"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/imgv_message"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginBottom="4dp"
-                android:src="@drawable/mail_24px"
+                android:src="@drawable/person_24px"
                 tools:tint="@color/black"/>
 
         </LinearLayout>

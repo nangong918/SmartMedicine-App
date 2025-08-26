@@ -25,8 +25,8 @@
             android:layout_marginBottom="50dp"
             android:layout_marginEnd="24dp"
             android:src="@drawable/add_24px"
-            android:backgroundTint="@color/red_300"
-            app:tint="@color/dark_red_600"
+            android:backgroundTint="@color/green_50"
+            app:tint="@color/green_900"
             android:foregroundGravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -36,6 +36,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center"
+            android:indeterminateTint="@color/green_100"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
