@@ -57,6 +57,7 @@ public interface MqConstants {
         // purchase (购物)
         // pay (支付)
         String PAY_EXCHANGE = PayQueue.ID + EXCHANGE;
+        String PAY_RESULT_EXCHANGE = PayQueue.ID + PayQueue.RESULT + EXCHANGE;
     }
 
 
@@ -203,14 +204,28 @@ public interface MqConstants {
 
     interface PayQueue {
         String ID = ".pay";
+        String RESULT = ".result";
+        String WAIT = ".wait";
+
         interface Routing {
-            String APPOINTMENT_ORDER_ROUTING = ".appointment" + ID;
-            String PURCHASE_ORDER_ROUTING = ".purchase" + ID;
-            String TO_SOCKET_ROUTING = TO_SOCKET + ID;
+            /// 预约
+            String APPOINTMENT_WAIT_PAY_ROUTING = ".appointment" + WAIT + ID;
+            String APPOINTMENT_PAY_RESULT_ROUTING = ".appointment" + RESULT + ID;
+            String APPOINTMENT_TO_SOCKET_ROUTING = ".appointment" + TO_SOCKET + ID;
+
+            /// 购买
+            String PURCHASE_WAIT_ROUTING = ".purchase" + WAIT + ID;
+            String PURCHASE_RESULT_ROUTING = ".purchase" + RESULT + ID;
+            String PURCHASE_TO_SOCKET_ROUTING = ".purchase" + TO_SOCKET + ID;
+
         }
-        String APPOINTMENT_PAY_QUEUE = Routing.APPOINTMENT_ORDER_ROUTING + QUEUE;
-        String PURCHASE_PAY_QUEUE = Routing.PURCHASE_ORDER_ROUTING + QUEUE;
-        String PAY_TO_SOCKET_QUEUE = Routing.TO_SOCKET_ROUTING + QUEUE;
+        String APPOINTMENT_WAIT_PAY_QUEUE = Routing.APPOINTMENT_WAIT_PAY_ROUTING + QUEUE;
+        String APPOINTMENT_PAY_RESULT_QUEUE = Routing.APPOINTMENT_PAY_RESULT_ROUTING + QUEUE;
+        String APPOINTMENT_TO_SOCKET_QUEUE = Routing.APPOINTMENT_TO_SOCKET_ROUTING + QUEUE;
+
+        String PURCHASE_WAIT_QUEUE = Routing.PURCHASE_WAIT_ROUTING + QUEUE;
+        String PURCHASE_RESULT_QUEUE = Routing.PURCHASE_RESULT_ROUTING + QUEUE;
+        String PURCHASE_TO_SOCKET_QUEUE = Routing.PURCHASE_TO_SOCKET_ROUTING + QUEUE;
     }
 
     /**
@@ -226,8 +241,7 @@ public interface MqConstants {
             String RELATIONSHIP_DEAD_LETTER_ROUTING = RelationshipQueue.ID + ID;
 //            String OSS_DEAD_LETTER_ROUTING = OssQueue.ID + ID;
             String APPOINTMENT_DEAD_LETTER_ROUTING = AppointmentQueue.ID + ID;
-            String APPOINTMENT_PAY_DEAD_LETTER_ROUTING = PayQueue.Routing.APPOINTMENT_ORDER_ROUTING + ID;
-            String PURCHASE_PAY_DEAD_LETTER_ROUTING = PayQueue.Routing.PURCHASE_ORDER_ROUTING + ID;
+
             String ALL_DEAD_LETTER_ROUTING = ".#" + ID;
         }
         String MESSAGE_DEAD_LETTER_QUEUE = Routing.MESSAGE_DEAD_LETTER_ROUTING + QUEUE;
@@ -235,8 +249,7 @@ public interface MqConstants {
         String RELATIONSHIP_DEAD_LETTER_QUEUE = Routing.RELATIONSHIP_DEAD_LETTER_ROUTING + QUEUE;
 //        String OSS_DEAD_LETTER_QUEUE = Routing.OSS_DEAD_LETTER_ROUTING + QUEUE;
         String APPOINTMENT_DEAD_LETTER_QUEUE = Routing.APPOINTMENT_DEAD_LETTER_ROUTING + QUEUE;
-        String APPOINTMENT_PAY_DEAD_LETTER_QUEUE = Routing.APPOINTMENT_PAY_DEAD_LETTER_ROUTING + QUEUE;
-        String PURCHASE_PAY_DEAD_LETTER_QUEUE = Routing.PURCHASE_PAY_DEAD_LETTER_ROUTING + QUEUE;
+
         // all
         String ALL_DEAD_LETTER_QUEUE = Routing.ALL_DEAD_LETTER_ROUTING + QUEUE;
         // logging没有死信队列

@@ -44,7 +44,7 @@ public class AppointmentMqSender implements RabbitMqSenderInterface {
         log.info("[支付]开始发送消息，appointmentOrderDto: {}", appointmentOrderDto);
         rabbitJsonTemplate.convertAndSend(
                 MqConstants.Exchange.PAY_EXCHANGE,
-                MqConstants.PayQueue.Routing.APPOINTMENT_ORDER_ROUTING,
+                MqConstants.PayQueue.Routing.APPOINTMENT_WAIT_PAY_ROUTING,
                 appointmentOrderDto
         );
     }

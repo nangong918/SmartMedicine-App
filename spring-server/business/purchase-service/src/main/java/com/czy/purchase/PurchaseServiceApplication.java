@@ -3,6 +3,7 @@ package com.czy.purchase;
 
 import com.utils.common.start.PortApplicationContextInitializer;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
@@ -23,6 +24,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
         "com.utils.rabbitmq",
 }) // 扫描bean
 @EnableElasticsearchRepositories(basePackages = "com.api.mapper")
+@EnableRabbit
 public class PurchaseServiceApplication {
     public static void main(String[] args) {
         new SpringApplicationBuilder(PurchaseServiceApplication.class)

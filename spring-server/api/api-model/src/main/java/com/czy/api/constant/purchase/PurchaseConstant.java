@@ -14,4 +14,6 @@ public class PurchaseConstant {
 
     // 支付超时时间、某商品重复点击订单的分布式锁超时时间 (秒)
     public static final long PAY_TIMEOUT = 5 * 60L;
+    // 订单支付超时最大等待时间
+    public static final int MAX_WAIT_PAY_TIMEOUT = 30 * 60 * 1000;
 }

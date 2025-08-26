@@ -18,4 +18,7 @@ public class AppointmentOrderDto implements Serializable {
     private UserOrderStatusEnum orderStatusEnum;
     // 有效时长
     private Long effectiveTime = MedicineRedisKey.Appointment.appointmentOrder_EXPIRE_TIME;
+
+    /// 日志
+    private Long currentTime = System.currentTimeMillis();
 }
