@@ -2,62 +2,42 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/red_20"
+    android:background="@color/green_50"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/cImgv_face"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="20dp"
         android:src="@mipmap/logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.search.SearchBar
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/search_bar"
-        tools:visibility="visible"
-        android:visibility="gone"
-        android:layout_width="200dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="10dp"
+        android:background="@drawable/round_green10"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="85dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cImgv_face"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/ly_friend"
-        android:layout_width="0dp"
-        tools:visibility="visible"
-        android:visibility="gone"
-        android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cImgv_face" >
-
-        <View
-            android:id="@+id/v_addFriend"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/add_24px"
-            android:backgroundTint="@color/red_1000"
-            android:layout_marginEnd="20dp"
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="15dp"
+            android:src="@drawable/search_24px"
+            app:tint="@color/green_100" />
 
-        <View
-            android:id="@+id/v_addFriendClick"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            tools:background="#372FFF00"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
