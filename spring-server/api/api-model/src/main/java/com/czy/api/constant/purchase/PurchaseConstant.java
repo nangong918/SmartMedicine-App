@@ -16,4 +16,5 @@ public class PurchaseConstant {
     public static final long PAY_TIMEOUT = 5 * 60L;
     // 订单支付超时最大等待时间
     public static final int MAX_WAIT_PAY_TIMEOUT = 30 * 60 * 1000;
+    public static final String Pay_CONTROLLER = "/pay";
 }

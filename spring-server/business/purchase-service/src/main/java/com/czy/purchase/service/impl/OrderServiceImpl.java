@@ -1,6 +1,8 @@
 package com.czy.purchase.service.impl;
 
+import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
+import com.czy.api.constant.purchase.PayResultEnum;
 import com.czy.api.constant.purchase.PurchaseConstant;
 import com.czy.api.converter.domain.purchase.AppointmentPayConverter;
 import com.czy.api.domain.dto.mq.AppointmentOrderDto;
@@ -28,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
     private final RedissonService redissonService;
     private final PayMqSender payMqSender;
     private final AppointmentPayConverter appointmentPayConverter;
-
+    private final PayRedisMapper payRedisMapper;
 
     private static final String CREATE_ORDER_LOCK = "createOrder";
 
@@ -85,5 +87,17 @@ public class OrderServiceImpl implements OrderService {
             // 看看解除分布式锁是放在medicine-service ?
             redissonService.unlock(appointmentLock);
         }
+    }
+
+    @NotNull
+    public Integer payAppointmentOrder(Long userId, Long orderId){
+        // 1. 上游消息队列缓存
+
+        // 2. 执行事务: 2.1 扣减用户余额 (成功: 通知, 删除rabbitmq中的延迟消息; 失败: 归还库存)
+        // 成功之后标记, 死信队列中的消息被处理的时候就不会回调handleOutTimeOrder
+        payRedisMapper.saveOrderWaitPayStatus(orderId);
+
+        // 3. mq通知medicine服务: 状态更新
+        return PayResultEnum.NULL.getCode();
     }
 }

@@ -16,9 +16,9 @@ public enum PurchaseMerchantStatusEnum {
 
     AVAILABLE(0, "可购买"),
 
-    SOLD_OUT(1, "已下架"),
+    NO_AVAILABLE(1, "已下架"),
 
-    NO_AVAILABLE(2, "售罄"),
+    SOLD_OUT(2, "售罄"),
 
     WAITING_OPEN(3, "等待开放"),
     ;

@@ -1,5 +1,6 @@
 package com.czy.purchase.mq;
 
+import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.MqConstants;
 import com.czy.api.domain.dto.mq.AppointmentOrderDto;
 import com.czy.purchase.service.OrderService;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
 public class PayResultHandler {
 
     private final OrderService orderService;
+    private final PayRedisMapper payRedisMapper;
 
     @RabbitListener(
             bindings = @QueueBinding(
@@ -43,17 +45,25 @@ public class PayResultHandler {
             )
     )
     public void handlePayDeathMessage(AppointmentOrderDto dto){
-        log.info("收到支付超时付消息：user: {} , 商户: {}, 订单: {}, 订单状态: {}, 订单有效时间: {}, 收到时间间隔: {}",
-                dto.getUserId(), dto.getDoctorMerchantAppointmentId(),
-                dto.getOrderId(),
-                dto.getOrderStatusEnum(),
-                dto.getEffectiveTime(),
-                System.currentTimeMillis() - dto.getCurrentTime());
+        // 监听支付结果 (传递的是json不是对象, 无法不通过messageId中途修改message的数据)
+        Long orderId = dto.getOrderId();
+        // 未支付的情况
+        if (!payRedisMapper.getAndDeleteOrderWaitPayStatus(orderId)){
+            log.info("收到支付超时付消息：user: {} , 商户: {}, 订单: {}, 订单状态: {}, 订单有效时间: {}, 收到时间间隔: {}",
+                    dto.getUserId(), dto.getDoctorMerchantAppointmentId(),
+                    dto.getOrderId(),
+                    dto.getOrderStatusEnum(),
+                    dto.getEffectiveTime(),
+                    System.currentTimeMillis() - dto.getCurrentTime());
 
-        // 处理超时未支付订单通知medicine服务
-        orderService.handleOutTimeOrder(
-                dto
-        );
+            // 处理超时未支付订单通知medicine服务
+            orderService.handleOutTimeOrder(
+                    dto
+            );
+        }
+        else {
+            log.info("[order: {}] 不是待支付状态", orderId);
+        }
     }
 
 }
