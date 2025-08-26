@@ -2,6 +2,7 @@ package com.czy.purchase.mq;
 
 import com.czy.api.MqConstants;
 import com.czy.api.domain.dto.mq.AppointmentOrderDto;
+import com.czy.purchase.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class PayResultHandler {
+
+    private final OrderService orderService;
 
     @RabbitListener(
             bindings = @QueueBinding(
@@ -46,6 +49,11 @@ public class PayResultHandler {
                 dto.getOrderStatusEnum(),
                 dto.getEffectiveTime(),
                 System.currentTimeMillis() - dto.getCurrentTime());
+
+        // 处理超时未支付订单通知medicine服务
+        orderService.handleOutTimeOrder(
+                dto
+        );
     }
 
 }
