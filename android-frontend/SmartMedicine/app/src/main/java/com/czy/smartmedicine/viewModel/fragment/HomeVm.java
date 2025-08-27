@@ -22,7 +22,7 @@ import com.czy.domain.dto.http.response.RecommendPostResponse;
 import com.czy.domain.fragmentActivityAo.HomeVo;
 import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.fragment.HomeFragment;
+import com.czy.smartmedicine.fragment.home.HomeFragment;
 import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.czy.smartmedicine.manager.PostClickManager;
 import com.czy.smartmedicine.test.TestConfig;

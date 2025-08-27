@@ -1,4 +1,4 @@
-package com.czy.smartmedicine.fragment;
+package com.czy.smartmedicine.fragment.home;
 
 import android.content.Intent;
 import android.os.Bundle;

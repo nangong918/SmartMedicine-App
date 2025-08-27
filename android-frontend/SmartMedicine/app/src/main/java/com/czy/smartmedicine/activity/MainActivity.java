@@ -27,7 +27,7 @@ import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.search.SearchPostActivity;
 import com.czy.smartmedicine.databinding.ActivityMainBinding;
 import com.czy.smartmedicine.fragment.AiFragment;
-import com.czy.smartmedicine.fragment.HomeFragment;
+import com.czy.smartmedicine.fragment.home.HomeFragment;
 import com.czy.smartmedicine.fragment.MessageFragment;
 import com.czy.smartmedicine.fragment.NoticeFragment;
 import com.czy.smartmedicine.fragment.SearchFragment;
