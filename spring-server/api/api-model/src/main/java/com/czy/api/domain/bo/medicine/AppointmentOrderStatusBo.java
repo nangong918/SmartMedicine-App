@@ -2,6 +2,7 @@ package com.czy.api.domain.bo.medicine;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -19,7 +20,7 @@ public class AppointmentOrderStatusBo {
     // user订单状态
     private Integer userOrderStatus;
     // 商户的定价金额
-    private Integer merchantPrice;
+    private BigDecimal merchantPrice;
     // 预约的开始时间
     private LocalDateTime beginDate;
 }

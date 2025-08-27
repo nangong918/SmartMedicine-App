@@ -10,5 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface PayTransactionalService {
     @Transactional(rollbackFor = Exception.class)
-    PayResultEnum payAppointmentOrder(long userI, long orderId) throws AppException;
+    PayResultEnum payAppointmentOrder(long userId, long orderId) throws AppException;
 }
