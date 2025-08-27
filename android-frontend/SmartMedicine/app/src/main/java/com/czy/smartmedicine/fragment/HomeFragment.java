@@ -105,6 +105,10 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                 }
             });
         });
+
+        binding.homeTopBar.setOnViewPagerBarClickListener(position -> {
+
+        });
     }
 
     //---------------------------viewModel---------------------------

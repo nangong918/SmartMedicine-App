@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="language_setting">语言设置</string>
+    <string name="popular">热门</string>
 </resources>

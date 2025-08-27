@@ -82,4 +82,7 @@
     <string name="setting">设置</string>
     <string name="log_out">登出</string>
     <string name="night_mode">夜间模式</string>
+    <string name="recommend">推荐</string>
+    <string name="follow">关注</string>
+    <string name="friendsCircle">朋友圈</string>
 </resources>
