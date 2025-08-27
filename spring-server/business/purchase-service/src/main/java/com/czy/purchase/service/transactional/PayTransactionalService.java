@@ -1,5 +1,6 @@
 package com.czy.purchase.service.transactional;
 
+import com.czy.api.constant.purchase.PayResultEnum;
 import exception.AppException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,5 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface PayTransactionalService {
     @Transactional(rollbackFor = Exception.class)
-    void payAppointmentOrder(long userI, long orderId) throws AppException;
+    PayResultEnum payAppointmentOrder(long userI, long orderId) throws AppException;
 }

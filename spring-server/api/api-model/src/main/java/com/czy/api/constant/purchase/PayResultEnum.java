@@ -25,6 +25,8 @@ public enum PayResultEnum implements Serializable {
     LIMITED(4, "支付受限"),
     // 余额不足
     INSUFFICIENT_BALANCE(5, "余额不足"),
+    // 订单状态错误
+    ORDER_STATUS_ERROR(6, "订单状态错误"),
     ;
 
     private final int code;
