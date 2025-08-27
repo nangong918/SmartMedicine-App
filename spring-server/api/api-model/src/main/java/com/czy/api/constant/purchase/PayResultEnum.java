@@ -19,10 +19,12 @@ public enum PayResultEnum implements Serializable {
     SOLD_OUT(1, "售罄"),
     // 已下架
     NO_AVAILABLE(2, "已下架"),
+    // 订单过期
+    ORDER_EXPIRED(3, "订单过期"),
     // 支付受限
-    LIMITED(3, "支付受限"),
+    LIMITED(4, "支付受限"),
     // 余额不足
-    INSUFFICIENT_BALANCE(4, "余额不足"),
+    INSUFFICIENT_BALANCE(5, "余额不足"),
     ;
 
     private final int code;
