@@ -4,6 +4,10 @@ import com.czy.api.constant.purchase.PurchaseConstant;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.PayAppointmentOrderRequest;
 import com.czy.api.domain.dto.http.response.PayAppointmentResponse;
+import com.czy.api.exception.PurchaseExceptions;
+import com.czy.purchase.service.PayService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,10 +27,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(PurchaseConstant.Pay_CONTROLLER)
 public class PayController {
 
-    @PostMapping("/appointment")
+    private final RedissonService redissonService;
+    private final PayService payService;
+
+    @PostMapping(PurchaseConstant.AppointmentPay_API)
     public BaseResponse<PayAppointmentResponse>
     payAppointmentOrder(@RequestBody PayAppointmentOrderRequest request){
-        // 消息队列, 处理高并发支付订单 todo
+
+        // 支付分布式锁
+        String dataId = request.getUserId().toString() + ":" + request.getOrderId().toString();
+        String mappingPath = PurchaseConstant.Pay_CONTROLLER + PurchaseConstant.AppointmentPay_API;
+        RedissonClusterLock appointmentPayLock = new RedissonClusterLock(
+                dataId,
+                mappingPath,
+                // 5分钟(300s)，单位：秒
+                PurchaseConstant.PAY_TIMEOUT
+        );
+
+        // 获取分布式锁
+        if (!redissonService.tryLock(appointmentPayLock)){
+            log.warn("[支付预约订单][获取分布式锁失败][user: {}][订单: {}]", request.getUserId(), request.getOrderId());
+            BaseResponse.LogBackError(PurchaseExceptions.REPEAT_PAY_LOCK);
+        }
+
+
         return null;
     }
 }

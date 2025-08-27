@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 //@Component
 @Deprecated // 延迟队列不需要任何handler
-public class PayMqHandler {
+public class OrderDelayPayMqHandler {
 
     /**
      * 此处注释不删除:

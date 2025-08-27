@@ -206,26 +206,31 @@ public interface MqConstants {
         String ID = ".pay";
         String RESULT = ".result";
         String WAIT = ".wait";
+        String PAYING = ".paying"; // 支付中 降低qps的消息队列(暂时不用)
 
         interface Routing {
             /// 预约
             String APPOINTMENT_WAIT_PAY_ROUTING = ".appointment" + WAIT + ID;
             String APPOINTMENT_PAY_RESULT_ROUTING = ".appointment" + RESULT + ID;
             String APPOINTMENT_TO_SOCKET_ROUTING = ".appointment" + TO_SOCKET + ID;
+            String APPOINTMENT_PAYING_ROUTING = ".appointment" + PAYING + ID; // 支付中 降低qps的消息队列(暂时不用)
 
             /// 购买
             String PURCHASE_WAIT_ROUTING = ".purchase" + WAIT + ID;
             String PURCHASE_RESULT_ROUTING = ".purchase" + RESULT + ID;
             String PURCHASE_TO_SOCKET_ROUTING = ".purchase" + TO_SOCKET + ID;
+            String PURCHASE_PAYING_ROUTING = ".purchase" + PAYING + ID; // 支付中 降低qps的消息队列(暂时不用)
 
         }
-        String APPOINTMENT_WAIT_PAY_QUEUE = Routing.APPOINTMENT_WAIT_PAY_ROUTING + QUEUE;
-        String APPOINTMENT_PAY_RESULT_QUEUE = Routing.APPOINTMENT_PAY_RESULT_ROUTING + QUEUE;
+        String APPOINTMENT_WAIT_PAY_QUEUE = Routing.APPOINTMENT_WAIT_PAY_ROUTING + QUEUE; // exchange: PAY_EXCHANGE
+        String APPOINTMENT_PAY_RESULT_QUEUE = Routing.APPOINTMENT_PAY_RESULT_ROUTING + QUEUE; // exchange: PAY_RESULT_EXCHANGE
         String APPOINTMENT_TO_SOCKET_QUEUE = Routing.APPOINTMENT_TO_SOCKET_ROUTING + QUEUE;
+        String APPOINTMENT_PAYING_QUEUE = Routing.APPOINTMENT_PAYING_ROUTING + QUEUE; // exchange: PAY_EXCHANGE  // 支付中 降低qps的消息队列(暂时不用)
 
         String PURCHASE_WAIT_QUEUE = Routing.PURCHASE_WAIT_ROUTING + QUEUE;
         String PURCHASE_RESULT_QUEUE = Routing.PURCHASE_RESULT_ROUTING + QUEUE;
         String PURCHASE_TO_SOCKET_QUEUE = Routing.PURCHASE_TO_SOCKET_ROUTING + QUEUE;
+        String PURCHASE_PAYING_QUEUE = Routing.PURCHASE_PAYING_ROUTING + QUEUE; // 支付中 降低qps的消息队列(暂时不用)
     }
 
     /**

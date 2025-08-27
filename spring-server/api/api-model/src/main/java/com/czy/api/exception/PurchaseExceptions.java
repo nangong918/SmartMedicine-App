@@ -14,6 +14,10 @@ public enum PurchaseExceptions implements ExceptionEnums {
     REPEAT_APPLY_LOCK("PUR_10001", "重复申请，请耐心等待"),
     // 同商户已存在订单, 暂不可申请
     EXIST_ORDER_LOCK("PUR_10002", "同商户已存在订单, 暂不可申请"),
+    // 重复支付, 请勿重复支付
+    REPEAT_PAY_LOCK("PUR_10003", "重复支付, 请勿重复支付"),
+    // 系统忙碌, 支付请求超时, 请稍后再试
+    SYSTEM_BUSY_LOCK("PUR_10004", "系统忙碌, 支付请求超时, 请稍后再试"),
     ;
 
     private final String code;
