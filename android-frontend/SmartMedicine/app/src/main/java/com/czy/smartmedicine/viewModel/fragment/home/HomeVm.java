@@ -1,4 +1,4 @@
-package com.czy.smartmedicine.viewModel.fragment;
+package com.czy.smartmedicine.viewModel.fragment.home;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

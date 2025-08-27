@@ -21,7 +21,7 @@ import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.fragment.HomeVm;
+import com.czy.smartmedicine.viewModel.fragment.home.HomeVm;
 
 
 /**
