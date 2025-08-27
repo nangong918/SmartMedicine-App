@@ -81,6 +81,7 @@ dependencies {
      */
     // 圆形的 ImageView 组件
     implementation libs.circleimageview
+    implementation libs.roundedimageview
 
     // EventBus
     implementation libs.eventbus

@@ -23,12 +23,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ImageView
+                <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/cardImage"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_width="270dp"
                     android:layout_height="200dp"
+                    app:riv_corner_radius="20dp"
                     android:src="@mipmap/logo"/>
 
                 <TextView

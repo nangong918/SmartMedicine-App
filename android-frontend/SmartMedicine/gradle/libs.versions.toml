@@ -18,6 +18,7 @@ okhttp = "3.14.9"
 protobufJava = "3.22.0"
 retrofit = "2.9.0"
 roomRuntime = "2.6.1"
+roundedimageview = "2.3.0"
 rxandroid = "2.1.1"
 rxjava = "2.2.21"
 activity = "1.10.0"
@@ -30,6 +31,7 @@ androidx-room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
+roundedimageview = { module = "com.makeramen:roundedimageview", version.ref = "roundedimageview" }
 swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 fastjson = { module = "com.alibaba:fastjson", version.ref = "fastjson" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jacksonDatabind" }
