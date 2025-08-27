@@ -1,6 +1,8 @@
 package com.czy.purchase.service.impl;
 
 import com.czy.api.constant.purchase.PayResultEnum;
+import com.czy.api.constant.purchase.RechargeEnum;
+import com.czy.api.domain.dto.http.response.RechargeMoneyResponse;
 import com.czy.purchase.mq.PayMqSender;
 import com.czy.purchase.service.PayService;
 import com.czy.purchase.service.transactional.PayTransactionalService;
@@ -29,5 +31,12 @@ public class PayServiceImpl implements PayService {
 
         // 2. mq通知medicine服务: 状态更新
         return PayResultEnum.NULL.getCode();
+    }
+
+    @NotNull
+    @Override
+    public RechargeMoneyResponse testRecharge(@NotNull Long userId, @NotNull RechargeEnum rechargeEnum){
+        // todo
+        return null;
     }
 }

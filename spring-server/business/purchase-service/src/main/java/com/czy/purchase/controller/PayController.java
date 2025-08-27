@@ -1,9 +1,12 @@
 package com.czy.purchase.controller;
 
 import com.czy.api.constant.purchase.PurchaseConstant;
+import com.czy.api.constant.purchase.RechargeEnum;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.PayAppointmentOrderRequest;
+import com.czy.api.domain.dto.http.request.RechargeMoneyRequest;
 import com.czy.api.domain.dto.http.response.PayAppointmentResponse;
+import com.czy.api.domain.dto.http.response.RechargeMoneyResponse;
 import com.czy.api.exception.PurchaseExceptions;
 import com.czy.purchase.service.PayService;
 import com.utils.redisson.service.RedissonClusterLock;
@@ -52,5 +55,18 @@ public class PayController {
 
 
         return null;
+    }
+
+    // 充值测试
+    @PostMapping("/test-recharge")
+    public BaseResponse<RechargeMoneyResponse> testRecharge(@RequestBody RechargeMoneyRequest request) {
+        RechargeEnum rechargeEnum = RechargeEnum.getByCode(request.getType());
+        RechargeMoneyResponse response = payService.testRecharge(
+                request.getUserId(),
+                rechargeEnum
+        );
+        return BaseResponse.getResponseEntitySuccess(
+                response
+        );
     }
 }
