@@ -69,7 +69,6 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initView();
 
         // 获取屏幕高度
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -126,7 +125,8 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
                 });
     }
 
-    private void initView(){
+    @Override
+    protected void initView(){
 //        initRecyclerView();
         MainTopBarVo mainTopBarVo = new MainTopBarVo();
         mainTopBarVo.selectItemEnum = SelectItemEnum.FRIENDS;

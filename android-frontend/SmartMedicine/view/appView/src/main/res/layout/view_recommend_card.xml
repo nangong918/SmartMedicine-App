@@ -14,6 +14,7 @@
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/base_card1"
             android:layout_width="match_parent"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="5dp"
@@ -128,7 +129,7 @@
                 android:layout_height="wrap_content">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imvg_avatar"
+                    android:id="@+id/imgv_avatar1"
                     android:src="@mipmap/logo"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -137,11 +138,12 @@
                     android:layout_height="24dp"/>
 
                 <TextView
+                    android:id="@+id/tv_name1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     tools:text="张良医生"
-                    app:layout_constraintStart_toEndOf="@+id/imvg_avatar"
+                    app:layout_constraintStart_toEndOf="@+id/imgv_avatar1"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_like1"
@@ -189,6 +191,7 @@
                 android:maxLines="2"/>
 
             <ImageView
+                android:id="@+id/btn_unlike1"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@mipmap/unlike"
@@ -212,6 +215,7 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/base_card2"
             android:layout_width="match_parent"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="10dp"
@@ -326,7 +330,7 @@
                 android:layout_height="wrap_content">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imvg_avatar2"
+                    android:id="@+id/imgv_avatar2"
                     android:src="@mipmap/logo"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -335,11 +339,12 @@
                     android:layout_height="24dp"/>
 
                 <TextView
+                    android:id="@+id/tv_name2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     tools:text="张良医生"
-                    app:layout_constraintStart_toEndOf="@+id/imvg_avatar2"
+                    app:layout_constraintStart_toEndOf="@+id/imgv_avatar2"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_like2"
@@ -387,6 +392,7 @@
                 android:maxLines="2"/>
 
             <ImageView
+                android:id="@+id/btn_unlike2"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@mipmap/unlike"

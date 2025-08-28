@@ -64,22 +64,22 @@ public class PostHomeItemViewManager {
         loadPostData(new ViewBinding() {
             @Override
             public void setUserFace(String url) {
-                ImageLoadUtil.loadImageViewByResource(url, binding.cardUserFace);
+                ImageLoadUtil.loadImageViewByResource(url, binding.imgvAvatar);
             }
 
             @Override
             public void setPostImage(String url) {
-                ImageLoadUtil.loadImageViewByResource(url, binding.cardImage);
+                ImageLoadUtil.loadImageViewByResource(url, binding.imgvMain);
             }
 
             @Override
             public void setTitle(String title) {
-                binding.textTitle.setText(title);
+                binding.tvTitle.setText(title);
             }
 
             @Override
             public void setUserID(String userID) {
-                binding.cardUserID.setText(userID);
+                binding.tvName.setText(userID);
             }
         }, postAo, 0);
     }
@@ -90,22 +90,22 @@ public class PostHomeItemViewManager {
         loadPostData(new ViewBinding() {
             @Override
             public void setUserFace(String url) {
-                ImageLoadUtil.loadImageViewByResource(url, binding.cardUserFace);
+                ImageLoadUtil.loadImageViewByResource(url, binding.imgvAvatar1);
             }
 
             @Override
             public void setPostImage(String url) {
-                ImageLoadUtil.loadImageViewByResource(url, binding.cardImage);
+                ImageLoadUtil.loadImageViewByResource(url, binding.imgvMain1);
             }
 
             @Override
             public void setTitle(String title) {
-                binding.textTitle.setText(title);
+                binding.tvTitle1.setText(title);
             }
 
             @Override
             public void setUserID(String userID) {
-                binding.cardUserID.setText(userID);
+                binding.tvName1.setText(userID);
             }
         }, postAo, 0);
 
@@ -113,22 +113,22 @@ public class PostHomeItemViewManager {
         loadPostData(new ViewBinding() {
             @Override
             public void setUserFace(String url) {
-                ImageLoadUtil.loadImageViewByResource(url, binding.cardUserFace2);
+                ImageLoadUtil.loadImageViewByResource(url, binding.imgvAvatar2);
             }
 
             @Override
             public void setPostImage(String url) {
-                ImageLoadUtil.loadImageViewByResource(url, binding.cardImage2);
+                ImageLoadUtil.loadImageViewByResource(url, binding.imgvMain2);
             }
 
             @Override
             public void setTitle(String title) {
-                binding.textTitle2.setText(title);
+                binding.tvTitle2.setText(title);
             }
 
             @Override
             public void setUserID(String userID) {
-                binding.cardUserID2.setText(userID);
+                binding.tvName2.setText(userID);
             }
         }, postAo, 1);
     }
@@ -147,28 +147,28 @@ public class PostHomeItemViewManager {
             final int cardId = 0;
             @Override
             public void setBasicCardClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.basicCard.setOnClickListener(v ->
+                binding.baseCard.setOnClickListener(v ->
                         onClick.onCardClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId)
                 );
             }
 
             @Override
             public void setFavoriteClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.favorite.setOnClickListener(v ->
+                binding.btnLike.setOnClickListener(v ->
                         onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
                 );
             }
 
             @Override
             public void setStarClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.star.setOnClickListener(v ->
+                binding.btnCollect.setOnClickListener(v ->
                         onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
                 );
             }
 
             @Override
             public void setUnlikeClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.unlike.setOnClickListener(v ->
+                binding.btnUnlike.setOnClickListener(v ->
                         onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
                 );
             }
@@ -183,28 +183,28 @@ public class PostHomeItemViewManager {
             final int cardId = 0;
             @Override
             public void setBasicCardClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.basicCard.setOnClickListener(v ->
+                binding.baseCard1.setOnClickListener(v ->
                         onClick.onCardClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId)
                 );
             }
 
             @Override
             public void setFavoriteClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.favorite.setOnClickListener(v ->
+                binding.btnLike1.setOnClickListener(v ->
                         onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
                 );
             }
 
             @Override
             public void setStarClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.star.setOnClickListener(v ->
+                binding.btnCollect1.setOnClickListener(v ->
                         onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
                 );
             }
 
             @Override
             public void setUnlikeClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.unlike.setOnClickListener(v ->
+                binding.btnUnlike1.setOnClickListener(v ->
                         onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
                 );
             }
@@ -215,28 +215,28 @@ public class PostHomeItemViewManager {
             final int cardId = 1;
             @Override
             public void setBasicCardClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.basicCard.setOnClickListener(v ->
+                binding.baseCard2.setOnClickListener(v ->
                         onClick.onCardClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId)
                 );
             }
 
             @Override
             public void setFavoriteClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.favorite.setOnClickListener(v ->
+                binding.btnLike2.setOnClickListener(v ->
                         onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.LIKE)
                 );
             }
 
             @Override
             public void setStarClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.star.setOnClickListener(v ->
+                binding.btnCollect2.setOnClickListener(v ->
                         onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.COLLECT)
                 );
             }
 
             @Override
             public void setUnlikeClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {
-                binding.unlike.setOnClickListener(v ->
+                binding.btnUnlike2.setOnClickListener(v ->
                         onClick.onButtonClick(viewHolder.getAdapterPosition(), RecommendCardType.SINGLE_BIG_CARD, cardId, RecommendButtonType.DISLIKE)
                 );
             }

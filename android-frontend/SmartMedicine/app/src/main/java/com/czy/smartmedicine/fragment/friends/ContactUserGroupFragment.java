@@ -57,11 +57,11 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initView();
         changeToDo(position);
     }
 
-    private void initView(){
+    @Override
+    protected void initView(){
 
         initRecyclerView();
     }
