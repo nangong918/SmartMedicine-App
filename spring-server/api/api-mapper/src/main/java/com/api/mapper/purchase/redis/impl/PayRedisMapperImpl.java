@@ -8,6 +8,8 @@ import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  *@author 13225
  *@date 2025/8/26 17:22
@@ -37,5 +39,20 @@ public class PayRedisMapperImpl implements PayRedisMapper {
             bucket.delete();
         }
         return exists;
+    }
+
+    @Override
+    public void saveOrderWaitPayStartTime(Long orderId){
+        String key = PurchaseRedisKey.Pay.WAIT_PAY_START_TIME_KEY_PREFIX + orderId;
+        RBucket<Long> bucket = redissonClient.getBucket(key);
+        bucket.set(System.currentTimeMillis());
+        bucket.expire(PurchaseRedisKey.Pay.WAIT_PAY_KEY_TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public Long getOrderWaitPayStartTime(Long orderId){
+        String key = PurchaseRedisKey.Pay.WAIT_PAY_START_TIME_KEY_PREFIX + orderId;
+        RBucket<Long> bucket = redissonClient.getBucket(key);
+        return bucket.get();
     }
 }

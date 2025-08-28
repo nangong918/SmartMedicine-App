@@ -2,6 +2,7 @@ package com.czy.medicine.controller;
 
 import cn.hutool.core.util.IdUtil;
 import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.purchase.PurchaseConstant;
@@ -57,6 +58,7 @@ public class RegisterAppointmentController {
     private final RedissonService redissonService;
     private final AppointmentMqSender appointmentMqSender;
     private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+    private final PayRedisMapper payRedisMapper;
 
     /// 查：获取
 
@@ -180,6 +182,8 @@ public class RegisterAppointmentController {
         appointmentDoctorAo.setDoctorMerchantAppointmentId(request.getDoctorMerchantAppointmentId());
         appointmentDoctorAo.setOrderId(orderId);
         appointmentMqSender.push(appointmentDoctorAo);
+        // 订单从待审核 -> 待支付，记录到redis转换时间，用于判断订单是否过期
+        payRedisMapper.saveOrderWaitPayStartTime(orderId);
 
         // 通知前端耐心等待预约结果
         return BaseResponse.getResponseEntitySuccess(new AppointmentDoctorResponse(

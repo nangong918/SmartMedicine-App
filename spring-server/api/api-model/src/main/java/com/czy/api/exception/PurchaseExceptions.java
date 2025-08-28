@@ -19,7 +19,9 @@ public enum PurchaseExceptions implements ExceptionEnums {
     // 系统忙碌, 支付请求超时, 请稍后再试
     SYSTEM_BUSY_LOCK("PUR_10004", "系统忙碌, 支付请求超时, 请稍后再试"),
     // 订单不存在
-    ORDER_NOT_EXIST_LOCK("PUR_10005", "订单不存在"),
+    ORDER_NOT_EXIST("PUR_10005", "订单不存在"),
+    // 订单状态错误
+    ORDER_STATUS_ERROR("PUR_10006", "订单状态错误"),
     ;
 
     private final String code;

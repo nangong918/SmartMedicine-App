@@ -4,6 +4,7 @@ import com.api.mapper.medicine.mybatis.bo.AppointmentOrderStatusBoMapper;
 import com.api.mapper.purchase.mybatis.UserWalletMapper;
 import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
+import com.czy.api.constant.medicine.MedicineRedisKey;
 import com.czy.api.constant.purchase.PayResultEnum;
 import com.czy.api.domain.Do.purchase.UserWalletDo;
 import com.czy.api.domain.bo.medicine.AppointmentOrderStatusBo;
@@ -40,10 +41,19 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
         AppointmentOrderStatusBo orderStatusBo = appointmentOrderStatusBoMapper.fetchAndLockBoByOrderId(orderId);
         if (orderStatusBo == null || orderStatusBo.getOrderId() == null){
             // 订单不存在
-            throw new AppException(PurchaseExceptions.ORDER_NOT_EXIST_LOCK);
+            throw new AppException(PurchaseExceptions.ORDER_NOT_EXIST);
         }
 
-        // todo 检查订单是否过期 orderId -> 审核通过之后在redis加入审核的时间戳; 然后此处首先检查是否存在记录，不存在返回订单状态异常，存在则检查时间戳是否超时，超时则返回订单过期
+        // 检查订单是否过期 orderId -> 审核通过之后在redis加入审核的时间戳;
+        // 然后此处首先检查是否存在记录，不存在返回订单状态异常，存在则检查时间戳是否超时，超时则返回订单过期
+        Long orderWaitPayStartTime = payRedisMapper.getOrderWaitPayStartTime(orderId);
+        if (orderWaitPayStartTime == null){
+            throw new AppException(PurchaseExceptions.ORDER_STATUS_ERROR);
+        }
+        long gap = System.currentTimeMillis() - orderWaitPayStartTime;
+        if (gap > (MedicineRedisKey.Appointment.appointmentOrder_EXPIRE_TIME * 1000L)){
+            return PayResultEnum.ORDER_EXPIRED;
+        }
 
         // 检查订单
         // 是否是待支付
@@ -79,6 +89,7 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
         // 3.2失败: error1: 余额不足; error2: 支付受限
 
         /// 4.缓存更新
+        // 订单状态缓存：在medicine-service中更新
 
         return PayResultEnum.SUCCESS;
     }
