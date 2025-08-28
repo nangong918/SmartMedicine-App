@@ -2,6 +2,7 @@ package com.czy.api.domain.dto.mq;
 
 import com.czy.api.constant.UserOrderStatusEnum;
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public class AppointmentPayResultDto implements Serializable {
+    @Nullable
     private Long doctorMerchantAppointmentId;
     private Long userId;
     private Long orderId;

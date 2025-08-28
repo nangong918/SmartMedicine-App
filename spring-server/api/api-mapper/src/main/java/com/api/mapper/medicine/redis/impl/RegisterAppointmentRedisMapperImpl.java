@@ -19,11 +19,13 @@ import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -78,6 +80,52 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         return redissonService.getObjectFromJson(
                 keyBuilder,
                 AppointmentDoctorOrderListAo.class
+        );
+    }
+
+    @Nullable
+    @Override
+    public AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAo(
+            @NotNull Long userId,
+            @NotNull Long orderId
+    ){
+        String keyBuilder = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX +
+                userId + ":*:" +
+                orderId;
+        Iterable<String> keyIterable = redissonClient.getKeys().getKeysByPattern(keyBuilder);
+
+        // 检查是否有元素
+        Iterator<String> iterator = keyIterable.iterator();
+        if (!iterator.hasNext()) {
+            return null; // 没有找到对应的 key
+        }
+        String key = iterator.next();
+        if (!StringUtils.hasText(key)){
+            return null;
+        }
+
+        return redissonService.getObjectFromJson(
+                key,
+                AppointmentDoctorOrderListAo.class
+        );
+    }
+
+    @Override
+    public boolean updateAppointmentDoctorOrderListAoStatus(
+            @NotNull Long userId,
+            @NotNull Long orderId,
+            @NotNull Integer status
+    ){
+        AppointmentDoctorOrderListAo ao = getAppointmentDoctorOrderListAo(userId, orderId);
+        if (ao == null || ao.getListVo() == null) {
+            return false;
+        }
+        if (ao.getDoctorMerchantId() == null){
+            return false;
+        }
+        ao.getListVo().setCustomerStatus(status);
+        return saveAppointmentDoctorOrderListAo(
+                userId, ao.getDoctorMerchantId(), orderId, ao
         );
     }
 

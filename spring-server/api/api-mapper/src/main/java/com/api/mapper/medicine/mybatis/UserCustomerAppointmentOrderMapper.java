@@ -31,4 +31,5 @@ public interface UserCustomerAppointmentOrderMapper {
             @Param("userId") Long userId,
             @Param("doctorMerchantId") Long doctorMerchantId
     );
+    UserCustomerAppointmentDo getByOrderId(Long id);
 }

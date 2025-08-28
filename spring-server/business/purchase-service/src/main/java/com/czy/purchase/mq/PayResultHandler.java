@@ -45,7 +45,7 @@ public class PayResultHandler {
                     key = MqConstants.PayQueue.Routing.APPOINTMENT_PAY_DEATH_ROUTING
             )
     )
-    public void handlePayResultMessage(AppointmentOrderDto dto){
+    public void handlePayDeathMessage(AppointmentOrderDto dto){
         // 监听支付结果 (传递的是json不是对象, 无法不通过messageId中途修改message的数据)
         Long orderId = dto.getOrderId();
         // 未支付的情况

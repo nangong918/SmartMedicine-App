@@ -4,6 +4,7 @@ import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
+import com.czy.api.domain.dto.mq.AppointmentPayResultDto;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.utils.redisson.service.RedissonClusterLock;
@@ -60,4 +61,6 @@ public interface RegisterAppointmentService {
     // 获取user预约订单列表
     @NotNull List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType,
                                                                          @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException;
+
+    void handlePayResultMessage(@NotNull AppointmentPayResultDto dto);
 }

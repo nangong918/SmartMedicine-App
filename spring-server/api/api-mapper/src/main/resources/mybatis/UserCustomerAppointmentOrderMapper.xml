@@ -116,5 +116,11 @@
         where user_id = #{userId}
         and doctor_merchant_appointment_id = #{doctorMerchantId}
     </select>
+    <select id="getByOrderId" resultType="com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo">
+        select
+        <include refid="columns"/>
+        from <include refid="table"/>
+        where id = #{id}
+    </select>
 
 </mapper>

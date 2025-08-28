@@ -42,6 +42,7 @@ public class PayServiceImpl implements PayService {
             // 成功: 待支付 -> 待使用
             dto.setOrderStatusEnum(UserOrderStatusEnum.WAITING_USE);
             dto.setHandleTime(LocalDateTime.now());
+            // 将消息发送给medicine-service
             payMqSender.sendAppointmentPayResult(dto);
         }
 

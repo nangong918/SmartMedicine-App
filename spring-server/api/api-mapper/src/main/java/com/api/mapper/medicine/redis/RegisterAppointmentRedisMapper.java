@@ -41,6 +41,17 @@ public interface RegisterAppointmentRedisMapper {
             @NotNull Long orderId
     );
 
+    @Nullable AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAo(
+            @NotNull Long userId,
+            @NotNull Long orderId
+    );
+
+    boolean updateAppointmentDoctorOrderListAoStatus(
+            @NotNull Long userId,
+            @NotNull Long orderId,
+            @NotNull Integer status
+    );
+
     /// DoctorMerchantAppointmentDo
     @NotNull List<AppointmentDoctorOrderListAo> getAllAppointmentRecordList(@NotNull Long userId);
 
