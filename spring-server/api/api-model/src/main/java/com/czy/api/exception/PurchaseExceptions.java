@@ -22,6 +22,10 @@ public enum PurchaseExceptions implements ExceptionEnums {
     ORDER_NOT_EXIST("PUR_10005", "订单不存在"),
     // 订单状态错误
     ORDER_STATUS_ERROR("PUR_10006", "订单状态错误"),
+    // 充值金额有误
+    RECHARGE_AMOUNT_ERROR("PUR_10007", "充值金额有误"),
+    // 充值失败
+    RECHARGE_FAIL("PUR_10008", "充值失败"),
     ;
 
     private final String code;

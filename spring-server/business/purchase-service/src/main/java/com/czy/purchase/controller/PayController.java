@@ -70,6 +70,9 @@ public class PayController {
     @PostMapping("/test-recharge")
     public BaseResponse<RechargeMoneyResponse> testRecharge(@RequestBody RechargeMoneyRequest request) {
         RechargeEnum rechargeEnum = RechargeEnum.getByCode(request.getType());
+        if (rechargeEnum == null || rechargeEnum.equals(RechargeEnum.NULL)) {
+            return BaseResponse.LogBackError(PurchaseExceptions.RECHARGE_AMOUNT_ERROR);
+        }
         RechargeMoneyResponse response = payService.testRecharge(
                 request.getUserId(),
                 rechargeEnum

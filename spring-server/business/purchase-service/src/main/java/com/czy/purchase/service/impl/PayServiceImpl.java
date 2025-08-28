@@ -1,18 +1,23 @@
 package com.czy.purchase.service.impl;
 
+import com.api.mapper.purchase.mybatis.UserWalletMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.purchase.PayResultEnum;
 import com.czy.api.constant.purchase.RechargeEnum;
+import com.czy.api.domain.Do.purchase.UserWalletDo;
 import com.czy.api.domain.dto.http.response.RechargeMoneyResponse;
 import com.czy.api.domain.dto.mq.AppointmentPayResultDto;
+import com.czy.api.exception.PurchaseExceptions;
 import com.czy.purchase.mq.PayMqSender;
 import com.czy.purchase.service.PayService;
 import com.czy.purchase.service.transactional.PayTransactionalService;
+import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -26,6 +31,7 @@ public class PayServiceImpl implements PayService {
 
     private final PayMqSender payMqSender;
     private final PayTransactionalService payTransactionalService;
+    private final UserWalletMapper userWalletMapper;
 
     // 事务处理 + 回调medicine + 测试
     @Override
@@ -53,7 +59,29 @@ public class PayServiceImpl implements PayService {
     @NotNull
     @Override
     public RechargeMoneyResponse testRecharge(@NotNull Long userId, @NotNull RechargeEnum rechargeEnum){
-        // todo
-        return null;
+        // 先检查是否存在
+        UserWalletDo userWalletDo = userWalletMapper.getUserWalletByUserId(userId);
+        if (userWalletDo == null || userWalletDo.getId() == null){
+            userWalletDo = new UserWalletDo();
+            userWalletDo.setUserId(userId);
+            userWalletDo.setBalance(new BigDecimal(0));
+            userWalletMapper.insert(userWalletDo);
+        }
+
+        BigDecimal rechargeAmount = new BigDecimal(rechargeEnum.getAmount());
+        int updateCount = userWalletMapper.userRecharge(userId, rechargeAmount);
+        if (updateCount <= 0) {
+            throw new AppException(PurchaseExceptions.RECHARGE_FAIL);
+        }
+
+        // 查询余额
+        UserWalletDo currentUserWalletDo = userWalletMapper.getUserWalletByUserId(userId);
+
+        RechargeMoneyResponse response = new RechargeMoneyResponse();
+        response.setUserId(userId);
+        response.setRechargeAmount(rechargeAmount);
+        response.setBalance(currentUserWalletDo.getBalance());
+
+        return response;
     }
 }
