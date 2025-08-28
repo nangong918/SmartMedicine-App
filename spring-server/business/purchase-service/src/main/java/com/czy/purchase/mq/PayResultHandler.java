@@ -25,10 +25,11 @@ public class PayResultHandler {
     private final OrderService orderService;
     private final PayRedisMapper payRedisMapper;
 
+    // 支付到期队列
     @RabbitListener(
             bindings = @QueueBinding(
                     value = @Queue(
-                            name = MqConstants.PayQueue.APPOINTMENT_PAY_RESULT_QUEUE,
+                            name = MqConstants.PayQueue.APPOINTMENT_PAY_DEATH_QUEUE,
                             // 持久化队列
                             durable = "true",
                             // 排他队列
@@ -41,10 +42,10 @@ public class PayResultHandler {
                             type = ExchangeTypes.TOPIC,
                             durable = "true"  // 持久化交换机
                     ),
-                    key = MqConstants.PayQueue.Routing.APPOINTMENT_PAY_RESULT_ROUTING
+                    key = MqConstants.PayQueue.Routing.APPOINTMENT_PAY_DEATH_ROUTING
             )
     )
-    public void handlePayDeathMessage(AppointmentOrderDto dto){
+    public void handlePayResultMessage(AppointmentOrderDto dto){
         // 监听支付结果 (传递的是json不是对象, 无法不通过messageId中途修改message的数据)
         Long orderId = dto.getOrderId();
         // 未支付的情况

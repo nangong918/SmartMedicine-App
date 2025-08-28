@@ -53,8 +53,17 @@ public class PayController {
             BaseResponse.LogBackError(PurchaseExceptions.REPEAT_PAY_LOCK);
         }
 
+        // 支付订单
+        int payStatus = payService.payAppointmentOrder(
+                request.getUserId(),
+                request.getOrderId()
+        );
 
-        return null;
+        PayAppointmentResponse response = new PayAppointmentResponse();
+        response.setOrderId(request.getOrderId());
+        response.setPayResult(payStatus);
+
+        return BaseResponse.getResponseEntitySuccess(response);
     }
 
     // 充值测试

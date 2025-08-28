@@ -9,5 +9,8 @@ import org.jetbrains.annotations.NotNull;
  * @date 2025/8/27 11:33
  */
 public interface PayService {
+    // 事务处理 + 回调medicine + 测试
+    int payAppointmentOrder(Long userId, Long orderId);
+
     @NotNull RechargeMoneyResponse testRecharge(@NotNull Long userId, @NotNull RechargeEnum rechargeEnum);
 }

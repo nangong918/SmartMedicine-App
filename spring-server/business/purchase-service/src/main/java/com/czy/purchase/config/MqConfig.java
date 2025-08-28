@@ -61,7 +61,7 @@ public class MqConfig {
         return QueueBuilder.durable(MqConstants.PayQueue.APPOINTMENT_WAIT_PAY_QUEUE)
                 // 死信队列交换机不在在@RabbitListener创建
                 .deadLetterExchange(MqConstants.Exchange.PAY_RESULT_EXCHANGE)
-                .deadLetterRoutingKey(MqConstants.PayQueue.Routing.APPOINTMENT_PAY_RESULT_ROUTING)
+                .deadLetterRoutingKey(MqConstants.PayQueue.Routing.APPOINTMENT_PAY_DEATH_ROUTING)
                 .ttl(PurchaseConstant.MAX_WAIT_PAY_TIMEOUT)
                 .build();
     }
