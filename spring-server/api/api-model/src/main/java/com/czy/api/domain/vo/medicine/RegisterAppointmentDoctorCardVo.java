@@ -6,6 +6,7 @@ import lombok.Data;
 /**
  * @author 13225
  * @date 2025/8/18 14:40
+ * 挂号医生卡片视图
  */
 @Data
 public class RegisterAppointmentDoctorCardVo {

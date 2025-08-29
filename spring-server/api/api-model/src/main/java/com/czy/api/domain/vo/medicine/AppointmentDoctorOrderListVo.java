@@ -8,6 +8,7 @@ import java.io.Serializable;
 /**
  * @author 13225
  * @date 2025/8/21 10:49
+ * 预约医生订单列表视图
  */
 @Data
 public class AppointmentDoctorOrderListVo implements Serializable {

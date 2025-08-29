@@ -170,14 +170,11 @@ public class RegisterAppointmentController {
         }
 
         /// 生成缓存
-        // 在增加和修改的时候可以直接访问数据库, 因为是不可避免的; 但是在查询的时候就要尽量避免使用数据库而是缓存
-
-        // 在加入消息队列之前先生成订单id然后缓存到redis避免找不到。see: getAppointmentRecordList
+        // 缓存功能: 1. user查询订单状态 2. 后端检查是否重复预约
+        // 缓存数据结构: AppointmentDoctorOrderListAo
+        // 缓存存储方式: ZSet 有序集合
+        // 订单Id生成: 在加入消息队列之前先生成订单id然后缓存到Redis避免找不到; see: getAppointmentRecordList
         long orderId = IdUtil.getSnowflakeNextId();
-        // 加入redis缓存 用于前端等待结果的时候去主动查询订单状态
-        // 创建AppointmentDoctorOrderListVo；并且在订单为出来之前AppointmentDoctorOrderListVo就足够担任详情页
-        // 确定存储redis的数据和数据结构, 那就得看查询的时候是怎么查询的, 参数是怎么传递的? 参数是userId, 查询对象是 AppointmentDoctorOrderListAo
-        // redis的缓存对象不应该分开存储, 因为分开存储就面临问题: 1.需要新的dataId对象来专门存储Id 2.设计大量的RedisMapper 3. 缓存击穿之后还得单独调用Mybatis的接口, 然和Mybatis的查询基本是联合查询, 单独查询反而性能差
         registerAppointmentService.generateOrderCache(
                 request.getDoctorMerchantAppointmentId(),
                 request.getUserId(),

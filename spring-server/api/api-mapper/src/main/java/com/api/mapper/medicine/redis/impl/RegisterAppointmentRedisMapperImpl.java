@@ -34,6 +34,10 @@ import java.util.stream.Collectors;
 /**
  * @author 13225
  * @date 2025/8/21 13:43
+ * Redis的缓存对象不应该分开存储, 因为分开存储就面临问题:
+ *  1.需要新的dataId对象来专门存储Id
+ *  2.设计大量的RedisMapper
+ *  3. 缓存击穿之后还得单独调用Mybatis的接口, 然和Mybatis的查询基本是联合查询, 单独查询反而性能差
  */
 @Slf4j
 @RequiredArgsConstructor

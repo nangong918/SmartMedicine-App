@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * @author 13225
  * @date 2025/8/18 16:38
+ * 挂号预约页面
  */
 @Data
 public class RegisterAppointmentPageVo implements BaseBean {

@@ -334,8 +334,19 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     }
     
     // 获取list
-    /// 缓存
-    // 生成订单缓存
+    /// 缓存: 1. 审核期间前端直接访问的vo 2. 用于判断是否重复申请
+    /**
+     * 生成订单缓存 (订单缓存不在此处落库, 在事务中落库; 并且审核失败需改改为状态审核未通过, 缓存不删除)
+     * 缓存功能: 1. user查询订单状态 2. 后端检查是否重复预约
+     * 缓存数据结构: AppointmentDoctorOrderListAo
+     * 缓存存储方式: ZSet 有序集合
+     * 订单Id生成: 在加入消息队列之前先生成订单id然后缓存到Redis避免找不到; see: getAppointmentRecordList
+     * @param doctorMerchantAppointmentId   预约id
+     * @param userId                        用户id
+     * @param orderId                       订单id
+     * @param appointmentLock               预约锁
+     * @throws AppException                 预约异常
+     */
     @Override
     public void generateOrderCache(@NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId, @NotNull RedissonClusterLock appointmentLock) throws AppException {
         DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointment.getById(doctorMerchantAppointmentId);
