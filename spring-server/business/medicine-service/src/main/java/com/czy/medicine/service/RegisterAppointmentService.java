@@ -63,4 +63,12 @@ public interface RegisterAppointmentService {
                                                                          @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException;
 
     void handlePayResultMessage(@NotNull AppointmentPayResultDto dto);
+
+    /**
+     * 检查用户是否预约此商户并且拥有有效订单
+     * @param userId                        用户id
+     * @param doctorMerchantAppointmentId   商户预约id
+     * @return                              true:存在有效订单
+     */
+    boolean checkIsUserEffectiveAppointmentExist(@NotNull Long userId, @NotNull Long doctorMerchantAppointmentId);
 }

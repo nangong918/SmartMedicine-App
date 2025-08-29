@@ -387,7 +387,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         if (isCached){
             // 检查
             AppointmentDoctorOrderListAo cacheObject =
-                    registerAppointmentRedisMapper.getAppointmentDoctorOrderListAo(
+                    registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
                             userId, doctorMerchantAppointmentId, orderId
                     );
             log.info("[user: {}]申请商户[merchantId: {}][orderId: {}], 缓存订单成功, 等待后续处理. 缓存结果: {}",
@@ -486,7 +486,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         userCustomerAppointmentOrderMapper.update(order);
 
         // 更新缓存(如果缓存存在)
-        AppointmentDoctorOrderListAo ao = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAo(
+        AppointmentDoctorOrderListAo ao = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
                 dto.getUserId(),
                 // 此处商户id不能传递, 因为我确定在支付服务中, 只是对订单进行支付, 是不知道商户id的, 所以返回的是null; 并且不需要商户id也能查询到
 //                dto.getDoctorMerchantAppointmentId(),
@@ -500,5 +500,38 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             );
             log.warn("[处理支付结果][AppointmentDoctorOrderListAo缓存更新成功: {}]", updateResult);
         }
+    }
+
+    /**
+     * 检查用户是否预约此商户并且拥有有效订单
+     * @param userId                        用户id
+     * @param doctorMerchantAppointmentId   商户预约id
+     * @return                              true:存在有效订单
+     */
+    @Override
+    public boolean checkIsUserEffectiveAppointmentExist(@NotNull Long userId, @NotNull Long doctorMerchantAppointmentId) {
+        AppointmentDoctorOrderListAo orderListAo = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByMerchantId(
+                userId,
+                doctorMerchantAppointmentId
+        );
+        if (orderListAo == null){
+            return false;
+        }
+        int status = Optional.ofNullable(orderListAo.listVo)
+                .map(vo -> vo.customerStatus)
+                .orElse(UserOrderStatusEnum.NULL.getCode());
+
+        // isHaveEffective
+        return
+                // 审核中
+                UserOrderStatusEnum.WAITING_AUDIT.getCode() == status ||
+                // 待支付
+                UserOrderStatusEnum.WAITING_PAYMENT.getCode() == status ||
+                // 待使用
+                UserOrderStatusEnum.WAITING_USE.getCode() == status ||
+                // 退款中
+                UserOrderStatusEnum.REFUNDING.getCode() == status ||
+                // 退款失败
+                UserOrderStatusEnum.REFUND_FAILED.getCode() == status;
     }
 }

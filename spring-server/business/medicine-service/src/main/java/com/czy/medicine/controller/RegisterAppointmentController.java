@@ -20,6 +20,7 @@ import com.czy.api.domain.dto.http.response.GetUserAppointmentRecordResponse;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.api.exception.CommonExceptions;
+import com.czy.api.exception.MedicineExceptions;
 import com.czy.api.exception.PurchaseExceptions;
 import com.czy.medicine.mq.AppointmentMqSender;
 import com.czy.medicine.service.RegisterAppointmentService;
@@ -144,7 +145,16 @@ public class RegisterAppointmentController {
     public BaseResponse<AppointmentDoctorResponse> appointment
     (@Validated @RequestBody AppointmentDoctorRequest request){
 
-        /// 分布式锁（避免重复预约；避免死锁设置 5分钟自动锁消除）
+        /// 1. 行为幂等性:防止用户重复预约
+        // user:商户预约是否已经存在
+        boolean isExist = registerAppointmentService.checkIsUserEffectiveAppointmentExist(request.getUserId(), request.getDoctorMerchantAppointmentId());
+        if (isExist){
+            return BaseResponse.LogBackError(
+                    MedicineExceptions.APPOINTMENT_DOCTOR_ORDER_EXIST
+            );
+        }
+
+        // 分布式锁（避免重复预约；避免死锁设置 5分钟自动锁消除）
         String dataId = request.getDoctorMerchantAppointmentId().toString() + ":" + request.getUserId().toString();
         String mappingPath = MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
         RedissonClusterLock appointmentLock = new RedissonClusterLock(

@@ -154,7 +154,7 @@ public class RegisterAppointmentTests {
         ao.setListVo(vo);
 
         registerAppointmentRedisMapper.saveAppointmentDoctorOrderListAo(1L, 1L, 1L, ao);
-        AppointmentDoctorOrderListAo ao1 = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAo(1L, 1L, 1L);
+        AppointmentDoctorOrderListAo ao1 = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByOrderId(1L, 1L, 1L);
         log.info("{}", ao1);
     }
 

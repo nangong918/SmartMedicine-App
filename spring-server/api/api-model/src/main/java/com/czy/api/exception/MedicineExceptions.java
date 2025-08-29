@@ -20,6 +20,8 @@ public enum MedicineExceptions implements ExceptionEnums {
     WAITING_OPEN("MD_10004", "等待开放，在开放预约之后在进行预约"),
     // 用户经纬度位置不能为空
     LOCATION_NOT_NULL("MD_10005", "用户经纬度位置不能为空"),
+    // 预约单已存在
+    APPOINTMENT_DOCTOR_ORDER_EXIST("MD_10006", "预约单已存在"),
     ;
 
     private final String code;

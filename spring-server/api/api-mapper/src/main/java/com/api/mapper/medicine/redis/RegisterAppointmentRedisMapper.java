@@ -35,13 +35,19 @@ public interface RegisterAppointmentRedisMapper {
             (@NotNull Long userId, @NotNull Long doctorMerchantAppointmentId,
              @NotNull Long orderId, @NotNull AppointmentDoctorOrderListAo ao);
 
-    AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAo(
+    AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAoByOrderId(
             @NotNull Long userId,
             @NotNull Long doctorMerchantAppointmentId,
             @NotNull Long orderId
     );
 
-    @Nullable AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAo(
+    // 查询user-merchant
+    AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAoByMerchantId(
+            @NotNull Long userId,
+            @NotNull Long doctorMerchantAppointmentId
+    );
+
+    @Nullable AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAoByOrderId(
             @NotNull Long userId,
             @NotNull Long orderId
     );

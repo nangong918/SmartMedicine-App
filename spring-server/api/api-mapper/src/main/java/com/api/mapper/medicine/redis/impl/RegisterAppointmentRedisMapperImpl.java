@@ -68,7 +68,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
 
     // 全数据查询单个
     @Override
-    public AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAo(
+    public AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAoByOrderId(
             @NotNull Long userId,
             @NotNull Long doctorMerchantAppointmentId,
             @NotNull Long orderId
@@ -83,9 +83,37 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         );
     }
 
+    // 查询user-merchant
+    @Override
+    public AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAoByMerchantId(
+            @NotNull Long userId,
+            @NotNull Long doctorMerchantAppointmentId
+    ){
+        String keyBuilder = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX +
+                userId + ":" +
+                doctorMerchantAppointmentId + ":*";
+        Iterable<String> keyIterable = redissonClient.getKeys().getKeysByPattern(keyBuilder);
+
+        // 检查是否有元素
+        Iterator<String> iterator = keyIterable.iterator();
+        if (!iterator.hasNext()) {
+            return null; // 没有找到对应的 key
+        }
+        String key = iterator.next();
+        if (!StringUtils.hasText(key)){
+            return null;
+        }
+
+        return redissonService.getObjectFromJson(
+                key,
+                AppointmentDoctorOrderListAo.class
+        );
+    }
+
+    // 查询user-order
     @Nullable
     @Override
-    public AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAo(
+    public AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAoByOrderId(
             @NotNull Long userId,
             @NotNull Long orderId
     ){
@@ -116,7 +144,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
             @NotNull Long orderId,
             @NotNull Integer status
     ){
-        AppointmentDoctorOrderListAo ao = getAppointmentDoctorOrderListAo(userId, orderId);
+        AppointmentDoctorOrderListAo ao = getAppointmentDoctorOrderListAoByOrderId(userId, orderId);
         if (ao == null || ao.getListVo() == null) {
             return false;
         }
