@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.czy.baseutil.activity.BaseFragment
 import com.czy.smartmedicine.databinding.FragmentRecommendBinding
+import com.czy.smartmedicine.utils.BaseVmFragment
+import com.czy.smartmedicine.viewModel.fragment.home.RecommendVm
 
 
-class RecommendFragment : BaseFragment<FragmentRecommendBinding>(
-    RecommendFragment::class.java
+class RecommendFragment : BaseVmFragment<FragmentRecommendBinding, RecommendVm>(
+    RecommendFragment::class,
+    RecommendVm::class
 ) {
     override fun getBinding(): FragmentRecommendBinding {
         return FragmentRecommendBinding.inflate(layoutInflater)
@@ -31,5 +33,10 @@ class RecommendFragment : BaseFragment<FragmentRecommendBinding>(
         super.onViewCreated(view, savedInstanceState)
     }
 
+    //---------------------------ViewModel---------------------------
+
+    override fun initViewModel() {
+        super.initViewModel()
+    }
 
 }
