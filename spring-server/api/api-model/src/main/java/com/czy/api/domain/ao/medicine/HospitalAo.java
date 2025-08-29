@@ -25,8 +25,12 @@ public class HospitalAo implements Cloneable , Serializable {
     @Override
     public HospitalAo clone() throws CloneNotSupportedException {
         HospitalAo cloned = (HospitalAo) super.clone();
-        cloned.hospitalVo = hospitalVo.clone();
-        cloned.locationAo = locationAo.clone();
+        if (hospitalVo != null){
+            cloned.hospitalVo = hospitalVo.clone();
+        }
+        if (locationAo != null){
+            cloned.locationAo = locationAo.clone();
+        }
         return cloned;
     }
 }

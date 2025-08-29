@@ -22,7 +22,9 @@ public class DoctorVo implements Cloneable , Serializable {
     public DoctorVo clone() throws CloneNotSupportedException {
         DoctorVo cloned = (DoctorVo) super.clone();
         // 深克隆 doctorAvatarFileAo
-        cloned.doctorAvatarFileAo = this.doctorAvatarFileAo.clone();
+        if (this.doctorAvatarFileAo != null){
+            cloned.doctorAvatarFileAo = this.doctorAvatarFileAo.clone();
+        }
         return cloned;
     }
 }

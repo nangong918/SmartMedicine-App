@@ -64,7 +64,9 @@ public class AppointmentDoctorOrderListAo implements Cloneable, Serializable {
     @Override
     public AppointmentDoctorOrderListAo clone() throws CloneNotSupportedException{
         AppointmentDoctorOrderListAo ao = (AppointmentDoctorOrderListAo) super.clone();
-        ao.listVo = listVo.clone();
+        if (listVo != null){
+            ao.listVo = listVo.clone();
+        }
         return ao;
     }
 }
