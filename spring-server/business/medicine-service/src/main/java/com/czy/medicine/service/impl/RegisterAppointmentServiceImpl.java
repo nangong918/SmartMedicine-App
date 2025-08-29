@@ -7,6 +7,7 @@ import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
 import com.czy.api.constant.ErrorConstant;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
+import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.MedicineRedisKey;
 import com.czy.api.converter.domain.medicine.AppointmentDoctorOrderConverter;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
@@ -62,7 +63,7 @@ import java.util.stream.Collectors;
 @Service
 public class RegisterAppointmentServiceImpl implements RegisterAppointmentService {
 
-    private final DoctorMerchantAppointmentMapper doctorMerchantAppointment;
+    private final DoctorMerchantAppointmentMapper doctorMerchantAppointmentMapper;
     private final RegisterAppointmentDoctorCardConverter registerAppointmentDoctorCardConverter;
     private final DoctorMerchantBoMapper doctorMerchantBoMapper;
     private final OssService ossService;
@@ -98,7 +99,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
 
         // 获取可挂号的记录列表
         List<DoctorMerchantAppointmentDo> doctorRegisterAppointmentDos =
-                doctorMerchantAppointment.getDosByParam(
+                doctorMerchantAppointmentMapper.getDosByParam(
                     ao.registerLocation,
                     registerTime,
                     ao.registerDepartmentCode,
@@ -279,7 +280,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         for (LocalDateTime registerDate : registerDates) {
             // 获取可挂号的记录列表
             List<DoctorMerchantAppointmentDo> doctorRegisterAppointmentDos =
-                    doctorMerchantAppointment.getDosByParam(
+                    doctorMerchantAppointmentMapper.getDosByParam(
                         ao.registerLocation,
                         registerDate,
                         ao.registerDepartmentCode,
@@ -349,7 +350,8 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
      */
     @Override
     public void generateOrderCache(@NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId, @NotNull RedissonClusterLock appointmentLock) throws AppException {
-        DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointment.getById(doctorMerchantAppointmentId);
+        // 检查商户
+        DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointmentMapper.getById(doctorMerchantAppointmentId);
         if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null){
             // 异常则解开分布式锁
             redissonService.unlock(appointmentLock);
@@ -366,6 +368,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
         }
 
+        // 中间数据结构, 不能直接使用appointmentDoctorOrderConverter, 因为此时订单数据库还没数据, 无法查询对应的bo
         RegisterAppointmentDoctorCardVo vo = registerAppointmentDoctorCardConverter.boToVo(boList.get(0));
 
         LocalDateTime registerDate = LocalDateTime.now();
@@ -390,17 +393,25 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         ao.setOrderId(orderId);
         ao.setDoctorMerchantId(doctorMerchantAppointmentId);
 
-        // 缓存到redis
-        boolean isCached = registerAppointmentRedisMapper.saveAppointmentDoctorOrderListAo(
-                userId, doctorMerchantAppointmentId, orderId, ao
+        // 缓存到redis: 存储到user-orders ZSet
+        boolean isCached = registerAppointmentRedisMapper.saveSingleAppointmentDoctorOrderListAo(
+                userId,
+                ao
         );
-
         if (isCached){
-            // 检查
-            AppointmentDoctorOrderListAo cacheObject =
-                    registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
-                            userId, doctorMerchantAppointmentId, orderId
-                    );
+            // 检查, 获取根据时间排序的ZSet
+            List<AppointmentDoctorOrderListAo> aoList = registerAppointmentRedisMapper.getAppointmentRecordList(
+                    userId,
+                    AppointmentSortTypeEnum.TIME.getCode(),
+                    null,
+                    null
+            );
+            // 获取第一个, 因为时间升序, 第一个是最新的
+            AppointmentDoctorOrderListAo cacheObject = Optional.ofNullable(aoList)
+                        .filter(list -> !list.isEmpty())
+                        .map(a -> a.get(0))
+                        .orElse(null);
+
             log.info("[user: {}]申请商户[merchantId: {}][orderId: {}], 缓存订单成功, 等待后续处理. 缓存结果: {}",
                     userId, doctorMerchantAppointmentId, orderId, cacheObject);
         }

@@ -19,13 +19,11 @@ import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -47,71 +45,29 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
     private final RedissonService redissonService;
     private final RedissonClient redissonClient;
 
-    /**
-     * 缓存预约申请信息
-     * @param userId                        用户id
-     * @param doctorMerchantAppointmentId   医生商户预约id
-     * @param orderId                       订单id
-     * @param ao                            预约信息
-     * @return                              缓存结果
-     */
-    @Override
-    public boolean saveAppointmentDoctorOrderListAo
-    (@NotNull Long userId, @NotNull Long doctorMerchantAppointmentId,
-     @NotNull Long orderId, @NotNull AppointmentDoctorOrderListAo ao){
-        String keyBuilder = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX +
-                userId + ":" +
-                doctorMerchantAppointmentId + ":" +
-                orderId;
-        return redissonService.setObjectByJson(
-                keyBuilder,
-                ao,
-                MedicineRedisKey.Appointment.appointmentOrder_EXPIRE_TIME
-        );
-    }
-
-    // 全数据查询单个
-    @Override
-    public AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAoByOrderId(
-            @NotNull Long userId,
-            @NotNull Long doctorMerchantAppointmentId,
-            @NotNull Long orderId
-    ){
-        String keyBuilder = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX +
-                userId + ":" +
-                doctorMerchantAppointmentId + ":" +
-                orderId;
-        return redissonService.getObjectFromJson(
-                keyBuilder,
-                AppointmentDoctorOrderListAo.class
-        );
-    }
-
     // 查询user-merchant
     @Override
     public AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAoByMerchantId(
             @NotNull Long userId,
             @NotNull Long doctorMerchantAppointmentId
     ){
-        String keyBuilder = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX +
-                userId + ":" +
-                doctorMerchantAppointmentId + ":*";
-        Iterable<String> keyIterable = redissonClient.getKeys().getKeysByPattern(keyBuilder);
+        List<AppointmentDoctorOrderListAo> aoList = getAppointmentRecordList(
+                userId,
+                AppointmentSortTypeEnum.TIME.getCode(),
+                null, null
+        );
 
-        // 检查是否有元素
-        Iterator<String> iterator = keyIterable.iterator();
-        if (!iterator.hasNext()) {
-            return null; // 没有找到对应的 key
-        }
-        String key = iterator.next();
-        if (!StringUtils.hasText(key)){
+        if (CollectionUtils.isEmpty(aoList)){
             return null;
         }
 
-        return redissonService.getObjectFromJson(
-                key,
-                AppointmentDoctorOrderListAo.class
-        );
+        for (AppointmentDoctorOrderListAo ao : aoList){
+            if (doctorMerchantAppointmentId.equals(ao.getDoctorMerchantId())){
+                return ao;
+            }
+        }
+
+        return null;
     }
 
     // 查询user-order
@@ -121,25 +77,23 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
             @NotNull Long userId,
             @NotNull Long orderId
     ){
-        String keyBuilder = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX +
-                userId + ":*:" +
-                orderId;
-        Iterable<String> keyIterable = redissonClient.getKeys().getKeysByPattern(keyBuilder);
+        List<AppointmentDoctorOrderListAo> aoList = getAppointmentRecordList(
+                userId,
+                AppointmentSortTypeEnum.TIME.getCode(),
+                null, null
+        );
 
-        // 检查是否有元素
-        Iterator<String> iterator = keyIterable.iterator();
-        if (!iterator.hasNext()) {
-            return null; // 没有找到对应的 key
-        }
-        String key = iterator.next();
-        if (!StringUtils.hasText(key)){
+        if (CollectionUtils.isEmpty(aoList)){
             return null;
         }
 
-        return redissonService.getObjectFromJson(
-                key,
-                AppointmentDoctorOrderListAo.class
-        );
+        for (AppointmentDoctorOrderListAo ao : aoList){
+            if (orderId.equals(ao.getOrderId())){
+                return ao;
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -155,31 +109,41 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         if (ao.getDoctorMerchantId() == null){
             return false;
         }
-        ao.getListVo().setCustomerStatus(status);
-        return saveAppointmentDoctorOrderListAo(
-                userId, ao.getDoctorMerchantId(), orderId, ao
-        );
+
+        // 删除原先的记录
+        try {
+            // 创建需要插入的记录
+            AppointmentDoctorOrderListAo newAo = ao.clone();
+            newAo.getListVo().setCustomerStatus(status);
+            // 删除redis原先的数据
+            deleteSingleAppointmentDoctorOrderListAo(userId, ao);
+            // 保存新的数据
+            return saveSingleAppointmentDoctorOrderListAo(userId, newAo);
+        } catch (CloneNotSupportedException e) {
+            log.error("updateAppointmentDoctorOrderListAoStatus clone error", e);
+            return false;
+        } catch (Exception e) {
+            log.error("updateAppointmentDoctorOrderListAoStatus unexpected error", e);
+            return false;
+        }
     }
+
 
     @NotNull
     @Override
     public List<AppointmentDoctorOrderListAo> getAllAppointmentRecordList(@NotNull Long userId) {
-        String keyPattern = MedicineRedisKey.Appointment.appointmentOrder_KEY_PREFIX + userId + ":*:*";
-        RKeys rKeys = redissonClient.getKeys();
+        List<AppointmentDoctorOrderListAo> list = getAppointmentRecordList(
+                userId,
+                AppointmentSortTypeEnum.TIME.getCode(),
+                null, null
+        );
 
-        // 获取匹配的所有键
-        Iterable<String> keysIterable = rKeys.getKeysByPattern(keyPattern);
-        List<AppointmentDoctorOrderListAo> aoList = new ArrayList<>();
-
-        // 将 Iterable 转换为 List
-        for (String key : keysIterable) {
-            AppointmentDoctorOrderListAo ao = redissonService.getObjectFromJson(key, AppointmentDoctorOrderListAo.class);
-            if (ao != null) {
-                aoList.add(ao);
-            }
+        if (CollectionUtils.isEmpty(list)){
+            return new ArrayList<>();
         }
-
-        return aoList;
+        else {
+            return list;
+        }
     }
 
     @Override
@@ -223,7 +187,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
     public List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType, @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException {
         String keyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + sortType;
         // 不存在key返回null; null和empty是两个概念, 一个是缓存未命中, 一个是缓存命中，但结果为空
-        if (!redissonService.hasKey(keyBuilder)){
+        if (!redissonClient.getBucket(keyBuilder).isExists()){
             return null;
         }
 
@@ -342,22 +306,42 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
     ) {
         String keyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + sortType;
 
-        if (!redissonService.hasKey(keyBuilder)){
+        if (!redissonClient.getBucket(keyBuilder).isExists()){
             return;
         }
 
-        redissonService.removeSet(keyBuilder);
+        redissonClient.getKeys().delete(keyBuilder);
+    }
+
+    @Override
+    public void deleteAllAppointmentDoctorOrderListAo(
+            @NotNull Long userId
+    ){
+        String keyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":*";
+
+        // 获取匹配到的keys
+        RKeys keys = redissonClient.getKeys();
+        Iterable<String> keysIterable = keys.getKeysByPattern(keyBuilder);
+        // 遍历并删除匹配的 keys
+        for (String key : keysIterable) {
+            try {
+                redissonClient.getKeys().delete(key);
+            } catch (Exception e) {
+                log.error("Failed to delete key: {}", key, e);
+            }
+        }
     }
 
     /**
-     * 保存预约
+     * 保存预约list
      * @param userId                        用户id
      * @param aoList                        预约
      * @return                              是否成功
      * @throws AppException                 保存失败的异常
      */
     @Override
-    public boolean saveAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull List<AppointmentDoctorOrderListAo> aoList) throws AppException{
+    public boolean saveAppointmentDoctorOrderListAo
+    (@NotNull Long userId, @NotNull List<AppointmentDoctorOrderListAo> aoList) throws AppException{
         String timeKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.TIME.getCode();
         String distanceKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.DISTANCE.getCode();
         String costKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.COST.getCode();

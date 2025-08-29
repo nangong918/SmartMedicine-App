@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 预约医生订单列表视图
  */
 @Data
-public class AppointmentDoctorOrderListVo implements Serializable {
+public class AppointmentDoctorOrderListVo implements Cloneable, Serializable {
     /// 医生视图
     public DoctorVo doctorVo;
     /// 医院视图 + data
@@ -42,4 +42,12 @@ public class AppointmentDoctorOrderListVo implements Serializable {
      * @see com.czy.api.constant.UserOrderStatusEnum
      */
     public Integer customerStatus;
+
+    @Override
+    public AppointmentDoctorOrderListVo clone() throws CloneNotSupportedException {
+        AppointmentDoctorOrderListVo vo = (AppointmentDoctorOrderListVo) super.clone();
+        vo.doctorVo = doctorVo.clone();
+        vo.hospitalAo = hospitalAo.clone();
+        return vo;
+    }
 }

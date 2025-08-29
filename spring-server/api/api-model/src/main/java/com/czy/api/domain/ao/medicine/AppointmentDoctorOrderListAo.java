@@ -15,7 +15,7 @@ import java.util.Optional;
  * @date 2025/8/21 11:03
  */
 @Data
-public class AppointmentDoctorOrderListAo implements Serializable {
+public class AppointmentDoctorOrderListAo implements Cloneable, Serializable {
     public AppointmentDoctorOrderListVo listVo;
     public Long orderId;
     public Long doctorMerchantId;
@@ -59,5 +59,12 @@ public class AppointmentDoctorOrderListAo implements Serializable {
         } catch (Exception e){
             return null;
         }
+    }
+
+    @Override
+    public AppointmentDoctorOrderListAo clone() throws CloneNotSupportedException{
+        AppointmentDoctorOrderListAo ao = (AppointmentDoctorOrderListAo) super.clone();
+        ao.listVo = listVo.clone();
+        return ao;
     }
 }

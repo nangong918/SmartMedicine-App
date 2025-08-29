@@ -23,24 +23,6 @@ public interface RegisterAppointmentRedisMapper {
 
     /// AppointmentDoctorOrderListAo
 
-    /**
-     * 缓存预约申请信息
-     * @param userId                        用户id
-     * @param doctorMerchantAppointmentId   医生商户预约id
-     * @param orderId                       订单id
-     * @param ao                            预约信息
-     * @return                              缓存结果
-     */
-    boolean saveAppointmentDoctorOrderListAo
-            (@NotNull Long userId, @NotNull Long doctorMerchantAppointmentId,
-             @NotNull Long orderId, @NotNull AppointmentDoctorOrderListAo ao);
-
-    AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAoByOrderId(
-            @NotNull Long userId,
-            @NotNull Long doctorMerchantAppointmentId,
-            @NotNull Long orderId
-    );
-
     // 查询user-merchant
     AppointmentDoctorOrderListAo getAppointmentDoctorOrderListAoByMerchantId(
             @NotNull Long userId,
@@ -58,8 +40,27 @@ public interface RegisterAppointmentRedisMapper {
             @NotNull Integer status
     );
 
-    /// DoctorMerchantAppointmentDo
     @NotNull List<AppointmentDoctorOrderListAo> getAllAppointmentRecordList(@NotNull Long userId);
+
+    void deleteAppointmentDoctorOrderListAo(
+            @NotNull Long userId,
+            int sortType
+    );
+
+    void deleteAllAppointmentDoctorOrderListAo(
+            @NotNull Long userId
+    );
+
+    boolean saveAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull List<AppointmentDoctorOrderListAo> aoList) throws AppException;
+
+    // 单个存储, 在创建订单的时候存储
+    boolean saveSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo ao) throws AppException;
+
+    // 单个删除, 在取消订单和支付超时的时候存储
+    void deleteSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo ao);
+
+
+    /// DoctorMerchantAppointmentDo
 
     /**
      * 保存/更新商户信息
@@ -73,17 +74,4 @@ public interface RegisterAppointmentRedisMapper {
     boolean deleteDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
 
     @Nullable List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType, @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException;
-
-    void deleteAppointmentDoctorOrderListAo(
-            @NotNull Long userId,
-            int sortType
-    );
-
-    boolean saveAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull List<AppointmentDoctorOrderListAo> aoList) throws AppException;
-
-    // 单个存储, 在创建订单的时候存储
-    boolean saveSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo ao) throws AppException;
-
-    // 单个删除, 在取消订单和支付超时的时候存储
-    void deleteSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo ao);
 }
