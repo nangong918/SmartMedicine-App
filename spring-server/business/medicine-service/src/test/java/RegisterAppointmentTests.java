@@ -17,6 +17,8 @@ import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
 import com.czy.medicine.MedicineServiceApplication;
 import com.czy.medicine.service.RegisterAppointmentService;
 import date.DateUtils;
+import json.BaseBean;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.CollectionUtils;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -219,12 +222,47 @@ public class RegisterAppointmentTests {
         List<AppointmentDoctorOrderListAo> distanceAoList = registerAppointmentRedisMapper.getAppointmentRecordList(
                 userId, AppointmentSortTypeEnum.DISTANCE.getCode(), userLongitude, userLatitude
         );
+        ValidDataList time = new ValidDataList();
+        time.validDataList = obtainValidData(timeAoList, userLongitude, userLatitude);
+        ValidDataList cost = new ValidDataList();
+        cost.validDataList = obtainValidData(costAoList, userLongitude, userLatitude);
+        ValidDataList distance = new ValidDataList();
+        distance.validDataList = obtainValidData(distanceAoList, userLongitude, userLatitude);
         log.info("[结果检查][时间花费: {}]\n[TIME: {}]\n[COST: {}]\n[DISTANCE: {}]",
                 System.currentTimeMillis() - startTime,
-                timeAoList,
-                costAoList,
-                distanceAoList
+                time,
+                cost,
+                distance
         );
+    }
+
+    @Data
+    public static class ValidDataList implements BaseBean, Serializable {
+        public List<ValidData> validDataList = new ArrayList<>();
+    }
+
+    @Data
+    public static class ValidData implements BaseBean, Serializable {
+        public BigDecimal cost;
+        public LocalDateTime beginDate;
+        public Integer customerStatus;
+        public Double distance;
+    }
+
+    private List<ValidData> obtainValidData(List<AppointmentDoctorOrderListAo> list, double userLongitude, double userLatitude){
+        if (CollectionUtils.isEmpty(list)){
+            return new ArrayList<>();
+        }
+        List<ValidData> validDataList = new ArrayList<>();
+        for (AppointmentDoctorOrderListAo ao : list){
+            ValidData validData = new ValidData();
+            validData.cost = ao.getCost();
+            validData.beginDate = ao.getBeginDate();
+            validData.customerStatus = ao.getListVo().getCustomerStatus();
+            validData.distance = ao.getDistance(userLongitude, userLatitude);
+            validDataList.add(validData);
+        }
+        return validDataList;
     }
 
     private List<AppointmentDoctorOrderListAo> getAppointmentRecordList() {
