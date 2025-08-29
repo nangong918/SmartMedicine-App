@@ -85,8 +85,8 @@ public class HomeViewPagerBar extends ConstraintLayout {
         HomeViewPagerEnum homeViewPagerEnum = HomeViewPagerEnum.getHomeViewPagerEnum(currentPosition);
         binding.tvRecommend.setTextColor(
                 HomeViewPagerEnum.RECOMMEND.equals(homeViewPagerEnum) ?
-                        ContextCompat.getColor(getContext(), R.color.green_900) :
-                        ContextCompat.getColor(getContext(), R.color.green_600)
+                        ContextCompat.getColor(getContext(), R.color.green_1000) :
+                        ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.vBar1.setVisibility(
                 HomeViewPagerEnum.RECOMMEND.equals(homeViewPagerEnum) ?
@@ -96,8 +96,8 @@ public class HomeViewPagerBar extends ConstraintLayout {
 
         binding.tvPopular.setTextColor(
                 HomeViewPagerEnum.POPULAR.equals(homeViewPagerEnum) ?
-                        ContextCompat.getColor(getContext(), R.color.green_900) :
-                        ContextCompat.getColor(getContext(), R.color.green_600)
+                        ContextCompat.getColor(getContext(), R.color.green_1000) :
+                        ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.vBar2.setVisibility(
                 HomeViewPagerEnum.POPULAR.equals(homeViewPagerEnum) ?
@@ -107,8 +107,8 @@ public class HomeViewPagerBar extends ConstraintLayout {
 
         binding.tvFollow.setTextColor(
                 HomeViewPagerEnum.FOLLOW.equals(homeViewPagerEnum) ?
-                        ContextCompat.getColor(getContext(), R.color.green_900) :
-                        ContextCompat.getColor(getContext(), R.color.green_600)
+                        ContextCompat.getColor(getContext(), R.color.green_1000) :
+                        ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.vBar3.setVisibility(
                 HomeViewPagerEnum.FOLLOW.equals(homeViewPagerEnum) ?
@@ -118,8 +118,8 @@ public class HomeViewPagerBar extends ConstraintLayout {
 
         binding.tvFriendsCircle.setTextColor(
                 HomeViewPagerEnum.FRIEND_CIRCLE.equals(homeViewPagerEnum) ?
-                        ContextCompat.getColor(getContext(), R.color.green_900) :
-                        ContextCompat.getColor(getContext(), R.color.green_600)
+                        ContextCompat.getColor(getContext(), R.color.green_1000) :
+                        ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.vBar4.setVisibility(
                 HomeViewPagerEnum.FRIEND_CIRCLE.equals(homeViewPagerEnum) ?
