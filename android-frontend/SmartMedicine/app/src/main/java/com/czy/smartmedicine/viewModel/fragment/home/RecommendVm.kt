@@ -80,26 +80,22 @@ open class RecommendVm(
 
     // 获取推荐帖子
     private fun getRecommendPosts(context: Context, callback: SyncRequestCallback) {
-        val request = RecommendPostRequest()
-        request.userId = Optional.ofNullable(MainApplication.getInstance().userLoginInfoAo)
-            .map { ao: UserLoginInfoAo -> ao.userId }
-            .orElse(NettyConstants.ERROR_ID)
+        val request = RecommendPostRequest().apply {
+            userId = Optional.ofNullable(MainApplication.getInstance().userLoginInfoAo)
+                .map { ao: UserLoginInfoAo -> ao.userId }
+                .orElse(NettyConstants.ERROR_ID)
+        }
         apiRequestImpl.getRecommendPosts(
             request,
-            { response: BaseResponse<RecommendPostResponse?>? ->
-                ResponseTool.handleSyncResponseEx<RecommendPostResponse?>(
+            { response ->
+                ResponseTool.handleSyncResponseEx(
                     response,
                     context,
-                    callback
-                ) { response: BaseResponse<RecommendPostResponse>, context: Context, callback: SyncRequestCallback ->
-                    this.handleGetPostList(
-                        response,
-                        context,
-                        callback
-                    )
-                }
+                    callback,
+                    this::handleGetPostList
+                )
             },
-            { throwable: Throwable? ->
+            { throwable ->
                 callback.onThrowable(throwable)
                 ViewModelUtil.globalThrowableToast(throwable)
             }
@@ -108,26 +104,22 @@ open class RecommendVm(
 
     // 前后端联调测试接口：获取随机推荐帖子
     private fun testGetRandomPosts(context: Context, callback: SyncRequestCallback) {
-        val request = RecommendPostRequest()
-        request.userId = Optional.ofNullable(MainApplication.getInstance().userLoginInfoAo)
-            .map { ao: UserLoginInfoAo -> ao.userId }
-            .orElse(NettyConstants.ERROR_ID)
+        val request = RecommendPostRequest().apply {
+            userId = Optional.ofNullable(MainApplication.getInstance().userLoginInfoAo)
+                .map { ao: UserLoginInfoAo -> ao.userId }
+                .orElse(NettyConstants.ERROR_ID)
+        }
         apiRequestImpl.recommendTestGetRandomPost(
             request,
-            { response: BaseResponse<RecommendPostResponse?>? ->
-                ResponseTool.handleSyncResponseEx<RecommendPostResponse?>(
+            { response ->
+                ResponseTool.handleSyncResponseEx(
                     response,
                     context,
-                    callback
-                ) { response: BaseResponse<RecommendPostResponse>, context: Context, callback: SyncRequestCallback ->
-                    this.handleGetPostList(
-                        response,
-                        context,
-                        callback
-                    )
-                }
+                    callback,
+                    this::handleGetPostList
+                )
             },
-            { throwable: Throwable? ->
+            { throwable ->
                 callback.onThrowable(throwable)
                 ViewModelUtil.globalThrowableToast(throwable)
             }
