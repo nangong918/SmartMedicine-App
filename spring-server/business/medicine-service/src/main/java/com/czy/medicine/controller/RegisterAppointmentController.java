@@ -146,7 +146,7 @@ public class RegisterAppointmentController {
     (@Validated @RequestBody AppointmentDoctorRequest request){
 
         /// 1. 行为幂等性:防止用户重复预约
-        // user:商户预约是否已经存在
+        // user:商户预约是否已经存在 (会抛出redis连接失败的错误, 避免出现redis挂掉导致超卖问题)
         boolean isExist = registerAppointmentService.checkIsUserEffectiveAppointmentExist(request.getUserId(), request.getDoctorMerchantAppointmentId());
         if (isExist){
             return BaseResponse.LogBackError(

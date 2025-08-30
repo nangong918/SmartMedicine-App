@@ -26,6 +26,7 @@ import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
 import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.MedicineExceptions;
 import com.czy.medicine.mq.AppointmentMqSender;
 import com.czy.medicine.service.RegisterAppointmentService;
@@ -531,29 +532,39 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
      * @return                              true:存在有效订单
      */
     @Override
-    public boolean checkIsUserEffectiveAppointmentExist(@NotNull Long userId, @NotNull Long doctorMerchantAppointmentId) {
-        AppointmentDoctorOrderListAo orderListAo = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByMerchantId(
-                userId,
-                doctorMerchantAppointmentId
-        );
-        if (orderListAo == null){
-            return false;
-        }
-        int status = Optional.ofNullable(orderListAo.listVo)
-                .map(vo -> vo.customerStatus)
-                .orElse(UserOrderStatusEnum.NULL.getCode());
+    public boolean checkIsUserEffectiveAppointmentExist(@NotNull Long userId, @NotNull Long doctorMerchantAppointmentId) throws AppException{
+        try {
+             /*
+             因为Redis的过期时间是4天, 远远超过待支付的5分钟; 同时也与商户的商品存活时间相等, 所以默认Redis没有数据就未订购
+             当然要改为长久商品也很简单, 如果此处没有查询到数据就查询一下数据库就好了.
+             此项目预约不需要查询数据库, 只有购买需要查询数据库
+             */
+            AppointmentDoctorOrderListAo orderListAo = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByMerchantId(
+                    userId,
+                    doctorMerchantAppointmentId
+            );
+            if (orderListAo == null){
+                return false;
+            }
+            int status = Optional.ofNullable(orderListAo.listVo)
+                    .map(vo -> vo.customerStatus)
+                    .orElse(UserOrderStatusEnum.NULL.getCode());
 
-        // isHaveEffective
-        return
-                // 审核中
-                UserOrderStatusEnum.WAITING_AUDIT.getCode() == status ||
-                // 待支付
-                UserOrderStatusEnum.WAITING_PAYMENT.getCode() == status ||
-                // 待使用
-                UserOrderStatusEnum.WAITING_USE.getCode() == status ||
-                // 退款中
-                UserOrderStatusEnum.REFUNDING.getCode() == status ||
-                // 退款失败
-                UserOrderStatusEnum.REFUND_FAILED.getCode() == status;
+            // isHaveEffective
+            return
+                    // 审核中
+                    UserOrderStatusEnum.WAITING_AUDIT.getCode() == status ||
+                            // 待支付
+                            UserOrderStatusEnum.WAITING_PAYMENT.getCode() == status ||
+                            // 待使用
+                            UserOrderStatusEnum.WAITING_USE.getCode() == status ||
+                            // 退款中
+                            UserOrderStatusEnum.REFUNDING.getCode() == status ||
+                            // 退款失败
+                            UserOrderStatusEnum.REFUND_FAILED.getCode() == status;
+        } catch (Exception e){
+            log.error("[检查用户是否预约此商户并且拥有有效订单][redis异常]", e);
+            throw new AppException(CommonExceptions.SYSTEM_REDIS_ERROR);
+        }
     }
 }
