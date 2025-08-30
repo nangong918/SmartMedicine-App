@@ -4,7 +4,6 @@ import com.api.mapper.medicine.mybatis.bo.AppointmentOrderStatusBoMapper;
 import com.api.mapper.purchase.mybatis.UserWalletMapper;
 import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
-import com.czy.api.constant.medicine.MedicineRedisKey;
 import com.czy.api.constant.purchase.PayResultEnum;
 import com.czy.api.domain.Do.purchase.UserWalletDo;
 import com.czy.api.domain.bo.medicine.AppointmentOrderStatusBo;
@@ -44,14 +43,9 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
             throw new AppException(PurchaseExceptions.ORDER_NOT_EXIST);
         }
 
-        // 检查订单是否过期 orderId -> 审核通过之后在redis加入审核的时间戳;
-        // 然后此处首先检查是否存在记录，不存在返回订单状态异常，存在则检查时间戳是否超时，超时则返回订单过期
-        Long orderWaitPayStartTime = payRedisMapper.getOrderWaitPayStartTime(orderId);
-        if (orderWaitPayStartTime == null){
-            throw new AppException(PurchaseExceptions.ORDER_STATUS_ERROR);
-        }
-        long gap = System.currentTimeMillis() - orderWaitPayStartTime;
-        if (gap > (MedicineRedisKey.Appointment.appointmentOrder_EXPIRE_TIME * 1000L)){
+        // 检查订单是否过期 [乐观锁1]
+        boolean isOutTime = payRedisMapper.getAndDeleteOrderOutTimeStatus(userId, orderId);
+        if (isOutTime){
             return PayResultEnum.ORDER_EXPIRED;
         }
 
@@ -85,6 +79,13 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
         // 3.1成功: 更新订单状态
         // 成功之后标记, 死信队列中的消息被处理的时候就不会回调handleOutTimeOrder
         payRedisMapper.saveOrderWaitPayStatus(orderId);
+
+        // 再次检查是否订单超时 [乐观锁2]
+        boolean isOutTime2 = payRedisMapper.getAndDeleteOrderOutTimeStatus(userId, orderId);
+        if (isOutTime2){
+            // 抛出订单超时异常, 事务回滚
+            throw new AppException(PurchaseExceptions.ORDER_TIMEOUT);
+        }
 
         // 3.2失败: error1: 余额不足; error2: 支付受限
 

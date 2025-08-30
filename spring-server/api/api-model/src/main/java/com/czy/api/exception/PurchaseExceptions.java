@@ -26,6 +26,8 @@ public enum PurchaseExceptions implements ExceptionEnums {
     RECHARGE_AMOUNT_ERROR("PUR_10007", "充值金额有误"),
     // 充值失败
     RECHARGE_FAIL("PUR_10008", "充值失败"),
+    // 订单超时
+    ORDER_TIMEOUT("PUR_10009", "订单超时"),
     ;
 
     private final String code;

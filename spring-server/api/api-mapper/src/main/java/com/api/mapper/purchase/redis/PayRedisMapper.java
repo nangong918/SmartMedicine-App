@@ -12,7 +12,7 @@ public interface PayRedisMapper {
     // 获取是否已经支付, 如果已经支付还要删除redis key
     boolean getAndDeleteOrderWaitPayStatus(Long orderId);
 
-    void saveOrderWaitPayStartTime(Long orderId);
+    void saveOrderOutTimeStatus(Long orderId, Long userId, boolean isOutTime);
 
-    Long getOrderWaitPayStartTime(Long orderId);
+    boolean getAndDeleteOrderOutTimeStatus(Long orderId, Long userId);
 }

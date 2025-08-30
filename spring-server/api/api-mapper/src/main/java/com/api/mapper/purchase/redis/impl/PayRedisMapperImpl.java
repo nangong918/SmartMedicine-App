@@ -42,17 +42,17 @@ public class PayRedisMapperImpl implements PayRedisMapper {
     }
 
     @Override
-    public void saveOrderWaitPayStartTime(Long orderId){
-        String key = PurchaseRedisKey.Pay.WAIT_PAY_START_TIME_KEY_PREFIX + orderId;
-        RBucket<Long> bucket = redissonClient.getBucket(key);
-        bucket.set(System.currentTimeMillis());
-        bucket.expire(PurchaseRedisKey.Pay.WAIT_PAY_KEY_TIMEOUT, TimeUnit.SECONDS);
+    public void saveOrderOutTimeStatus(Long orderId, Long userId, boolean isOutTime){
+        String key = PurchaseRedisKey.Pay.IS_PAY_EXPIRED + orderId + ":" + userId;
+        RBucket<Boolean> bucket = redissonClient.getBucket(key);
+        bucket.set(isOutTime);
+        bucket.expire(PurchaseRedisKey.Pay.IS_PAY_EXPIRED_TIMEOUT, TimeUnit.SECONDS);
     }
 
     @Override
-    public Long getOrderWaitPayStartTime(Long orderId){
-        String key = PurchaseRedisKey.Pay.WAIT_PAY_START_TIME_KEY_PREFIX + orderId;
-        RBucket<Long> bucket = redissonClient.getBucket(key);
-        return bucket.get();
+    public boolean getAndDeleteOrderOutTimeStatus(Long orderId, Long userId){
+        String key = PurchaseRedisKey.Pay.IS_PAY_EXPIRED + orderId + ":" + userId;
+        RBucket<Boolean> bucket = redissonClient.getBucket(key);
+        return bucket.getAndDelete();
     }
 }
