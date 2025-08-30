@@ -28,6 +28,10 @@ public enum PurchaseExceptions implements ExceptionEnums {
     RECHARGE_FAIL("PUR_10008", "充值失败"),
     // 订单超时
     ORDER_TIMEOUT("PUR_10009", "订单超时"),
+    // 订单不存在
+    ORDER_EXPIRED("PUR_10010", "订单不存在"),
+    // 支付的订单不是待支付状态
+    ORDER_NOT_WAIT_PAY("PUR_10011", "支付的订单不是待支付状态"),
     ;
 
     private final String code;

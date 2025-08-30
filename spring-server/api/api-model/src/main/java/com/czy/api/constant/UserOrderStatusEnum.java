@@ -38,6 +38,19 @@ public enum UserOrderStatusEnum implements Serializable {
                 return value;
             }
         }
-        return NOT_ORDERED;
+        return NULL;
+    }
+
+    public static boolean isPaid(int code){
+        UserOrderStatusEnum statusEnum = getByCode(code);
+
+        return  // 待使用
+                statusEnum.equals(WAITING_USE) ||
+                // 待评价
+                statusEnum.equals(WAITING_EVALUATION) ||
+                // 退款中
+                statusEnum.equals(REFUNDING) ||
+                // 退款失败
+                statusEnum.equals(REFUND_FAILED);
     }
 }

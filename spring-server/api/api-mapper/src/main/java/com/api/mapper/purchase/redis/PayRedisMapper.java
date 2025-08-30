@@ -1,18 +1,22 @@
 package com.api.mapper.purchase.redis;
 
+import com.czy.api.domain.ao.purchase.OrderStatusAo;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  *@author 13225
  *@date 2025/8/26 17:22
  */
 public interface PayRedisMapper {
 
-    // 记录已经支付, 不再是待支付状态
-    void saveOrderWaitPayStatus(Long orderId);
+    void saveOrderStatus(@NotNull Long userId, @NotNull Long orderId,
+                         @NotNull Integer customerStatus, @Nullable Integer merchantStatus);
 
-    // 获取是否已经支付, 如果已经支付还要删除redis key
-    boolean getAndDeleteOrderWaitPayStatus(Long orderId);
+    void deleteOrderStatus(@NotNull Long userId, @NotNull Long orderId);
 
-    void saveOrderOutTimeStatus(Long orderId, Long userId, boolean isOutTime);
+    void updateOrderStatus(@NotNull Long userId, @NotNull Long orderId,
+                           @NotNull Integer customerStatus, @Nullable Integer merchantStatus);
 
-    boolean getAndDeleteOrderOutTimeStatus(Long orderId, Long userId);
+    OrderStatusAo getOrderStatus(@NotNull Long userId, @NotNull Long orderId);
 }

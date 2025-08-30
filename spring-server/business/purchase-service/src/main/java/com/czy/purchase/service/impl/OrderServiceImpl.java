@@ -1,5 +1,6 @@
 package com.czy.purchase.service.impl;
 
+import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.converter.domain.purchase.AppointmentPayConverter;
 import com.czy.api.domain.dto.mq.AppointmentOrderDto;
@@ -24,6 +25,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final PayMqSender payMqSender;
     private final AppointmentPayConverter appointmentPayConverter;
+    private final PayRedisMapper payRedisMapper;
 
 
     @Override
@@ -33,10 +35,19 @@ public class OrderServiceImpl implements OrderService {
 
         // 此处只将消息传递给Medicine-service, 是否传递给前端由订单服务自行判断
         try {
+            // 设置缓存
+            payRedisMapper.updateOrderStatus(
+                    dto.getUserId(), dto.getOrderId(),
+                    dto.getOrderStatusEnum().getCode(),
+                    null
+            );
+
             AppointmentPayResultDto resultDto = appointmentPayConverter.orderToPayResult(
                     dto,
                     LocalDateTime.now()
             );
+
+            // 发送给[订单-预约系统]
             payMqSender.sendAppointmentPayResult(resultDto);
             log.info("purchase通知medicine-service支付预约订单失败, 发送消息通知medicine-service, 消息内容: {}, " +
                     "\n 预约系统即将执行[归还数据库库存, 解除申请分布式锁, netty通知前端]", resultDto);

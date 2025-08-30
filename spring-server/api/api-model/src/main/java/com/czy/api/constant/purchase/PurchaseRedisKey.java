@@ -13,5 +13,8 @@ public interface PurchaseRedisKey {
         long IS_PAY_EXPIRED_TIMEOUT = 24 * 60 * 60L;
         // 是否过期
         String IS_PAY_EXPIRED = ID + "isExpired:";
+        String ORDER_STATUS_EXPIRED = ID + "orderStatus:";
+        // 订单状态4天过期
+        long ORDER_STATUS_KEY_TIMEOUT = 4 * 24 * 60 * 60L;
     }
 }

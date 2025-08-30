@@ -6,6 +6,7 @@ import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.purchase.PayResultEnum;
 import com.czy.api.domain.Do.purchase.UserWalletDo;
+import com.czy.api.domain.ao.purchase.OrderStatusAo;
 import com.czy.api.domain.bo.medicine.AppointmentOrderStatusBo;
 import com.czy.api.exception.PurchaseExceptions;
 import com.czy.purchase.service.transactional.PayTransactionalService;
@@ -44,9 +45,18 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
         }
 
         // 检查订单是否过期 [乐观锁1]
-        boolean isOutTime = payRedisMapper.getAndDeleteOrderOutTimeStatus(userId, orderId);
-        if (isOutTime){
+        OrderStatusAo orderStatusAo = payRedisMapper.getOrderStatus(userId, orderId);
+        if (orderStatusAo == null){
+            throw new AppException(PurchaseExceptions.ORDER_EXPIRED);
+        }
+        if (orderStatusAo.getCustomerStatus() == UserOrderStatusEnum.CANCELED.getCode()){
+            // 订单超时异常,
             return PayResultEnum.ORDER_EXPIRED;
+        }
+        if (orderStatusAo.getCustomerStatus() != UserOrderStatusEnum.WAITING_PAYMENT.getCode()){
+            // 订单状态错误
+            log.warn("订单状态错误: {}", orderStatusAo.getCustomerStatus());
+            throw new AppException(PurchaseExceptions.ORDER_NOT_WAIT_PAY);
         }
 
         // 检查订单
@@ -76,18 +86,28 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
         }
 
         /// 3.状态检查:
-        // 3.1成功: 更新订单状态
-        // 成功之后标记, 死信队列中的消息被处理的时候就不会回调handleOutTimeOrder
-        payRedisMapper.saveOrderWaitPayStatus(orderId);
-
-        // 再次检查是否订单超时 [乐观锁2]
-        boolean isOutTime2 = payRedisMapper.getAndDeleteOrderOutTimeStatus(userId, orderId);
-        if (isOutTime2){
+        // 3.1 再次检查是否订单超时 [乐观锁2]
+        OrderStatusAo orderStatusAo2 = payRedisMapper.getOrderStatus(userId, orderId);
+        if (orderStatusAo2 == null){
+            throw new AppException(PurchaseExceptions.ORDER_EXPIRED);
+        }
+        if (orderStatusAo2.getCustomerStatus() == UserOrderStatusEnum.CANCELED.getCode()){
             // 抛出订单超时异常, 事务回滚
             throw new AppException(PurchaseExceptions.ORDER_TIMEOUT);
         }
+        if (orderStatusAo2.getCustomerStatus() != UserOrderStatusEnum.WAITING_PAYMENT.getCode()){
+            // 订单状态错误
+            log.warn("订单状态错误: {}", orderStatusAo.getCustomerStatus());
+            throw new AppException(PurchaseExceptions.ORDER_NOT_WAIT_PAY);
+        }
 
-        // 3.2失败: error1: 余额不足; error2: 支付受限
+        // 3.2成功: 更新订单状态
+        // 成功之后标记, 死信队列中的消息被处理的时候就不会回调handleOutTimeOrder
+        payRedisMapper.updateOrderStatus(
+                userId, orderId,
+                UserOrderStatusEnum.WAITING_USE.getCode(),
+                null
+        );
 
         /// 4.缓存更新
         // 订单状态缓存：在medicine-service中更新

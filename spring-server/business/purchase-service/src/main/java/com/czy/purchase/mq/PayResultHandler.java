@@ -2,6 +2,8 @@ package com.czy.purchase.mq;
 
 import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.MqConstants;
+import com.czy.api.constant.UserOrderStatusEnum;
+import com.czy.api.domain.ao.purchase.OrderStatusAo;
 import com.czy.api.domain.dto.mq.AppointmentOrderDto;
 import com.czy.purchase.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -48,9 +50,15 @@ public class PayResultHandler {
     )
     public void handlePayDeathMessage(AppointmentOrderDto dto){
         // 监听支付结果 (传递的是json不是对象, 无法不通过messageId中途修改message的数据)
+        Long userId = dto.getUserId();
         Long orderId = dto.getOrderId();
+        OrderStatusAo ao = payRedisMapper.getOrderStatus(userId, orderId);
+
+        // 检查是否支付
+        boolean isPaid = UserOrderStatusEnum.isPaid(ao.getCustomerStatus());
+
         // 未支付的情况
-        if (!payRedisMapper.getAndDeleteOrderWaitPayStatus(orderId)){
+        if (!isPaid){
             log.info("收到支付超时付消息：user: {} , 商户: {}, 订单: {}, 订单状态: {}, 订单有效时间: {}, 收到时间间隔: {}",
                     dto.getUserId(), dto.getDoctorMerchantAppointmentId(),
                     dto.getOrderId(),

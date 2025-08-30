@@ -2,8 +2,11 @@ package com.api.mapper.purchase.redis.impl;
 
 import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.purchase.PurchaseRedisKey;
+import com.czy.api.domain.ao.purchase.OrderStatusAo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
@@ -21,38 +24,42 @@ public class PayRedisMapperImpl implements PayRedisMapper {
 
     private final RedissonClient redissonClient;
 
-    // 记录订单待支付状态
     @Override
-    public void saveOrderWaitPayStatus(Long orderId){
-        String key = PurchaseRedisKey.Pay.IS_WAIT_PAY_KEY_PREFIX + orderId;
-        RBucket<Boolean> bucket = redissonClient.getBucket(key);
-        bucket.set(true);
+    public void saveOrderStatus(@NotNull Long userId, @NotNull Long orderId,
+                                @NotNull Integer customerStatus, @Nullable Integer merchantStatus) {
+        String key = PurchaseRedisKey.Pay.ORDER_STATUS_EXPIRED + orderId + ":" + userId;
+
+        OrderStatusAo ao = new OrderStatusAo();
+        ao.setUserId(userId);
+        ao.setOrderId(orderId);
+        ao.setCustomerStatus(customerStatus);
+        ao.setMerchantStatus(merchantStatus);
+        redissonClient.getBucket(key).set(ao);
+
+        RBucket<OrderStatusAo> bucket = redissonClient.getBucket(key);
+        bucket.expire(PurchaseRedisKey.Pay.ORDER_STATUS_KEY_TIMEOUT, TimeUnit.MINUTES);
     }
 
-    // 获取订单是否还是待支付状态
     @Override
-    public boolean getAndDeleteOrderWaitPayStatus(Long orderId){
-        String key = PurchaseRedisKey.Pay.IS_WAIT_PAY_KEY_PREFIX + orderId;
-        RBucket<Boolean> bucket = redissonClient.getBucket(key);
-        boolean exists = bucket.isExists() && bucket.get();
+    public void deleteOrderStatus(@NotNull Long userId, @NotNull Long orderId) {
+        String key = PurchaseRedisKey.Pay.ORDER_STATUS_EXPIRED + orderId + ":" + userId;
+        redissonClient.getBucket(key).delete();
+    }
+
+    @Override
+    public void updateOrderStatus(@NotNull Long userId, @NotNull Long orderId,
+                                  @NotNull Integer customerStatus, @Nullable Integer merchantStatus){
+        deleteOrderStatus(userId, orderId);
+        saveOrderStatus(userId, orderId, customerStatus, merchantStatus);
+    }
+
+    @Override
+    public OrderStatusAo getOrderStatus(@NotNull Long userId, @NotNull Long orderId) {
+        String key = PurchaseRedisKey.Pay.ORDER_STATUS_EXPIRED + orderId + ":" + userId;
+        RBucket<OrderStatusAo> bucket = redissonClient.getBucket(key);
         if (bucket.isExists()) {
-            bucket.delete();
+            return bucket.get();
         }
-        return exists;
-    }
-
-    @Override
-    public void saveOrderOutTimeStatus(Long orderId, Long userId, boolean isOutTime){
-        String key = PurchaseRedisKey.Pay.IS_PAY_EXPIRED + orderId + ":" + userId;
-        RBucket<Boolean> bucket = redissonClient.getBucket(key);
-        bucket.set(isOutTime);
-        bucket.expire(PurchaseRedisKey.Pay.IS_PAY_EXPIRED_TIMEOUT, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public boolean getAndDeleteOrderOutTimeStatus(Long orderId, Long userId){
-        String key = PurchaseRedisKey.Pay.IS_PAY_EXPIRED + orderId + ":" + userId;
-        RBucket<Boolean> bucket = redissonClient.getBucket(key);
-        return bucket.getAndDelete();
+        return null;
     }
 }
