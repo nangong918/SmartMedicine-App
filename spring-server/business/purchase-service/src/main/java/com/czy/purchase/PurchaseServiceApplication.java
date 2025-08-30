@@ -22,6 +22,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @SpringBootApplication(scanBasePackages = {
         // 扫描api模块
         "com.czy.api",
+        "com.api.mapper",
         // 扫描本模块
         "com.czy.purchase",
         // 扫描工具类

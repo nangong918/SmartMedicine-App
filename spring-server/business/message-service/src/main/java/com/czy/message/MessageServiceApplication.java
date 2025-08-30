@@ -34,6 +34,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
         scanBasePackages = {
                 // 扫描api模块
                 "com.czy.api",
+                "com.api.mapper",
                 // 扫描本模块
                 "com.czy.message",
                 // 扫描工具类

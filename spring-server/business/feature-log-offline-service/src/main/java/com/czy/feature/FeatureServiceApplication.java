@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
         "com.utils.minio.mapper",
         // api.mapper
         "com.api.mapper.user.mybatis",
+        "com.api.mapper.post.mybatis",
         "com.api.mapper.feature.mybatis",
 })
 @EnableConfigurationProperties(DebugConfig.class)
