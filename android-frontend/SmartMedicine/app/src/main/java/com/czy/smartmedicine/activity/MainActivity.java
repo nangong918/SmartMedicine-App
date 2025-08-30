@@ -108,10 +108,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     }
 
-    public void setMainTopBar(@NonNull MainTopBarVo mainTopBarVo) {
-        binding.mainTopBar.setView(mainTopBarVo);
-    }
-
     @Override
     protected void setListener() {
         super.setListener();

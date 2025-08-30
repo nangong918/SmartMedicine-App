@@ -1,10 +1,12 @@
 package com.czy.smartmedicine.fragment.home.children
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.czy.appcore.network.api.handle.SyncRequestCallback
+import com.czy.baseutil.network.networkLoad.NetworkLoadUtils
 import com.czy.smartmedicine.databinding.FragmentRecommendBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
 import com.czy.smartmedicine.viewModel.fragment.home.RecommendVm
@@ -42,13 +44,19 @@ class RecommendFragment : BaseVmFragment<FragmentRecommendBinding, RecommendVm>(
         vm.initPostClickManager(this)
 
         // 初始化网络请求
+        NetworkLoadUtils.showDialog(requireContext())
         vm.initialNetworkRequest(requireContext(), object : SyncRequestCallback {
             override fun onThrowable(throwable: Throwable) {
-                // 处理异常
+                Log.e(TAG, "onThrowable: $throwable")
+                binding.progressBar.visibility = View.GONE
+                binding.lyMain.isRefreshing = false
+                NetworkLoadUtils.dismissDialog()
             }
 
             override fun onAllRequestSuccess() {
+                binding.progressBar.visibility = View.GONE
                 binding.lyMain.isRefreshing = false
+                NetworkLoadUtils.dismissDialog()
             }
         })
     }

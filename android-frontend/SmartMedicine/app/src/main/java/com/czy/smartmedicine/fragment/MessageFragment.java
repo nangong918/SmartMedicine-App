@@ -10,11 +10,8 @@ import androidx.annotation.Nullable;
 
 import com.czy.baseutil.activity.BaseFragment;
 import com.czy.baseutil.viewModel.ViewModelUtil;
-import com.czy.domain.constant.SelectItemEnum;
 import com.czy.domain.fragmentActivityAo.MessageVo;
-import com.czy.domain.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.databinding.FragmentMessageBinding;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.fragment.MessageVm;
@@ -72,7 +69,6 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.MESSAGE));
 
         // 此处recyclerView才创建
         vm.initRecyclerView(

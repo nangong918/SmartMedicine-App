@@ -54,7 +54,6 @@ public class SearchFragment extends BaseFragment<FragmentSearchBinding> {
     private final String[] mStrs = {"aaa", "bbb", "ccc", "abcdefg"};
     @Override
     protected void initView() {
-        ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.SEARCH));
         binding.listView.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, mStrs));
         binding.listView.setTextFilterEnabled(true);
     }

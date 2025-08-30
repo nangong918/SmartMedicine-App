@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="3dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
@@ -23,8 +25,8 @@
             android:layout_marginEnd="5dp"
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:riv_corner_radius="20dp"
+            android:layout_height="wrap_content"
+            app:riv_corner_radius="10dp"
             android:src="@mipmap/logo"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout

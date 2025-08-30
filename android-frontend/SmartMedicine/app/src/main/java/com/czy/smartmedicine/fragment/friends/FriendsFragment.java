@@ -15,16 +15,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.czy.appview.view.viewPager.ViewPagerConstant;
 import com.czy.baseutil.activity.BaseFragment;
 import com.czy.baseutil.viewModel.ViewModelUtil;
-import com.czy.appview.view.viewPager.ViewPagerConstant;
 import com.czy.domain.ao.intent.NewUserActivityIntentAo;
 import com.czy.domain.constant.SelectItemEnum;
 import com.czy.domain.constant.newUserGroup.UserGroupEnum;
 import com.czy.domain.fragmentActivityAo.FriendsVo;
 import com.czy.domain.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.NewUserActivity;
 import com.czy.smartmedicine.activity.search.SearchUserActivity;
 import com.czy.smartmedicine.databinding.FragmentFriendsBinding;
@@ -134,7 +133,6 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
             Intent intent = new Intent(requireActivity(), SearchUserActivity.class);
             searchUserLauncher.launch(intent);
         };
-        ((MainActivity)requireActivity()).setMainTopBar(mainTopBarVo);
 
         binding.vpb.setText(new String[]{getString(com.czy.appview.R.string.friends), getString(com.czy.appview.R.string.groups)});
 

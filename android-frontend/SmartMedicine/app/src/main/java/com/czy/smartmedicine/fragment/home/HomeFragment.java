@@ -9,34 +9,30 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.czy.appcore.network.api.handle.SyncRequestCallback;
-import com.czy.baseutil.activity.BaseFragment;
-import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
-import com.czy.baseutil.viewModel.ViewModelUtil;
-import com.czy.domain.constant.SelectItemEnum;
 import com.czy.domain.fragmentActivityAo.HomeVo;
-import com.czy.domain.vo.view.mainTop.MainTopBarVo;
-import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+import com.czy.smartmedicine.utils.BaseVmFragment;
 import com.czy.smartmedicine.viewModel.fragment.home.HomeVm;
+
+import kotlin.jvm.JvmClassMappingKt;
 
 
 /**
  * @author 13225
  */
-public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
+public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
 
 
     public HomeFragment() {
-        super(HomeFragment.class);
+        super(JvmClassMappingKt.getKotlinClass(HomeFragment.class), JvmClassMappingKt.getKotlinClass(HomeVm.class));
     }
 
+    @NonNull
     @Override
-    public FragmentHomeBinding getBinding() {
+    public FragmentHomeBinding initBinding() {
         return FragmentHomeBinding.inflate(getLayoutInflater());
+
     }
 
     @Override
@@ -45,9 +41,6 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
         // 初始化viewModel
         initViewModel();
-
-        // 初始化点击管理器
-        vm.initPostClickManager(this);
     }
 
     @Override
@@ -62,23 +55,6 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.HOME));
-
-        // 初始化RecyclerView
-        vm.initRecyclerView(binding.rclvRecommend, requireActivity());
-
-        // 初始化网络请求；网络请求之后会触发回调，回调会调用rclAdapter，所以在initRecyclerView之后初始化请求
-        vm.initialNetworkRequest(requireContext(), new SyncRequestCallback() {
-            @Override
-            public void onThrowable(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onAllRequestSuccess() {
-                binding.lyMain.setRefreshing(false);
-            }
-        });
     }
 
     @Override
@@ -90,22 +66,6 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
             startActivity(intent);
         });
 
-        binding.lyMain.setOnRefreshListener(() -> {
-            NetworkLoadUtils.showDialog(requireContext());
-            vm.getRecommendPostsP(requireContext(), new SyncRequestCallback() {
-                @Override
-                public void onThrowable(Throwable throwable) {
-                    NetworkLoadUtils.dismissDialog();
-                }
-
-                @Override
-                public void onAllRequestSuccess() {
-                    NetworkLoadUtils.dismissDialog();
-                    binding.lyMain.setRefreshing(false);
-                }
-            });
-        });
-
         binding.homeTopBar.setOnViewPagerBarClickListener(position -> {
 
         });
@@ -113,17 +73,12 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
     //---------------------------viewModel---------------------------
 
-    private HomeVm vm;
-
-    private void initViewModel(){
-        // 创建viewModel
-        ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, HomeVm.class);
-
+    @Override
+    protected void initViewModel() {
+        super.initViewModel();
         // 初始化viewModel
         vm.init(new HomeVo());
     }
-
 
 
     //-----------------------intent-----------------------

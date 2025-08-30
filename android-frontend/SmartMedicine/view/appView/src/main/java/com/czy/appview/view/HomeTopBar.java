@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.czy.appview.databinding.ViewMainTopBarBinding;
-import com.czy.domain.vo.view.mainTop.MainTopBarVo;
 
 /**
  * @author 13225
@@ -54,10 +53,6 @@ public class HomeTopBar extends ConstraintLayout {
 
     public ImageView getImageView(){
         return binding.cImgvFace;
-    }
-
-    public void setView(MainTopBarVo mainTopBarVo){
-
     }
 
     public void setImageClickListener(OnClickListener listener){
