@@ -332,6 +332,8 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         orderDto.setOrderStatusEnum(UserOrderStatusEnum.WAITING_PAYMENT);
         orderDto.setEffectiveTime(MedicineRedisKey.Appointment.appointmentOrder_EXPIRE_TIME);
 
+        /// 订单有效时限: 发送
+        // 发送待支付消息队列: APPOINTMENT_WAIT_PAY_ROUTING
         appointmentMqSender.push(orderDto);
     }
     

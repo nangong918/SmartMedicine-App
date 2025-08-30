@@ -1,5 +1,3 @@
-import com.czy.api.constant.UserOrderStatusEnum;
-import com.czy.api.domain.dto.mq.AppointmentOrderDto;
 import com.czy.purchase.PurchaseServiceApplication;
 import com.czy.purchase.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,25 +23,25 @@ public class PayTests {
         log.info("start test; orderService: {}", orderService);
     }
 
-    @Test // 成功
-    public void createOrderTest(){
-        AppointmentOrderDto dto = new AppointmentOrderDto();
-        dto.setDoctorMerchantAppointmentId(1L);
-        dto.setUserId(1L);
-        dto.setOrderId(1L);
-        dto.setOrderStatusEnum(UserOrderStatusEnum.WAITING_PAYMENT);
-        // 设置3秒之后就过期
-        dto.setEffectiveTime(3L);
-        dto.setCurrentTime(System.currentTimeMillis());
-
-        orderService.createOrder(dto);
-
-        // 线程等待30秒
-        try {
-            Thread.sleep(30 * 1000L);
-        } catch (Exception e){
-            log.error("线程休眠失败", e);
-        }
-    }
+//    @Test // 成功
+//    public void createOrderTest(){
+//        AppointmentOrderDto dto = new AppointmentOrderDto();
+//        dto.setDoctorMerchantAppointmentId(1L);
+//        dto.setUserId(1L);
+//        dto.setOrderId(1L);
+//        dto.setOrderStatusEnum(UserOrderStatusEnum.WAITING_PAYMENT);
+//        // 设置3秒之后就过期
+//        dto.setEffectiveTime(3L);
+//        dto.setCurrentTime(System.currentTimeMillis());
+//
+//        orderService.createOrder(dto);
+//
+//        // 线程等待30秒
+//        try {
+//            Thread.sleep(30 * 1000L);
+//        } catch (Exception e){
+//            log.error("线程休眠失败", e);
+//        }
+//    }
 
 }

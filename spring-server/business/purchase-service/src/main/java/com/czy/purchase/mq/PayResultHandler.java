@@ -25,6 +25,7 @@ public class PayResultHandler {
     private final OrderService orderService;
     private final PayRedisMapper payRedisMapper;
 
+    /// 订单有效时限: 死信
     // 支付到期队列
     @RabbitListener(
             bindings = @QueueBinding(

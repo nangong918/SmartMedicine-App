@@ -41,6 +41,7 @@ public class MqConfig {
         return template;
     }
 
+    /// 订单有效时限: 延迟队列
     /**
      * 此处注释不删除:
      * 延迟队列必须用@Bean创建, 不能用@RabbitListener创建
