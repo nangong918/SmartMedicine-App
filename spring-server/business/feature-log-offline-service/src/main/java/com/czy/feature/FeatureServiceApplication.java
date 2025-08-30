@@ -12,7 +12,16 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  * @author 13225
  * @date 2025/1/10 18:25
  */
-@MapperScan({"com.czy.feature.mapper", "com.api.mapper"})
+// mybatis (注意mybatis一定要特别限定区间，因为这个傻逼会把其他的接口也视为它的接口，明明都没用@Mapper但是这个傻逼还是会绝对接口是它的)
+@MapperScan({
+        // this
+        "com.czy.feature.mapper",
+        // minio
+        "com.utils.minio.mapper",
+        // api.mapper
+        "com.api.mapper.user.mybatis",
+        "com.api.mapper.feature.mybatis",
+})
 @EnableConfigurationProperties(DebugConfig.class)
 @SpringBootApplication(
         // 扫描指定包下的类

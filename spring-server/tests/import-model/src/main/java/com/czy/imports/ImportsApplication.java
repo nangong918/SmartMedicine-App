@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  * @author 13225
  * @date 2025/1/10 18:25
  */
-// mybatis-plus
+// mybatis (注意mybatis一定要特别限定区间，因为这个傻逼会把其他的接口也视为它的接口，明明都没用@Mapper但是这个傻逼还是会绝对接口是它的)
 @MapperScan({
         "com.czy.imports.mapper",
         "com.utils.minio.mapper",

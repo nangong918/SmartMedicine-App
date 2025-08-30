@@ -1,6 +1,8 @@
 package com.czy.message.service;
 
 
+import com.api.mapper.message.mongo.UserChatMessageMongoMapper;
+import com.api.mapper.message.mybatis.UserChatMessageMapper;
 import com.czy.api.api.message.ChatService;
 import com.czy.api.api.user.relation.UserRelationshipService;
 import com.czy.api.api.user.user.UserService;
@@ -15,8 +17,6 @@ import com.czy.api.domain.bo.message.UserChatLastViewMessageBo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
 import com.czy.api.domain.entity.FriendViewEntity;
 import com.czy.api.exception.UserExceptions;
-import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
-import com.czy.message.mapper.mysql.UserChatMessageMapper;
 import com.czy.message.service.transactional.MessageStorageService;
 import com.utils.minio.service.OssService;
 import com.utils.redis.service.RedisService;
@@ -28,15 +28,7 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

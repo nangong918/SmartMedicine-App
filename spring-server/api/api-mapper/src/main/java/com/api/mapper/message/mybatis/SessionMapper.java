@@ -1,4 +1,4 @@
-package com.czy.message.mapper.mysql;
+package com.api.mapper.message.mybatis;
 
 
 

@@ -8,14 +8,27 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
  * @author 13225
  * @date 2025/1/10 18:25
  */
 @EnableConfigurationProperties(DebugConfig.class)
-// 扫描mapper
-@MapperScan({"com.czy.message.mapper"})
+// mybatis (注意mybatis一定要特别限定区间，因为这个傻逼会把其他的接口也视为它的接口，明明都没用@Mapper但是这个傻逼还是会绝对接口是它的)
+@MapperScan({
+        // this
+        "com.czy.message.mapper",
+        // minio
+        "com.utils.minio.mapper",
+        // api.mapper
+        "com.api.mapper.user.mybatis",
+        "com.api.mapper.message.mybatis",
+})
+// mongodb
+@EnableMongoRepositories(basePackages = {
+        "com.api.mapper.message.mongo"
+})
 @SpringBootApplication(
         // 扫描指定包下的类
         scanBasePackages = {
@@ -37,7 +50,9 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
         exclude = {}
 )
 // es
-@EnableElasticsearchRepositories(basePackages = "com.api.mapper")
+@EnableElasticsearchRepositories(basePackages = {
+        "com.api.mapper.message.es"
+})
 public class MessageServiceApplication {
     public static void main(String[] args) {
         new SpringApplicationBuilder(MessageServiceApplication.class)

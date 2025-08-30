@@ -37,7 +37,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 // 启用事务管理
 @EnableTransactionManagement
 // es
-@EnableElasticsearchRepositories(basePackages = "com.api.mapper")
+@EnableElasticsearchRepositories(basePackages = {
+        "com.api.mapper.medicine.es"
+})
 public class MedicineServiceApplication {
     public static void main(String[] args) {
         new SpringApplicationBuilder(MedicineServiceApplication.class)

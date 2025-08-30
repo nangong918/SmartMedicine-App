@@ -1,4 +1,4 @@
-package com.czy.message.mapper.mongo;
+package com.api.mapper.message.mongo;
 
 import com.czy.api.domain.Do.message.UserChatMessageDo;
 import lombok.RequiredArgsConstructor;

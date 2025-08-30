@@ -1,4 +1,4 @@
-package com.czy.message.mapper.es;
+package com.api.mapper.message.es;
 
 import com.czy.api.domain.Do.message.UserChatMessageEsDo;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;

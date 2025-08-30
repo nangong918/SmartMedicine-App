@@ -15,10 +15,20 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  * @author 13225
  * @date 2025/1/10 18:25
  */
-// mybatis-plus
-@MapperScan({"com.czy.post.mapper", "com.utils.minio.mapper", "com.api.mapper"})
+// mybatis (注意mybatis一定要特别限定区间，因为这个傻逼会把其他的接口也视为它的接口，明明都没用@Mapper但是这个傻逼还是会绝对接口是它的)
+@MapperScan({
+        // this
+        "com.czy.post.mapper",
+        // minio
+        "com.utils.minio.mapper",
+        // api.mapper
+        "com.api.mapper.user.mybatis",
+        "com.api.mapper.post.mybatis",
+})
 // mongodb
-@EnableMongoRepositories(basePackages = "com.api.mapper")
+@EnableMongoRepositories(basePackages = {
+        "com.api.mapper.post.mongo"
+})
 @EnableAspectJAutoProxy // 启用aop
 @EnableConfigurationProperties(DebugConfig.class)
 @SpringBootApplication(
@@ -43,7 +53,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
         exclude = {}
 )
 // es
-@EnableElasticsearchRepositories(basePackages = "com.api.mapper")
+@EnableElasticsearchRepositories(basePackages = {
+        "com.api.mapper.post.es"
+})
 public class PostServiceApplication {
     public static void main(String[] args) {
         new SpringApplicationBuilder(PostServiceApplication.class)

@@ -2,6 +2,7 @@ package com.czy.message.handler;
 
 
 import cn.hutool.core.util.IdUtil;
+import com.api.mapper.message.mongo.UserChatMessageMongoMapper;
 import com.czy.api.api.message.ChatService;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.MessageTypeEnum;
@@ -23,7 +24,6 @@ import com.czy.api.exception.MessageExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.api.utils.NettyUtils;
 import com.czy.message.handler.api.ChatApi;
-import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
 import com.czy.message.mq.sender.RabbitMqSender;
 import com.czy.message.queue.ChatMessageQueue;
 import com.utils.minio.service.OssService;

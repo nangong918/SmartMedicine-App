@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.czy.message.mapper.mysql.SessionMapper">
+<mapper namespace="com.api.mapper.message.mybatis.SessionMapper">
 
     <insert id="add">
         insert into session(uuid, device_id, device_name, app_version, os_version, package_name, language, uid, nid, ipv6, bind_time, type)
