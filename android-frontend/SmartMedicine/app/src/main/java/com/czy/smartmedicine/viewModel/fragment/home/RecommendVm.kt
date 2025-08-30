@@ -35,12 +35,6 @@ open class RecommendVm(
         val TAG: String = RecommendVm::class.java.name
     }
 
-    open fun getSocketMessageSender() : SocketMessageSender {
-        return socketMessageSender
-    }
-
-    //---------------------------FAo Ld---------------------------
-;
     //==========RecyclerView
 
     open lateinit var postHomeAdapter: PostHomeAdapter
@@ -49,7 +43,7 @@ open class RecommendVm(
         val onRecommendCardClick: OnRecommendCardClick =
             postClickManager.getOnRecommendCardClick(activity)
 
-        // adapter的地址指针指向数据仓库
+        // adapter的地址指针指向数据仓库的recommendList
         postHomeAdapter = PostHomeAdapter(
             MainApplication.getInstance().postDataManager.recommendPosts,
             onRecommendCardClick
@@ -69,7 +63,7 @@ open class RecommendVm(
         // 不是首次打开管都不用管
     }
 
-    fun getRecommendPostsP(context: Context, callback: SyncRequestCallback) {
+    private fun getRecommendPostsP(context: Context, callback: SyncRequestCallback) {
         if (!TestConfig.IS_TEST) {
             getRecommendPosts(context, callback)
         } else {
@@ -179,6 +173,7 @@ open class RecommendVm(
 
     fun initPostClickManager(fragment: ActivityResultCaller) {
         postClickManager = PostClickManager(
+            // postClickManager的指针指向 postDataManager的recommendList
             MainApplication.getInstance().postDataManager.recommendPosts,
             fragment
         )

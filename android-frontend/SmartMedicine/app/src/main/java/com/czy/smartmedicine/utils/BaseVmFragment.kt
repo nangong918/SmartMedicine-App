@@ -18,10 +18,11 @@ abstract class BaseVmFragment<VB : ViewBinding, VM : ViewModel>(
 ) : Fragment() {
 
     protected open lateinit var vm: VM
-    protected val fragmentName: String = fragmentClassType.simpleName ?: "BaseVmFragment"
+    protected open lateinit var binding: VB
+    private val fragmentName: String = fragmentClassType.simpleName ?: "BaseVmFragment"
     protected open val TAG : String = fragmentName
 
-    abstract fun getBinding(): VB
+    abstract fun initBinding(): VB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,21 +33,21 @@ abstract class BaseVmFragment<VB : ViewBinding, VM : ViewModel>(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = initBinding()
         this.setListener()
-        return getBinding().root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // 此处binding才生效
-        initView()
+        initViewModel()
     }
 
     protected open fun setListener() {
 
     }
-    protected open fun initView() {}
 
     protected open fun initViewModel() {
         val apiViewModelFactory = ApiViewModelFactory(
