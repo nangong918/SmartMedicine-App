@@ -8,6 +8,7 @@ import com.czy.api.constant.ErrorConstant;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
 import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
+import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.medicine.MedicineRedisKey;
 import com.czy.api.converter.domain.medicine.AppointmentDoctorOrderConverter;
 import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConverter;
@@ -488,43 +489,69 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
 
     @Override
     public void handlePayResultMessage(@NotNull AppointmentPayResultDto dto) {
-        // 解析dto
-        int customerStatus = Optional.ofNullable(dto.getOrderStatusEnum())
-                .map(UserOrderStatusEnum::getCode)
-                .orElse(UserOrderStatusEnum.NULL.getCode());
+        try {
+            // 解析dto
+            int customerStatus = Optional.ofNullable(dto.getOrderStatusEnum())
+                    .map(UserOrderStatusEnum::getCode)
+                    .orElse(UserOrderStatusEnum.NULL.getCode());
 
-        if (customerStatus == UserOrderStatusEnum.NULL.getCode()){
-            log.warn("[处理支付结果]订单dto状态错误");
-            return;
-        }
+            if (customerStatus == UserOrderStatusEnum.NULL.getCode()){
+                log.warn("[处理支付结果]订单dto状态错误");
+                return;
+            }
 
-        // 获取订单
-        UserCustomerAppointmentDo order = userCustomerAppointmentOrderMapper.getByOrderId(dto.getOrderId());
-        if (order == null || order.getId() == null){
-            // 订单不存在, 直接归为error级别
-            log.error("[处理支付结果][数据库查询异常]订单: {} 不存在", dto.getOrderId());
-            return;
-        }
-        order.setUserOrderStatus(customerStatus);
+            // 获取订单
+            UserCustomerAppointmentDo order = userCustomerAppointmentOrderMapper.getByOrderId(dto.getOrderId());
+            if (order == null || order.getId() == null){
+                // 订单不存在, 直接归为error级别
+                log.error("[处理支付结果][数据库查询异常]订单: {} 不存在", dto.getOrderId());
+                return;
+            }
+            order.setUserOrderStatus(customerStatus);
 
-        // 更新数据库
-        userCustomerAppointmentOrderMapper.update(order);
+            /// 1. 更新数据库
+            // 库存归还 [取消的情况下]
+            if (customerStatus == UserOrderStatusEnum.CANCELED.getCode()){
+                doctorMerchantAppointmentMapper.returnStock(order.getDoctorMerchantAppointmentId());
+            }
+            // 订单状态更新
+            userCustomerAppointmentOrderMapper.update(order);
 
-        // 更新缓存(如果缓存存在)
-        AppointmentDoctorOrderListAo ao = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
-                dto.getUserId(),
-                // 此处商户id不能传递, 因为我确定在支付服务中, 只是对订单进行支付, 是不知道商户id的, 所以返回的是null; 并且不需要商户id也能查询到
-//                dto.getDoctorMerchantAppointmentId(),
-                dto.getOrderId()
-        );
-        if (ao != null){
-            boolean updateResult = registerAppointmentRedisMapper.updateAppointmentDoctorOrderListAoStatus(
+            // 更新缓存(如果缓存存在)
+            AppointmentDoctorOrderListAo ao = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
                     dto.getUserId(),
-                    dto.getOrderId(),
-                    customerStatus
+                    // 此处商户id不能传递, 因为我确定在支付服务中, 只是对订单进行支付, 是不知道商户id的, 所以返回的是null; 并且不需要商户id也能查询到
+//                dto.getDoctorMerchantAppointmentId(),
+                    dto.getOrderId()
             );
-            log.warn("[处理支付结果][AppointmentDoctorOrderListAo缓存更新成功: {}]", updateResult);
+            if (ao != null){
+                boolean updateResult = registerAppointmentRedisMapper.updateAppointmentDoctorOrderListAoStatus(
+                        dto.getUserId(),
+                        dto.getOrderId(),
+                        customerStatus
+                );
+                log.warn("[处理支付结果][AppointmentDoctorOrderListAo缓存更新成功: {}]", updateResult);
+            }
+        } catch (Exception e){
+            log.error("[处理支付结果异常: ", e);
+        } finally {
+            if (dto.getDoctorMerchantAppointmentId() == null || dto.getUserId() == null){
+                log.warn("[处理支付结果][分布式锁解除失败]");
+            }
+            else {
+                // 获得锁
+                String dataId = dto.getDoctorMerchantAppointmentId() + ":" + dto.getUserId();
+                String mappingPath = MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
+                RedissonClusterLock appointmentLock = new RedissonClusterLock(
+                        dataId,
+                        mappingPath
+                );
+                /// 3. 解除申请分布式锁
+                redissonService.unlock(appointmentLock);
+                /// 2. netty通知前端, 考虑用spring event实现
+            }
         }
+
     }
 
     /**

@@ -29,7 +29,8 @@ public interface DoctorMerchantAppointmentMapper {
 
     /// 修改
     void updateDoctorMerchantAppointment(DoctorMerchantAppointmentDo item);
-
+    // 归还库存
+    void returnStock(Long doctorMerchantAppointmentId);
     void updateDoctorMerchantAppointments(@Param("list") List<DoctorMerchantAppointmentDo> list);
 
     /**

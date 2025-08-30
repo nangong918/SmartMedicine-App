@@ -85,6 +85,11 @@
         WHERE id = #{id}
         AND remain_count > 0
     </update>
+    <update id="returnStock">
+        UPDATE doctor_merchant_appointment
+        SET remain_count = remain_count + 1
+        WHERE id = #{id}
+    </update>
 
     <delete id="deleteDoctorMerchantAppointment">
         DELETE FROM doctor_merchant_appointment
