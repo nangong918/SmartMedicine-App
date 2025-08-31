@@ -23,6 +23,9 @@ public class StartListener implements ApplicationListener<ApplicationReadyEvent>
 
     @Override
     public void onApplicationEvent(@NotNull ApplicationReadyEvent event) {
-        log.info("user-service启动成功，debug config情况：{}\n sms config情况：{}",  debugConfig.toString(), smsConstant.toString());
+        log.info("user-service启动成功，debug config情况：{}\n sms config情况：{}",
+                debugConfig.toString(),
+                smsConstant.toString()
+        );
     }
 }
