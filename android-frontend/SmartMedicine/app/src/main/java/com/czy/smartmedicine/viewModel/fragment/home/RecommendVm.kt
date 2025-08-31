@@ -12,6 +12,7 @@ import com.czy.appcore.network.netty.api.send.SocketMessageSender
 import com.czy.appview.view.home.OnRecommendCardClick
 import com.czy.appview.view.home.PostHomeAdapter
 import com.czy.baseutil.network.BaseResponse
+import com.czy.baseutil.network.networkLoad.NetworkLoadUtils
 import com.czy.dao.networkRepository.ApiRequestImpl
 import com.czy.domain.ao.chat.UserLoginInfoAo
 import com.czy.domain.constant.NettyConstants
@@ -58,6 +59,7 @@ open class RecommendVm(
     fun initialNetworkRequest(context: Context, callback: SyncRequestCallback) {
         // app首次打开HomeFragment时，请求推荐帖子
         if (HttpRequestManager.getIsFirstOpen(HomeFragment::class.java.name)) {
+            NetworkLoadUtils.showDialog(context)
             getRecommendPostsP(context, callback)
         }
         // 不是首次打开管都不用管

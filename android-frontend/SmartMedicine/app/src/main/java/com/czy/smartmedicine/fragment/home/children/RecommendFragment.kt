@@ -37,14 +37,13 @@ class RecommendFragment : BaseVmFragment<FragmentRecommendBinding, RecommendVm>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 初始化点击管理器 (RecyclerView中用到了, 必须在其之前)
+        vm.initPostClickManager(this)
+
         // 初始化RecyclerView
         vm.initRecyclerView(binding.rclvRecommend, requireActivity())
 
-        // 初始化点击管理器
-        vm.initPostClickManager(this)
-
         // 初始化网络请求
-        NetworkLoadUtils.showDialog(requireContext())
         vm.initialNetworkRequest(requireContext(), object : SyncRequestCallback {
             override fun onThrowable(throwable: Throwable) {
                 Log.e(TAG, "onThrowable: $throwable")

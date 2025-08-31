@@ -29,7 +29,7 @@ public enum HomeViewPagerEnum {
                 return value;
             }
         }
-        return null;
+        return RECOMMEND;
     }
 
     public static int getHomeViewPagerCount() {

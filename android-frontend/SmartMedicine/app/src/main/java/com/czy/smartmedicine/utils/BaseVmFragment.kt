@@ -26,6 +26,7 @@ abstract class BaseVmFragment<VB : ViewBinding, VM : ViewModel>(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.binding = initBinding()
     }
 
     override fun onCreateView(
@@ -33,14 +34,12 @@ abstract class BaseVmFragment<VB : ViewBinding, VM : ViewModel>(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = initBinding()
         this.setListener()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // 此处binding才生效
         initViewModel()
     }

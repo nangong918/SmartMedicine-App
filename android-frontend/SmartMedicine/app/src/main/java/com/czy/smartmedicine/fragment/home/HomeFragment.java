@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.czy.domain.fragmentActivityAo.HomeVo;
+import com.czy.appview.view.home.HomeViewPagerEnum;
+import com.czy.domain.fragmentActivityAo.HomeFAo;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
 import com.czy.smartmedicine.utils.BaseVmFragment;
@@ -32,7 +33,6 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
     @Override
     public FragmentHomeBinding initBinding() {
         return FragmentHomeBinding.inflate(getLayoutInflater());
-
     }
 
     @Override
@@ -66,8 +66,9 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
             startActivity(intent);
         });
 
+        // 设置顶部导航栏的点击监听器
         binding.homeTopBar.setOnViewPagerBarClickListener(position -> {
-
+            binding.vPager2.setCurrentItem(position, true);
         });
     }
 
@@ -77,7 +78,12 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
     protected void initViewModel() {
         super.initViewModel();
         // 初始化viewModel
-        vm.init(new HomeVo());
+        HomeFAo homeFAo = new HomeFAo();
+        homeFAo.currentPosition.setValue(HomeViewPagerEnum.RECOMMEND.getIndex());
+        vm.init(homeFAo, this);
+
+        // 设置 ViewPager2 的适配器
+        binding.vPager2.setAdapter(vm.viewPagerAdapter);
     }
 
 

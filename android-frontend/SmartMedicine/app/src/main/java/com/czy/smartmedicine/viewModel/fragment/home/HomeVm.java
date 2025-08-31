@@ -1,11 +1,13 @@
 package com.czy.smartmedicine.viewModel.fragment.home;
 
 
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.dao.networkRepository.ApiRequestImpl;
-import com.czy.domain.fragmentActivityAo.HomeVo;
+import com.czy.domain.fragmentActivityAo.HomeFAo;
+import com.czy.smartmedicine.fragment.home.children.HomeViewPagerAdapter;
 
 public class HomeVm extends ViewModel {
 
@@ -25,13 +27,14 @@ public class HomeVm extends ViewModel {
 
     //---------------------------Vo Ld---------------------------
 
-    public HomeVo homeVo = new HomeVo();
+    public HomeViewPagerAdapter viewPagerAdapter;
 
-    public void init(HomeVo homeVo){
-        this.homeVo = homeVo;
+    public HomeFAo homeFAo = new HomeFAo();
+
+    public void init(HomeFAo homeFAo, Fragment fragment){
+        this.homeFAo = homeFAo;
+        viewPagerAdapter = new HomeViewPagerAdapter(fragment);
     }
-
-    //==========RecyclerView
 
 
 
