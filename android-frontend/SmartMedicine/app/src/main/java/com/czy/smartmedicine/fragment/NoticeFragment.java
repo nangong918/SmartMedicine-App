@@ -9,10 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.czy.baseUtilsLib.activity.BaseFragment;
-import com.czy.dal.constant.SelectItemEnum;
-import com.czy.dal.vo.view.mainTop.MainTopBarVo;
-import com.czy.smartmedicine.activity.MainActivity;
+import com.czy.baseutil.activity.BaseFragment;
 import com.czy.smartmedicine.databinding.FragmentNoticeBinding;
 
 /**
@@ -46,7 +43,6 @@ public class NoticeFragment extends BaseFragment<FragmentNoticeBinding> {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.NOTIFICATIONS));
 
     }
 

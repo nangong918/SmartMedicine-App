@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper">
+
+    <sql id="doColumns">
+        id, doctor_id, hospital_id,
+        department_id, subject_id,
+        cost, remain_count,
+        begin_date, end_date
+    </sql>
+
+    <sql id="setValue">
+        doctor_id = #{doctorId},
+        hospital_id = #{hospitalId},
+        department_id = #{departmentId},
+        subject_id = #{subjectId},
+        cost = #{cost},
+        remain_count = #{remainCount},
+        begin_date = #{beginDate},
+        end_date = #{endDate},
+    </sql>
+
+    <sql id="insertValue">
+        #{doctorId}, #{hospitalId}, #{departmentId},
+        #{subjectId}, #{cost}, #{remainCount},
+        #{beginDate}, #{endDate}
+    </sql>
+
+    <insert id="insertDoctorMerchantAppointment">
+        INSERT INTO doctor_merchant_appointment
+        (<include refid="doColumns"/>)
+        VALUES
+        (<include refid="insertValue"/>)
+    </insert>
+
+    <insert id="insertDoctorMerchantAppointmentBatch">
+        <if test="list != null and list.size() > 0">
+            INSERT INTO doctor_merchant_appointment
+            (<include refid="doColumns"/>)
+            VALUES
+            <foreach item="item" index="index" collection="list" separator=",">
+                (#{item.id}, #{item.doctorId}, #{item.hospitalId}, #{item.departmentId},
+                #{item.subjectId}, #{item.cost}, #{item.remainCount},
+                #{item.beginDate}, #{item.endDate})
+            </foreach>
+        </if>
+    </insert>
+
+    <update id="updateDoctorMerchantAppointment">
+        UPDATE doctor_merchant_appointment
+        SET
+            <include refid="setValue"/>
+        WHERE id = #{id}
+    </update>
+    <update id="updateDoctorMerchantAppointments">
+        <if test="list != null and list.size() > 0">
+            UPDATE doctor_merchant_appointment
+            SET
+                <include refid="setValue"/>
+            WHERE id IN
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item.id}
+            </foreach>
+        </if>
+    </update>
+
+    <update id="compareAndDecrement">
+        UPDATE doctor_merchant_appointment
+        SET remain_count = remain_count - 1
+        WHERE id = #{id}
+        AND remain_count = #{expectedCount} <!-- 乐观锁：先前查询的数据必须和当前库存相等 -->
+    </update>
+
+    <update id="decrementRemainCount">
+        UPDATE doctor_merchant_appointment
+        SET remain_count = remain_count - 1
+        WHERE id = #{id}
+        AND remain_count > 0
+    </update>
+
+    <update id="decrementWithPessimisticLock">
+        UPDATE doctor_merchant_appointment
+        SET remain_count = remain_count - 1
+        WHERE id = #{id}
+        AND remain_count > 0
+    </update>
+    <update id="returnStock">
+        UPDATE doctor_merchant_appointment
+        SET remain_count = remain_count + 1
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteDoctorMerchantAppointment">
+        DELETE FROM doctor_merchant_appointment
+        WHERE id = #{id}
+    </delete>
+    <delete id="deleteDoctorMerchantAppointments">
+        <if test="list != null and list.size() > 0">
+            DELETE FROM doctor_merchant_appointment
+            WHERE id IN
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+
+    <select id="getDosByParam" resultType="com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo">
+        SELECT *
+        FROM doctor_merchant_appointment AS dma
+        INNER JOIN hospital AS hos ON dma.hospital_id = hos.id
+        WHERE
+            hos.province = #{location.province} <!-- 地区非空 -->
+            <if test="location.city != null">
+                AND hos.city = #{location.city}
+            </if>
+            <if test="location.region != null">
+                AND hos.region = #{location.region}
+            </if>
+            AND dma.department_id = #{departmentCode}
+            <if test="SubjectCode != null">
+                AND dma.subject_id = #{SubjectCode}
+            </if>
+            <if test="date != null">
+                AND (DATE(dma.begin_date) = DATE(#{date}) OR   <!-- 开始日期是今天 -->
+                DATE(dma.end_date) = DATE(#{date}) OR          <!-- 结束日期是今天 -->
+                (dma.begin_date &lt;= #{date} AND dma.end_date &gt;= #{date}))    <!-- 今天在日期区间中 -->
+            </if>
+    </select>
+    <select id="getById" resultType="com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo">
+        SELECT *
+        FROM doctor_merchant_appointment
+        WHERE id = #{id}
+    </select>
+
+    <!-- 行锁定 SELECT FOR UPDATE -->
+    <select id="getByIdForUpdate" resultType="com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo">
+        SELECT *
+        FROM doctor_merchant_appointment
+        WHERE id = #{id}
+        FOR UPDATE
+    </select>
+
+    <select id="getRemainCountWithLock" resultType="java.lang.Integer">
+        SELECT remain_count
+        FROM doctor_merchant_appointment
+        WHERE id = #{id}
+        FOR UPDATE
+    </select>
+
+</mapper>

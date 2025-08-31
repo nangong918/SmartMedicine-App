@@ -2,6 +2,7 @@ package com.czy.api.domain.ao.feature;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  * @date 2025/5/12 18:06
  */
 @Data
-public class PostExplicitTimeAo {
+public class PostExplicitTimeAo implements Serializable {
     private Long userId;
     private List<PostExplicitPostScoreAo> postExplicitPostScoreAos;
 //    private List<PostExplicitEntityScoreAo> postExplicitEntityScoreAos;

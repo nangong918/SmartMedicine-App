@@ -5,8 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.czy.baseUtilsLib.network.BaseResponse;
-import com.czy.baseUtilsLib.network.ResponseUtil;
+import com.czy.baseutil.network.BaseResponse;
+import com.czy.baseutil.network.ResponseUtil;
 import com.czy.smartmedicine.MainApplication;
 
 public class ViewModelUtil {
@@ -19,7 +19,7 @@ public class ViewModelUtil {
         Log.w(TAG, throwable);
         Context context = MainApplication.getInstance().getApplicationContext();
         if (context != null) {
-            String error = context.getString(com.czy.customviewlib.R.string.network_error);
+            String error = context.getString(com.czy.appview.R.string.network_error);
             new Handler(Looper.getMainLooper()).post(() -> {
                 MainApplication.getInstance().showGlobalDialog(error);
             });
@@ -29,7 +29,7 @@ public class ViewModelUtil {
     //==========Toast
 
     public static void globalThrowableToast(Throwable throwable){
-        globalThrowableToast(throwable, com.czy.customviewlib.R.string.network_error);
+        globalThrowableToast(throwable, com.czy.appview.R.string.network_error);
     }
 
     public static void globalThrowableToast(Throwable throwable, int resId){

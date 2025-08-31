@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper">
+
+    <select id="getDoctorCardBosByDoctorMerchantDos"
+            resultType="com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo">
+        <if test="list != null and list.size() > 0">
+            SELECT
+                dt.avatar_file_id AS doctorAvatarFileId,
+                dt.name AS doctorName,
+                dt.title AS doctorTitle,
+
+                ht.name AS hospitalName,
+                ht.level AS hospitalLevel,
+                ht.province AS locationProvince,
+                ht.city AS locationCity,
+                ht.region AS locationRegion,
+                ht.longitude AS longitude,
+                ht.latitude AS latitude,
+
+                dma.remain_count AS remainCount,
+                dma.cost AS cost,
+                dma.begin_date AS beginDate,
+                dma.end_date AS endDate,
+                dma.id AS doctorMerchantId
+            FROM doctor_merchant_appointment AS dma
+            INNER JOIN doctor AS dt ON dma.doctor_id = dt.id
+            INNER JOIN hospital AS ht ON dma.hospital_id = ht.id
+            WHERE dma.id IN
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item.id}
+            </foreach>
+        </if>
+
+    </select>
+    <select id="getDoctorCardBosByUserCustomerAppointmentDos"
+            resultType="com.czy.api.domain.bo.medicine.UserAppointmentOrderBo">
+        <if test="list != null and list.size() > 0">
+            SELECT
+                dt.avatar_file_id AS doctorAvatarFileId,
+                dt.name AS doctorName,
+                dt.title AS doctorTitle,
+
+                ht.name AS hospitalName,
+                ht.level AS hospitalLevel,
+                ht.province AS locationProvince,
+                ht.city AS locationCity,
+                ht.region AS locationRegion,
+                ht.longitude AS longitude,
+                ht.latitude AS latitude,
+
+                dma.remain_count AS remainCount,
+                dma.cost AS cost,
+                dma.begin_date AS beginDate,
+                dma.end_date AS endDate,
+                dma.id AS doctorMerchantId,
+
+                ucao.user_order_status AS customerStatus,
+                ucao.id AS orderId
+            FROM user_customer_appointment_order AS ucao
+            INNER JOIN doctor_merchant_appointment AS dma ON ucao.doctor_merchant_appointment_id = dma.id
+            INNER JOIN doctor AS dt ON dma.doctor_id = dt.id
+            INNER JOIN hospital AS ht ON dma.hospital_id = ht.id
+            WHERE dma.id IN
+            <foreach item="item" collection="list" open="(" separator="," close=")">
+                #{item.doctorMerchantAppointmentId}
+            </foreach>
+        </if>
+    </select>
+</mapper>

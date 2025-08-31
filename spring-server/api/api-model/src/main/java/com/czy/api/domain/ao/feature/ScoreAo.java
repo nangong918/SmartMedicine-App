@@ -4,13 +4,14 @@ import json.BaseBean;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * @author 13225
  * @date 2025/5/12 10:45
  */
 @Data
-public class ScoreAo implements BaseBean {
+public class ScoreAo implements BaseBean, Serializable {
     private int clickTimes = 0;
     private double implicitScore = 0.0;
     private double explicitScore = 0.0;

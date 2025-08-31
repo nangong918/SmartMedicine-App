@@ -11,16 +11,16 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.czy.baseUtilsLib.activity.BaseFragment;
-import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.contact.ContactAdapter;
-import com.czy.dal.ao.userBrief.UserBriefIntentAo;
-import com.czy.dal.vo.entity.contact.ContactListVo;
-import com.czy.dal.vo.fragmentActivity.ContactUserGroupVo;
+import com.czy.baseutil.activity.BaseFragment;
+import com.czy.baseutil.viewModel.ViewModelUtil;
+import com.czy.appview.view.contact.ContactAdapter;
+import com.czy.domain.ao.userBrief.UserBriefIntentAo;
+import com.czy.domain.vo.entity.contact.ContactListVo;
+import com.czy.domain.fragmentActivityAo.ContactUserGroupVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.UserBriefActivity;
 import com.czy.smartmedicine.databinding.FragmentContactUserGroupBinding;
-import com.czy.smartmedicine.viewModel.activity.ContactUserGroupViewModel;
+import com.czy.smartmedicine.viewModel.activity.ContactUserVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.ArrayList;
@@ -57,11 +57,11 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initView();
         changeToDo(position);
     }
 
-    private void initView(){
+    @Override
+    protected void initView(){
 
         initRecyclerView();
     }
@@ -77,11 +77,11 @@ public class ContactUserGroupFragment extends BaseFragment<FragmentContactUserGr
 
     //-----------------------ViewModel-----------------------
 
-    private ContactUserGroupViewModel viewModel;
+    private ContactUserVm viewModel;
 
     private void initViewModel() {
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, ContactUserGroupViewModel.class);
+        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, ContactUserVm.class);
 
         initViewModelVo();
 

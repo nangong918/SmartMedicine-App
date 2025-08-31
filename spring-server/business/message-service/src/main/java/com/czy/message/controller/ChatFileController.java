@@ -1,22 +1,22 @@
 package com.czy.message.controller;
 
 import com.czy.api.api.message.ChatService;
-import com.czy.api.api.oss.OssService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.message.MessageConstant;
 import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.ResponseMessageType;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.Do.user.UserDo;
-import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.response.ChatUploadFileResponse;
 import com.czy.api.domain.dto.socket.response.UserImageResponse;
 import com.czy.api.exception.OssExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.message.mq.sender.RabbitMqSender;
-import com.utils.mvc.redisson.RedissonService;
-import com.utils.mvc.service.MinIOService;
+import com.utils.minio.domain.ao.FileIsExistAo;
+import com.utils.minio.service.MinioService;
+import com.utils.minio.service.OssService;
+import com.utils.redisson.service.RedissonService;
 import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import domain.SuccessFile;
@@ -52,9 +52,8 @@ public class ChatFileController {
 
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
-    private final MinIOService minIOService;
+    private final OssService ossService;
+    private final MinioService minioService;
     private final RabbitMqSender rabbitMqSender;
     private final RedissonService redissonService;
     private final ChatService chatService;
@@ -107,7 +106,7 @@ public class ChatFileController {
         List<MultipartFile> files = new ArrayList<>(1);
         files.add(file);
         // 上传到minIO
-        FileOptionResult fileOptionResult = minIOService.uploadFilesWithIdempotent(
+        FileOptionResult fileOptionResult = minioService.uploadFilesWithIdempotent(
                 files,
                 results,
                 chatPostImageBucket,

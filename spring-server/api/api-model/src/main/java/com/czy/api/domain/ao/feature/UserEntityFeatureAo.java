@@ -2,6 +2,7 @@ package com.czy.api.domain.ao.feature;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +11,7 @@ import java.util.Map;
  * @date 2025/5/10 14:41
  */
 @Data
-public class UserEntityFeatureAo {
+public class UserEntityFeatureAo implements Serializable {
     private Long userId;
     // Map<EntityName, NerFeatureScoreAo>
     private Map<String, NerFeatureScoreAo> nerFeatureScoreMap = new HashMap<>();

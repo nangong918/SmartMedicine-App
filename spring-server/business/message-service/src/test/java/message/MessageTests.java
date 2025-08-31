@@ -1,15 +1,15 @@
 package message;
 
+import com.api.mapper.message.es.UserChatMessageEsMapper;
+import com.api.mapper.message.mongo.UserChatMessageMongoMapper;
+import com.api.mapper.message.mybatis.UserChatMessageMapper;
 import com.czy.api.api.message.ChatSearchService;
 import com.czy.api.constant.MessageTypeEnum;
 import com.czy.api.converter.mongoEs.UserChatMessageEsConverter;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.Do.message.UserChatMessageEsDo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
-import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.request.FetchUserMessageResponse;
 import com.czy.message.MessageServiceApplication;
-import com.czy.message.mapper.mysql.UserChatMessageMapper;
 import com.czy.message.service.transactional.MessageStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -21,12 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.TestPropertySource;
 
-import reactor.core.publisher.Mono;
-
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -102,7 +98,7 @@ public class MessageTests {
 
     // MongoDB分页查询
     @Autowired
-    private com.czy.message.mapper.mongo.UserChatMessageMongoMapper userChatMessageMongoMapper;
+    private UserChatMessageMongoMapper userChatMessageMongoMapper;
     @Test
     public void searchMongoUserChatMessage() {
         final long userId1 = 26L;
@@ -126,7 +122,7 @@ public class MessageTests {
 
     // Elastic Search分页查询
     @Autowired
-    private com.czy.message.mapper.es.UserChatMessageEsMapper userChatMessageEsMapper;
+    private UserChatMessageEsMapper userChatMessageEsMapper;
     @Test
     public void searchEsUserChatMessage() {
         final long userId1 = 26L;

@@ -10,7 +10,7 @@ import com.czy.api.constant.test.TestConstant;
  */
 public class UserConstant {
 
-    public static final String serviceName = "user-relationship-service";
+    public static final String serviceName = "user-auth-relation-service";
     public static final String serviceRoute = "/" + serviceName;
     public static final String Login_CONTROLLER = "/login";
     public static final String User_File_CONTROLLER = "/userFile";

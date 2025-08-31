@@ -3,6 +3,7 @@ package com.czy.api.domain.ao.feature;
 import com.czy.api.domain.Do.neo4j.rels.UserEntityRelation;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +12,7 @@ import java.util.Set;
  * @date 2025/5/19 15:03
  */
 @Data
-public class UserHistoryFeatureAo {
+public class UserHistoryFeatureAo implements Serializable {
 
     // 用户历史特征 (entity权重集合 -> 画像)
     private Set<UserEntityRelation> userEntityRelations = new HashSet<>();

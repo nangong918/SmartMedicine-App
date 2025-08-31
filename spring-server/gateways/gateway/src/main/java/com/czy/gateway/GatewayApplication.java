@@ -10,9 +10,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         // 扫描本模块
         "com.czy.gateway",
         // 扫描工具类
-        "com.utils.webflux.handler",
+//        "com.utils.webflux.handler",
         // springUtils
-        "com.czy.springUtils"
+        "com.czy.spring",
+        "com.utils.common",
+        "com.utils.redis"
 })
 public class GatewayApplication {
     public static void main(String[] args) {

@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="base-netty-user" type="CompoundRunConfigurationType">
+    <toRun name="NettySocketApplication" type="Application" />
+    <toRun name="UserServiceApplication" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

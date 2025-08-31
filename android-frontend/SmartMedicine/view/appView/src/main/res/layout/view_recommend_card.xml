@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="3dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/base_card1"
+            android:layout_width="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/post_plus_card_background"
+            android:layout_height="wrap_content">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/imgv_main1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:riv_corner_radius="10dp"
+                android:src="@mipmap/logo"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imgv_main1">
+
+                <LinearLayout
+                    android:id="@+id/ly_time1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@mipmap/time"
+                        app:tint="@color/green_900"/>
+
+                    <TextView
+                        android:id="@+id/tv_time1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="2025/08/15"
+                        android:textSize="11sp"
+                        android:textColor="@color/grey_100"
+                        android:layout_marginStart="2dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ly_time1"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@mipmap/view"
+                        app:tint="@color/green_900"/>
+
+                    <TextView
+                        android:id="@+id/tv_view1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="17.4w"
+                        android:textSize="11sp"
+                        android:textColor="@color/grey_100"
+                        android:layout_marginStart="2dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ly_time1"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@mipmap/like"
+                        app:tint="@color/green_900"/>
+
+                    <TextView
+                        android:id="@+id/tv_like1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="2.2w"
+                        android:textSize="11sp"
+                        android:textColor="@color/grey_100"
+                        android:layout_marginStart="2dp"/>
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ly_author1"
+                app:layout_constraintTop_toBottomOf="@+id/imgv_main1"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imgv_avatar1"
+                    android:src="@mipmap/logo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"/>
+
+                <TextView
+                    android:id="@+id/tv_name1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    tools:text="张良医生"
+                    app:layout_constraintStart_toEndOf="@+id/imgv_avatar1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_like1"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:maxLines="1"
+                    android:textColor="@color/green_900"/>
+
+                <ImageView
+                    android:id="@+id/btn_like1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/favorite_border"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_collect1"
+                    app:tint="@color/green_900"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"/>
+
+                <ImageView
+                    android:id="@+id/btn_collect1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@drawable/star_border"
+                    app:tint="@color/green_900"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/tv_title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="高血压如何预防，平时要注意这几点！高血压如何预防，平时要注意这几点！高血压如何预防，平时要注意这几点！"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/green_900"
+                android:textSize="11sp"
+                app:layout_constraintTop_toBottomOf="@+id/ly_author1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:layout_marginBottom="10dp"
+                android:maxLines="2"/>
+
+            <ImageView
+                android:id="@+id/btn_unlike1"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@mipmap/unlike"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imgv_main1"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/base_card2"
+            android:layout_width="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/post_plus_card_background"
+            android:layout_height="wrap_content">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/imgv_main2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:riv_corner_radius="10dp"
+                android:src="@mipmap/logo"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imgv_main2">
+
+                <LinearLayout
+                    android:id="@+id/ly_time2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@mipmap/time"
+                        app:tint="@color/green_900"/>
+
+                    <TextView
+                        android:id="@+id/tv_time2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="2025/08/15"
+                        android:textSize="11sp"
+                        android:textColor="@color/grey_100"
+                        android:layout_marginStart="2dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ly_time2"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@mipmap/view"
+                        app:tint="@color/green_900"/>
+
+                    <TextView
+                        android:id="@+id/tv_view2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="17.4w"
+                        android:textSize="11sp"
+                        android:textColor="@color/grey_100"
+                        android:layout_marginStart="2dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ly_time2"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@mipmap/like"
+                        app:tint="@color/green_900"/>
+
+                    <TextView
+                        android:id="@+id/tv_like2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="2.2w"
+                        android:textSize="11sp"
+                        android:textColor="@color/grey_100"
+                        android:layout_marginStart="2dp"/>
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ly_author2"
+                app:layout_constraintTop_toBottomOf="@+id/imgv_main2"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imgv_avatar2"
+                    android:src="@mipmap/logo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"/>
+
+                <TextView
+                    android:id="@+id/tv_name2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    tools:text="张良医生"
+                    app:layout_constraintStart_toEndOf="@+id/imgv_avatar2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_like2"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:maxLines="1"
+                    android:textColor="@color/green_900"/>
+
+                <ImageView
+                    android:id="@+id/btn_like2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/favorite_border"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_collect2"
+                    app:tint="@color/green_900"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"/>
+
+                <ImageView
+                    android:id="@+id/btn_collect2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@drawable/star_border"
+                    app:tint="@color/green_900"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/tv_title2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="高血压如何预防，平时要注意这几点！高血压如何预防，平时要注意这几点！高血压如何预防，平时要注意这几点！"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/green_900"
+                android:textSize="11sp"
+                app:layout_constraintTop_toBottomOf="@+id/ly_author2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:layout_marginBottom="10dp"
+                android:maxLines="2"/>
+
+            <ImageView
+                android:id="@+id/btn_unlike2"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@mipmap/unlike"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imgv_main2"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

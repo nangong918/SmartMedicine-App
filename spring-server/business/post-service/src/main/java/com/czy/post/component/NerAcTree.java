@@ -1,13 +1,13 @@
 package com.czy.post.component;
 
 import com.alibaba.fastjson.JSONArray;
+import com.czy.api.constant.post.NerConstant;
 import com.czy.api.domain.ao.post.AcTreeInfo;
+import com.czy.api.domain.ao.post.IsLoadNerFilesAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
-import com.utils.mvc.config.NerConstant;
-import com.utils.mvc.domain.IsLoadNerFilesAo;
-import com.utils.mvc.redisson.RedissonClusterLock;
-import com.utils.mvc.redisson.RedissonService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -7,7 +7,7 @@ package com.czy.api.constant.feature;
 public class FeatureConstant {
 
 
-    public static final String serviceName = "feature-service";
+    public static final String serviceName = "feature-log-offline-service";
     public static final String serviceRoute = "/" + serviceName;
 
     public static final String serviceUri = "lb://" + serviceName;

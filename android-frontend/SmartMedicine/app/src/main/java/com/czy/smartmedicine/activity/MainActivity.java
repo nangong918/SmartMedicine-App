@@ -1,34 +1,34 @@
 package com.czy.smartmedicine.activity;
 
 
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
-import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.customviewlib.view.DialogConfirm;
-import com.czy.dal.ao.chat.UserLoginInfoAo;
-import com.czy.dal.constant.SelectItemEnum;
-import com.czy.dal.vo.view.mainTop.MainTopBarVo;
+import com.czy.appview.view.DialogConfirm;
+import com.czy.baseutil.activity.ActivityLaunchUtils;
+import com.czy.baseutil.activity.BaseActivity;
+import com.czy.baseutil.image.ImageLoadUtil;
+import com.czy.domain.ao.chat.UserLoginInfoAo;
+import com.czy.domain.constant.SelectItemEnum;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityMainBinding;
 import com.czy.smartmedicine.fragment.AiFragment;
-import com.czy.smartmedicine.fragment.friends.FriendsFragment;
-import com.czy.smartmedicine.fragment.HomeFragment;
 import com.czy.smartmedicine.fragment.MessageFragment;
 import com.czy.smartmedicine.fragment.NoticeFragment;
 import com.czy.smartmedicine.fragment.SearchFragment;
+import com.czy.smartmedicine.fragment.friends.FriendsFragment;
+import com.czy.smartmedicine.fragment.home.HomeFragment;
 
 import java.util.Optional;
 
@@ -63,32 +63,42 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     private void initView(){
         exitDialog = new DialogConfirm(this);
-        exitDialog.setContent(getString(com.czy.customviewlib.R.string.are_you_sure_to_exit),0xFFF94040);
+        exitDialog.setContent(getString(com.czy.appview.R.string.are_you_sure_to_exit),0xFFF94040);
 
         View headerView = binding.mainNavigationView.getHeaderView(0);
-        TextView nameTv = headerView.findViewById(com.czy.customviewlib.R.id.nagi_name);
-        TextView accountTv = headerView.findViewById(com.czy.customviewlib.R.id.nagi_account);
-        TextView phoneTv = headerView.findViewById(com.czy.customviewlib.R.id.nagi_phone);
+        TextView nameTv = headerView.findViewById(com.czy.appview.R.id.nagi_name);
+        TextView accountTv = headerView.findViewById(com.czy.appview.R.id.nagi_account);
+        TextView phoneTv = headerView.findViewById(com.czy.appview.R.id.nagi_phone);
+        ImageView avatarIv = headerView.findViewById(com.czy.appview.R.id.nagi_logo);
 
         UserLoginInfoAo userLoginInfoAo = MainApplication.getInstance().getUserLoginInfoAo();
 
-        String name = Optional.ofNullable(userLoginInfoAo)
-                .map(ao -> ao.account)
-                .orElse("");
         String account = Optional.ofNullable(userLoginInfoAo)
                 .map(ao -> ao.account)
                 .orElse("");
+        String name = Optional.ofNullable(userLoginInfoAo)
+                .map(ao -> ao.userName)
+                .orElse(account);
         String phone = Optional.ofNullable(userLoginInfoAo)
                 .map(ao -> ao.phone)
                 .orElse("");
+        String avatarUrl = Optional.ofNullable(userLoginInfoAo)
+                .map(ao -> ao.avatarUrl)
+                .orElse("");
+
         // 设置文本
         nameTv.setText(name);
         accountTv.setText(account);
         phoneTv.setText(phone);
-    }
 
-    public void setMainTopBar(@NonNull MainTopBarVo mainTopBarVo) {
-        binding.mainTopBar.setView(mainTopBarVo);
+        // 加载头像
+        if (!TextUtils.isEmpty(avatarUrl)){
+            ImageLoadUtil.loadImageViewByResource(
+                    avatarUrl,
+                    avatarIv
+            );
+        }
+
     }
 
     @Override
@@ -103,7 +113,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             changeFragment(fragmentType);
         });
 
-        binding.mainTopBar.setImageClickListener(v -> {
+        // MainActivity给HomeFragment初始化点击事件
+        MainApplication.onHomeSearchAvatarClicked = () -> {
             if (!binding.mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                 binding.mainDrawerLayout.openDrawer(GravityCompat.START);
 //                ToastUtils.showToastActivity(this, "打开了抽屉");
@@ -111,10 +122,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 binding.mainDrawerLayout.closeDrawer(GravityCompat.START);
 //                ToastUtils.showToastActivity(this, "关闭了抽屉");
             }
-        });
+        };
 
         binding.mainNavigationView.setNavigationItemSelectedListener(item -> {
-            if (com.czy.customviewlib.R.id.setting_logOut == item.getItemId()){
+            if (com.czy.appview.R.id.setting_logOut == item.getItemId()){
                 exitDialog.show();
                 return true;
             }
@@ -126,7 +137,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         exitDialog.setButtonClickListener(v -> {
             exitDialog.dismiss();
             // 清除用户信息
-            MainApplication.getInstance().clearUserLoginInfoAo();
+            MainApplication.getInstance().clearAllUserData();
             // 断开socket
             MainApplication.getInstance().disconnectNettySocketService();
             // 跳转到登录界面

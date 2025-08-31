@@ -2,14 +2,15 @@ package com.czy.smartmedicine.activity;
 
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.util.Log;
 
 import com.czy.appcore.BaseConfig;
-import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
-import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.dal.ao.login.LoginTokenAo;
-import com.czy.dal.constant.NettyConstants;
+import com.czy.baseutil.activity.ActivityLaunchUtils;
+import com.czy.baseutil.activity.BaseActivity;
+import com.czy.baseutil.ui.ToastUtils;
+import com.czy.domain.ao.login.LoginTokenAo;
+import com.czy.domain.constant.NettyConstants;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityStartBinding;
 
@@ -35,8 +36,14 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
     @Override
     protected void init() {
         super.init();
-
+        initView();
         initTimer();
+    }
+
+    private void initView() {
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "Arial-Black.ttf");
+        Typeface italicTypeface = Typeface.create(typeface, Typeface.ITALIC);
+        binding.tvAppName.setTypeface(italicTypeface);
     }
 
     // 请求缓存数据，用户数据，用refreshToken刷新accessToken，验证刷新token是否过期等等

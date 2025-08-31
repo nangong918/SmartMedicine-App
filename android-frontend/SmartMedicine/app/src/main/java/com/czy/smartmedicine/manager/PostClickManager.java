@@ -12,21 +12,21 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.customviewlib.view.home.OnRecommendCardClick;
-import com.czy.dal.ao.home.PostAo;
-import com.czy.dal.ao.home.PostInfoUrlAo;
-import com.czy.dal.ao.home.PostIntentAo;
-import com.czy.dal.constant.NettyConstants;
-import com.czy.dal.constant.home.PostOperation;
-import com.czy.dal.constant.home.RecommendButtonType;
-import com.czy.dal.constant.home.RecommendCardType;
-import com.czy.dal.constant.netty.NettyOptionEnum;
-import com.czy.dal.dto.netty.request.PostCollectRequest;
-import com.czy.dal.dto.netty.request.PostDisLikeRequest;
-import com.czy.dal.dto.netty.request.PostLikeRequest;
-import com.czy.dal.dto.netty.request.UserBrowseTimeRequest;
-import com.czy.dal.dto.netty.request.UserClickPostRequest;
-import com.czy.dal.vo.entity.home.PostVo;
+import com.czy.appview.view.home.OnRecommendCardClick;
+import com.czy.domain.ao.home.PostAo;
+import com.czy.domain.ao.home.PostInfoUrlAo;
+import com.czy.domain.ao.home.PostIntentAo;
+import com.czy.domain.constant.NettyConstants;
+import com.czy.domain.constant.home.PostOperation;
+import com.czy.domain.constant.home.RecommendButtonType;
+import com.czy.domain.constant.home.RecommendCardType;
+import com.czy.domain.constant.netty.NettyOptionEnum;
+import com.czy.domain.dto.netty.request.PostCollectRequest;
+import com.czy.domain.dto.netty.request.PostDisLikeRequest;
+import com.czy.domain.dto.netty.request.PostLikeRequest;
+import com.czy.domain.dto.netty.request.UserBrowseTimeRequest;
+import com.czy.domain.dto.netty.request.UserClickPostRequest;
+import com.czy.domain.vo.entity.home.PostVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.PostActivity;
 
@@ -50,6 +50,9 @@ public class PostClickManager {
     public PostClickManager(@NonNull List<PostAo> postAoList, @NonNull ActivityResultCaller activityResultCaller){
         this.postAoList = postAoList;
         this.socketSender = MainApplication.getInstance().getMessageSender();
+        Log.i(TAG, "PostClickManager init: this.socketSender : "
+                + this.socketSender + " this.socketSender == null?"
+                + (this.socketSender == null));
         initActivityLauncher(activityResultCaller);
     }
 
@@ -89,7 +92,7 @@ public class PostClickManager {
                         .orElse(null);
                 if (postId == null){
                     Log.e(TAG, "帖子id为空");
-                    Toast.makeText(activity, activity.getString(com.czy.customviewlib.R.string.post_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getString(com.czy.appview.R.string.post_error), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -153,8 +156,8 @@ public class PostClickManager {
         if (postAoList.isEmpty()){
             return null;
         }
-        int realIndex = getPostRealIndexByPosition(position, cardId);
-        PostAo postAo = postAoList.get(realIndex);
+//        int realIndex = getPostRealIndexByPosition(position, cardId);
+        PostAo postAo = postAoList.get(position);
         assert cardId >= 0 && cardId < 2;
         if (RecommendCardType.TWO_SMALL_CARD.value == postAo.viewType){
             return postAo.postVos[cardId];
@@ -168,6 +171,7 @@ public class PostClickManager {
      * @param cardId    卡片索引(列索引)
      * @return  list中真实位置
      */
+    @Deprecated(since = "2025/8/11 [理解错误: postAoList是直接可用的, 并不需要进行转换]")
     private int getPostRealIndexByPosition(int position, int cardId){
         if (position > postAoList.size() || position < 0 || (cardId != 0 && cardId != 1)){
             Log.w(TAG, "getPostRealIndexByPosition: position out of range, position: " + position + " cardId:" + cardId);
@@ -177,7 +181,22 @@ public class PostClickManager {
         for (int i = 0; i < position; i++){
             index += postAoList.get(i).postVos.length;
         }
-        return index + cardId;
+        /*
+         * eg: realList[size7] -> list[2,2,2,1]
+         * param:
+         *  (0,0) -> 0
+         *  (0,1) -> 1
+         *  (1,0) -> 2
+         *  (1,1) -> 3
+         *  (2,0) -> 4
+         *  (2,1) -> 5
+         *  (3,0) -> 6
+         * 没有问题
+         */
+        int realIndex = index + cardId;
+        Log.i(TAG, "param: [position: " + position + ", cardId: " + cardId
+                + "] result: [realIndex: " + realIndex + "]");
+        return realIndex;
     }
 
     private void startPostActivityIntent(Long postId, FragmentActivity activity){
@@ -188,7 +207,11 @@ public class PostClickManager {
         postIntentAo.postId = postId;
         Intent intent = new Intent(activity, PostActivity.class);
         intent.putExtra(PostIntentAo.POST_OPEN_INTENT, postIntentAo);
-        openPostActivityLauncher.launch(intent);
+
+        Log.i("check_netty", "PostClickManager::MessageSender: " + MainApplication.getInstance().getMessageSender());
+
+        activity.startActivity(intent);
+//        openPostActivityLauncher.launch(intent);
 
         startReadPostTime = System.currentTimeMillis();
         // 记录点击（浏览）post事件
@@ -205,6 +228,7 @@ public class PostClickManager {
         request.postId = postId;
         request.senderId = userId;
         request.timestamp = String.valueOf(time);
+        Log.i("check_netty", "recordPostView::MessageSender: " + MainApplication.getInstance().getMessageSender());
         this.socketSender.uploadClickEvent(request);
     }
 
@@ -218,6 +242,7 @@ public class PostClickManager {
         request.timestamp = String.valueOf(time);
         request.postId = postId;
         request.browseDuration = duration;
+        Log.i("check_netty", "recordViewingDuration::MessageSender: " + MainApplication.getInstance().getMessageSender());
         this.socketSender.uploadBrowseEvent(request);
     }
 

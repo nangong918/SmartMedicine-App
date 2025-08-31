@@ -1,7 +1,6 @@
 package com.czy.smartmedicine.activity;
 
 
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -10,17 +9,17 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
-import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.baseUtilsLib.image.ImageLoadUtil;
-import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.post.CommentAdapter;
-import com.czy.dal.ao.home.PostIntentAo;
-import com.czy.dal.vo.entity.home.CommentVo;
-import com.czy.dal.vo.fragmentActivity.post.PostActivityVo;
+import com.czy.baseutil.activity.BaseActivity;
+import com.czy.baseutil.image.ImageLoadUtil;
+import com.czy.baseutil.viewModel.ViewModelUtil;
+import com.czy.appview.view.post.CommentAdapter;
+import com.czy.domain.ao.home.PostIntentAo;
+import com.czy.domain.vo.entity.home.CommentVo;
+import com.czy.domain.fragmentActivityAo.post.PostActivityVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPostBinding;
+import com.czy.smartmedicine.viewModel.activity.PostVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
-import com.czy.smartmedicine.viewModel.activity.PostViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +43,25 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     @Override
     protected void init() {
         super.init();
+
+        Log.i("check_netty", "PostActivity::MessageSender: " + MainApplication.getInstance().getMessageSender());
+
         initIntent();
         initViewModel();
         initRecyclerView();
+
+        // 利用postId去网络请求帖子信息（先请求1页的评论内容）
+        vm.getSinglePost(1, this, new SyncRequestCallback() {
+            @Override
+            public void onThrowable(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onAllRequestSuccess() {
+
+            }
+        });
     }
 
     @Override
@@ -75,39 +90,26 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         }
     }
 
-    private PostViewModel viewModel;
+    private PostVm vm;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, PostViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, PostVm.class);
 
         initViewModelVo();
 
         observeLivedata();
 
         // 绑定viewModel
-        binding.setViewModel(viewModel);
+        binding.setViewModel(vm);
         // 设置监听者
         binding.setLifecycleOwner(this);
-
-        // 利用postId去网络请求帖子信息（先请求1页的评论内容）
-        viewModel.getSinglePost(1, this, new SyncRequestCallback() {
-            @Override
-            public void onThrowable(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onAllRequestSuccess() {
-
-            }
-        });
     }
 
     private void initViewModelVo(){
         PostActivityVo vo = new PostActivityVo();
         vo.postVoLd.postIdLd.setValue(currentActivityPostId);
-        viewModel.init(vo);
+        vm.init(vo);
     }
 
     private void observeLivedata() {
@@ -116,7 +118,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     }
 
     private void observePostVo(){
-        viewModel.postActivityVo.postVoLd.authorAvatarUrlLd.observe(
+        vm.postActivityVo.postVoLd.authorAvatarUrlLd.observe(
                 this, authorAvatarUrl -> {
                     if (TextUtils.isEmpty(authorAvatarUrl)){
                         return;
@@ -125,7 +127,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
                 }
         );
 
-        viewModel.postActivityVo.postVoLd.postImgUrlsLd.observe(
+        vm.postActivityVo.postVoLd.postImgUrlsLd.observe(
                 this, postImgUrls -> {
                     if (postImgUrls == null){
                         return;
@@ -136,7 +138,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
                 }
         );
 
-        viewModel.postActivityVo.postVoLd.postContentLd.observe(
+        vm.postActivityVo.postVoLd.postContentLd.observe(
                 this, content -> {
                     if (TextUtils.isEmpty(content)){
                         return;
@@ -145,7 +147,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
                 }
         );
 
-        viewModel.postActivityVo.postVoLd.postTitleLd.observe(
+        vm.postActivityVo.postVoLd.postTitleLd.observe(
                 this, title -> {
                     if (TextUtils.isEmpty(title)){
                         return;
@@ -154,7 +156,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
                 }
         );
 
-        viewModel.postActivityVo.postVoLd.authorNameLd.observe(
+        vm.postActivityVo.postVoLd.authorNameLd.observe(
                 this, authorName -> {
                     if (TextUtils.isEmpty(authorName)){
                         return;
@@ -163,7 +165,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
                 }
         );
 
-        viewModel.postActivityVo.postVoLd.likeNumLd.observe(
+        vm.postActivityVo.postVoLd.likeNumLd.observe(
                 this, likeNum -> {
                     if (TextUtils.isEmpty(likeNum)){
                         return;
@@ -172,7 +174,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
                 }
         );
 
-        viewModel.postActivityVo.postVoLd.collectNumLd.observe(
+        vm.postActivityVo.postVoLd.collectNumLd.observe(
                 this, collectNum -> {
                     if (TextUtils.isEmpty(collectNum)){
                         return;
@@ -181,7 +183,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
                 }
         );
 
-        viewModel.postActivityVo.postVoLd.commentNumLd.observe(
+        vm.postActivityVo.postVoLd.commentNumLd.observe(
                 this, commentNum -> {
                     if (TextUtils.isEmpty(commentNum)){
                         return;
@@ -190,23 +192,23 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
                 }
         );
 
-        viewModel.postActivityVo.postVoLd.isLikeLd.observe(
+        vm.postActivityVo.postVoLd.isLikeLd.observe(
                 this, isLike -> {
                     if (isLike){
-                        binding.imgFavorite.setImageResource(com.czy.customviewlib.R.drawable.favorite_full);
+                        binding.imgFavorite.setImageResource(com.czy.appview.R.drawable.favorite_full);
                     }else{
-                        binding.imgFavorite.setImageResource(com.czy.customviewlib.R.drawable.favorite_border);
+                        binding.imgFavorite.setImageResource(com.czy.appview.R.drawable.favorite_border);
                     }
                 }
         );
 
-        viewModel.postActivityVo.postVoLd.isCollectLd.observe(
+        vm.postActivityVo.postVoLd.isCollectLd.observe(
                 this, isCollect -> {
                     if (isCollect){
-                        binding.imgvStar.setImageResource(com.czy.customviewlib.R.drawable.star_full);
+                        binding.imgvStar.setImageResource(com.czy.appview.R.drawable.star_full);
                     }
                     else{
-                        binding.imgvStar.setImageResource(com.czy.customviewlib.R.drawable.star_border);
+                        binding.imgvStar.setImageResource(com.czy.appview.R.drawable.star_border);
                     }
                 }
         );
@@ -214,7 +216,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
 
     @SuppressLint("NotifyDataSetChanged")
     private void observeCommentVo() {
-        viewModel.postActivityVo.commentNumLd.observe(
+        vm.postActivityVo.commentNumLd.observe(
                 this,
                 commentNum -> {
                     // 通知适配器数据已更改
@@ -226,7 +228,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     // recyclerView
     private CommentAdapter adapter;
     private void initRecyclerView(){
-        List<CommentVo> commentVos = Optional.ofNullable(viewModel.postActivityVo)
+        List<CommentVo> commentVos = Optional.ofNullable(vm.postActivityVo)
                 .map(ao -> ao.commentVos)
                 .orElse(new ArrayList<>());
         adapter = new CommentAdapter(commentVos);

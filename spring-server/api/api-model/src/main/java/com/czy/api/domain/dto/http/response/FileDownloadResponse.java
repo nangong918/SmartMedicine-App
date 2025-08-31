@@ -1,6 +1,7 @@
 package com.czy.api.domain.dto.http.response;
 
-import com.czy.api.domain.ao.oss.FileResAo;
+
+import domain.FileResAo;
 import lombok.Data;
 
 import java.io.Serializable;

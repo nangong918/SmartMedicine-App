@@ -1,0 +1,36 @@
+package com.czy.api.domain.ao.medicine;
+
+import com.czy.api.domain.ao.LocationAo;
+import com.czy.api.domain.vo.medicine.HospitalVo;
+import lombok.Data;
+
+import java.io.Serializable;
+
+/**
+ * @author 13225
+ * @date 2025/8/18 14:47
+ */
+@Data
+public class HospitalAo implements Cloneable , Serializable {
+    // vo
+    public HospitalVo hospitalVo;
+
+    // data
+    // position
+    public LocationAo locationAo;
+    // 经纬度
+    public Double longitude;
+    public Double latitude;
+
+    @Override
+    public HospitalAo clone() throws CloneNotSupportedException {
+        HospitalAo cloned = (HospitalAo) super.clone();
+        if (hospitalVo != null){
+            cloned.hospitalVo = hospitalVo.clone();
+        }
+        if (locationAo != null){
+            cloned.locationAo = locationAo.clone();
+        }
+        return cloned;
+    }
+}

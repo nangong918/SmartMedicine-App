@@ -1,0 +1,80 @@
+package com.czy.appview.view;
+
+import android.content.Context;
+import android.graphics.PorterDuff;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+
+import com.czy.appview.R;
+import com.czy.appview.databinding.ViewMainBottomBarBinding;
+import com.czy.domain.OnPositionItemClick;
+import com.czy.domain.constant.SelectItemEnum;
+
+/**
+ * @author 13225
+ */
+public class MainBottomBar extends ConstraintLayout {
+
+
+    public MainBottomBar(@NonNull Context context) {
+        super(context);
+        init(context);
+    }
+
+    public MainBottomBar(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+
+    public MainBottomBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context);
+    }
+
+    private ViewMainBottomBarBinding binding;
+
+    private void init(Context context){
+        LayoutInflater inflater = LayoutInflater.from(context);
+        binding = ViewMainBottomBarBinding.inflate(inflater, this, true);
+        clickLys = new LinearLayout[]{
+                binding.lyClick1, binding.lyClick2, binding.lyClick3, binding.lyClick4
+        };
+        imageViews = new ImageView[]{
+                binding.imgvHome, binding.imgvMedicine, binding.imgvMessage, binding.imgvMine
+        };
+        updateUi(0);
+    }
+
+    private LinearLayout[] clickLys;
+    private ImageView[] imageViews;
+
+    public void clickListener(OnPositionItemClick click) {
+        for (int i = 0; i < clickLys.length; i++){
+            int finalI = i;
+            clickLys[i].setOnClickListener(v -> {
+                updateUi(finalI);
+                click.onPositionItemClick(finalI);
+            });
+        }
+    }
+
+    private void updateUi(int clickPosition) {
+        boolean[] isClick = new boolean[imageViews.length];
+        isClick[clickPosition] = true;
+        for (int i = 0; i < imageViews.length; i++) {
+            int color = isClick[i] ? R.color.green_300 : R.color.green_900;
+            imageViews[i].setColorFilter(ContextCompat.getColor(getContext(), color), PorterDuff.Mode.SRC_IN);
+        }
+    }
+
+    public void setSelected(SelectItemEnum position) {
+        updateUi(position.getPosition());
+    }
+}

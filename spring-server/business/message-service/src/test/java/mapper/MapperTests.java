@@ -1,10 +1,10 @@
 package mapper;
 
+import com.api.mapper.message.mybatis.UserChatMessageMapper;
 import com.czy.api.constant.MessageTypeEnum;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.bo.message.UserChatMessageBo;
 import com.czy.message.MessageServiceApplication;
-import com.czy.message.mapper.mysql.UserChatMessageMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

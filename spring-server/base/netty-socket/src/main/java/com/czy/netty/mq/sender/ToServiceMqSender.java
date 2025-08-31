@@ -1,6 +1,6 @@
 package com.czy.netty.mq.sender;
 
-import com.czy.api.constant.netty.MqConstants;
+import com.czy.api.MqConstants;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.netty.service.NettyMessageService;
 import lombok.RequiredArgsConstructor;
@@ -43,9 +43,9 @@ public class ToServiceMqSender {
                 case MqConstants.RelationshipQueue.ID:
                     sendToRelationshipService(message);
                     break;
-                case MqConstants.OssQueue.ID:
-                    sendToOssService(message);
-                    break;
+//                case MqConstants.OssQueue.ID:
+//                    sendToOssService(message);
+//                    break;
                 case MqConstants.TO_SERVICE:
 //                    log.info("前端发送给server的消息，无需处理");
                 default:
@@ -151,15 +151,15 @@ public class ToServiceMqSender {
     }
 
     // oss service(通知消息))要求非可靠 非快速。采用惰性队列 + message ttl + 消息持久化 + 消息队列max length
-    private void sendToOssService(Message message){
-        // 发送消息
-        rabbitJsonTemplate.convertAndSend(
-                // 交换机
-                MqConstants.Exchange.OSS_EXCHANGE,
-                // 路由键
-                MqConstants.OssQueue.Routing.TO_SERVICE_ROUTING,
-                // 消息
-                message
-        );
-    }
+//    private void sendToOssService(Message message){
+//        // 发送消息
+//        rabbitJsonTemplate.convertAndSend(
+//                // 交换机
+//                MqConstants.Exchange.OSS_EXCHANGE,
+//                // 路由键
+//                MqConstants.OssQueue.Routing.TO_SERVICE_ROUTING,
+//                // 消息
+//                message
+//        );
+//    }
 }

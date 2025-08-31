@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.mapper.purchase.mybatis.WalletPayForAppointment">
+
+    <update id="payForAppointmentOrder">
+        UPDATE
+            user_wallet uw
+        SET
+            uw.balance = uw.balance - (
+                SELECT dma.cost
+                FROM user_customer_appointment_order ucao
+                INNER JOIN doctor_merchant_appointment dma ON ucao.doctor_merchant_appointment_id = dma.id
+                WHERE ucao.id = #{orderId}
+            )
+        WHERE
+            uw.user_id = (
+                SELECT user_id
+                FROM user_customer_appointment_order
+                WHERE id = #{orderId}
+            )
+        AND uw.balance >= (
+            SELECT dma.cost
+            FROM user_customer_appointment_order ucao
+            INNER JOIN doctor_merchant_appointment dma ON ucao.doctor_merchant_appointment_id = dma.id
+            WHERE ucao.id = #{orderId}
+        );
+
+        UPDATE
+            user_customer_appointment_order
+        SET
+            user_order_status = #{successCode}
+        WHERE
+            id = #{orderId}
+        AND EXISTS (
+            SELECT 1
+                FROM user_wallet uw
+                WHERE uw.user_id = (
+                    SELECT user_id
+                    FROM user_customer_appointment_order
+                    WHERE id = #{orderId}
+            )
+            AND uw.balance >= (
+                SELECT dma.cost
+                FROM user_customer_appointment_order ucao
+                INNER JOIN doctor_merchant_appointment dma ON ucao.doctor_merchant_appointment_id = dma.id
+                WHERE ucao.id = #{orderId}
+            )
+        );
+    </update>
+</mapper>

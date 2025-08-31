@@ -1,8 +1,11 @@
 package com.czy.post.service.impl;
 
-import com.czy.api.api.oss.OssService;
+
+import com.api.mapper.post.mongo.PostDetailMongoMapper;
+import com.api.mapper.post.mybatis.PostFilesMapper;
+import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.api.post.PostSearchService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.es.FieldAnalyzer;
 import com.czy.api.constant.search.SearchConstant;
 import com.czy.api.converter.domain.post.PostConverter;
@@ -21,10 +24,8 @@ import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 import com.czy.api.mapper.DiseaseRepository;
 import com.czy.post.front.PostFrontService;
-import com.czy.post.mapper.mongo.PostDetailMongoMapper;
-import com.czy.post.mapper.mysql.PostFilesMapper;
-import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.service.PostStorageService;
+import com.utils.minio.service.OssService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -74,8 +75,7 @@ public class PostSearchServiceImpl implements PostSearchService {
     private final RestHighLevelClient restHighLevelClient;
     private final PostDetailMongoMapper postDetailMongoMapper;
     private final PostStorageService postStorageService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     private final PostFrontService postFrontService;

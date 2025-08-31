@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.czy.smartmedicine.viewModel.activity.ChatViewModel" />
+            type="com.czy.smartmedicine.viewModel.activity.ChatVm" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -90,7 +90,7 @@
             app:stackFromEnd="true"
             tools:layout_editor_absoluteX="0dp" />
 
-        <com.czy.customviewlib.view.SendMessage
+        <com.czy.appview.view.SendMessage
             android:id="@+id/sm_sendMessage"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"

@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  * @date 2025/5/16 17:01
  */
 @Data
-public class FeatureContext {
+public class FeatureContext implements Serializable {
     // 用户 ID
     @NotNull(message = "用户 ID 不能为空")
     private Long userId;

@@ -1,7 +1,7 @@
 package com.czy.post.mq.handler;
 
 
-import com.czy.api.constant.netty.MqConstants;
+import com.czy.api.MqConstants;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.post.component.PostEventManager;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.czy.message.mq.handler;
 
-import com.czy.api.constant.netty.MqConstants;
+import com.czy.api.MqConstants;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.message.component.MessageEventManager;
 import lombok.RequiredArgsConstructor;

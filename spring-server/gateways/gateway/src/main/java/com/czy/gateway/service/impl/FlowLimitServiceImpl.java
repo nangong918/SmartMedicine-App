@@ -3,14 +3,14 @@ package com.czy.gateway.service.impl;
 import com.czy.api.exception.GatewayExceptions;
 import com.czy.gateway.constant.IpConstant;
 import com.czy.gateway.service.FlowLimitService;
-import com.czy.springUtils.service.RedisManagerService;
+import com.czy.gateway.utils.ResponseUtils;
+import com.utils.redis.service.RedisManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import utils.ResponseUtils;
 
 /**
  * @author 13225

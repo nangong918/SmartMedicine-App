@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/switch_night"
+        android:icon="@drawable/brightness_4_24px"
+        android:title="@string/night_mode"
+        app:actionLayout="@layout/switch_item" />
+    <item
+        android:id="@+id/setting_language"
+        android:icon="@drawable/settings_24px"
+        android:title="@string/language_setting"
+        android:checked="false"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/setting_logOut"
+        android:icon="@drawable/logout_24px"
+        android:title="@string/log_out"
+        android:checked="false"
+        android:checkable="true" />
+</menu>

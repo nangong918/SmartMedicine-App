@@ -1,16 +1,24 @@
 package com.czy.post.service.impl;
 
-import com.czy.api.api.user_relationship.UserService;
+import cn.hutool.core.util.IdUtil;
+import com.api.mapper.post.mongo.PostCommentMongoMapper;
+import com.api.mapper.post.mybatis.PostInfoMapper;
+import com.czy.api.api.user.user.UserService;
+import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.dto.service.CommentResultDto;
-import com.czy.post.mapper.mongo.PostCommentMongoMapper;
+import com.czy.api.exception.CommonExceptions;
+import com.czy.api.exception.PostExceptions;
+import com.czy.api.exception.UserExceptions;
 import com.czy.post.service.PostCommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -31,6 +39,7 @@ public class PostCommentServiceImpl implements PostCommentService {
     private final PostCommentMongoMapper postCommentMongoMapper;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
+    private final PostInfoMapper postInfoMapper;
 
     @Override
     public List<PostCommentDo> getLevel1PostComments(Long postId, Integer pageSize, Integer pageNum) {
@@ -40,11 +49,11 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Override
     public List<PostCommentDo> getLevel2PostComments(Long postId, Long level2CommentId, Integer pageSize, Integer pageNum) {
         int finalPageNum = pageNum;
-        if (finalPageNum < 10){
-            finalPageNum = 10;
+        if (finalPageNum < PostConstant.COMMENT_MIN_PAGE_SIZE){
+            finalPageNum = PostConstant.COMMENT_MIN_PAGE_SIZE;
         }
-        else if (finalPageNum > 20){
-            finalPageNum = 20;
+        else if (finalPageNum > PostConstant.COMMENT_MAX_PAGE_SIZE){
+            finalPageNum = PostConstant.COMMENT_MAX_PAGE_SIZE;
         }
         return postCommentMongoMapper.findLevel2CommentsByPostIdAndReplyCommentIdPaging(postId, level2CommentId, pageSize, finalPageNum);
     }
@@ -110,9 +119,39 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @NotNull
     @Override
-    public CommentResultDto comment(Long senderId, Long postId, Long replyCommentId, String content) {
+    public CommentResultDto comment(Long senderId, Long postId, @Nullable Long replyCommentId, @NotNull String content, Long timestamp) {
+        CommentResultDto resultDto = new CommentResultDto();
 
-        return null;
+        // 参数校验
+        if (senderId == null || postId == null) {
+            resultDto.setSuccess(false);
+            resultDto.setExceptionEnums(CommonExceptions.PARAM_ERROR);
+            return resultDto;
+        }
+        UserDo sender = userService.getUserById(senderId);
+        if (sender == null || sender.getId() == null){
+            resultDto.setSuccess(false);
+            resultDto.setExceptionEnums(UserExceptions.USER_NOT_EXIST);
+            return resultDto;
+        }
+        PostInfoDo postInfoDo = postInfoMapper.getPostInfoDoById(postId);
+        if (postInfoDo == null || postInfoDo.getId() == null){
+            resultDto.setSuccess(false);
+            resultDto.setExceptionEnums(PostExceptions.POST_NOT_EXIST);
+            return resultDto;
+        }
+
+        // 添加到mongodb数据库中
+        PostCommentDo postCommentDo = new PostCommentDo();
+        postCommentDo.setId(IdUtil.getSnowflakeNextId());
+        postCommentDo.setPostId(postId);
+        postCommentDo.setCommenterId(senderId);
+        postCommentDo.setReplyCommentId(replyCommentId);
+        postCommentDo.setContent(content);
+        postCommentDo.setTimestamp(timestamp);
+        postCommentMongoMapper.saveComment(postCommentDo);
+
+        return resultDto;
     }
 
     @Override

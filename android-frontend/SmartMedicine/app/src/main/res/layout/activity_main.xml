@@ -3,40 +3,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/green_0"
     android:layout_height="match_parent"
     android:id="@+id/main_drawerLayout"
     tools:context=".activity.MainActivity">
-
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--  home,search,AI,friends,notice,message  -->
-
-        <com.czy.customviewlib.view.MainTopBar
-            android:id="@+id/main_top_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+        <!--  home, medicine, message, mine  -->
 
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/main_top_bar"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/main_bottom_bar"/>
 
-        <com.czy.customviewlib.view.MainBottomBar
+        <com.czy.appview.view.MainBottomBar
             android:id="@+id/main_bottom_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- 他妈的傻逼Android, 非要设置一些傻逼属性, 他妈的自己设定的时候这些属性找他妈的都找不到, 操你妈的傻逼Android, 操你妈的傻逼Google -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:itemBackground="@color/green_90"
+            app:itemRippleColor="@color/green_90"
+            app:itemTextColor="@color/green_500"
+            app:itemIconTint="@color/green_500"
+            app:menu="@menu/bottom_nav_menu" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

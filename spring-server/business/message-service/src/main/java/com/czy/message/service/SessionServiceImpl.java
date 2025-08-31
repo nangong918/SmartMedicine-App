@@ -1,10 +1,9 @@
 package com.czy.message.service;
 
 
-
+import com.api.mapper.message.mybatis.SessionMapper;
 import com.czy.api.api.message.SessionService;
 import com.czy.api.domain.entity.event.Session;
-import com.czy.message.mapper.mysql.SessionMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

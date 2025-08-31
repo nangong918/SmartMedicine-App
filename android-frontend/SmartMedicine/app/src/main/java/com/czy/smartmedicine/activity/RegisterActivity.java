@@ -3,6 +3,7 @@ package com.czy.smartmedicine.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.Log;
 
@@ -11,20 +12,21 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
-import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
-import com.czy.baseUtilsLib.permission.GainPermissionCallback;
-import com.czy.baseUtilsLib.permission.PermissionUtil;
-import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.dal.ao.intent.RegisterActivityIntentAo;
-import com.czy.dal.constant.intent.RegisterActivityType;
-import com.czy.dal.vo.fragmentActivity.RegisterVo;
+import com.czy.baseutil.activity.BaseActivity;
+import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
+import com.czy.baseutil.permission.GainPermissionCallback;
+import com.czy.baseutil.permission.PermissionUtil;
+import com.czy.baseutil.ui.ToastUtils;
+import com.czy.baseutil.viewModel.ViewModelUtil;
+import com.czy.domain.ao.intent.RegisterIntentAAo;
+import com.czy.domain.constant.intent.RegisterActivityType;
+import com.czy.domain.fragmentActivityAo.RegisterVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityRegisterBinding;
-import com.czy.smartmedicine.viewModel.activity.RegisterViewModel;
+import com.czy.smartmedicine.viewModel.activity.RegisterVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -58,28 +60,28 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     protected void setListener() {
         super.setListener();
 
-        binding.infoBar.setBack(v -> finish());
+        binding.btnBack.setOnClickListener(v -> finish());
 
-        viewModel.onPhoneChanged(binding.edtvPhone, this);
-        viewModel.onVcodeChanged(binding.edtvVcode, this);
-        viewModel.onPasswordInputEnd(binding.edtvPassword, this);
-        viewModel.onConfirmPasswordInputEnd(binding.edtvConfirmPassword, this);
+        vm.onPhoneChanged(binding.edtvPhone, this);
+        vm.onVcodeChanged(binding.edtvVcode, this);
+        vm.onPasswordInputEnd(binding.edtvPassword, this);
+        vm.onConfirmPasswordInputEnd(binding.edtvConfirmPassword, this);
 
         binding.btnGetVcode.setOnClickListener(v -> {
-            if (Boolean.TRUE.equals(viewModel.registerVo.isPhoneValid.getValue())){
+            if (Boolean.TRUE.equals(vm.registerVo.isPhoneValid.getValue())){
                 NetworkLoadUtils.showDialog(this);
-                viewModel.tryRegisterSendSms(
+                vm.tryRegisterSendSms(
                         this,
                         new SyncRequestCallback() {
                             @Override
                             public void onThrowable(Throwable throwable) {
-                                viewModel.countDownTimerUtil.isStartCountDown = new AtomicBoolean(false);
+                                vm.countDownTimerUtil.isStartCountDown = new AtomicBoolean(false);
                                 NetworkLoadUtils.dismissDialog();
                             }
 
                             @Override
                             public void onAllRequestSuccess() {
-                                viewModel.countDownTimerUtil.isStartCountDown = new AtomicBoolean(false);
+                                vm.countDownTimerUtil.isStartCountDown = new AtomicBoolean(false);
                                 NetworkLoadUtils.dismissDialog();
                             }
                         }
@@ -88,22 +90,22 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
         });
 
         binding.btnConfirm.setOnClickListener(v -> {
-            if (Boolean.FALSE.equals(viewModel.registerVo.isPhoneValid.getValue())){
+            if (Boolean.FALSE.equals(vm.registerVo.isPhoneValid.getValue())){
                 
-                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.please_enter_right_phone));
+                ToastUtils.showToast(this, getString(com.czy.appview.R.string.please_enter_right_phone));
                 return;
             }
-            else if (Boolean.FALSE.equals(viewModel.registerVo.isVcodeValid.getValue())){
-                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.please_enter_right_vcode));
+            else if (Boolean.FALSE.equals(vm.registerVo.isVcodeValid.getValue())){
+                ToastUtils.showToast(this, getString(com.czy.appview.R.string.please_enter_right_vcode));
                 return;
             }
-            else if (Boolean.FALSE.equals(viewModel.registerVo.isPwdValid.getValue())){
-                String message = getString(com.czy.customviewlib.R.string.pwdNotLegal);
+            else if (Boolean.FALSE.equals(vm.registerVo.isPwdValid.getValue())){
+                String message = getString(com.czy.appview.R.string.pwdNotLegal);
                 ToastUtils.showToast(this, message);
                 return;
             }
-            else if (viewModel.uriAtomicReference == null || viewModel.uriAtomicReference.get() == null){
-                String message = getString(com.czy.customviewlib.R.string.avatarNotSelected);
+            else if (vm.uriAtomicReference == null || vm.uriAtomicReference.get() == null){
+                String message = getString(com.czy.appview.R.string.avatarNotSelected);
                 ToastUtils.showToast(this, message);
                  return;
             }
@@ -111,15 +113,15 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 //                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.pwdAgainNotConsist));
 //                return;
 //            }
-            String phone = viewModel.registerVo.phone.getValue();
-            String vcode = viewModel.registerVo.vcode.getValue();
-            String password = viewModel.registerVo.pwd.getValue();
-            String pwdAgain = viewModel.registerVo.pwdAgain.getValue();
-            String userName = viewModel.registerVo.userName.getValue();
-            String account = viewModel.registerVo.account.getValue();
-            if (viewModel.intentAo.activityType == RegisterActivityType.REGISTER.getType()){
+            String phone = vm.registerVo.phone.getValue();
+            String vcode = vm.registerVo.vcode.getValue();
+            String password = vm.registerVo.pwd.getValue();
+            String pwdAgain = vm.registerVo.pwdAgain.getValue();
+            String userName = vm.registerVo.userName.getValue();
+            String account = vm.registerVo.account.getValue();
+            if (vm.intentAo.activityType == RegisterActivityType.REGISTER.getType()){
                 NetworkLoadUtils.showDialog(this);
-                viewModel.doRegister(
+                vm.doRegister(
                         this,
                         phone,
                         vcode,
@@ -154,17 +156,18 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
         });
 
         binding.imvgAvatar.setOnClickListener(v -> {
-            PermissionUtil.requestPermissionsX(this, new String[]{
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, new GainPermissionCallback() {
+            PermissionUtil.requestPermissionSelectX(this,
+                   new String[]{},
+                    BaseConfig.NOT_MUST_PERMISSIONS,
+                    new GainPermissionCallback() {
                 @Override
                 public void allGranted() {
-                    com.czy.baseUtilsLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
+                    com.czy.baseutil.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
                 }
 
                 @Override
                 public void notGranted(String[] notGrantedPermissions) {
+                    Log.w(TAG, "权限获取失败::" + Arrays.toString(notGrantedPermissions));
                     ToastUtils.showToastActivity(RegisterActivity.this, "获取权限失败");
                 }
             });
@@ -172,14 +175,14 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     }
 
 
-    private RegisterViewModel viewModel;
+    private RegisterVm vm;
 
-    private RegisterActivityIntentAo intentAo;
+    private RegisterIntentAAo intentAo;
 
     private void initIntent(){
         try {
-            intentAo = (RegisterActivityIntentAo) getIntent().getSerializableExtra(
-                    RegisterActivityIntentAo.INTENT_KEY
+            intentAo = (RegisterIntentAAo) getIntent().getSerializableExtra(
+                    RegisterIntentAAo.INTENT_KEY
             );
         } catch (Exception e){
             Log.e(TAG, "initIntent error", e);
@@ -189,14 +192,14 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, RegisterViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, RegisterVm.class);
 
         initViewModelVo();
 
         observeLivedata();
 
         // 绑定viewModel
-        binding.setViewModel(viewModel);
+        binding.setViewModel(vm);
         // 设置监听者
         binding.setLifecycleOwner(this);
     }
@@ -204,47 +207,47 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     private void initViewModelVo() {
         RegisterVo registerVo = new RegisterVo();
 
-        viewModel.intentAo = intentAo;
-        viewModel.registerVo.phone.setValue(intentAo.phone);
+        vm.intentAo = intentAo;
+        vm.registerVo.phone.setValue(intentAo.phone);
 
-        viewModel.initVo(registerVo);
+        vm.initVo(registerVo);
     }
 
     private void observeLivedata() {
         // 观察验证码发送值
-        viewModel.registerVo.vcodeCountDown.observe(this, vcodeCountDown -> {
+        vm.registerVo.vcodeCountDown.observe(this, vcodeCountDown -> {
             if (vcodeCountDown > 0){
                 String time = vcodeCountDown + "s";
                 binding.btnGetVcode.setText(time);
             }
             else {
-                binding.btnGetVcode.setText(getText(com.czy.customviewlib.R.string.get_vcode));
+                binding.btnGetVcode.setText(getText(com.czy.appview.R.string.get_vcode));
             }
             checkConfirmIsEnable();
         });
 
         // 观察密码是否合法
-        viewModel.registerVo.isPwdValid.observe(this, isPwdValid -> {
+        vm.registerVo.isPwdValid.observe(this, isPwdValid -> {
             checkConfirmIsEnable();
         });
 
         // 观察两次密码是否一致
-        viewModel.registerVo.isPwdAgainConsist.observe(this, isPwdAgainConsist -> {
+        vm.registerVo.isPwdAgainConsist.observe(this, isPwdAgainConsist -> {
             checkConfirmIsEnable();
         });
 
         // 观察验证码输入
-        viewModel.registerVo.isVcodeValid.observe(this, isVcodeValid -> {
+        vm.registerVo.isVcodeValid.observe(this, isVcodeValid -> {
             checkConfirmIsEnable();
         });
 
         // 观察是否可以注册、重置密码
-        viewModel.registerVo.isConfirmBtnEnable.observe(this,
+        vm.registerVo.isConfirmBtnEnable.observe(this,
                 isConfirmBtnEnable -> {
                     binding.btnConfirm.setBackgroundResource(
                             isConfirmBtnEnable ?
-                                    com.czy.customviewlib.R.drawable.button_selected :
-                                    com.czy.customviewlib.R.drawable.button_not_select
+                                    com.czy.appview.R.drawable.button_selected2 :
+                                    com.czy.appview.R.drawable.button_not_select2
                     );
 //                    binding.btnConfirm.setClickable(isConfirmBtnEnable);
                 }
@@ -253,24 +256,28 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     }
 
     private void initView(){
-        binding.tvPrefix.setText(BaseConfig.phonePrefix);
+//        binding.tvPrefix.setText(BaseConfig.phonePrefix);
 
-        viewModel.registerVo.phone.setValue(viewModel.intentAo.phone);
-        binding.edtvPhone.setText(viewModel.intentAo.phone);
-        viewModel.registerVo.isPhoneValid.setValue(true);
+        vm.registerVo.phone.setValue(vm.intentAo.phone);
+        binding.edtvPhone.setText(vm.intentAo.phone);
+        vm.registerVo.isPhoneValid.setValue(true);
+
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "Arial-Black.ttf");
+        Typeface italicTypeface = Typeface.create(typeface, Typeface.ITALIC);
+        binding.tvAppName.setTypeface(italicTypeface);
     }
 
     private void checkConfirmIsEnable(){
         boolean enable =
-                Boolean.TRUE.equals(viewModel.registerVo.isPhoneValid.getValue())
-                        && Boolean.TRUE.equals(viewModel.registerVo.isVcodeValid.getValue())
-                        && Boolean.TRUE.equals(viewModel.registerVo.isPwdValid.getValue())
-                        && Boolean.TRUE.equals(viewModel.registerVo.isPwdAgainConsist.getValue());
+                Boolean.TRUE.equals(vm.registerVo.isPhoneValid.getValue())
+                        && Boolean.TRUE.equals(vm.registerVo.isVcodeValid.getValue())
+                        && Boolean.TRUE.equals(vm.registerVo.isPwdValid.getValue())
+                        && Boolean.TRUE.equals(vm.registerVo.isPwdAgainConsist.getValue());
         if (enable){
-            viewModel.registerVo.isConfirmBtnEnable.setValue(true);
+            vm.registerVo.isConfirmBtnEnable.setValue(true);
         }
         else {
-            viewModel.registerVo.isConfirmBtnEnable.setValue(false);
+            vm.registerVo.isConfirmBtnEnable.setValue(false);
         }
     }
 
@@ -284,7 +291,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
                     Intent data = result.getData();
                     if (data != null){
                         Uri imageUri = data.getData();
-                        viewModel.uriAtomicReference.set(imageUri);
+                        vm.uriAtomicReference.set(imageUri);
                         Bitmap bitmap = MainApplication.getInstance().getImageManager().uriToBitmapMediaStore(this, imageUri);
                         if (bitmap != null){
                             binding.imvgAvatar.setImageBitmap(bitmap);

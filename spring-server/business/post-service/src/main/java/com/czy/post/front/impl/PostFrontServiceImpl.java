@@ -1,7 +1,6 @@
 package com.czy.post.front.impl;
 
-import com.czy.api.api.oss.OssService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
@@ -11,6 +10,7 @@ import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostService;
+import com.utils.minio.service.OssService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +33,7 @@ import java.util.stream.Collectors;
 @Service
 public class PostFrontServiceImpl implements PostFrontService {
 
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     private final PostService postService;
@@ -97,7 +96,9 @@ public class PostFrontServiceImpl implements PostFrontService {
             }
             PostPreviewVo postPreviewVo = new PostPreviewVo();
             postPreviewVo.setPostId(postInfoAo.getId());
-            postPreviewVo.setPostImgUrl(fileUrls.get(i));
+            List<String> postImgUrls = new ArrayList<>();
+            postImgUrls.add(fileUrls.get(i));
+            postPreviewVo.setPostImgUrls(postImgUrls);
             postPreviewVo.setPostTitle(postInfoAo.getTitle());
             postPreviewVo.setAuthorId(postInfoAo.getAuthorId());
             String authorName = null;

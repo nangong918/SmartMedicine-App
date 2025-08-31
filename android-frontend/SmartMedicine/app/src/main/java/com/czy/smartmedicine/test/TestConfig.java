@@ -1,7 +1,7 @@
 package com.czy.smartmedicine.test;
 
 
-import com.czy.baseUtilsLib.debug.DebugEnvironment;
+import com.czy.baseutil.debug.DebugEnvironment;
 
 /**
  * @author 13225

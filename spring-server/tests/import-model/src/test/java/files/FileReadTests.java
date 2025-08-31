@@ -1,7 +1,9 @@
 package files;
 
 import cn.hutool.core.util.IdUtil;
-import com.czy.api.api.oss.OssService;
+import com.api.mapper.post.es.PostDetailEsMapper;
+import com.api.mapper.post.mongo.PostDetailMongoMapper;
+import com.api.mapper.user.es.UserEsMapper;
 import com.czy.api.domain.Do.neo4j.DiseaseDo;
 import com.czy.api.domain.Do.neo4j.PostNeo4jDo;
 import com.czy.api.domain.Do.neo4j.ProducersDo;
@@ -16,15 +18,12 @@ import com.czy.imports.domain.Do.ArticleDo;
 import com.czy.imports.domain.ao.AuthorAo;
 import com.czy.imports.manager.CrawlerDataManager;
 import com.czy.imports.manager.FileReadManager;
-import com.czy.imports.mapper.PostDetailMongoMapper;
-import com.czy.imports.mapperEs.PostDetailEsMapper;
-import com.czy.imports.mapperEs.UserEsMapper;
 import com.czy.imports.service.ImportAuthorService;
-import com.utils.mvc.service.MinIOService;
+import com.utils.minio.service.MinioService;
+import com.utils.minio.service.OssService;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -508,7 +507,6 @@ public class FileReadTests {
         session.query(cql, parameters);
     }
 
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private OssService ossService;
 
     @Test
@@ -539,7 +537,7 @@ public class FileReadTests {
     private UserEsMapper userEsMapper;
 
     @Autowired
-    private MinIOService minIOService;
+    private MinioService minioService;
 
     @Test
     public void clearAllTestData(){
@@ -576,8 +574,8 @@ public class FileReadTests {
 
         // 删除minIO数据
         try {
-            minIOService.deleteBucketAll(testAuthorBucketName);
-            minIOService.deleteBucketAll(testPostBucketName);
+            minioService.deleteBucketAll(testAuthorBucketName);
+            minioService.deleteBucketAll(testPostBucketName);
         } catch (Exception e){
             log.error("Error deleting bucket all in MinIO", e);
         }
