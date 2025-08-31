@@ -74,10 +74,7 @@ public class MainBottomBar extends ConstraintLayout {
         }
     }
 
-    private SelectItemEnum currentSelected;
-
     public void setSelected(SelectItemEnum position) {
-        this.currentSelected = position;
         updateUi(position.getPosition());
     }
 }

@@ -450,6 +450,8 @@ public class MainApplication extends Application {
         return message;
     }
 
+    public static Runnable onHomeSearchAvatarClicked;
+
     //----------------------------utils----------------------------
 
     private static Gson GSON;

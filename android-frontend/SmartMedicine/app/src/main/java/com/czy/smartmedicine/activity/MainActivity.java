@@ -10,28 +10,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.czy.appview.view.DialogConfirm;
 import com.czy.baseutil.activity.ActivityLaunchUtils;
 import com.czy.baseutil.activity.BaseActivity;
-import com.czy.appview.view.DialogConfirm;
 import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.constant.SelectItemEnum;
-import com.czy.domain.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.activity.search.SearchPostActivity;
 import com.czy.smartmedicine.databinding.ActivityMainBinding;
 import com.czy.smartmedicine.fragment.AiFragment;
-import com.czy.smartmedicine.fragment.home.HomeFragment;
 import com.czy.smartmedicine.fragment.MessageFragment;
 import com.czy.smartmedicine.fragment.NoticeFragment;
 import com.czy.smartmedicine.fragment.SearchFragment;
 import com.czy.smartmedicine.fragment.friends.FriendsFragment;
+import com.czy.smartmedicine.fragment.home.HomeFragment;
 
 import java.util.Optional;
 
@@ -100,10 +97,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     avatarUrl,
                     avatarIv
             );
-            ImageLoadUtil.loadImageViewByResource(
-                    avatarUrl,
-                    binding.mainTopBar.getImageView()
-            );
         }
 
     }
@@ -120,12 +113,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             changeFragment(fragmentType);
         });
 
-        binding.mainTopBar.setSearchBarClickListener(v -> {
-            Intent intent = new Intent(this, SearchPostActivity.class);
-            startActivity(intent);
-        });
-
-        binding.mainTopBar.setImageClickListener(v -> {
+        // MainActivity给HomeFragment初始化点击事件
+        MainApplication.onHomeSearchAvatarClicked = () -> {
             if (!binding.mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                 binding.mainDrawerLayout.openDrawer(GravityCompat.START);
 //                ToastUtils.showToastActivity(this, "打开了抽屉");
@@ -133,7 +122,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 binding.mainDrawerLayout.closeDrawer(GravityCompat.START);
 //                ToastUtils.showToastActivity(this, "关闭了抽屉");
             }
-        });
+        };
 
         binding.mainNavigationView.setNavigationItemSelectedListener(item -> {
             if (com.czy.appview.R.id.setting_logOut == item.getItemId()){
