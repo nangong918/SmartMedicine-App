@@ -2,6 +2,9 @@ package com.czy.api.domain.ao.purchase;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 /**
  * @author 13225
  * @date 2025/8/30 15:37
@@ -20,4 +23,12 @@ public class OrderStatusAo {
      * @see com.czy.api.constant.medicine.AppointmentMerchantStatusEnum
      */
     private Integer merchantStatus;
+    /**
+     * 商户结束时间
+     */
+    private LocalDateTime merchantEndTime;
+    /**
+     * 订单总价
+     */
+    private BigDecimal totalPrice;
 }

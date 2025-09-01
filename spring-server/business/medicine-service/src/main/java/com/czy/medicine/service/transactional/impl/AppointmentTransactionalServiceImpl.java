@@ -4,6 +4,7 @@ import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper;
 import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
@@ -11,6 +12,7 @@ import com.czy.api.converter.domain.medicine.AppointmentDoctorOrderConverter;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
+import com.czy.api.domain.ao.purchase.OrderStatusAo;
 import com.czy.api.domain.bo.medicine.UserAppointmentOrderBo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.MedicineExceptions;
@@ -45,6 +47,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
     private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
     private final DoctorMerchantBoMapper doctorMerchantBoMapper;
     private final AppointmentDoctorOrderConverter appointmentDoctorOrderConverter;
+    private final PayRedisMapper payRedisMapper;
 
     // todo 升级方向: 1. 可以使用优化合并sql来提升速度,避免多次IO 2.使用Redis的信号量
     @Transactional(rollbackFor = Exception.class)
@@ -61,7 +64,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         // 当前时间；在此处获取，因为业务可能呗等待，入参的时间应该是错误的
         LocalDateTime now = LocalDateTime.now();
         long timestamp = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        AppointmentMerchantStatusEnum status = AppointmentMerchantStatusCalculator.calculate(
+        AppointmentMerchantStatusEnum merchantStatus = AppointmentMerchantStatusCalculator.calculate(
                 doctorRegisterAppointmentDo.getRemainCount(),
                 now,
                 MedicineConstant.APPOINTMENT_OPEN_DAYS,
@@ -70,7 +73,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         );
 
         // 异常
-        switch (status){
+        switch (merchantStatus){
             case AVAILABLE:
                 break;
             case EXPIRED:
@@ -143,14 +146,28 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
 
         LocalDateTime registerDate = LocalDateTime.now();
         String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
+        // 5.1 订单系统的查询view视图更新
         AppointmentDoctorOrderListAo ao = appointmentDoctorOrderConverter.getAoByBo(bos.get(0), dateStr);
-        boolean result = registerAppointmentRedisMapper.saveSingleAppointmentDoctorOrderListAo(
+        boolean orderViewResult = registerAppointmentRedisMapper.saveSingleAppointmentDoctorOrderListAo(
                 userId,
                 ao
         );
-        if (!result){
-            log.warn("缓存用户预约order失败, redis存储失败");
+        if (!orderViewResult){
+            log.warn("缓存用户预约orderViewResult失败, redis存储失败");
         }
+        // 5.2 支付系统的状态创建/更新
+        payRedisMapper.updateOrderStatus(
+                userId,
+                orderId,
+                UserOrderStatusEnum.WAITING_PAYMENT.getCode(),
+                merchantStatus.getCode(),
+                // 结束时间: 预约开始时间
+                doctorRegisterAppointmentDo.getBeginDate(),
+                doctorRegisterAppointmentDo.getCost()
+        );
+        // 检查
+        OrderStatusAo orderStatusAo = payRedisMapper.getOrderStatus(userId, orderId);
+        log.info("创建订单成功, 订单状态为: {}", orderStatusAo);
     }
 
 }
