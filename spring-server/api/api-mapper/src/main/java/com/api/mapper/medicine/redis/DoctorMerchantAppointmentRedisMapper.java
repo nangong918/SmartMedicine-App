@@ -12,7 +12,6 @@ import java.util.List;
  */
 public interface DoctorMerchantAppointmentRedisMapper {
 
-    @Async
     boolean saveDoctorMerchantAppointmentDo(@NotNull DoctorMerchantAppointmentDo doctorMerchantAppointmentDo);
 
     @Async
@@ -21,4 +20,14 @@ public interface DoctorMerchantAppointmentRedisMapper {
     DoctorMerchantAppointmentDo getDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
 
     boolean deleteDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
+
+    boolean initAppointmentListSemaphorePermits(@NotNull List<DoctorMerchantAppointmentDo> appointmentDos);
+
+    boolean initAppointmentSemaphorePermits(@NotNull Long doctorMerchantAppointmentId, int permitsCount);
+
+    // 预约: 此预约是尝试获取信号量并更新缓存的库存
+    boolean reserveAppointment(@NotNull Long doctorMerchantAppointmentId);
+
+    // 取消预约: 归还信号量并更新缓存的库存
+    boolean cancelAppointment(@NotNull Long doctorMerchantAppointmentId);
 }

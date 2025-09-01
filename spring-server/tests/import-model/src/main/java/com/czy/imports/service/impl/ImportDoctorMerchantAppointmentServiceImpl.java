@@ -150,6 +150,10 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
                     doctorMerchantAppointmentDos
             );
             log.info("异步存入redis成功");
+            boolean semaphorePermitsResult = doctorMerchantAppointmentRedisMapper.initAppointmentListSemaphorePermits(
+                    doctorMerchantAppointmentDos
+            );
+            log.info("初始化信号量: {}", semaphorePermitsResult);
         }
     }
 

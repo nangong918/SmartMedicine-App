@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.redisson.api.RBucket;
+import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,6 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
 
     /// DoctorMerchantAppointmentDo 商户的信息mapper
 
-    @Async
     @Override
     public boolean saveDoctorMerchantAppointmentDo(@NotNull DoctorMerchantAppointmentDo doctorMerchantAppointmentDo) {
         if (doctorMerchantAppointmentDo.getId() == null){
@@ -82,4 +82,89 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
         return bucket.delete();
     }
 
+    @Override
+    public boolean initAppointmentListSemaphorePermits(@NotNull List<DoctorMerchantAppointmentDo> appointmentDos){
+        boolean result = true;
+        for (DoctorMerchantAppointmentDo item : appointmentDos) {
+            boolean currentResult = initAppointmentSemaphorePermits(item.getId(), item.getRemainCount());
+            if (!currentResult) {
+                result = false;
+            }
+        }
+        return result; // 返回整体初始化结果
+    }
+
+    // 初始化限流桶
+    @Override
+    public boolean initAppointmentSemaphorePermits(@NotNull Long doctorMerchantAppointmentId, int permitsCount) {
+        String semaphoreKeyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_SEMAPHORE_KEY_PREFIX +
+                doctorMerchantAppointmentId;
+
+        // 获取信号量
+        RSemaphore semaphore = redissonClient.getSemaphore(semaphoreKeyBuilder);
+
+        // 尝试设置许可数量
+        return semaphore.trySetPermits(permitsCount);
+    }
+
+    // 预约: 此预约是尝试获取信号量并更新缓存的库存
+    @Override
+    public boolean reserveAppointment(@NotNull Long doctorMerchantAppointmentId){
+        String semaphoreKeyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_SEMAPHORE_KEY_PREFIX +
+                doctorMerchantAppointmentId;
+
+        // 获取信号量
+        RSemaphore semaphore = redissonClient.getSemaphore(semaphoreKeyBuilder);
+
+        // 尝试获取信号量
+        boolean acquired = semaphore.tryAcquire();
+
+        if (acquired){
+            int remainingPermits = semaphore.availablePermits();
+            DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = getDoctorMerchantAppointmentDo(doctorMerchantAppointmentId);
+            if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null){
+                log.warn("[商户: {}不存在]", doctorMerchantAppointmentId);
+                return false;
+            }
+            doctorMerchantAppointmentDo.setRemainCount(remainingPermits);
+            // 更新
+            saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo);
+            return true;
+        }
+        else {
+            log.warn("[预约失败][信号量获取失败]");
+        }
+        // 预约失败
+        return false;
+    }
+
+    // 取消预约: 归还信号量并更新缓存的库存
+    @Override
+    public boolean cancelAppointment(@NotNull Long doctorMerchantAppointmentId) {
+        String semaphoreKeyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_SEMAPHORE_KEY_PREFIX +
+                doctorMerchantAppointmentId;
+
+        // 获取信号量
+        RSemaphore semaphore = redissonClient.getSemaphore(semaphoreKeyBuilder);
+
+        // 归还信号量
+        semaphore.release();
+
+        // 获取当前的预约信息
+        DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = getDoctorMerchantAppointmentDo(doctorMerchantAppointmentId);
+
+        if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null) {
+            log.warn("[商户: {}不存在]", doctorMerchantAppointmentId);
+            return false;
+        }
+
+        // 更新库存
+        int currentRemainingCount = semaphore.availablePermits();
+        doctorMerchantAppointmentDo.setRemainCount(currentRemainingCount);
+        // 更新 Redis 中的预约信息
+        saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo);
+
+        log.info("[预约已取消][信号量已归还][当前剩余库存: {}]", doctorMerchantAppointmentDo.getRemainCount());
+        return true;
+    }
 }
