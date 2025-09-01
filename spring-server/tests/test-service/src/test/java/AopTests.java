@@ -26,4 +26,10 @@ public class AopTests {
         log.info("未命中结果：{}", missResult);
     }
 
+    @Test
+    public void updateRedisTest(){
+        String result = redisAopTestService.updateRedisTest(1L);
+        log.info("更新结果：{}", result);
+    }
+
 }

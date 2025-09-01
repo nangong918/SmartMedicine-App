@@ -10,4 +10,6 @@ public interface RedisAopTestService {
     String hitTest(@NotNull Long userId);
 
     String missTest(@NotNull Long userId);
+
+    String updateRedisTest(@NotNull Long userId);
 }
