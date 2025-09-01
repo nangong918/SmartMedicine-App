@@ -1,7 +1,7 @@
 package com.czy.medicine.controller;
 
 import cn.hutool.core.util.IdUtil;
-import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
 import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
@@ -58,7 +58,7 @@ public class RegisterAppointmentController {
     private final RegisterAppointmentService registerAppointmentService;
     private final RedissonService redissonService;
     private final AppointmentMqSender appointmentMqSender;
-    private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+    private final AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
     private final PayRedisMapper payRedisMapper;
 
     /// 查：获取

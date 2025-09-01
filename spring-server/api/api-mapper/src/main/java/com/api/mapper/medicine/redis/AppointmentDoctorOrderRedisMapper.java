@@ -1,11 +1,9 @@
 package com.api.mapper.medicine.redis;
 
-import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import exception.AppException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 
@@ -20,7 +18,7 @@ import java.util.List;
  *  增加修改的时候可以直接查询数据库,甚至不用缓存
  *  但是查询的时候必须使用缓存
  */
-public interface RegisterAppointmentRedisMapper {
+public interface AppointmentDoctorOrderRedisMapper {
 
     /// AppointmentDoctorOrderListAo
 
@@ -59,24 +57,6 @@ public interface RegisterAppointmentRedisMapper {
 
     // 单个删除, 在取消订单和支付超时的时候存储
     void deleteSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo ao);
-
-
-    /// DoctorMerchantAppointmentDo
-
-    /**
-     * 保存/更新商户信息
-     * @param doctorMerchantAppointmentDo   DoctorMerchantAppointmentDo
-     * @return                              boolean
-     */
-    @Async
-    boolean saveDoctorMerchantAppointmentDo(@NotNull DoctorMerchantAppointmentDo doctorMerchantAppointmentDo);
-
-    @Async
-    void saveDoctorMerchantAppointmentDos(@NotNull List<DoctorMerchantAppointmentDo> appointmentDos);
-
-    DoctorMerchantAppointmentDo getDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
-
-    boolean deleteDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
 
     @Nullable List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType, @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException;
 }

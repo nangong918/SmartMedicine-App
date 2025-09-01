@@ -3,7 +3,8 @@ package com.czy.medicine.service.transactional.impl;
 import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper;
-import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
+import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
@@ -44,10 +45,11 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
 
     private final DoctorMerchantAppointmentMapper doctorMerchantAppointmentMapper;
     private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
-    private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+    private final AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
     private final DoctorMerchantBoMapper doctorMerchantBoMapper;
     private final AppointmentDoctorOrderConverter appointmentDoctorOrderConverter;
     private final PayRedisMapper payRedisMapper;
+    private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
 
     // todo 升级方向: 1. 可以使用优化合并sql来提升速度,避免多次IO 2.使用Redis的信号量
     @Transactional(rollbackFor = Exception.class)
@@ -122,10 +124,10 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         /// 5.删除/更新redis缓存
         // 库存扣减 todo 升级方向: 使用RSemaphore 信号量; 初步架构暂时使用Redis存储Json
         DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointmentMapper.getById(doctorMerchantId);
-        if (!registerAppointmentRedisMapper.saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo)){
+        if (!doctorMerchantAppointmentRedisMapper.saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo)){
             // 缓存更新失败的话不需要回滚事务, 直接删除缓存就好, 等待之后查询发现没缓存就来查询数据了
             log.warn("缓存更新失败, 删除缓存");
-            boolean result = registerAppointmentRedisMapper.deleteDoctorMerchantAppointmentDo(doctorMerchantId);
+            boolean result = doctorMerchantAppointmentRedisMapper.deleteDoctorMerchantAppointmentDo(doctorMerchantId);
             if (!result){
                 // 如果删除都删除失败了, 就要用error日志, 去排查问题, 估计是redis挂了
                 log.error("删除缓存也删除失败了失败");

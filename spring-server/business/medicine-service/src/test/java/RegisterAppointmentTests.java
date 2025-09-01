@@ -1,6 +1,6 @@
 import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper;
-import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.DepartmentEnum;
@@ -143,7 +143,7 @@ public class RegisterAppointmentTests {
     }
 
     @Autowired
-    private RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+    private AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
 
     @Test
     public void appointmentDoctorOrderListAoTests(){

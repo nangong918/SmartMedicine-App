@@ -4,7 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.api.mapper.medicine.mybatis.DoctorMapper;
 import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.HospitalMapper;
-import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.api.mapper.user.mybatis.user.UserMapper;
 import com.czy.api.constant.BaseEnum;
 import com.czy.api.constant.BaseParentEnum;
@@ -44,7 +44,7 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
     private final UserMapper userMapper;
     private final DoctorMerchantAppointmentMapper doctorMerchantAppointmentMapper;
     // 导入数据的时候用于缓存数据
-    private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+    private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
 
     public void importRecord(){}
 
@@ -146,7 +146,7 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
             log.info("批量插入数据库成功");
 
             // 异步存入redis
-            registerAppointmentRedisMapper.saveDoctorMerchantAppointmentDos(
+            doctorMerchantAppointmentRedisMapper.saveDoctorMerchantAppointmentDos(
                     doctorMerchantAppointmentDos
             );
             log.info("异步存入redis成功");

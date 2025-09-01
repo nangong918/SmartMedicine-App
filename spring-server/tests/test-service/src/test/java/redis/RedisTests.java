@@ -1,6 +1,6 @@
 package redis;
 
-import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
 import com.czy.test.TestApplication;
 import com.czy.test.domain.Do.TestDo;
 import com.czy.test.mapper.TestRedisMapper;
@@ -34,6 +34,6 @@ public class RedisTests {
     }
 
     @Autowired
-    private RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+    private AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
 
 }

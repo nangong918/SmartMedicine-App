@@ -3,7 +3,7 @@ package com.czy.medicine.service.impl;
 import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper;
-import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
 import com.czy.api.constant.ErrorConstant;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
@@ -71,7 +71,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     private final OssService ossService;
     private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
     private final RedissonService redissonService;
-    private final RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+    private final AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
     private final AppointmentTransactionalService appointmentTransactionalService;
     private final AppointmentDoctorOrderConverter appointmentDoctorOrderConverter;
     private final AppointmentMqSender appointmentMqSender;
