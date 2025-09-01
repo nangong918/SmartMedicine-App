@@ -17,8 +17,8 @@ public interface MedicineRedisKey {
         long appointmentOrder_EXPIRE_TIME = 5 * 60L;
         /// DoctorMerchant
         String DoctorMerchant_KEY_PREFIX = MedicineRedisKey.ID + ID + "DoctorMerchant:";
-        // 过期时间: 1天
-        long DoctorMerchant_EXPIRE_TIME = (long) 60 * 60 * 24;
+        // 过期时间: 4天
+        long DoctorMerchant_EXPIRE_TIME = (long) 4 * 60 * 60 * 24;
         /// 用户订单记录
         // key: prefix:userId:sortType
         String AppointmentDoctorOrderListAoList_KEY_PREFIX = MedicineRedisKey.ID + ID + "AppointmentDoctorOrderListAoList:";

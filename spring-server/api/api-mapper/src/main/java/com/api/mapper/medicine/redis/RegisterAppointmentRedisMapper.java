@@ -5,6 +5,7 @@ import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import exception.AppException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 
@@ -67,7 +68,11 @@ public interface RegisterAppointmentRedisMapper {
      * @param doctorMerchantAppointmentDo   DoctorMerchantAppointmentDo
      * @return                              boolean
      */
+    @Async
     boolean saveDoctorMerchantAppointmentDo(@NotNull DoctorMerchantAppointmentDo doctorMerchantAppointmentDo);
+
+    @Async
+    void saveDoctorMerchantAppointmentDos(@NotNull List<DoctorMerchantAppointmentDo> appointmentDos);
 
     DoctorMerchantAppointmentDo getDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
 

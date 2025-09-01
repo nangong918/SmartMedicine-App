@@ -7,16 +7,17 @@ import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.MedicineExceptions;
-import com.utils.redisson.service.RedissonService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.redisson.api.RBucket;
 import org.redisson.api.RKeys;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -42,7 +43,6 @@ import java.util.stream.Collectors;
 @Component
 public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRedisMapper {
 
-    private final RedissonService redissonService;
     private final RedissonClient redissonClient;
 
     // 查询user-merchant
@@ -146,6 +146,7 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         }
     }
 
+    @Async
     @Override
     public boolean saveDoctorMerchantAppointmentDo(@NotNull DoctorMerchantAppointmentDo doctorMerchantAppointmentDo) {
         if (doctorMerchantAppointmentDo.getId() == null){
@@ -153,22 +154,52 @@ public class RegisterAppointmentRedisMapperImpl implements RegisterAppointmentRe
         }
         String keyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX +
                 doctorMerchantAppointmentDo.getId();
-        return redissonService.setObjectByJson(keyBuilder, doctorMerchantAppointmentDo,
-                MedicineRedisKey.Appointment.DoctorMerchant_EXPIRE_TIME);
+
+        RBucket<DoctorMerchantAppointmentDo> bucket = redissonClient.getBucket(keyBuilder);
+        if (!bucket.isExists()){
+            bucket.expire(MedicineRedisKey.Appointment.DoctorMerchant_EXPIRE_TIME, TimeUnit.SECONDS);
+        }
+        bucket.set(doctorMerchantAppointmentDo);
+        return true;
     }
+
+    @Async
+    @Override
+    public void saveDoctorMerchantAppointmentDos(@NotNull List<DoctorMerchantAppointmentDo> appointmentDos) {
+        for (DoctorMerchantAppointmentDo item : appointmentDos) {
+            String keyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX + item.getId();
+            RBucket<DoctorMerchantAppointmentDo> bucket = redissonClient.getBucket(keyBuilder);
+            bucket.set(item, MedicineRedisKey.Appointment.DoctorMerchant_EXPIRE_TIME, TimeUnit.SECONDS);
+        }
+    }
+
 
     @Override
     public DoctorMerchantAppointmentDo getDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId) {
         String keyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX +
                 doctorMerchantAppointmentId;
-        return redissonService.getObjectFromJson(keyBuilder, DoctorMerchantAppointmentDo.class);
+
+        // 从 Redis 获取对象
+        RBucket<DoctorMerchantAppointmentDo> bucket = redissonClient.getBucket(keyBuilder);
+
+        // 检查对象是否存在
+        if (bucket.isExists()) {
+            return bucket.get(); // 返回存储的对象
+        } else {
+            return null; // 如果不存在，返回 null 或者可以抛出异常
+        }
     }
 
     @Override
     public boolean deleteDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId) {
         String keyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX +
                 doctorMerchantAppointmentId;
-        return redissonService.deleteObject(keyBuilder);
+
+        // 获取桶
+        RBucket<DoctorMerchantAppointmentDo> bucket = redissonClient.getBucket(keyBuilder);
+
+        // 删除对象并返回结果
+        return bucket.delete();
     }
 
     /// List<AppointmentDoctorOrderListAo> 用户预约订单
