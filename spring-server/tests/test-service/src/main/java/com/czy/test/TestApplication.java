@@ -2,6 +2,7 @@ package com.czy.test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -9,6 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @author 13225
  * @date 2025/1/10 18:25
  */
+// 启用AOP
+@EnableAspectJAutoProxy
 @SpringBootApplication(scanBasePackages = {
         "com.utils.minio",
         "com.utils.redisson",
