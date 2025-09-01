@@ -144,6 +144,7 @@ public class RegisterAppointmentController {
     @PostMapping(MedicineConstant.APPOINTMENT)
     public BaseResponse<AppointmentDoctorResponse> appointment
     (@Validated @RequestBody AppointmentDoctorRequest request){
+        /// 1. 商户可预约可预约查询
 
         /// 1. 行为幂等性:防止用户重复预约
         // user:商户预约是否已经存在 (会抛出redis连接失败的错误, 避免出现redis挂掉导致超卖问题)
