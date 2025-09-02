@@ -3,20 +3,23 @@ package com.czy.smartmedicine.viewModel.activity;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseutil.network.BaseResponse;
+import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseutil.ui.ToastUtils;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.domain.dto.http.request.RecommendPostRequest;
 import com.czy.domain.dto.http.response.SinglePostResponse;
-import com.czy.domain.fragmentActivityAo.post.PostActivityVo;
+import com.czy.domain.fragmentActivityAo.post.PostAAo;
 import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.PostActivity;
 import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
@@ -36,25 +39,36 @@ public class PostVm extends ViewModel {
 
     //---------------------------Vo Ld---------------------------
 
-    public PostActivityVo postActivityVo = new PostActivityVo();
+    public PostAAo postAAo = new PostAAo();
 
-    public void init(PostActivityVo postActivityVo) {
-        this.postActivityVo = postActivityVo;
-
-        initialNetworkRequest();
+    public void init(PostAAo postAAo, FragmentActivity activity) {
+        this.postAAo = postAAo;
+        initialNetworkRequest(activity);
     }
 
     //---------------------------NetWork---------------------------
 
     // 初始化网络请求
-    private void initialNetworkRequest() {
+    private void initialNetworkRequest(FragmentActivity activity) {
+        // 利用postId去网络请求帖子信息（先请求1页的评论内容）
+        NetworkLoadUtils.showDialog(activity);
+        // 获取帖子信息；初始化请求分页为1
+        getSinglePost(1, activity, new SyncRequestCallback() {
+            @Override
+            public void onThrowable(Throwable throwable) {
+                NetworkLoadUtils.dismissDialogSafe(activity);
+            }
+
+            @Override
+            public void onAllRequestSuccess() {
+                NetworkLoadUtils.dismissDialogSafe(activity);
+            }
+        });
     }
 
     public void getSinglePost(Integer pageNum, Context context, SyncRequestCallback callback){
-        Long postId = Optional.ofNullable(postActivityVo)
-                        .map(vo -> vo.postVoLd)
-                        .map(pvo -> pvo.postIdLd)
-                        .map(LiveData::getValue)
+        Long postId = Optional.ofNullable(postAAo)
+                        .map(aao -> aao.postId)
                         .orElse(null);
 
         if (postId == null){
@@ -99,9 +113,9 @@ public class PostVm extends ViewModel {
 
     private void handleSinglePost(BaseResponse<SinglePostResponse> response, Context context, SyncRequestCallback callback){
         SinglePostResponse singlePostResponse = response.getData();
-        postActivityVo.postVoLd.initByPostVo(singlePostResponse.postVo);
-        postActivityVo.commentVos = singlePostResponse.commentVos;
-        postActivityVo.commentNumLd.setValue(
+        postAAo.postAVo.initByPostVo(singlePostResponse.postVo);
+        postAAo.commentVos = singlePostResponse.commentVos;
+        postAAo.commentNumLd.setValue(
                 singlePostResponse.commentVos.size()
         );
         callback.onAllRequestSuccess();

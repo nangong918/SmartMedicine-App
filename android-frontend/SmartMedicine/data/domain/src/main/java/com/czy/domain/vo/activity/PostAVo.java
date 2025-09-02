@@ -29,5 +29,4 @@ public class PostAVo {
 
     // comment
     public List<CommentAo> commentAos = new ArrayList<>();
-    public MutableLiveData<Integer> commentNumLd = new MutableLiveData<>(0);
 }
