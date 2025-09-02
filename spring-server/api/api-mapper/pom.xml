@@ -76,6 +76,12 @@
             <artifactId>jackson-annotations</artifactId>
         </dependency>
 
+        <!-- 引入 Spring AOP 相关依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!-- jetbrains注解 -->
         <dependency>
             <groupId>org.jetbrains</groupId>

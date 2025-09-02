@@ -312,6 +312,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     (@NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId) throws AppException{
         // 检查当前状态是否是可预约 todo 查询改为redis 缓存查询
 
+        // todo: 1. 异常归还redisson库存, 2. Aop查询数据库 3.异步更新Redis缓存
         // 执行事务
         // 对商品上锁，库减少（模拟减少，因为有5分钟的支付时间，未支付的话就库存数据增）
         // 缓存减少 事务sql
@@ -354,8 +355,10 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
      */
     @Override
     public void generateOrderCache(@NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId, @NotNull RedissonClusterLock appointmentLock) throws AppException {
-        // 检查商户
-        DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointmentMapper.getById(doctorMerchantAppointmentId);
+        // 检查商户 (aop: redis -> mybatis)
+        DoctorMerchantAppointmentDo doctorMerchantAppointmentDo =
+                doctorMerchantAppointmentMapper.getById(doctorMerchantAppointmentId);
+
         if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null){
             // 异常则解开分布式锁
             redissonService.unlock(appointmentLock);
@@ -364,7 +367,11 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
         List<DoctorMerchantAppointmentDo> dos = new ArrayList<>();
         dos.add(doctorMerchantAppointmentDo);
-        List<RegisterAppointmentDoctorCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(dos);
+
+        // 获取预约信息 (aop: redis -> mybatis)
+        List<RegisterAppointmentDoctorCardBo> boList =
+                doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(dos);
+
         if (CollectionUtils.isEmpty(boList) || boList.get(0) == null){
             // 异常则解开分布式锁
             redissonService.unlock(appointmentLock);

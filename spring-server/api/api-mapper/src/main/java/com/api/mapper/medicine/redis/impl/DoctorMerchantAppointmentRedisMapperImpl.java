@@ -3,6 +3,7 @@ package com.api.mapper.medicine.redis.impl;
 import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.czy.api.constant.medicine.MedicineRedisKey;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
+import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
 import com.czy.api.exception.MedicineExceptions;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -169,5 +171,44 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
 
         log.info("[预约已取消][信号量已归还][当前剩余库存: {}]", doctorMerchantAppointmentDo.getRemainCount());
         return true;
+    }
+
+    /// RegisterAppointmentDoctorCardBo; DoctorMerchantBo
+    @Override
+    public RegisterAppointmentDoctorCardBo getDoctorCardBosByDoctorMerchantDoId(@NotNull Long doctorMerchantId){
+        String keyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorCardBo_KEY_PREFIX +
+                doctorMerchantId;
+        RBucket<RegisterAppointmentDoctorCardBo> bucket = redissonClient.getBucket(keyBuilder);
+        return bucket.get();
+    }
+
+    @Override
+    public List<RegisterAppointmentDoctorCardBo> getDoctorCardBosByDoctorMerchantDos(@NotNull List<DoctorMerchantAppointmentDo> dos){
+        List<RegisterAppointmentDoctorCardBo> result = new ArrayList<>();
+        for (DoctorMerchantAppointmentDo doctorMerchantAppointmentDo : dos) {
+            RegisterAppointmentDoctorCardBo doctorCardBo = getDoctorCardBosByDoctorMerchantDoId(doctorMerchantAppointmentDo.getId());
+            result.add(doctorCardBo);
+        }
+        return result.isEmpty() ? null : result;
+    }
+
+    @Override
+    public void saveRegisterAppointmentDoctorCardBo(@NotNull RegisterAppointmentDoctorCardBo bo,
+                                                    @NotNull Long doctorMerchantId){
+        String keyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorCardBo_KEY_PREFIX +
+                doctorMerchantId;
+        RBucket<RegisterAppointmentDoctorCardBo> bucket = redissonClient.getBucket(keyBuilder);
+        bucket.expire(MedicineRedisKey.Appointment.DoctorMerchant_EXPIRE_TIME, TimeUnit.SECONDS);
+        bucket.set(bo);
+    }
+
+    @Override
+    public void saveRegisterAppointmentDoctorCardBos(@NotNull List<RegisterAppointmentDoctorCardBo> bos,
+                                                     @NotNull List<DoctorMerchantAppointmentDo> dos){
+        for (int i = 0; i < bos.size(); i++) {
+            RegisterAppointmentDoctorCardBo bo = bos.get(i);
+            DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = dos.get(i);
+            saveRegisterAppointmentDoctorCardBo(bo, doctorMerchantAppointmentDo.getId());
+        }
     }
 }
