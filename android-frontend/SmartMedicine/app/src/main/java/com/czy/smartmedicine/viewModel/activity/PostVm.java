@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
@@ -12,14 +11,13 @@ import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseutil.network.BaseResponse;
 import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseutil.ui.ToastUtils;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.domain.dto.http.request.RecommendPostRequest;
 import com.czy.domain.dto.http.response.SinglePostResponse;
 import com.czy.domain.fragmentActivityAo.post.PostAAo;
-import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.activity.PostActivity;
 import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
@@ -113,10 +111,9 @@ public class PostVm extends ViewModel {
 
     private void handleSinglePost(BaseResponse<SinglePostResponse> response, Context context, SyncRequestCallback callback){
         SinglePostResponse singlePostResponse = response.getData();
-        postAAo.postAVo.initByPostVo(singlePostResponse.postVo);
-        postAAo.commentVos = singlePostResponse.commentVos;
-        postAAo.commentNumLd.setValue(
-                singlePostResponse.commentVos.size()
+        postAAo.postAVo.initByResponse(
+                singlePostResponse.postVo,
+                singlePostResponse.commentAos
         );
         callback.onAllRequestSuccess();
     }

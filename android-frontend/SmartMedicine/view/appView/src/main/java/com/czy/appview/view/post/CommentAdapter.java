@@ -6,38 +6,35 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.czy.appview.databinding.ViewCommentBinding;
-import com.czy.domain.vo.entity.home.CommentVo;
+import com.czy.appview.databinding.ViewCommentItemBinding;
+import com.czy.domain.ao.entity.CommentAo;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public List<CommentVo> commentVos;
+    public final List<CommentAo> commentAos;
 
-    public CommentAdapter(List<CommentVo> commentVos){
-        this.commentVos = commentVos;
+    public CommentAdapter(@NonNull List<CommentAo> commentAos){
+        this.commentAos = commentAos;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ViewCommentBinding binding = ViewCommentBinding.inflate(inflater, parent, false);
+        ViewCommentItemBinding binding = ViewCommentItemBinding.inflate(inflater, parent, false);
         return new CommentViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        CommentVo commentVo = commentVos.get(position);
+        CommentAo commentVo = commentAos.get(position);
         ((CommentViewHolder)holder).setView(commentVo);
     }
 
     @Override
     public int getItemCount() {
-        return Optional.ofNullable(this.commentVos)
-                .map(List::size)
-                .orElse(0);
+        return commentAos.size();
     }
 }

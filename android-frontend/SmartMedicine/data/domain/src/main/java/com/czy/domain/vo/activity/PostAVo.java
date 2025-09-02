@@ -4,6 +4,7 @@ package com.czy.domain.vo.activity;
 import androidx.lifecycle.MutableLiveData;
 
 import com.czy.domain.ao.entity.CommentAo;
+import com.czy.domain.vo.entity.home.PostVo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,4 +31,19 @@ public class PostAVo {
 
     // comment
     public final List<CommentAo> commentAos = new ArrayList<>();
+
+    public void initByResponse(PostVo postVo, List<CommentAo> commentAos) {
+        this.authorAvatarUrlLd.setValue(postVo.authorAvatarUrl);
+        this.authorNameLd.setValue(postVo.authorName);
+        this.postTitleLd.setValue(postVo.postTitle);
+        this.postContentLd.setValue(postVo.postContent);
+        this.postPublishTimeLd.setValue(postVo.postPublishTime);
+        this.postViewNumLd.setValue(postVo.postViewNum);
+        this.postImgUrls.addAll(postVo.postImgUrls);
+        this.likePostLd.setValue(postVo.like);
+        this.collectPostLd.setValue(postVo.collect);
+        this.dislikePostLd.setValue(postVo.dislike);
+
+        this.commentAos.addAll(commentAos);
+    }
 }

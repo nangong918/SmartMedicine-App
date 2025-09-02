@@ -1,14 +1,17 @@
 package com.czy.domain.vo.entity.home;
 
 
+import androidx.annotation.NonNull;
+
 import com.czy.baseutil.algorithm.SortItem;
 import com.czy.domain.constant.home.PostOperation;
 import com.czy.domain.constant.home.RecommendButtonType;
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public class PostVo extends SortItem {
+public class PostVo extends SortItem implements Serializable, Cloneable {
 
     // postId
     public Long postId = null;
@@ -107,5 +110,11 @@ public class PostVo extends SortItem {
             }
             case CANCEL_NOT_INTERESTED -> dislike = false;
         }
+    }
+
+    @NonNull
+    @Override
+    public PostVo clone() throws CloneNotSupportedException {
+        return (PostVo) super.clone();
     }
 }

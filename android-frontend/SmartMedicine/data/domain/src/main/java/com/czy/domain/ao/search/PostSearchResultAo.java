@@ -40,7 +40,7 @@ public class PostSearchResultAo {
         List<PostExVo> list1 = likePostPreviewVoList.stream()
                 .map(postVo -> {
                     PostExVo postExVo = new PostExVo();
-                    postExVo.setByPostVo(postVo);
+                    postExVo.setPostVo(postVo);
                     postExVo.type = PostSearchResultListEnum.LIKE_MATCH_RESULT.getValue();
                     return postExVo;
                 })
@@ -48,7 +48,7 @@ public class PostSearchResultAo {
         List<PostExVo> list2 = tokenizedPostPreviewVoList.stream()
                 .map(postVo -> {
                     PostExVo postExVo = new PostExVo();
-                    postExVo.setByPostVo(postVo);
+                    postExVo.setPostVo(postVo);
                     postExVo.type = PostSearchResultListEnum.TOKENIZED_MATCH_RESULT.getValue();
                     return postExVo;
                 })
@@ -56,7 +56,7 @@ public class PostSearchResultAo {
         List<PostExVo> list3 = similarPostPreviewVoList.stream()
                 .map(postVo -> {
                     PostExVo postExVo = new PostExVo();
-                    postExVo.setByPostVo(postVo);
+                    postExVo.setPostVo(postVo);
                     postExVo.type = PostSearchResultListEnum.SIMILAR_MATCH_RESULT.getValue();
                     return postExVo;
                 })
@@ -64,7 +64,7 @@ public class PostSearchResultAo {
         List<PostExVo> list4 = recommendPostPreviewVoList.stream()
                 .map(postVo -> {
                     PostExVo postExVo = new PostExVo();
-                    postExVo.setByPostVo(postVo);
+                    postExVo.setPostVo(postVo);
                     postExVo.type = PostSearchResultListEnum.RECOMMEND_MATCH_RESULT.getValue();
                     return postExVo;
                 })
