@@ -15,18 +15,19 @@ import java.util.List;
 public class PostAVo {
 
     // author
-    public MutableLiveData<String> authorAvatarUrlLd = new MutableLiveData<>("");
-    public MutableLiveData<String> authorNameLd = new MutableLiveData<>("");
+    public final MutableLiveData<String> authorAvatarUrlLd = new MutableLiveData<>("");
+    public final MutableLiveData<String> authorNameLd = new MutableLiveData<>("");
     // post
-    public MutableLiveData<String> postTitleLd = new MutableLiveData<>("");
-    public MutableLiveData<String> postContentLd = new MutableLiveData<>("");
-    public MutableLiveData<String> postPublishTimeLd = new MutableLiveData<>("");
-    public MutableLiveData<String> postViewNumLd = new MutableLiveData<>("");
+    public final MutableLiveData<String> postTitleLd = new MutableLiveData<>("");
+    public final MutableLiveData<String> postContentLd = new MutableLiveData<>("");
+    public final MutableLiveData<String> postPublishTimeLd = new MutableLiveData<>("");
+    public final MutableLiveData<String> postViewNumLd = new MutableLiveData<>("");
+    public final List<String> postImgUrls = new ArrayList<>();
     // action
-    public MutableLiveData<Boolean> likePostLd = new MutableLiveData<>(false);
-    public MutableLiveData<Boolean> collectPostLd = new MutableLiveData<>(false);
-    public MutableLiveData<Boolean> dislikePostLd = new MutableLiveData<>(false);
+    public final MutableLiveData<Boolean> likePostLd = new MutableLiveData<>(false);
+    public final MutableLiveData<Boolean> collectPostLd = new MutableLiveData<>(false);
+    public final MutableLiveData<Boolean> dislikePostLd = new MutableLiveData<>(false);
 
     // comment
-    public List<CommentAo> commentAos = new ArrayList<>();
+    public final List<CommentAo> commentAos = new ArrayList<>();
 }
