@@ -61,7 +61,6 @@ public class RegisterAppointmentController {
     private final RedissonService redissonService;
     private final AppointmentMqSender appointmentMqSender;
     private final AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
-    private final PayRedisMapper payRedisMapper;
     private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
 
     /// 查：获取

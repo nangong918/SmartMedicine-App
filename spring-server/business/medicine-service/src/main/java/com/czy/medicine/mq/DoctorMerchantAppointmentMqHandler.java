@@ -62,11 +62,11 @@ public class DoctorMerchantAppointmentMqHandler {
         Long orderId = message.getOrderId();
 
         if (userId == null || doctorMerchantAppointmentId == null){
-            log.warn("[预约 消息队列错误]用户id或预约记录id为空");
+            log.warn("[预约 消息队列错误][消息错误]用户id或预约记录id为空");
             return;
         }
         if (orderId == null){
-            log.warn("[预约 订单id为空]");
+            log.warn("[预约 消息队列错误][消息错误][预约 订单id为空]");
             return;
         }
 
