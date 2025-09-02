@@ -2,6 +2,7 @@ package com.czy.medicine.controller;
 
 import cn.hutool.core.util.IdUtil;
 import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
+import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
@@ -26,6 +27,7 @@ import com.czy.medicine.mq.AppointmentMqSender;
 import com.czy.medicine.service.RegisterAppointmentService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
+import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -60,6 +62,7 @@ public class RegisterAppointmentController {
     private final AppointmentMqSender appointmentMqSender;
     private final AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
     private final PayRedisMapper payRedisMapper;
+    private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
 
     /// 查：获取
 
@@ -144,17 +147,7 @@ public class RegisterAppointmentController {
     @PostMapping(MedicineConstant.APPOINTMENT)
     public BaseResponse<AppointmentDoctorResponse> appointment
     (@Validated @RequestBody AppointmentDoctorRequest request){
-        /// 1. 商户可预约可预约查询
-
-        /// 1. 行为幂等性:防止用户重复预约
-        // user:商户预约是否已经存在 (会抛出redis连接失败的错误, 避免出现redis挂掉导致超卖问题)
-        boolean isExist = registerAppointmentService.checkIsUserEffectiveAppointmentExist(request.getUserId(), request.getDoctorMerchantAppointmentId());
-        if (isExist){
-            return BaseResponse.LogBackError(
-                    MedicineExceptions.APPOINTMENT_DOCTOR_ORDER_EXIST
-            );
-        }
-
+        /// 1. 行为幂等 [1.1] 行为分布式锁
         // 分布式锁（避免重复预约；避免死锁设置 5分钟自动锁消除）
         String dataId = request.getDoctorMerchantAppointmentId().toString() + ":" + request.getUserId().toString();
         String mappingPath = MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
@@ -170,20 +163,76 @@ public class RegisterAppointmentController {
             BaseResponse.LogBackError(PurchaseExceptions.REPEAT_APPLY_LOCK);
         }
 
-        /// 生成缓存
+        /// 1. 行为幂等 [1.2] 获取用户订单, 检查重复预约; 防止用户重复预约
+        try {
+            // user:商户预约是否已经存在 (会抛出redis连接失败的错误, 避免出现redis挂掉导致超卖问题)
+            boolean isExist = registerAppointmentService.checkIsUserEffectiveAppointmentExist(
+                    request.getUserId(), request.getDoctorMerchantAppointmentId()
+            );
+            if (isExist){
+                redissonService.unlock(appointmentLock);
+                log.warn("[预约挂号][用户已存在有效预约][user: {}][商户: {}]", request.getUserId(), request.getDoctorMerchantAppointmentId());
+                return BaseResponse.LogBackError(
+                        MedicineExceptions.APPOINTMENT_DOCTOR_ORDER_EXIST
+                );
+            }
+        } catch (AppException e){
+            redissonService.unlock(appointmentLock);
+            log.error("[预约挂号][用户预约业务异常][user: {}][商户: {}]", request.getUserId(), request.getDoctorMerchantAppointmentId());
+            return BaseResponse.LogBackError(e);
+        } catch (Exception e){
+            redissonService.unlock(appointmentLock);
+            log.error("[预约挂号][用户预约系统异常][user: {}][商户: {}]", request.getUserId(), request.getDoctorMerchantAppointmentId());
+            return BaseResponse.LogBackError(
+                    MedicineExceptions.APPOINTMENT_DOCTOR_ORDER_EXIST
+            );
+        }
+
+        /// 2. Redis原子性获取库存许可
+        try {
+            boolean acquiredResult = doctorMerchantAppointmentRedisMapper.reserveAppointment(request.getDoctorMerchantAppointmentId());
+            if (acquiredResult){
+                log.info("[user: {}][商户: {}][获取预约permit成功]继续执行流程", request.getUserId(), request.getDoctorMerchantAppointmentId());
+            }
+            else {
+                log.warn("[预约doctor商户失败][获取redisson permit失败][库存不足]");
+                redissonService.unlock(appointmentLock);
+                return BaseResponse.LogBackError(PurchaseExceptions.ORDER_INVENTORY_APPLY_FAILED);
+            }
+        } catch (AppException e){
+            log.warn("[商户: {}不存在]", request.getDoctorMerchantAppointmentId());
+            redissonService.unlock(appointmentLock);
+            return BaseResponse.LogBackError(e);
+        } catch (Exception e){
+            log.error("[预约doctor商户失败][获取redisson permit失败]: ", e);
+            redissonService.unlock(appointmentLock);
+            return BaseResponse.LogBackError(PurchaseExceptions.ORDER_INVENTORY_APPLY_FAILED);
+        }
+
+        /// 3. 生成缓存
         // 缓存功能: 1. user查询订单状态 2. 后端检查是否重复预约
         // 缓存数据结构: AppointmentDoctorOrderListAo
         // 缓存存储方式: ZSet 有序集合
         // 订单Id生成: 在加入消息队列之前先生成订单id然后缓存到Redis避免找不到; see: getAppointmentRecordList
         long orderId = IdUtil.getSnowflakeNextId();
-        registerAppointmentService.generateOrderCache(
-                request.getDoctorMerchantAppointmentId(),
-                request.getUserId(),
-                orderId,
-                appointmentLock
-        );
+        try {
+            registerAppointmentService.generateOrderCache(
+                    request.getDoctorMerchantAppointmentId(),
+                    request.getUserId(),
+                    orderId,
+                    appointmentLock
+            );
+        } catch (AppException e){
+            log.error("[预约失败][生成缓存业务异常]: ", e);
+            redissonService.unlock(appointmentLock);
+            return BaseResponse.LogBackError(e);
+        } catch (Exception e){
+            log.error("[预约失败][生成缓存系统异常]: ", e);
+            redissonService.unlock(appointmentLock);
+            return BaseResponse.LogBackError(CommonExceptions.SYSTEM_ERROR);
+        }
 
-        /// 加入消息队列，避免数据库qps过高
+        /// 4. 加入消息队列，避免数据库qps过高
         // 使用rabbitmq，避免jvm单机挂掉消息丢失，出现分布式死锁。
         AppointmentDoctorAo appointmentDoctorAo = new AppointmentDoctorAo();
         appointmentDoctorAo.setUserId(request.getUserId());

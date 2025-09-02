@@ -3,6 +3,8 @@ package com.api.mapper.medicine.redis.impl;
 import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.czy.api.constant.medicine.MedicineRedisKey;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
+import com.czy.api.exception.MedicineExceptions;
+import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author 13225
  * @date 2025/9/1 18:05
+ * 商户的信息mapper
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -109,7 +112,7 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
 
     // 预约: 此预约是尝试获取信号量并更新缓存的库存
     @Override
-    public boolean reserveAppointment(@NotNull Long doctorMerchantAppointmentId){
+    public boolean reserveAppointment(@NotNull Long doctorMerchantAppointmentId) throws AppException {
         String semaphoreKeyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_SEMAPHORE_KEY_PREFIX +
                 doctorMerchantAppointmentId;
 
@@ -124,7 +127,7 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
             DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = getDoctorMerchantAppointmentDo(doctorMerchantAppointmentId);
             if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null){
                 log.warn("[商户: {}不存在]", doctorMerchantAppointmentId);
-                return false;
+                throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
             }
             doctorMerchantAppointmentDo.setRemainCount(remainingPermits);
             // 更新
@@ -133,14 +136,14 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
         }
         else {
             log.warn("[预约失败][信号量获取失败]");
+            // 预约失败
+            return false;
         }
-        // 预约失败
-        return false;
     }
 
     // 取消预约: 归还信号量并更新缓存的库存
     @Override
-    public boolean cancelAppointment(@NotNull Long doctorMerchantAppointmentId) {
+    public boolean cancelAppointment(@NotNull Long doctorMerchantAppointmentId) throws AppException{
         String semaphoreKeyBuilder = MedicineRedisKey.Appointment.DoctorMerchant_SEMAPHORE_KEY_PREFIX +
                 doctorMerchantAppointmentId;
 
@@ -155,7 +158,7 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
 
         if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null) {
             log.warn("[商户: {}不存在]", doctorMerchantAppointmentId);
-            return false;
+            throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
         }
 
         // 更新库存

@@ -34,6 +34,8 @@ public enum PurchaseExceptions implements ExceptionEnums {
     ORDER_NOT_WAIT_PAY("PUR_10011", "支付的订单不是待支付状态"),
     // 订单价格状态异常
     ORDER_PRICE_ERROR("PUR_10012", "订单价格错误"),
+    // 订单申请失败, 获取商户库存请求失败
+    ORDER_INVENTORY_APPLY_FAILED("PUR_10013", "订单申请失败, 获取商户库存请求失败"),
     ;
 
     private final String code;

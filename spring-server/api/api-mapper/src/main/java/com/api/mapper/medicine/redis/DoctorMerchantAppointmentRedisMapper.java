@@ -1,6 +1,7 @@
 package com.api.mapper.medicine.redis;
 
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
+import exception.AppException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Async;
 
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * @author 13225
  * @date 2025/9/1 18:05
+ * 商户的信息mapper
  */
 public interface DoctorMerchantAppointmentRedisMapper {
 
@@ -26,8 +28,8 @@ public interface DoctorMerchantAppointmentRedisMapper {
     boolean initAppointmentSemaphorePermits(@NotNull Long doctorMerchantAppointmentId, int permitsCount);
 
     // 预约: 此预约是尝试获取信号量并更新缓存的库存
-    boolean reserveAppointment(@NotNull Long doctorMerchantAppointmentId);
+    boolean reserveAppointment(@NotNull Long doctorMerchantAppointmentId) throws AppException;
 
     // 取消预约: 归还信号量并更新缓存的库存
-    boolean cancelAppointment(@NotNull Long doctorMerchantAppointmentId);
+    boolean cancelAppointment(@NotNull Long doctorMerchantAppointmentId) throws AppException;
 }
