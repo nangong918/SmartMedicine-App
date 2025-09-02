@@ -51,7 +51,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
     private final PayRedisMapper payRedisMapper;
     private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
 
-    // todo 升级方向: 1. 可以使用优化合并sql来提升速度,避免多次IO 2.使用Redis的信号量
+    // todo 升级方向: 1. 可以使用优化合并sql来提升速度,避免多次IO
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void createAppointmentOrder(long orderId, long doctorMerchantId, long userId) throws AppException {
@@ -122,7 +122,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         }
 
         /// 5.删除/更新redis缓存
-        // 库存扣减 todo 升级方向: 使用RSemaphore 信号量; 初步架构暂时使用Redis存储Json
+        // 库存扣减
         DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointmentMapper.getById(doctorMerchantId);
         if (!doctorMerchantAppointmentRedisMapper.saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo)){
             // 缓存更新失败的话不需要回滚事务, 直接删除缓存就好, 等待之后查询发现没缓存就来查询数据了

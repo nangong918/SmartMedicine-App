@@ -50,8 +50,8 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
         }
         // 超时检查
         if (orderStatusAo.getCustomerStatus() == UserOrderStatusEnum.CANCELED.getCode()){
-            // 订单超时异常,
-            return PayResultEnum.ORDER_EXPIRED;
+            // 抛出订单超时异常, 事务回滚
+            throw new AppException(PurchaseExceptions.ORDER_TIMEOUT);
         }
         // 待支付检查
         if (orderStatusAo.getCustomerStatus() != UserOrderStatusEnum.WAITING_PAYMENT.getCode()){

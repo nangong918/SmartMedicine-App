@@ -4,6 +4,7 @@ import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper;
 import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
+import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.czy.api.constant.ErrorConstant;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
@@ -75,6 +76,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     private final AppointmentTransactionalService appointmentTransactionalService;
     private final AppointmentDoctorOrderConverter appointmentDoctorOrderConverter;
     private final AppointmentMqSender appointmentMqSender;
+    private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
 
     // 获取PageList
     @NotNull
@@ -310,9 +312,6 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     @Override
     public void appointment
     (@NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId) throws AppException{
-        // 检查当前状态是否是可预约 todo 查询改为redis 缓存查询
-
-        // todo: 1. 异常归还redisson库存, 2. Aop查询数据库 3.异步更新Redis缓存
         // 执行事务
         // 对商品上锁，库减少（模拟减少，因为有5分钟的支付时间，未支付的话就库存数据增）
         // 缓存减少 事务sql
@@ -520,6 +519,9 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             // 库存归还 [取消的情况下]
             if (customerStatus == UserOrderStatusEnum.CANCELED.getCode()){
                 doctorMerchantAppointmentMapper.returnStock(order.getDoctorMerchantAppointmentId());
+                if (!doctorMerchantAppointmentRedisMapper.cancelAppointment(order.getDoctorMerchantAppointmentId())){
+                    log.warn("[取消支付]归还库存失败: {}", order.getDoctorMerchantAppointmentId());
+                }
             }
             // 订单状态更新
             userCustomerAppointmentOrderMapper.update(order);

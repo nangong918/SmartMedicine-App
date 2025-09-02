@@ -1,5 +1,6 @@
 package com.czy.medicine.mq;
 
+import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.czy.api.MqConstants;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.netty.NettyConstants;
@@ -33,6 +34,7 @@ public class DoctorMerchantAppointmentMqHandler {
     private final RegisterAppointmentService registerAppointmentService;
     private final RedissonService redissonService;
     private final AppointmentMqSender appointmentMqSender;
+    private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
 
     @RabbitListener(
             bindings = @QueueBinding(
@@ -86,6 +88,7 @@ public class DoctorMerchantAppointmentMqHandler {
         response.setIsSuccess(false);
 
         try {
+            // 创建订单
             registerAppointmentService.appointment(
                     doctorMerchantAppointmentId,
                     userId,
@@ -99,6 +102,10 @@ public class DoctorMerchantAppointmentMqHandler {
 
         } catch (AppException appe){
             log.error("用户预约失败", appe);
+            // 预约失败归还库存
+            if (!doctorMerchantAppointmentRedisMapper.cancelAppointment(doctorMerchantAppointmentId)){
+                log.error("[预约失败][归还库存失败]: ");
+            }
             // 将枚举错误填充
             response.setException(appe.getExceptionEnums());
             // 通知失败原因
@@ -110,6 +117,10 @@ public class DoctorMerchantAppointmentMqHandler {
         } catch (Exception e){
             log.error("[预约 消息队列错误][userId: {}][merchantId: {}][orderId: {}]",
                     userId, doctorMerchantAppointmentId, orderId, e);
+            // 预约失败归还库存
+            if (!doctorMerchantAppointmentRedisMapper.cancelAppointment(doctorMerchantAppointmentId)){
+                log.error("[预约失败][归还库存失败]: ");
+            }
             // 通知订单失败消息
             response.setMessage(e.getMessage());
             appointmentMqSender.push(response);

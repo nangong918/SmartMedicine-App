@@ -209,7 +209,7 @@ public class RegisterAppointmentController {
             return BaseResponse.LogBackError(PurchaseExceptions.ORDER_INVENTORY_APPLY_FAILED);
         }
 
-        /// 3. 生成缓存 todo 生成缓存逻辑优化, 生成缓存失败不应该影响业务逻辑. 并且应该使用异步生成缓存
+        /// 3. 生成缓存
         // 缓存功能: 1. user查询订单状态 2. 后端检查是否重复预约
         // 缓存数据结构: AppointmentDoctorOrderListAo
         // 缓存存储方式: ZSet 有序集合
@@ -225,13 +225,17 @@ public class RegisterAppointmentController {
         } catch (AppException e){
             log.error("[预约失败][生成缓存业务异常]: ", e);
             // 归还库存
-            doctorMerchantAppointmentRedisMapper.cancelAppointment(request.getDoctorMerchantAppointmentId());
+            if(!doctorMerchantAppointmentRedisMapper.cancelAppointment(request.getDoctorMerchantAppointmentId())){
+                log.warn("[库存归还失败][商户: {}][用户: {}]", request.getDoctorMerchantAppointmentId(), request.getUserId());
+            }
             redissonService.unlock(appointmentLock);
             return BaseResponse.LogBackError(e);
         } catch (Exception e){
             log.error("[预约失败][生成缓存系统异常]: ", e);
             // 归还库存
-            doctorMerchantAppointmentRedisMapper.cancelAppointment(request.getDoctorMerchantAppointmentId());
+            if(!doctorMerchantAppointmentRedisMapper.cancelAppointment(request.getDoctorMerchantAppointmentId())){
+                log.warn("[库存归还失败][商户: {}][用户: {}]", request.getDoctorMerchantAppointmentId(), request.getUserId());
+            }
             redissonService.unlock(appointmentLock);
             return BaseResponse.LogBackError(CommonExceptions.SYSTEM_ERROR);
         }
