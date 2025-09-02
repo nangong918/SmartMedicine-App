@@ -31,6 +31,7 @@ public class PostAVo {
 
     // comment
     public final List<CommentAo> commentAos = new ArrayList<>();
+    public final MutableLiveData<Integer> commentNumLd = new MutableLiveData<>(0);
 
     public void initByResponse(PostVo postVo, List<CommentAo> commentAos) {
         this.authorAvatarUrlLd.setValue(postVo.authorAvatarUrl);

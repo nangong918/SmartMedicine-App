@@ -12,9 +12,9 @@ import com.czy.appview.view.post.CommentAdapter;
 import com.czy.baseutil.activity.BaseActivity;
 import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.baseutil.viewModel.ViewModelUtil;
+import com.czy.domain.ao.entity.CommentAo;
 import com.czy.domain.ao.home.PostIntentAo;
 import com.czy.domain.fragmentActivityAo.post.PostAAo;
-import com.czy.domain.vo.entity.home.CommentVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPostBinding;
 import com.czy.smartmedicine.viewModel.activity.PostVm;
@@ -148,7 +148,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
 
     @SuppressLint("NotifyDataSetChanged")
     private void observeCommentVo() {
-        vm.postAAo.commentNumLd.observe(
+        vm.postAAo.postAVo.commentNumLd.observe(
                 this,
                 commentNum -> {
                     // 通知适配器数据已更改
@@ -160,10 +160,11 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     // recyclerView
     private CommentAdapter adapter;
     private void initRecyclerView(){
-        List<CommentVo> commentVos = Optional.ofNullable(vm.postAAo)
-                .map(ao -> ao.commentVos)
+        List<CommentAo> commentAos = Optional.ofNullable(vm.postAAo)
+                .map(aao -> aao.postAVo)
+                .map(avo -> avo.commentAos)
                 .orElse(new ArrayList<>());
-        adapter = new CommentAdapter(commentVos);
+        adapter = new CommentAdapter(commentAos);
         binding.rclvCommend.setAdapter(adapter);
     }
 

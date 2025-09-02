@@ -21,6 +21,7 @@ import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ResponseTool;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 
+import java.util.List;
 import java.util.Optional;
 
 public class PostVm extends ViewModel {
@@ -114,6 +115,11 @@ public class PostVm extends ViewModel {
         postAAo.postAVo.initByResponse(
                 singlePostResponse.postVo,
                 singlePostResponse.commentAos
+        );
+        postAAo.postAVo.commentNumLd.setValue(
+                Optional.ofNullable(singlePostResponse.commentAos)
+                        .map(List::size)
+                        .orElse(0)
         );
         callback.onAllRequestSuccess();
     }
