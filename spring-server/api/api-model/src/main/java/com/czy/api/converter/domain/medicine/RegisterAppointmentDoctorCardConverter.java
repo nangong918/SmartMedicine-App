@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -77,9 +78,16 @@ public interface RegisterAppointmentDoctorCardConverter {
     }
 
     default RegisterAppointmentDoctorCardAo boToAo(AppointmentDoctorMerchantCardBo bo){
+        if (bo == null){
+            return null;
+        }
         AppointmentDoctorMerchantCardVo vo = boToVo(bo);
         RegisterAppointmentDoctorCardAo ao = new RegisterAppointmentDoctorCardAo();
-        ao.setDoctorMerchantAppointmentId(String.valueOf(bo.getDoctorMerchantId()));
+        ao.setDoctorMerchantAppointmentId(
+                Optional.ofNullable(bo.getDoctorMerchantId())
+                        .map(String::valueOf)
+                        .orElse(null)
+        );
         ao.setVo(vo);
         return ao;
     }

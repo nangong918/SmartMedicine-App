@@ -99,11 +99,9 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
             由于时间处理会比较特殊，所以redis_key不存储时间参数，而是获取时间参数之外的数据然后计算时间参数
             如果不按照上述方式去处理的话会出现的bug: 每次传入的时间参数都是当前时间，那么每次都找不到缓存不说还会产生大量垃圾缓存。
          */
-        StringBuilder keyBuilder = new StringBuilder();
 
-        // 获取可挂号的记录列表
-        List<DoctorMerchantAppointmentDo> doctorRegisterAppointmentDos =
-                doctorMerchantAppointmentMapper.getDosByParam(
+        // 获取可挂号的记录列表 todo 改为aop先查缓存
+        List<DoctorMerchantAppointmentDo> doctorRegisterAppointmentDos = doctorMerchantAppointmentMapper.getDosByParam(
                     ao.registerLocation,
                     registerTime,
                     ao.registerDepartmentCode,

@@ -192,6 +192,7 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
         return bucket.get();
     }
 
+    // dos的ids对应的bos, 如果bo是null必须添加, 避免出现数组越界; 因为需要保证长度相同
     @Override
     public List<AppointmentDoctorMerchantCardBo> getDoctorCardBosByDoctorMerchantDos(@NotNull List<DoctorMerchantAppointmentDo> dos){
         List<AppointmentDoctorMerchantCardBo> result = new ArrayList<>();
@@ -199,7 +200,7 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
             AppointmentDoctorMerchantCardBo doctorCardBo = getDoctorCardBosByDoctorMerchantDoId(doctorMerchantAppointmentDo.getId());
             result.add(doctorCardBo);
         }
-        return result.isEmpty() ? null : result;
+        return result;
     }
 
     @Override

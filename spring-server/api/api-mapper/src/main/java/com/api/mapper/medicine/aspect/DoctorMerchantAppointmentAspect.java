@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 商户的信息切面
@@ -42,7 +43,7 @@ public class DoctorMerchantAppointmentAspect {
                 doctorMerchantAppointmentRedisMapper.getDoctorMerchantAppointmentDo(doctorMerchantId);
 
         if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null){
-            log.info("缓存未命中, 继续执行mybatis查询");
+            log.info("[缓存未命中][DoctorMerchantAppointmentMapper.getById], 继续执行mybatis查询");
             Object result = joinPoint.proceed();
             if (result == null){
                 return null;
@@ -52,7 +53,7 @@ public class DoctorMerchantAppointmentAspect {
             return result;
         }
         else {
-            log.info("从redis缓存中获取数据");
+            log.info("[缓存命中][DoctorMerchantAppointmentMapper.getById][doResult: {}]", doctorMerchantAppointmentDo);
             return doctorMerchantAppointmentDo;
         }
     }
@@ -75,11 +76,12 @@ public class DoctorMerchantAppointmentAspect {
                 list
         );
 
-        if (boList != null){
-            log.info("[缓存命中]");
+        // 检查缓存内容是否有效，至少有一个元素不为 null
+        if (boList != null && !boList.isEmpty() && boList.stream().anyMatch(Objects::nonNull)){
+            log.info("[缓存命中][DoctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos][boList: {}]", boList);
             return boList;
         }
-        log.info("[缓存未命中]");
+        log.info("[缓存未命中][DoctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos]");
         Object result = joinPoint.proceed();
         if (result == null){
             return null;
