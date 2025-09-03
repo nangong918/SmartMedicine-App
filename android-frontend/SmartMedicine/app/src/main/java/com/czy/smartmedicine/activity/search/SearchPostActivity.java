@@ -43,7 +43,7 @@ public class SearchPostActivity extends
     protected void setListener() {
         super.setListener();
 
-        binding.topBar.setOnClickListener(v -> finish());
+        binding.btnBack.setOnClickListener(v -> finish());
 
         binding.btnSearch.setOnClickListener(v -> searchInfo());
     }
@@ -53,10 +53,6 @@ public class SearchPostActivity extends
     @Override
     protected void initView(){
         super.initView();
-
-        binding.topBar.setTitle(
-                getString(com.czy.appview.R.string.search_post)
-        );
 
         initViewModelVo();
 

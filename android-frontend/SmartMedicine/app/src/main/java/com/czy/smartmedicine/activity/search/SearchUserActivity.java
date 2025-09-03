@@ -46,9 +46,6 @@ public class SearchUserActivity extends BaseActivity<ActivitySearchBaseBinding> 
     //----------------------------view----------------------------
 
     private void initView(){
-        binding.topBar.setTitle(
-                getString(com.czy.appview.R.string.search_user)
-        );
 
         initViewModelVo();
 
@@ -115,7 +112,7 @@ public class SearchUserActivity extends BaseActivity<ActivitySearchBaseBinding> 
     protected void setListener() {
         super.setListener();
 
-        binding.topBar.setOnClickListener(v -> finish());
+        binding.btnBack.setOnClickListener(v -> finish());
 
         binding.btnSearch.setOnClickListener(v -> searchInfo());
     }

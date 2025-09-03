@@ -260,6 +260,7 @@
                 tools:ignore="RtlSymmetry" />
             
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_comment"
                 android:layout_width="70dp"
                 android:layout_height="30dp"
                 android:background="@drawable/round_corners_button_commend"
