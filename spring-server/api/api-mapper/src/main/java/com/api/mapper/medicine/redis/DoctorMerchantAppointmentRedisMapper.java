@@ -24,6 +24,8 @@ public interface DoctorMerchantAppointmentRedisMapper {
     @Async
     void saveDoctorMerchantAppointmentDos(@NotNull List<DoctorMerchantAppointmentDo> appointmentDos);
 
+    void clearAllMerchantAppointmentCache();
+
     DoctorMerchantAppointmentDo getDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);
 
     boolean deleteDoctorMerchantAppointmentDo(@NotNull Long doctorMerchantAppointmentId);

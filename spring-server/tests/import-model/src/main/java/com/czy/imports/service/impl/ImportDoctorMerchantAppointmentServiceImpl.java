@@ -219,6 +219,14 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
         return result;
     }
 
+    @Override
+    public void clearAllDoctorsMerchantAppointmentDos() {
+        doctorMerchantAppointmentMapper.deleteAllDoctorMerchantAppointments();
+        log.info("删除mysql数据成功");
+        doctorMerchantAppointmentRedisMapper.clearAllMerchantAppointmentCache();
+        log.info("删除redis数据成功和信号量成功");
+    }
+
     private void getMustGenerateDoctorMerchantAppointmentDos
             (@NonNull List<DoctorMerchantAppointmentDo> list) {
         assert list.size() >= TEST_DATA_COUNT;

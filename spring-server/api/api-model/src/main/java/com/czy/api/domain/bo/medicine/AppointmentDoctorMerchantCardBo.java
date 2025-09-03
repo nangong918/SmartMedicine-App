@@ -1,7 +1,9 @@
 package com.czy.api.domain.bo.medicine;
 
+import json.BaseBean;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -28,7 +30,7 @@ import java.time.LocalDateTime;
    WHERE drat.doctorId in (item.doctorId)
  */
 @Data
-public class AppointmentDoctorMerchantCardBo {
+public class AppointmentDoctorMerchantCardBo implements BaseBean, Serializable {
     // Doctor
     private Long doctorAvatarFileId;
     private String doctorName;

@@ -27,6 +27,8 @@ public interface DoctorMerchantAppointmentMapper {
 
     void deleteDoctorMerchantAppointments(@Param("list") List<Long> ids);
 
+    void deleteAllDoctorMerchantAppointments();
+
     /// 修改
     void updateDoctorMerchantAppointment(DoctorMerchantAppointmentDo item);
     // 归还库存
