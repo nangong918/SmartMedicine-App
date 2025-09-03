@@ -1,18 +1,18 @@
 package com.czy.domain.dto.http.response;
 
 
-import com.czy.domain.ao.home.PostInfoUrlAo;
+import com.czy.domain.vo.entity.home.PostVo;
 
 import java.util.List;
 
 public class RecommendPostResponse {
-    public List<PostInfoUrlAo> postInfoUrlAos;
+    public List<PostVo> postVos;
 
-    public List<PostInfoUrlAo> getPostInfoUrlAos() {
-        return postInfoUrlAos;
+    public List<PostVo> getPostVos() {
+        return postVos;
     }
 
-    public void setPostInfoUrlAos(List<PostInfoUrlAo> postInfoAos) {
-        this.postInfoUrlAos = postInfoAos;
+    public void setPostVos(List<PostVo> postVos) {
+        this.postVos = postVos;
     }
 }

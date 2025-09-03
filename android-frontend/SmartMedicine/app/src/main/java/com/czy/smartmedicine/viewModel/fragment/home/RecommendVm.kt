@@ -134,7 +134,7 @@ open class RecommendVm(
     ) {
         val postInfoAos = Optional.ofNullable(response)
             .map { obj: BaseResponse<RecommendPostResponse> -> obj.data }
-            .map { obj: RecommendPostResponse -> obj.getPostInfoUrlAos() }
+            .map { obj: RecommendPostResponse -> obj.getPostVos() }
             .orElse(ArrayList())
 
         if (postInfoAos.isEmpty()) {

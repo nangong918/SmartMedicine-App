@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentActivity;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appview.view.home.OnRecommendCardClick;
 import com.czy.domain.ao.home.PostAo;
-import com.czy.domain.ao.home.PostInfoUrlAo;
 import com.czy.domain.ao.home.PostIntentAo;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.constant.home.PostOperation;
@@ -33,7 +32,6 @@ import com.czy.smartmedicine.activity.PostActivity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 public class PostClickManager {
@@ -247,9 +245,9 @@ public class PostClickManager {
     }
 
     // postInfoUrlAoList -> PostAoList
-    public List<PostAo> getPostAoListByResponse(List<PostInfoUrlAo> postInfoAos){
+    public List<PostAo> getPostAoListByResponse(List<PostVo> postVoList){
         List<PostAo> postAoList = new ArrayList<>();
-        List<Integer> postTypeList = getPostType(postInfoAos.size());
+        List<Integer> postTypeList = getPostType(postVoList.size());
         if (postTypeList.isEmpty()){
             return new ArrayList<>();
         }
@@ -258,20 +256,12 @@ public class PostClickManager {
             PostAo postAo = new PostAo(postType);
             if (RecommendCardType.TWO_SMALL_CARD.value == postType){
                 // post1
-                PostVo postVo1 = PostVo.getRecommendPostVoFromPostInfoUrlAo(
-                        postInfoAos.get(index)
-                );
-                postAo.postVos[0] = postVo1;
+                postAo.postVos[0] = postVoList.get(index);
                 // post2
-                PostVo postVo2 = PostVo.getRecommendPostVoFromPostInfoUrlAo(
-                        postInfoAos.get(index + 1)
-                );
-                postAo.postVos[1] = postVo2;
+                postAo.postVos[1] = postVoList.get(index + 1);;
             }
             else {
-                postAo.postVos[0] = PostVo.getRecommendPostVoFromPostInfoUrlAo(
-                        postInfoAos.get(index)
-                );
+                postAo.postVos[0] = postVoList.get(index);
             }
             index += postType;
             postAoList.add(postAo);
@@ -328,18 +318,4 @@ public class PostClickManager {
         return postTypes;
     }
 
-    public List<PostAo> getPostAoByPostVo(List<PostVo> postVoList){
-        if (postVoList == null || postVoList.isEmpty()){
-            return new ArrayList<>();
-        }
-        List<PostInfoUrlAo> postInfoUrlAos = Optional.of(postVoList)
-                .map(list -> {
-                    // stream流转换
-                    return list.stream()
-                            .map(PostInfoUrlAo::getPostInfoUsrAoByVo)
-                            .collect(Collectors.toList());
-                })
-                .orElse(new ArrayList<>());
-        return getPostAoListByResponse(postInfoUrlAos);
-    }
 }
