@@ -180,6 +180,92 @@
 
                 </LinearLayout>
 
+                <!-- post label -->
+                <LinearLayout
+                    android:id="@+id/ly_label"
+                    android:layout_marginTop="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginEnd="40dp">
+                    
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@mipmap/label"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:textColor="@color/green_900"
+                        android:textSize="14sp"
+                        android:text="@string/add_label_or_topic"/>
+                    
+                </LinearLayout>
+
+                <View
+                    android:layout_marginTop="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/green_900"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginEnd="40dp"/>
+
+                <!-- post location -->
+                <LinearLayout
+                    android:id="@+id/ly_location"
+                    android:layout_marginTop="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginEnd="40dp">
+
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@mipmap/location"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:textColor="@color/green_900"
+                        android:textSize="14sp"
+                        android:text="@string/at_location"/>
+
+                </LinearLayout>
+
+                <!-- post location -->
+                <LinearLayout
+                    android:id="@+id/ly_permission"
+                    android:layout_marginTop="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginEnd="40dp">
+
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@mipmap/person"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:textColor="@color/green_900"
+                        android:textSize="14sp"
+                        android:text="@string/who_can_watch_and_not_show_to_whom"/>
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </ScrollView>
