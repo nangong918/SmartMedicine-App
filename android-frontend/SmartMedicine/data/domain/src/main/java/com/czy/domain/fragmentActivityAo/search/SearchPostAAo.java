@@ -11,5 +11,5 @@ public class SearchPostAAo {
     // 搜索结果
     public List<PostExVo> postExVoList = new ArrayList<>();
     // 输入框内容
-    public final MutableLiveData<String> edtvInputData = new MutableLiveData<>();
+    public final MutableLiveData<String> searchInputLd = new MutableLiveData<>("");
 }

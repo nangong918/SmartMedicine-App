@@ -88,13 +88,13 @@ public class SearchPostActivity extends
             @Override
             public boolean onQueryTextChange(String newText) {
                 Optional.ofNullable(vm.searchPostAAo)
-                        .map(vo -> vo.edtvInputData)
+                        .map(vo -> vo.searchInputLd)
                         .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
                 return true;
             }
         });
         // LiveData -> SearchView
-        vm.searchPostAAo.edtvInputData.observe(this, newText -> {
+        vm.searchPostAAo.searchInputLd.observe(this, newText -> {
             if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
                 binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
             }
@@ -102,9 +102,10 @@ public class SearchPostActivity extends
     }
 
     private void searchInfo(){
+        // 傻逼Android没有提供双向binding
         String query = binding.searchBar.getQuery().toString();
         if (TextUtils.isEmpty(query)){
-            ToastUtils.showToastActivity(this, "请输入搜索内容");
+            ToastUtils.showToastActivity(this, getString(com.czy.appview.R.string.please_enter_search_content));
         }
         NetworkLoadUtils.showDialog(this);
         vm.searchPosts(this, query, new SyncRequestCallback() {
