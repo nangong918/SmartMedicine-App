@@ -132,6 +132,7 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
                 log.warn("[预约订单][商户: {}不存在]", doctorMerchantAppointmentId);
                 throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
             }
+            log.info("[预约][获取信号量成功][信号量剩余: {}]", remainingPermits);
             doctorMerchantAppointmentDo.setRemainCount(remainingPermits);
             // 更新
             saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo);

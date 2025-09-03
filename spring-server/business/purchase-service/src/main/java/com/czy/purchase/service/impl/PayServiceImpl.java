@@ -35,10 +35,10 @@ public class PayServiceImpl implements PayService {
 
     // 事务处理 + 回调medicine + 测试
     @Override
-    public int payAppointmentOrder(Long userId, Long orderId){
+    public int payAppointmentOrder(Long userId, Long orderId) throws AppException{
         // 1. 执行事务: 1.1 扣减用户余额 (成功: 通知, 不删除rabbitmq中的延迟消息,等待过期[FIFO无法删除]; 失败: 不归还库存, 等待用户取消或者订单过期)
+        log.info("[支付][开始执行支付事务][userId: {}][orderId: {}]", userId, orderId);
         PayResultEnum payResultEnum = payTransactionalService.payAppointmentOrder(userId, orderId);
-
         if (payResultEnum == PayResultEnum.SUCCESS){
             // 1.1.1 扣减成功: 订单支付成功, 通知medicine服务
             // 1.1.2 扣减失败: 订单支付失败, 不做操作rabbitmq中的延迟消息自动执行删除
@@ -48,10 +48,15 @@ public class PayServiceImpl implements PayService {
             // 成功: 待支付 -> 待使用
             dto.setOrderStatusEnum(UserOrderStatusEnum.WAITING_USE);
             dto.setHandleTime(LocalDateTime.now());
+
+            log.info("[支付][支付成功][发送消息通知订单系统][消息: {}]", dto);
             // 将消息发送给medicine-service
             payMqSender.sendAppointmentPayResult(dto);
         }
         // 失败不用通知, 因为如果死信通知了失败, 此处还通知失败, 会调用两次归还库存
+        else {
+            log.info("[支付][支付失败][支付结果: {}]", payResultEnum);
+        }
 
         // 2. mq通知medicine服务: 状态更新
         return payResultEnum.getCode();

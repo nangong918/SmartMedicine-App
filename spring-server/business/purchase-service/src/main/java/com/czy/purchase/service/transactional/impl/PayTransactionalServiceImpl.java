@@ -34,36 +34,39 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public PayResultEnum payAppointmentOrder(long userId, long orderId) throws AppException {
-        log.info("[Appointment订单支付事务开始][user: {}][order: {}]", userId, orderId);
 
         /// 1. 获取订单待支付金额, 订单状态检查 (error1: 已下架; error2: 订单过期)
         // 需要的bo数据： （订单id， 商户id，userId，user订单状态，商户的定价金额，预约的开始时间）
 
         OrderStatusAo orderStatusAo = payRedisMapper.getOrderStatus(userId, orderId);
         if (orderStatusAo == null || orderStatusAo.getCustomerStatus() == null){
+            log.warn("[order: {}] 订单不存在", orderId);
             throw new AppException(PurchaseExceptions.ORDER_EXPIRED);
         }
         // 1.1 检查订单是否过期 [乐观锁1]
+        log.info("[支付事务][乐观锁1: 开始第一次检查订单是否过期]");
         if (orderStatusAo.getMerchantEndTime() == null || orderStatusAo.getMerchantEndTime().isBefore(LocalDateTime.now())){
             // error1: 已下架
+            log.warn("[支付事务][商户的商品已下架][user: {}][订单: {}]", userId, orderId);
             throw new AppException(PurchaseExceptions.ORDER_OUT_OF_SELLING_TIME);
         }
         // 1.2 超时检查
         if (orderStatusAo.getCustomerStatus() == UserOrderStatusEnum.CANCELED.getCode()){
             // 抛出订单超时异常, 事务回滚 error2: 订单过期
-            log.warn("[订单支付]预约商家已开始不可支付, 商家结束时间： {}", orderStatusAo.getMerchantEndTime());
+            log.warn("[支付事务][超时]预约商家已开始不可支付, 商家结束时间： {}", orderStatusAo.getMerchantEndTime());
             throw new AppException(PurchaseExceptions.ORDER_TIMEOUT);
         }
 
         /// 2. 检查订单
         // 2.1 价格不存在 || 价格小于0 (可以等于0, 属于特殊优惠)
         if (orderStatusAo.getTotalPrice() == null || orderStatusAo.getTotalPrice().compareTo(BigDecimal.ZERO) < 0){
+            log.error("[支付事务]订单价格异常: {}", orderStatusAo.getTotalPrice());
             throw new AppException(PurchaseExceptions.ORDER_PRICE_ERROR);
         }
         // 2.2 待支付检查
         if (orderStatusAo.getCustomerStatus() != UserOrderStatusEnum.WAITING_PAYMENT.getCode()){
             // 订单状态错误
-            log.warn("订单状态错误: {}", orderStatusAo.getCustomerStatus());
+            log.warn("[支付事务]订单状态错误: {}", orderStatusAo.getCustomerStatus());
             throw new AppException(PurchaseExceptions.ORDER_NOT_WAIT_PAY);
         }
 
@@ -80,6 +83,7 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
 
         /// 4.状态检查:
         // 4.1 再次检查是否订单超时 [乐观锁2]
+        log.info("[支付事务][乐观锁2: 开始第二次检查订单是否过期]");
         OrderStatusAo orderStatusAo2 = payRedisMapper.getOrderStatus(userId, orderId);
         if (orderStatusAo2 == null){
             throw new AppException(PurchaseExceptions.ORDER_EXPIRED);

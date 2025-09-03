@@ -335,6 +335,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
 
         /// 订单有效时限: 发送
         // 发送待支付消息队列: APPOINTMENT_WAIT_PAY_ROUTING
+        log.info("[审核预约挂号][通知支付服务创建待支付订单][mq消息: {}]", orderDto);
         appointmentMqSender.push(orderDto);
     }
     
@@ -504,7 +505,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
                     .orElse(UserOrderStatusEnum.NULL.getCode());
 
             if (customerStatus == UserOrderStatusEnum.NULL.getCode()){
-                log.warn("[处理支付结果]订单dto状态错误");
+                log.warn("[预约订单服务][处理支付结果]订单dto状态错误");
                 return;
             }
 
@@ -515,6 +516,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
                 log.error("[处理支付结果][数据库查询异常]订单: {} 不存在", dto.getOrderId());
                 return;
             }
+            log.info("[处理支付结果][更新订单状态]订单原状态: {}", order);
             order.setUserOrderStatus(customerStatus);
 
             /// 1. 更新数据库
@@ -526,9 +528,11 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
                 if (!doctorMerchantAppointmentRedisMapper.cancelAppointment(order.getDoctorMerchantAppointmentId())){
                     log.warn("[取消支付]归还库存失败: {}", order.getDoctorMerchantAppointmentId());
                 }
+                log.info("[处理支付结果][取消支付] 归还sql库存 归还redis信号量库存");
             }
             // 订单状态更新
             userCustomerAppointmentOrderMapper.update(order);
+            log.info("[取消支付]更新数据库成功: {}", order);
 
             // 更新缓存(如果缓存存在)
             AppointmentDoctorOrderListAo ao = appointmentDoctorOrderRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
@@ -543,7 +547,10 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
                         dto.getOrderId(),
                         customerStatus
                 );
-                log.warn("[处理支付结果][AppointmentDoctorOrderListAo缓存更新成功: {}]", updateResult);
+                log.warn("[处理支付结果][更新订单状态 AppointmentDoctorOrderListAo缓存: {}]", updateResult);
+            }
+            else {
+                log.warn("[处理支付结果][更新订单状态 AppointmentDoctorOrderListAo缓存失败, 找不到AppointmentDoctorOrderListAo缓存信息]");
             }
         } catch (Exception e){
             log.error("[处理支付结果异常: ", e);
@@ -561,6 +568,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
                 );
                 /// 3. 解除申请分布式锁
                 redissonService.unlock(appointmentLock);
+                log.info("[解除申请分布式锁][dataId: {}]", dataId);
                 /// 2. netty通知前端, 考虑用spring event实现
             }
         }

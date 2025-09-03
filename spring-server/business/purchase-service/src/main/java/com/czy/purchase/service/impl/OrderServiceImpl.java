@@ -3,6 +3,7 @@ package com.czy.purchase.service.impl;
 import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.converter.domain.purchase.AppointmentPayConverter;
+import com.czy.api.domain.ao.purchase.OrderStatusAo;
 import com.czy.api.domain.dto.mq.AppointmentOrderDto;
 import com.czy.api.domain.dto.mq.AppointmentPayResultDto;
 import com.czy.purchase.mq.PayMqSender;
@@ -41,6 +42,12 @@ public class OrderServiceImpl implements OrderService {
                     dto.getOrderStatusEnum().getCode(),
                     null
             );
+            // 缓存检查
+            OrderStatusAo updatePayAo = payRedisMapper.getOrderStatus(
+                    dto.getUserId(), dto.getOrderId()
+            );
+
+            log.info("[支付服务][延迟未支付取消订单][更新情况: {}]", updatePayAo);
 
             AppointmentPayResultDto resultDto = appointmentPayConverter.orderToPayResult(
                     dto,
@@ -49,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
 
             // 发送给[订单-预约系统]
             payMqSender.sendAppointmentPayResult(resultDto);
-            log.info("purchase通知medicine-service支付预约订单失败, 发送消息通知medicine-service, 消息内容: {}, " +
+            log.info("[支付服务][延迟未支付取消订单]purchase通知medicine-service, 发送消息通知medicine-service, 消息内容: {}, " +
                     "\n 预约系统即将执行[归还数据库库存, 解除申请分布式锁, netty通知前端]", resultDto);
         } catch (Exception e) {
             log.error("取消订单失败, 消息: {}", dto, e);

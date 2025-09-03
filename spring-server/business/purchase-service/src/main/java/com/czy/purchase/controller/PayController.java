@@ -7,10 +7,12 @@ import com.czy.api.domain.dto.http.request.PayAppointmentOrderRequest;
 import com.czy.api.domain.dto.http.request.RechargeMoneyRequest;
 import com.czy.api.domain.dto.http.response.PayAppointmentResponse;
 import com.czy.api.domain.dto.http.response.RechargeMoneyResponse;
+import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PurchaseExceptions;
 import com.czy.purchase.service.PayService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
+import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -47,6 +49,7 @@ public class PayController {
                 // 5分钟(300s)，单位：秒
                 PurchaseConstant.PAY_TIMEOUT
         );
+        log.info("[支付][开始行为幂等检查][dataId: {}]", dataId);
 
         // 获取分布式锁
         if (!redissonService.tryLock(appointmentPayLock)){
@@ -55,16 +58,27 @@ public class PayController {
         }
 
         /// 2. 支付订单
-        int payStatus = payService.payAppointmentOrder(
-                request.getUserId(),
-                request.getOrderId()
-        );
+        try {
+            int payStatus = payService.payAppointmentOrder(
+                    request.getUserId(),
+                    request.getOrderId()
+            );
+            log.info("[支付][支付结果: {}]", payStatus);
 
-        PayAppointmentResponse response = new PayAppointmentResponse();
-        response.setOrderId(request.getOrderId());
-        response.setPayResult(payStatus);
+            PayAppointmentResponse response = new PayAppointmentResponse();
+            response.setOrderId(request.getOrderId());
+            response.setPayResult(payStatus);
 
-        return BaseResponse.getResponseEntitySuccess(response);
+            return BaseResponse.getResponseEntitySuccess(response);
+        } catch (AppException e){
+            return BaseResponse.LogBackError(e);
+        } catch (Exception e){
+            log.error("[支付][支付失败]: ", e);
+            return BaseResponse.LogBackError(CommonExceptions.SYSTEM_ERROR);
+        } finally {
+            redissonService.unlock(appointmentPayLock);
+            log.info("[支付][解锁锁]");
+        }
     }
 
     // 充值测试

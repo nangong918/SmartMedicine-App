@@ -44,6 +44,7 @@ public class PayResultMqHandler {
             )
     )
     public void handlePayResultMessage(AppointmentPayResultDto dto){
+        log.info("[预约服务][支付结果消息: {}]", dto);
         // 处理支付结果
         registerAppointmentService.handlePayResultMessage(dto);
     }
