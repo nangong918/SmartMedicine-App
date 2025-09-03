@@ -55,9 +55,7 @@ public class PostHomeItemViewManager {
         // userID (其实就是username)
         viewBinding.setUserID(Optional.ofNullable(vo.authorName)
                 .filter(name -> !TextUtils.isEmpty(name))
-                .orElseGet(() -> Optional.ofNullable(vo.authorId)
-                        .map(String::valueOf)
-                        .orElse("")));
+                .orElse(""));
     }
 
     public static void setView(@NonNull ViewRecommendCardPlusBinding binding, @NonNull PostAo postAo) {
