@@ -45,7 +45,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
 
     private final DoctorMerchantAppointmentMapper doctorMerchantAppointmentMapper;
     private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
-    private final AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
+    private final AppointmentDoctorOrderRedisMapper appointmentDoctorOrderRedisMapper;
     private final DoctorMerchantBoMapper doctorMerchantBoMapper;
     private final AppointmentDoctorOrderConverter appointmentDoctorOrderConverter;
     private final PayRedisMapper payRedisMapper;
@@ -87,7 +87,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
                 throw new AppException(MedicineExceptions.WAITING_OPEN);
         }
 
-        /// 2.检查是否存在订单, 顺便查询订单状态
+        /// 3.检查是否存在订单, 顺便查询订单状态
         List<UserCustomerAppointmentDo> orderDos = userCustomerAppointmentOrderMapper.getDosByUserIdAndMerchantId(
                 userId, doctorMerchantId
         );
@@ -99,7 +99,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
             throw new AppException(PurchaseExceptions.EXIST_ORDER_LOCK);
         }
 
-        /// 3.减少库存 (事务中)
+        /// 4.减少库存 (事务中)
         int updatedRows = doctorMerchantAppointmentMapper.decrementWithPessimisticLock(doctorMerchantId);
         if (updatedRows == 0) {
             // 理论上不会走到这里，因为前面已经检查过了
@@ -107,7 +107,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
             throw new AppException(MedicineExceptions.NO_AVAILABLE_MERCHANT);
         }
 
-        /// 4.创建订单并插入数据库
+        /// 5.创建订单并插入数据库
         UserCustomerAppointmentDo userCustomerAppointmentDo = new UserCustomerAppointmentDo();
         userCustomerAppointmentDo.setId(orderId);
         userCustomerAppointmentDo.setDoctorMerchantAppointmentId(doctorMerchantId);
@@ -121,7 +121,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
             throw new AppException(CommonExceptions.SYSTEM_SQL_ERROR);
         }
 
-        /// 5.删除/更新redis缓存
+        /// 6.删除/更新redis缓存
         // 库存扣减
         DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointmentMapper.getById(doctorMerchantId);
         if (!doctorMerchantAppointmentRedisMapper.saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo)){
@@ -148,9 +148,9 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
 
         LocalDateTime registerDate = LocalDateTime.now();
         String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
-        // 5.1 订单系统的查询view视图更新
+        // 5.1 订单系统的查询view视图更新 ; 更新之前的缓存: 之前的缓存数据不完善, 现在更新之前的缓存
         AppointmentDoctorOrderListAo ao = appointmentDoctorOrderConverter.getAoByBo(bos.get(0), dateStr);
-        boolean orderViewResult = registerAppointmentRedisMapper.saveSingleAppointmentDoctorOrderListAo(
+        boolean orderViewResult = appointmentDoctorOrderRedisMapper.updateSingleAppointmentDoctorOrderListAo(
                 userId,
                 ao
         );

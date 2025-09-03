@@ -14,9 +14,11 @@ import java.util.List;
  */
 public interface DoctorMerchantBoMapper {
 
-    // 根据do记录获取 cardVo的bo 已测试
+    //
     /**
-     *
+     * 根据do记录获取 cardVo的bo 已测试
+     * 此方法被AOP标记:
+     * @see com.api.mapper.medicine.aspect.DoctorMerchantAppointmentAspect
      * @param list   doList
      * @return      boList
     SELECT

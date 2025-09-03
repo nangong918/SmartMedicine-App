@@ -72,7 +72,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
     private final OssService ossService;
     private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
     private final RedissonService redissonService;
-    private final AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
+    private final AppointmentDoctorOrderRedisMapper appointmentDoctorOrderRedisMapper;
     private final AppointmentTransactionalService appointmentTransactionalService;
     private final AppointmentDoctorOrderConverter appointmentDoctorOrderConverter;
     private final AppointmentMqSender appointmentMqSender;
@@ -403,14 +403,14 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
         ao.setOrderId(orderId);
         ao.setDoctorMerchantId(doctorMerchantAppointmentId);
 
-        // 缓存到redis: 存储到user-orders ZSet
-        boolean isCached = registerAppointmentRedisMapper.saveSingleAppointmentDoctorOrderListAo(
+        // 缓存到redis: 存储到user-orders ZSet; 此缓存只是用于查看, 还有很多数据缺失, 需要再在创建订单种更新缓存
+        boolean isCached = appointmentDoctorOrderRedisMapper.saveSingleAppointmentDoctorOrderListAo(
                 userId,
                 ao
         );
         if (isCached){
             // 检查, 获取根据时间排序的ZSet
-            List<AppointmentDoctorOrderListAo> aoList = registerAppointmentRedisMapper.getAppointmentRecordList(
+            List<AppointmentDoctorOrderListAo> aoList = appointmentDoctorOrderRedisMapper.getAppointmentRecordList(
                     userId,
                     AppointmentSortTypeEnum.TIME.getCode(),
                     null,
@@ -439,7 +439,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
     public List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType,
                                                                        @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException {
         /// 查询redis缓存   redis: 11ms
-        List<AppointmentDoctorOrderListAo> listAos = registerAppointmentRedisMapper.getAppointmentRecordList(
+        List<AppointmentDoctorOrderListAo> listAos = appointmentDoctorOrderRedisMapper.getAppointmentRecordList(
                 userId, sortType, userLongitude, userLatitude
         );
         // 不为null说明命中, empty也是命中
@@ -481,7 +481,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
             }
 
             // 缓存
-            boolean result = registerAppointmentRedisMapper.saveAppointmentDoctorOrderListAo(
+            boolean result = appointmentDoctorOrderRedisMapper.saveAppointmentDoctorOrderListAo(
                     userId,
                     listAos
             );
@@ -528,14 +528,14 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
             userCustomerAppointmentOrderMapper.update(order);
 
             // 更新缓存(如果缓存存在)
-            AppointmentDoctorOrderListAo ao = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
+            AppointmentDoctorOrderListAo ao = appointmentDoctorOrderRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
                     dto.getUserId(),
                     // 此处商户id不能传递, 因为我确定在支付服务中, 只是对订单进行支付, 是不知道商户id的, 所以返回的是null; 并且不需要商户id也能查询到
 //                dto.getDoctorMerchantAppointmentId(),
                     dto.getOrderId()
             );
             if (ao != null){
-                boolean updateResult = registerAppointmentRedisMapper.updateAppointmentDoctorOrderListAoStatus(
+                boolean updateResult = appointmentDoctorOrderRedisMapper.updateAppointmentDoctorOrderListAoStatus(
                         dto.getUserId(),
                         dto.getOrderId(),
                         customerStatus
@@ -578,7 +578,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
              当然要改为长久商品也很简单, 如果此处没有查询到数据就查询一下数据库就好了.
              此项目预约不需要查询数据库, 只有购买需要查询数据库
              */
-            AppointmentDoctorOrderListAo orderListAo = registerAppointmentRedisMapper.getAppointmentDoctorOrderListAoByMerchantId(
+            AppointmentDoctorOrderListAo orderListAo = appointmentDoctorOrderRedisMapper.getAppointmentDoctorOrderListAoByMerchantId(
                     userId,
                     doctorMerchantAppointmentId
             );

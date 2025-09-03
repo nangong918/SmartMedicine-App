@@ -143,7 +143,7 @@ public class RegisterAppointmentTests {
     }
 
     @Autowired
-    private AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
+    private AppointmentDoctorOrderRedisMapper appointmentDoctorOrderRedisMapper;
 
     @Test
     public void appointmentDoctorOrderListAoTests(){
@@ -157,7 +157,7 @@ public class RegisterAppointmentTests {
 
         // 增加数据到redis
         long startTime = System.currentTimeMillis();
-        boolean listSaveResult = registerAppointmentRedisMapper.saveAppointmentDoctorOrderListAo(
+        boolean listSaveResult = appointmentDoctorOrderRedisMapper.saveAppointmentDoctorOrderListAo(
                 userId, aos
         );
         log.info("list save result: {}, 时间花费: {}ms", listSaveResult, System.currentTimeMillis() - startTime);
@@ -182,7 +182,7 @@ public class RegisterAppointmentTests {
         ao1.setListVo(vo1);
 
         startTime = System.currentTimeMillis();
-        boolean singleInsertResult = registerAppointmentRedisMapper.saveSingleAppointmentDoctorOrderListAo(
+        boolean singleInsertResult = appointmentDoctorOrderRedisMapper.saveSingleAppointmentDoctorOrderListAo(
                 userId, ao1
         );
         log.info("single insert result: {},  时间花费: {}ms", singleInsertResult, System.currentTimeMillis() - startTime);
@@ -190,7 +190,7 @@ public class RegisterAppointmentTests {
 
         // 更新某条
         startTime = System.currentTimeMillis();
-        boolean updateResult = registerAppointmentRedisMapper.updateAppointmentDoctorOrderListAoStatus(
+        boolean updateResult = appointmentDoctorOrderRedisMapper.updateAppointmentDoctorOrderListAoStatus(
                 userId,
                 ao1.getOrderId(),
                 UserOrderStatusEnum.WAITING_PAYMENT.getCode()
@@ -200,26 +200,26 @@ public class RegisterAppointmentTests {
 
         // 删除某条
         startTime = System.currentTimeMillis();
-        registerAppointmentRedisMapper.deleteSingleAppointmentDoctorOrderListAo(userId, aos.get(0));
+        appointmentDoctorOrderRedisMapper.deleteSingleAppointmentDoctorOrderListAo(userId, aos.get(0));
         log.info("删除某条, 耗时：{}", System.currentTimeMillis() - startTime);
         getDataInfo(userId, userLongitude, userLatitude);
 
         // 全部删除
         startTime = System.currentTimeMillis();
-        registerAppointmentRedisMapper.deleteAllAppointmentDoctorOrderListAo(userId);
+        appointmentDoctorOrderRedisMapper.deleteAllAppointmentDoctorOrderListAo(userId);
         log.info("删除全部, 耗时：{}", System.currentTimeMillis() - startTime);
         getDataInfo(userId, userLongitude, userLatitude);
     }
 
     private void getDataInfo(long userId, double userLongitude, double userLatitude){
         long startTime = System.currentTimeMillis();
-        List<AppointmentDoctorOrderListAo> timeAoList = registerAppointmentRedisMapper.getAppointmentRecordList(
+        List<AppointmentDoctorOrderListAo> timeAoList = appointmentDoctorOrderRedisMapper.getAppointmentRecordList(
                 userId, AppointmentSortTypeEnum.TIME.getCode(), null, null
         );
-        List<AppointmentDoctorOrderListAo> costAoList = registerAppointmentRedisMapper.getAppointmentRecordList(
+        List<AppointmentDoctorOrderListAo> costAoList = appointmentDoctorOrderRedisMapper.getAppointmentRecordList(
                 userId, AppointmentSortTypeEnum.COST.getCode(), null, null
         );
-        List<AppointmentDoctorOrderListAo> distanceAoList = registerAppointmentRedisMapper.getAppointmentRecordList(
+        List<AppointmentDoctorOrderListAo> distanceAoList = appointmentDoctorOrderRedisMapper.getAppointmentRecordList(
                 userId, AppointmentSortTypeEnum.DISTANCE.getCode(), userLongitude, userLatitude
         );
         ValidDataList time = new ValidDataList();

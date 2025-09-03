@@ -91,7 +91,13 @@ public interface DoctorMerchantAppointmentMapper {
             @Param("SubjectCode") Integer registerSubjectCode
     );
 
-    // 获取指定id的预约记录
+    /**
+     * 获取商户do
+     * 此方法被AOP标记:
+     * @see com.api.mapper.medicine.aspect.DoctorMerchantAppointmentAspect
+     * @param doctorMerchantId  商户id
+     * @return                  商户do
+     */
     DoctorMerchantAppointmentDo getById(@Param("id") Long doctorMerchantId);
 
     // 添加行级锁查询

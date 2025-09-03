@@ -431,6 +431,27 @@ public class AppointmentDoctorOrderRedisMapperImpl implements AppointmentDoctorO
     }
 
     /**
+     * 存储用户成本订单数据到缓存
+     * @param userId            用户ID
+     * @param newAo             新订单数据
+     * @return                  存储结果
+     * @throws AppException     存储失败
+     */
+    @Override
+    public boolean updateSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo newAo) throws AppException{
+        if (newAo.orderId == null) {
+            throw new AppException(CommonExceptions.SYSTEM_PARAM_ERROR);
+        }
+        AppointmentDoctorOrderListAo oldAo = getAppointmentDoctorOrderListAoByOrderId(
+                userId, newAo.orderId
+        );
+        if (oldAo != null) {
+            deleteSingleAppointmentDoctorOrderListAo(userId, oldAo);
+        }
+        return saveSingleAppointmentDoctorOrderListAo(userId, newAo);
+    }
+
+    /**
      * 删除用户的指定预约订单
      * @param userId 用户id
      * @param ao     要删除的预约订单对象

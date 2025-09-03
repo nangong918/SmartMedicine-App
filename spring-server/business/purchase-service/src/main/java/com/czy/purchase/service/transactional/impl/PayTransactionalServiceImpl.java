@@ -35,7 +35,7 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
     @Override
     public PayResultEnum payAppointmentOrder(long userId, long orderId) throws AppException {
         log.info("[Appointment订单支付事务开始][user: {}][order: {}]", userId, orderId);
-
+//todo 事务支付订单
         /// 1.获取订单待支付金额, 订单状态检查 (error1: 已下架; error2: 订单过期)
         // 需要的bo数据： （订单id， 商户id，userId，user订单状态，商户的定价金额，预约的开始时间）
 

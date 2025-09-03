@@ -34,6 +34,6 @@ public class RedisTests {
     }
 
     @Autowired
-    private AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
+    private AppointmentDoctorOrderRedisMapper appointmentDoctorOrderRedisMapper;
 
 }
