@@ -2,7 +2,7 @@ package com.czy.medicine.mq;
 
 import com.czy.api.MqConstants;
 import com.czy.api.domain.dto.mq.AppointmentPayResultDto;
-import com.czy.medicine.service.RegisterAppointmentService;
+import com.czy.medicine.service.AppointmentDoctorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PayResultMqHandler {
 
-    private final RegisterAppointmentService registerAppointmentService;
+    private final AppointmentDoctorService registerAppointmentService;
 
     // 支付结果队列
     @RabbitListener(

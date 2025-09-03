@@ -8,7 +8,7 @@ import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.HospitalVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorMerchantCardVo;
 import com.czy.test.TestApplication;
 import date.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class DomainTests {
 
     @Test
     public void appointmentCloneTest() throws CloneNotSupportedException {
-        RegisterAppointmentDoctorCardVo vo = new RegisterAppointmentDoctorCardVo();
+        AppointmentDoctorMerchantCardVo vo = new AppointmentDoctorMerchantCardVo();
 
         vo.doctorVo = new DoctorVo();
         vo.doctorVo.doctorAvatarFileAo = new FileResAo();

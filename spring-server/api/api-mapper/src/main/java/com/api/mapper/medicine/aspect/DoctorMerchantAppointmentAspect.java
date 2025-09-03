@@ -2,6 +2,7 @@ package com.api.mapper.medicine.aspect;
 
 import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
+import com.czy.api.domain.bo.medicine.AppointmentDoctorMerchantCardBo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -9,9 +10,11 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
- * @author 13225
- * @date 2025/9/2 16:07
+ * 商户的信息切面
+ * 功能: 查询数据库之前先查询Redis缓存
  */
 @Slf4j
 @Aspect
@@ -21,6 +24,13 @@ public class DoctorMerchantAppointmentAspect {
 
     private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
 
+    /**
+     * 查询 医生商户Merchant记录 缓存
+     * @see DoctorMerchantAppointmentDo
+     * @param joinPoint     切点
+     * @return              DoctorMerchantAppointmentDo
+     * @throws Throwable    抛出异常
+     */
     @Around("execution(* com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper.getById(..))")
     public Object getById(ProceedingJoinPoint joinPoint) throws Throwable {
 
@@ -45,6 +55,41 @@ public class DoctorMerchantAppointmentAspect {
             log.info("从redis缓存中获取数据");
             return doctorMerchantAppointmentDo;
         }
+    }
+
+    /**
+     * 获取商户预约列表cardVo的元数据 AppointmentDoctorMerchantCardBo
+     * @see AppointmentDoctorMerchantCardBo
+     * @param joinPoint     切点
+     * @return              List<AppointmentDoctorMerchantCardBo>
+     * @throws Throwable    抛出异常
+     */
+    @Around("execution(* com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(..))")
+    public Object getDoctorCardBosByDoctorMerchantDoId(ProceedingJoinPoint joinPoint) throws Throwable{
+        // 反射获取方法参数
+        Object[] args = joinPoint.getArgs();
+        List<DoctorMerchantAppointmentDo> list = (List<DoctorMerchantAppointmentDo>) args[0];
+
+        // 查找缓存
+        List<AppointmentDoctorMerchantCardBo> boList = doctorMerchantAppointmentRedisMapper.getDoctorCardBosByDoctorMerchantDos(
+                list
+        );
+
+        if (boList != null){
+            log.info("[缓存命中]");
+            return boList;
+        }
+        log.info("[缓存未命中]");
+        Object result = joinPoint.proceed();
+        if (result == null){
+            return null;
+        }
+        List<AppointmentDoctorMerchantCardBo> bosResult = (List<AppointmentDoctorMerchantCardBo>) result;
+        doctorMerchantAppointmentRedisMapper.saveRegisterAppointmentDoctorCardBos(
+                bosResult,
+                list
+        );
+        return bosResult;
     }
 
 }

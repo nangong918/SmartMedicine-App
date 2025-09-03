@@ -1,6 +1,6 @@
 package com.czy.api.domain.dto.http.response;
 
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorDataVo;
 import lombok.Data;
 
 import java.util.List;
@@ -11,5 +11,5 @@ import java.util.List;
  */
 @Data
 public class GetAllRegisterAppointmentDateResponse {
-    private List<RegisterAppointmentDataVo> dataVos;
+    private List<AppointmentDoctorDataVo> dataVos;
 }

@@ -8,9 +8,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * @author 13225
- * @date 2025/8/21 13:43
  * 用户预约订单RedisMapper
+ * 存储数据结构:
+ * 1. 预约订单OrderView的Item
+ * @see AppointmentDoctorOrderListAo
  * <p>
  * Redis的缓存对象不应该分开存储, 因为分开存储就面临问题:
  *  1.需要新的dataId对象来专门存储Id

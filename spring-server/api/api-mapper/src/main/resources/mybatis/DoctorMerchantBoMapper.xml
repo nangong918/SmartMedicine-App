@@ -4,7 +4,7 @@
 <mapper namespace="com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper">
 
     <select id="getDoctorCardBosByDoctorMerchantDos"
-            resultType="com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo">
+            resultType="com.czy.api.domain.bo.medicine.AppointmentDoctorMerchantCardBo">
         <if test="list != null and list.size() > 0">
             SELECT
                 dt.avatar_file_id AS doctorAvatarFileId,

@@ -8,14 +8,14 @@ import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
-import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
-import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorSelectAo;
+import com.czy.api.domain.bo.medicine.AppointmentDoctorMerchantCardBo;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.DoctorVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorDataVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorPageVo;
 import com.czy.medicine.MedicineServiceApplication;
-import com.czy.medicine.service.RegisterAppointmentService;
+import com.czy.medicine.service.AppointmentDoctorService;
 import date.DateUtils;
 import json.BaseBean;
 import lombok.Data;
@@ -46,8 +46,8 @@ public class RegisterAppointmentTests {
     @Autowired
     private DoctorMerchantBoMapper doctorMerchantBoMapper;
 
-    private RegisterAppointmentSelectAo getRegisterAppointmentSelectAo(){
-        RegisterAppointmentSelectAo ao = new RegisterAppointmentSelectAo();
+    private AppointmentDoctorSelectAo getRegisterAppointmentSelectAo(){
+        AppointmentDoctorSelectAo ao = new AppointmentDoctorSelectAo();
         LocationAo locationAo = new LocationAo("广东省", "深圳市", "南山区");
         LocalDateTime now = LocalDateTime.now();
         ao.setRegisterLocation(locationAo);
@@ -76,7 +76,7 @@ public class RegisterAppointmentTests {
      */
     @Test
     public void doctorMerchantAppointmentTest(){
-        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+        AppointmentDoctorSelectAo ao = getRegisterAppointmentSelectAo();
         LocalDateTime now = LocalDateTime.now();
 
         for (int i = 0; i < 4; i++){
@@ -102,7 +102,7 @@ public class RegisterAppointmentTests {
 
     @Test
     public void doctorMerchantBoTest(){
-        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+        AppointmentDoctorSelectAo ao = getRegisterAppointmentSelectAo();
         LocalDateTime now = LocalDateTime.now();
         List<DoctorMerchantAppointmentDo> dos = doctorMerchantAppointmentMapper.getDosByParam(
                 ao.getRegisterLocation(),
@@ -111,20 +111,20 @@ public class RegisterAppointmentTests {
                 ao.registerSubjectCode
         );
 
-        List<RegisterAppointmentDoctorCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(dos);
-        for (RegisterAppointmentDoctorCardBo bo : boList){
+        List<AppointmentDoctorMerchantCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(dos);
+        for (AppointmentDoctorMerchantCardBo bo : boList){
             log.info("bo: {}", bo);
         }
     }
 
     @Autowired
-    private RegisterAppointmentService registerAppointmentService;
+    private AppointmentDoctorService registerAppointmentService;
 
     @Test
     public void getListRegisterAppointment(){
-        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+        AppointmentDoctorSelectAo ao = getRegisterAppointmentSelectAo();
 
-        RegisterAppointmentPageVo pageVo = registerAppointmentService.getPage(
+        AppointmentDoctorPageVo pageVo = registerAppointmentService.getPage(
                 ao
         );
 
@@ -133,9 +133,9 @@ public class RegisterAppointmentTests {
 
     @Test
     public void getAllDateRegisterAppointment(){
-        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+        AppointmentDoctorSelectAo ao = getRegisterAppointmentSelectAo();
 
-        List<RegisterAppointmentDataVo> dataVos = registerAppointmentService.getDataVoList(
+        List<AppointmentDoctorDataVo> dataVos = registerAppointmentService.getDataVoList(
                 ao
         );
 

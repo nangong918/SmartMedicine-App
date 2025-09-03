@@ -3,11 +3,11 @@ package com.czy.api.converter.domain.medicine;
 import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
-import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.bo.medicine.AppointmentDoctorMerchantCardBo;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.HospitalVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorMerchantCardVo;
 import date.DateUtils;
 import domain.FileResAo;
 import org.mapstruct.Mapper;
@@ -34,11 +34,11 @@ public interface RegisterAppointmentDoctorCardConverter {
      * @param bo     bo
      * @return       vo
      */
-    default RegisterAppointmentDoctorCardVo boToVo(RegisterAppointmentDoctorCardBo bo){
+    default AppointmentDoctorMerchantCardVo boToVo(AppointmentDoctorMerchantCardBo bo){
         if (bo == null){
             return null;
         }
-        RegisterAppointmentDoctorCardVo vo = new RegisterAppointmentDoctorCardVo();
+        AppointmentDoctorMerchantCardVo vo = new AppointmentDoctorMerchantCardVo();
         // DoctorVo
         DoctorVo doctorVo = new DoctorVo();
         FileResAo doctorAvatarFileAo = new FileResAo();
@@ -76,15 +76,15 @@ public interface RegisterAppointmentDoctorCardConverter {
         return vo;
     }
 
-    default RegisterAppointmentDoctorCardAo boToAo(RegisterAppointmentDoctorCardBo bo){
-        RegisterAppointmentDoctorCardVo vo = boToVo(bo);
+    default RegisterAppointmentDoctorCardAo boToAo(AppointmentDoctorMerchantCardBo bo){
+        AppointmentDoctorMerchantCardVo vo = boToVo(bo);
         RegisterAppointmentDoctorCardAo ao = new RegisterAppointmentDoctorCardAo();
         ao.setDoctorMerchantAppointmentId(String.valueOf(bo.getDoctorMerchantId()));
         ao.setVo(vo);
         return ao;
     }
 
-    default List<RegisterAppointmentDoctorCardVo> bosToVos(List<RegisterAppointmentDoctorCardBo> bos){
+    default List<AppointmentDoctorMerchantCardVo> bosToVos(List<AppointmentDoctorMerchantCardBo> bos){
         if (CollectionUtils.isEmpty(bos)){
             return new ArrayList<>();
         }
@@ -93,7 +93,7 @@ public interface RegisterAppointmentDoctorCardConverter {
                 .collect(Collectors.toList());
     }
 
-    default List<RegisterAppointmentDoctorCardAo> bosToAos(List<RegisterAppointmentDoctorCardBo> bos){
+    default List<RegisterAppointmentDoctorCardAo> bosToAos(List<AppointmentDoctorMerchantCardBo> bos){
         if (CollectionUtils.isEmpty(bos)){
             return new ArrayList<>();
         }
@@ -104,7 +104,7 @@ public interface RegisterAppointmentDoctorCardConverter {
 
     // RegisterAppointmentDoctorCardVo -> AppointmentDoctorOrderListVo
     default AppointmentDoctorOrderListVo getAppointmentDoctorOrderListVo(
-            RegisterAppointmentDoctorCardVo sourceVo,
+            AppointmentDoctorMerchantCardVo sourceVo,
             String approveDate,
             Integer merchantStatus,
             Integer customerStatus

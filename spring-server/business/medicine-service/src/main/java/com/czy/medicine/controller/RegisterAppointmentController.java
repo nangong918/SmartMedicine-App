@@ -3,7 +3,6 @@ package com.czy.medicine.controller;
 import cn.hutool.core.util.IdUtil;
 import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
 import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
-import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.purchase.PurchaseConstant;
@@ -18,13 +17,13 @@ import com.czy.api.domain.dto.http.response.AppointmentDoctorResponse;
 import com.czy.api.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
 import com.czy.api.domain.dto.http.response.GetRegisterAppointmentListResponse;
 import com.czy.api.domain.dto.http.response.GetUserAppointmentRecordResponse;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorDataVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorPageVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.MedicineExceptions;
 import com.czy.api.exception.PurchaseExceptions;
 import com.czy.medicine.mq.AppointmentMqSender;
-import com.czy.medicine.service.RegisterAppointmentService;
+import com.czy.medicine.service.AppointmentDoctorService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
 import exception.AppException;
@@ -57,7 +56,7 @@ import java.util.List;
 @RequestMapping(MedicineConstant.RegisterAppointment_CONTROLLER)
 public class RegisterAppointmentController {
 
-    private final RegisterAppointmentService registerAppointmentService;
+    private final AppointmentDoctorService registerAppointmentService;
     private final RedissonService redissonService;
     private final AppointmentMqSender appointmentMqSender;
     private final AppointmentDoctorOrderRedisMapper registerAppointmentRedisMapper;
@@ -70,7 +69,7 @@ public class RegisterAppointmentController {
     public BaseResponse<GetRegisterAppointmentListResponse>
     getList(@Validated @RequestBody GetRegisterAppointmentListRequest request){
         // 参数校验 （此处ao中部分参数因为复用没写校验所以需要单独校验逻辑）
-        RegisterAppointmentPageVo pageVo = registerAppointmentService.getPage(
+        AppointmentDoctorPageVo pageVo = registerAppointmentService.getPage(
                 request.getRequestAo()
         );
 
@@ -83,7 +82,7 @@ public class RegisterAppointmentController {
     @PostMapping("/getAllDate")
     public BaseResponse<GetAllRegisterAppointmentDateResponse>
     getAllDate(@Validated @RequestBody GetRegisterAppointmentListRequest request) {
-        List<RegisterAppointmentDataVo> dataVos = registerAppointmentService.getDataVoList(
+        List<AppointmentDoctorDataVo> dataVos = registerAppointmentService.getDataVoList(
                 request.getRequestAo()
         );
 

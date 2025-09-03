@@ -5,9 +5,10 @@ import lombok.Data;
 /**
  * @author 13225
  * @date 2025/8/18 14:39
+ * 预约日期vo
  */
 @Data
-public class RegisterAppointmentDataVo {
+public class AppointmentDoctorDataVo {
     // 预约时间：yyyy-MM-dd
     public String data;
     // 剩余可预约数量

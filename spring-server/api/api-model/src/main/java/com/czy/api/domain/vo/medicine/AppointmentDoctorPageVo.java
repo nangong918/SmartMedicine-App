@@ -13,9 +13,9 @@ import java.util.List;
  * 挂号预约页面
  */
 @Data
-public class RegisterAppointmentPageVo implements BaseBean {
+public class AppointmentDoctorPageVo implements BaseBean {
     // 日期vo
-    private RegisterAppointmentDataVo dataVo;
+    private AppointmentDoctorDataVo dataVo;
     // 医生卡片voList
     private List<RegisterAppointmentDoctorCardAo> cardAos = new ArrayList<>();
 }

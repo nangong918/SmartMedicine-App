@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
    WHERE drat.doctorId in (item.doctorId)
  */
 @Data
-public class RegisterAppointmentDoctorCardBo {
+public class AppointmentDoctorMerchantCardBo {
     // Doctor
     private Long doctorAvatarFileId;
     private String doctorName;

@@ -18,20 +18,20 @@ import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
-import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
-import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorSelectAo;
+import com.czy.api.domain.bo.medicine.AppointmentDoctorMerchantCardBo;
 import com.czy.api.domain.bo.medicine.UserAppointmentOrderBo;
 import com.czy.api.domain.dto.mq.AppointmentOrderDto;
 import com.czy.api.domain.dto.mq.AppointmentPayResultDto;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.DoctorVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorDataVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorMerchantCardVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorPageVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.MedicineExceptions;
 import com.czy.medicine.mq.AppointmentMqSender;
-import com.czy.medicine.service.RegisterAppointmentService;
+import com.czy.medicine.service.AppointmentDoctorService;
 import com.czy.medicine.service.transactional.AppointmentTransactionalService;
 import com.czy.medicine.utils.AppointmentMerchantStatusCalculator;
 import com.utils.minio.service.OssService;
@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class RegisterAppointmentServiceImpl implements RegisterAppointmentService {
+public class AppointmentMerchantServiceImpl implements AppointmentDoctorService {
 
     private final DoctorMerchantAppointmentMapper doctorMerchantAppointmentMapper;
     private final RegisterAppointmentDoctorCardConverter registerAppointmentDoctorCardConverter;
@@ -81,7 +81,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     // 获取PageList
     @NotNull
     @Override
-    public RegisterAppointmentPageVo getPage(@NotNull RegisterAppointmentSelectAo ao) throws AppException {
+    public AppointmentDoctorPageVo getPage(@NotNull AppointmentDoctorSelectAo ao) throws AppException {
         /// 参数校验
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime registerTime;
@@ -110,9 +110,9 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
                     ao.registerSubjectCode
         );
 
-        RegisterAppointmentPageVo pageVo = new RegisterAppointmentPageVo();
+        AppointmentDoctorPageVo pageVo = new AppointmentDoctorPageVo();
         // dataVo
-        RegisterAppointmentDataVo dataVo = getDataVo(doctorRegisterAppointmentDos, ao.getRegisterTime());
+        AppointmentDoctorDataVo dataVo = getDataVo(doctorRegisterAppointmentDos, ao.getRegisterTime());
         pageVo.setDataVo(dataVo);
 
         // cardAos
@@ -135,12 +135,12 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             for (RegisterAppointmentDoctorCardAo cardAo : pageVo.getCardAos()){
                 Double longitude = Optional.ofNullable(cardAo)
                         .map(RegisterAppointmentDoctorCardAo::getVo)
-                        .map(RegisterAppointmentDoctorCardVo::getHospitalAo)
+                        .map(AppointmentDoctorMerchantCardVo::getHospitalAo)
                         .map(HospitalAo::getLongitude)
                         .orElse(null);
                 Double latitude = Optional.ofNullable(cardAo)
                         .map(RegisterAppointmentDoctorCardAo::getVo)
-                        .map(RegisterAppointmentDoctorCardVo::getHospitalAo)
+                        .map(AppointmentDoctorMerchantCardVo::getHospitalAo)
                         .map(HospitalAo::getLatitude)
                         .orElse(null);
                 if (longitude != null && latitude != null){
@@ -157,7 +157,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         // oss填充
         List<Long> doctorAvatarFileIds = cardAos.stream()
                 .map(RegisterAppointmentDoctorCardAo::getVo)
-                .map(RegisterAppointmentDoctorCardVo::getDoctorVo)
+                .map(AppointmentDoctorMerchantCardVo::getDoctorVo)
                 .map(DoctorVo::getDoctorAvatarFileAo)
                 .map(FileResAo::getFileId)
                 .collect(Collectors.toList());
@@ -173,9 +173,9 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     }
 
     // 获取DataVo (此do -> vo无需查询数据库, 无需redis缓存)
-    private RegisterAppointmentDataVo getDataVo
+    private AppointmentDoctorDataVo getDataVo
             (List<DoctorMerchantAppointmentDo> dos, String dateStr){
-        RegisterAppointmentDataVo dataVo = new RegisterAppointmentDataVo();
+        AppointmentDoctorDataVo dataVo = new AppointmentDoctorDataVo();
         dataVo.setData(dateStr);
 
         if (CollectionUtils.isEmpty(dos)){
@@ -217,7 +217,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
 
         // 用dos批量查询 -> do; 避免逐个查询产生多余的io (Mybatis不会添加null对象)
-        List<RegisterAppointmentDoctorCardBo> bos = doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(
+        List<AppointmentDoctorMerchantCardBo> bos = doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(
                 dos
         );
         if (CollectionUtils.isEmpty(bos)){
@@ -231,7 +231,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
     // 获取DataVoList
     @NotNull
     @Override
-    public List<RegisterAppointmentDataVo> getDataVoList(@NotNull RegisterAppointmentSelectAo ao) throws AppException{
+    public List<AppointmentDoctorDataVo> getDataVoList(@NotNull AppointmentDoctorSelectAo ao) throws AppException{
         /// 参数校验
         if (!StringUtils.hasText(ao.getRegisterTime())){
             return new ArrayList<>();
@@ -280,7 +280,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         };
 
         // 获取数据
-        List<RegisterAppointmentDataVo> dataVos = new ArrayList<>();
+        List<AppointmentDoctorDataVo> dataVos = new ArrayList<>();
         for (LocalDateTime registerDate : registerDates) {
             // 获取可挂号的记录列表
             List<DoctorMerchantAppointmentDo> doctorRegisterAppointmentDos =
@@ -294,7 +294,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
 
             // dataVo
-            RegisterAppointmentDataVo dataVo = getDataVo(doctorRegisterAppointmentDos, dateStr);
+            AppointmentDoctorDataVo dataVo = getDataVo(doctorRegisterAppointmentDos, dateStr);
             dataVos.add(dataVo);
         }
         return dataVos;
@@ -368,7 +368,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         dos.add(doctorMerchantAppointmentDo);
 
         // 获取预约信息 (aop: redis -> mybatis)
-        List<RegisterAppointmentDoctorCardBo> boList =
+        List<AppointmentDoctorMerchantCardBo> boList =
                 doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(dos);
 
         if (CollectionUtils.isEmpty(boList) || boList.get(0) == null){
@@ -379,7 +379,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
         }
 
         // 中间数据结构, 不能直接使用appointmentDoctorOrderConverter, 因为此时订单数据库还没数据, 无法查询对应的bo
-        RegisterAppointmentDoctorCardVo vo = registerAppointmentDoctorCardConverter.boToVo(boList.get(0));
+        AppointmentDoctorMerchantCardVo vo = registerAppointmentDoctorCardConverter.boToVo(boList.get(0));
 
         LocalDateTime registerDate = LocalDateTime.now();
         String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
@@ -519,6 +519,7 @@ public class RegisterAppointmentServiceImpl implements RegisterAppointmentServic
             // 库存归还 [取消的情况下]
             if (customerStatus == UserOrderStatusEnum.CANCELED.getCode()){
                 doctorMerchantAppointmentMapper.returnStock(order.getDoctorMerchantAppointmentId());
+                // 归还redis库存
                 if (!doctorMerchantAppointmentRedisMapper.cancelAppointment(order.getDoctorMerchantAppointmentId())){
                     log.warn("[取消支付]归还库存失败: {}", order.getDoctorMerchantAppointmentId());
                 }

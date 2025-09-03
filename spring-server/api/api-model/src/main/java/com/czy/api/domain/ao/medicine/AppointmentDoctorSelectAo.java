@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
  * 挂号预约的参数
  */
 @Data
-public class RegisterAppointmentSelectAo {
+public class AppointmentDoctorSelectAo {
     @Valid
     @NotNull(message = "挂号地点不能为空")
     public LocationAo registerLocation;

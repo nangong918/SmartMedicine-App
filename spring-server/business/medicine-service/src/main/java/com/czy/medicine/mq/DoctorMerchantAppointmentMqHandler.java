@@ -9,7 +9,7 @@ import com.czy.api.constant.purchase.PurchaseConstant;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorAo;
 import com.czy.api.domain.dto.socket.response.AppointmentResultResponse;
 import com.czy.api.utils.NettyUtils;
-import com.czy.medicine.service.RegisterAppointmentService;
+import com.czy.medicine.service.AppointmentDoctorService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
 import exception.AppException;
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DoctorMerchantAppointmentMqHandler {
 
-    private final RegisterAppointmentService registerAppointmentService;
+    private final AppointmentDoctorService registerAppointmentService;
     private final RedissonService redissonService;
     private final AppointmentMqSender appointmentMqSender;
     private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;

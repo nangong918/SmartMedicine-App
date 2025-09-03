@@ -3,10 +3,10 @@ package com.czy.medicine.service;
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
-import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorSelectAo;
 import com.czy.api.domain.dto.mq.AppointmentPayResultDto;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorDataVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorPageVo;
 import com.utils.redisson.service.RedissonClusterLock;
 import exception.AppException;
 import org.jetbrains.annotations.NotNull;
@@ -18,14 +18,14 @@ import java.util.List;
  * @author 13225
  * @date 2025/8/18 16:12
  */
-public interface RegisterAppointmentService {
+public interface AppointmentDoctorService {
     /**
      * 获取PageList   （某天的日期vo 和 医生卡片voList）
      * @param ao            查询参数
      * @return              PageList
      * @throws AppException 错误
      */
-    @NotNull RegisterAppointmentPageVo getPage(@NotNull RegisterAppointmentSelectAo ao) throws AppException;
+    @NotNull AppointmentDoctorPageVo getPage(@NotNull AppointmentDoctorSelectAo ao) throws AppException;
 
     /**
      * 获取DoctorCardAo(Vo)
@@ -41,7 +41,7 @@ public interface RegisterAppointmentService {
      * @return                  List<RegisterAppointmentDataVo>
      * @throws AppException     AppException
      */
-    @NotNull List<RegisterAppointmentDataVo> getDataVoList(@NotNull RegisterAppointmentSelectAo ao) throws AppException;
+    @NotNull List<AppointmentDoctorDataVo> getDataVoList(@NotNull AppointmentDoctorSelectAo ao) throws AppException;
 
     /**
      * 预约
