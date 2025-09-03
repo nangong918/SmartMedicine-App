@@ -35,49 +35,39 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
     @Override
     public PayResultEnum payAppointmentOrder(long userId, long orderId) throws AppException {
         log.info("[Appointment订单支付事务开始][user: {}][order: {}]", userId, orderId);
-//todo 事务支付订单
-        /// 1.获取订单待支付金额, 订单状态检查 (error1: 已下架; error2: 订单过期)
+
+        /// 1. 获取订单待支付金额, 订单状态检查 (error1: 已下架; error2: 订单过期)
         // 需要的bo数据： （订单id， 商户id，userId，user订单状态，商户的定价金额，预约的开始时间）
 
-        // 检查订单是否过期 [乐观锁1]
         OrderStatusAo orderStatusAo = payRedisMapper.getOrderStatus(userId, orderId);
         if (orderStatusAo == null || orderStatusAo.getCustomerStatus() == null){
             throw new AppException(PurchaseExceptions.ORDER_EXPIRED);
         }
-        // 价格不存在 || 价格小于0 (可以等于0, 属于特殊优惠)
+        // 1.1 检查订单是否过期 [乐观锁1]
+        if (orderStatusAo.getMerchantEndTime() == null || orderStatusAo.getMerchantEndTime().isBefore(LocalDateTime.now())){
+            // error1: 已下架
+            throw new AppException(PurchaseExceptions.ORDER_OUT_OF_SELLING_TIME);
+        }
+        // 1.2 超时检查
+        if (orderStatusAo.getCustomerStatus() == UserOrderStatusEnum.CANCELED.getCode()){
+            // 抛出订单超时异常, 事务回滚 error2: 订单过期
+            log.warn("[订单支付]预约商家已开始不可支付, 商家结束时间： {}", orderStatusAo.getMerchantEndTime());
+            throw new AppException(PurchaseExceptions.ORDER_TIMEOUT);
+        }
+
+        /// 2. 检查订单
+        // 2.1 价格不存在 || 价格小于0 (可以等于0, 属于特殊优惠)
         if (orderStatusAo.getTotalPrice() == null || orderStatusAo.getTotalPrice().compareTo(BigDecimal.ZERO) < 0){
             throw new AppException(PurchaseExceptions.ORDER_PRICE_ERROR);
         }
-        // 超时检查
-        if (orderStatusAo.getCustomerStatus() == UserOrderStatusEnum.CANCELED.getCode()){
-            // 抛出订单超时异常, 事务回滚
-            throw new AppException(PurchaseExceptions.ORDER_TIMEOUT);
-        }
-        // 待支付检查
+        // 2.2 待支付检查
         if (orderStatusAo.getCustomerStatus() != UserOrderStatusEnum.WAITING_PAYMENT.getCode()){
             // 订单状态错误
             log.warn("订单状态错误: {}", orderStatusAo.getCustomerStatus());
             throw new AppException(PurchaseExceptions.ORDER_NOT_WAIT_PAY);
         }
 
-        // 检查订单
-        // 是否是待支付
-        UserOrderStatusEnum orderStatusEnum = UserOrderStatusEnum.getByCode(
-                orderStatusAo.getCustomerStatus()
-        );
-        if (!UserOrderStatusEnum.WAITING_PAYMENT.equals(orderStatusEnum)){
-            log.warn("[订单支付]订单状态错误: {}", orderStatusEnum);
-            return PayResultEnum.ORDER_STATUS_ERROR;
-        }
-        // 预约商家是否已经开始不可支付 (如果为null说明不存在过期时间)
-        if (orderStatusAo.getMerchantEndTime() != null){
-            if (LocalDateTime.now().isAfter(orderStatusAo.getMerchantEndTime())){
-                log.warn("[订单支付]预约商家已开始不可支付, 商家结束时间： {}", orderStatusAo.getMerchantEndTime());
-                return PayResultEnum.LIMITED;
-            }
-        }
-
-        /// 2.锁行检查用户的金额 + 扣减制定金额
+        /// 3.锁行检查用户的金额 + 扣减制定金额
         UserWalletDo userWalletDo = userWalletMapper.getUserWalletAndLockByUserId(userId);
         // 钱包都没有
         if (userWalletDo == null || userWalletDo.getId() == null){
@@ -88,8 +78,8 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
             return PayResultEnum.INSUFFICIENT_BALANCE;
         }
 
-        /// 3.状态检查:
-        // 3.1 再次检查是否订单超时 [乐观锁2]
+        /// 4.状态检查:
+        // 4.1 再次检查是否订单超时 [乐观锁2]
         OrderStatusAo orderStatusAo2 = payRedisMapper.getOrderStatus(userId, orderId);
         if (orderStatusAo2 == null){
             throw new AppException(PurchaseExceptions.ORDER_EXPIRED);
@@ -104,7 +94,7 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
             throw new AppException(PurchaseExceptions.ORDER_NOT_WAIT_PAY);
         }
 
-        // 3.2成功: 更新订单状态
+        // 4.2成功: 更新订单状态
         // 成功之后标记, 死信队列中的消息被处理的时候就不会回调handleOutTimeOrder
         payRedisMapper.updateOrderStatus(
                 userId, orderId,
@@ -112,7 +102,7 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
                 null
         );
 
-        /// 4.缓存更新
+        /// 5.缓存更新
         // 订单状态缓存：在medicine-service中更新
 
         return PayResultEnum.SUCCESS;

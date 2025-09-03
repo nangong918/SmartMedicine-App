@@ -51,6 +51,7 @@ public class PayServiceImpl implements PayService {
             // 将消息发送给medicine-service
             payMqSender.sendAppointmentPayResult(dto);
         }
+        // 失败不用通知, 因为如果死信通知了失败, 此处还通知失败, 会调用两次归还库存
 
         // 2. mq通知medicine服务: 状态更新
         return payResultEnum.getCode();

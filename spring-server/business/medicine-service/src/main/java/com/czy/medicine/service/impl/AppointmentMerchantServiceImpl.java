@@ -518,6 +518,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
             /// 1. 更新数据库
             // 库存归还 [取消的情况下]
             if (customerStatus == UserOrderStatusEnum.CANCELED.getCode()){
+                // 归还sql库存
                 doctorMerchantAppointmentMapper.returnStock(order.getDoctorMerchantAppointmentId());
                 // 归还redis库存
                 if (!doctorMerchantAppointmentRedisMapper.cancelAppointment(order.getDoctorMerchantAppointmentId())){

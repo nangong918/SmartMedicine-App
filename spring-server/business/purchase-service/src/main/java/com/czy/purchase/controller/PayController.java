@@ -37,6 +37,7 @@ public class PayController {
     public BaseResponse<PayAppointmentResponse>
     payAppointmentOrder(@RequestBody PayAppointmentOrderRequest request){
 
+        /// 1. 行为幂等性
         // 支付分布式锁
         String dataId = request.getUserId().toString() + ":" + request.getOrderId().toString();
         String mappingPath = PurchaseConstant.Pay_CONTROLLER + PurchaseConstant.AppointmentPay_API;
@@ -53,7 +54,7 @@ public class PayController {
             BaseResponse.LogBackError(PurchaseExceptions.REPEAT_PAY_LOCK);
         }
 
-        // 支付订单
+        /// 2. 支付订单
         int payStatus = payService.payAppointmentOrder(
                 request.getUserId(),
                 request.getOrderId()
