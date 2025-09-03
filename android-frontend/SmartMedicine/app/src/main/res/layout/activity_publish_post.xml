@@ -16,85 +16,169 @@
         android:layout_height="match_parent"
         tools:context=".activity.PublishPostActivity">
 
-        <com.czy.appview.view.InfoBarView
-            android:id="@+id/top_bar"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
         <ScrollView
-            app:layout_constraintTop_toBottomOf="@+id/top_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="center_horizontal"
                 android:orientation="vertical">
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edtv_title"
-                    android:layout_marginTop="20dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:text="@={viewModel.publishPostVo.postTitleLd}"
-                    android:hint="请输入标题"
-                    android:textSize="20sp" />
-
+                
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp">
+                    
+                    <ImageView
+                        android:id="@+id/btn_back"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:padding="5dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:src="@drawable/chevron_left_24px"
+                        android:layout_marginStart="10dp"/>
 
-                    <com.czy.appview.view.RoundedImage
-                        android:id="@+id/imgv_articlePic"
-                        android:layout_width="300dp"
-                        android:layout_height="200dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_gravity="center_horizontal"
-                        android:padding="10dp"
-                        android:src="@mipmap/logo"
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_publish"
+                        android:layout_width="70dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/round_corners_button_commend"
+                        app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <View
-                        android:id="@+id/v_selectImage"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/add_24px"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgv_articlePic"
-                        app:layout_constraintEnd_toEndOf="@+id/imgv_articlePic"
-                        app:layout_constraintStart_toStartOf="@+id/imgv_articlePic"
-                        app:layout_constraintTop_toTopOf="@+id/imgv_articlePic" />
-
-
+                        android:layout_marginEnd="15dp"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="@color/green_900"
+                        android:text="@string/publish"/>
+                    
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+                <!-- post title -->
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edtv_content"
+                    android:id="@+id/tv_title"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginEnd="40dp"
                     android:layout_marginTop="20dp"
+                    android:textSize="30sp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/title"
+                    android:textColor="@color/green_900"
+                    android:text="@={viewModel.publishPostVo.postTitleLd}"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <!-- post content -->
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/tv_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
-                    android:hint="请输入内容"
-                    android:text="@={viewModel.publishPostVo.postContentLd}"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imgv_articlePic" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_publish"
                     android:layout_marginTop="20dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="发布"/>
+                    android:textSize="14sp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/enter_post_cotent"
+                    android:textColor="@color/green_900"
+                    android:text="@={viewModel.publishPostVo.postContentLd}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <!-- post image -->
+                <LinearLayout
+                    android:layout_marginTop="35dp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ly_p1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <ImageView
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:id="@+id/img_p1"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            tools:background="@color/green_90"/>
+                        <View
+                            android:id="@+id/v_add1"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/add_24px"
+                            app:layout_constraintBottom_toBottomOf="@+id/img_p1"
+                            app:layout_constraintEnd_toEndOf="@+id/img_p1"
+                            app:layout_constraintStart_toStartOf="@+id/img_p1"
+                            app:layout_constraintTop_toTopOf="@+id/img_p1" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ly_p2"
+                        android:visibility="gone"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <ImageView
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:id="@+id/img_p2"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            tools:background="@color/green_90"/>
+                        <View
+                            android:id="@+id/v_add2"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/add_24px"
+                            app:layout_constraintBottom_toBottomOf="@+id/img_p2"
+                            app:layout_constraintEnd_toEndOf="@+id/img_p2"
+                            app:layout_constraintStart_toStartOf="@+id/img_p2"
+                            app:layout_constraintTop_toTopOf="@+id/img_p2" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ly_p3"
+                        android:visibility="gone"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <ImageView
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:id="@+id/img_p3"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            tools:background="@color/green_90"/>
+                        <View
+                            android:id="@+id/v_add3"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/add_24px"
+                            app:layout_constraintBottom_toBottomOf="@+id/img_p3"
+                            app:layout_constraintEnd_toEndOf="@+id/img_p3"
+                            app:layout_constraintStart_toStartOf="@+id/img_p3"
+                            app:layout_constraintTop_toTopOf="@+id/img_p3" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
