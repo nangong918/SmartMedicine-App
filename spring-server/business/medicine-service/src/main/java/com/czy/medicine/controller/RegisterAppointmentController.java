@@ -155,13 +155,18 @@ public class RegisterAppointmentController {
                 // 5分钟(300s)，单位：秒
                 PurchaseConstant.PAY_TIMEOUT
         );
+        log.info("[预约挂号][行为幂等检查][开始获取分布式锁失败][userId: {}][merchantId: {}]",
+                request.getUserId(), request.getDoctorMerchantAppointmentId());
         // 获取分布式锁
         if (!redissonService.tryLock(appointmentLock)){
-            log.warn("[预约挂号][获取分布式锁失败][user: {}][商户: {}]", request.getUserId(), request.getDoctorMerchantAppointmentId());
+            log.warn("[预约挂号][获取分布式锁失败][user: {}][商户: {}]",
+                    request.getUserId(), request.getDoctorMerchantAppointmentId());
             BaseResponse.LogBackError(PurchaseExceptions.REPEAT_APPLY_LOCK);
         }
 
         /// 1. 行为幂等 [1.2] 获取用户订单, 检查重复预约; 防止用户重复预约
+        log.info("[预约挂号][行为幂等检查][开始获取用户订单][检查重复预约; 防止用户重复预约][user: {}][商户: {}]",
+                request.getUserId(), request.getDoctorMerchantAppointmentId());
         try {
             // user:商户预约是否已经存在 (会抛出redis连接失败的错误, 避免出现redis挂掉导致超卖问题)
             boolean isExist = registerAppointmentService.checkIsUserEffectiveAppointmentExist(
@@ -176,11 +181,11 @@ public class RegisterAppointmentController {
             }
         } catch (AppException e){
             redissonService.unlock(appointmentLock);
-            log.error("[预约挂号][用户预约业务异常][user: {}][商户: {}]", request.getUserId(), request.getDoctorMerchantAppointmentId());
+            log.error("[预约挂号][用户预约业务异常][解除预约行为分布式锁][user: {}][商户: {}]", request.getUserId(), request.getDoctorMerchantAppointmentId(), e);
             return BaseResponse.LogBackError(e);
         } catch (Exception e){
             redissonService.unlock(appointmentLock);
-            log.error("[预约挂号][用户预约系统异常][user: {}][商户: {}]", request.getUserId(), request.getDoctorMerchantAppointmentId());
+            log.error("[预约挂号][用户预约系统异常][解除预约行为分布式锁][user: {}][商户: {}]", request.getUserId(), request.getDoctorMerchantAppointmentId(), e);
             return BaseResponse.LogBackError(
                     MedicineExceptions.APPOINTMENT_DOCTOR_ORDER_EXIST
             );
@@ -193,16 +198,16 @@ public class RegisterAppointmentController {
                 log.info("[user: {}][商户: {}][获取预约permit成功]继续执行流程", request.getUserId(), request.getDoctorMerchantAppointmentId());
             }
             else {
-                log.warn("[预约doctor商户失败][获取redisson permit失败][库存不足]");
                 redissonService.unlock(appointmentLock);
+                log.warn("[预约doctor商户: {}失败][获取redisson permit失败][库存不足][解除预约行为分布式锁]", request.getDoctorMerchantAppointmentId());
                 return BaseResponse.LogBackError(PurchaseExceptions.ORDER_INVENTORY_APPLY_FAILED);
             }
         } catch (AppException e){
-            log.warn("[商户: {}不存在]", request.getDoctorMerchantAppointmentId());
+            log.warn("[预约挂号][用户预约业务异常][解除预约行为分布式锁]", e);
             redissonService.unlock(appointmentLock);
             return BaseResponse.LogBackError(e);
         } catch (Exception e){
-            log.error("[预约doctor商户失败][获取redisson permit失败]: ", e);
+            log.error("[预约挂号][用户预约系统异常][解除预约行为分布式锁] ", e);
             redissonService.unlock(appointmentLock);
             return BaseResponse.LogBackError(PurchaseExceptions.ORDER_INVENTORY_APPLY_FAILED);
         }
@@ -213,6 +218,7 @@ public class RegisterAppointmentController {
         // 缓存存储方式: ZSet 有序集合
         // 订单Id生成: 在加入消息队列之前先生成订单id然后缓存到Redis避免找不到; see: getAppointmentRecordList
         long orderId = IdUtil.getSnowflakeNextId();
+        log.info("[预约挂号][开始生成用户订单view (AppointmentDoctorOrderListAo) 缓存, 订单id: {}]", orderId);
         try {
             registerAppointmentService.generateOrderCache(
                     request.getDoctorMerchantAppointmentId(),
@@ -221,10 +227,11 @@ public class RegisterAppointmentController {
                     appointmentLock
             );
         } catch (AppException e){
-            log.error("[预约失败][生成缓存业务异常]: ", e);
+            log.error("[预约挂号][生成缓存失败]: ", e);
             // 归还库存
             if(!doctorMerchantAppointmentRedisMapper.cancelAppointment(request.getDoctorMerchantAppointmentId())){
-                log.warn("[库存归还失败][商户: {}][用户: {}]", request.getDoctorMerchantAppointmentId(), request.getUserId());
+                log.warn("[预约挂号业务异常][库存归还失败][商户: {}][用户: {}]",
+                        request.getDoctorMerchantAppointmentId(), request.getUserId());
             }
             redissonService.unlock(appointmentLock);
             return BaseResponse.LogBackError(e);
@@ -232,7 +239,8 @@ public class RegisterAppointmentController {
             log.error("[预约失败][生成缓存系统异常]: ", e);
             // 归还库存
             if(!doctorMerchantAppointmentRedisMapper.cancelAppointment(request.getDoctorMerchantAppointmentId())){
-                log.warn("[库存归还失败][商户: {}][用户: {}]", request.getDoctorMerchantAppointmentId(), request.getUserId());
+                log.warn("[预约挂号系统异常][库存归还失败][商户: {}][用户: {}]",
+                        request.getDoctorMerchantAppointmentId(), request.getUserId());
             }
             redissonService.unlock(appointmentLock);
             return BaseResponse.LogBackError(CommonExceptions.SYSTEM_ERROR);
@@ -244,6 +252,8 @@ public class RegisterAppointmentController {
         appointmentDoctorAo.setUserId(request.getUserId());
         appointmentDoctorAo.setDoctorMerchantAppointmentId(request.getDoctorMerchantAppointmentId());
         appointmentDoctorAo.setOrderId(orderId);
+        log.info("[预约挂号][生成缓存成功][订单状态: 待审核][待审核加入消息队列，避免审核访问数据库qps过高][商户: {}][用户: {}]",
+                request.getDoctorMerchantAppointmentId(), request.getUserId());
         appointmentMqSender.push(appointmentDoctorAo);
 
         // 通知前端耐心等待预约结果

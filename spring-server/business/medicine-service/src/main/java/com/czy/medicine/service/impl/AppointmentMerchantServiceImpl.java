@@ -310,13 +310,13 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
      * @throws AppException                 预约失败的异常
      */
     @Override
-    public void appointment
+    public void reviewOrder
     (@NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId) throws AppException{
         // 执行事务
         // 对商品上锁，库减少（模拟减少，因为有5分钟的支付时间，未支付的话就库存数据增）
         // 缓存减少 事务sql
         long startTime = System.currentTimeMillis();
-        log.info("[用户{}]开始预约事务", userId);
+        log.info("[审核预约挂号][用户:{}, 订单:{}]开始预约事务", userId, orderId);
         appointmentTransactionalService.createAppointmentOrder(
                 orderId, doctorMerchantAppointmentId, userId
         );
@@ -355,26 +355,28 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
     @Override
     public void generateOrderCache(@NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId, @NotNull RedissonClusterLock appointmentLock) throws AppException {
         // 检查商户 (aop: redis -> mybatis)
+        log.info("[预约挂号][生成缓存][Aop获取商户记录: DoctorMerchantAppointmentDo]");
         DoctorMerchantAppointmentDo doctorMerchantAppointmentDo =
                 doctorMerchantAppointmentMapper.getById(doctorMerchantAppointmentId);
 
         if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null){
             // 异常则解开分布式锁
             redissonService.unlock(appointmentLock);
-            log.warn("[userId: {}][doctorMerchantAppointmentId: {}] 申请失败，不存在此预约信息", userId, doctorMerchantAppointmentId);
+            log.warn("[预约挂号][生成缓存][userId: {}][doctorMerchantAppointmentId: {}] 申请失败，不存在此预约信息", userId, doctorMerchantAppointmentId);
             throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
         }
         List<DoctorMerchantAppointmentDo> dos = new ArrayList<>();
         dos.add(doctorMerchantAppointmentDo);
 
         // 获取预约信息 (aop: redis -> mybatis)
+        log.info("[预约挂号][生成缓存][Aop获取预约信息: AppointmentDoctorMerchantCardBo]");
         List<AppointmentDoctorMerchantCardBo> boList =
                 doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(dos);
 
         if (CollectionUtils.isEmpty(boList) || boList.get(0) == null){
             // 异常则解开分布式锁
             redissonService.unlock(appointmentLock);
-            log.warn("[userId: {}][doctorMerchantAppointmentId: {}] 申请失败，bo inner join 联合查询数据不完整", userId, doctorMerchantAppointmentId);
+            log.warn("[预约挂号][生成缓存][userId: {}][doctorMerchantAppointmentId: {}] 申请失败，bo inner join 联合查询数据不完整", userId, doctorMerchantAppointmentId);
             throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
         }
 
@@ -584,24 +586,29 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
                     doctorMerchantAppointmentId
             );
             if (orderListAo == null){
+                log.info("[预约挂号][行为幂等检查][用户: {}在商户: {}不存在订单]",
+                        userId, doctorMerchantAppointmentId);
                 return false;
             }
             int status = Optional.ofNullable(orderListAo.listVo)
                     .map(vo -> vo.customerStatus)
                     .orElse(UserOrderStatusEnum.NULL.getCode());
+            UserOrderStatusEnum userOrderStatusEnum = UserOrderStatusEnum.getByCode(status);
+            log.info("[预约挂号][行为幂等检查][用户: {}在商户: {}存在订单]用户订单状态为：{}",
+                    userId, doctorMerchantAppointmentId, userOrderStatusEnum);
 
             // isHaveEffective
             return
                     // 审核中
-                    UserOrderStatusEnum.WAITING_AUDIT.getCode() == status ||
+                    UserOrderStatusEnum.WAITING_AUDIT.equals(userOrderStatusEnum) ||
                             // 待支付
-                            UserOrderStatusEnum.WAITING_PAYMENT.getCode() == status ||
+                            UserOrderStatusEnum.WAITING_PAYMENT.equals(userOrderStatusEnum) ||
                             // 待使用
-                            UserOrderStatusEnum.WAITING_USE.getCode() == status ||
+                            UserOrderStatusEnum.WAITING_USE.equals(userOrderStatusEnum) ||
                             // 退款中
-                            UserOrderStatusEnum.REFUNDING.getCode() == status ||
+                            UserOrderStatusEnum.REFUNDING.equals(userOrderStatusEnum) ||
                             // 退款失败
-                            UserOrderStatusEnum.REFUND_FAILED.getCode() == status;
+                            UserOrderStatusEnum.REFUND_FAILED.equals(userOrderStatusEnum);
         } catch (Exception e){
             log.error("[检查用户是否预约此商户并且拥有有效订单][redis异常]", e);
             throw new AppException(CommonExceptions.SYSTEM_REDIS_ERROR);

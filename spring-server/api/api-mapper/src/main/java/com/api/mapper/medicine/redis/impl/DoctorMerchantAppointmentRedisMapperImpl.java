@@ -126,9 +126,10 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
 
         if (acquired){
             int remainingPermits = semaphore.availablePermits();
-            DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = getDoctorMerchantAppointmentDo(doctorMerchantAppointmentId);
+            DoctorMerchantAppointmentDo doctorMerchantAppointmentDo =
+                    getDoctorMerchantAppointmentDo(doctorMerchantAppointmentId);
             if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null){
-                log.warn("[商户: {}不存在]", doctorMerchantAppointmentId);
+                log.warn("[预约订单][商户: {}不存在]", doctorMerchantAppointmentId);
                 throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
             }
             doctorMerchantAppointmentDo.setRemainCount(remainingPermits);
@@ -159,7 +160,7 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
         DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = getDoctorMerchantAppointmentDo(doctorMerchantAppointmentId);
 
         if (doctorMerchantAppointmentDo == null || doctorMerchantAppointmentDo.getId() == null) {
-            log.warn("[商户: {}不存在]", doctorMerchantAppointmentId);
+            log.warn("[取消订单][商户: {}不存在]", doctorMerchantAppointmentId);
             throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
         }
 

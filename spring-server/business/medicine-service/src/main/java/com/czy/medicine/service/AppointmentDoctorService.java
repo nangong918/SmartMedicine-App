@@ -52,7 +52,7 @@ public interface AppointmentDoctorService {
      * 所以由上游创建订单id，如果此处处理失败了，就将redis的数据清除)
      * @throws AppException                 预约失败的异常
      */
-    void appointment(
+    void reviewOrder(
             @NotNull Long doctorMerchantAppointmentId, @NotNull Long userId, long orderId) throws AppException;
 
     /**

@@ -4,7 +4,6 @@ import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper;
 import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
-import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentMerchantStatusEnum;
@@ -25,6 +24,7 @@ import date.DateUtils;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -49,16 +49,16 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
     private final DoctorMerchantBoMapper doctorMerchantBoMapper;
     private final AppointmentDoctorOrderConverter appointmentDoctorOrderConverter;
     private final PayRedisMapper payRedisMapper;
-    private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
 
-    // todo 升级方向: 1. 可以使用优化合并sql来提升速度,避免多次IO
+    // todo 升级方向: 取消数控直接扣减, 而是成功之后更新redis的信号量
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void createAppointmentOrder(long orderId, long doctorMerchantId, long userId) throws AppException {
         /// 1.检查是否存在商户 + 锁行（确保后续操作在同一个事务中）
+        log.info("[审核订单][检查是否存在商户 + 锁行]");
         DoctorMerchantAppointmentDo doctorRegisterAppointmentDo = doctorMerchantAppointmentMapper.getByIdForUpdate(doctorMerchantId);
         if (doctorRegisterAppointmentDo == null || doctorRegisterAppointmentDo.getId() == null){
-            log.warn("预约医生商户{} 不存在", doctorMerchantId);
+            log.warn("[审核订单]预约医生商户{} 不存在", doctorMerchantId);
             throw new AppException(MedicineExceptions.DOCTOR_MERCHANT_NOT_EXIST);
         }
 
@@ -73,6 +73,9 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
                 doctorRegisterAppointmentDo.getBeginDate(),
                 doctorRegisterAppointmentDo.getEndDate()
         );
+        log.info("[审核订单]检查当前状态是否是可预约: {}, [参数 RemainCount: {}, BeginDate: {}, EndDate: {}]",
+                merchantStatus, doctorRegisterAppointmentDo.getRemainCount(),
+                doctorRegisterAppointmentDo.getBeginDate(), doctorRegisterAppointmentDo.getEndDate());
 
         // 异常
         switch (merchantStatus){
@@ -88,6 +91,7 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         }
 
         /// 3.检查是否存在订单, 顺便查询订单状态
+        log.info("[审核预约][检查是否存在订单]");
         List<UserCustomerAppointmentDo> orderDos = userCustomerAppointmentOrderMapper.getDosByUserIdAndMerchantId(
                 userId, doctorMerchantId
         );
@@ -100,11 +104,15 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         }
 
         /// 4.减少库存 (事务中)
+        log.info("[审核预约][尝试扣减库存][商户{}]", doctorMerchantId);
         int updatedRows = doctorMerchantAppointmentMapper.decrementWithPessimisticLock(doctorMerchantId);
         if (updatedRows == 0) {
             // 理论上不会走到这里，因为前面已经检查过了
-            log.warn("[商户{}]库存减少失败", doctorMerchantId);
+            log.warn("[审核预约][商户{}]库存减少失败", doctorMerchantId);
             throw new AppException(MedicineExceptions.NO_AVAILABLE_MERCHANT);
+        }
+        else {
+            log.info("[审核预约][商户{}]库存减少成功", doctorMerchantId);
         }
 
         /// 5.创建订单并插入数据库
@@ -116,31 +124,46 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         // 设置为审核中
         userCustomerAppointmentDo.setUserOrderStatus(UserOrderStatusEnum.WAITING_AUDIT.getCode());
 
+        log.info("[审核预约][审核成功, 开始将订单插入数据库][创建用户预约此商户的订单]");
         int insertResult = userCustomerAppointmentOrderMapper.insert(userCustomerAppointmentDo);
         if (insertResult <= 0){
+            log.warn("[审核预约][插入数据库失败][商户: {}][用户: {}][订单: {}]",
+                    doctorMerchantId, userId, orderId);
             throw new AppException(CommonExceptions.SYSTEM_SQL_ERROR);
         }
 
-        /// 6.删除/更新redis缓存
-        // 库存扣减
-        DoctorMerchantAppointmentDo doctorMerchantAppointmentDo = doctorMerchantAppointmentMapper.getById(doctorMerchantId);
-        if (!doctorMerchantAppointmentRedisMapper.saveDoctorMerchantAppointmentDo(doctorMerchantAppointmentDo)){
-            // 缓存更新失败的话不需要回滚事务, 直接删除缓存就好, 等待之后查询发现没缓存就来查询数据了
-            log.warn("缓存更新失败, 删除缓存");
-            boolean result = doctorMerchantAppointmentRedisMapper.deleteDoctorMerchantAppointmentDo(doctorMerchantId);
-            if (!result){
-                // 如果删除都删除失败了, 就要用error日志, 去排查问题, 估计是redis挂了
-                log.error("删除缓存也删除失败了失败");
-            }
-        }
+        /// 6.异步更新缓存
+        uploadRedis(userCustomerAppointmentDo,
+                userId, orderId, merchantStatus,
+                doctorRegisterAppointmentDo
+        );
+    }
+
+
+    /**
+     * 异步更新缓存:
+     * 1. AppointmentDoctorOrderListAo 用户订单状态
+     * 2. 创建支付缓存
+     * @param userCustomerAppointmentDo     订单do
+     * @param userId                        用户id
+     * @param orderId                       订单id
+     * @param merchantStatus                商户状态
+     * @param doctorRegisterAppointmentDo   商户do
+     */
+    @Async
+    public void uploadRedis(UserCustomerAppointmentDo userCustomerAppointmentDo, Long userId, Long orderId,
+                            AppointmentMerchantStatusEnum merchantStatus, DoctorMerchantAppointmentDo doctorRegisterAppointmentDo){
+        log.info("[审核预约成功][异步更新缓存]");
         // 订单插入userOrderList
         List<UserCustomerAppointmentDo> userOrderList = new ArrayList<>();
         userOrderList.add(userCustomerAppointmentDo);
         List<UserAppointmentOrderBo> bos = doctorMerchantBoMapper.getDoctorCardBosByUserCustomerAppointmentDos(userOrderList);
         if (CollectionUtils.isEmpty(bos)){
-            log.warn("缓存用户预约order失败: bo为空");
+            log.warn("[审核预约成功][异步更新缓存] 缓存用户预约order失败: bo为空");
+            return;
         }
 
+        log.info("[审核预约成功][异步更新缓存] 开始数据计算填充: MerchantStatus");
         // 数据计算填充: MerchantStatus
         AppointmentMerchantStatusCalculator.calculateFillUserAppointmentOrderBos(
                 bos
@@ -148,8 +171,9 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
 
         LocalDateTime registerDate = LocalDateTime.now();
         String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
-        // 5.1 订单系统的查询view视图更新 ; 更新之前的缓存: 之前的缓存数据不完善, 现在更新之前的缓存
+        /// 6.1 订单系统的查询view视图更新 ; 更新之前的缓存: 之前的缓存数据不完善, 现在更新之前的缓存  AppointmentDoctorOrderListAo 用户订单状态
         AppointmentDoctorOrderListAo ao = appointmentDoctorOrderConverter.getAoByBo(bos.get(0), dateStr);
+        log.info("[审核预约成功][异步更新缓存] 开始更新 用户订单状态 的缓存, [AppointmentDoctorOrderListAo: {}]", ao);
         boolean orderViewResult = appointmentDoctorOrderRedisMapper.updateSingleAppointmentDoctorOrderListAo(
                 userId,
                 ao
@@ -157,7 +181,8 @@ public class AppointmentTransactionalServiceImpl implements AppointmentTransacti
         if (!orderViewResult){
             log.warn("缓存用户预约orderViewResult失败, redis存储失败");
         }
-        // 5.2 支付系统的状态创建/更新
+        /// 6.2 支付系统的状态创建/更新  创建支付缓存
+        log.info("[审核预约成功][异步更新缓存] 开始创建 待支付订单 的缓存");
         payRedisMapper.updateOrderStatus(
                 userId,
                 orderId,
