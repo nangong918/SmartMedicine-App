@@ -4,45 +4,40 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
-import com.czy.baseutil.activity.BaseActivity;
 import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseutil.ui.ToastUtils;
-import com.czy.baseutil.viewModel.ViewModelUtil;
 import com.czy.domain.ao.home.PostIntentAo;
 import com.czy.domain.fragmentActivityAo.search.SearchPostAAo;
-import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.PostActivity;
 import com.czy.smartmedicine.databinding.ActivitySearchBaseBinding;
+import com.czy.smartmedicine.utils.BaseVmActivity;
 import com.czy.smartmedicine.viewModel.activity.search.SearchPostVm;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.Optional;
+
+import kotlin.jvm.JvmClassMappingKt;
 
 /**
  * post 搜索
  * 公用 ActivitySearchBaseBinding
  */
-public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> {
-
+public class SearchPostActivity extends
+        BaseVmActivity<ActivitySearchBaseBinding, SearchPostVm> {
 
     public SearchPostActivity() {
-        super(SearchPostActivity.class);
+        super(JvmClassMappingKt.getKotlinClass(SearchPostActivity.class),
+                JvmClassMappingKt.getKotlinClass(SearchPostVm.class));
     }
 
+    @NonNull
     @Override
-    public ActivitySearchBaseBinding getBinding() {
+    public ActivitySearchBaseBinding initBinding() {
         return ActivitySearchBaseBinding.inflate(getLayoutInflater());
     }
 
-    @Override
-    protected void init() {
-        super.init();
-
-        initViewModel();
-
-        initView();
-    }
 
     @Override
     protected void setListener() {
@@ -55,7 +50,10 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
 
     //----------------------------view----------------------------
 
-    private void initView(){
+    @Override
+    protected void initView(){
+        super.initView();
+
         binding.topBar.setTitle(
                 getString(com.czy.appview.R.string.search_post)
         );
@@ -67,11 +65,8 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
 
     //----------------------------viewModel----------------------------
 
-    private SearchPostVm vm;
-
-    private void initViewModel(){
-        ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchPostVm.class);
+    protected void initViewModel(){
+        super.initViewModel();
 
         vm.init(new SearchPostAAo(), this);
         vm.initRecyclerAdapter(binding.rclvSearch, this::openSearchPostDetailActivity);
@@ -81,7 +76,6 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
     }
 
     private void initViewModelVo(){
-        SearchPostVm searchPostVm = vm;
 
         // 双向绑定
         // SearchView -> LiveData
@@ -93,15 +87,14 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                SearchPostVm searchPostVm = vm;
-                Optional.ofNullable(searchPostVm.searchPostAAo)
+                Optional.ofNullable(vm.searchPostAAo)
                         .map(vo -> vo.edtvInputData)
                         .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
                 return true;
             }
         });
         // LiveData -> SearchView
-        searchPostVm.searchPostAAo.edtvInputData.observe(this, newText -> {
+        vm.searchPostAAo.edtvInputData.observe(this, newText -> {
             if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
                 binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
             }
@@ -144,4 +137,6 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
 
         startActivity(intent);
     }
+
+
 }

@@ -1,10 +1,10 @@
 package com.czy.smartmedicine.utils
 
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.util.AttributeSet
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import com.czy.baseutil.viewModel.ViewModelUtil
@@ -12,36 +12,36 @@ import com.czy.smartmedicine.MainApplication
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory
 import kotlin.reflect.KClass
 
-abstract class BaseVmFragment<VB : ViewBinding, VM : ViewModel>(
-    fragmentClassType: KClass<out Fragment>,
-    private val vmClassType: KClass<VM>,
-) : Fragment() {
+abstract class BaseVmActivity<VB : ViewBinding, VM : ViewModel> (
+    activityClassType: KClass<out FragmentActivity>,
+    private val vmClassType: KClass<VM>
+) : FragmentActivity(){
 
     protected open lateinit var vm: VM
     protected open lateinit var binding: VB
-    private val fragmentName: String = fragmentClassType.java.name
-    protected open val TAG : String = fragmentName
+
+    private val activityName : String = activityClassType.java.name
+    protected open val TAG : String = activityName
 
     abstract fun initBinding(): VB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.binding = initBinding()
-    }
+        setContentView(binding.root)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        this.setListener()
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        // 此处binding才生效
         initViewModel()
+
+        setListener()
+    }
+
+    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
+        initView()
+        return super.onCreateView(name, context, attrs)
+    }
+
+    protected open fun initView(){
+
     }
 
     protected open fun setListener() {
