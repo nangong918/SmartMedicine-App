@@ -55,7 +55,8 @@ public class BaseConfig extends com.czy.baseutil.config.BaseConfig {
 
     // 请求是否加认证token前缀 最后要在拦截器检查去掉; 定义一些不像url的命名避免出现与后端路由重合
     public static final String AUTH_TOKEN_PREFIX = "/has-0!0-token";
-
+    // post 的image数量
+    public static final int MAX_POST_IMAGE_COUNT = 3;
 
     // permission
     public static final String[] MUST_PERMISSIONS = new String[]{

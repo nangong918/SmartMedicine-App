@@ -67,7 +67,7 @@
                     android:background="@android:color/transparent"
                     android:hint="@string/title"
                     android:textColor="@color/green_900"
-                    android:text="@={viewModel.publishPostVo.postTitleLd}"
+                    android:text="@={viewModel.aao.postTitleLd}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
@@ -81,7 +81,7 @@
                     android:background="@android:color/transparent"
                     android:hint="@string/enter_post_cotent"
                     android:textColor="@color/green_900"
-                    android:text="@={viewModel.publishPostVo.postContentLd}"
+                    android:text="@={viewModel.aao.postContentLd}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 

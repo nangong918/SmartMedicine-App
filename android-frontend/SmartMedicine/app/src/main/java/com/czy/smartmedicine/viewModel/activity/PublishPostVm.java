@@ -1,22 +1,31 @@
 package com.czy.smartmedicine.viewModel.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.baseutil.file.FileUtil;
+import com.czy.baseutil.image.ImageManager;
 import com.czy.baseutil.network.BaseResponse;
+import com.czy.baseutil.photo.SelectPhotoUtil;
 import com.czy.baseutil.ui.ToastUtils;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.domain.dto.http.request.PostPublishRequest;
 import com.czy.domain.dto.http.response.PostPublishResponse;
-import com.czy.domain.fragmentActivityAo.post.PublishPostVo;
+import com.czy.domain.fragmentActivityAo.post.PublishPostAAo;
 import com.czy.domain.vo.entity.home.PostVo;
-import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ResponseTool;
 
@@ -25,6 +34,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import okhttp3.MultipartBody;
 
@@ -40,14 +50,12 @@ public class PublishPostVm extends ViewModel {
         this.socketMessageSender = socketMessageSender;
     }
 
-    public AtomicReference<Uri> selectImageUriAtomic = new AtomicReference<>(null);
-
     //---------------------------Vo Ld---------------------------
 
-    public PublishPostVo publishPostVo = new PublishPostVo();
+    public PublishPostAAo aao = new PublishPostAAo();
 
-    public void init(PublishPostVo publishPostVo) {
-        this.publishPostVo = publishPostVo;
+    public void init(PublishPostAAo aao) {
+        this.aao = aao;
 
         initialNetworkRequest();
     }
@@ -59,12 +67,12 @@ public class PublishPostVm extends ViewModel {
     }
 
     public void doPostPublishFirst(Context context, SyncRequestCallback callback){
-        String title = Optional.ofNullable(publishPostVo)
+        String title = Optional.ofNullable(aao)
                 .map(vo -> vo.postTitleLd)
                 .map(LiveData::getValue)
                 .orElse("");
 
-        String content = Optional.ofNullable(publishPostVo)
+        String content = Optional.ofNullable(aao)
                 .map(vo -> vo.postContentLd)
                 .map(LiveData::getValue)
                 .orElse("");
@@ -77,11 +85,11 @@ public class PublishPostVm extends ViewModel {
             return;
         }
 
-        boolean isHaveFile = Optional.ofNullable(selectImageUriAtomic.get())
+        boolean isHaveFile = Optional.ofNullable(aao.imageUriArList.get(0))
                 .map(Objects::nonNull)
                 .orElse(false);
 
-        Log.i(TAG, "isHaveFile1: " + isHaveFile + "\n" + "uri: " + selectImageUriAtomic.get());
+        Log.i(TAG, "isHaveFile1: " + isHaveFile + "\n" + "uri: " + aao.imageUriArList.get(0).get());
 
         PostPublishRequest request = new PostPublishRequest();
         request.title = title;
@@ -140,8 +148,11 @@ public class PublishPostVm extends ViewModel {
         try {
             Long userId = MainApplication.getInstance().getUserLoginInfoAo().userId;
 
-            List<Uri> uris = new ArrayList<>();
-            uris.add(selectImageUriAtomic.get());
+            // 获取图片
+            List<Uri> uris = aao.imageUriArList.stream()
+                            .map(AtomicReference::get)
+                            .collect(Collectors.toList());
+
             List<MultipartBody.Part> parts = FileUtil.getMultipartBodyByUri(context, uris);
             apiRequestImpl.uploadPostFile(
                     parts,
@@ -165,5 +176,31 @@ public class PublishPostVm extends ViewModel {
         ToastUtils.showToastActivity(context, response.getMessage());
         // 完成
         callback.onAllRequestSuccess();
+    }
+
+    //---------------------------logic---------------------------
+
+    public final List<ActivityResultLauncher<Intent>> selectImageLaunchers = new ArrayList<>(BaseConfig.MAX_POST_IMAGE_COUNT);
+    private final ImageManager imageManager = new ImageManager();
+    public void initSelectImageLaunchers(@NonNull ImageView[] imageViews, @NonNull View[] addViews, AppCompatActivity activity){
+        for (int i = 0; i < imageViews.length; i++){
+            int finalI = i;
+            ActivityResultLauncher<Intent> launcher = SelectPhotoUtil.initActivityResultLauncher(
+                    activity,
+                    imageViews[i],
+                    aao.imageUriArList.get(i),
+                    imageManager,
+                    () -> {
+                        for (int j = 0; j < addViews.length; j++) {
+                            if (j == finalI) {
+                                addViews[j].setVisibility(View.VISIBLE);
+                            } else {
+                                addViews[j].setVisibility(View.GONE);
+                            }
+                        }
+                    }
+            );
+            selectImageLaunchers.add(launcher);
+        }
     }
 }

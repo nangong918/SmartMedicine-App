@@ -1,23 +1,24 @@
 package com.czy.smartmedicine.activity;
 
 
-import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
-import androidx.activity.result.ActivityResultLauncher;
-
+import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseutil.activity.BaseActivity;
-import com.czy.baseutil.image.ImageManager;
 import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseutil.photo.SelectPhotoUtil;
 import com.czy.baseutil.viewModel.ViewModelUtil;
-import com.czy.domain.fragmentActivityAo.post.PublishPostVo;
+import com.czy.domain.fragmentActivityAo.post.PublishPostAAo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPublishPostBinding;
 import com.czy.smartmedicine.viewModel.activity.PublishPostVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
+
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 发布帖子界面
@@ -37,7 +38,20 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
     protected void init() {
         super.init();
         initViewModel();
-        initActivityLauncher();
+        vm.initSelectImageLaunchers(
+                // imageViews.length == addViews.length == BaseConfig.MAX_POST_IMAGE_COUNT
+                new ImageView[]{
+                        binding.imgP1,
+                        binding.imgP2,
+                        binding.imgP3
+                },
+                new View[]{
+                        binding.vAdd1,
+                        binding.vAdd2,
+                        binding.vAdd3
+                },
+                this
+        );
     }
 
     @Override
@@ -45,7 +59,7 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
         super.setListener();
 
         // 返回
-        binding.topBar.setBack(v -> finish());
+        binding.btnBack.setOnClickListener(v -> finish());
 
         // 发布
         binding.btnPublish.setOnClickListener(v -> {
@@ -72,9 +86,17 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
         });
 
         // 选择图片
-        binding.imgvArticlePic.setOnClickListener(v -> {
-            SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
-        });
+        ImageView[] imageViews = new ImageView[]{
+                binding.imgP1,
+                binding.imgP2,
+                binding.imgP3
+        };
+        for (int i = 0; i < imageViews.length; i++) {
+            int finalI = i;
+            imageViews[i].setOnClickListener(v -> {
+                SelectPhotoUtil.selectImageFromAlbum(vm.selectImageLaunchers.get(finalI));
+            });
+        }
     }
 
     private PublishPostVm vm;
@@ -94,28 +116,15 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
     }
 
     private void initViewModelVo() {
-        PublishPostVo publishPostVo = new PublishPostVo();
-        vm.init(publishPostVo);
+        PublishPostAAo aao = new PublishPostAAo();
+        aao.imageUriArList = new ArrayList<>(BaseConfig.MAX_POST_IMAGE_COUNT);
+        for (int i = 0; i < BaseConfig.MAX_POST_IMAGE_COUNT; i++){
+            aao.imageUriArList.add(new AtomicReference<>(null));
+        }
+        vm.init(aao);
     }
 
     private void observeLivedata() {
-    }
-
-    // 选择图片
-    private ActivityResultLauncher<Intent> selectImageLauncher;
-
-    private void initActivityLauncher() {
-        ImageManager imageManager = new ImageManager();
-
-        selectImageLauncher = SelectPhotoUtil.initActivityResultLauncher(
-                this,
-                binding.imgvArticlePic,
-                vm.selectImageUriAtomic,
-                imageManager,
-                () -> {
-                    binding.vSelectImage.setVisibility(View.GONE);
-                }
-        );
     }
 
 }
