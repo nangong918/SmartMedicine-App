@@ -1,5 +1,6 @@
 package com.czy.purchase.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.api.mapper.purchase.mybatis.UserWalletMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.purchase.PayResultEnum;
@@ -72,6 +73,7 @@ public class PayServiceImpl implements PayService {
         UserWalletDo userWalletDo = userWalletMapper.getUserWalletByUserId(userId);
         if (userWalletDo == null || userWalletDo.getId() == null){
             userWalletDo = new UserWalletDo();
+            userWalletDo.setId(IdUtil.getSnowflakeNextId());
             userWalletDo.setUserId(userId);
             userWalletDo.setBalance(new BigDecimal(0));
             userWalletMapper.insert(userWalletDo);

@@ -14,7 +14,7 @@ public interface MedicineRedisKey {
         /// appointmentOrder
         String appointmentOrder_KEY_PREFIX = MedicineRedisKey.ID + ID + "appointmentOrder:";
         // 缓存订单的过期时间: 5min (300s)
-        long appointmentOrder_EXPIRE_TIME = 5 * 60L;
+        long appointmentOrder_EXPIRE_TIME = 5 * 60 * 1000L;
         /// DoctorMerchant
         String DoctorMerchant_KEY_PREFIX = MedicineRedisKey.ID + ID + "DoctorMerchant:";
         // 过期时间: 4天
