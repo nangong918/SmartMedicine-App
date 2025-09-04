@@ -530,7 +530,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
             }
             // 订单状态更新
             userCustomerAppointmentOrderMapper.update(order);
-            log.info("[取消支付]更新数据库成功: {}", order);
+            log.info("[处理支付结果]更新数据库成功: {}", order);
 
             // 更新缓存(如果缓存存在)
             AppointmentDoctorOrderListAo ao = appointmentDoctorOrderRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
