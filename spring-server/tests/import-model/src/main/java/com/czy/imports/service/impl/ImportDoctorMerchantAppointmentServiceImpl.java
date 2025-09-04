@@ -170,11 +170,14 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
             doctorMapper.insertBatch(createDoctors());
         }
         else {
-            log.warn("有医生数据: {}, 跳过创建数据", doctorCount);
+            log.info("有医生数据: {}, 跳过创建数据", doctorCount);
         }
         if (hospitalCount == 0){
             log.warn("没有医院数据: {}, 创建数据", hospitalCount);
             hospitalMapper.insertBatch(createHospitals());
+        }
+        else {
+            log.info("有医院数据: {}, 跳过创建数据", hospitalCount);
         }
 
         List<DoctorDo> doctorDos = doctorMapper.getRandomByLimit(DOCTOR_COUNT);
