@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import com.czy.appview.view.home.HomeViewPagerEnum;
 import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
-import com.czy.domain.fragmentActivityAo.HomeFAo;
+import com.czy.domain.fragmentActivityAo.home.HomeFAo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.activity.search.SearchPostActivity;

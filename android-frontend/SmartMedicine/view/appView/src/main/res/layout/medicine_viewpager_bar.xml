@@ -23,7 +23,7 @@
             android:text="@string/appointment"
             android:textColor="@color/green_900"
             android:gravity="center"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <View
@@ -50,7 +50,7 @@
             android:text="@string/medical_wiki"
             android:textColor="@color/green_900"
             android:gravity="center"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <View
@@ -78,7 +78,7 @@
             android:text="@string/medical_shopping"
             android:textColor="@color/green_900"
             android:gravity="center"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <View
@@ -106,7 +106,7 @@
             android:text="@string/ai_question"
             android:textColor="@color/green_900"
             android:gravity="center"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <View
@@ -134,7 +134,7 @@
             android:text="@string/health_reminder"
             android:textColor="@color/green_900"
             android:gravity="center"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <View
