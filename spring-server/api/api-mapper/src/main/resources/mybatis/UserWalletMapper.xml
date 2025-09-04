@@ -25,10 +25,10 @@
     <update id="deduct">
         update
         <include refid="tableName"/>
-        set balance = balance - #{deductAmount}
+        set balance = balance - #{payAmount}
         where user_id = #{userId}
-        and balance >= #{deductAmount}
-        and #{deductAmount} >= 0
+        and balance >= #{payAmount}
+        and #{payAmount} >= 0
     </update>
 
 
