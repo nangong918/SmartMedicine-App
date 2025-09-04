@@ -1,8 +1,8 @@
 package com.czy.api.domain.dto.mq;
 
 import com.czy.api.constant.UserOrderStatusEnum;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 
@@ -11,9 +11,8 @@ import java.io.Serializable;
  * @date 2025/8/26 15:50
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppointmentPayResultDto implements Serializable {
-    @Nullable
-    private Long doctorMerchantAppointmentId;
     private Long userId;
     private Long orderId;
     private UserOrderStatusEnum orderStatusEnum;

@@ -16,18 +16,18 @@ import com.czy.api.converter.domain.medicine.RegisterAppointmentDoctorCardConver
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorSelectAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
 import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
-import com.czy.api.domain.ao.medicine.AppointmentDoctorSelectAo;
 import com.czy.api.domain.bo.medicine.AppointmentDoctorMerchantCardBo;
 import com.czy.api.domain.bo.medicine.UserAppointmentOrderBo;
 import com.czy.api.domain.dto.mq.AppointmentOrderDto;
 import com.czy.api.domain.dto.mq.AppointmentPayResultDto;
-import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
-import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorDataVo;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorMerchantCardVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorPageVo;
+import com.czy.api.domain.vo.medicine.DoctorVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.MedicineExceptions;
 import com.czy.medicine.mq.AppointmentMqSender;
@@ -553,21 +553,33 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
         } catch (Exception e){
             log.error("[处理支付结果异常: ", e);
         } finally {
-            if (dto.getDoctorMerchantAppointmentId() == null || dto.getUserId() == null){
-                log.warn("[处理支付结果][分布式锁解除失败]");
+            if (dto.getUserId() == null || dto.getOrderId() == null){
+                log.warn("[处理支付结果][分布式锁解除失败][dto参数不足]");
             }
             else {
                 // 获得锁
-                String dataId = dto.getDoctorMerchantAppointmentId() + ":" + dto.getUserId();
-                String mappingPath = MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
-                RedissonClusterLock appointmentLock = new RedissonClusterLock(
-                        dataId,
-                        mappingPath
+                AppointmentDoctorOrderListAo ao = appointmentDoctorOrderRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
+                        dto.getUserId(),
+                        dto.getOrderId()
                 );
-                /// 3. 解除申请分布式锁
-                redissonService.unlock(appointmentLock);
-                log.info("[解除申请分布式锁][dataId: {}]", dataId);
-                /// 2. netty通知前端, 考虑用spring event实现
+                Long merchantId = Optional.ofNullable(ao)
+                        .map(AppointmentDoctorOrderListAo::getDoctorMerchantId)
+                        .orElse(null);
+                if (merchantId == null){
+                    log.warn("[处理支付结果][分布式锁解除失败][merchantId == null]");
+                }
+                else {
+                    String dataId = merchantId + ":" + dto.getUserId();
+                    String mappingPath = MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
+                    RedissonClusterLock appointmentLock = new RedissonClusterLock(
+                            dataId,
+                            mappingPath
+                    );
+                    /// 3. 解除申请分布式锁
+                    redissonService.unlock(appointmentLock);
+                    log.info("[解除申请分布式锁][dataId: {}]", dataId);
+                    /// 2. netty通知前端, 考虑用spring event实现
+                }
             }
         }
 

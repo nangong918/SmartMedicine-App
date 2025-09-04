@@ -18,7 +18,6 @@ public interface AppointmentPayConverter {
     AppointmentPayConverter INSTANCE = Mappers.getMapper(AppointmentPayConverter.class);
 
     // Order -> PayResult
-    @Mapping(source = "doctorMerchantAppointmentId", target = "doctorMerchantAppointmentId")
     @Mapping(source = "userId", target = "userId")
     @Mapping(source = "orderId", target = "orderId")
     @Mapping(source = "orderStatusEnum", target = "orderStatusEnum")

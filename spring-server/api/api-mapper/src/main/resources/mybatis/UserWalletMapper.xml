@@ -28,6 +28,7 @@
         set balance = balance - #{deductAmount}
         where user_id = #{userId}
         and balance >= #{deductAmount}
+        and #{deductAmount} >= 0
     </update>
 
 

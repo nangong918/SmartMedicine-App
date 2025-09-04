@@ -4,7 +4,6 @@ import com.api.mapper.purchase.mybatis.UserWalletMapper;
 import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.purchase.PayResultEnum;
-import com.czy.api.domain.Do.purchase.UserWalletDo;
 import com.czy.api.domain.ao.purchase.OrderStatusAo;
 import com.czy.api.exception.PurchaseExceptions;
 import com.czy.purchase.service.transactional.PayTransactionalService;
@@ -71,14 +70,16 @@ public class PayTransactionalServiceImpl implements PayTransactionalService {
         }
 
         /// 3.锁行检查用户的金额 + 扣减制定金额
-        UserWalletDo userWalletDo = userWalletMapper.getUserWalletAndLockByUserId(userId);
-        // 钱包都没有
-        if (userWalletDo == null || userWalletDo.getId() == null){
-            return PayResultEnum.INSUFFICIENT_BALANCE;
-        }
-        // 钱不够
-        if (userWalletDo.getBalance().compareTo(orderStatusAo.getTotalPrice()) < 0){
-            return PayResultEnum.INSUFFICIENT_BALANCE;
+        int deductionResult = userWalletMapper.deduct(
+                userId,
+                orderStatusAo.getTotalPrice()
+        );
+        // 不是 0 元送活动 (0 元会导致数据库扣减影响行数0, 导致出现余额不足的错误)
+        if (!BigDecimal.ZERO.equals(orderStatusAo.getTotalPrice())){
+            if (deductionResult == 0){
+                // 钱不够
+                return PayResultEnum.INSUFFICIENT_BALANCE;
+            }
         }
 
         /// 4.状态检查:
