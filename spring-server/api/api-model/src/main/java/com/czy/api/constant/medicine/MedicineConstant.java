@@ -20,6 +20,8 @@ public class MedicineConstant {
     /// api
     // 预约
     public static final String APPOINTMENT = "/appointment";
+    // 取消预约/退款
+    public static final String CANCEL = "/cancel";
 
     /// constant
     // 一共多少日期可看

@@ -97,7 +97,7 @@ public class RegisterAppointmentController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
-    // 获取user预约订单列表 mysql: 816ms; redis: 11ms   todo 存在问题, 已有订单不符合
+    // 获取user预约订单列表 mysql: 816ms; redis: 11ms
     @PostMapping("/getCustomerList")
     public BaseResponse<GetUserAppointmentRecordResponse>
     getAppointmentRecordList
@@ -279,25 +279,31 @@ public class RegisterAppointmentController {
         ));
     }
 
-    /// 改（删）：取消预约
-    @PostMapping("/cancel")
+    /// 改（删）：取消订单 (退款) todo 后续再做, 因为涉及 分布式事务
+    @PostMapping(MedicineConstant.CANCEL)
     public BaseResponse<Object> cancelAppointment
     (@Validated @RequestBody AppointmentDoctorRequest request){
 
-        // 获取分布式锁; MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
+        /// 1.1 行为幂等: 分布式锁
+        // 获取分布式锁; MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.CANCEL;
         String dataId = request.getDoctorMerchantAppointmentId().toString() + ":" + request.getUserId().toString();
-        String mappingPath = MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.APPOINTMENT;
-        RedissonClusterLock appointmentLock = new RedissonClusterLock(
+        String mappingPath = MedicineConstant.RegisterAppointment_CONTROLLER + MedicineConstant.CANCEL;
+        RedissonClusterLock cancelLock = new RedissonClusterLock(
                 dataId,
                 mappingPath,
                 // 5分钟(300s)，单位：秒
                 PurchaseConstant.PAY_TIMEOUT
         );
 
-        // 取消预约 todo
+        /// 1.2 行为幂等: 订单状态检查
+        // 订单已使用 (待评价 -> 不可退款)
+
+        // 取消订单
+        // todo 金额: [支付系统, 订单系统] 分布式事务Saga
 
         return null;
     }
+    //
 
-    /// 再次预约
+    /// 使用订单 待时用 -> 待评价
 }
