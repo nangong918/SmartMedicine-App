@@ -11,6 +11,7 @@ import com.czy.api.exception.PurchaseExceptions;
 import com.czy.purchase.mq.PayMqSender;
 import com.czy.purchase.service.PayService;
 import com.czy.purchase.service.transactional.PayTransactionalService;
+import date.DateUtils;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,9 @@ public class PayServiceImpl implements PayService {
             dto.setOrderId(orderId);
             // 成功: 待支付 -> 待使用
             dto.setOrderStatusEnum(UserOrderStatusEnum.WAITING_USE);
-            dto.setHandleTime(LocalDateTime.now());
+            dto.setHandleTimeStr(
+                    DateUtils.yyyyMMddHHmmssToString(LocalDateTime.now())
+            );
 
             log.info("[支付][支付成功][发送消息通知订单系统][消息: {}]", dto);
             // 将消息发送给medicine-service

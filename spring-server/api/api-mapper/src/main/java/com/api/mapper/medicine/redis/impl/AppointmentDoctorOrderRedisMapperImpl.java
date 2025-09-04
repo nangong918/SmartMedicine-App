@@ -431,7 +431,7 @@ public class AppointmentDoctorOrderRedisMapperImpl implements AppointmentDoctorO
     }
 
     /**
-     * 存储用户成本订单数据到缓存
+     * 更新用户成本订单数据到缓存
      * @param userId            用户ID
      * @param newAo             新订单数据
      * @return                  存储结果
@@ -446,7 +446,11 @@ public class AppointmentDoctorOrderRedisMapperImpl implements AppointmentDoctorO
                 userId, newAo.orderId
         );
         if (oldAo != null) {
+            log.info("[更新用户成本订单数据到缓存]oldAo非空: {}", oldAo);
             deleteSingleAppointmentDoctorOrderListAo(userId, oldAo);
+        }
+        else {
+            log.warn("[更新用户成本订单数据到缓存]oldAo空");
         }
         return saveSingleAppointmentDoctorOrderListAo(userId, newAo);
     }
@@ -462,23 +466,27 @@ public class AppointmentDoctorOrderRedisMapperImpl implements AppointmentDoctorO
         String distanceKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.DISTANCE.getCode();
         String costKeyBuilder = MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + userId + ":" + AppointmentSortTypeEnum.COST.getCode();
 
+        boolean[] removeResults = {false, false, false};
+
         // 删除时间有序集合中的指定订单
         RScoredSortedSet<AppointmentDoctorOrderListAo> timeZSet = redissonClient.getScoredSortedSet(timeKeyBuilder);
         if (timeZSet.isExists()) {
-            timeZSet.remove(ao);
+            removeResults[0] = timeZSet.remove(ao);
         }
 
         // 删除距离集合中的指定订单
         RSet<AppointmentDoctorOrderListAo> distanceSet = redissonClient.getSet(distanceKeyBuilder);
         if (distanceSet.isExists()) {
-            distanceSet.remove(ao);
+            removeResults[1] = distanceSet.remove(ao);
         }
 
         // 删除成本有序集合中的指定订单
         RScoredSortedSet<AppointmentDoctorOrderListAo> costZSet = redissonClient.getScoredSortedSet(costKeyBuilder);
         if (costZSet.isExists()) {
-            costZSet.remove(ao);
+            removeResults[2] = costZSet.remove(ao);
         }
+
+        log.info("[删除用户的指定预约订单]删除结果：{}", removeResults);
     }
 
 

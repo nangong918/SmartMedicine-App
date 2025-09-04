@@ -8,6 +8,7 @@ import com.czy.api.domain.dto.mq.AppointmentOrderDto;
 import com.czy.api.domain.dto.mq.AppointmentPayResultDto;
 import com.czy.purchase.mq.PayMqSender;
 import com.czy.purchase.service.OrderService;
+import date.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
 
             AppointmentPayResultDto resultDto = appointmentPayConverter.orderToPayResult(
                     dto,
-                    LocalDateTime.now()
+                    DateUtils.yyyyMMddHHmmssToString(LocalDateTime.now())
             );
 
             // 发送给[订单-预约系统]

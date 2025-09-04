@@ -7,8 +7,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.factory.Mappers;
 
-import java.time.LocalDateTime;
-
 /**
  * @author 13225
  * @date 2025/8/26 15:55
@@ -26,9 +24,9 @@ public interface AppointmentPayConverter {
     @Mapping(source = "orderStatusEnum", target = "orderStatusEnum")
     AppointmentPayResultDto orderToPayResult_(AppointmentOrderDto order);
 
-    default AppointmentPayResultDto orderToPayResult(AppointmentOrderDto order, LocalDateTime handleTime){
+    default AppointmentPayResultDto orderToPayResult(AppointmentOrderDto order, String handleTimeStr){
         AppointmentPayResultDto result = orderToPayResult_(order);
-        result.setHandleTime(handleTime);
+        result.setHandleTimeStr(handleTimeStr);
         return result;
     }
 }

@@ -38,7 +38,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author 13225
@@ -112,15 +116,27 @@ public class RegisterAppointmentController {
             return BaseResponse.LogBackError(CommonExceptions.SORT_TYPE_NOT_FOUND);
         }
 
-        // 获取订单记录
+        // 获取订单记录 todo 改为 AOP, 此处查询存在问题
         List<AppointmentDoctorOrderListAo> currentOrders = appointmentDoctorService.getAppointmentRecordList(
                 request.getUserId(), sortType,
                 request.getUserLongitude(), request.getUserLatitude()
         );
-        // 获取未处理的待审核订单 此部分订单只会维持 5分钟 (待重构: 失效订单落库问题[rabbitmq死信队列; 在开发支付系统的时候完成])
+        // 获取未处理的待审核订单 此部分订单只会维持 5分钟
         List<AppointmentDoctorOrderListAo> unprocessedOrders = appointmentDoctorOrderRedisMapper.getAllAppointmentRecordList(
                 request.getUserId()
         );
+        // 去重
+        Set<Long> currentOrderIds = currentOrders
+                .stream()
+                .map(AppointmentDoctorOrderListAo::getOrderId)
+                .collect(Collectors.toSet());
+        unprocessedOrders = Optional.of(unprocessedOrders)
+                .filter(list -> !list.isEmpty())
+                .map(l -> {
+                    l.removeIf(order -> currentOrderIds.contains(order.getOrderId()));
+                    return l;
+                })
+                .orElse(Collections.emptyList());
 
         GetUserAppointmentRecordResponse response = new GetUserAppointmentRecordResponse();
         response.setCurrentOrders(currentOrders);
