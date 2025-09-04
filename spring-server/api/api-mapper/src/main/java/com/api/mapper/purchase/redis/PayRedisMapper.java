@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 /**
  *@author 13225
  *@date 2025/8/26 17:22
+ * 待支付订单的Mapper
+ * 用于存储订单: 支付状态, 金额(跟订单系统解耦). 订单过期时间
+ * 数据结构: OrderStatusAo
  */
 public interface PayRedisMapper {
 

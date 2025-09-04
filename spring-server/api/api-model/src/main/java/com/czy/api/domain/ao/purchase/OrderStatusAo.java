@@ -2,6 +2,7 @@ package com.czy.api.domain.ao.purchase;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
  * @date 2025/8/30 15:37
  */
 @Data
-public class OrderStatusAo {
+public class OrderStatusAo implements Serializable {
     private Long userId;
     private Long orderId;
     /**
