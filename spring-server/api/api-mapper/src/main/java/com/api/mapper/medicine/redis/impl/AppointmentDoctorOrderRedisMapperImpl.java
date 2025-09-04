@@ -480,4 +480,12 @@ public class AppointmentDoctorOrderRedisMapperImpl implements AppointmentDoctorO
             costZSet.remove(ao);
         }
     }
+
+
+    @Override
+    public void clearAllDate(){
+        redissonClient.getKeys().deleteByPattern(
+                MedicineRedisKey.Appointment.AppointmentDoctorOrderListAoList_KEY_PREFIX + "*:*"
+        );
+    }
 }

@@ -61,4 +61,6 @@ public interface AppointmentDoctorOrderRedisMapper {
     void deleteSingleAppointmentDoctorOrderListAo(@NotNull Long userId, @NotNull AppointmentDoctorOrderListAo ao);
 
     @Nullable List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType, @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException;
+
+    void clearAllDate();
 }

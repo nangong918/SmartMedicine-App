@@ -60,7 +60,7 @@ public class DoctorMerchantAppointmentRedisMapperImpl implements DoctorMerchantA
     }
 
     @Override
-    public void clearAllMerchantAppointmentCache(){
+    public void clearAllData(){
         // 删除 DoctorMerchantAppointmentDo
         redissonClient.getKeys().deleteByPattern(MedicineRedisKey.Appointment.DoctorMerchant_KEY_PREFIX + "*");
         // 删除信号量

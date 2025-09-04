@@ -47,4 +47,6 @@ public interface PayRedisMapper {
                            @NotNull Integer customerStatus, @Nullable Integer merchantStatus);
 
     OrderStatusAo getOrderStatus(@NotNull Long userId, @NotNull Long orderId);
+
+    void clearAllData();
 }

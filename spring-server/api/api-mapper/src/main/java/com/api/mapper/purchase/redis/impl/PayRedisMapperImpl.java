@@ -80,4 +80,11 @@ public class PayRedisMapperImpl implements PayRedisMapper {
         }
         return null;
     }
+
+    @Override
+    public void clearAllData(){
+        redissonClient.getKeys().deleteByPattern(
+                PurchaseRedisKey.Pay.ORDER_STATUS_EXPIRED + "*:*"
+        );
+    }
 }
