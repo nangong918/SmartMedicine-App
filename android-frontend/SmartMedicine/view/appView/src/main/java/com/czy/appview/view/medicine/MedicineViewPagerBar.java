@@ -1,4 +1,4 @@
-package com.czy.appview.view.home;
+package com.czy.appview.view.medicine;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -11,30 +11,30 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.czy.appview.R;
-import com.czy.appview.databinding.HomeViewpagerBarBinding;
+import com.czy.appview.databinding.MedicineViewpagerBarBinding;
 import com.czy.domain.OnPositionItemClick;
 
-public class HomeViewPagerBar extends ConstraintLayout {
-    public HomeViewPagerBar(@NonNull Context context) {
+public class MedicineViewPagerBar extends ConstraintLayout {
+    public MedicineViewPagerBar(@NonNull Context context) {
         super(context);
         init(context);
     }
 
-    public HomeViewPagerBar(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public MedicineViewPagerBar(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public HomeViewPagerBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public MedicineViewPagerBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
-    private HomeViewpagerBarBinding binding;
+    private MedicineViewpagerBarBinding binding;
 
     private void init(@NonNull Context context){
         LayoutInflater inflater = LayoutInflater.from(context);
-        binding = HomeViewpagerBarBinding.inflate(inflater, this, true);
+        binding = MedicineViewpagerBarBinding.inflate(inflater, this, true);
 
         setOnClickListener();
     }
@@ -44,16 +44,17 @@ public class HomeViewPagerBar extends ConstraintLayout {
                 binding.lyClick1,
                 binding.lyClick2,
                 binding.lyClick3,
-                binding.lyClick4
+                binding.lyClick4,
+                binding.lyClick5
         };
         for (int i = 0; i < linearLayouts.length; i++){
             int finalI = i;
             linearLayouts[i].setOnClickListener(
                     v -> {
-                        currentPosition = HomeViewPagerEnum.values()[finalI].getIndex();
+                        currentPosition = MedicineViewPagerEnum.values()[finalI].getIndex();
                         if (onViewPagerBarClickListener != null){
                             onViewPagerBarClickListener.onPositionItemClick(
-                                    HomeViewPagerEnum.values()[finalI].getIndex()
+                                    MedicineViewPagerEnum.values()[finalI].getIndex()
                             );
                             updateUI();
                         }
@@ -62,7 +63,7 @@ public class HomeViewPagerBar extends ConstraintLayout {
         }
     }
 
-    private int currentPosition = HomeViewPagerEnum.RECOMMEND.getIndex();
+    private int currentPosition = MedicineViewPagerEnum.APPOINTMENT.getIndex();
 
     private OnPositionItemClick onViewPagerBarClickListener;
 
@@ -76,47 +77,58 @@ public class HomeViewPagerBar extends ConstraintLayout {
     }
 
     private void updateUI() {
-        HomeViewPagerEnum homeViewPagerEnum = HomeViewPagerEnum.getEnumByIndex(currentPosition);
-        binding.tvRecommend.setTextColor(
-                HomeViewPagerEnum.RECOMMEND.equals(homeViewPagerEnum) ?
+        MedicineViewPagerEnum medicineViewPagerEnum = MedicineViewPagerEnum.getEnumByIndex(currentPosition);
+        binding.tvAppointment.setTextColor(
+                MedicineViewPagerEnum.APPOINTMENT.equals(medicineViewPagerEnum) ?
                         ContextCompat.getColor(getContext(), R.color.green_1000) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.vBar1.setVisibility(
-                HomeViewPagerEnum.RECOMMEND.equals(homeViewPagerEnum) ?
+                MedicineViewPagerEnum.APPOINTMENT.equals(medicineViewPagerEnum) ?
                         VISIBLE :
                         GONE
         );
 
-        binding.tvPopular.setTextColor(
-                HomeViewPagerEnum.POPULAR.equals(homeViewPagerEnum) ?
+        binding.tvMedicalWiki.setTextColor(
+                MedicineViewPagerEnum.MEDICAL_WIKI.equals(medicineViewPagerEnum) ?
                         ContextCompat.getColor(getContext(), R.color.green_1000) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.vBar2.setVisibility(
-                HomeViewPagerEnum.POPULAR.equals(homeViewPagerEnum) ?
+                MedicineViewPagerEnum.MEDICAL_WIKI.equals(medicineViewPagerEnum) ?
                         VISIBLE :
                         GONE
         );
 
-        binding.tvFollow.setTextColor(
-                HomeViewPagerEnum.FOLLOW.equals(homeViewPagerEnum) ?
+        binding.tvMedicalShopping.setTextColor(
+                MedicineViewPagerEnum.MEDICAL_SHOPPING.equals(medicineViewPagerEnum) ?
                         ContextCompat.getColor(getContext(), R.color.green_1000) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.vBar3.setVisibility(
-                HomeViewPagerEnum.FOLLOW.equals(homeViewPagerEnum) ?
+                MedicineViewPagerEnum.MEDICAL_SHOPPING.equals(medicineViewPagerEnum) ?
                         VISIBLE :
                         GONE
         );
 
-        binding.tvFriendsCircle.setTextColor(
-                HomeViewPagerEnum.FRIEND_CIRCLE.equals(homeViewPagerEnum) ?
+        binding.tvAiQuestion.setTextColor(
+                MedicineViewPagerEnum.AI_QUESTION.equals(medicineViewPagerEnum) ?
                         ContextCompat.getColor(getContext(), R.color.green_1000) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.vBar4.setVisibility(
-                HomeViewPagerEnum.FRIEND_CIRCLE.equals(homeViewPagerEnum) ?
+                MedicineViewPagerEnum.AI_QUESTION.equals(medicineViewPagerEnum) ?
+                        VISIBLE :
+                        GONE
+        );
+
+        binding.tvHealthReminder.setTextColor(
+                MedicineViewPagerEnum.HEALTH_REMINDER.equals(medicineViewPagerEnum) ?
+                        ContextCompat.getColor(getContext(), R.color.green_1000) :
+                        ContextCompat.getColor(getContext(), R.color.green_900)
+        );
+        binding.vBar5.setVisibility(
+                MedicineViewPagerEnum.HEALTH_REMINDER.equals(medicineViewPagerEnum) ?
                         VISIBLE :
                         GONE
         );

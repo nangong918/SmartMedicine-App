@@ -23,7 +23,7 @@ public enum HomeViewPagerEnum {
     }
 
     // index -> o
-    public static HomeViewPagerEnum getHomeViewPagerEnum(int index) {
+    public static HomeViewPagerEnum getEnumByIndex(int index) {
         for (HomeViewPagerEnum value : HomeViewPagerEnum.values()) {
             if (value.index == index) {
                 return value;
@@ -32,7 +32,7 @@ public enum HomeViewPagerEnum {
         return RECOMMEND;
     }
 
-    public static int getHomeViewPagerCount() {
+    public static int getCount() {
         return HomeViewPagerEnum.values().length;
     }
 

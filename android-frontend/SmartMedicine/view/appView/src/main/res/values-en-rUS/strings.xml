@@ -91,4 +91,9 @@
     <string name="add_label_or_topic">添加标签/话题</string>
     <string name="at_location">所在位置</string>
     <string name="who_can_watch_and_not_show_to_whom">谁可以看/不给谁看</string>
+    <string name="appointment">挂号预约</string>
+    <string name="medical_wiki">医疗百科</string>
+    <string name="medical_shopping">医疗购物</string>
+    <string name="ai_question">AI问答</string>
+    <string name="health_reminder">健康提醒</string>
 </resources>
