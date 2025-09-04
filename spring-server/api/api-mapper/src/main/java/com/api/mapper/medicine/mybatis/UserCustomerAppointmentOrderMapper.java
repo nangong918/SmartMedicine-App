@@ -19,6 +19,7 @@ public interface UserCustomerAppointmentOrderMapper {
     /// 删除
     void delete(Long id);
     void deleteBatch(@Param("list") List<Long> ids);
+    void deleteAll();
     /// 修改
     void update(UserCustomerAppointmentDo userCustomerAppointmentDo);
     void updateBatch(@Param("list") List<UserCustomerAppointmentDo> list);

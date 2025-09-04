@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.api.mapper.medicine.mybatis.DoctorMapper;
 import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.HospitalMapper;
+import com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper;
 import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.api.mapper.user.mybatis.user.UserMapper;
 import com.czy.api.constant.BaseEnum;
@@ -45,6 +46,7 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
     private final DoctorMerchantAppointmentMapper doctorMerchantAppointmentMapper;
     // 导入数据的时候用于缓存数据
     private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
+    private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
 
     public void importRecord(){}
 
@@ -225,6 +227,7 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
     @Override
     public void clearAllDoctorsMerchantAppointmentDos() {
         doctorMerchantAppointmentMapper.deleteAllDoctorMerchantAppointments();
+        userCustomerAppointmentOrderMapper.deleteAll();
         log.info("删除mysql数据成功");
         doctorMerchantAppointmentRedisMapper.clearAllMerchantAppointmentCache();
         log.info("删除redis数据成功和信号量成功");

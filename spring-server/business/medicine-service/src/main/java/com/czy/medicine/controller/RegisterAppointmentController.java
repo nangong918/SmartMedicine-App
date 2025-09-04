@@ -56,7 +56,7 @@ import java.util.List;
 @RequestMapping(MedicineConstant.RegisterAppointment_CONTROLLER)
 public class RegisterAppointmentController {
 
-    private final AppointmentDoctorService registerAppointmentService;
+    private final AppointmentDoctorService appointmentDoctorService;
     private final RedissonService redissonService;
     private final AppointmentMqSender appointmentMqSender;
     private final AppointmentDoctorOrderRedisMapper appointmentDoctorOrderRedisMapper;
@@ -69,7 +69,7 @@ public class RegisterAppointmentController {
     public BaseResponse<GetRegisterAppointmentListResponse>
     getList(@Validated @RequestBody GetRegisterAppointmentListRequest request){
         // 参数校验 （此处ao中部分参数因为复用没写校验所以需要单独校验逻辑）
-        AppointmentDoctorPageVo pageVo = registerAppointmentService.getPage(
+        AppointmentDoctorPageVo pageVo = appointmentDoctorService.getPage(
                 request.getRequestAo()
         );
 
@@ -82,7 +82,7 @@ public class RegisterAppointmentController {
     @PostMapping("/getAllDate")
     public BaseResponse<GetAllRegisterAppointmentDateResponse>
     getAllDate(@Validated @RequestBody GetRegisterAppointmentListRequest request) {
-        List<AppointmentDoctorDataVo> dataVos = registerAppointmentService.getDataVoList(
+        List<AppointmentDoctorDataVo> dataVos = appointmentDoctorService.getDataVoList(
                 request.getRequestAo()
         );
 
@@ -93,7 +93,7 @@ public class RegisterAppointmentController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
-    // 获取user预约订单列表 mysql: 816ms; redis: 11ms
+    // 获取user预约订单列表 mysql: 816ms; redis: 11ms   todo 存在问题, 已有订单不符合
     @PostMapping("/getCustomerList")
     public BaseResponse<GetUserAppointmentRecordResponse>
     getAppointmentRecordList
@@ -113,7 +113,7 @@ public class RegisterAppointmentController {
         }
 
         // 获取订单记录
-        List<AppointmentDoctorOrderListAo> currentOrders = registerAppointmentService.getAppointmentRecordList(
+        List<AppointmentDoctorOrderListAo> currentOrders = appointmentDoctorService.getAppointmentRecordList(
                 request.getUserId(), sortType,
                 request.getUserLongitude(), request.getUserLatitude()
         );
@@ -169,7 +169,7 @@ public class RegisterAppointmentController {
                 request.getUserId(), request.getDoctorMerchantAppointmentId());
         try {
             // user:商户预约是否已经存在 (会抛出redis连接失败的错误, 避免出现redis挂掉导致超卖问题)
-            boolean isExist = registerAppointmentService.checkIsUserEffectiveAppointmentExist(
+            boolean isExist = appointmentDoctorService.checkIsUserEffectiveAppointmentExist(
                     request.getUserId(), request.getDoctorMerchantAppointmentId()
             );
             if (isExist){
@@ -220,7 +220,7 @@ public class RegisterAppointmentController {
         long orderId = IdUtil.getSnowflakeNextId();
         log.info("[预约挂号][开始生成用户订单view (AppointmentDoctorOrderListAo) 缓存, 订单id: {}]", orderId);
         try {
-            registerAppointmentService.generateOrderCache(
+            appointmentDoctorService.generateOrderCache(
                     request.getDoctorMerchantAppointmentId(),
                     request.getUserId(),
                     orderId,

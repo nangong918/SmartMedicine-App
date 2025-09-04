@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DoctorMerchantAppointmentMqHandler {
 
-    private final AppointmentDoctorService registerAppointmentService;
+    private final AppointmentDoctorService appointmentDoctorService;
     private final RedissonService redissonService;
     private final AppointmentMqSender appointmentMqSender;
     private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
@@ -93,7 +93,7 @@ public class DoctorMerchantAppointmentMqHandler {
         try {
             // 创建订单
             log.info("[预约挂号][审核订单开始]，user: {}, orderId: {} ", userId, orderId);
-            registerAppointmentService.reviewOrder(
+            appointmentDoctorService.reviewOrder(
                     doctorMerchantAppointmentId,
                     userId,
                     orderId

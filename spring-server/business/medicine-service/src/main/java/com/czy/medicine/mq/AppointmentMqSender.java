@@ -8,8 +8,11 @@ import com.czy.api.domain.dto.mq.AppointmentOrderDto;
 import com.czy.api.domain.entity.event.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -41,11 +44,25 @@ public class AppointmentMqSender implements RabbitMqSenderInterface {
             log.error("[支付]参数错误");
             return;
         }
+
+        // 创建 MessagePostProcessor 对象
+        MessagePostProcessor messagePostProcessor = message -> {
+            // 获取有效时长（以毫秒为单位）
+            // 设置消息的TTL
+            Optional.ofNullable(appointmentOrderDto.getEffectiveTime())
+                    .filter(time -> time > 0)
+                    .ifPresent(effectiveTime -> {
+                        message.getMessageProperties().setExpiration(String.valueOf(effectiveTime));
+                    });
+            return message;
+        };
+
         log.info("[支付]开始发送消息，appointmentOrderDto: {}", appointmentOrderDto);
         rabbitJsonTemplate.convertAndSend(
                 MqConstants.Exchange.PAY_EXCHANGE,
                 MqConstants.PayQueue.Routing.APPOINTMENT_WAIT_PAY_ROUTING,
-                appointmentOrderDto
+                appointmentOrderDto,
+                messagePostProcessor
         );
     }
 

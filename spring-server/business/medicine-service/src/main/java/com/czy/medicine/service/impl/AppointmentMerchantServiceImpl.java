@@ -417,14 +417,14 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
                     null,
                     null
             );
-            // 获取第一个, 因为时间升序, 第一个是最新的
-            AppointmentDoctorOrderListAo cacheObject = Optional.ofNullable(aoList)
-                        .filter(list -> !list.isEmpty())
-                        .map(a -> a.get(0))
-                        .orElse(null);
+            if (aoList == null || aoList.isEmpty()){
+                log.warn("[预约挂号][生成缓存检查] 异常: aoList is empty");
+                return;
+            }
 
-            log.info("[user: {}]申请商户[merchantId: {}][orderId: {}], 缓存订单成功, 等待后续处理. 缓存结果: {}",
-                    userId, doctorMerchantAppointmentId, orderId, cacheObject);
+            // 获取第一个, 因为时间升序, 第一个是最新的
+            log.info("[预约挂号][生成缓存检查][user: {}]申请商户[merchantId: {}][orderId: {}], 缓存订单成功, 等待后续处理. 当前缓存订单数量是: {}, 缓存结果: {}",
+                    userId, doctorMerchantAppointmentId, orderId, aoList.size(), aoList.get(0));
         }
         else {
             log.error("[系统错误, Redis缓存异常][user: {}]申请商户[merchantId: {}][orderId: {}], 缓存订单失败",

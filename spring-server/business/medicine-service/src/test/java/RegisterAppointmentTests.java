@@ -118,13 +118,13 @@ public class RegisterAppointmentTests {
     }
 
     @Autowired
-    private AppointmentDoctorService registerAppointmentService;
+    private AppointmentDoctorService appointmentDoctorService;
 
     @Test
     public void getListRegisterAppointment(){
         AppointmentDoctorSelectAo ao = getRegisterAppointmentSelectAo();
 
-        AppointmentDoctorPageVo pageVo = registerAppointmentService.getPage(
+        AppointmentDoctorPageVo pageVo = appointmentDoctorService.getPage(
                 ao
         );
 
@@ -135,7 +135,7 @@ public class RegisterAppointmentTests {
     public void getAllDateRegisterAppointment(){
         AppointmentDoctorSelectAo ao = getRegisterAppointmentSelectAo();
 
-        List<AppointmentDoctorDataVo> dataVos = registerAppointmentService.getDataVoList(
+        List<AppointmentDoctorDataVo> dataVos = appointmentDoctorService.getDataVoList(
                 ao
         );
 
