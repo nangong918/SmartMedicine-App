@@ -30,19 +30,19 @@ public class PostVo implements Serializable, Cloneable {
     public String postTitle;
     // mongoDb 获取内容
     public List<PostContentEntity> postContents;
-    public String postContent;
     public String postPublishTime; // yyyy-MM-dd HH:mm:ss
     // 阅读数量（点击数量） (redis-hash)
-    public String postViewNum = "0";
+    public Long postViewNum = 0L;
     // 点赞数量
-    public String likeNum = "0";
+    public Long likeNum = 0L;
     // 收藏数量
-    public String collectNum = "0";
+    public Long collectNum = 0L;
     // 评论数量
-    public String commentNum = "0";
+    public Long commentNum = 0L;
     // 转发数量
-    public String forwardNum = "0";
+    public Long forwardNum = 0L;
     // (post_info LEFT JOIN post_files INNER JOIN post_file -> OssService)
+    // 此处的fileIds暂时来自于mysql, 而不是mongoDB 后续需要升级再改为mongodb
     public List<String> postImgUrls;
 
     // action   (login_user INNER JOIN user_post_action INNER JOIN post_info)
@@ -60,7 +60,7 @@ public class PostVo implements Serializable, Cloneable {
      */
     public List<PostNerResult> nerResults;
 
-    // 排序 (时间， 热度， 推荐评分) (redis获取 / 计算填充)
+    // 排序 (时间， 热度， 推荐评分) (redis获取 / 计算填充; bo的converter无法填充)
     public Long timestamp;
     public Long popularity;
     public Long score;

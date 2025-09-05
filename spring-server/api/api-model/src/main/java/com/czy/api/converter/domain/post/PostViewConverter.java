@@ -1,0 +1,59 @@
+package com.czy.api.converter.domain.post;
+
+import com.czy.api.domain.Do.post.post.content.PostContentEntity;
+import com.czy.api.domain.ao.post.PostNerResult;
+import com.czy.api.domain.bo.post.PostViewBo;
+import com.czy.api.domain.vo.post.aaa.PostVo;
+import date.DateUtils;
+import org.jetbrains.annotations.NotNull;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.factory.Mappers;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * @author 13225
+ * @date 2025/9/5 16:53
+ */
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface PostViewConverter {
+
+    // INSTANCE
+    PostViewConverter INSTANCE = Mappers.getMapper(PostViewConverter.class);
+
+    // bo -> vo
+    @Mapping(source = "postId", target = "postId")
+    @Mapping(source = "authorName", target = "authorName")
+    @Mapping(source = "authorId", target = "authorId")
+    @Mapping(source = "postTitle", target = "postTitle")
+    @Mapping(source = "postViewNum", target = "postViewNum")
+    @Mapping(source = "likeNum", target = "likeNum")
+    @Mapping(source = "collectNum", target = "collectNum")
+    @Mapping(source = "commentNum", target = "commentNum")
+    @Mapping(source = "forwardNum", target = "forwardNum")
+    @Mapping(source = "like", target = "like")
+    @Mapping(source = "collect", target = "collect")
+    @Mapping(source = "dislike", target = "dislike")
+    PostVo getVoByBo_(@NotNull PostViewBo bo);
+
+    default PostVo getVoByBo(
+            @NotNull PostViewBo bo,
+            String authorAvatarUrl,
+            List<PostContentEntity> postContents,
+            List<String> postImgUrls,
+            List<PostNerResult> nerResults
+    ){
+        PostVo vo = getVoByBo_(bo);
+        vo.setAuthorAvatarUrl(authorAvatarUrl);
+        vo.setPostContents(postContents);
+        vo.setPostImgUrls(postImgUrls);
+        vo.setNerResults(nerResults);
+        Optional.ofNullable(bo.getReleaseTimestamp())
+                .map(DateUtils::getDateStringByTimestamp)
+                .ifPresent(vo::setPostPublishTime);
+        return vo;
+    }
+}
