@@ -98,4 +98,12 @@
     <string name="health_reminder">健康提醒</string>
     <string name="community_dynamic">社区动态</string>
     <string name="fans">粉丝</string>
+    <string name="my_dynamic">我的动态</string>
+    <string name="my_collect">我的收藏</string>
+    <string name="my_sport">我的运动</string>
+    <string name="my_diet">我的饮食</string>
+    <string name="my_health_reminder">我的健康提醒</string>
+    <string name="my_shopping">我的购物</string>
+    <string name="my_health">我的健康</string>
+    <string name="my_order">我的订单</string>
 </resources>
