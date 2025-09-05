@@ -3,6 +3,7 @@ package com.czy.smartmedicine.viewModel.fragment
 import androidx.lifecycle.ViewModel
 import com.czy.appcore.network.netty.api.send.SocketMessageSender
 import com.czy.dao.networkRepository.ApiRequestImpl
+import com.czy.domain.fragmentActivityAo.mine.MineFAo
 
 
 open class MineVm(
@@ -16,7 +17,11 @@ open class MineVm(
 
     //---------------------------FAo Ld---------------------------
 
+    open lateinit var mineFAo : MineFAo
 
+    open fun init(mineFAo: MineFAo){
+        this.mineFAo = mineFAo
+    }
 
     //---------------------------NetWork---------------------------
 
