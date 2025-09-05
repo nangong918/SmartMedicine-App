@@ -1,7 +1,7 @@
 package com.czy.api.domain.dto.http.response;
 
 
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.ao.post.PostAo;
 import lombok.Data;
 
@@ -16,5 +16,5 @@ import java.util.List;
 public class GetPostResponse {
     public PostAo postAo;
     // 一般来说第一次默认是第1（0）页面 + 20条
-    public List<PostCommentDo> postCommentList;
+    public List<PostCommentMongoDo> postCommentList;
 }

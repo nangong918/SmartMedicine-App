@@ -1,12 +1,14 @@
 package com.api.mapper.post.mybatis.bo;
 
 import com.czy.api.domain.bo.post.PostViewBo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
  * @author 13225
  * @date 2025/9/5 11:59
  */
+@Mapper
 public interface PostViewBoMapper {
 
     /**
