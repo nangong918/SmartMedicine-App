@@ -98,4 +98,6 @@
     <string name="medical_shopping">医疗购物</string>
     <string name="ai_question">AI问答</string>
     <string name="health_reminder">健康提醒</string>
+    <string name="community_dynamic">社区动态</string>
+    <string name="fans">粉丝</string>
 </resources>
