@@ -8,6 +8,7 @@ import domain.ErrorFile;
 import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import domain.SuccessFile;
+import lombok.NonNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -130,6 +131,7 @@ public interface OssService {
      * @return                  List<Url>
      *     支持Long为null返回null的url
      */
+    @NonNull
     List<String> getFileUrlsByFileIds(List<Long> fileIds);
 
 

@@ -27,7 +27,7 @@ import com.czy.api.domain.dto.http.response.PostPublishResponse;
 import com.czy.api.domain.dto.http.response.SinglePostResponse;
 import com.czy.api.domain.vo.post.CommentVo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.vo.post.PostOldVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PostExceptions;
 import com.czy.post.front.PostFrontService;
@@ -301,7 +301,7 @@ public class PostController {
 
         SinglePostResponse singlePostResponse = new SinglePostResponse();
         // 转换为vo
-        PostVo postVo = postFrontService.postAoToPostVo(postAo);
+        PostOldVo postVo = postFrontService.postAoToPostVo(postAo);
         List<CommentVo> commentVos = postFrontService.getCommentVosByPostCommentDos(postCommentList);
         singlePostResponse.postVo = postVo;
         singlePostResponse.commentVos = commentVos;

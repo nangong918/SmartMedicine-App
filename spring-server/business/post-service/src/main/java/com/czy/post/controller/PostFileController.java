@@ -11,7 +11,7 @@ import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.PostOssResponse;
 import com.czy.api.domain.entity.event.UserOssResponse;
-import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.vo.post.PostOldVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.OssExceptions;
 import com.czy.api.exception.PostExceptions;
@@ -68,7 +68,7 @@ public class PostFileController {
      * @return              上传结果
      */
     @PostMapping("/uploadPost/immediately")
-    public BaseResponse<PostVo> uploadPostFiles(
+    public BaseResponse<PostOldVo> uploadPostFiles(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("postId") Long postId,
             @RequestParam("userId") Long userId){
@@ -157,7 +157,7 @@ public class PostFileController {
                 if (!result){
                     return BaseResponse.LogBackError(OssExceptions.UPLOAD_FILE_RECORD_ERROR);
                 }
-                PostVo postVo = postFrontService.getPostVo(postId);
+                PostOldVo postVo = postFrontService.getPostVo(postId);
                 return BaseResponse.getResponseEntitySuccess(postVo);
             }
         } catch (Exception e){
@@ -201,7 +201,7 @@ public class PostFileController {
 
     // 修改帖子file
     @PostMapping("/updatePost/immediately")
-    public BaseResponse<PostVo> updatePostFiles(
+    public BaseResponse<PostOldVo> updatePostFiles(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("newTitle") String newTitle,
             @RequestParam("newContent") String newContent,
@@ -334,7 +334,7 @@ public class PostFileController {
                             // 更新到数据库
                             postService.updatePostAfterOss(postAo);
 
-                            PostVo userVo = postFrontService.getPostVo(postId);
+                            PostOldVo userVo = postFrontService.getPostVo(postId);
                             return BaseResponse.getResponseEntitySuccess(userVo);
                         }
                     }

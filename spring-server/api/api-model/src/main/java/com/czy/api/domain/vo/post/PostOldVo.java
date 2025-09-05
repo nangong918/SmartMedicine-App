@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@Deprecated
 @Data
-public class PostVo implements Serializable {
+public class PostOldVo implements Serializable {
 
     // postId
     public Long postId = null;
@@ -54,8 +55,8 @@ public class PostVo implements Serializable {
 
 
 
-    public static PostVo getRecommendPostVoFromPostInfoUrlAo(PostInfoUrlAo postInfoUrlAo){
-        PostVo postVo = new PostVo();
+    public static PostOldVo getRecommendPostVoFromPostInfoUrlAo(PostInfoUrlAo postInfoUrlAo){
+        PostOldVo postVo = new PostOldVo();
         postVo.postId = postInfoUrlAo.id;
         postVo.postImgUrls = new ArrayList<>();
         postVo.postImgUrls.add(postInfoUrlAo.fileUrl);

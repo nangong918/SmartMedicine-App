@@ -1,5 +1,6 @@
 package com.czy.api.converter.domain.post;
 
+import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.content.PostContentEntity;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.bo.post.PostViewBo;
@@ -37,6 +38,7 @@ public interface PostViewConverter {
     @Mapping(source = "like", target = "like")
     @Mapping(source = "collect", target = "collect")
     @Mapping(source = "dislike", target = "dislike")
+    @Mapping(source = "releaseTimestamp", target = "timestamp")
     PostVo getVoByBo_(@NotNull PostViewBo bo);
 
     default PostVo getVoByBo(
@@ -51,6 +53,26 @@ public interface PostViewConverter {
         vo.setPostContents(postContents);
         vo.setPostImgUrls(postImgUrls);
         vo.setNerResults(nerResults);
+        Optional.ofNullable(bo.getReleaseTimestamp())
+                .map(DateUtils::getDateStringByTimestamp)
+                .ifPresent(vo::setPostPublishTime);
+        return vo;
+    }
+
+    default PostVo getVoByBo(
+            @NotNull PostViewBo bo,
+            PostDetailDo postDetailDo,
+            String authorAvatarUrl,
+            List<String> postImgUrls
+    ){
+        PostVo vo = getVoByBo_(bo);
+        vo.setAuthorAvatarUrl(authorAvatarUrl);
+        Optional.ofNullable(postDetailDo)
+            .ifPresent(pdo -> {
+                vo.setPostContents(pdo.getPostContents());
+                vo.setNerResults(pdo.getNerResults());
+            });
+        vo.setPostImgUrls(postImgUrls);
         Optional.ofNullable(bo.getReleaseTimestamp())
                 .map(DateUtils::getDateStringByTimestamp)
                 .ifPresent(vo::setPostPublishTime);

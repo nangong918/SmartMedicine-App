@@ -21,7 +21,7 @@ import com.czy.api.domain.ao.post.PostSearchEsAo;
 import com.czy.api.domain.ao.recommend.PostScoreAo;
 import com.czy.api.domain.ao.user.AuthorAo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.vo.post.PostOldVo;
 import com.czy.api.mapper.DiseaseRepository;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostStorageService;
@@ -379,7 +379,7 @@ public class PostSearchServiceImpl implements PostSearchService {
     }
 
     @Override
-    public PostVo getPostVoById(Long postId) {
+    public PostOldVo getPostVoById(Long postId) {
         if (postId == null){
             return null;
         }

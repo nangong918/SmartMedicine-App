@@ -13,6 +13,7 @@ import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import exception.OssException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -277,6 +278,7 @@ public class OssServiceImpl implements OssService {
     }
 
     // Todo 改为先redis缓存，redis缓存未命中走minIO
+    @NonNull
     @Override
     public List<String> getFileUrlsByFileIds(List<Long> fileIds) {
         List<String> fileUrls = new LinkedList<>();
