@@ -11,7 +11,7 @@
  Target Server Version : 80034
  File Encoding         : 65001
 
- Date: 27/08/2025 17:36:17
+ Date: 05/09/2025 16:51:55
 */
 
 SET NAMES utf8mb4;
@@ -44,7 +44,7 @@ CREATE TABLE `doctor_merchant_appointment`  (
   `begin_date` datetime NULL DEFAULT NULL,
   `end_date` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1958733459964624950 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1963512751961493558 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for friend_apply
@@ -159,15 +159,16 @@ CREATE TABLE `post_files`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `post_info`;
 CREATE TABLE `post_info`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'post_id',
   `author_id` bigint NOT NULL,
-  `release_timestamp` bigint NOT NULL,
-  `like_count` bigint NOT NULL,
-  `collect_count` bigint NOT NULL,
-  `comment_count` bigint NOT NULL,
-  `forward_count` bigint NULL DEFAULT 0,
+  `release_timestamp` bigint UNSIGNED NOT NULL,
+  `like_count` bigint UNSIGNED NOT NULL,
+  `collect_count` bigint UNSIGNED NOT NULL,
+  `comment_count` bigint UNSIGNED NOT NULL,
+  `forward_count` bigint UNSIGNED NULL DEFAULT 0,
   `title` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
+  `view_count` bigint UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`, `author_id`) USING BTREE,
   INDEX `idx_author_id`(`author_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1953385863356162049 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
@@ -282,6 +283,21 @@ CREATE TABLE `user_health_data`  (
   `income` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for user_post_action
+-- ----------------------------
+DROP TABLE IF EXISTS `user_post_action`;
+CREATE TABLE `user_post_action`  (
+  `id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  `post_id` bigint NOT NULL,
+  `like` tinyint(1) NULL DEFAULT NULL,
+  `collect` tinyint(1) NULL DEFAULT NULL,
+  `dislike` tinyint(1) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_post`(`user_id` ASC, `post_id` ASC) USING BTREE COMMENT 'user_post联合索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
