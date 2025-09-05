@@ -1,6 +1,6 @@
 package com.czy.api.converter.domain.post;
 
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.socket.request.PostCommentRequest;
@@ -23,10 +23,10 @@ public interface PostCommentConverter {
     @Mapping(source = "postId", target = "postId")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "replyCommentId", target = "replyCommentId")
-    PostCommentDo postCommentRequestToPostCommentDo(PostCommentRequest request);
+    PostCommentMongoDo postCommentRequestToPostCommentDo(PostCommentRequest request);
 
-    default PostCommentDo postCommentRequestToPostCommentDo(PostCommentRequest request, Long commenterId) {
-        PostCommentDo postCommentDo = postCommentRequestToPostCommentDo(request);
+    default PostCommentMongoDo postCommentRequestToPostCommentDo(PostCommentRequest request, Long commenterId) {
+        PostCommentMongoDo postCommentDo = postCommentRequestToPostCommentDo(request);
         postCommentDo.setCommenterId(commenterId);
         return postCommentDo;
     }

@@ -7,7 +7,7 @@ import com.api.mapper.post.mybatis.PostCollectMapper;
 import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.domain.Do.post.collect.PostCollectDo;
 import com.czy.api.domain.Do.post.collect.PostCollectFolderDo;
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.post.service.PostHandleService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class PostHandleServiceImpl implements PostHandleService {
 
     @Transactional
     @Override
-    public void postComment(PostCommentDo postCommentDo) {
+    public void postComment(PostCommentMongoDo postCommentDo) {
         // mongo存储文本
         postCommentMongoMapper.saveComment(postCommentDo);
         // mysql存储次数

@@ -4,13 +4,13 @@ import com.api.mapper.post.mongo.PostDetailMongoMapper;
 import com.api.mapper.post.mybatis.bo.PostViewBoMapper;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.converter.domain.post.PostViewConverter;
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.bo.post.PostViewBo;
-import com.czy.api.domain.vo.post.CommentVo;
+import com.czy.api.domain.vo.post.CommentOldVo;
 import com.czy.api.domain.vo.post.PostOldVo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.aaa.PostVo;
@@ -193,14 +193,14 @@ public class PostFrontServiceImpl implements PostFrontService {
     }
 
     @Override
-    public List<CommentVo> getCommentVosByPostCommentDos(List<PostCommentDo> postCommentDos) {
+    public List<CommentOldVo> getCommentVosByPostCommentDos(List<PostCommentMongoDo> postCommentDos) {
         return postCommentDos.stream()
                 .map(this::getCommentVo)
                 .collect(Collectors.toList());
     }
 
-    private CommentVo getCommentVo(PostCommentDo postCommentDo) {
-        CommentVo commentVo = new CommentVo();
+    private CommentOldVo getCommentVo(PostCommentMongoDo postCommentDo) {
+        CommentOldVo commentVo = new CommentOldVo();
         commentVo.commentId = postCommentDo.getId();
         commentVo.replyCommentId = postCommentDo.getReplyCommentId();
         commentVo.postId = postCommentDo.getPostId();

@@ -4,8 +4,9 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+@Deprecated
 @Data
-public class CommentVo implements Serializable {
+public class CommentOldVo implements Serializable {
     // comment 所属相关
     public Long commentId = null;
     public Long replyCommentId = null;

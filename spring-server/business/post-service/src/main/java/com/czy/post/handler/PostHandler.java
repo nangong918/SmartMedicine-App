@@ -10,7 +10,7 @@ import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
@@ -434,7 +434,7 @@ public class PostHandler implements PostApi{
     // comment通知评论发布者
     private void notifyCommenter(PostCommentResponse postCommentResponse){
         if (postCommentResponse.getReplyCommentId() != null){
-            PostCommentDo postCommenterDo = postCommentService.getPostCommentById(postCommentResponse.getReplyCommentId());
+            PostCommentMongoDo postCommenterDo = postCommentService.getPostCommentById(postCommentResponse.getReplyCommentId());
             if (postCommenterDo == null || postCommenterDo.getCommenterId() == null){
                 return;
             }
@@ -462,7 +462,7 @@ public class PostHandler implements PostApi{
 
         // 2. 通知接收者
         if (request.getReplyCommentId() != null){
-            PostCommentDo postCommenterDo = postCommentService.getPostCommentById(request.getReplyCommentId());
+            PostCommentMongoDo postCommenterDo = postCommentService.getPostCommentById(request.getReplyCommentId());
             if (postCommenterDo != null && postCommenterDo.getId() != null){
                 Long commenterId = Optional.ofNullable(postCommenterDo.getCommenterId())
                                 .orElse(NettyConstants.ERROR_ID);

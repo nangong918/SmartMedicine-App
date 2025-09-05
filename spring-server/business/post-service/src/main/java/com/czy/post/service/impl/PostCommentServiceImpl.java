@@ -5,7 +5,7 @@ import com.api.mapper.post.mongo.PostCommentMongoMapper;
 import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.post.PostConstant;
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostCommentAo;
@@ -42,12 +42,12 @@ public class PostCommentServiceImpl implements PostCommentService {
     private final PostInfoMapper postInfoMapper;
 
     @Override
-    public List<PostCommentDo> getLevel1PostComments(Long postId, Integer pageSize, Integer pageNum) {
+    public List<PostCommentMongoDo> getLevel1PostComments(Long postId, Integer pageSize, Integer pageNum) {
         return postCommentMongoMapper.findLevel1CommentsByPostIdAndPaging(postId, pageSize, pageNum);
     }
 
     @Override
-    public List<PostCommentDo> getLevel2PostComments(Long postId, Long level2CommentId, Integer pageSize, Integer pageNum) {
+    public List<PostCommentMongoDo> getLevel2PostComments(Long postId, Long level2CommentId, Integer pageSize, Integer pageNum) {
         int finalPageNum = pageNum;
         if (finalPageNum < PostConstant.COMMENT_MIN_PAGE_SIZE){
             finalPageNum = PostConstant.COMMENT_MIN_PAGE_SIZE;
@@ -59,12 +59,12 @@ public class PostCommentServiceImpl implements PostCommentService {
     }
 
     @Override
-    public PostCommentDo getPostCommentById(Long commentId) {
+    public PostCommentMongoDo getPostCommentById(Long commentId) {
         return postCommentMongoMapper.findCommentById(commentId);
     }
 
     @Override
-    public List<PostCommentAo> getPostCommentAoList(List<PostCommentDo> postCommentDoList) {
+    public List<PostCommentAo> getPostCommentAoList(List<PostCommentMongoDo> postCommentDoList) {
         if (CollectionUtils.isEmpty(postCommentDoList)){
             return new ArrayList<>();
         }
@@ -95,7 +95,7 @@ public class PostCommentServiceImpl implements PostCommentService {
         // 生成一个存在null的list
         List<PostCommentAo> postCommentAoList = new ArrayList<>();
         for (int i = 0; i < postCommentDoList.size(); i++) {
-            PostCommentDo postCommentDo = postCommentDoList.get(i);
+            PostCommentMongoDo postCommentDo = postCommentDoList.get(i);
             if (postCommentDo == null){
                 postCommentAoList.add(null);
                 continue;
@@ -142,7 +142,7 @@ public class PostCommentServiceImpl implements PostCommentService {
         }
 
         // 添加到mongodb数据库中
-        PostCommentDo postCommentDo = new PostCommentDo();
+        PostCommentMongoDo postCommentDo = new PostCommentMongoDo();
         postCommentDo.setId(IdUtil.getSnowflakeNextId());
         postCommentDo.setPostId(postId);
         postCommentDo.setCommenterId(senderId);

@@ -6,7 +6,7 @@ import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.converter.domain.post.PostConverter;
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
@@ -25,7 +25,7 @@ import com.czy.api.domain.dto.http.response.GetPostPreviewListResponse;
 import com.czy.api.domain.dto.http.response.GetPostResponse;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
 import com.czy.api.domain.dto.http.response.SinglePostResponse;
-import com.czy.api.domain.vo.post.CommentVo;
+import com.czy.api.domain.vo.post.CommentOldVo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostOldVo;
 import com.czy.api.exception.CommonExceptions;
@@ -274,7 +274,7 @@ public class PostController {
         if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
             pageNum = 1;
         }
-        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(postId, PostConstant.COMMENT_PAGE_SIZE, pageNum);
+        List<PostCommentMongoDo> postCommentList = postCommentService.getLevel1PostComments(postId, PostConstant.COMMENT_PAGE_SIZE, pageNum);
         GetPostResponse getPostResponse = new GetPostResponse();
         getPostResponse.setPostAo(postAo);
         getPostResponse.setPostCommentList(postCommentList);
@@ -295,14 +295,14 @@ public class PostController {
         if (ObjectUtils.isEmpty(request.getPageNum()) || request.getPageNum() < 1){
             request.setPageNum(1);
         }
-        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(
+        List<PostCommentMongoDo> postCommentList = postCommentService.getLevel1PostComments(
                 request.getPostId(), PostConstant.COMMENT_PAGE_SIZE, request.getPageNum()
         );
 
         SinglePostResponse singlePostResponse = new SinglePostResponse();
         // 转换为vo
         PostOldVo postVo = postFrontService.postAoToPostVo(postAo);
-        List<CommentVo> commentVos = postFrontService.getCommentVosByPostCommentDos(postCommentList);
+        List<CommentOldVo> commentVos = postFrontService.getCommentVosByPostCommentDos(postCommentList);
         singlePostResponse.postVo = postVo;
         singlePostResponse.commentVos = commentVos;
         return BaseResponse.getResponseEntitySuccess(singlePostResponse);
@@ -326,13 +326,13 @@ public class PostController {
         }
 
         if (leve1commentId != null) {
-            PostCommentDo postCommentDo = postCommentService.getPostCommentById(leve1commentId);
+            PostCommentMongoDo postCommentDo = postCommentService.getPostCommentById(leve1commentId);
             if (postCommentDo == null || postCommentDo.getId() == null) {
                 return BaseResponse.LogBackError(PostExceptions.COMMENT_NOT_EXIST);
             }
         }
 
-        List<PostCommentDo> postCommentList;
+        List<PostCommentMongoDo> postCommentList;
         // 没有level1Id默认为他就是level1评论
         if (leve1commentId == null) {
             postCommentList = postCommentService.getLevel1PostComments(postId, pageSize, pageNum);
