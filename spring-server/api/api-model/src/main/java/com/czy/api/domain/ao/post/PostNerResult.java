@@ -13,6 +13,7 @@ import java.io.Serializable;
 public class PostNerResult implements BaseBean , Serializable {
     private String keyWord;
     private String nerType;
+    private Double score;
 
     public boolean isEmpty() {
         return keyWord == null || keyWord.isEmpty() || nerType == null || nerType.isEmpty();

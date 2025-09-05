@@ -1,11 +1,15 @@
 package com.czy.api.domain.Do.post.post;
 
+import com.czy.api.domain.Do.post.post.content.PostContentEntity;
 import com.czy.api.domain.ao.post.PostNerResult;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -26,7 +30,25 @@ public class PostDetailDo implements Serializable {
     // title；not null
     private String title;
     // content；not null
-    private String content;
+    private List<PostContentEntity> postContents;
     // ner特诊
     private List<PostNerResult> nerResults;
+
+    public void setPostContentsByOnlyString(String content){
+        postContents = new ArrayList<>();
+        PostContentEntity contentEntity = new PostContentEntity();
+        contentEntity.setContent(content);
+        postContents.add(contentEntity);
+    }
+
+    public String getOnlyContent() {
+        return Optional.ofNullable(postContents)
+                .filter(list -> !list.isEmpty())
+                .map(list -> list.stream()
+                        .map(PostContentEntity::getContent)
+                        .filter(Objects::nonNull)
+                        .reduce("", (s1, s2) -> s1 + "\n" + s2)
+                )
+                .orElse("");
+    }
 }
