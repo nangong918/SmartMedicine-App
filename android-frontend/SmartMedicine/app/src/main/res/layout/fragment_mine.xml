@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/green_0"
     android:orientation="vertical"
     android:gravity="center_horizontal"
@@ -173,6 +174,7 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                app:tint="@color/green_900"
                 android:src="@drawable/animated_images_48px" />
 
             <TextView
@@ -180,6 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
+                android:textColor="@color/green_900"
                 android:text="@string/my_dynamic"
                 android:gravity="center" />
         </LinearLayout>
@@ -195,6 +198,7 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                app:tint="@color/green_900"
                 android:src="@drawable/heart_plus_48px" /> <!-- 替换为相应的图片资源 -->
 
             <TextView
@@ -202,6 +206,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
+                android:textColor="@color/green_900"
                 android:text="@string/my_collect"
                 android:gravity="center" />
         </LinearLayout>
@@ -217,6 +222,7 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                app:tint="@color/green_900"
                 android:src="@drawable/directions_bike_48px" /> <!-- 替换为相应的图片资源 -->
 
             <TextView
@@ -224,6 +230,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
+                android:textColor="@color/green_900"
                 android:text="@string/my_sport"
                 android:gravity="center" />
         </LinearLayout>
@@ -239,6 +246,7 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                app:tint="@color/green_900"
                 android:src="@drawable/yoshoku_48px" /> <!-- 替换为相应的图片资源 -->
 
             <TextView
@@ -246,6 +254,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
+                android:textColor="@color/green_900"
                 android:text="@string/my_diet"
                 android:gravity="center" />
         </LinearLayout>
@@ -262,6 +271,7 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                app:tint="@color/green_900"
                 android:src="@drawable/notifications_active_48px" /> <!-- 替换为相应的图片资源 -->
 
             <TextView
@@ -269,6 +279,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
+                android:textColor="@color/green_900"
                 android:text="@string/my_health_reminder"
                 android:gravity="center" />
         </LinearLayout>
@@ -285,6 +296,7 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                app:tint="@color/green_900"
                 android:src="@drawable/shopping_cart_48px" /> <!-- 替换为相应的图片资源 -->
 
             <TextView
@@ -292,6 +304,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
+                android:textColor="@color/green_900"
                 android:text="@string/my_shopping"
                 android:gravity="center" />
         </LinearLayout>
@@ -308,6 +321,7 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                app:tint="@color/green_900"
                 android:src="@drawable/ecg_heart_48px" /> <!-- 替换为相应的图片资源 -->
 
             <TextView
@@ -315,6 +329,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
+                android:textColor="@color/green_900"
                 android:text="@string/my_health"
                 android:gravity="center" />
         </LinearLayout>
@@ -331,6 +346,7 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                app:tint="@color/green_900"
                 android:src="@drawable/delivery_truck_speed_48px" /> <!-- 替换为相应的图片资源 -->
 
             <TextView
@@ -338,10 +354,115 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
+                android:textColor="@color/green_900"
                 android:text="@string/my_order"
                 android:gravity="center" />
         </LinearLayout>
 
     </GridLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:orientation="vertical"
+        android:background="@drawable/round_corners_bg_commend">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="25dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/wallet_48px"
+                app:tint="@color/green_900" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:text="@string/my_wallet"
+                android:layout_marginStart="20dp"
+                android:textColor="@color/green_900"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/money_bag_48px"/>
+
+            <TextView
+                android:id="@+id/tv_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="54,000.50"
+                android:maxLines="1"
+                android:layout_marginStart="10dp"
+                android:textSize="35sp"/>
+
+        </LinearLayout>
+        
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_recharge"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="40dp"
+            android:layout_marginBottom="30dp"
+            android:layout_width="95dp"
+            android:layout_height="35dp"
+            android:gravity="center"
+            android:text="@string/recharge"
+            android:textSize="14sp"
+            android:textColor="@color/green_900"
+            android:background="@drawable/round_corners_button_commend"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_transaction_record"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="30dp"
+            android:layout_width="95dp"
+            android:layout_height="35dp"
+            android:gravity="center"
+            android:text="@string/transaction_record"
+            android:textSize="14sp"
+            android:textColor="@color/green_900"
+            android:background="@drawable/round_corners_button_commend"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_setting"
+        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_height="45dp"
+        android:gravity="center"
+        android:text="@string/setting"
+        android:textSize="18sp"
+        android:textColor="@color/green_900"
+        android:background="@drawable/round_corners_button_commend"/>
+
 
 </LinearLayout>

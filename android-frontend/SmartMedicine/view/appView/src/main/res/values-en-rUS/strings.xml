@@ -106,4 +106,7 @@
     <string name="my_shopping">我的购物</string>
     <string name="my_health">我的健康</string>
     <string name="my_order">我的订单</string>
+    <string name="my_wallet">我的钱包</string>
+    <string name="recharge">充值</string>
+    <string name="transaction_record">流水记录</string>
 </resources>
