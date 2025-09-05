@@ -11,7 +11,7 @@
  Target Server Version : 80034
  File Encoding         : 65001
 
- Date: 05/09/2025 16:51:55
+ Date: 05/09/2025 18:31:26
 */
 
 SET NAMES utf8mb4;
@@ -140,6 +140,23 @@ CREATE TABLE `post_collect_folder`  (
   `collect_folder_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_post_user`(`user_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for post_comment
+-- ----------------------------
+DROP TABLE IF EXISTS `post_comment`;
+CREATE TABLE `post_comment`  (
+  `id` bigint NOT NULL COMMENT 'comment_id',
+  `post_id` bigint NOT NULL,
+  `commenter_id` bigint NOT NULL COMMENT 'user_id',
+  `reply_comment_id` bigint NULL DEFAULT NULL,
+  `timestamp` bigint NOT NULL,
+  `comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_post_id`(`post_id` ASC) USING BTREE,
+  INDEX `idx_commenter_id`(`commenter_id` ASC) USING BTREE,
+  INDEX `idx_reply_comment_id`(`reply_comment_id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
