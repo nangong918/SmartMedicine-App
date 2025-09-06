@@ -54,46 +54,27 @@ public class SearchPostActivity extends
     protected void initView(){
         super.initView();
 
-        initViewModelVo();
 
-        observeData();
     }
 
     //----------------------------viewModel----------------------------
 
+    @Override
     protected void initViewModel(){
         super.initViewModel();
 
-        vm.init(new SearchPostAAo(), this);
+        initVmAAo();
+
+        observeData();
+    }
+
+    private void initVmAAo(){
+        SearchPostAAo aao = new SearchPostAAo();
+
+        vm.init(aao, this);
         vm.initRecyclerAdapter(binding.rclvSearch, this::openSearchPostDetailActivity);
         vm.initDialogAnswer(this, v -> {
             // todo 跳转到跟ai聊天的详情页
-        });
-    }
-
-    private void initViewModelVo(){
-
-        // 双向绑定
-        // SearchView -> LiveData
-        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                Optional.ofNullable(vm.searchPostAAo)
-                        .map(vo -> vo.searchInputLd)
-                        .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
-                return true;
-            }
-        });
-        // LiveData -> SearchView
-        vm.searchPostAAo.searchInputLd.observe(this, newText -> {
-            if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
-                binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
-            }
         });
     }
 
@@ -118,6 +99,29 @@ public class SearchPostActivity extends
     }
 
     private void observeData(){
+        // 双向绑定
+        // SearchView -> LiveData
+        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Optional.ofNullable(vm.searchPostAAo)
+                        .map(vo -> vo.searchInputLd)
+                        .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
+                return true;
+            }
+        });
+
+        // LiveData -> SearchView
+        vm.searchPostAAo.searchInputLd.observe(this, newText -> {
+            if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
+                binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
+            }
+        });
     }
     
     private void openSearchPostDetailActivity(int position, Long postId){
