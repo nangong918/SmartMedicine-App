@@ -76,6 +76,8 @@
                 <!-- post content -->
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/tv_content"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="10dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginTop="20dp"
@@ -111,11 +113,12 @@
                             android:layout_width="120dp"
                             android:layout_height="120dp"
                             android:src="@color/green_90"/>
-                        <View
+                        <ImageView
                             android:id="@+id/v_add1"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:background="@drawable/add_24px"
+                            android:src="@drawable/add_24px"
+                            app:tint="@color/green_900"
                             app:layout_constraintBottom_toBottomOf="@+id/img_p1"
                             app:layout_constraintEnd_toEndOf="@+id/img_p1"
                             app:layout_constraintStart_toStartOf="@+id/img_p1"
