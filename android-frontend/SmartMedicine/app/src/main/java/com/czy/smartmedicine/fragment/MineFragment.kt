@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.czy.baseutil.image.ImageLoadUtil
+import com.czy.baseutil.ui.ToastUtils
 import com.czy.domain.fragmentActivityAo.mine.MineFAo
 import com.czy.smartmedicine.databinding.FragmentMineBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
@@ -41,48 +42,144 @@ class MineFragment : BaseVmFragment<FragmentMineBinding, MineVm>(
     override fun setListener() {
         super.setListener()
 
+        // 社区动态
+        binding.lyCommunityDynamic.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["社区动态"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
+        }
+
+        // 关注
+        binding.lyFollow.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["关注"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
+        }
+
+        // 粉丝
+        binding.lyFans.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["粉丝"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
+        }
+
         // 我的动态
         binding.lyMyDynamic.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["我的动态"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
 
         // 我的收藏
         binding.lyMyCollect.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["我的收藏"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
 
         // 我的运动
         binding.lyMySport.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["我的运动"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
 
         // 我的饮食
         binding.lyMyDiet.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["我的饮食"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
 
         // 我的健康提醒
         binding.lyMyHealthReminder.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["我的健康提醒"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
 
         // 我的购物
         binding.lyMyShopping.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["我的购物"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
 
         // 我的健康
         binding.lyMyHealth.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["我的健康"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
 
         // 我的订单
         binding.lyMyOrder.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["我的订单"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
 
         // 充值
         binding.btnRecharge.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["充值"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
 
         // 流水记录
         binding.btnTransactionRecord.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["流水记录"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
 
         // 设置
         binding.btnSetting.setOnClickListener {
+            if(vm.mineFAo.isFinishedLdMap["设置"]?.value == false){
+                ToastUtils.showToast(requireContext(), requireContext().getString(
+                    com.czy.appview.R.string.coding
+                ))
+                return@setOnClickListener
+            }
         }
     }
 
