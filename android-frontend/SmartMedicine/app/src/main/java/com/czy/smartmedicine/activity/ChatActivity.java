@@ -29,7 +29,7 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     }
 
     @Override
-    public ActivityChatBinding getBinding() {
+    public ActivityChatBinding initBinding() {
         return ActivityChatBinding.inflate(getLayoutInflater());
     }
 

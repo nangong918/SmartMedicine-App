@@ -34,7 +34,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     }
 
     @Override
-    public ActivityPostBinding getBinding() {
+    public ActivityPostBinding initBinding() {
         return ActivityPostBinding.inflate(getLayoutInflater());
     }
 

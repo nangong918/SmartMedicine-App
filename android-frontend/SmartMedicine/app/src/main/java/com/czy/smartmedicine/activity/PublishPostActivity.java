@@ -32,7 +32,7 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
     }
 
     @Override
-    public ActivityPublishPostBinding getBinding() {
+    public ActivityPublishPostBinding initBinding() {
         return ActivityPublishPostBinding.inflate(getLayoutInflater());
     }
 

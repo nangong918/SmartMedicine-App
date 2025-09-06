@@ -28,7 +28,7 @@ public class NewUserActivity extends BaseActivity<ActivityNewUserBinding> {
     }
 
     @Override
-    public ActivityNewUserBinding getBinding() {
+    public ActivityNewUserBinding initBinding() {
         return ActivityNewUserBinding.inflate(getLayoutInflater());
     }
 

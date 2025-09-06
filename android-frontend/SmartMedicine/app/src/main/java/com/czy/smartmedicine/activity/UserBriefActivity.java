@@ -30,7 +30,7 @@ public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
     }
 
     @Override
-    public ActivityUserBriefBinding getBinding() {
+    public ActivityUserBriefBinding initBinding() {
         return ActivityUserBriefBinding.inflate(getLayoutInflater());
     }
 

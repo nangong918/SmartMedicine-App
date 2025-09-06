@@ -39,14 +39,16 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     }
 
     @Override
-    public ActivityRegisterBinding getBinding() {
+    public ActivityRegisterBinding initBinding() {
         return ActivityRegisterBinding.inflate(getLayoutInflater());
     }
 
     @Override
     protected void init() {
         super.init();
-
+        setStatusBarColor(
+                getColor(com.czy.appview.R.color.green_200),255
+        );
         initIntent();
 
         initViewModel();

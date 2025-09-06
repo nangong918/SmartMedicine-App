@@ -28,7 +28,7 @@ public class SearchUserActivity extends BaseActivity<ActivitySearchBaseBinding> 
     //----------------------------init----------------------------
 
     @Override
-    public ActivitySearchBaseBinding getBinding() {
+    public ActivitySearchBaseBinding initBinding() {
         return ActivitySearchBaseBinding.inflate(getLayoutInflater());
     }
 
