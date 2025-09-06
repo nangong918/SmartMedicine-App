@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -182,7 +183,11 @@ public class PublishPostVm extends ViewModel {
 
     public final List<ActivityResultLauncher<Intent>> selectImageLaunchers = new ArrayList<>(BaseConfig.MAX_POST_IMAGE_COUNT);
     private final ImageManager imageManager = new ImageManager();
-    public void initSelectImageLaunchers(@NonNull ImageView[] imageViews, @NonNull View[] addViews, AppCompatActivity activity){
+    public void initSelectImageLaunchers(
+            @NonNull ConstraintLayout[] layouts,
+            @NonNull ImageView[] imageViews,
+            @NonNull View[] addViews,
+            AppCompatActivity activity){
         for (int i = 0; i < imageViews.length; i++){
             int finalI = i;
             ActivityResultLauncher<Intent> launcher = SelectPhotoUtil.initActivityResultLauncher(
@@ -191,10 +196,18 @@ public class PublishPostVm extends ViewModel {
                     aao.imageUriArList.get(i),
                     imageManager,
                     () -> {
-                        for (int j = 0; j < addViews.length; j++) {
-                            if (j == finalI) {
-                                addViews[j].setVisibility(View.VISIBLE);
+                        // 每次重新获取当前图片数量, 保证时效性
+                        int imageCount = aao.getImageCount();
+                        // 设置所有布局和视图的可见性
+                        for (int j = 0; j < layouts.length; j++) {
+                            Log.i(TAG, "handleImageCountChange: " + imageCount);
+                            if (j <= imageCount) {
+                                layouts[j].setVisibility(View.VISIBLE);
+                                imageViews[j].setVisibility(View.VISIBLE);
+                                addViews[j].setVisibility(j <= imageCount - 1 ? View.GONE : View.VISIBLE);
                             } else {
+                                layouts[j].setVisibility(View.GONE);
+                                imageViews[j].setVisibility(View.GONE);
                                 addViews[j].setVisibility(View.GONE);
                             }
                         }

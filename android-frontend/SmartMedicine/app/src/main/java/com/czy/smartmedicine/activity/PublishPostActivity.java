@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.baseutil.activity.BaseActivity;
@@ -40,6 +42,11 @@ public class PublishPostActivity extends BaseActivity<ActivityPublishPostBinding
         initViewModel();
         vm.initSelectImageLaunchers(
                 // imageViews.length == addViews.length == BaseConfig.MAX_POST_IMAGE_COUNT
+                new ConstraintLayout[]{
+                        binding.lyP1,
+                        binding.lyP2,
+                        binding.lyP3
+                },
                 new ImageView[]{
                         binding.imgP1,
                         binding.imgP2,
