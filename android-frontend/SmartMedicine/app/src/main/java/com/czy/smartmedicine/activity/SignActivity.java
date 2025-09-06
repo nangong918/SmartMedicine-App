@@ -47,7 +47,7 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
     protected void init() {
         super.init();
         setStatusBarColor(
-                getColor(com.czy.appview.R.color.white),255
+                com.czy.appview.R.color.white
         );
         initViewModel();
         initView();

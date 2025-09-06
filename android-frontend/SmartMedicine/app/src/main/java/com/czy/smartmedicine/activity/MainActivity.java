@@ -170,25 +170,25 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             switch(fragmentType){
                 case HOME -> {
                     setStatusBarColor(
-                            getColor(com.czy.appview.R.color.green_90),255
+                            com.czy.appview.R.color.green_90
                     );
                     turnToTargetFragment(SelectItemEnum.HOME, HomeFragment.class, null);
                 }
                 case MEDICAL -> {
                     setStatusBarColor(
-                            getColor(com.czy.appview.R.color.green_0),0
+                            com.czy.appview.R.color.green_0
                     );
                     turnToTargetFragment(SelectItemEnum.MEDICAL, MedicineFragment.class, null);
                 }
                 case MESSAGE -> {
                     setStatusBarColor(
-                            getColor(com.czy.appview.R.color.green_0),0
+                            com.czy.appview.R.color.green_0
                     );
                     turnToTargetFragment(SelectItemEnum.MESSAGE, MessageFragment.class, null);
                 }
                 case MINE -> {
                     setStatusBarColor(
-                            getColor(com.czy.appview.R.color.green_0),0
+                            com.czy.appview.R.color.green_0
                     );
                     turnToTargetFragment(SelectItemEnum.MINE, MineFragment.class, null);
                 }

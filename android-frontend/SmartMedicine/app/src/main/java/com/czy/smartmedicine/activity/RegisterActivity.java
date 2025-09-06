@@ -47,7 +47,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     protected void init() {
         super.init();
         setStatusBarColor(
-                getColor(com.czy.appview.R.color.green_200),255
+                com.czy.appview.R.color.green_200
         );
         initIntent();
 

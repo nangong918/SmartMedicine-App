@@ -4,7 +4,6 @@ package com.czy.baseutil.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -72,16 +71,23 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
         Optional.ofNullable(getSupportActionBar())
                 .ifPresent(ActionBar::hide);
 
+        setStatusBarColor(statusBarColorId);
+    }
+
+    private int statusBarColorId = android.R.color.transparent;
+
+    @SuppressLint("ResourceType")
+    public void setStatusBarColor(int colorId){
+        statusBarColorId = colorId;
         // 获取 DecorView
         ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
         int count = decorView.getChildCount();
-
-        // 判断是否已经添加了 StatusBarView
         if (count > 0 && decorView.getChildAt(count - 1) instanceof StatusBarView) {
-            decorView.getChildAt(count - 1).setBackgroundColor(calculateStatusColor(Color.BLUE, 255)); // 你可以自定义颜色和透明度
-        } else {
+            decorView.getChildAt(count - 1).setBackgroundResource(statusBarColorId);
+        }
+        else {
             // 创建并添加 StatusBarView
-            statusBarView = createStatusBarView(this, statusBarColor, statusBarAlpha); // 你可以自定义颜色和透明度
+            StatusBarView statusBarView = createStatusBarView(this, statusBarColorId);
             decorView.addView(statusBarView);
         }
 
@@ -94,26 +100,13 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
         });
     }
 
-    private StatusBarView statusBarView;
-    private int statusBarColor = Color.BLUE;
-    private int statusBarAlpha = 0;
-
-    public void setStatusBarColor(int color, int alpha){
-        statusBarColor = color;
-        statusBarAlpha = alpha;
-        Optional.ofNullable(statusBarView)
-                .ifPresent(
-                        v -> v.setBackgroundColor(calculateStatusColor(color, alpha))
-                );
-    }
-
     // 创建 StatusBarView
-    private static StatusBarView createStatusBarView(Activity activity, int color, int alpha) {
+    private static StatusBarView createStatusBarView(Activity activity, int colorId) {
         StatusBarView statusBarView = new StatusBarView(activity);
         LinearLayout.LayoutParams params =
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight(activity));
         statusBarView.setLayoutParams(params);
-        statusBarView.setBackgroundColor(calculateStatusColor(color, alpha));
+        statusBarView.setBackgroundResource(colorId);
         return statusBarView;
     }
 
@@ -128,10 +121,6 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
         return result;
     }
 
-    // 计算状态栏颜色
-    private static int calculateStatusColor(int color, int alpha) {
-        return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color));
-    }
 
     // 将头部的Bar隐藏
 
