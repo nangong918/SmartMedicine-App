@@ -128,7 +128,7 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
     protected void initView(){
 //        initRecyclerView();
         MainTopBarVo mainTopBarVo = new MainTopBarVo();
-        mainTopBarVo.selectItemEnum = SelectItemEnum.FRIENDS;
+        mainTopBarVo.selectItemEnum = SelectItemEnum.MINE;
         mainTopBarVo.onFriendCallback = () -> {
             Intent intent = new Intent(requireActivity(), SearchUserActivity.class);
             searchUserLauncher.launch(intent);

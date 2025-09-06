@@ -38,6 +38,54 @@ class MineFragment : BaseVmFragment<FragmentMineBinding, MineVm>(
 
     }
 
+    override fun setListener() {
+        super.setListener()
+
+        // 我的动态
+        binding.lyMyDynamic.setOnClickListener {
+        }
+
+        // 我的收藏
+        binding.lyMyCollect.setOnClickListener {
+        }
+
+        // 我的运动
+        binding.lyMySport.setOnClickListener {
+        }
+
+        // 我的饮食
+        binding.lyMyDiet.setOnClickListener {
+        }
+
+        // 我的健康提醒
+        binding.lyMyHealthReminder.setOnClickListener {
+        }
+
+        // 我的购物
+        binding.lyMyShopping.setOnClickListener {
+        }
+
+        // 我的健康
+        binding.lyMyHealth.setOnClickListener {
+        }
+
+        // 我的订单
+        binding.lyMyOrder.setOnClickListener {
+        }
+
+        // 充值
+        binding.btnRecharge.setOnClickListener {
+        }
+
+        // 流水记录
+        binding.btnTransactionRecord.setOnClickListener {
+        }
+
+        // 设置
+        binding.btnSetting.setOnClickListener {
+        }
+    }
+
     //---------------------------ViewModel---------------------------
 
     override fun initViewModel() {

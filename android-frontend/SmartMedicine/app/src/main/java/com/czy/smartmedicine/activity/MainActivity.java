@@ -23,12 +23,10 @@ import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.constant.SelectItemEnum;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityMainBinding;
-import com.czy.smartmedicine.fragment.AiFragment;
 import com.czy.smartmedicine.fragment.MessageFragment;
-import com.czy.smartmedicine.fragment.NoticeFragment;
-import com.czy.smartmedicine.fragment.SearchFragment;
-import com.czy.smartmedicine.fragment.friends.FriendsFragment;
+import com.czy.smartmedicine.fragment.MineFragment;
 import com.czy.smartmedicine.fragment.home.HomeFragment;
+import com.czy.smartmedicine.fragment.medicine.MedicineFragment;
 
 import java.util.Optional;
 
@@ -173,20 +171,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 case HOME -> {
                     turnToTargetFragment(SelectItemEnum.HOME, HomeFragment.class, null);
                 }
-                case SEARCH -> {
-                    turnToTargetFragment(SelectItemEnum.SEARCH, SearchFragment.class, null);
-                }
-                case AI -> {
-                    turnToTargetFragment(SelectItemEnum.AI, AiFragment.class, null);
-                }
-                case FRIENDS -> {
-                    turnToTargetFragment(SelectItemEnum.FRIENDS, FriendsFragment.class, null);
-                }
-                case NOTIFICATIONS -> {
-                    turnToTargetFragment(SelectItemEnum.NOTIFICATIONS, NoticeFragment.class, null);
+                case MEDICAL -> {
+                    turnToTargetFragment(SelectItemEnum.MEDICAL, MedicineFragment.class, null);
                 }
                 case MESSAGE -> {
                     turnToTargetFragment(SelectItemEnum.MESSAGE, MessageFragment.class, null);
+                }
+                case MINE -> {
+                    turnToTargetFragment(SelectItemEnum.MINE, MineFragment.class, null);
                 }
             }
         }

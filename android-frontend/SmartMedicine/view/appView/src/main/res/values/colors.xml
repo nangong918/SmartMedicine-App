@@ -187,6 +187,9 @@
     <color name="yellow_500">#765b00</color>
     <color name="yellow_1000">#241a00</color>
 
+    <color name="gold">#ffd700</color>
+    <color name="gold_500">#EFC700</color>
+
     <color name="orange_90">#ffdcc1</color>
     <color name="orange_100">#fd9b40</color>
     <color name="orange_500">#914c00</color>

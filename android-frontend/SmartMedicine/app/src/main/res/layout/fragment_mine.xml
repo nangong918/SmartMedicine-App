@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/green_0"
@@ -10,459 +10,474 @@
     tools:context=".fragment.MineFragment">
 
     <LinearLayout
-        android:layout_marginTop="40dp"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imgv_avatar"
-            android:layout_marginStart="40dp"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@mipmap/logo"/>
-        
-        <LinearLayout
-            android:layout_marginStart="40dp"
-            android:layout_width="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_vertical"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/tv_userName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:textColor="@color/green_900"
-                android:textStyle="bold"
-                android:maxLines="1"
-                tools:text="鸦羽天下第一！"/>
-            <TextView
-                android:id="@+id/tv_userAccount"
-                android:layout_marginTop="2dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/grey_100"
-                android:textSize="11sp"
-                android:textStyle="italic"
-                tools:text="YaYuBestInTheWorld!"/>
-
-        </LinearLayout>
-
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_marginTop="25dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_community_dynamic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textColor="@color/green_900"
-                tools:text="20"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textSize="16sp"
-                android:textColor="@color/green_900"
-                tools:text="@string/community_dynamic"/>
-
-        </LinearLayout>
-        
-        <View
-            android:layout_width="1dp"
-            android:layout_height="33dp"
-            android:background="@color/green_900"/>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_follow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textColor="@color/green_900"
-                tools:text="300"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/green_900"
-                tools:text="@string/follow"/>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="33dp"
-            android:background="@color/green_900"/>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_fans"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textColor="@color/green_900"
-                tools:text="220.5k"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/green_900"
-                tools:text="@string/fans"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <GridLayout
-        android:layout_marginTop="35dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:rowCount="2"
-        android:columnCount="4"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="@drawable/round_corners_bg_green900"
-        android:layout_gravity="center">
-
-        <LinearLayout
-            android:id="@+id/ly_my_dynamic"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:tint="@color/green_900"
-                android:src="@drawable/animated_images_48px" />
-
-            <TextView
-                android:layout_marginTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/green_900"
-                android:text="@string/my_dynamic"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ly_my_collect"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:tint="@color/green_900"
-                android:src="@drawable/heart_plus_48px" /> <!-- 替换为相应的图片资源 -->
-
-            <TextView
-                android:layout_marginTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/green_900"
-                android:text="@string/my_collect"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ly_my_sport"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:tint="@color/green_900"
-                android:src="@drawable/directions_bike_48px" /> <!-- 替换为相应的图片资源 -->
-
-            <TextView
-                android:layout_marginTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/green_900"
-                android:text="@string/my_sport"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ly_my_diet"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:tint="@color/green_900"
-                android:src="@drawable/yoshoku_48px" /> <!-- 替换为相应的图片资源 -->
-
-            <TextView
-                android:layout_marginTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/green_900"
-                android:text="@string/my_diet"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ly_my_health_reminder"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:tint="@color/green_900"
-                android:src="@drawable/notifications_active_48px" /> <!-- 替换为相应的图片资源 -->
-
-            <TextView
-                android:layout_marginTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/green_900"
-                android:text="@string/my_health_reminder"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ly_my_shopping"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:tint="@color/green_900"
-                android:src="@drawable/shopping_cart_48px" /> <!-- 替换为相应的图片资源 -->
-
-            <TextView
-                android:layout_marginTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/green_900"
-                android:text="@string/my_shopping"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ly_my_health"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:tint="@color/green_900"
-                android:src="@drawable/ecg_heart_48px" /> <!-- 替换为相应的图片资源 -->
-
-            <TextView
-                android:layout_marginTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/green_900"
-                android:text="@string/my_health"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ly_my_order"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                app:tint="@color/green_900"
-                android:src="@drawable/delivery_truck_speed_48px" /> <!-- 替换为相应的图片资源 -->
-
-            <TextView
-                android:layout_marginTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/green_900"
-                android:text="@string/my_order"
-                android:gravity="center" />
-        </LinearLayout>
-
-    </GridLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="260dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:orientation="vertical"
-        android:background="@drawable/round_corners_bg_commend">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="25dp">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/wallet_48px"
-                app:tint="@color/green_900" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="22sp"
-                android:text="@string/my_wallet"
-                android:layout_marginStart="20dp"
-                android:textColor="@color/green_900"
-                android:textStyle="bold"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="25dp"
             android:gravity="center_vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/money_bag_48px"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgv_avatar"
+                android:layout_marginStart="25dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@mipmap/logo"/>
 
-            <TextView
-                android:id="@+id/tv_money"
+            <LinearLayout
+                android:layout_marginStart="20dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="54,000.50"
-                android:maxLines="1"
-                android:layout_marginStart="10dp"
-                android:textSize="35sp"/>
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_userName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:textColor="@color/green_900"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    tools:text="鸦羽天下第一！"/>
+                <TextView
+                    android:id="@+id/tv_userAccount"
+                    android:layout_marginTop="2dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/grey_100"
+                    android:textSize="11sp"
+                    android:textStyle="italic"
+                    tools:text="YaYuBestInTheWorld!"/>
+
+            </LinearLayout>
+
+
 
         </LinearLayout>
-        
+
+        <LinearLayout
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/ly_community_dynamic"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_community_dynamic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/green_900"
+                    tools:text="20"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/green_900"
+                    android:text="@string/community_dynamic"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="33dp"
+                android:background="@color/green_900"/>
+
+            <LinearLayout
+                android:id="@+id/ly_follow"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_follow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/green_900"
+                    android:textSize="14sp"
+                    tools:text="300" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/green_900"
+                    android:textSize="14sp"
+                    android:text="@string/follow" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="33dp"
+                android:background="@color/green_900"/>
+
+            <LinearLayout
+                android:id="@+id/ly_fans"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_fans"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/green_900"
+                    tools:text="220.5k"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/green_900"
+                    android:text="@string/fans"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <GridLayout
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:rowCount="2"
+            android:columnCount="4"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:background="@drawable/round_corners_bg_green900"
+            android:layout_gravity="center">
+
+            <LinearLayout
+                android:id="@+id/ly_my_dynamic"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:tint="@color/green_900"
+                    android:src="@drawable/animated_images_48px" />
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/green_900"
+                    android:text="@string/my_dynamic"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_my_collect"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:tint="@color/green_900"
+                    android:src="@drawable/heart_plus_48px" /> <!-- 替换为相应的图片资源 -->
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/green_900"
+                    android:text="@string/my_collect"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_my_sport"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:tint="@color/green_900"
+                    android:src="@drawable/directions_bike_48px" /> <!-- 替换为相应的图片资源 -->
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/green_900"
+                    android:text="@string/my_sport"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_my_diet"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:tint="@color/green_900"
+                    android:src="@drawable/yoshoku_48px" /> <!-- 替换为相应的图片资源 -->
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/green_900"
+                    android:text="@string/my_diet"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_my_health_reminder"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:tint="@color/green_900"
+                    android:src="@drawable/notifications_active_48px" /> <!-- 替换为相应的图片资源 -->
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/green_900"
+                    android:text="@string/my_health_reminder"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_my_shopping"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:tint="@color/green_900"
+                    android:src="@drawable/shopping_cart_48px" /> <!-- 替换为相应的图片资源 -->
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/green_900"
+                    android:text="@string/my_shopping"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_my_health"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:tint="@color/green_900"
+                    android:src="@drawable/ecg_heart_48px" /> <!-- 替换为相应的图片资源 -->
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/green_900"
+                    android:text="@string/my_health"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_my_order"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:tint="@color/green_900"
+                    android:src="@drawable/delivery_truck_speed_48px" /> <!-- 替换为相应的图片资源 -->
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/green_900"
+                    android:text="@string/my_order"
+                    android:gravity="center" />
+            </LinearLayout>
+
+        </GridLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:orientation="vertical"
+            android:background="@drawable/round_corners_bg_commend">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="25dp">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/wallet_48px"
+                    app:tint="@color/green_900" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="@string/my_wallet"
+                    android:layout_marginStart="20dp"
+                    android:textColor="@color/green_900"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:gravity="center_vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:tint="@color/gold"
+                    android:src="@drawable/money_bag_48px"/>
+
+                <TextView
+                    android:id="@+id/tv_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="54,000.50"
+                    android:textColor="@color/gold"
+                    android:maxLines="1"
+                    android:layout_marginStart="10dp"
+                    android:textSize="35sp"/>
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_recharge"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="40dp"
+                android:layout_marginBottom="30dp"
+                android:layout_width="95dp"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:text="@string/recharge"
+                android:textSize="14sp"
+                android:textColor="@color/green_900"
+                android:background="@drawable/round_corners_button_commend"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_transaction_record"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="40dp"
+                android:layout_marginBottom="30dp"
+                android:layout_width="95dp"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:text="@string/transaction_record"
+                android:textSize="14sp"
+                android:textColor="@color/green_900"
+                android:background="@drawable/round_corners_button_commend"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_recharge"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="40dp"
-            android:layout_marginBottom="30dp"
-            android:layout_width="95dp"
-            android:layout_height="35dp"
+            android:id="@+id/btn_setting"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_height="45dp"
             android:gravity="center"
-            android:text="@string/recharge"
-            android:textSize="14sp"
+            android:text="@string/setting"
+            android:textSize="18sp"
             android:textColor="@color/green_900"
             android:background="@drawable/round_corners_button_commend"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_transaction_record"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="40dp"
-            android:layout_marginBottom="30dp"
-            android:layout_width="95dp"
-            android:layout_height="35dp"
-            android:gravity="center"
-            android:text="@string/transaction_record"
-            android:textSize="14sp"
-            android:textColor="@color/green_900"
-            android:background="@drawable/round_corners_button_commend"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_setting"
-        android:layout_marginTop="50dp"
-        android:layout_width="match_parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_height="45dp"
-        android:gravity="center"
-        android:text="@string/setting"
-        android:textSize="18sp"
-        android:textColor="@color/green_900"
-        android:background="@drawable/round_corners_button_commend"/>
+    </LinearLayout>
 
 
-</LinearLayout>
+
+
+</ScrollView>
