@@ -180,8 +180,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     app:tint="@color/green_900"
                     android:src="@drawable/animated_images_48px" />
 
@@ -189,7 +189,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:textColor="@color/green_900"
                     android:text="@string/my_dynamic"
                     android:gravity="center" />
@@ -204,8 +204,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     app:tint="@color/green_900"
                     android:src="@drawable/heart_plus_48px" /> <!-- 替换为相应的图片资源 -->
 
@@ -213,7 +213,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:textColor="@color/green_900"
                     android:text="@string/my_collect"
                     android:gravity="center" />
@@ -228,8 +228,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     app:tint="@color/green_900"
                     android:src="@drawable/directions_bike_48px" /> <!-- 替换为相应的图片资源 -->
 
@@ -237,7 +237,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:textColor="@color/green_900"
                     android:text="@string/my_sport"
                     android:gravity="center" />
@@ -252,8 +252,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     app:tint="@color/green_900"
                     android:src="@drawable/yoshoku_48px" /> <!-- 替换为相应的图片资源 -->
 
@@ -261,7 +261,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:textColor="@color/green_900"
                     android:text="@string/my_diet"
                     android:gravity="center" />
@@ -277,8 +277,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     app:tint="@color/green_900"
                     android:src="@drawable/notifications_active_48px" /> <!-- 替换为相应的图片资源 -->
 
@@ -286,7 +286,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:textColor="@color/green_900"
                     android:text="@string/my_health_reminder"
                     android:gravity="center" />
@@ -302,8 +302,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     app:tint="@color/green_900"
                     android:src="@drawable/shopping_cart_48px" /> <!-- 替换为相应的图片资源 -->
 
@@ -311,7 +311,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:textColor="@color/green_900"
                     android:text="@string/my_shopping"
                     android:gravity="center" />
@@ -327,8 +327,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     app:tint="@color/green_900"
                     android:src="@drawable/ecg_heart_48px" /> <!-- 替换为相应的图片资源 -->
 
@@ -336,7 +336,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:textColor="@color/green_900"
                     android:text="@string/my_health"
                     android:gravity="center" />
@@ -352,8 +352,8 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     app:tint="@color/green_900"
                     android:src="@drawable/delivery_truck_speed_48px" /> <!-- 替换为相应的图片资源 -->
 
@@ -361,7 +361,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:textColor="@color/green_900"
                     android:text="@string/my_order"
                     android:gravity="center" />
@@ -388,8 +388,8 @@
                 android:layout_marginTop="25dp">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:src="@drawable/wallet_48px"
                     app:tint="@color/green_900" />
 
@@ -438,7 +438,7 @@
                 android:layout_marginStart="40dp"
                 android:layout_marginBottom="30dp"
                 android:layout_width="95dp"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
                 android:gravity="center"
                 android:text="@string/recharge"
                 android:textSize="14sp"
@@ -452,7 +452,7 @@
                 android:layout_marginEnd="40dp"
                 android:layout_marginBottom="30dp"
                 android:layout_width="95dp"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
                 android:gravity="center"
                 android:text="@string/transaction_record"
                 android:textSize="14sp"
