@@ -23,10 +23,10 @@ import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.constant.SelectItemEnum;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityMainBinding;
-import com.czy.smartmedicine.fragment.MessageFragment;
 import com.czy.smartmedicine.fragment.MineFragment;
 import com.czy.smartmedicine.fragment.home.HomeFragment;
 import com.czy.smartmedicine.fragment.medicine.MedicineFragment;
+import com.czy.smartmedicine.fragment.message.MessageMainFragment;
 
 import java.util.Optional;
 
@@ -184,7 +184,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     setStatusBarColor(
                             com.czy.appview.R.color.green_0
                     );
-                    turnToTargetFragment(SelectItemEnum.MESSAGE, MessageFragment.class, null);
+                    turnToTargetFragment(SelectItemEnum.MESSAGE, MessageMainFragment.class, null);
                 }
                 case MINE -> {
                     setStatusBarColor(

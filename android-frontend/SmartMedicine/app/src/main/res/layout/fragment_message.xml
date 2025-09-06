@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.MessageFragment">
+    tools:context=".fragment.message.children.MessageFragment">
 
     <!--  TODO：当没有消息的时候展示No Message  -->
     <androidx.recyclerview.widget.RecyclerView

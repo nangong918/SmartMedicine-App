@@ -1,4 +1,4 @@
-package com.czy.smartmedicine.fragment;
+package com.czy.smartmedicine.fragment.message.children;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
