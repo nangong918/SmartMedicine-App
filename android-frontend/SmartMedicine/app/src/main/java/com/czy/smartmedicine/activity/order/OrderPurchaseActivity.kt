@@ -1,20 +1,13 @@
 package com.czy.smartmedicine.activity.order
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.czy.smartmedicine.R
-import com.czy.smartmedicine.databinding.ActivityOrderListBinding
 import com.czy.smartmedicine.databinding.ActivityOrderPurchaseBinding
 import com.czy.smartmedicine.utils.BaseVmActivity
-import com.czy.smartmedicine.viewModel.order.OrderListVm
-import com.czy.smartmedicine.viewModel.order.OrderPurchaseVm
+import com.czy.smartmedicine.viewModel.activity.order.OrderPurchaseAVm
 
-class OrderPurchaseActivity : BaseVmActivity<ActivityOrderPurchaseBinding, OrderPurchaseVm>(
+class OrderPurchaseActivity : BaseVmActivity<ActivityOrderPurchaseBinding, OrderPurchaseAVm>(
     OrderPurchaseActivity::class,
-    OrderPurchaseVm::class
+    OrderPurchaseAVm::class
 ) {
     override fun initBinding(): ActivityOrderPurchaseBinding {
         return ActivityOrderPurchaseBinding.inflate(layoutInflater)
