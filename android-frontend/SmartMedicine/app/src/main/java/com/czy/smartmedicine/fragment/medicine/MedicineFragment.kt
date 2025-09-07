@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager2.widget.ViewPager2
 import com.czy.appview.view.medicine.MedicineViewPagerEnum
 import com.czy.domain.fragmentActivityAo.medicine.MedicineFAo
 import com.czy.smartmedicine.databinding.FragmentMedicineBinding
@@ -43,8 +44,17 @@ class MedicineFragment : BaseVmFragment<FragmentMedicineBinding, MedicineVm>(
 
         // 设置顶部导航栏的点击监听器
         binding.medicineSelectBar.setOnViewPagerBarClickListener { position ->
+            vm.fao.currentPosition.value = position
             binding.vPager2.setCurrentItem(position, true)
         }
+
+        // 注册页面变化回调
+        binding.vPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                vm.fao.currentPosition.value = position
+            }
+        })
     }
 
     //---------------------------ViewModel---------------------------

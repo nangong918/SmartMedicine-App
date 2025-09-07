@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.czy.appview.view.home.HomeViewPagerEnum;
 import com.czy.baseutil.image.ImageLoadUtil;
@@ -71,7 +72,16 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
 
         // 设置顶部导航栏的点击监听器
         binding.homeSelectBar.setOnViewPagerBarClickListener(position -> {
+            vm.homeFAo.currentPosition.setValue(position);
             binding.vPager2.setCurrentItem(position, true);
+        });
+
+        binding.vPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                vm.homeFAo.currentPosition.setValue(position);
+            }
         });
 
         // searchBar

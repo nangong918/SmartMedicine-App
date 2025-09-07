@@ -6,7 +6,6 @@ import com.czy.appcore.network.netty.api.send.SocketMessageSender
 import com.czy.dao.networkRepository.ApiRequestImpl
 import com.czy.domain.fragmentActivityAo.medicine.MedicineFAo
 import com.czy.smartmedicine.fragment.medicine.children.MedicineViewPagerAdapter
-import com.czy.smartmedicine.viewModel.fragment.home.RecommendVm
 
 open class MedicineVm(
     private val apiRequestImpl: ApiRequestImpl,
@@ -21,10 +20,10 @@ open class MedicineVm(
 
     open lateinit var medicineViewPagerAdapter : MedicineViewPagerAdapter
 
-    open var medicineFAo : MedicineFAo = MedicineFAo()
+    open var fao : MedicineFAo = MedicineFAo()
 
     open fun init(medicineFAo : MedicineFAo, fragment : Fragment){
-        this.medicineFAo = medicineFAo
+        this.fao = medicineFAo
         medicineViewPagerAdapter = MedicineViewPagerAdapter(
             fragment.childFragmentManager,
             fragment.lifecycle
