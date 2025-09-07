@@ -8,12 +8,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.czy.baseutil.viewModel.ViewModelUtil;
 import com.czy.domain.fragmentActivityAo.MessageVo;
-import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.FragmentMessageBinding;
 import com.czy.smartmedicine.utils.BaseVmFragment;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.fragment.MessageVm;
 
 import kotlin.jvm.JvmClassMappingKt;
@@ -88,13 +85,9 @@ public class MessageFragment extends BaseVmFragment<FragmentMessageBinding, Mess
 
     //---------------------------viewModel---------------------------
 
-    private MessageVm vm;
-
     @Override
     protected void initViewModel(){
         super.initViewModel();
-        ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, MessageVm.class);
 
         vm.init(new MessageVo());
 
@@ -102,7 +95,22 @@ public class MessageFragment extends BaseVmFragment<FragmentMessageBinding, Mess
     }
 
     private void observeData() {
-        // 观察RecyclerView
+        // 观察RecyclerView todo 此处逻辑需要核对 (注意, 我暂时还没设置任何地方去设置totalMessageCountLd)
+        vm.messageVo.totalMessageCountLd.observe(this, totalMessageCount -> {
+            if (totalMessageCount <= 0){
+                binding.rclvMessage.setVisibility(View.INVISIBLE);
+                binding.lyHaveNoMessage.setVisibility(View.VISIBLE);
+            }
+            else {
+                binding.rclvMessage.setVisibility(View.VISIBLE);
+                binding.lyHaveNoMessage.setVisibility(View.GONE);
+            }
+        });
+
+        // 未读新消息数量
+        vm.messageVo.unreadMessageCountLd.observe(this, unreadMessageCount -> {
+            binding.vMessagePrompt.setMessageNum(unreadMessageCount);
+        });
     }
 
     @Override

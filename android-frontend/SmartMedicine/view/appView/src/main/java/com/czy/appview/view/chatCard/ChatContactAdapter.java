@@ -2,6 +2,7 @@ package com.czy.appview.view.chatCard;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -43,6 +44,7 @@ public class ChatContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         // 相同地址的情况
         if (newList == currentList){
             // 地址相同直接更新
+            Log.i(ChatContactAdapter.class.getName(), "currentList: size" + currentList.size());
             notifyDataSetChanged();
         }
         else {
@@ -53,6 +55,7 @@ public class ChatContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             // 通过 diffResult 更新 RecyclerView
             diffResult.dispatchUpdatesTo(this);
             // TODO BUG此处有问题，暂时使用全部更新Bug
+            Log.i(ChatContactAdapter.class.getName(), "currentList: size" + currentList.size());
             notifyItemChanged(newList.size() - 1);
         }
     }
