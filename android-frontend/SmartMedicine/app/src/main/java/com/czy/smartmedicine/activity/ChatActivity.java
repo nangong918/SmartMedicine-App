@@ -129,20 +129,6 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
                         binding.tvTitle.setText(newName);
                     });
                 });
-        // 头像
-        Optional.ofNullable(vm)
-                .map(vm -> vm.chatVo)
-                .map(cvo -> cvo.avatarUrlOrUri)
-                .ifPresent(liveData -> {
-                    liveData.observe(this, newAvatarUrlOrUri -> {
-                        if (!TextUtils.isEmpty(newAvatarUrlOrUri)) {
-                            ImageLoadUtil.loadImageViewByNetWork(
-                                    newAvatarUrlOrUri,
-                                    binding.imgvCircle
-                            );
-                        }
-                    });
-                });
         // 输入框
 //        Optional.ofNullable(viewModel)
 //                .map(vm -> vm.chatVo)
