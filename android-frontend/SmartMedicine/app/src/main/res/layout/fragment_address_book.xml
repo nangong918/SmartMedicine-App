@@ -1,113 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/contact_background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.message.children.AddressBookFragment">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/ly_new_friends"
-            android:padding="15dp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:orientation="vertical">
 
-            <ImageView
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="15dp"
-                android:src="@drawable/group_add_24px"
-                app:tint="@color/green_900" />
-
-            <TextView
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="55dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/new_friends"
-                android:textColor="@color/green_900"
-                android:textSize="16sp" />
-
-            <com.czy.appview.view.MessagePrompt
-                android:id="@+id/v_newFriends_prompt"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ly_new_friends"
+                android:padding="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_width="21dp"
-                android:layout_height="21dp"
-                android:layout_marginEnd="20dp"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/ly_friend_labels"
-            android:padding="15dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="15dp"
-                android:src="@drawable/sell_24px"
-                app:tint="@color/green_900" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="55dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/friend_labels"
-                android:textColor="@color/green_900"
-                android:textSize="16sp" />
+                <ImageView
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:foregroundGravity="center"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/person_add_24px"
+                    app:tint="@color/green_900" />
 
-            <com.czy.appview.view.MessagePrompt
-                android:id="@+id/v_friendLabel_prompt"
+                <TextView
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginStart="55dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/new_friends"
+                    android:textColor="@color/green_900"
+                    android:textSize="16sp" />
+
+                <com.czy.appview.view.MessagePrompt
+                    android:id="@+id/v_newFriends_prompt"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="21dp"
+                    android:layout_height="21dp"
+                    android:layout_marginEnd="20dp"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ly_friend_labels"
+                android:padding="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_width="21dp"
-                android:layout_height="21dp"
-                android:layout_marginEnd="20dp"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/sell_24px"
+                    app:tint="@color/green_900" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rclv_contact"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/contact_background"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:layout_height="1000dp" />
+                <TextView
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginStart="55dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/friend_labels"
+                    android:textColor="@color/green_900"
+                    android:textSize="16sp" />
 
-    </LinearLayout>
+                <com.czy.appview.view.MessagePrompt
+                    android:id="@+id/v_friendLabel_prompt"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="21dp"
+                    android:layout_height="21dp"
+                    android:layout_marginEnd="20dp"/>
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.core.widget.NestedScrollView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rclv_contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:layout_height="1000dp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

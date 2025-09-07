@@ -71,7 +71,7 @@
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:layout_marginStart="35dp"
-                    android:src="@drawable/group_add_24px"
+                    android:src="@drawable/person_add_24px"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
