@@ -14,8 +14,6 @@
 
         <LinearLayout
             android:id="@+id/ly_new_message"
-            android:visibility="gone"
-            tools:visibility="visible"
             android:padding="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -40,8 +40,12 @@ public class MessageViewPagerAdapter extends FragmentStateAdapter {
 
         MessageViewPagerEnum viewPagerEnum = MessageViewPagerEnum.getEnumByIndex(position);
         Fragment fragment = switch (viewPagerEnum) {
-            case MESSAGE -> new MessageFragment();
-            case ADDRESS_BOOK -> new AddressBookFragment();
+            case MESSAGE -> {
+                yield new MessageFragment();
+            }
+            case ADDRESS_BOOK -> {
+                yield new AddressBookFragment();
+            }
             default -> {
                 Log.w(TAG, "Unexpected value: " + viewPagerEnum);
                 throw new IllegalStateException("Unexpected value: " + viewPagerEnum);

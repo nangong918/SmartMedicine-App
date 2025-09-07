@@ -45,9 +45,6 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // 初始化viewModel
-        initViewModel();
     }
 
     @Override
