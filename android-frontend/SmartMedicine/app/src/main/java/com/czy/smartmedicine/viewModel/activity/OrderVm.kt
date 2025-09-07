@@ -1,26 +1,25 @@
-package com.czy.smartmedicine.viewModel.fragment
+package com.czy.smartmedicine.viewModel.activity
 
 import androidx.lifecycle.ViewModel
 import com.czy.appcore.network.netty.api.send.SocketMessageSender
 import com.czy.dao.networkRepository.ApiRequestImpl
-import com.czy.domain.fragmentActivityAo.mine.MineFAo
+import com.czy.domain.fragmentActivityAo.OrderAAo
 
-
-open class MineVm(
+open class OrderVm(
     private val apiRequestImpl: ApiRequestImpl,
     private val socketMessageSender: SocketMessageSender
-) : ViewModel(){
+) : ViewModel() {
 
     companion object {
-        val TAG: String = MineVm::class.java.name
+        val TAG: String = OrderVm::class.java.name
     }
 
-    //---------------------------FAo Ld---------------------------
+    //---------------------------AAo Ld---------------------------
 
-    open lateinit var fao : MineFAo
+    open lateinit var aao: OrderAAo
 
-    open fun init(fao: MineFAo){
-        this.fao = fao
+    open fun init(aao: OrderAAo) {
+        this.aao = aao
     }
 
     //---------------------------NetWork---------------------------
