@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.mapper.post.mybatis.bo.PostViewBoMapper">
+
+
+    <select id="getPostViewBoById" resultType="com.czy.api.domain.bo.post.PostViewBo">
+        SELECT
+            pi.id AS postId,
+
+            au.id AS authorId,
+            au.avatar_file_id AS authorAvatarFileId,
+            au.user_name AS authorName,
+
+            pi.title AS postTitle,
+            pi.release_timestamp AS releaseTimestamp,
+            pi.view_count AS postViewNum,
+            pi.like_count AS likeNum,
+            pi.collect_count AS collectNum,
+            pi.comment_count AS commentNum,
+            pi.forward_count AS forwardNum,
+
+            -- 子查询聚合文件ID（不需要GROUP BY）
+            (SELECT
+            GROUP_CONCAT(DISTINCT pf.file_id)
+            FROM post_files pf
+            WHERE pf.post_id = pi.id) AS postImgFileIds,
+
+            IFNULL(upa.like, false) AS like,
+            IFNULL(upa.collect, false) AS collect,
+            IFNULL(upa.dislike, false) AS dislike
+
+        FROM post_info AS pi
+        LEFT JOIN login_user AS au ON pi.author_id = au.id
+        LEFT JOIN post_files AS pf ON pi.id = pf.post_id
+        LEFT JOIN user_post_action AS upa ON pi.id = upa.post_id AND upa.user_id = #{userId}
+        WHERE pi.id = #{postId}
+    </select>
+</mapper>

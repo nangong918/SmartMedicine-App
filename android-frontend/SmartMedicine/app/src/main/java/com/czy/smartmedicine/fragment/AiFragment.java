@@ -10,10 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.czy.baseUtilsLib.activity.BaseFragment;
-import com.czy.dal.constant.SelectItemEnum;
-import com.czy.dal.vo.view.mainTop.MainTopBarVo;
-import com.czy.smartmedicine.activity.MainActivity;
+import com.czy.baseutil.activity.BaseFragment;
 import com.czy.smartmedicine.activity.TestActivity;
 import com.czy.smartmedicine.databinding.FragmentAiBinding;
 
@@ -48,8 +45,7 @@ public class AiFragment extends BaseFragment<FragmentAiBinding> {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // initView(); 此处binding才生效
-        ((MainActivity)requireActivity()).setMainTopBar(new MainTopBarVo(SelectItemEnum.AI));
+
     }
 
     @Override

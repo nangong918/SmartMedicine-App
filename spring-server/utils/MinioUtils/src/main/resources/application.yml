@@ -1,0 +1,43 @@
+#-------------------------server Setting-------------------------
+
+server:
+
+  port: 29910
+  # 优雅关闭
+  shutdown: graceful
+
+#-------------------------spring Setting-------------------------
+spring:
+
+  #-------------------------database Setting-------------------------
+  datasource:
+
+
+#============ oss：minIO
+minio:
+  endpoint: "http://127.0.0.1:9000" # minIO 服务器地址
+  access-key: "minioadmin"  # minIO 用户名
+  secret-key: "minioadmin"  # minIO 密码
+  #============ minio 代理
+  use-gateway-proxy: true
+  gateway-port: 8888        # 代理minio的网关端口号
+  minio-url: "/oss-minio"
+
+
+#-------------------------Mybatis-plus setting-------------------------
+
+mybatis-plus:
+  type-aliases-package: com.utils.minio.domain # 扫描实体类
+  mapper-locations: classpath*:mybatis/*Mapper.xml, classpath*:mybatis-plus/*Mapper.xml #指定多个 Mapper XML 文件的路径
+  global-config:
+    db-config:
+      id-type: auto # 数据库主键策略配置
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# logging
+
+logging:
+  level:
+    org:
+      mybatis: DEBUG

@@ -8,7 +8,7 @@ package "Base" {
 }
 
 package "Business" {
-    [user-relationship-service]
+    [user-auth-relation-service]
     [auth-sms-service]
     [message-service]
     [post-service]
@@ -16,16 +16,16 @@ package "Business" {
     [search-service]
     [feature-service]
 
-    [message-service] --> [user-relationship-service]
+    [message-service] --> [user-auth-relation-service]
     [message-service] -[#0000FF]--> [oss-service]
     [message-service] -[#0000FF]--> [netty-socket]
 
-    [user-relationship-service] --> [auth-sms-service]
+    [user-auth-relation-service] --> [auth-sms-service]
 
-    [post-service] --> [user-relationship-service]
+    [post-service] --> [user-auth-relation-service]
     [post-service] -[#0000FF]--> [oss-service]
 
-    [recommend-service] --> [user-relationship-service]
+    [recommend-service] --> [user-auth-relation-service]
     [recommend-service] --> [post-service]
 }
 

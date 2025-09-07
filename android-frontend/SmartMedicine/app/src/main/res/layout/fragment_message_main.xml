@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.message.MessageMainFragment">
+
+    <LinearLayout
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/mark_email_unread_48px"
+            app:tint="@color/green_900"/>
+
+        <TextView
+            android:layout_marginStart="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/green_900"
+            android:text="@string/message"/>
+
+    </LinearLayout>
+
+    <com.czy.appview.view.message.MessageViewPagerBar
+        android:id="@+id/message_select_bar"
+        app:layout_constraintTop_toBottomOf="@+id/home_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/v_pager2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/message_select_bar"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</LinearLayout>

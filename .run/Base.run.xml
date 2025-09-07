@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Base" type="CompoundRunConfigurationType">
-    <toRun name="NettySocketApplication" type="Application" />
-    <toRun name="OssApplication" type="Application" />
-    <method v="2" />
-  </configuration>
-</component>

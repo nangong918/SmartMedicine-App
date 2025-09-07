@@ -2,7 +2,7 @@
 2.netty-socket                  10000-10009
 3.oss-service                   10010-10019
 4.auth-sms-service              10020-10029
-6.user-relationship-service     10040-10049
+6.user-auth-relation-service     10040-10049
 7.message-service               10050-10059
 7.post-service                  10070-10079
 8.logging-service               10080-10089
@@ -10,5 +10,8 @@
 10.recommend-offline-service    10100-10109
 11.recommend-service            10110-10119
 12.search-service               10120-10129
+
+medicine-service                10130-10139
+purchase-service                10140-10149
 
 n.gateway                       8888

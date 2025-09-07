@@ -1,22 +1,22 @@
 package com.czy.imports.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.api.mapper.post.es.PostDetailEsMapper;
+import com.api.mapper.post.mongo.PostDetailMongoMapper;
+import com.api.mapper.user.es.UserEsMapper;
 import com.czy.api.api.post.PostImportService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.imports.ImportsConstant;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.constant.user_relationship.UserConstant;
-import com.czy.api.domain.Do.oss.OssFileDo;
-import com.czy.api.domain.ao.oss.FileAo;
 import com.czy.imports.domain.Do.ArticleDo;
 import com.czy.imports.domain.ao.AuthorAo;
 import com.czy.imports.manager.CrawlerDataManager;
-import com.czy.imports.mapper.OssMapper;
-import com.czy.imports.mapper.PostDetailMongoMapper;
-import com.czy.imports.mapperEs.PostDetailEsMapper;
-import com.czy.imports.mapperEs.UserEsMapper;
 import com.czy.imports.service.ImportAuthorService;
-import com.utils.mvc.service.MinIOService;
+import com.utils.minio.domain.Do.OssFileDo;
+import com.utils.minio.domain.ao.FileAo;
+import com.utils.minio.mapper.OssMapper;
+import com.utils.minio.service.MinioService;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 @Service
 public class ImportAuthorServiceImpl implements ImportAuthorService {
 
-    private final MinIOService minIOService;
+    private final MinioService minIOService;
     private final OssMapper ossMapper;
 
 //    private final UserMapper userMapper;
@@ -57,7 +57,7 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
     private final org.neo4j.ogm.session.Session session;
 
     @Override
-    public FileOptionResult uploadFiles(String filePath, String bucketName) {
+    public FileOptionResult uploadFiles(String filePath, String bucketName, Long userId) {
         File file = new File(filePath);
 //        List<File> files = new ArrayList<>();
 //        files.add(file);
@@ -76,6 +76,7 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
         List<OssFileDo> ossFileDos = new ArrayList<>();
         for (SuccessFile successFile : successFiles){
             OssFileDo ossFileDo = new OssFileDo();
+            ossFileDo.setUserId(userId);
             ossFileDo.setId(successFile.getFileId());
             log.info("fileId:{}", successFile.getFileId());
             ossFileDo.setFileName(successFile.getFileName());
@@ -138,11 +139,13 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
             log.info("importSingle::上传头像并获取id::节点检查，authorImagePath: {}", authorImagePath);
         }
 
+        // 作者id
         long userId = IdUtil.getSnowflakeNextId();
         if (StringUtils.hasText(authorImagePath)){
             FileOptionResult result = uploadFiles(
                     authorImagePath,
-                    UserConstant.USER_FILE_BUCKET + userId
+                    UserConstant.USER_FILE_BUCKET + userId,
+                    userId
             );
             if (!result.getSuccessFiles().isEmpty()){
                 // 默认取第0个
@@ -167,7 +170,9 @@ public class ImportAuthorServiceImpl implements ImportAuthorService {
             if (StringUtils.hasText(articleImagePath)){
                 FileOptionResult result = uploadFiles(
                         articleImagePath,
-                        PostConstant.POST_FILE_BUCKET + articleDo.getId()
+                        PostConstant.POST_FILE_BUCKET + articleDo.getId(),
+                        // ossMapper需要存储文件属于哪个user，此文件属于作者
+                        userId
                 );
                 if (!result.getSuccessFiles().isEmpty()){
                     List<Long> postFileIds = result.getSuccessFiles().stream()

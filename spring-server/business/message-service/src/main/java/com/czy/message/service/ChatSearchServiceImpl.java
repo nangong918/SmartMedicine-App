@@ -1,8 +1,8 @@
 package com.czy.message.service;
 
+import com.api.mapper.message.es.UserChatMessageEsMapper;
 import com.czy.api.api.message.ChatSearchService;
 import com.czy.api.domain.Do.message.UserChatMessageEsDo;
-import com.czy.message.mapper.es.UserChatMessageEsMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

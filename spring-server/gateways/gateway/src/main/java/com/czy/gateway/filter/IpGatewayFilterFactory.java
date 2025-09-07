@@ -11,7 +11,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.OrderedGatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.stereotype.Component;
-import utils.ResponseUtils;
+import com.czy.gateway.utils.ResponseUtils;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

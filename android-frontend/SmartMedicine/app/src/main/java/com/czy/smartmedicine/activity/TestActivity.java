@@ -13,22 +13,22 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.czy.appcore.network.netty.api.receive.ChatApiHandler;
-import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.baseUtilsLib.image.ImageLoadUtil;
-import com.czy.baseUtilsLib.permission.GainPermissionCallback;
-import com.czy.baseUtilsLib.permission.PermissionUtil;
-import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.dal.constant.NettyConstants;
-import com.czy.dal.dto.netty.forwardMessage.GroupTextDataResponse;
-import com.czy.dal.dto.netty.forwardMessage.SendTextDataRequest;
-import com.czy.dal.dto.netty.forwardMessage.UserImageResponse;
-import com.czy.dal.dto.netty.forwardMessage.UserTextDataResponse;
-import com.czy.dal.dto.netty.response.HaveReadMessageResponse;
+import com.czy.baseutil.activity.BaseActivity;
+import com.czy.baseutil.image.ImageLoadUtil;
+import com.czy.baseutil.permission.GainPermissionCallback;
+import com.czy.baseutil.permission.PermissionUtil;
+import com.czy.baseutil.ui.ToastUtils;
+import com.czy.baseutil.viewModel.ViewModelUtil;
+import com.czy.domain.constant.NettyConstants;
+import com.czy.domain.dto.netty.forwardMessage.GroupTextDataResponse;
+import com.czy.domain.dto.netty.forwardMessage.SendTextDataRequest;
+import com.czy.domain.dto.netty.forwardMessage.UserImageResponse;
+import com.czy.domain.dto.netty.forwardMessage.UserTextDataResponse;
+import com.czy.domain.dto.netty.response.HaveReadMessageResponse;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityTestBinding;
 import com.czy.smartmedicine.test.TestConfig;
-import com.czy.smartmedicine.viewModel.activity.TestViewModel;
+import com.czy.smartmedicine.viewModel.activity.TestVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import org.greenrobot.eventbus.EventBus;
@@ -47,7 +47,7 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
     }
 
     @Override
-    public ActivityTestBinding getBinding() {
+    public ActivityTestBinding initBinding() {
         return ActivityTestBinding.inflate(getLayoutInflater());
     }
 
@@ -121,7 +121,7 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
             }, new GainPermissionCallback() {
                 @Override
                 public void allGranted() {
-                    com.czy.baseUtilsLib.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
+                    com.czy.baseutil.photo.SelectPhotoUtil.selectImageFromAlbum(selectImageLauncher);
                 }
 
                 @Override
@@ -132,7 +132,7 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
         });
 
         binding.btnUpload.setOnClickListener(v -> {
-            viewModel.uploadImageTest(this);
+            vm.uploadImageTest(this);
         });
 
         binding.btnLoad.setOnClickListener(v -> {
@@ -147,11 +147,11 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
 
     //------------------viewModel------------------
 
-    private TestViewModel viewModel;
+    private TestVm vm;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, TestViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, TestVm.class);
 
 
     }

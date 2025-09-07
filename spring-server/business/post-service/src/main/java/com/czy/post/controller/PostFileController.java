@@ -1,28 +1,28 @@
 package com.czy.post.controller;
 
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.oss.OssResponseTypeEnum;
 import com.czy.api.constant.oss.OssTaskTypeEnum;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.domain.Do.user.UserDo;
-import com.czy.api.domain.ao.oss.FileIsExistAo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.PostOssResponse;
 import com.czy.api.domain.entity.event.UserOssResponse;
-import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.vo.post.PostOldVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.OssExceptions;
 import com.czy.api.exception.PostExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostService;
-import com.utils.mvc.redisson.RedissonClusterLock;
-import com.utils.mvc.redisson.RedissonService;
-import com.utils.mvc.service.MinIOService;
+import com.utils.minio.domain.ao.FileIsExistAo;
+import com.utils.minio.service.MinioService;
+import com.utils.minio.service.OssService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 import domain.FileIsExistResult;
 import domain.FileOptionResult;
 import domain.SuccessFile;
@@ -52,9 +52,8 @@ import java.util.stream.Collectors;
 public class PostFileController {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
-    private final MinIOService minIOService;
+    private final OssService ossService;
+    private final MinioService minioService;
     private final RedissonService redissonService;
     private final PostFrontService postFrontService;
     private final PostService postService;
@@ -69,7 +68,7 @@ public class PostFileController {
      * @return              上传结果
      */
     @PostMapping("/uploadPost/immediately")
-    public BaseResponse<PostVo> uploadPostFiles(
+    public BaseResponse<PostOldVo> uploadPostFiles(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("postId") Long postId,
             @RequestParam("userId") Long userId){
@@ -124,7 +123,7 @@ public class PostFileController {
             List<FileIsExistResult> results = ossService.checkFilesExistForResult(fileIsExistAos);
 
             // 上传到minIO
-            FileOptionResult fileOptionResult = minIOService.uploadFilesWithIdempotent(
+            FileOptionResult fileOptionResult = minioService.uploadFilesWithIdempotent(
                     files,
                     results,
                     postImageBucket,
@@ -158,7 +157,7 @@ public class PostFileController {
                 if (!result){
                     return BaseResponse.LogBackError(OssExceptions.UPLOAD_FILE_RECORD_ERROR);
                 }
-                PostVo postVo = postFrontService.getPostVo(postId);
+                PostOldVo postVo = postFrontService.getPostVo(postId);
                 return BaseResponse.getResponseEntitySuccess(postVo);
             }
         } catch (Exception e){
@@ -202,7 +201,7 @@ public class PostFileController {
 
     // 修改帖子file
     @PostMapping("/updatePost/immediately")
-    public BaseResponse<PostVo> updatePostFiles(
+    public BaseResponse<PostOldVo> updatePostFiles(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("newTitle") String newTitle,
             @RequestParam("newContent") String newContent,
@@ -289,7 +288,7 @@ public class PostFileController {
                     List<FileIsExistResult> results = ossService.checkFilesExistForResult(fileIsExistAos);
 
                     // 上传到minIO
-                    FileOptionResult fileOptionResult = minIOService.uploadFilesWithIdempotent(
+                    FileOptionResult fileOptionResult = minioService.uploadFilesWithIdempotent(
                             files,
                             results,
                             postImageBucket,
@@ -335,7 +334,7 @@ public class PostFileController {
                             // 更新到数据库
                             postService.updatePostAfterOss(postAo);
 
-                            PostVo userVo = postFrontService.getPostVo(postId);
+                            PostOldVo userVo = postFrontService.getPostVo(postId);
                             return BaseResponse.getResponseEntitySuccess(userVo);
                         }
                     }

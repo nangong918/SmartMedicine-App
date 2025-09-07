@@ -1,16 +1,22 @@
 package com.czy.post.front.impl;
 
-import com.czy.api.api.oss.OssService;
-import com.czy.api.api.user_relationship.UserService;
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.api.mapper.post.mongo.PostDetailMongoMapper;
+import com.api.mapper.post.mybatis.bo.PostViewBoMapper;
+import com.czy.api.api.user.user.UserService;
+import com.czy.api.converter.domain.post.PostViewConverter;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
+import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
-import com.czy.api.domain.vo.post.CommentVo;
+import com.czy.api.domain.bo.post.PostViewBo;
+import com.czy.api.domain.vo.post.CommentOldVo;
+import com.czy.api.domain.vo.post.PostOldVo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.vo.post.aaa.PostVo;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostService;
+import com.utils.minio.service.OssService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +39,13 @@ import java.util.stream.Collectors;
 @Service
 public class PostFrontServiceImpl implements PostFrontService {
 
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     private final PostService postService;
+    private final PostViewBoMapper postViewBoMapper;
+    private final PostViewConverter postViewConverter;
+    private final PostDetailMongoMapper postDetailMongoMapper;
 
     @Override
     public List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList){
@@ -97,7 +105,9 @@ public class PostFrontServiceImpl implements PostFrontService {
             }
             PostPreviewVo postPreviewVo = new PostPreviewVo();
             postPreviewVo.setPostId(postInfoAo.getId());
-            postPreviewVo.setPostImgUrl(fileUrls.get(i));
+            List<String> postImgUrls = new ArrayList<>();
+            postImgUrls.add(fileUrls.get(i));
+            postPreviewVo.setPostImgUrls(postImgUrls);
             postPreviewVo.setPostTitle(postInfoAo.getTitle());
             postPreviewVo.setAuthorId(postInfoAo.getAuthorId());
             String authorName = null;
@@ -132,8 +142,8 @@ public class PostFrontServiceImpl implements PostFrontService {
     }
 
     @Override
-    public PostVo postAoToPostVo(@NonNull PostAo postAo) {
-        PostVo postVo = new PostVo();
+    public PostOldVo postAoToPostVo(@NonNull PostAo postAo) {
+        PostOldVo postVo = new PostOldVo();
         // 所属info
         postVo.postId = postAo.getId();
 
@@ -159,11 +169,11 @@ public class PostFrontServiceImpl implements PostFrontService {
         postVo.postPublishTimestamp = postAo.getReleaseTimestamp();
 
         // 数据
-        postVo.likeNum = PostVo.numToString(postAo.getLikeCount());
-        postVo.collectNum = PostVo.numToString(postAo.getCollectCount());
-        postVo.commentNum = PostVo.numToString(postAo.getCommentCount());
-        postVo.readNum = PostVo.numToString(postAo.getReadCount());
-        postVo.forwardNum = PostVo.numToString(postAo.getForwardCount());
+        postVo.likeNum = PostOldVo.numToString(postAo.getLikeCount());
+        postVo.collectNum = PostOldVo.numToString(postAo.getCollectCount());
+        postVo.commentNum = PostOldVo.numToString(postAo.getCommentCount());
+        postVo.readNum = PostOldVo.numToString(postAo.getReadCount());
+        postVo.forwardNum = PostOldVo.numToString(postAo.getForwardCount());
 
         // user属性 TODO
 //        postVo.isLike = postAo.getLikeCount() > 0;
@@ -174,7 +184,7 @@ public class PostFrontServiceImpl implements PostFrontService {
     }
 
     @Override
-    public PostVo getPostVo(Long postId) {
+    public PostOldVo getPostVo(Long postId) {
         PostAo postAo = postService.findPostById(postId);
         if (postAo != null && postAo.getId() != null){
             return postAoToPostVo(postAo);
@@ -183,14 +193,14 @@ public class PostFrontServiceImpl implements PostFrontService {
     }
 
     @Override
-    public List<CommentVo> getCommentVosByPostCommentDos(List<PostCommentDo> postCommentDos) {
+    public List<CommentOldVo> getCommentVosByPostCommentDos(List<PostCommentMongoDo> postCommentDos) {
         return postCommentDos.stream()
                 .map(this::getCommentVo)
                 .collect(Collectors.toList());
     }
 
-    private CommentVo getCommentVo(PostCommentDo postCommentDo) {
-        CommentVo commentVo = new CommentVo();
+    private CommentOldVo getCommentVo(PostCommentMongoDo postCommentDo) {
+        CommentOldVo commentVo = new CommentOldVo();
         commentVo.commentId = postCommentDo.getId();
         commentVo.replyCommentId = postCommentDo.getReplyCommentId();
         commentVo.postId = postCommentDo.getPostId();
@@ -212,6 +222,45 @@ public class PostFrontServiceImpl implements PostFrontService {
         }
 
         return commentVo;
+    }
+
+    @Override
+    public PostVo getPostVo(Long postId, Long userId) {
+        PostViewBo postViewBo = postViewBoMapper.getPostViewBoById(
+                postId,
+                userId
+        );
+        if (postViewBo == null || postViewBo.getPostId() == null){
+            return null;
+        }
+
+        // fileId -> url
+        List<Long> fileIds = new ArrayList<>();
+        fileIds.add(postViewBo.getAuthorAvatarFileId());
+        fileIds.addAll(postViewBo.getPostImgFileIds());
+        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+        assert fileUrls.size() == fileIds.size();
+        String authorAvatarUrl = null;
+        List<String> postImgUrls = new ArrayList<>();
+        for (int i = 0; i < fileIds.size(); i++){
+            if (i == 0){
+                authorAvatarUrl = fileUrls.get(i);
+            }
+            else {
+                postImgUrls.add(fileUrls.get(i));
+            }
+        }
+
+        // details
+        PostDetailDo postDetailDo = postDetailMongoMapper.findPostDetailById(postId);
+
+        // convert bo to vo
+        return postViewConverter.getVoByBo(
+                postViewBo,
+                postDetailDo,
+                authorAvatarUrl,
+                postImgUrls
+        );
     }
 
 }

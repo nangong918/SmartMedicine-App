@@ -31,7 +31,7 @@ public class BaseResponseData extends BaseRequestData implements ToDataMap{
 
     }
 
-    public void setError(@NotNull ExceptionEnums exceptionEnums){
+    public void setException(@NotNull ExceptionEnums exceptionEnums){
         this.code = exceptionEnums.getCode();
         this.message = exceptionEnums.getMessage();
     }
@@ -80,7 +80,16 @@ public class BaseResponseData extends BaseRequestData implements ToDataMap{
     // 抽象方法，继承者都需要实现将自己的字段设置为dataMap，用于组装Message
     @JsonIgnore
     public Map<String, String> toDataMap(){
-        return new HashMap<>();
+        Map<String, String> dataMap = new HashMap<>();
+        Optional.ofNullable(this.code)
+                .ifPresent(
+                        code -> dataMap.put("code", code)
+                );
+        Optional.ofNullable(this.message)
+                .ifPresent(
+                        message -> dataMap.put("message", message)
+                );
+        return dataMap;
     }
 
     // 导出为Message的方法，需要JsonIgnore，否则会序列化错误

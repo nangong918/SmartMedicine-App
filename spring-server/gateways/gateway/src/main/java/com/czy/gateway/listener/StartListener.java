@@ -1,6 +1,6 @@
 package com.czy.gateway.listener;
 
-import com.czy.springUtils.debug.DebugConfig;
+import com.utils.common.debug.DebugConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

@@ -17,13 +17,70 @@
 1. 学习推荐系统架构\学习Java场景题(由场景入八股)
 2. 学习推荐系统的业务 -> 架构 + 大数据 + 算法
 
+## 日志记录
+
+暂时取消hive，hive较难集成，引入中间件较多。成本较高，可以考虑替换为TimescaleDB
+
+关于TimeScaleDB，无论使用还是不使用，在Java层代码都一样，只需要最后把PostgreSQL升级TimeScaleDB插件
+所以可以直接使用PostgreSQL进行开发（timeScaleDb可以取代mongodb而不是Hive）
+
+暂时不开启vue3去后台配置各种活动数据, 使用java脚本直接往数据库导入和删除数据, 在import-model实现: [import-model](spring-server/tests/import-model)
+项目全部完成写: 项目总结, bug总结, 优化总结.
+优化要在学完java设计模式之后再进行优化, 优化之前要熟悉全部代码, todo标注痛点, 然后确定数据结构再进行优化
+
+推荐算法放在最后；
+
+## 版本
+### v1
+* 推荐系统: 行为收集 + 热门post
+* 社区系统: post发布
+* IM系统: 好友, 聊天
+* 医疗系统: 预约，支付
+* IM系统: webRTC, RTMP视频直播推流 (学习Cpp一定要会的, 包括OpenCV和OpenGL方向)
+
+### v1.5
+* 架构升级 + 部署微服务
+
+### v2
+补充:
+* 推荐系统: lambda架构大数据
+
+### v3
+* 医疗系统: 医疗问答
+* 知识图谱页面
+
+### v4
+架构全面升级; 采用最优最新框架
+
+### v5
+* 后台管理: vue实现数据库查看
+
+### v6
+* 医疗系统: 购物
+
+
 ## 目前任务
 
-1. 前后端联调：实现post搜索
+这两天在家把App的view画完之后就不在家进行此项目的开发了, 后续功能的完成都在公司进行.
+在家进行新的项目开发: 智能机器人小智
+
+* 医疗预约 + 订单系统: todo 绘制整个预约支付流程图, 思考任何系统不安全的地方
+* AOP进行Redis缓存查询与更新 https://cloud.tencent.com/developer/article/1082790
+* 个人帖子
+* 医疗百科
+* 评论，收藏
+↑ 上述结束之后进行整体优化
+↓ 待开发：在整体优化结束之后
+* ~~提醒~~
+* ~~直播~~ (在全部优化完成再执行, 没必要直接加入, 当然如果对C++感兴趣可以额外去做)
+* ~~TimescaleDB记录行为特征 (安装PostgreSQL + TimescaleDB)~~ 还是使用hive
+
+1. jvm调参
 2. user行为记录改为hive存储
 
-公司: 日志数据源改为hive
-家: 重新确定功能, 设计UI
+
+公司: 1. 日志数据源改为TimescaleDB 2. 搞推荐算法
+家: todo:1. 搞联调; 2.重新确定功能, 设计UI
 
 ### spring-server
 
@@ -177,7 +234,7 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
 4. 行为特征上传
 
 ##### 在家梳理
-梳理user-relationship-service；作流程图
+梳理user-auth-relation-service；作流程图
 参考《大麦》看看是否存在优化空间
 
 #### 排期
@@ -253,6 +310,13 @@ todo 搭建Elk（Elasticsearch, Logstash, Kibana）
   * 3天
   * 7月3~7月5
 
+* todo 
+    1. user预约：mysql插入数据测试（redis缓存 + mysql避免超卖问题）
+    2. purchase的支付服务；订单生成，超时未支付关闭订单；商户状态/订单状态变化
+    3. 获取user预约订单列表
+    4. 获取订单详情
+    5. 取消预约 + 退款
+    6. 再次预约
 todo 日志数据存储改为hive
 todo user行为记录改为aop; 数据记录位置改为hive(大数据仓库)
 todo 数据离线计算改为spark,flink
@@ -261,8 +325,6 @@ todo 学习dubbo;实现dubbo服务能够动态注册生产者,让消消费者动
 todo 提高系统的鲁棒性：（单点，各种场景考虑，性能分析，中间件分析）
 todo 推荐系统已经推荐的post编辑进入已推荐过,召回阶段不再选取
 todo post获取权限筛选；评论权限筛选（AOP？）。
-todo 秒杀预约挂号系统
-todo 商品购物系统
 todo 点赞(netty)，评论(netty+http)，收藏(netty)，转发(netty)
 todo 明天继续跑通IM和post
 商品购物系统需要加入(后台配置秒杀活动)
@@ -273,9 +335,12 @@ todo Redisson 替换 Redis
 todo android的eventBus合理化
 todo 性能优化，考虑使用kotlin
 todo 使用链路追踪检查接口耗费时长问题
+todo 需要记录HomeAdapter刚刚看到的位置, 此归为优化项
+todo JSON中传递的Long改为String, 避免精度丢失
 
 ~~todo 后续合并post-service和search-service~~ search-service和post-service暂时不能合并，因为：
 search-service依赖feature-service的规则，feature-service依赖post-service的数据
+todo 代码升级: SpringBoot3, Jdk 23, PostgreSQL
 
 ##### 重构+细化
 * spring学习
@@ -302,6 +367,8 @@ search-service依赖feature-service的规则，feature-service依赖post-service
     * 1.学习mq,2.重构netty,3.编写前端
 
 先自己梳理好逻辑,再进行测试,微服务的重启成本太高
+
+最终: 取消Java后端换位Golang;Go更适合高并发,微服务,分布式
 
 ##### 最终功能补充 (不要着急写新功能,在当前系统未重构优化完成之间,禁止开发新功能)
 * 商品购物 (联合推荐系统 + 大麦的pay系统) [一般的公司都有支付系统,此功能至少实现]
@@ -355,10 +422,22 @@ search-service依赖feature-service的规则，feature-service依赖post-service
 8. oss优化, url存储在redis中,并且redis.ttl < oss.ttl
 9. 搜索,排序算法优化.
 10. 微服务分布式优化:集群,均衡负载,分布式锁,分布式事务,链路,服务注册,服务发现,服务熔断,服务限流
+11. nacos和dubbo的动态注册,能先启动消费者再启动生产者,实现生产者服务挂掉启动新的生产服务能被消费服务发现
 
 ## Android
+
 暂时取消DiffUtil，测试总是出bug，属于过度开发；归为性能优化点
 List取消使用LiveData
+
+Android Remote Service
+
+## 已处理任务
+
+* 前后端联调：实现post搜索  todo 合并service
+
+##### 挂号预约
+虚拟数据导入脚本（1.根据当前时间生成4天，2.每天至少生成5条 3.生成地址定位为：广东-深圳-南山）
+获取可预约列表，获取所有预约时间：mysql查数据查询测试
 
 ##### 问题
 尝试解决Redis RDB问题:
@@ -366,3 +445,6 @@ List取消使用LiveData
 1160:M 26 Jun 2025 11:18:11.123 * Background saving started by pid 10054
 10054:C 26 Jun 2025 11:18:11.128 # Failed opening the RDB file dump.rdb (in server root dir /Redis) for saving: No error
 1160:M 26 Jun 2025 11:18:11.253 # Background saving error`
+
+
+Json返回Long类型出现精度丢失, 全部改为String

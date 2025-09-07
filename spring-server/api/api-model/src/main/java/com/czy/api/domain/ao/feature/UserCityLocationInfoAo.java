@@ -3,13 +3,14 @@ package com.czy.api.domain.ao.feature;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 
 /**
  * @author 13225
  * @date 2025/5/9 15:39
  */
 @Data
-public class UserCityLocationInfoAo {
+public class UserCityLocationInfoAo implements Serializable {
     @NotEmpty(message = "城市名称不能为空")
     private String cityName;
     // 经度 null able

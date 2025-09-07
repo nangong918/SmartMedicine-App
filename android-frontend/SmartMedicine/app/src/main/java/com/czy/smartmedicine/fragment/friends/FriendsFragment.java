@@ -15,22 +15,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.czy.baseUtilsLib.activity.BaseFragment;
-import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.viewPager.ViewPagerConstant;
-import com.czy.dal.ao.intent.NewUserGroupActivityIntentAo;
-import com.czy.dal.ao.intent.SearchActivityIntentAo;
-import com.czy.dal.constant.SearchEnum;
-import com.czy.dal.constant.SelectItemEnum;
-import com.czy.dal.constant.newUserGroup.UserGroupEnum;
-import com.czy.dal.vo.fragmentActivity.FriendsVo;
-import com.czy.dal.vo.view.mainTop.MainTopBarVo;
+import com.czy.appview.view.viewPager.ViewPagerConstant;
+import com.czy.baseutil.activity.BaseFragment;
+import com.czy.baseutil.viewModel.ViewModelUtil;
+import com.czy.domain.ao.intent.NewUserActivityIntentAo;
+import com.czy.domain.constant.SelectItemEnum;
+import com.czy.domain.constant.newUserGroup.UserGroupEnum;
+import com.czy.domain.fragmentActivityAo.FriendsVo;
+import com.czy.domain.vo.view.mainTop.MainTopBarVo;
 import com.czy.smartmedicine.MainApplication;
-import com.czy.smartmedicine.activity.MainActivity;
-import com.czy.smartmedicine.activity.NewUserGroupActivity;
-import com.czy.smartmedicine.activity.SearchActivity;
+import com.czy.smartmedicine.activity.NewUserActivity;
+import com.czy.smartmedicine.activity.search.SearchUserActivity;
 import com.czy.smartmedicine.databinding.FragmentFriendsBinding;
-import com.czy.smartmedicine.viewModel.activity.FriendsViewModel;
+import com.czy.smartmedicine.viewModel.activity.FriendsVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.Optional;
@@ -71,7 +68,6 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initView();
 
         // 获取屏幕高度
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -100,11 +96,11 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
 
     //-----------------------ViewModel-----------------------
 
-    private FriendsViewModel viewModel;
+    private FriendsVm vm;
 
     private void initViewModel() {
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, FriendsViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, FriendsVm.class);
 
         initViewModelVo();
 
@@ -114,11 +110,11 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
     private void initViewModelVo() {
         FriendsVo friendsVo = new FriendsVo();
 
-        viewModel.init(friendsVo);
+        vm.init(friendsVo);
     }
 
     private void observeData() {
-        Optional.ofNullable(viewModel)
+        Optional.ofNullable(vm)
                 .map(vm -> vm.friendsVo)
                 .map(vo -> vo.newFriends)
                 .ifPresent(intLd -> {
@@ -128,20 +124,17 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
                 });
     }
 
-    private void initView(){
+    @Override
+    protected void initView(){
 //        initRecyclerView();
         MainTopBarVo mainTopBarVo = new MainTopBarVo();
-        mainTopBarVo.selectItemEnum = SelectItemEnum.FRIENDS;
+        mainTopBarVo.selectItemEnum = SelectItemEnum.MINE;
         mainTopBarVo.onFriendCallback = () -> {
-            Intent intent = new Intent(requireActivity(), SearchActivity.class);
-            SearchActivityIntentAo intentAo = new SearchActivityIntentAo();
-            intentAo.searchType = SearchEnum.USER;
-            intent.putExtra(SearchActivityIntentAo.INTENT_KEY, intentAo);
+            Intent intent = new Intent(requireActivity(), SearchUserActivity.class);
             searchUserLauncher.launch(intent);
         };
-        ((MainActivity)requireActivity()).setMainTopBar(mainTopBarVo);
 
-        binding.vpb.setText(new String[]{getString(com.czy.customviewlib.R.string.friends), getString(com.czy.customviewlib.R.string.groups)});
+        binding.vpb.setText(new String[]{getString(com.czy.appview.R.string.friends), getString(com.czy.appview.R.string.groups)});
 
         initViewPager2();
     }
@@ -156,10 +149,10 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
         });
 
         binding.lyNewFriend.setOnClickListener(v -> {
-            Intent intent = new Intent(requireActivity(), NewUserGroupActivity.class);
-            NewUserGroupActivityIntentAo newUserGroupActivityIntentAo = new NewUserGroupActivityIntentAo();
-            newUserGroupActivityIntentAo.userGroupEnum = UserGroupEnum.USER;
-            intent.putExtra(NewUserGroupActivityIntentAo.INTENT_KEY, newUserGroupActivityIntentAo);
+            Intent intent = new Intent(requireActivity(), NewUserActivity.class);
+            NewUserActivityIntentAo newUserActivityIntentAo = new NewUserActivityIntentAo();
+            newUserActivityIntentAo.userGroupEnum = UserGroupEnum.USER;
+            intent.putExtra(NewUserActivityIntentAo.INTENT_KEY, newUserActivityIntentAo);
             newFriendLauncher.launch(intent);
         });
     }
@@ -231,8 +224,8 @@ public class FriendsFragment extends BaseFragment<FragmentFriendsBinding> {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (viewModel != null){
-            viewModel.onDestroy();
+        if (vm != null){
+            vm.onDestroy();
         }
     }
 }

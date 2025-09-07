@@ -1,0 +1,135 @@
+package com.czy.smartmedicine.fragment.message.children;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.czy.domain.fragmentActivityAo.MessageVo;
+import com.czy.smartmedicine.databinding.FragmentMessageBinding;
+import com.czy.smartmedicine.utils.BaseVmFragment;
+import com.czy.smartmedicine.viewModel.fragment.MessageVm;
+
+import kotlin.jvm.JvmClassMappingKt;
+
+
+/**
+ * @author 13225
+ * im系统前端UI，前端数据存储设计，后端数据存储设计，前端实时通讯，后端实时通讯；python批量导入测试数据
+ * 1.RecyclerView展示聊天消息列表
+ *    1.1.列表消息基本Item
+ *    1.2.聊天列表RecyclerView
+ * 2.聊天Activity
+ *    2.1.聊天界面RecyclerView
+ *    2.2.聊天界面输入框
+ *    2.3.聊天记录：
+ *      2.3.1.聊天记录本地存取（SQLite记录聊天记录所属+文件[加密]+分页查询）
+ *      2.3.2.聊天记录服务器存取 （MySQL记录聊天记录所属+MongoDB[分页查询]+文件服务）
+ * 3.双人互聊IM通讯
+ *    3.1.Android端WebSocket连接
+ *    3.2.Spring端WebSocket连接
+ *    3.3.Spring端WebSocket消息转发 + Redis消息队列 + 消息推送
+ *    3.4.Android端WebSocket消息接收 + 显示消息
+ * <p>
+ * 信息推送：FirebaseMessagingService
+ * 消息长连接：WebSocket
+ * 音视频推流：WebRTC
+ */
+public class MessageFragment extends BaseVmFragment<FragmentMessageBinding, MessageVm> {
+
+
+    public MessageFragment() {
+        super(
+                JvmClassMappingKt.getKotlinClass(MessageFragment.class),
+                JvmClassMappingKt.getKotlinClass(MessageVm.class)
+        );
+    }
+
+    @NonNull
+    @Override
+    public FragmentMessageBinding initBinding() {
+        return FragmentMessageBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+        // 此处recyclerView才创建
+        vm.initRecyclerView(
+                binding.rclvMessage,
+                requireActivity()
+        );
+    }
+
+    @Override
+    protected void setListener() {
+        super.setListener();
+
+        binding.lyNewMessage.setOnClickListener(v -> {
+            // 跳转新消息页面
+        });
+    }
+
+    //---------------------------viewModel---------------------------
+
+    @Override
+    protected void initViewModel(){
+        super.initViewModel();
+
+        vm.init(new MessageVo());
+
+        observeData();
+    }
+
+    private void observeData() {
+        // 观察RecyclerView todo 此处逻辑需要核对 (注意, 我暂时还没设置任何地方去设置totalMessageCountLd)
+        vm.messageVo.totalMessageCountLd.observe(this, totalMessageCount -> {
+            if (totalMessageCount <= 0){
+                binding.rclvMessage.setVisibility(View.INVISIBLE);
+                binding.lyHaveNoMessage.setVisibility(View.VISIBLE);
+            }
+            else {
+                binding.rclvMessage.setVisibility(View.VISIBLE);
+                binding.lyHaveNoMessage.setVisibility(View.GONE);
+            }
+        });
+
+        // 未读新消息数量
+        vm.messageVo.unreadMessageCountLd.observe(this, unreadMessageCount -> {
+            binding.vMessagePrompt.setMessageNum(unreadMessageCount);
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (vm != null){
+            vm.onPause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (vm != null){
+            vm.onDestroy();
+        }
+    }
+}

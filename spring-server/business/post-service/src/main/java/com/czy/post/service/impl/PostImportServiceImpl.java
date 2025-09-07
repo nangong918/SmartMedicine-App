@@ -1,6 +1,5 @@
 package com.czy.post.service.impl;
 
-import cn.hutool.core.util.IdUtil;
 import com.czy.api.api.post.PostImportService;
 import com.czy.api.api.post.PostNerService;
 import com.czy.api.domain.ao.post.PostAo;

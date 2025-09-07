@@ -1,21 +1,22 @@
 package com.czy.post.controller;
 
-import com.czy.api.api.oss.OssService;
 import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.converter.domain.post.PostConverter;
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.PostCommentDto;
+import com.czy.api.domain.dto.http.request.GetCommentRequest;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.GetPostPreviewListRequest;
+import com.czy.api.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import com.czy.api.domain.dto.http.response.GetPostCommentsResponse;
@@ -24,16 +25,17 @@ import com.czy.api.domain.dto.http.response.GetPostPreviewListResponse;
 import com.czy.api.domain.dto.http.response.GetPostResponse;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
 import com.czy.api.domain.dto.http.response.SinglePostResponse;
-import com.czy.api.domain.vo.post.CommentVo;
+import com.czy.api.domain.vo.post.CommentOldVo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.vo.post.PostOldVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PostExceptions;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
-import com.utils.mvc.redisson.RedissonClusterLock;
-import com.utils.mvc.redisson.RedissonService;
+import com.utils.minio.service.OssService;
+import com.utils.redisson.service.RedissonClusterLock;
+import com.utils.redisson.service.RedissonService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,8 +75,7 @@ public class PostController {
     private final PostService postService;
     private final PostCommentService postCommentService;
     private final PostCommentConverter postCommentConverter;
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     private final PostNerService postNerService;
     private final PostSearchService postSearchService;
     private final PostFrontService postFrontService;
@@ -101,12 +102,13 @@ public class PostController {
         PostAo postAo = postConverter.requestToAo(request, request.getSenderId());
         // 审核 目前只有防止刷帖；没有自然语言审核
         if (!postService.isLegalPost(postAo)) {
-            return BaseResponse.LogBackError("帖子内容不合规，请修改");
+            return BaseResponse.LogBackError(PostExceptions.POST_CONTENT_REJECTED);
         }
         // 自然语言标签分析 + 标签存储 todo 4大基本分区
         // 不需要上传文件的情况
         if (!request.getIsHaveFiles()){
             snowflakeId = postService.releasePostWithoutFile(postAo);
+            log.info("[post不包含文件发布][帖子id为：{}]", snowflakeId);
         }
         else {
             // 1.给用户id上分布式锁
@@ -128,6 +130,10 @@ public class PostController {
                 // 2.1特征提取
                 // 使用知识图谱实体 + AcTree进行知识图谱特征提取
                 List<PostNerResult> resultList = postNerService.getPostNerResults(postAo.getTitle());
+
+                log.info("[post包含文件发布][userId: {}][发布post title: {}]\n[nerSize: {}][nerResults: {}]",
+                        request.getSenderId(), request.getTitle(), resultList.size(), resultList);
+
                 // acTree 进行Topic特征提取 todo
                 postAo.setNerResults(resultList);
                 // 特征存储在mongodb；mysql不适合存储非结构化数据
@@ -268,56 +274,46 @@ public class PostController {
         if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
             pageNum = 1;
         }
-        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(postId, PostConstant.COMMENT_PAGE_SIZE, pageNum);
+        List<PostCommentMongoDo> postCommentList = postCommentService.getLevel1PostComments(postId, PostConstant.COMMENT_PAGE_SIZE, pageNum);
         GetPostResponse getPostResponse = new GetPostResponse();
         getPostResponse.setPostAo(postAo);
         getPostResponse.setPostCommentList(postCommentList);
         return BaseResponse.getResponseEntitySuccess(getPostResponse);
     }
 
-    @GetMapping("/getPost")
+    @PostMapping("/getPost")
     public BaseResponse<SinglePostResponse>
-    getPostNew(@RequestParam("postId") Long postId,
-            @RequestParam("pageNum") Integer pageNum){
-        if (ObjectUtils.isEmpty(postId)){
+    getPostNew(@Valid @RequestBody GetSinglePostRequest request){
+        if (ObjectUtils.isEmpty(request.getPostId())){
             return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
-        PostAo postAo = postService.findPostById(postId);
+        PostAo postAo = postService.findPostById(request.getPostId());
         if (postAo == null || postAo.getId() == null){
             return BaseResponse.LogBackError(PostExceptions.POST_NOT_EXIST);
         }
-        if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
-            pageNum = 1;
+        if (ObjectUtils.isEmpty(request.getPageNum()) || request.getPageNum() < 1){
+            request.setPageNum(1);
         }
-        List<PostCommentDo> postCommentList = postCommentService.getLevel1PostComments(postId, PostConstant.COMMENT_PAGE_SIZE, pageNum);
+        List<PostCommentMongoDo> postCommentList = postCommentService.getLevel1PostComments(
+                request.getPostId(), PostConstant.COMMENT_PAGE_SIZE, request.getPageNum()
+        );
 
         SinglePostResponse singlePostResponse = new SinglePostResponse();
         // 转换为vo
-        PostVo postVo = postFrontService.postAoToPostVo(postAo);
-        List<CommentVo> commentVos = postFrontService.getCommentVosByPostCommentDos(postCommentList);
+        PostOldVo postVo = postFrontService.postAoToPostVo(postAo);
+        List<CommentOldVo> commentVos = postFrontService.getCommentVosByPostCommentDos(postCommentList);
         singlePostResponse.postVo = postVo;
         singlePostResponse.commentVos = commentVos;
         return BaseResponse.getResponseEntitySuccess(singlePostResponse);
     }
 
     // 获取下拉一级评论（pageNum）
-    @GetMapping("/getPostLevel1Comments")
+    @PostMapping("/getPostComments")
     public BaseResponse<GetPostCommentsResponse>
-    getPostLevel1Comments(@RequestParam("postId") Long postId,
-                    @RequestParam("pageSize") Integer pageSize,
-                    @RequestParam("pageNum") Integer pageNum){
-        return getPostComments(postId, null, pageSize, pageNum);
-    }
-
-    // 获取二级评论（commentId + pageNum）
-    @GetMapping("/getPostLevel2Comments")
-    public BaseResponse<GetPostCommentsResponse>
-    getPostLevel2Comments(@RequestParam("postId") Long postId,
-                    @RequestParam("level1commentId") Long level1commentId,
-                    @RequestParam("pageSize") Integer pageSize,
-                    @RequestParam("pageNum") Integer pageNum){
-        return getPostComments(postId, level1commentId, pageSize, pageNum);
+    getPostLevel1Comments(@Validated @RequestBody GetCommentRequest request){
+        return getPostComments(request.getPostId(), request.getLevel1commentId(),
+                request.getPageSize(), request.getPageNum());
     }
 
     private BaseResponse<GetPostCommentsResponse> getPostComments(
@@ -330,13 +326,13 @@ public class PostController {
         }
 
         if (leve1commentId != null) {
-            PostCommentDo postCommentDo = postCommentService.getPostCommentById(leve1commentId);
+            PostCommentMongoDo postCommentDo = postCommentService.getPostCommentById(leve1commentId);
             if (postCommentDo == null || postCommentDo.getId() == null) {
                 return BaseResponse.LogBackError(PostExceptions.COMMENT_NOT_EXIST);
             }
         }
 
-        List<PostCommentDo> postCommentList;
+        List<PostCommentMongoDo> postCommentList;
         // 没有level1Id默认为他就是level1评论
         if (leve1commentId == null) {
             postCommentList = postCommentService.getLevel1PostComments(postId, pageSize, pageNum);
@@ -364,5 +360,10 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess(getPostCommentsResponse);
     }
 
-    // 发表评论 todo
+    // 发表评论 逻辑在postHandler实现
+//    @Deprecated
+//    @PostMapping("/comment")
+//    public BaseResponse<BaseHttpResponse> comment(@Validated @RequestBody CommentRequest request) {
+//
+//    }
 }

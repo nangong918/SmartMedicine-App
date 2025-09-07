@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.mapper.medicine.mybatis.bo.AppointmentOrderStatusBoMapper">
+
+    <select id="fetchAndLockBoByOrderId" resultType="com.czy.api.domain.bo.medicine.AppointmentOrderStatusBo">
+        SELECT
+            ucao.id AS orderId,
+            dma.id AS doctorMerchantId,
+            ucao.user_id AS userId,
+            ucao.user_order_status AS userOrderStatus,
+            dma.cost AS merchantPrice,
+            dma.begin_date AS beginDate
+        FROM
+            user_appointment_order AS ucao
+        INNER JOIN doctor_merchant_appointment AS dma ON ucao.doctor_merchant_appointment_id = dma.id
+        WHERE
+            ucao.id = #{orderId}
+        FOR UPDATE
+    </select>
+</mapper>

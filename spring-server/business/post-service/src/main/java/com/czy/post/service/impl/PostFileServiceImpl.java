@@ -1,16 +1,13 @@
 package com.czy.post.service.impl;
 
-import com.czy.api.api.oss.OssService;
 import com.czy.api.domain.ao.post.PostAo;
-import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.service.PostFileService;
-import com.utils.mvc.service.MinIOService;
+import com.utils.minio.service.OssService;
 import domain.ErrorFile;
 import domain.FileOptionResult;
 import domain.SuccessFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -27,8 +24,7 @@ import java.util.List;
 @Service
 public class PostFileServiceImpl implements PostFileService {
 
-    @Reference(protocol = "dubbo", version = "1.0.0", check = false)
-    private OssService ossService;
+    private final OssService ossService;
     private final ApplicationContext applicationContext;
     @Override
     public FileOptionResult deleteFileByPostAo(PostAo postAo) {

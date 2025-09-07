@@ -1,0 +1,37 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.SmartMedicine" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green_300</item>
+        <item name="colorPrimaryVariant">@color/green_200</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/green_50</item>
+        <item name="colorSecondaryVariant">@color/green_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="itemRippleColor">@color/green_50</item>
+        <!-- Customize your theme here. -->
+        <!-- 设置窗口背景颜色 -->
+        <item name="android:windowBackground">@color/green_0</item>
+        <!-- 沉浸式 -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Android 6.0以上 状态栏字色和图标为浅黑色-->
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="MyNavigationViewStyle" parent="Widget.Design.NavigationView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:background">@drawable/shape_navi_view</item>
+        <item name="itemTextColor">@color/green_500</item> <!-- 设置字体颜色为黑色 -->
+        <item name="itemIconTint">@color/green_500</item> <!-- 设置图标颜色为黑色 -->
+    </style>
+
+    <style name="My_AppCompat_Dialog_Theme" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+</resources>

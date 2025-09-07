@@ -1,9 +1,9 @@
 package com.czy.post.service.impl;
 
+import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.api.post.PostUserRelationService;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.post.post.UserPostBrowseDo;
-import com.czy.post.mapper.mysql.PostInfoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,0 +1,17 @@
+package com.czy.domain.ao.userBrief;
+
+import com.czy.baseutil.json.BaseBean;
+
+import java.io.Serializable;
+
+public class UserBriefIntentAo implements Serializable, BaseBean {
+
+    // view
+    public String userName;
+    public String avatarUrl;
+
+    // data
+    public String userAccount;
+    // 必填
+    public Long userId;
+}

@@ -1,6 +1,6 @@
 package com.czy.oss;
 
-import com.czy.springUtils.start.PortApplicationContextInitializer;
+import com.utils.common.start.PortApplicationContextInitializer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
@@ -13,8 +13,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
         scanBasePackages = {
                 "com.czy.oss",
                 "com.utils.mvc",
-                "com.czy.springUtils",
+                "com.czy.spring",
                 "com.czy.api",
+                "com.utils.common"
         },
         // 排除
         exclude = {}

@@ -81,6 +81,7 @@ dependencies {
      */
     // 圆形的 ImageView 组件
     implementation libs.circleimageview
+    implementation libs.roundedimageview
 
     // EventBus
     implementation libs.eventbus
@@ -90,6 +91,13 @@ dependencies {
 
     // MultiDexApplication
     implementation libs.multidex
+
+    // Gson
+    implementation libs.converter.gson
+    implementation project(':core:baseUtil')
+    implementation project(':core:appcore')
+    // fastJson
+//    implementation libs.fastjson
 
     /**
      * 自定义Module
@@ -107,10 +115,8 @@ dependencies {
      * 6.app：               Application
      *      BaseUtilsLib，AppCoreLib，DataLib，CustomViewLib，Dal
      */
-    implementation project(':core:BaseUtilsLib')
-    implementation project(':core:AppCoreLib')
-    implementation project(':data:Dal')
-    implementation project(':view:CustomViewLib')
-    implementation project(':data:DataLib')
+    implementation project(':data:domain')
+    implementation project(':view:appView')
+    implementation project(':data:dao')
 
 }

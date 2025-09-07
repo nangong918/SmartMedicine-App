@@ -2,7 +2,8 @@ package com.czy.gateway.filter;
 
 import com.czy.api.exception.CommonExceptions;
 import com.czy.gateway.service.JwtService;
-import com.czy.springUtils.debug.DebugConfig;
+import com.czy.gateway.utils.ResponseUtils;
+import com.utils.common.debug.DebugConfig;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,7 +12,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.OrderedGatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.stereotype.Component;
-import utils.ResponseUtils;
 
 /**
  * @author 13225

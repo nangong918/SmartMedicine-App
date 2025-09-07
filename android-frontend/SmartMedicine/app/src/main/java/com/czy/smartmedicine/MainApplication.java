@@ -22,18 +22,20 @@ import com.czy.appcore.network.netty.queue.SocketMessageQueue;
 import com.czy.appcore.network.netty.service.NettySocketService;
 import com.czy.appcore.network.netty.service.NettySocketServiceInitiator;
 import com.czy.appcore.service.chat.ChatMessageManager;
-import com.czy.baseUtilsLib.file.SecuritySharedPreferencesUtils;
-import com.czy.baseUtilsLib.image.ImageManager;
-import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.customviewlib.view.GlobalDialogFragment;
-import com.czy.dal.ao.chat.ChatContactItemAo;
-import com.czy.dal.ao.chat.UserLoginInfoAo;
-import com.czy.dal.ao.login.LoginTokenAo;
-import com.czy.dal.constant.NettyConstants;
-import com.czy.dal.dto.http.request.BaseHttpRequest;
-import com.czy.dal.netty.Message;
-import com.czy.datalib.networkRepository.ApiRequestImpl;
+import com.czy.appcore.service.post.PostDataManager;
+import com.czy.baseutil.file.SecuritySharedPreferencesUtils;
+import com.czy.baseutil.image.ImageManager;
+import com.czy.baseutil.ui.ToastUtils;
+import com.czy.appview.view.GlobalDialogFragment;
+import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.ao.chat.UserLoginInfoAo;
+import com.czy.domain.ao.login.LoginTokenAo;
+import com.czy.domain.constant.NettyConstants;
+import com.czy.domain.dto.http.request.BaseHttpRequest;
+import com.czy.domain.netty.Message;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.manager.HttpRequestManager;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +69,7 @@ public class MainApplication extends Application {
     private void initGlobal(){
         apiRequestInstance = getApiRequestInstance();
         this.chatMessageManager = getChatMessageManager();
+        this.postDataManager = getPostDataManager();
     }
 
     private ImageManager imageManager;
@@ -85,9 +88,21 @@ public class MainApplication extends Application {
     public ChatMessageManager getChatMessageManager(){
         if (chatMessageManager == null){
             chatMessageManager = new ChatMessageManager();
+            // 启动轮询 可以考虑取消thread使用线程池
             chatMessageManager.start();
         }
         return chatMessageManager;
+    }
+
+    // PostDataManager
+
+    private PostDataManager postDataManager;
+
+    public PostDataManager getPostDataManager(){
+        if (postDataManager == null){
+            postDataManager = new PostDataManager();
+        }
+        return postDataManager;
     }
 
     //==========ApiRequest
@@ -113,6 +128,10 @@ public class MainApplication extends Application {
     public static synchronized ApiRequestImpl getApiRequestImplInstance(){
         if (apiRequestImplInstance == null){
             apiRequestImplInstance = new ApiRequestImpl(getApiRequestInstance());
+        }
+        if (!ApiRequestProvider.isLogin()){
+            Log.i(TAG, "LoginToken空了");
+            setToken();
         }
         return apiRequestImplInstance;
     }
@@ -181,10 +200,10 @@ public class MainApplication extends Application {
     //==========ServiceInitiator
     private NettySocketServiceInitiator nettySocketServiceInitiator;
 
-    // 连接WebSocket
+    // 启动连接Netty的Service
     public void startNettySocketService(Long senderId){
-        nettySocketServiceInitiator = new NettySocketServiceInitiator();
-        nettySocketServiceInitiator.initRemoteService(
+        this.nettySocketServiceInitiator = new NettySocketServiceInitiator();
+        this.nettySocketServiceInitiator.initRemoteService(
                 this,
                 senderId,
                 MainApplication.getMessageListener()
@@ -197,6 +216,7 @@ public class MainApplication extends Application {
     public void disconnectNettySocketService(){
         if (nettySocketServiceInitiator != null){
             nettySocketServiceInitiator.disconnectNetty();
+            Log.i(TAG, "断开链接netty的service");
         }
     }
 
@@ -204,11 +224,13 @@ public class MainApplication extends Application {
 
     // sendMessage
     public SocketMessageSender getMessageSender(){
-        if (nettySocketServiceInitiator == null){
+        Log.w("check_netty", "nettySocketServiceInitiator: " + this.nettySocketServiceInitiator);
+        Log.i(TAG, "getMessageSender, nettySocketServiceInitiator = " + this.nettySocketServiceInitiator);
+        if (this.nettySocketServiceInitiator == null){
             Log.w(TAG, "远程发送消息的Service未启动");
             return null;
         }
-        return nettySocketServiceInitiator.getMessageSender();
+        return this.nettySocketServiceInitiator.getMessageSender();
     }
 
     //==========user
@@ -267,7 +289,7 @@ public class MainApplication extends Application {
     private LoginTokenAo loginTokenAo;
 
     public LoginTokenAo getLoginTokenAo() {
-        if (loginTokenAo == null){
+        if (loginTokenAo == null || loginTokenAo.isEmpty()){
             loginTokenAo = new LoginTokenAo();
             try {
                 // SharePreferences
@@ -308,6 +330,12 @@ public class MainApplication extends Application {
         } catch (Exception e) {
             Log.e(TAG, "clearLoginTokenAo error", e);
         }
+    }
+
+    // 清除sp的文件数据 和 MainApplication的Java对象缓存
+    public void clearAllUserData() {
+        // todo
+        clearUserLoginInfoAo();
     }
 
     //==========messageList
@@ -420,6 +448,19 @@ public class MainApplication extends Application {
             Log.w(TAG, "showGlobalToast::resId is not exist " + resId, e);
         }
         return message;
+    }
+
+    public static Runnable onHomeSearchAvatarClicked;
+
+    //----------------------------utils----------------------------
+
+    private static Gson GSON;
+
+    public static Gson getGson() {
+        if (GSON == null) {
+            GSON = new Gson();
+        }
+        return GSON;
     }
 
     //----------------------------APP终止的时候调用----------------------------

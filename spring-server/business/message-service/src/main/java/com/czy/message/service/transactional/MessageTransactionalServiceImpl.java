@@ -1,10 +1,10 @@
 package com.czy.message.service.transactional;
 
+import com.api.mapper.message.es.UserChatMessageEsMapper;
+import com.api.mapper.message.mongo.UserChatMessageMongoMapper;
 import com.czy.api.converter.mongoEs.UserChatMessageEsConverter;
 import com.czy.api.domain.Do.message.UserChatMessageDo;
 import com.czy.api.domain.Do.message.UserChatMessageEsDo;
-import com.czy.message.mapper.es.UserChatMessageEsMapper;
-import com.czy.message.mapper.mongo.UserChatMessageMongoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

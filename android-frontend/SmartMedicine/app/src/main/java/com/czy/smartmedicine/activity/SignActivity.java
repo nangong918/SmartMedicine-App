@@ -3,26 +3,28 @@ package com.czy.smartmedicine.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
-import com.czy.baseUtilsLib.activity.ActivityLaunchUtils;
-import com.czy.baseUtilsLib.activity.BaseActivity;
-import com.czy.baseUtilsLib.network.networkLoad.NetworkLoadUtils;
-import com.czy.baseUtilsLib.ui.ToastUtils;
-import com.czy.baseUtilsLib.viewModel.ViewModelUtil;
-import com.czy.customviewlib.view.DialogPrompt;
-import com.czy.dal.ao.intent.RegisterActivityIntentAo;
-import com.czy.dal.constant.intent.RegisterActivityType;
-import com.czy.dal.vo.fragmentActivity.SignVo;
+import com.czy.appview.view.DialogPrompt;
+import com.czy.baseutil.activity.ActivityLaunchUtils;
+import com.czy.baseutil.activity.BaseActivity;
+import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
+import com.czy.baseutil.ui.ToastUtils;
+import com.czy.baseutil.viewModel.ViewModelUtil;
+import com.czy.domain.ao.intent.RegisterIntentAAo;
+import com.czy.domain.constant.intent.RegisterActivityType;
+import com.czy.domain.fragmentActivityAo.SignVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivitySignBinding;
 import com.czy.smartmedicine.test.TestConfig;
-import com.czy.smartmedicine.viewModel.activity.SignViewModel;
+import com.czy.smartmedicine.viewModel.activity.SignVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 /**
@@ -37,15 +39,18 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
     //---------------------------init---------------------------
 
     @Override
-    public ActivitySignBinding getBinding() {
+    public ActivitySignBinding initBinding() {
         return ActivitySignBinding.inflate(getLayoutInflater());
     }
 
     @Override
     protected void init() {
         super.init();
-
+        setStatusBarColor(
+                com.czy.appview.R.color.white
+        );
         initViewModel();
+        initView();
 
         initRegisterLauncher();
 
@@ -61,10 +66,10 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         super.setListener();
 
         // 监听手机号变化
-        viewModel.onPhoneChanged(binding.edtvPhone, this);
+        vm.onPhoneChanged(binding.edtvPhone, this);
 
         // 注册
-        binding.btnRegister.setOnClickListener(v -> {
+        binding.btnGoRegister.setOnClickListener(v -> {
             register();
         });
 
@@ -75,17 +80,17 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
 
         // 忘记密码
         binding.btnForgetPassword.setOnClickListener(v -> {
-            if (Boolean.TRUE.equals(viewModel.signVo.isRegistered.getValue())){
+            if (Boolean.TRUE.equals(vm.signVo.isRegistered.getValue())){
                 resetPassword();
             }
             else {
-                ToastUtils.showToast(this, getString(com.czy.customviewlib.R.string.please_register_first));
+                ToastUtils.showToast(this, getString(com.czy.appview.R.string.please_register_first));
             }
         });
 
         View.OnClickListener agreeClickListener = v -> {
-            boolean isAgree = Boolean.TRUE.equals(viewModel.signVo.isAgree.getValue());
-            viewModel.signVo.isAgree.setValue(!isAgree);
+            boolean isAgree = Boolean.TRUE.equals(vm.signVo.isAgree.getValue());
+            vm.signVo.isAgree.setValue(!isAgree);
         };
 
         // 同意隐私协议
@@ -94,13 +99,13 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         binding.tvAgree.setOnClickListener(agreeClickListener);
 
         // Test
+//        binding.lyTest.setVisibility(TestConfig.IS_TEST ? View.VISIBLE : View.GONE);
         binding.btvTest.setVisibility(TestConfig.IS_TEST ? View.VISIBLE : View.GONE);
         if (TestConfig.IS_TEST) {
             binding.btvTest.setOnClickListener(v -> {
-                viewModel.onTestClick(this);
+                vm.onTestClick(this);
             });
         }
-
         binding.btvTest2.setVisibility(TestConfig.IS_TEST ? View.VISIBLE : View.GONE);
         if (TestConfig.IS_TEST) {
             binding.btvTest2.setOnClickListener(v -> {
@@ -125,10 +130,10 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
 //            return;
 //        }
         Intent intent = new Intent(this, RegisterActivity.class);
-        RegisterActivityIntentAo ao = new RegisterActivityIntentAo();
+        RegisterIntentAAo ao = new RegisterIntentAAo();
         ao.activityType = RegisterActivityType.REGISTER.getType();
-        ao.phone = viewModel.signVo.phone.getValue();
-        intent.putExtra(RegisterActivityIntentAo.INTENT_KEY, ao);
+        ao.phone = vm.signVo.phone.getValue();
+        intent.putExtra(RegisterIntentAAo.INTENT_KEY, ao);
         registerActivityResultLauncher.launch(intent);
         dialogPrompt.dismiss();
     }
@@ -139,21 +144,21 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
 //            return;
 //        }
         NetworkLoadUtils.showDialog(this);
-        viewModel.doSign(
+        vm.doSign(
                 this,
-                viewModel.signVo.phone.getValue(),
-                viewModel.signVo.pwd.getValue(),
+                vm.signVo.phone.getValue(),
+                vm.signVo.pwd.getValue(),
                 new SyncRequestCallback() {
                         @Override
                         public void onThrowable(Throwable throwable) {
-                            NetworkLoadUtils.dismissDialog();
+                            NetworkLoadUtils.dismissDialogSafe(SignActivity.this);
                             ToastUtils.showToastActivity(SignActivity.this, throwable.getMessage());
                             Log.w(TAG, "onThrowable: " + throwable);
                         }
 
                         @Override
                         public void onAllRequestSuccess() {
-                            NetworkLoadUtils.dismissDialog();
+                            NetworkLoadUtils.dismissDialogSafe(SignActivity.this);
                             Intent intent = new Intent(SignActivity.this, MainActivity.class);
                             ActivityLaunchUtils.launchNewTask(SignActivity.this, intent, null);
                         }
@@ -163,10 +168,10 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
 
     private void resetPassword(){
         Intent intent = new Intent(this, RegisterActivity.class);
-        RegisterActivityIntentAo ao = new RegisterActivityIntentAo();
+        RegisterIntentAAo ao = new RegisterIntentAAo();
         ao.activityType = RegisterActivityType.RESET_PWD.getType();
-        ao.phone = viewModel.signVo.phone.getValue();
-        intent.putExtra(RegisterActivityIntentAo.INTENT_KEY, ao);
+        ao.phone = vm.signVo.phone.getValue();
+        intent.putExtra(RegisterIntentAAo.INTENT_KEY, ao);
         registerActivityResultLauncher.launch(intent);
         dialogPrompt.dismiss();
     }
@@ -174,22 +179,35 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
     private ActivityResultLauncher<Intent> registerActivityResultLauncher;
 
     private void initRegisterLauncher(){
+        //语言设置
         registerActivityResultLauncher =
                 registerForActivityResult(
                         new ActivityResultContracts.StartActivityForResult(),
                         result -> {
-                            viewModel.doCheckIsRegistered(this);
+                            NetworkLoadUtils.showDialog(this);
+                            vm.doCheckIsRegistered(this, new SyncRequestCallback() {
+                                @Override
+                                public void onThrowable(Throwable throwable) {
+                                    NetworkLoadUtils.dismissDialog();
+                                    Log.e(TAG, "注册检查异常：", throwable);
+                                }
+
+                                @Override
+                                public void onAllRequestSuccess() {
+                                    NetworkLoadUtils.dismissDialog();
+                                }
+                            });
                         }
                 );
     }
 
     //---------------------------viewModel---------------------------
 
-    private SignViewModel viewModel;
+    private SignVm vm;
 
     private void initViewModel(){
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        viewModel = ViewModelUtil.newViewModel(this, apiViewModelFactory, SignViewModel.class);
+        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, SignVm.class);
 
         initViewModelVo();
 
@@ -197,12 +215,21 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         observeLivedata();
 
         // 绑定viewModel
-        binding.setViewModel(viewModel);
+        binding.setViewModel(vm);
         // 设置监听者
         binding.setLifecycleOwner(this);
 
         // 获取权限
-        viewModel.getPermission(this);
+        vm.getPermission(this);
+    }
+
+    private void initView() {
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "Arial-Black.ttf");
+        Typeface italicTypeface = Typeface.create(typeface, Typeface.ITALIC);
+        binding.tvAppName.setTypeface(italicTypeface);
+        binding.tvTitle.setTypeface(typeface);
+
+        binding.tvPrefix.setText(BaseConfig.phonePrefix);
     }
 
     private void initViewModelVo(){
@@ -215,28 +242,28 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
         signVo.phone.setValue("");
         signVo.pwd.setValue("");
 
-        viewModel.initVo(signVo);
+        vm.initVo(signVo);
     }
 
     private void observeLivedata(){
-        viewModel.signVo.isPhoneValid.observe(this, isPhoneValid -> {
+        vm.signVo.isPhoneValid.observe(this, isPhoneValid -> {
             binding.btnLogin.setBackgroundResource(
                     isPhoneValid ?
-                            com.czy.customviewlib.R.drawable.button_selected :
-                            com.czy.customviewlib.R.drawable.button_not_select
+                            com.czy.appview.R.drawable.button_selected :
+                            com.czy.appview.R.drawable.button_not_select
             );
-            binding.btnRegister.setBackgroundResource(
-                    isPhoneValid ?
-                            com.czy.customviewlib.R.drawable.button_selected :
-                            com.czy.customviewlib.R.drawable.button_not_select
-            );
+//            binding.btnGoRegister.setBackgroundResource(
+//                    isPhoneValid ?
+//                            com.czy.appview.R.drawable.button_selected :
+//                            com.czy.appview.R.drawable.button_not_select
+//            );
             binding.btnLogin.setClickable(isPhoneValid);
-            binding.btnRegister.setClickable(isPhoneValid);
+//            binding.btnGoRegister.setClickable(isPhoneValid);
         });
 
-        viewModel.signVo.isRegistered.observe(this, isRegistered -> {
+        vm.signVo.isRegistered.observe(this, isRegistered -> {
             // 合法前提
-            if (Boolean.TRUE.equals(viewModel.signVo.isPhoneValid.getValue())){
+            if (Boolean.TRUE.equals(vm.signVo.isPhoneValid.getValue())){
 
                 binding.btnLogin.setVisibility(
                         isRegistered ?
@@ -244,11 +271,11 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
                                 View.GONE
 
                 );
-                binding.btnRegister.setVisibility(
-                        isRegistered ?
-                                View.GONE :
-                                View.VISIBLE
-                );
+//                binding.btnGoRegister.setVisibility(
+//                        isRegistered ?
+//                                View.GONE :
+//                                View.VISIBLE
+//                );
                 if (isRegistered){
                     binding.edtvPassword.setVisibility(View.VISIBLE);
                 }
@@ -259,18 +286,18 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
             }
             else {
                 binding.btnLogin.setVisibility(View.VISIBLE);
-                binding.btnRegister.setVisibility(View.GONE);
+//                binding.btnGoRegister.setVisibility(View.GONE);
                 binding.edtvPassword.setVisibility(View.GONE);
             }
 
             binding.lyPassword.setVisibility(isRegistered ? View.VISIBLE : View.GONE);
         });
 
-        viewModel.signVo.isAgree.observe(this, isAgree -> {
+        vm.signVo.isAgree.observe(this, isAgree -> {
             binding.vAgree.setImageResource(
                     isAgree ?
-                            com.czy.customviewlib.R.mipmap.o :
-                            com.czy.customviewlib.R.drawable.circle_corners_bg_grey
+                            com.czy.appview.R.mipmap.o :
+                            com.czy.appview.R.drawable.circle_corners_bg_grey
             );
         });
     }

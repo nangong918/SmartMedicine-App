@@ -13,8 +13,12 @@
   <!--Maven version：2.3.7-->
   <modules>
     <module>JavaUtils</module>
+    <module>RedisUtils</module>
+    <module>RedissonUtils</module>
+    <module>MinioUtils</module>
+    <module>RabbitMqUtils</module>
+    <module>CommonUtils</module>
     <module>SpringUtils</module>
-    <module>SpringMvcUtils</module>
     <module>SpringWebfluxUtils</module>
     <module>StartUtils</module>
   </modules>

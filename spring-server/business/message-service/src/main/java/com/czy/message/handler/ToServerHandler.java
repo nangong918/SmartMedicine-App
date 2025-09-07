@@ -2,7 +2,7 @@ package com.czy.message.handler;
 
 
 import com.czy.api.api.message.ChatService;
-import com.czy.api.api.user_relationship.UserService;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.netty.MessageTypeTranslator;
 import com.czy.api.constant.netty.NettyConstants;
 import com.czy.api.constant.netty.RequestMessageType;
@@ -11,7 +11,7 @@ import com.czy.api.domain.dto.socket.response.HaveReadMessageResponse;
 import com.czy.api.domain.entity.event.Message;
 import com.czy.message.handler.api.ToServiceApi;
 import com.czy.message.mq.sender.RabbitMqSender;
-import com.czy.springUtils.annotation.HandlerType;
+import com.utils.rabbitmq.annotation.HandlerType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;

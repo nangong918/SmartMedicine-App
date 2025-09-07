@@ -1,6 +1,7 @@
 package com.czy.post.handler;
 
-import com.czy.api.api.user_relationship.UserService;
+import com.api.mapper.post.mybatis.PostInfoMapper;
+import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.feature.PostOperation;
 import com.czy.api.constant.netty.KafkaConstant;
 import com.czy.api.constant.netty.NettyConstants;
@@ -9,7 +10,7 @@ import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostCommentConverter;
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
@@ -36,12 +37,11 @@ import com.czy.api.exception.UserExceptions;
 import com.czy.api.utils.NettyUtils;
 import com.czy.post.component.KafkaSender;
 import com.czy.post.handler.api.PostApi;
-import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.mq.sender.RabbitMqSender;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostHandleService;
 import com.czy.post.service.PostService;
-import com.czy.springUtils.annotation.HandlerType;
+import com.utils.rabbitmq.annotation.HandlerType;
 import exception.ExceptionEnums;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,13 +83,13 @@ public class PostHandler implements PostApi{
         }
         if (request.getSenderId() == null){
             NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
-            nettyServerResponse.setError(UserExceptions.USER_NOT_EXIST);
+            nettyServerResponse.setException(UserExceptions.USER_NOT_EXIST);
             return false;
         }
         if (request.getOptionCode() == NettyOptionEnum.NULL.getCode()){
             NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
             // 操作行为异常
-            nettyServerResponse.setError(PostExceptions.OPERATION_TYPE_NOT_EXIST);
+            nettyServerResponse.setException(PostExceptions.OPERATION_TYPE_NOT_EXIST);
             rabbitMqSender.push(nettyServerResponse);
             return false;
         }
@@ -106,7 +106,7 @@ public class PostHandler implements PostApi{
         if (ObjectUtils.isEmpty(request.getPostId())){
             NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
             // 帖子参数不存在
-            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
+            nettyServerResponse.setException(CommonExceptions.PARAM_ERROR);
             rabbitMqSender.push(nettyServerResponse);
             return;
         }
@@ -135,10 +135,15 @@ public class PostHandler implements PostApi{
             case DELETE: {
                 Long folderId = request.getFolderId();
                 if (folderId == null){
+                    NettyUtils.sendErrorMessage(
+                            request.getSenderId(),
+                            PostExceptions.COLLECT_FOLDER_NOT_EXIST,
+                            rabbitMqSender
+                    );
                     return;
                 }
 
-                // 取消收藏
+                // 取消收藏 (不用传递userId，因为folderId跟userId存在关系)
                 postHandleService.deletePostCollect(request.getPostId(), folderId);
 
                 // 发送消息
@@ -314,13 +319,32 @@ public class PostHandler implements PostApi{
                         PostExceptions.EMPTY_COMMENT_ERROR,
                         rabbitMqSender
                 );
+                return;
+            }
+            if (content.length() > PostConstant.COMMENT_MAX_LENGTH){
+                NettyUtils.sendErrorMessage(
+                        request.getSenderId(),
+                        PostExceptions.COMMENT_TOO_LONG,
+                        rabbitMqSender
+                );
+                return;
             }
             Long senderId = request.getSenderId();
             Long postId = request.getPostId();
             Long replyCommentId = request.getReplyCommentId();
 
+            Long timestamp = Optional.ofNullable(request.getTimestamp())
+                    .map(tstr -> {
+                        try {
+                            return Long.valueOf(tstr);
+                        } catch (Exception e) {
+                            return System.currentTimeMillis();
+                        }
+                    })
+                    .orElse(System.currentTimeMillis());
+
             // 执行评论
-            CommentResultDto resultDto = postCommentService.comment(senderId, postId, replyCommentId, content);
+            CommentResultDto resultDto = postCommentService.comment(senderId, postId, replyCommentId, content, timestamp);
 
             if (resultDto.isSuccess()){
                 // 获取返回对象
@@ -410,7 +434,7 @@ public class PostHandler implements PostApi{
     // comment通知评论发布者
     private void notifyCommenter(PostCommentResponse postCommentResponse){
         if (postCommentResponse.getReplyCommentId() != null){
-            PostCommentDo postCommenterDo = postCommentService.getPostCommentById(postCommentResponse.getReplyCommentId());
+            PostCommentMongoDo postCommenterDo = postCommentService.getPostCommentById(postCommentResponse.getReplyCommentId());
             if (postCommenterDo == null || postCommenterDo.getCommenterId() == null){
                 return;
             }
@@ -438,7 +462,7 @@ public class PostHandler implements PostApi{
 
         // 2. 通知接收者
         if (request.getReplyCommentId() != null){
-            PostCommentDo postCommenterDo = postCommentService.getPostCommentById(request.getReplyCommentId());
+            PostCommentMongoDo postCommenterDo = postCommentService.getPostCommentById(request.getReplyCommentId());
             if (postCommenterDo != null && postCommenterDo.getId() != null){
                 Long commenterId = Optional.ofNullable(postCommenterDo.getCommenterId())
                                 .orElse(NettyConstants.ERROR_ID);
@@ -526,7 +550,7 @@ public class PostHandler implements PostApi{
         if (ObjectUtils.isEmpty(request.getPostId())){
             NettyServerResponse nettyServerResponse = new NettyServerResponse(NettyResponseStatuesEnum.FAILURE);
             // 帖子参数不存在
-            nettyServerResponse.setError(CommonExceptions.PARAM_ERROR);
+            nettyServerResponse.setException(CommonExceptions.PARAM_ERROR);
             rabbitMqSender.push(nettyServerResponse);
             return;
         }

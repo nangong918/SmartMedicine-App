@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.SmartMedicine" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green_300</item>
+        <item name="colorPrimaryVariant">@color/green_200</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/green_50</item>
+        <item name="colorSecondaryVariant">@color/green_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="itemRippleColor">@color/green_50</item>
+        <!-- Status bar color. -->
+        <!-- Customize your theme here. -->
+        <!-- 设置窗口背景颜色 -->
+        <item name="android:windowBackground">@color/green_0</item>
+        <!-- 沉浸式 -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Android 6.0以上 状态栏字色和图标为浅黑色-->
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

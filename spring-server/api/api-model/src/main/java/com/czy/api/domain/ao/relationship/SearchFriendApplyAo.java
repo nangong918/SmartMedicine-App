@@ -1,6 +1,6 @@
 package com.czy.api.domain.ao.relationship;
 
-import com.czy.api.domain.ao.oss.FileResAo;
+import domain.FileResAo;
 import json.BaseBean;
 import lombok.Data;
 

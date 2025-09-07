@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * @author 13225
- * @date 2025/4/18 17:24
+ * @date 2025/4/18 17:24 todo 1. 添加将后端的此数据结构转为前端数据结构PostVo方法 2.将后端的PostVo更新为前端的PostVo
  */
 @Data
 public class PostInfoUrlAo implements Serializable {

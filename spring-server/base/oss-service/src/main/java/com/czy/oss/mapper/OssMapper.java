@@ -1,3 +1,4 @@
+/*
 package com.czy.oss.mapper;
 
 import com.czy.api.domain.Do.oss.OssFileDo;
@@ -6,10 +7,12 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+*/
 /**
  * @author 13225
  * @date 2025/4/17 18:14
- */
+ *//*
+
 @Mapper
 public interface OssMapper {
 
@@ -82,3 +85,4 @@ public interface OssMapper {
             @Param("fileSize")Long fileSize
     );
 }
+*/

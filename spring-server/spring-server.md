@@ -4,7 +4,7 @@
 [message.md](business/message-service/message.md)
 [post.md](business/post-service/post.md)
 [search.md](business/search-service/search.md)
-[user-relationship.md](business/user-relationship-service/user-relationship.md)
+[user-auth-relation.md](business/user-auth-relation-service/user-auth-relation.md)
 
 # 优化方向
 * Redis多级缓存

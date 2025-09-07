@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/i_home"
+        android:icon="@drawable/home_24px"
+        app:actionLayout="@layout/switch_item" />
+    <item
+        android:id="@+id/i_medicine"
+        android:icon="@drawable/pill_24px"
+        android:checked="false"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/i_message"
+        android:icon="@drawable/mail_24px"
+        android:checked="false"
+        android:checkable="true" />
+    <item
+        android:id="@+id/i_mine"
+        android:icon="@drawable/person_24px"
+        android:checked="false"
+        android:checkable="true" />
+</menu>

@@ -29,7 +29,7 @@ public class CrawlerUserImport {
 
     /**
      * 批量导入：需要启动:
-     * user-relationship-service, post-service, oss-service
+     * user-auth-relation-service, post-service, oss-service
      */
     @Test
     public void importAll(){

@@ -1,11 +1,12 @@
 package com.czy.post.front;
 
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
-import com.czy.api.domain.vo.post.CommentVo;
+import com.czy.api.domain.vo.post.CommentOldVo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.vo.post.PostOldVo;
+import com.czy.api.domain.vo.post.aaa.PostVo;
 
 import java.util.List;
 
@@ -23,10 +24,18 @@ public interface PostFrontService {
     List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList);
 
     // PostAo -> PostVo
-    PostVo postAoToPostVo(PostAo postAo);
+    PostOldVo postAoToPostVo(PostAo postAo);
 
-    PostVo getPostVo(Long postId);
+    PostOldVo getPostVo(Long postId);
 
     // List<PostCommentDo> -> List<CommentVo>
-    List<CommentVo> getCommentVosByPostCommentDos(List<PostCommentDo> postCommentDos);
+    List<CommentOldVo> getCommentVosByPostCommentDos(List<PostCommentMongoDo> postCommentDos);
+
+    /**
+     * 获取帖子Vo
+     * @param postId    postId
+     * @param userId    userId
+     * @return          PostVo
+     */
+    PostVo getPostVo(Long postId, Long userId);
 }

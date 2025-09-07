@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>api-model</artifactId>
-    <description>测试服务，对Spring组件级别的测试，以及测试常量</description>
+    <description>各个服务的通用domain + dubbo service接口</description>
 
     <parent>
         <groupId>com.api</groupId>

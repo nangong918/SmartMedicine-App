@@ -11,11 +11,40 @@
  Target Server Version : 80034
  File Encoding         : 65001
 
- Date: 01/08/2025 10:10:37
+ Date: 05/09/2025 18:31:26
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for doctor
+-- ----------------------------
+DROP TABLE IF EXISTS `doctor`;
+CREATE TABLE `doctor`  (
+  `id` bigint NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `avatar_file_id` bigint NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for doctor_merchant_appointment
+-- ----------------------------
+DROP TABLE IF EXISTS `doctor_merchant_appointment`;
+CREATE TABLE `doctor_merchant_appointment`  (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `doctor_id` bigint NULL DEFAULT NULL,
+  `hospital_id` bigint NULL DEFAULT NULL,
+  `department_id` int NULL DEFAULT NULL,
+  `subject_id` int NULL DEFAULT NULL,
+  `cost` decimal(10, 2) NULL DEFAULT NULL,
+  `remain_count` int NULL DEFAULT NULL,
+  `begin_date` datetime NULL DEFAULT NULL,
+  `end_date` datetime NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1963512751961493558 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for friend_apply
@@ -36,6 +65,22 @@ CREATE TABLE `friend_apply`  (
   INDEX `idx_apply_user_id`(`apply_user_id` ASC) USING BTREE,
   INDEX `idx_handle_user_id`(`handle_user_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for hospital
+-- ----------------------------
+DROP TABLE IF EXISTS `hospital`;
+CREATE TABLE `hospital`  (
+  `id` bigint NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `level` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '等级 （三甲，三丙）',
+  `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `region` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `longitude` double NULL DEFAULT NULL COMMENT '经度',
+  `latitude` double NULL DEFAULT NULL COMMENT '纬度',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for login_user
@@ -95,7 +140,24 @@ CREATE TABLE `post_collect_folder`  (
   `collect_folder_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_post_user`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for post_comment
+-- ----------------------------
+DROP TABLE IF EXISTS `post_comment`;
+CREATE TABLE `post_comment`  (
+  `id` bigint NOT NULL COMMENT 'comment_id',
+  `post_id` bigint NOT NULL,
+  `commenter_id` bigint NOT NULL COMMENT 'user_id',
+  `reply_comment_id` bigint NULL DEFAULT NULL,
+  `timestamp` bigint NOT NULL,
+  `comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_post_id`(`post_id` ASC) USING BTREE,
+  INDEX `idx_commenter_id`(`commenter_id` ASC) USING BTREE,
+  INDEX `idx_reply_comment_id`(`reply_comment_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for post_files
@@ -107,24 +169,25 @@ CREATE TABLE `post_files`  (
   `file_id` bigint NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_post_id`(`post_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1933094754910519297 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1953385952476733441 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for post_info
 -- ----------------------------
 DROP TABLE IF EXISTS `post_info`;
 CREATE TABLE `post_info`  (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'post_id',
   `author_id` bigint NOT NULL,
-  `release_timestamp` bigint NOT NULL,
-  `like_count` bigint NOT NULL,
-  `collect_count` bigint NOT NULL,
-  `comment_count` bigint NOT NULL,
-  `forward_count` bigint NULL DEFAULT 0,
+  `release_timestamp` bigint UNSIGNED NOT NULL,
+  `like_count` bigint UNSIGNED NOT NULL,
+  `collect_count` bigint UNSIGNED NOT NULL,
+  `comment_count` bigint UNSIGNED NOT NULL,
+  `forward_count` bigint UNSIGNED NULL DEFAULT 0,
   `title` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
+  `view_count` bigint UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`, `author_id`) USING BTREE,
   INDEX `idx_author_id`(`author_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1933094718457823233 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1953385863356162049 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for session
@@ -177,6 +240,19 @@ CREATE TABLE `user_chat_message`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 185 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Table structure for user_customer_appointment_order
+-- ----------------------------
+DROP TABLE IF EXISTS `user_customer_appointment_order`;
+CREATE TABLE `user_customer_appointment_order`  (
+  `id` bigint NOT NULL,
+  `doctor_merchant_appointment_id` bigint NULL DEFAULT NULL,
+  `user_id` bigint NULL DEFAULT NULL,
+  `record_timestamp` bigint NULL DEFAULT NULL,
+  `user_order_status` int NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for user_friend
 -- ----------------------------
 DROP TABLE IF EXISTS `user_friend`;
@@ -222,6 +298,33 @@ CREATE TABLE `user_health_data`  (
   `age` int NULL DEFAULT NULL,
   `education_level` tinyint(1) NULL DEFAULT NULL,
   `income` int NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_id`(`user_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for user_post_action
+-- ----------------------------
+DROP TABLE IF EXISTS `user_post_action`;
+CREATE TABLE `user_post_action`  (
+  `id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  `post_id` bigint NOT NULL,
+  `like` tinyint(1) NULL DEFAULT NULL,
+  `collect` tinyint(1) NULL DEFAULT NULL,
+  `dislike` tinyint(1) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_post`(`user_id` ASC, `post_id` ASC) USING BTREE COMMENT 'user_post联合索引'
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for user_wallet
+-- ----------------------------
+DROP TABLE IF EXISTS `user_wallet`;
+CREATE TABLE `user_wallet`  (
+  `id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  `balance` decimal(10, 2) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;

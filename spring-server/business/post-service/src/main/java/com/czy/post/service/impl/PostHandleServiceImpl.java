@@ -1,14 +1,14 @@
 package com.czy.post.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.api.mapper.post.mongo.PostCommentMongoMapper;
+import com.api.mapper.post.mybatis.PostCollectFolderMapper;
+import com.api.mapper.post.mybatis.PostCollectMapper;
+import com.api.mapper.post.mybatis.PostInfoMapper;
 import com.czy.api.domain.Do.post.collect.PostCollectDo;
 import com.czy.api.domain.Do.post.collect.PostCollectFolderDo;
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
-import com.czy.post.mapper.mongo.PostCommentMongoMapper;
-import com.czy.post.mapper.mysql.PostCollectFolderMapper;
-import com.czy.post.mapper.mysql.PostCollectMapper;
-import com.czy.post.mapper.mysql.PostInfoMapper;
 import com.czy.post.service.PostHandleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class PostHandleServiceImpl implements PostHandleService {
 
     @Transactional
     @Override
-    public void postComment(PostCommentDo postCommentDo) {
+    public void postComment(PostCommentMongoDo postCommentDo) {
         // mongo存储文本
         postCommentMongoMapper.saveComment(postCommentDo);
         // mysql存储次数
@@ -126,6 +126,7 @@ public class PostHandleServiceImpl implements PostHandleService {
 
     @Override
     public Long createPostCollectFolder(Long userId, String collectFolderName) {
+        // 判断是否已存在
         PostCollectFolderDo postCollectFolderDo = postCollectFolderMapper.findPostCollectFolderByUserIdAndName(
                 userId,
                 collectFolderName
@@ -138,7 +139,8 @@ public class PostHandleServiceImpl implements PostHandleService {
             postCollectFolderDo.setId(IdUtil.getSnowflakeNextId());
             postCollectFolderDo.setUserId(userId);
             postCollectFolderDo.setCollectFolderName(collectFolderName);
-            return postCollectFolderMapper.savePostCollectFolder(postCollectFolderDo);
+            postCollectFolderMapper.savePostCollectFolder(postCollectFolderDo);
+            return postCollectFolderDo.getId();
         }
     }
 

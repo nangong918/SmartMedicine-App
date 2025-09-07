@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper">
+
+    <sql id="table">
+        user_customer_appointment_order
+    </sql>
+
+    <sql id="columns">
+        id,
+        doctor_merchant_appointment_id,
+        user_id,
+        record_timestamp,
+        user_order_status
+    </sql>
+
+    <sql id="insertValue">
+        #{id},
+        #{doctorMerchantAppointmentId},
+        #{userId},
+        #{recordTimestamp},
+        #{userOrderStatus}
+    </sql>
+
+    <sql id="insertBatchValue">
+        #{item.id},
+        #{item.doctorMerchantAppointmentId},
+        #{item.userId},
+        #{item.recordTimestamp},
+        #{item.userOrderStatus}
+    </sql>
+
+    <sql id="setValue">
+        <if test="doctorMerchantAppointmentId != null">
+            doctor_merchant_appointment_id = #{doctorMerchantAppointmentId},
+        </if>
+        <if test="userId != null">
+            user_id = #{userId},
+        </if>
+        <if test="recordTimestamp != null">
+            record_timestamp = #{recordTimestamp},
+        </if>
+        <if test="userOrderStatus != null">
+            user_order_status = #{userOrderStatus}
+        </if>
+    </sql>
+
+    <insert id="insert">
+        insert into <include refid="table"/>
+        (<include refid="columns"/>)
+        values (<include refid="insertValue"/>)
+    </insert>
+
+    <insert id="insertBatch">
+        <if test="list != null and list.size() > 0">
+            insert into <include refid="table"/>
+            (<include refid="columns"/>)
+            values
+            <foreach item="item" index="index" collection="list" separator=",">
+                (<include refid="insertBatchValue"/>)
+            </foreach>
+        </if>
+    </insert>
+
+    <update id="update">
+        update <include refid="table"/>
+        set
+            <include refid="setValue"/>
+        where id = #{id}
+    </update>
+    <update id="updateBatch">
+        <if test="list != null and list.size() > 0">
+            update <include refid="table"/>
+            set
+                <include refid="setValue"/>
+            where id in
+            <foreach item="item" index="index" collection="list" separator="," open="(" close=")">
+                #{item.id}
+            </foreach>
+        </if>
+    </update>
+
+    <delete id="delete">
+        delete from <include refid="table"/>
+        where id = #{id}
+    </delete>
+    <delete id="deleteBatch">
+        <if test="list != null and list.size() > 0">
+            delete from <include refid="table"/>
+            where id in
+            <foreach item="item" index="index" collection="list" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+    <delete id="deleteAll">
+        delete from <include refid="table"/>
+        where 1=1
+    </delete>
+
+    <select id="getDosByDoctorMerchantAppointmentId"
+            resultType="com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo">
+        select
+        <include refid="columns"/>
+        from <include refid="table"/>
+        where doctor_merchant_appointment_id = #{doctorMerchantAppointmentId}
+    </select>
+    <select id="getDosByUserId" resultType="com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo">
+        select
+        <include refid="columns"/>
+        from <include refid="table"/>
+        where user_id = #{userId}
+    </select>
+    <select id="getDosByUserIdAndMerchantId"
+            resultType="com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo">
+        select
+        <include refid="columns"/>
+        from <include refid="table"/>
+        where user_id = #{userId}
+        and doctor_merchant_appointment_id = #{doctorMerchantId}
+    </select>
+    <select id="getByOrderId" resultType="com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo">
+        select
+        <include refid="columns"/>
+        from <include refid="table"/>
+        where id = #{id}
+    </select>
+
+</mapper>

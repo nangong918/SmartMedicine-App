@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class CommentResultDto {
 
-    private boolean isSuccess = false;
+    private boolean isSuccess = true;
 
     private ExceptionEnums exceptionEnums = null;
 }
