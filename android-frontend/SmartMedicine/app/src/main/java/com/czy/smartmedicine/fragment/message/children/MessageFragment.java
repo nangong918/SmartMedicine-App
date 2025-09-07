@@ -8,13 +8,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.czy.baseutil.activity.BaseFragment;
 import com.czy.baseutil.viewModel.ViewModelUtil;
 import com.czy.domain.fragmentActivityAo.MessageVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.FragmentMessageBinding;
+import com.czy.smartmedicine.utils.BaseVmFragment;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 import com.czy.smartmedicine.viewModel.fragment.MessageVm;
+
+import kotlin.jvm.JvmClassMappingKt;
 
 
 /**
@@ -39,23 +41,25 @@ import com.czy.smartmedicine.viewModel.fragment.MessageVm;
  * 消息长连接：WebSocket
  * 音视频推流：WebRTC
  */
-public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
+public class MessageFragment extends BaseVmFragment<FragmentMessageBinding, MessageVm> {
 
 
     public MessageFragment() {
-        super(MessageFragment.class);
+        super(
+                JvmClassMappingKt.getKotlinClass(MessageFragment.class),
+                JvmClassMappingKt.getKotlinClass(MessageVm.class)
+        );
     }
 
+    @NonNull
     @Override
-    public FragmentMessageBinding getBinding() {
+    public FragmentMessageBinding initBinding() {
         return FragmentMessageBinding.inflate(getLayoutInflater());
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        initViewModel();
     }
 
     @Override
@@ -86,34 +90,19 @@ public class MessageFragment extends BaseFragment<FragmentMessageBinding> {
 
     private MessageVm vm;
 
-    private void initViewModel(){
+    @Override
+    protected void initViewModel(){
+        super.initViewModel();
         ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
         vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, MessageVm.class);
 
         vm.init(new MessageVo());
-
-//        // 绑定viewModel
-//        binding.setViewModel(signViewModel);
-//        // 设置监听者
-//        binding.setLifecycleOwner(this);
 
         observeData();
     }
 
     private void observeData() {
         // 观察RecyclerView
-/*        Optional.ofNullable(viewModel)
-                .map(vm -> vm.messageVo)
-                .map(mvo -> mvo.chatContactListVo)
-                .map(cvo -> cvo.chatContactListLd)
-                .ifPresent(liveData -> {
-                    liveData.observe(this, newList -> {
-                        Optional.ofNullable(((ChatContactAdapter)binding.rclvMessage.getAdapter()))
-                                .ifPresent(chatContactAdapter -> {
-                                    chatContactAdapter.setCurrentList(newList);
-                                });
-                    });
-                });*/
     }
 
     @Override

@@ -115,4 +115,6 @@
     <string name="coding">功能开发中...</string>
     <string name="message">消息</string>
     <string name="address_book">通讯录</string>
+    <string name="have_no_message_now">暂时没有消息</string>
+    <string name="new_notification">新消息通知</string>
 </resources>

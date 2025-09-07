@@ -6,13 +6,75 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.message.children.MessageFragment">
 
-    <!--  TODO：当没有消息的时候展示No Message  -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rclv_message"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ly_new_message"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:padding="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/notifications_unread_24px"
+                app:tint="@color/green_900" />
+
+            <TextView
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_notification"
+                android:textColor="@color/green_900"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rclv_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:background="@color/green_90" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ly_have_no_message"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/raven_24px"
+            app:tint="@color/green_900" />
+
+        <TextView
+            android:layout_marginStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/have_no_message_now"
+            android:textColor="@color/green_900"
+            android:textSize="20sp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
