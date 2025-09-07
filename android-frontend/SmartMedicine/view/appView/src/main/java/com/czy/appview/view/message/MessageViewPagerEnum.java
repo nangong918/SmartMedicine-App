@@ -1,5 +1,7 @@
 package com.czy.appview.view.message;
 
+import androidx.annotation.NonNull;
+
 public enum MessageViewPagerEnum {
 
     // message
@@ -18,6 +20,7 @@ public enum MessageViewPagerEnum {
     }
 
     // index -> o
+    @NonNull
     public static MessageViewPagerEnum getEnumByIndex(int index) {
         for (MessageViewPagerEnum value : MessageViewPagerEnum.values()) {
             if (value.index == index) {

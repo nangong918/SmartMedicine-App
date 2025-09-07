@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.czy.appview.R
+import com.czy.smartmedicine.activity.MainActivity
 import com.czy.smartmedicine.databinding.FragmentAddressBookBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
 import com.czy.smartmedicine.viewModel.fragment.message.AddressBookVm
