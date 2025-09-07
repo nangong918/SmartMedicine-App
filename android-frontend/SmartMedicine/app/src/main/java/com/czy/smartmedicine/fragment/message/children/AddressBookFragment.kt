@@ -36,6 +36,16 @@ class AddressBookFragment : BaseVmFragment<FragmentAddressBookBinding, AddressBo
 
     }
 
+    override fun setListener() {
+        super.setListener()
+
+        binding.lyNewFriends.setOnClickListener {
+        }
+
+        binding.lyFriendLabels.setOnClickListener {
+        }
+    }
+
     //---------------------------ViewModel---------------------------
 
     override fun initViewModel() {

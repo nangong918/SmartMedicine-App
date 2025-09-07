@@ -81,6 +81,10 @@ public class MessageFragment extends BaseVmFragment<FragmentMessageBinding, Mess
     @Override
     protected void setListener() {
         super.setListener();
+
+        binding.lyNewMessage.setOnClickListener(v -> {
+            // 跳转新消息页面
+        });
     }
 
     //---------------------------viewModel---------------------------
