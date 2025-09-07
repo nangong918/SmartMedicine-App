@@ -404,32 +404,28 @@
 
             </LinearLayout>
 
-            <LinearLayout
+            <ImageView
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:gravity="center_vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="80dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:tint="@color/gold"
+                android:src="@drawable/money_bag_48px"/>
+
+            <TextView
+                android:id="@+id/tv_money"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="140dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    app:tint="@color/gold"
-                    android:src="@drawable/money_bag_48px"/>
-
-                <TextView
-                    android:id="@+id/tv_money"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="54,000.50"
-                    android:textColor="@color/gold"
-                    android:maxLines="1"
-                    android:layout_marginStart="10dp"
-                    android:textSize="35sp"/>
-
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                tools:text="54,000.50"
+                android:textColor="@color/gold"
+                android:maxLines="1"
+                android:textSize="35sp"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_recharge"
