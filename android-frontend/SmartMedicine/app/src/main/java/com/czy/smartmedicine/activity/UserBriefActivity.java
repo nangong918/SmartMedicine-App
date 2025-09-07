@@ -93,6 +93,26 @@ public class UserBriefActivity extends BaseActivity<ActivityUserBriefBinding> {
         binding.topBar.setBack(v -> {
             finish();
         });
+
+        // 好友设置
+        binding.btnFriendSetting.setOnClickListener(v -> {
+
+        });
+
+        // 朋友标签
+        binding.btnFriendLabel.setOnClickListener(v -> {
+
+        });
+
+        // 打电话
+        binding.btnCall.setOnClickListener(v -> {
+
+        });
+
+        // 朋友圈
+        binding.btnFriendMoments.setOnClickListener(v -> {
+
+        });
     }
 
     private UserBriefVm vm;
