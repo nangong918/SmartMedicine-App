@@ -9,8 +9,8 @@ import com.czy.smartmedicine.R
 import com.czy.smartmedicine.databinding.ActivityOrderAppointmentBinding
 import com.czy.smartmedicine.databinding.ActivityOrderListBinding
 import com.czy.smartmedicine.utils.BaseVmActivity
-import com.czy.smartmedicine.viewModel.order.OrderAppointmentVm
-import com.czy.smartmedicine.viewModel.order.OrderListVm
+import com.czy.smartmedicine.viewModel.activity.order.OrderAppointmentVm
+import com.czy.smartmedicine.viewModel.activity.order.OrderListVm
 
 class OrderAppointmentActivity : BaseVmActivity<ActivityOrderAppointmentBinding, OrderAppointmentVm>(
     OrderAppointmentActivity::class,

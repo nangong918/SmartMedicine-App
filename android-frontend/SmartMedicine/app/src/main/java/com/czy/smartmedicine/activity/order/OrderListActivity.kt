@@ -8,7 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.czy.smartmedicine.R
 import com.czy.smartmedicine.databinding.ActivityOrderListBinding
 import com.czy.smartmedicine.utils.BaseVmActivity
-import com.czy.smartmedicine.viewModel.order.OrderListVm
+import com.czy.smartmedicine.viewModel.activity.order.OrderListVm
 
 class OrderListActivity : BaseVmActivity<ActivityOrderListBinding, OrderListVm>(
     OrderListActivity::class,
