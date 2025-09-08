@@ -9,13 +9,13 @@ import com.czy.dao.networkRepository.ApiRequestImpl
 import com.czy.domain.fragmentActivityAo.medicine.AppointmentFAo
 
 
-open class AppointmentVm(
+open class AppointmentFVm(
     private val apiRequestImpl: ApiRequestImpl,
     private val socketMessageSender: SocketMessageSender
 ) : ViewModel(){
 
     companion object {
-        val TAG: String = AppointmentVm::class.java.name
+        val TAG: String = AppointmentFVm::class.java.name
     }
 
     //---------------------------FAo Ld---------------------------

@@ -6,14 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.czy.smartmedicine.databinding.FragmentAppointmentBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
-import com.czy.smartmedicine.viewModel.fragment.medicine.children.AppointmentVm
+import com.czy.smartmedicine.viewModel.fragment.medicine.children.AppointmentFVm
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, AppointmentVm>(
+class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, AppointmentFVm>(
     AppointmentFragment::class,
-    AppointmentVm::class
+    AppointmentFVm::class
 ) {
     override fun initBinding(): FragmentAppointmentBinding {
         return FragmentAppointmentBinding.inflate(layoutInflater)
