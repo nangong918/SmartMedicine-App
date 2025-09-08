@@ -10,7 +10,7 @@
             rplu.user_name AS replyUserName,
 
             pc.timestamp AS commentTimestamp,
-            pc.content AS commentContent,
+            pc.comment AS commentContent,
 
             pc.id AS commentId,
             pc.reply_comment_id AS parentCommentId,
@@ -24,6 +24,27 @@
         WHERE pc.id = #{commentId}
     </select>
     <select id="getCommentBoByIdList" resultType="com.czy.api.domain.bo.post.CommentBo">
+        <if test="list != null and list.size() > 0">
+            SELECT
+                cmu.avatar_file_id AS avatarFileId,
+                cmu.user_name AS userName,
+                rplu.user_name AS replyUserName,
 
+                pc.timestamp AS commentTimestamp,
+                pc.comment AS commentContent,
+
+                pc.id AS commentId,
+                pc.reply_comment_id AS parentCommentId,
+                pc.post_id AS postId,
+                pc.commenter_id AS commenterId
+            FROM post_comment AS pc
+            LEFT JOIN login_user AS cmu ON pc.commenter_id = cmu.id
+            LEFT JOIN post_comment AS reply_comment ON pc.reply_comment_id = reply_comment.id
+            LEFT JOIN login_user AS rplu ON reply_comment.commenter_id = rplu.id
+            WHERE pc.id IN
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                #{item.id}
+            </foreach>
+        </if>
     </select>
 </mapper>

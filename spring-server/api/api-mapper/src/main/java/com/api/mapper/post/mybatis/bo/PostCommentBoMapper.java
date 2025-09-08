@@ -27,7 +27,7 @@ public interface PostCommentBoMapper {
         rplu.user_name AS replyUserName,
 
         pc.timestamp AS commentTimestamp,
-        pc.content AS commentContent,
+        pc.comment AS commentContent,
 
         pc.id AS commentId,
         pc.reply_comment_id AS parentCommentId,
@@ -46,6 +46,27 @@ public interface PostCommentBoMapper {
      * 通过commentIdList获取CommentBoList
      * @param commentIdList 评论idList
      * @return              评论BoList
+    SELECT
+        cmu.avatar_file_id AS avatarFileId,
+        cmu.user_name AS userName,
+        rplu.user_name AS replyUserName,
+
+        pc.timestamp AS commentTimestamp,
+        pc.comment AS commentContent,
+
+        pc.id AS commentId,
+        pc.reply_comment_id AS parentCommentId,
+        pc.post_id AS postId,
+        pc.commenter_id AS commenterId
+    FROM post_comment AS pc
+    LEFT JOIN login_user AS cmu ON pc.commenter_id = cmu.id
+    LEFT JOIN post_comment AS reply_comment ON pc.reply_comment_id = reply_comment.id
+    LEFT JOIN login_user AS rplu ON reply_comment.commenter_id = rplu.id
+    WHERE pc.id IN (
+        SELECT comment_id
+        FROM post_comment
+        WHERE id IN (#{list})
+    );
      */
     List<CommentBo> getCommentBoByIdList(
             @Param("list") List<Long> commentIdList
