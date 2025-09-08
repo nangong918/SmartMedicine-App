@@ -76,9 +76,14 @@ public class PostVm extends ViewModel {
             return;
         }
 
+        Long userId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                .map(ao -> ao.userId)
+                .orElse(null);
+
         GetSinglePostRequest request = new GetSinglePostRequest();
         request.postId = postId;
         request.pageNum = pageNum;
+        request.userId = userId;
 
         apiRequestImpl.getSinglePost(
                 request,
