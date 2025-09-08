@@ -161,6 +161,12 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- 引入 Spring AOP 相关依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!-- 自动化配置 neo4j -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

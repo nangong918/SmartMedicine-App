@@ -42,7 +42,8 @@ public enum PostExceptions implements ExceptionEnums {
     COMMENT_TOO_LONG("P_10015", "评论过长"),
     // 收藏夹不存在
     COLLECT_FOLDER_NOT_EXIST("P_10016", "收藏夹不存在"),
-    ;
+    // 评论失败
+    COMMENT_INSERT_TO_DB_FAILED("P_10017", "评论失败");
 
     private final String code;
     private final String message;

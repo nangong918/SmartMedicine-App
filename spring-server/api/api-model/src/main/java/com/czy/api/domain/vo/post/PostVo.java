@@ -1,103 +1,98 @@
 package com.czy.api.domain.vo.post;
 
-import com.czy.api.domain.ao.post.PostInfoUrlAo;
+import com.czy.api.domain.Do.post.post.content.PostContentEntity;
+import com.czy.api.domain.ao.post.PostNerResult;
 import lombok.Data;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * 前端需要的Vo
+ * Redis存储格式: Hash
+ */
 @Data
-public class PostVo implements Serializable {
+public class PostVo implements Serializable, Cloneable {
 
-    // postId
+    // postId (post_info)
     public Long postId = null;
 
-    // 文章图片
-    public List<String> postImgUrls = null;
+    // author (post_info LEFT JOIN login_user)
+    public String authorAvatarUrl;
+    public String authorName;
+    public Long authorId;
 
-    // 文章标题
-    public String postTitle = "";
-
-    // 文章内容
-    public String postContent = "";
-
-    // 作者id
-    public Long authorId = null;
-
-    // 作者名称
-    public String authorName = "";
-
-    // 作者头像
-    public String authorAvatarUrl = "";
-
+    // post (post_info)
+    public String postTitle;
+    // mongoDb 获取内容
+    public List<PostContentEntity> postContents;
+    public String postPublishTime; // yyyy-MM-dd HH:mm:ss
+    // 阅读数量（点击数量） (redis-hash)
+    public Long postViewNum = 0L;
     // 点赞数量
-    public String likeNum = "0";
+    public Long likeNum = 0L;
     // 收藏数量
-    public String collectNum = "0";
+    public Long collectNum = 0L;
     // 评论数量
-    public String commentNum = "0";
-    // 阅读数量（点击数量）
-    public String readNum = "0";
+    public Long commentNum = 0L;
     // 转发数量
-    public String forwardNum = "0";
-    // 发表时间
-    public Long postPublishTimestamp = 0L;
+    public Long forwardNum = 0L;
+    // (post_info LEFT JOIN post_files INNER JOIN post_file -> OssService)
+    // 此处的fileIds暂时来自于mysql, 而不是mongoDB 后续需要升级再改为mongodb
+    public List<String> postImgUrls;
 
-    // 当前用户是否点赞
-    public Boolean isLike = false;
-    // 当前用户是否收藏
-    public Boolean isCollect = false;
-    // 当前用户是否不喜欢
-    public Boolean isDislike = false;
+    // action   (login_user INNER JOIN user_post_action INNER JOIN post_info)
+    public Boolean like;
+    public Boolean collect; // 取消文件夹创建 (你开发jb那么多功能干jb啥, 别他妈的造无用的轮子)
+    public Boolean dislike;
 
+    /*
+        ner labels
+        vo 不需要标签, ner属于是post画像,
+        但是vo是已经在feature-service拿到postId之后回调的接口,
+        已经属于recommend之后的行为, 无需ner
+        并且此处vo的功能单纯就是 id -> vo 可以一个bo联合全部查询出来
+        虽然但是, mongoDB能查询到, 那就都给他算了
+     */
+    public List<PostNerResult> nerResults;
 
+    // 排序 (时间， 热度， 推荐评分) (redis获取 / 计算填充; bo的converter无法填充)
+    public Long timestamp;
+    public Long popularity;
+    public Long score;
 
-    public static PostVo getRecommendPostVoFromPostInfoUrlAo(PostInfoUrlAo postInfoUrlAo){
-        PostVo postVo = new PostVo();
-        postVo.postId = postInfoUrlAo.id;
-        postVo.postImgUrls = new ArrayList<>();
-        postVo.postImgUrls.add(postInfoUrlAo.fileUrl);
-        postVo.postTitle = postInfoUrlAo.title;
-        postVo.authorName = postInfoUrlAo.authorName;
-        postVo.authorAvatarUrl = postInfoUrlAo.authorAvatarUrl;
-        postVo.likeNum = numToString(postInfoUrlAo.likeCount);
-        postVo.collectNum = numToString(postInfoUrlAo.collectCount);
-        postVo.commentNum = numToString(postInfoUrlAo.commentCount);
-        postVo.readNum = numToString(postInfoUrlAo.readCount);
-        postVo.forwardNum = numToString(postInfoUrlAo.forwardCount);
-        postVo.postPublishTimestamp = postInfoUrlAo.releaseTimestamp;
-        // 推荐默认为没看过
-        postVo.isLike = false;
-        postVo.isCollect = false;
-        postVo.isDislike = false;
-        return postVo;
-    }
+    @SneakyThrows
+    @NotNull
+    @Override
+    public PostVo clone() throws CloneNotSupportedException {
+        PostVo cloned = (PostVo) super.clone();
 
-    public static String numToString(Long num) {
-        if (num < 0) {
-            return "Invalid number";
+        // 深克隆 postContents
+        if (this.postContents != null) {
+            List<PostContentEntity> clonedPostContents = new ArrayList<>();
+            for (PostContentEntity content : this.postContents) {
+                clonedPostContents.add(content.clone());
+            }
+            cloned.postContents = clonedPostContents;
         }
 
-        // 大于 1000M展示为 1B；比如105643909 -> 1.0B
-        if (num >= 1_000_000_000) {
-            return String.format("%.1fB", num / 1_000_000_000.0);
+        // 深克隆 nerResults
+        if (this.nerResults != null) {
+            List<PostNerResult> clonedNerResults = new ArrayList<>();
+            for (PostNerResult result : this.nerResults) {
+                clonedNerResults.add(result.clone());
+            }
+            cloned.nerResults = clonedNerResults;
         }
-        // 大于 1000k展示为 1M；比如105643 -> 1.0M
-        else if (num >= 1_000_000) {
-            return String.format("%.1fM", num / 1_000_000.0);
-        }
-        // 大于 1000k展示为 1K；比如1105 -> 1.1K
-        else if (num >= 1_000) {
-            return String.format("%.1fK", num / 1_000.0);
-        } else {
-            return num.toString();
-        }
-    }
 
-    public static void main(String[] args) {
-        Long num = 1056439090L;
-        System.out.println(numToString(num));
+        // 深克隆 postImgUrls（如果需要）
+        if (this.postImgUrls != null) {
+            cloned.postImgUrls = new ArrayList<>(this.postImgUrls);
+        }
+
+        return cloned;
     }
 }

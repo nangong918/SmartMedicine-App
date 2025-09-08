@@ -9,7 +9,7 @@ import java.util.List;
  * 排序方式: 推荐index: 不参考
  *          热门index: heat
  *          社区index: timestamp
- * @param <T>   PostAo / PostVo;
+ * @param <T>   PostPreviewAo / PostVo;
  */
 public interface OnPostChange<T extends SortItem> {
     /**

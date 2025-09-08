@@ -1,12 +1,15 @@
 package com.czy.baseutil.activity;
 
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -18,10 +21,10 @@ import java.util.Optional;
 
 /**
  * 解决ViewBinding重复代码    （通过反射实现）
- * @param <viewBinding>     视图绑定类型
+ * @param <VB>     视图绑定类型
  */
-public abstract class BaseActivity<viewBinding extends ViewBinding> extends AppCompatActivity {
-    protected viewBinding binding;
+public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActivity {
+    protected VB binding;
     protected final String activityName;
     protected final String TAG;
 
@@ -30,7 +33,7 @@ public abstract class BaseActivity<viewBinding extends ViewBinding> extends AppC
 //        TAG = activityName;
 //    }
 
-    public abstract viewBinding getBinding();
+    public abstract VB initBinding();
 
     public BaseActivity(Class<?> classType){
         this.activityName = classType.getSimpleName();
@@ -41,8 +44,7 @@ public abstract class BaseActivity<viewBinding extends ViewBinding> extends AppC
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        initViewBinding();
-        this.binding = getBinding();
+        this.binding = initBinding();
         setContentView(binding.getRoot());
 
         init();
@@ -56,68 +58,69 @@ public abstract class BaseActivity<viewBinding extends ViewBinding> extends AppC
 //        initView();
     }
 
-/*
-    private void initViewBinding(){
-        // 反射获取泛型的父类型即：BaseViewBindActivity<viewBinding extends ViewBinding>    （BaseViewBindActivity<ActivityMainBinding>）
-        Type superclass = getClass().getGenericSuperclass();
-        // 获取参数类型也就是 BaseViewBindActivity<ActivityMainBinding> -> ActivityMainBinding
-        if(superclass == null){return;}
-        Class<?> aClass = (Class<?>) ((ParameterizedType) superclass).getActualTypeArguments()[0];
-
-        try {
-            // 反射获取 ActivityMainBinding.inflate方法；inflate是方法名称，LayoutInflater.class是方法传入参数
-            Method method = aClass.getDeclaredMethod("inflate", LayoutInflater.class);
-            // 填充Binding
-            binding = (viewBinding) method.invoke(null, getLayoutInflater());
-            assert binding != null;
-            setContentView(binding.getRoot());
-        } catch (NoSuchMethodException e) {
-            Log.e(TAG, "inflate 方法未找到: " + aClass.getSimpleName(), e);
-        } catch (IllegalAccessException e) {
-            Log.e(TAG, "无法访问 inflate 方法: " + aClass.getSimpleName(), e);
-        } catch (InvocationTargetException e) {
-            Log.e(TAG, "调用 inflate 方法时发生异常: " + aClass.getSimpleName() + "，原因: " + e.getCause(), e);
-        } catch (Exception e) {
-            Log.e(TAG, "发生未知错误: " + e.getMessage(), e);
-        }
-    }
-*/
-
     private void initWindow(){
 
-/*        // 状态栏透明
-        StatusBarUtil.setTranslucentStatusBar(this);
+//        //去除时间和电量等
+//        getWindow().setFlags(
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN
+//        );
 
-        // 隐藏顶部栏
-        StatusBarUtil.setHideStatusBar(this);*/
-
-        // 设置状态栏透明 （设置下面会让layout无法适应下拉列表放着输入框遮挡）
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//
-//        // 隐藏状态栏 （时间wifi等信息）
-//        View decorView = getWindow().getDecorView();
-//        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-//                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-//                View.SYSTEM_UI_FLAG_FULLSCREEN);
-
-//        EdgeToEdge.enable(this);
-//
-//        // 处理窗口插入
-//        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
 
         //去除标题导航栏
         Optional.ofNullable(getSupportActionBar())
                 .ifPresent(ActionBar::hide);
-        //去除时间和电量等
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-        );
+
+        setStatusBarColor(statusBarColorId);
     }
+
+    private int statusBarColorId = android.R.color.transparent;
+
+    @SuppressLint("ResourceType")
+    public void setStatusBarColor(int colorId){
+        statusBarColorId = colorId;
+        // 获取 DecorView
+        ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
+        int count = decorView.getChildCount();
+        if (count > 0 && decorView.getChildAt(count - 1) instanceof StatusBarView) {
+            decorView.getChildAt(count - 1).setBackgroundResource(statusBarColorId);
+        }
+        else {
+            // 创建并添加 StatusBarView
+            StatusBarView statusBarView = createStatusBarView(this, statusBarColorId);
+            decorView.addView(statusBarView);
+        }
+
+        // 获取根视图并设置窗口插图
+        ViewGroup rootView = (ViewGroup) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+        rootView.setOnApplyWindowInsetsListener((v, insets) -> {
+            int statusBarHeight = insets.getSystemWindowInsetTop();
+            v.setPadding(0, statusBarHeight, 0, 0); // 设置顶部填充以适应状态栏
+            return insets;
+        });
+    }
+
+    // 创建 StatusBarView
+    private static StatusBarView createStatusBarView(Activity activity, int colorId) {
+        StatusBarView statusBarView = new StatusBarView(activity);
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight(activity));
+        statusBarView.setLayoutParams(params);
+        statusBarView.setBackgroundResource(colorId);
+        return statusBarView;
+    }
+
+    // 获取状态栏高度
+    @SuppressLint({"DiscouragedApi", "InternalInsetResource"})
+    private static int getStatusBarHeight(Context context) {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
 
     // 将头部的Bar隐藏
 

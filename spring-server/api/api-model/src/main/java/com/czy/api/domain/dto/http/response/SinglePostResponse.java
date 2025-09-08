@@ -1,13 +1,13 @@
 package com.czy.api.domain.dto.http.response;
 
-import com.czy.api.domain.vo.post.CommentVo;
-import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.ao.post.CommentAo;
+import com.czy.api.domain.vo.post.toFront.PostFVo;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 public class SinglePostResponse {
-    public PostVo postVo;
-    public List<CommentVo> commentVos;
+    public PostFVo postVo;
+    public List<CommentAo> commentAos;
 }

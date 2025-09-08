@@ -9,7 +9,6 @@ import com.czy.api.constant.netty.NettyOptionEnum;
 import com.czy.api.constant.netty.NettyResponseStatuesEnum;
 import com.czy.api.constant.netty.RequestMessageType;
 import com.czy.api.constant.post.PostConstant;
-import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.user.UserDo;
@@ -68,7 +67,6 @@ public class PostHandler implements PostApi{
 
     private final PostHandleService postHandleService;
     private final RabbitMqSender rabbitMqSender;
-    private final PostCommentConverter postCommentConverter;
     private final PostService postService;
     private final PostInfoMapper postInfoMapper;
     private final PostCommentService postCommentService;
@@ -350,7 +348,7 @@ public class PostHandler implements PostApi{
                 // 获取返回对象
                 PostCommentResponse response = new PostCommentResponse();
                 // 从request获取其他属性
-                response.setCommentId(request.getCommentId());
+                response.setCommentId(resultDto.getCommentId());
                 response.setPostId(postId);
                 response.setContent(content);
                 response.setReplyCommentId(replyCommentId);
@@ -434,11 +432,11 @@ public class PostHandler implements PostApi{
     // comment通知评论发布者
     private void notifyCommenter(PostCommentResponse postCommentResponse){
         if (postCommentResponse.getReplyCommentId() != null){
-            PostCommentDo postCommenterDo = postCommentService.getPostCommentById(postCommentResponse.getReplyCommentId());
-            if (postCommenterDo == null || postCommenterDo.getCommenterId() == null){
+            PostCommentDo postCommentDo = postCommentService.getPostCommentById(postCommentResponse.getReplyCommentId());
+            if (postCommentDo == null || postCommentDo.getCommenterId() == null){
                 return;
             }
-            postCommentResponse.setReceiverId(postCommenterDo.getCommenterId());
+            postCommentResponse.setReceiverId(postCommentDo.getCommenterId());
             rabbitMqSender.push(postCommentResponse);
         }
     }
@@ -462,9 +460,9 @@ public class PostHandler implements PostApi{
 
         // 2. 通知接收者
         if (request.getReplyCommentId() != null){
-            PostCommentDo postCommenterDo = postCommentService.getPostCommentById(request.getReplyCommentId());
-            if (postCommenterDo != null && postCommenterDo.getId() != null){
-                Long commenterId = Optional.ofNullable(postCommenterDo.getCommenterId())
+            PostCommentDo postCommentDo = postCommentService.getPostCommentById(request.getReplyCommentId());
+            if (postCommentDo != null && postCommentDo.getId() != null){
+                Long commenterId = Optional.ofNullable(postCommentDo.getCommenterId())
                                 .orElse(NettyConstants.ERROR_ID);
                 if (!NettyConstants.ERROR_ID.equals(commenterId)){
                     response.setSenderId(request.getSenderId());

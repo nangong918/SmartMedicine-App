@@ -28,26 +28,26 @@ public class PostSearchViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setView(@NonNull PostExVo postExVo){
-        // userFace
-        Optional.ofNullable(postExVo.authorAvatarUrl)
-                .ifPresent(
-                        url -> ImageLoadUtil.loadImageViewByResource(url, binding.cardUserFace)
-                );
+        // author
+        Optional.ofNullable(postExVo.postVo)
+                .ifPresent(vo -> {
+                    // author
+                    ImageLoadUtil.loadImageViewByResource(vo.authorAvatarUrl, binding.imgvAvatar);
+                    binding.tvName.setText(vo.authorName);
 
-        // postImage
-        Optional.ofNullable(postExVo.postImgUrls)
-                .filter(urls -> !urls.isEmpty())
-                .ifPresent(
-                        urls -> ImageLoadUtil.loadImageViewByResource(urls.get(0), binding.cardImage)
-                );
-
-        // title
-        String title = Optional.ofNullable(postExVo.postTitle).orElse("");
-        binding.textTitle.setText(title);
-
-        // userID (其实就是username)
-        String userID = Optional.ofNullable(postExVo.authorName).orElse("");
-        binding.cardUserID.setText(userID);
+                    // post
+                    binding.tvTitle.setText(vo.postTitle);
+                    binding.tvTime.setText(vo.postPublishTime);
+                    binding.tvView.setText(vo.postViewNum);
+                    binding.tvLike.setText(vo.likeNum);
+                    // postImage
+                    Optional.ofNullable(vo.postImgUrls)
+                            .filter(urls -> !urls.isEmpty())
+                            .map(urls -> urls.get(0))
+                            .ifPresent(url -> {
+                                ImageLoadUtil.loadImageViewByResource(url, binding.imgvMain);
+                            });
+                });
 
         // type
         String type = PostSearchResultListEnum.getEnum(postExVo.type).getName();
@@ -57,11 +57,13 @@ public class PostSearchViewHolder extends RecyclerView.ViewHolder {
     private Long postId;
 
     private void setData(@NonNull PostExVo postExVo){
-        this.postId = postExVo.postId;
+        this.postId = Optional.ofNullable(postExVo.postVo)
+                .map(vo -> vo.postId)
+                .orElse(null);
     }
 
     private void setClick(@NonNull OnPostClick onPostClick){
-        binding.basicCard.setOnClickListener(v -> {
+        binding.baseCard.setOnClickListener(v -> {
             onPostClick.onPostClick(getAdapterPosition(), postId);
         });
     }

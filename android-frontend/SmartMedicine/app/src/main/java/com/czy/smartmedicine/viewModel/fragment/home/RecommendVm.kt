@@ -132,17 +132,17 @@ open class RecommendVm(
         context: Context,
         callback: SyncRequestCallback
     ) {
-        val postInfoAos = Optional.ofNullable(response)
+        val postPreviewVos = Optional.ofNullable(response)
             .map { obj: BaseResponse<RecommendPostResponse> -> obj.data }
-            .map { obj: RecommendPostResponse -> obj.getPostInfoUrlAos() }
+            .map { obj: RecommendPostResponse -> obj.postVos }
             .orElse(ArrayList())
 
-        if (postInfoAos.isEmpty()) {
+        if (postPreviewVos.isEmpty()) {
             return
         }
 
-        // postInfoUrlAo -> PostAo
-        val newPostAoList = postClickManager.getPostAoListByResponse(postInfoAos)
+        // postInfoUrlAo -> PostPreviewAo
+        val newPostAoList = postClickManager.getPostAoListByResponse(postPreviewVos)
 
         // homeList原先存在的列表
         val recommendPost = MainApplication.getInstance().postDataManager.recommendPosts
@@ -156,7 +156,7 @@ open class RecommendVm(
         recommendPost.addAll(newPostAoList)
 
         Log.i(TAG, "推荐数据检查：[原数据：$beforeSize] " +
-                "[处理前 新数据：${postInfoAos.size}] " +
+                "[处理前 新数据：${postPreviewVos.size}] " +
                 "[处理后 新数据：${newPostAoList.size}] " +
                 "[总数据：${recommendPost.size}]"
         )

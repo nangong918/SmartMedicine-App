@@ -1,6 +1,6 @@
 package com.czy.api.domain.dto.http.response;
 
-import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorPageVo;
 import lombok.Data;
 
 /**
@@ -9,5 +9,5 @@ import lombok.Data;
  */
 @Data
 public class GetRegisterAppointmentListResponse {
-    private RegisterAppointmentPageVo pageVo;
+    private AppointmentDoctorPageVo pageVo;
 }

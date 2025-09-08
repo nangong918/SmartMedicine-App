@@ -2,11 +2,10 @@ package com.czy.domain.constant;
 
 public enum SelectItemEnum {
     HOME(0),
-    SEARCH(1),
-    AI(2),
-    FRIENDS(3),
-    NOTIFICATIONS(4),
-    MESSAGE(5);
+    MEDICAL(1),
+    MESSAGE(2),
+    MINE(3),
+    ;
 
     private final int position;
 

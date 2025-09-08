@@ -8,14 +8,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.czy.appcore.network.api.handle.SyncRequestCallback;
+import com.czy.appview.view.post.CommentAdapter;
 import com.czy.baseutil.activity.BaseActivity;
 import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.baseutil.viewModel.ViewModelUtil;
-import com.czy.appview.view.post.CommentAdapter;
+import com.czy.domain.ao.entity.CommentAo;
 import com.czy.domain.ao.home.PostIntentAo;
-import com.czy.domain.vo.entity.home.CommentVo;
-import com.czy.domain.fragmentActivityAo.post.PostActivityVo;
+import com.czy.domain.fragmentActivityAo.post.PostAAo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityPostBinding;
 import com.czy.smartmedicine.viewModel.activity.PostVm;
@@ -27,7 +26,6 @@ import java.util.Optional;
 
 /**
  * 帖子详情界面
- * todo 点赞，评论，收藏，转发
  */
 public class PostActivity extends BaseActivity<ActivityPostBinding> {
 
@@ -36,7 +34,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     }
 
     @Override
-    public ActivityPostBinding getBinding() {
+    public ActivityPostBinding initBinding() {
         return ActivityPostBinding.inflate(getLayoutInflater());
     }
 
@@ -46,43 +44,28 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
 
         Log.i("check_netty", "PostActivity::MessageSender: " + MainApplication.getInstance().getMessageSender());
 
-        initIntent();
         initViewModel();
         initRecyclerView();
-
-        // 利用postId去网络请求帖子信息（先请求1页的评论内容）
-        vm.getSinglePost(1, this, new SyncRequestCallback() {
-            @Override
-            public void onThrowable(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onAllRequestSuccess() {
-
-            }
-        });
     }
 
     @Override
     protected void setListener() {
         super.setListener();
         binding.btnBack.setOnClickListener(v -> {
-            finishActivityWithPostId(currentActivityPostId);
+            finishActivityWithPostId(vm.postAAo.postId);
         });
     }
 
-    private Long currentActivityPostId = null;
 
     private void initIntent(){
         Intent initIntent = getIntent();
         PostIntentAo postIntentAo = (PostIntentAo) initIntent.getSerializableExtra(PostIntentAo.POST_OPEN_INTENT);
 
-        currentActivityPostId = Optional.ofNullable(postIntentAo)
+        vm.postAAo.postId = Optional.ofNullable(postIntentAo)
                 .map(p -> p.postId)
                 .orElse(null);
 
-        if (currentActivityPostId == null){
+        if (vm.postAAo.postId == null){
             Log.e(TAG, "帖子id为空");
             Toast.makeText(this, "帖子异常，请查看其他帖子", Toast.LENGTH_SHORT).show();
             finish();
@@ -98,6 +81,8 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
 
         initViewModelVo();
 
+        initIntent();
+
         observeLivedata();
 
         // 绑定viewModel
@@ -107,9 +92,8 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     }
 
     private void initViewModelVo(){
-        PostActivityVo vo = new PostActivityVo();
-        vo.postVoLd.postIdLd.setValue(currentActivityPostId);
-        vm.init(vo);
+        PostAAo aao = new PostAAo();
+        vm.init(aao, this);
     }
 
     private void observeLivedata() {
@@ -118,105 +102,53 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     }
 
     private void observePostVo(){
-        vm.postActivityVo.postVoLd.authorAvatarUrlLd.observe(
-                this, authorAvatarUrl -> {
+
+        // author
+        vm.postAAo.postAVo.authorAvatarUrlLd.observe(this, authorAvatarUrl -> {
                     if (TextUtils.isEmpty(authorAvatarUrl)){
                         return;
                     }
-                    ImageLoadUtil.loadImageViewByUrl(authorAvatarUrl, binding.authorFacePicture);
+                    ImageLoadUtil.loadImageViewByUrl(
+                            authorAvatarUrl, binding.imgvAuthorAvatar
+                    );
                 }
         );
+        vm.postAAo.postAVo.authorNameLd.observe(this, authorName -> {
+            binding.tvAuthorName.setText(authorName);
+        });
 
-        vm.postActivityVo.postVoLd.postImgUrlsLd.observe(
-                this, postImgUrls -> {
-                    if (postImgUrls == null){
-                        return;
-                    }
-                    if (!postImgUrls.isEmpty()){
-                        ImageLoadUtil.loadImageViewByUrl(postImgUrls.get(0), binding.articlePicture);
-                    }
-                }
-        );
+        // post
+        vm.postAAo.postAVo.postTitleLd.observe(this, postTitle -> {
+            binding.tvTime.setText(postTitle);
+        });
+        vm.postAAo.postAVo.postContentLd.observe(this, postContent -> {
+            binding.tvContent.setText(postContent);
+        });
+        vm.postAAo.postAVo.postPublishTimeLd.observe(this, publishTime -> {
+            binding.tvTime.setText(publishTime);
+        });
+        vm.postAAo.postAVo.postViewNumLd.observe(this, viewNum -> {
+            binding.tvViewNum.setText(viewNum);
+        });
 
-        vm.postActivityVo.postVoLd.postContentLd.observe(
-                this, content -> {
-                    if (TextUtils.isEmpty(content)){
-                        return;
-                    }
-                    binding.content.setText(content);
-                }
-        );
-
-        vm.postActivityVo.postVoLd.postTitleLd.observe(
-                this, title -> {
-                    if (TextUtils.isEmpty(title)){
-                        return;
-                    }
-                    binding.Title.setText(title);
-                }
-        );
-
-        vm.postActivityVo.postVoLd.authorNameLd.observe(
-                this, authorName -> {
-                    if (TextUtils.isEmpty(authorName)){
-                        return;
-                    }
-                    binding.authorName.setText(authorName);
-                }
-        );
-
-        vm.postActivityVo.postVoLd.likeNumLd.observe(
-                this, likeNum -> {
-                    if (TextUtils.isEmpty(likeNum)){
-                        return;
-                    }
-                    binding.tvLikeNum.setText(likeNum);
-                }
-        );
-
-        vm.postActivityVo.postVoLd.collectNumLd.observe(
-                this, collectNum -> {
-                    if (TextUtils.isEmpty(collectNum)){
-                        return;
-                    }
-                    binding.tvCollectionNum.setText(collectNum);
-                }
-        );
-
-        vm.postActivityVo.postVoLd.commentNumLd.observe(
-                this, commentNum -> {
-                    if (TextUtils.isEmpty(commentNum)){
-                        return;
-                    }
-                    binding.tvCommentNum.setText(commentNum);
-                }
-        );
-
-        vm.postActivityVo.postVoLd.isLikeLd.observe(
-                this, isLike -> {
-                    if (isLike){
-                        binding.imgFavorite.setImageResource(com.czy.appview.R.drawable.favorite_full);
-                    }else{
-                        binding.imgFavorite.setImageResource(com.czy.appview.R.drawable.favorite_border);
-                    }
-                }
-        );
-
-        vm.postActivityVo.postVoLd.isCollectLd.observe(
-                this, isCollect -> {
-                    if (isCollect){
-                        binding.imgvStar.setImageResource(com.czy.appview.R.drawable.star_full);
-                    }
-                    else{
-                        binding.imgvStar.setImageResource(com.czy.appview.R.drawable.star_border);
-                    }
-                }
-        );
+        // action
+        vm.postAAo.postAVo.likePostLd.observe(this, likePost -> {
+            binding.btnLike.setImageResource(likePost ?
+                    com.czy.appview.R.drawable.favorite2_48px :
+                    com.czy.appview.R.drawable.favorite_24px
+            );
+        });
+        vm.postAAo.postAVo.collectPostLd.observe(this, collectPost -> {
+            binding.btnCollect.setImageResource(collectPost ?
+                    com.czy.appview.R.drawable.kid_star2_48px :
+                    com.czy.appview.R.drawable.kid_star_48px
+            );
+        });
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private void observeCommentVo() {
-        vm.postActivityVo.commentNumLd.observe(
+        vm.postAAo.postAVo.commentNumLd.observe(
                 this,
                 commentNum -> {
                     // 通知适配器数据已更改
@@ -228,11 +160,12 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     // recyclerView
     private CommentAdapter adapter;
     private void initRecyclerView(){
-        List<CommentVo> commentVos = Optional.ofNullable(vm.postActivityVo)
-                .map(ao -> ao.commentVos)
+        List<CommentAo> commentAos = Optional.ofNullable(vm.postAAo)
+                .map(aao -> aao.postAVo)
+                .map(avo -> avo.commentAos)
                 .orElse(new ArrayList<>());
-        adapter = new CommentAdapter(commentVos);
-        binding.rclvComment.setAdapter(adapter);
+        adapter = new CommentAdapter(commentAos);
+        binding.rclvCommend.setAdapter(adapter);
     }
 
     // 在 PostActivity 中
@@ -247,6 +180,6 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
     @Override
     public void onBackPressed() {
         // 在这里处理返回逻辑
-        finishActivityWithPostId(currentActivityPostId);
+        finishActivityWithPostId(vm.postAAo.postId);
     }
 }

@@ -1,6 +1,6 @@
 import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.bo.DoctorMerchantBoMapper;
-import com.api.mapper.medicine.redis.RegisterAppointmentRedisMapper;
+import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.DepartmentEnum;
@@ -8,14 +8,14 @@ import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.ao.LocationAo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
 import com.czy.api.domain.ao.medicine.HospitalAo;
-import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
-import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorSelectAo;
+import com.czy.api.domain.bo.medicine.AppointmentDoctorMerchantCardBo;
 import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
 import com.czy.api.domain.vo.medicine.DoctorVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDataVo;
-import com.czy.api.domain.vo.medicine.RegisterAppointmentPageVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorDataVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorPageVo;
 import com.czy.medicine.MedicineServiceApplication;
-import com.czy.medicine.service.RegisterAppointmentService;
+import com.czy.medicine.service.AppointmentDoctorService;
 import date.DateUtils;
 import json.BaseBean;
 import lombok.Data;
@@ -46,8 +46,8 @@ public class RegisterAppointmentTests {
     @Autowired
     private DoctorMerchantBoMapper doctorMerchantBoMapper;
 
-    private RegisterAppointmentSelectAo getRegisterAppointmentSelectAo(){
-        RegisterAppointmentSelectAo ao = new RegisterAppointmentSelectAo();
+    private AppointmentDoctorSelectAo getRegisterAppointmentSelectAo(){
+        AppointmentDoctorSelectAo ao = new AppointmentDoctorSelectAo();
         LocationAo locationAo = new LocationAo("广东省", "深圳市", "南山区");
         LocalDateTime now = LocalDateTime.now();
         ao.setRegisterLocation(locationAo);
@@ -76,7 +76,7 @@ public class RegisterAppointmentTests {
      */
     @Test
     public void doctorMerchantAppointmentTest(){
-        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+        AppointmentDoctorSelectAo ao = getRegisterAppointmentSelectAo();
         LocalDateTime now = LocalDateTime.now();
 
         for (int i = 0; i < 4; i++){
@@ -102,7 +102,7 @@ public class RegisterAppointmentTests {
 
     @Test
     public void doctorMerchantBoTest(){
-        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+        AppointmentDoctorSelectAo ao = getRegisterAppointmentSelectAo();
         LocalDateTime now = LocalDateTime.now();
         List<DoctorMerchantAppointmentDo> dos = doctorMerchantAppointmentMapper.getDosByParam(
                 ao.getRegisterLocation(),
@@ -111,20 +111,20 @@ public class RegisterAppointmentTests {
                 ao.registerSubjectCode
         );
 
-        List<RegisterAppointmentDoctorCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(dos);
-        for (RegisterAppointmentDoctorCardBo bo : boList){
+        List<AppointmentDoctorMerchantCardBo> boList = doctorMerchantBoMapper.getDoctorCardBosByDoctorMerchantDos(dos);
+        for (AppointmentDoctorMerchantCardBo bo : boList){
             log.info("bo: {}", bo);
         }
     }
 
     @Autowired
-    private RegisterAppointmentService registerAppointmentService;
+    private AppointmentDoctorService appointmentDoctorService;
 
     @Test
     public void getListRegisterAppointment(){
-        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+        AppointmentDoctorSelectAo ao = getRegisterAppointmentSelectAo();
 
-        RegisterAppointmentPageVo pageVo = registerAppointmentService.getPage(
+        AppointmentDoctorPageVo pageVo = appointmentDoctorService.getPage(
                 ao
         );
 
@@ -133,9 +133,9 @@ public class RegisterAppointmentTests {
 
     @Test
     public void getAllDateRegisterAppointment(){
-        RegisterAppointmentSelectAo ao = getRegisterAppointmentSelectAo();
+        AppointmentDoctorSelectAo ao = getRegisterAppointmentSelectAo();
 
-        List<RegisterAppointmentDataVo> dataVos = registerAppointmentService.getDataVoList(
+        List<AppointmentDoctorDataVo> dataVos = appointmentDoctorService.getDataVoList(
                 ao
         );
 
@@ -143,7 +143,7 @@ public class RegisterAppointmentTests {
     }
 
     @Autowired
-    private RegisterAppointmentRedisMapper registerAppointmentRedisMapper;
+    private AppointmentDoctorOrderRedisMapper appointmentDoctorOrderRedisMapper;
 
     @Test
     public void appointmentDoctorOrderListAoTests(){
@@ -157,7 +157,7 @@ public class RegisterAppointmentTests {
 
         // 增加数据到redis
         long startTime = System.currentTimeMillis();
-        boolean listSaveResult = registerAppointmentRedisMapper.saveAppointmentDoctorOrderListAo(
+        boolean listSaveResult = appointmentDoctorOrderRedisMapper.saveAppointmentDoctorOrderListAo(
                 userId, aos
         );
         log.info("list save result: {}, 时间花费: {}ms", listSaveResult, System.currentTimeMillis() - startTime);
@@ -182,7 +182,7 @@ public class RegisterAppointmentTests {
         ao1.setListVo(vo1);
 
         startTime = System.currentTimeMillis();
-        boolean singleInsertResult = registerAppointmentRedisMapper.saveSingleAppointmentDoctorOrderListAo(
+        boolean singleInsertResult = appointmentDoctorOrderRedisMapper.saveSingleAppointmentDoctorOrderListAo(
                 userId, ao1
         );
         log.info("single insert result: {},  时间花费: {}ms", singleInsertResult, System.currentTimeMillis() - startTime);
@@ -190,7 +190,7 @@ public class RegisterAppointmentTests {
 
         // 更新某条
         startTime = System.currentTimeMillis();
-        boolean updateResult = registerAppointmentRedisMapper.updateAppointmentDoctorOrderListAoStatus(
+        boolean updateResult = appointmentDoctorOrderRedisMapper.updateAppointmentDoctorOrderListAoStatus(
                 userId,
                 ao1.getOrderId(),
                 UserOrderStatusEnum.WAITING_PAYMENT.getCode()
@@ -200,26 +200,26 @@ public class RegisterAppointmentTests {
 
         // 删除某条
         startTime = System.currentTimeMillis();
-        registerAppointmentRedisMapper.deleteSingleAppointmentDoctorOrderListAo(userId, aos.get(0));
+        appointmentDoctorOrderRedisMapper.deleteSingleAppointmentDoctorOrderListAo(userId, aos.get(0));
         log.info("删除某条, 耗时：{}", System.currentTimeMillis() - startTime);
         getDataInfo(userId, userLongitude, userLatitude);
 
         // 全部删除
         startTime = System.currentTimeMillis();
-        registerAppointmentRedisMapper.deleteAllAppointmentDoctorOrderListAo(userId);
+        appointmentDoctorOrderRedisMapper.deleteAllAppointmentDoctorOrderListAo(userId);
         log.info("删除全部, 耗时：{}", System.currentTimeMillis() - startTime);
         getDataInfo(userId, userLongitude, userLatitude);
     }
 
     private void getDataInfo(long userId, double userLongitude, double userLatitude){
         long startTime = System.currentTimeMillis();
-        List<AppointmentDoctorOrderListAo> timeAoList = registerAppointmentRedisMapper.getAppointmentRecordList(
+        List<AppointmentDoctorOrderListAo> timeAoList = appointmentDoctorOrderRedisMapper.getAppointmentRecordList(
                 userId, AppointmentSortTypeEnum.TIME.getCode(), null, null
         );
-        List<AppointmentDoctorOrderListAo> costAoList = registerAppointmentRedisMapper.getAppointmentRecordList(
+        List<AppointmentDoctorOrderListAo> costAoList = appointmentDoctorOrderRedisMapper.getAppointmentRecordList(
                 userId, AppointmentSortTypeEnum.COST.getCode(), null, null
         );
-        List<AppointmentDoctorOrderListAo> distanceAoList = registerAppointmentRedisMapper.getAppointmentRecordList(
+        List<AppointmentDoctorOrderListAo> distanceAoList = appointmentDoctorOrderRedisMapper.getAppointmentRecordList(
                 userId, AppointmentSortTypeEnum.DISTANCE.getCode(), userLongitude, userLatitude
         );
         ValidDataList time = new ValidDataList();

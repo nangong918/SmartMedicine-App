@@ -39,14 +39,16 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
     //---------------------------init---------------------------
 
     @Override
-    public ActivitySignBinding getBinding() {
+    public ActivitySignBinding initBinding() {
         return ActivitySignBinding.inflate(getLayoutInflater());
     }
 
     @Override
     protected void init() {
         super.init();
-
+        setStatusBarColor(
+                com.czy.appview.R.color.white
+        );
         initViewModel();
         initView();
 

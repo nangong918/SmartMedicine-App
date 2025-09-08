@@ -9,11 +9,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.czy.appview.view.home.HomeViewPagerEnum;
 import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
-import com.czy.domain.fragmentActivityAo.HomeFAo;
+import com.czy.domain.fragmentActivityAo.home.HomeFAo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.activity.search.SearchPostActivity;
@@ -45,9 +46,6 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // 初始化viewModel
-        initViewModel();
     }
 
     @Override
@@ -61,7 +59,6 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
     @Override
@@ -75,7 +72,16 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
 
         // 设置顶部导航栏的点击监听器
         binding.homeSelectBar.setOnViewPagerBarClickListener(position -> {
+            vm.homeFAo.currentPosition.setValue(position);
             binding.vPager2.setCurrentItem(position, true);
+        });
+
+        binding.vPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                vm.homeFAo.currentPosition.setValue(position);
+            }
         });
 
         // searchBar

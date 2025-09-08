@@ -105,6 +105,11 @@
         </if>
     </delete>
 
+    <delete id="deleteAllDoctorMerchantAppointments">
+        DELETE FROM doctor_merchant_appointment
+        WHERE 1 = 1
+    </delete>
+
     <select id="getDosByParam" resultType="com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo">
         SELECT *
         FROM doctor_merchant_appointment AS dma

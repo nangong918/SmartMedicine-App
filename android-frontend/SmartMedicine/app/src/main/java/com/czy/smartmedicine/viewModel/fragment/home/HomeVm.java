@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.dao.networkRepository.ApiRequestImpl;
-import com.czy.domain.fragmentActivityAo.HomeFAo;
+import com.czy.domain.fragmentActivityAo.home.HomeFAo;
 import com.czy.smartmedicine.fragment.home.children.HomeViewPagerAdapter;
 
 public class HomeVm extends ViewModel {
@@ -25,7 +25,7 @@ public class HomeVm extends ViewModel {
         return socketMessageSender;
     }
 
-    //---------------------------Vo Ld---------------------------
+    //---------------------------FAo Ld---------------------------
 
     public HomeViewPagerAdapter viewPagerAdapter;
 
@@ -33,7 +33,10 @@ public class HomeVm extends ViewModel {
 
     public void init(HomeFAo homeFAo, Fragment fragment){
         this.homeFAo = homeFAo;
-        viewPagerAdapter = new HomeViewPagerAdapter(fragment);
+        viewPagerAdapter = new HomeViewPagerAdapter(
+                fragment.getChildFragmentManager(),
+                fragment.getLifecycle()
+        );
     }
 
 

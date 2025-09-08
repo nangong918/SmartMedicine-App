@@ -11,9 +11,14 @@
         <item name="colorOnSecondary">@color/black</item>
         <item name="itemRippleColor">@color/green_50</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <!-- 设置窗口背景颜色 -->
-        <item name="android:windowBackground">@color/green_50</item>
+        <item name="android:windowBackground">@color/green_0</item>
+        <!-- 沉浸式 -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Android 6.0以上 状态栏字色和图标为浅黑色-->
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

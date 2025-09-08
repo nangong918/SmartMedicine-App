@@ -14,13 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
-import com.czy.baseutil.network.BaseResponse;
-import com.czy.baseutil.ui.ToastUtils;
 import com.czy.appview.view.DialogAnswer;
 import com.czy.appview.view.search.post.OnPostClick;
 import com.czy.appview.view.search.post.PostSearchAdapter;
+import com.czy.baseutil.network.BaseResponse;
+import com.czy.baseutil.ui.ToastUtils;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
-import com.czy.domain.ao.home.PostInfoUrlAo;
 import com.czy.domain.ao.search.AppFunctionAo;
 import com.czy.domain.ao.search.PersonalEvaluateAo;
 import com.czy.domain.ao.search.PostRecommendAo;
@@ -34,14 +34,13 @@ import com.czy.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.domain.fragmentActivityAo.search.SearchPostAAo;
 import com.czy.domain.vo.entity.home.PostExVo;
-import com.czy.domain.vo.entity.home.PostVo;
-import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ResponseTool;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SearchPostVm extends ViewModel {
 
@@ -217,17 +216,19 @@ public class SearchPostVm extends ViewModel {
                     PostRecommendAo ao = MainApplication.getGson().fromJson(
                             jsonString, PostRecommendAo.class
                     );
-                    List<PostInfoUrlAo> postInfoUrlAos = ao.postInfoUrlAos;
-                    List<PostExVo> recommendPostVoList = new ArrayList<>();
                     // 转换
-                    for (PostInfoUrlAo postInfoUrlAo : postInfoUrlAos){
-                        PostVo vo = PostVo.getRecommendPostVoFromPostInfoUrlAo(postInfoUrlAo);
-                        PostExVo exVo = new PostExVo();
-                        exVo.setByPostVo(vo);
-                        exVo.type = PostSearchResultListEnum.RECOMMEND_MATCH_RESULT.getValue();
-                        recommendPostVoList.add(exVo);
-                    }
-
+                    List<PostExVo> recommendPostVoList = Optional.ofNullable(ao.postVos)
+                            .map(vos -> {
+                                return vos.stream()
+                                        .map(vo -> {
+                                            PostExVo exVo = new PostExVo();
+                                            exVo.setPostVo(vo);
+                                            exVo.type = PostSearchResultListEnum.RECOMMEND_MATCH_RESULT.getValue();
+                                            return exVo;
+                                        })
+                                        .collect(Collectors.toList());
+                            })
+                            .orElse(new ArrayList<>());
                     // 推荐
                     if (!recommendPostVoList.isEmpty()){
                         searchPostAAo.postExVoList.addAll(recommendPostVoList);

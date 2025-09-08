@@ -14,4 +14,6 @@ public interface ImportDoctorMerchantAppointmentService {
     void createDoctorMerchantAppointmentDos(int count);
 
     List<DoctorMerchantAppointmentDo> generatorDoctorMerchantAppointmentDos(int count);
+
+    void clearAllDoctorsMerchantAppointmentDos();
 }

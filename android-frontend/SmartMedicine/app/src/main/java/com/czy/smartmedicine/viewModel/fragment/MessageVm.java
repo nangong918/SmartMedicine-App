@@ -36,7 +36,7 @@ import com.czy.domain.fragmentActivityAo.MessageVo;
 import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.ChatActivity;
-import com.czy.smartmedicine.fragment.MessageFragment;
+import com.czy.smartmedicine.fragment.message.children.MessageFragment;
 import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.czy.smartmedicine.utils.ViewModelUtil;
 

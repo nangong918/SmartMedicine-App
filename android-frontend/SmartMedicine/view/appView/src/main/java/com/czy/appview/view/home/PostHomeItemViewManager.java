@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewRecommendCardBinding;
 import com.czy.appview.databinding.ViewRecommendCardPlusBinding;
-import com.czy.domain.ao.home.PostAo;
+import com.czy.domain.ao.home.PostPreviewAo;
 import com.czy.domain.constant.home.RecommendButtonType;
 import com.czy.domain.constant.home.RecommendCardType;
-import com.czy.domain.vo.entity.home.PostVo;
+import com.czy.domain.vo.entity.home.PostPreviewVo;
 
 import java.util.Optional;
 
@@ -21,7 +21,7 @@ public class PostHomeItemViewManager {
         void setUserFace(String url);
         void setPostImage(String url);
         void setTitle(String title);
-        void setUserID(String userID);
+        void setUserId(String userId);
     }
 
     // currentPosition -> RecyclerView.ViewHolder; 因为创建时候的getAdapterPosition()是死值，需要动态的从ViewHolder获取
@@ -32,20 +32,19 @@ public class PostHomeItemViewManager {
         void setUnlikeClick(OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder);
     }
 
-    private static void loadPostData(ViewBinding viewBinding, PostAo postAo, int index) {
-        if (postAo.postVos == null || postAo.postVos.length <= index) {
+    private static void loadPostData(ViewBinding viewBinding, PostPreviewAo postPreviewAo, int index) {
+        if (postPreviewAo.postPreviewVos == null || postPreviewAo.postPreviewVos.length <= index) {
             return;
         }
-        PostVo vo = postAo.postVos[index];
+        PostPreviewVo vo = postPreviewAo.postPreviewVos[index];
 
         // avatarUrl
         String avatarUrl = Optional.ofNullable(vo.authorAvatarUrl).orElse("");
         viewBinding.setUserFace(avatarUrl);
 
         // postUrl
-        String postUrl = Optional.ofNullable(vo.postImgUrls)
+        String postUrl = Optional.ofNullable(vo.postImgUrl0)
                 .filter(urls -> !urls.isEmpty())
-                .map(urls -> urls.get(0))
                 .orElse("");
         viewBinding.setPostImage(postUrl);
 
@@ -53,14 +52,12 @@ public class PostHomeItemViewManager {
         viewBinding.setTitle(Optional.ofNullable(vo.postTitle).orElse(""));
 
         // userID (其实就是username)
-        viewBinding.setUserID(Optional.ofNullable(vo.authorName)
+        viewBinding.setUserId(Optional.ofNullable(vo.authorName)
                 .filter(name -> !TextUtils.isEmpty(name))
-                .orElseGet(() -> Optional.ofNullable(vo.authorId)
-                        .map(String::valueOf)
-                        .orElse("")));
+                .orElse(""));
     }
 
-    public static void setView(@NonNull ViewRecommendCardPlusBinding binding, @NonNull PostAo postAo) {
+    public static void setView(@NonNull ViewRecommendCardPlusBinding binding, @NonNull PostPreviewAo postPreviewAo) {
         loadPostData(new ViewBinding() {
             @Override
             public void setUserFace(String url) {
@@ -78,13 +75,13 @@ public class PostHomeItemViewManager {
             }
 
             @Override
-            public void setUserID(String userID) {
-                binding.tvName.setText(userID);
+            public void setUserId(String userId) {
+                binding.tvName.setText(userId);
             }
-        }, postAo, 0);
+        }, postPreviewAo, 0);
     }
 
-    public static void setView(@NonNull ViewRecommendCardBinding binding, @NonNull PostAo postAo) {
+    public static void setView(@NonNull ViewRecommendCardBinding binding, @NonNull PostPreviewAo postPreviewAo) {
 
         // card 1
         loadPostData(new ViewBinding() {
@@ -104,10 +101,10 @@ public class PostHomeItemViewManager {
             }
 
             @Override
-            public void setUserID(String userID) {
-                binding.tvName1.setText(userID);
+            public void setUserId(String userId) {
+                binding.tvName1.setText(userId);
             }
-        }, postAo, 0);
+        }, postPreviewAo, 0);
 
         // card 2
         loadPostData(new ViewBinding() {
@@ -127,10 +124,10 @@ public class PostHomeItemViewManager {
             }
 
             @Override
-            public void setUserID(String userID) {
-                binding.tvName2.setText(userID);
+            public void setUserId(String userId) {
+                binding.tvName2.setText(userId);
             }
-        }, postAo, 1);
+        }, postPreviewAo, 1);
     }
 
     private static void setCommonClickListeners(ClickBinding clickBinding, OnRecommendCardClick onClick, RecyclerView.ViewHolder viewHolder) {

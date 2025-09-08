@@ -58,7 +58,11 @@ public class UserBriefController {
                 request.getPostNum(),
                 request.getPostSize()
         );
-        List<PostPreviewVo> postPreviewVos = postFrontService.toPostPreviewVoList(postInfoAos);
+        // 他的动态
+        List<PostPreviewVo> postPreviewVos = postFrontService.toPostPreviewVoList(
+                postInfoAos,
+                request.getReceiverId()
+        );
 
         UserBriefResponse response = new UserBriefResponse();
         response.setUserView(beQueryUser);

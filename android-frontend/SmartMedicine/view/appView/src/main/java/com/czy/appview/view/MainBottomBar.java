@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -54,6 +55,12 @@ public class MainBottomBar extends ConstraintLayout {
 
     private LinearLayout[] clickLys;
     private ImageView[] imageViews;
+
+    public void setBaseBarColor(@ColorRes int colorResId){
+        binding.lyMain.setBackgroundResource(
+                colorResId
+        );
+    }
 
     public void clickListener(OnPositionItemClick click) {
         for (int i = 0; i < clickLys.length; i++){

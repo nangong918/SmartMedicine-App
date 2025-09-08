@@ -28,7 +28,7 @@ public class HomeViewPagerAdapter extends FragmentStateAdapter {
         super(fragmentManager, lifecycle);
     }
 
-    private final SparseArray<Fragment> fragmentCache = new SparseArray<>(HomeViewPagerEnum.getHomeViewPagerCount());
+    private final SparseArray<Fragment> fragmentCache = new SparseArray<>(HomeViewPagerEnum.getCount());
 
     @NonNull
     @Override
@@ -37,7 +37,7 @@ public class HomeViewPagerAdapter extends FragmentStateAdapter {
             return fragmentCache.get(position);
         }
 
-        HomeViewPagerEnum viewPagerEnum = HomeViewPagerEnum.getHomeViewPagerEnum(position);
+        HomeViewPagerEnum viewPagerEnum = HomeViewPagerEnum.getEnumByIndex(position);
         Fragment fragment = switch (viewPagerEnum) {
             case RECOMMEND -> new RecommendFragment();
             case POPULAR -> new PopularFragment();
@@ -55,6 +55,6 @@ public class HomeViewPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return HomeViewPagerEnum.getHomeViewPagerCount();
+        return HomeViewPagerEnum.getCount();
     }
 }

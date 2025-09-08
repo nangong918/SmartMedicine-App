@@ -32,6 +32,12 @@ public enum PurchaseExceptions implements ExceptionEnums {
     ORDER_EXPIRED("PUR_10010", "订单不存在"),
     // 支付的订单不是待支付状态
     ORDER_NOT_WAIT_PAY("PUR_10011", "支付的订单不是待支付状态"),
+    // 订单价格状态异常
+    ORDER_PRICE_ERROR("PUR_10012", "订单价格错误"),
+    // 订单申请失败, 获取商户库存请求失败
+    ORDER_INVENTORY_APPLY_FAILED("PUR_10013", "订单申请失败, 获取商户库存请求失败"),
+    // 超出商户售卖时间, 商品已下架
+    ORDER_OUT_OF_SELLING_TIME("PUR_10014", "超出商户售卖时间, 商品已下架"),
     ;
 
     private final String code;

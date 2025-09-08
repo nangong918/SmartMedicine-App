@@ -1,6 +1,6 @@
 package com.czy.api.domain.ao.medicine;
 
-import com.czy.api.domain.vo.medicine.RegisterAppointmentDoctorCardVo;
+import com.czy.api.domain.vo.medicine.AppointmentDoctorMerchantCardVo;
 import lombok.Data;
 
 /**
@@ -9,6 +9,6 @@ import lombok.Data;
  */
 @Data
 public class RegisterAppointmentDoctorCardAo {
-    private RegisterAppointmentDoctorCardVo vo;
+    private AppointmentDoctorMerchantCardVo vo;
     private String doctorMerchantAppointmentId;
 }

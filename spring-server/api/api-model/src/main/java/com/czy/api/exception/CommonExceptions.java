@@ -24,6 +24,8 @@ public enum CommonExceptions implements ExceptionEnums {
     FREQUENTLY_CLICK("C_10003", "频繁点击，请稍后再试"),
     // 排序方式未找到
     SORT_TYPE_NOT_FOUND("C_10004", "排序方式未找到"),
+    // 系统内参数错误
+    SYSTEM_PARAM_ERROR("C_10005", "系统内参数错误"),
     ;
 
     private final String code;

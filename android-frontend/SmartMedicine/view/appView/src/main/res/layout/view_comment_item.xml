@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <View
+        android:id="@+id/v_message"
+        android:background="@mipmap/message"
+        app:layout_constraintTop_toTopOf="@+id/imgv_avatar"
+        app:layout_constraintBottom_toBottomOf="@+id/imgv_avatar"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="10dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgv_avatar"
+        android:src="@mipmap/logo"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="36dp"/>
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        app:layout_constraintStart_toEndOf="@+id/imgv_avatar"
+        android:layout_marginStart="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="鸦羽天下第一!"
+        android:textSize="11sp"
+        android:textColor="@color/green_600"/>
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:maxLines="1"
+        tools:text="2025-08-09 17:48"
+        android:textSize="11sp"
+        android:textColor="@color/green_600"/>
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="70dp"
+        android:textSize="11sp"
+        android:layout_marginTop="3dp"
+        android:textColor="@color/green_900"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name"
+        tools:text="讲的很有用!长期的心理压力可能导致血压升高,定期监测血压是预防高血压的重要环节。通过定期体检，可以及时发现潜在的健康问题，并采取相应的措施。对于有高血压家族史的人群，更应加强监测和预防"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

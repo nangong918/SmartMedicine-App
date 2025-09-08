@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.ColorRes;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -23,12 +24,10 @@ import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.constant.SelectItemEnum;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityMainBinding;
-import com.czy.smartmedicine.fragment.AiFragment;
-import com.czy.smartmedicine.fragment.MessageFragment;
-import com.czy.smartmedicine.fragment.NoticeFragment;
-import com.czy.smartmedicine.fragment.SearchFragment;
-import com.czy.smartmedicine.fragment.friends.FriendsFragment;
+import com.czy.smartmedicine.fragment.MineFragment;
 import com.czy.smartmedicine.fragment.home.HomeFragment;
+import com.czy.smartmedicine.fragment.medicine.MedicineFragment;
+import com.czy.smartmedicine.fragment.message.MessageMainFragment;
 
 import java.util.Optional;
 
@@ -47,7 +46,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     @Override
-    public ActivityMainBinding getBinding() {
+    public ActivityMainBinding initBinding() {
         return ActivityMainBinding.inflate(getLayoutInflater());
     }
 
@@ -171,22 +170,32 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         if (fragmentType != null){
             switch(fragmentType){
                 case HOME -> {
+                    setStatusBarColor(
+                            com.czy.appview.R.color.green_90
+                    );
+                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
                     turnToTargetFragment(SelectItemEnum.HOME, HomeFragment.class, null);
                 }
-                case SEARCH -> {
-                    turnToTargetFragment(SelectItemEnum.SEARCH, SearchFragment.class, null);
-                }
-                case AI -> {
-                    turnToTargetFragment(SelectItemEnum.AI, AiFragment.class, null);
-                }
-                case FRIENDS -> {
-                    turnToTargetFragment(SelectItemEnum.FRIENDS, FriendsFragment.class, null);
-                }
-                case NOTIFICATIONS -> {
-                    turnToTargetFragment(SelectItemEnum.NOTIFICATIONS, NoticeFragment.class, null);
+                case MEDICAL -> {
+                    setStatusBarColor(
+                            com.czy.appview.R.color.green_0
+                    );
+                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                    turnToTargetFragment(SelectItemEnum.MEDICAL, MedicineFragment.class, null);
                 }
                 case MESSAGE -> {
-                    turnToTargetFragment(SelectItemEnum.MESSAGE, MessageFragment.class, null);
+                    setStatusBarColor(
+                            com.czy.appview.R.color.green_0
+                    );
+                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                    turnToTargetFragment(SelectItemEnum.MESSAGE, MessageMainFragment.class, null);
+                }
+                case MINE -> {
+                    setStatusBarColor(
+                            com.czy.appview.R.color.green_0
+                    );
+                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                    turnToTargetFragment(SelectItemEnum.MINE, MineFragment.class, null);
                 }
             }
         }
@@ -217,6 +226,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             transaction.replace(binding.fragmentContainer.getId(), newFragment);
             transaction.commit();
         }
+    }
+
+    public void setBaseBarColorRes(@ColorRes int colorResId){
+        binding.mainBottomBar.setBaseBarColor(colorResId);
     }
 
     //-------------------------------MotionEvent拦截-------------------------------

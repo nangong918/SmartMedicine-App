@@ -2,7 +2,7 @@ package com.api.mapper.medicine.mybatis.bo;
 
 import com.czy.api.domain.Do.medicine.DoctorMerchantAppointmentDo;
 import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
-import com.czy.api.domain.bo.medicine.RegisterAppointmentDoctorCardBo;
+import com.czy.api.domain.bo.medicine.AppointmentDoctorMerchantCardBo;
 import com.czy.api.domain.bo.medicine.UserAppointmentOrderBo;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,9 +14,11 @@ import java.util.List;
  */
 public interface DoctorMerchantBoMapper {
 
-    // 根据do记录获取 cardVo的bo 已测试
+    //
     /**
-     *
+     * 根据do记录获取 cardVo的bo 已测试
+     * 此方法被AOP标记:
+     * @see com.api.mapper.medicine.aspect.DoctorMerchantAppointmentAspect
      * @param list   doList
      * @return      boList
     SELECT
@@ -43,7 +45,7 @@ public interface DoctorMerchantBoMapper {
     INNER JOIN hospital AS ht ON dma.hospital_id = ht.id
     WHERE dma.id IN (item.id)
      */
-    List<RegisterAppointmentDoctorCardBo> getDoctorCardBosByDoctorMerchantDos(
+    List<AppointmentDoctorMerchantCardBo> getDoctorCardBosByDoctorMerchantDos(
             @Param("list") List<DoctorMerchantAppointmentDo> list
     );
 

@@ -434,7 +434,8 @@ public class UserActionRecordServiceImpl implements UserActionRecordService {
     }
 
     private Double getBrowseTimeScore(Long browseDuration, PostDetailDo postDetailDo) {
-        Integer postWordCount = postDetailDo.getContent().length();
+        String content = postDetailDo.getOnlyContent();
+        Integer postWordCount = content.length();
         return rulePostReadTime.execute(postWordCount, browseDuration);
     }
 

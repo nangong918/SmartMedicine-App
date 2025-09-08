@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 /**
  * @author 13225
  * @date 2025/8/20 14:54
+ * 预约订单Do
  */
 @Data
 public class UserCustomerAppointmentDo implements BaseBean {

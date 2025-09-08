@@ -11,6 +11,6 @@ import lombok.Data;
 public class CommentResultDto {
 
     private boolean isSuccess = true;
-
+    private Long commentId = null;
     private ExceptionEnums exceptionEnums = null;
 }

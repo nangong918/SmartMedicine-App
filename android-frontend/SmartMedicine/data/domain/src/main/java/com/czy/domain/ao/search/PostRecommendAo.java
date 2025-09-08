@@ -1,7 +1,7 @@
 package com.czy.domain.ao.search;
 
 
-import com.czy.domain.ao.home.PostInfoUrlAo;
+import com.czy.domain.vo.entity.home.PostVo;
 
 import java.util.List;
 
@@ -15,5 +15,5 @@ public class PostRecommendAo {
      * @see com.czy.domain.constant.search.PostRecommendResult
      */
     public Integer recommendType;
-    public List<PostInfoUrlAo> postInfoUrlAos;
+    public List<PostVo> postVos;
 }

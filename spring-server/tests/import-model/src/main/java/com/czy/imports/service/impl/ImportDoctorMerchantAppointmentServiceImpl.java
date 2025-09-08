@@ -4,6 +4,10 @@ import cn.hutool.core.util.IdUtil;
 import com.api.mapper.medicine.mybatis.DoctorMapper;
 import com.api.mapper.medicine.mybatis.DoctorMerchantAppointmentMapper;
 import com.api.mapper.medicine.mybatis.HospitalMapper;
+import com.api.mapper.medicine.mybatis.UserCustomerAppointmentOrderMapper;
+import com.api.mapper.medicine.redis.AppointmentDoctorOrderRedisMapper;
+import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
+import com.api.mapper.purchase.redis.PayRedisMapper;
 import com.api.mapper.user.mybatis.user.UserMapper;
 import com.czy.api.constant.BaseEnum;
 import com.czy.api.constant.BaseParentEnum;
@@ -42,6 +46,11 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
     private final HospitalMapper hospitalMapper;
     private final UserMapper userMapper;
     private final DoctorMerchantAppointmentMapper doctorMerchantAppointmentMapper;
+    // 导入数据的时候用于缓存数据
+    private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
+    private final UserCustomerAppointmentOrderMapper userCustomerAppointmentOrderMapper;
+    private final AppointmentDoctorOrderRedisMapper appointmentDoctorOrderRedisMapper;
+    private final PayRedisMapper payRedisMapper;
 
     public void importRecord(){}
 
@@ -136,9 +145,21 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
         List<DoctorMerchantAppointmentDo> doctorMerchantAppointmentDos = generatorDoctorMerchantAppointmentDos(count);
 
         if (!CollectionUtils.isEmpty(doctorMerchantAppointmentDos)){
+            // 批量插入数据库
             doctorMerchantAppointmentMapper.insertDoctorMerchantAppointmentBatch(
                     doctorMerchantAppointmentDos
             );
+            log.info("批量插入数据库成功");
+
+            // 异步存入redis
+            doctorMerchantAppointmentRedisMapper.saveDoctorMerchantAppointmentDos(
+                    doctorMerchantAppointmentDos
+            );
+            log.info("异步存入redis成功");
+            boolean semaphorePermitsResult = doctorMerchantAppointmentRedisMapper.initAppointmentListSemaphorePermits(
+                    doctorMerchantAppointmentDos
+            );
+            log.info("初始化信号量: {}", semaphorePermitsResult);
         }
     }
 
@@ -155,11 +176,14 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
             doctorMapper.insertBatch(createDoctors());
         }
         else {
-            log.warn("有医生数据: {}, 跳过创建数据", doctorCount);
+            log.info("有医生数据: {}, 跳过创建数据", doctorCount);
         }
         if (hospitalCount == 0){
             log.warn("没有医院数据: {}, 创建数据", hospitalCount);
             hospitalMapper.insertBatch(createHospitals());
+        }
+        else {
+            log.info("有医院数据: {}, 跳过创建数据", hospitalCount);
         }
 
         List<DoctorDo> doctorDos = doctorMapper.getRandomByLimit(DOCTOR_COUNT);
@@ -202,6 +226,17 @@ public class ImportDoctorMerchantAppointmentServiceImpl implements ImportDoctorM
         getMustGenerateDoctorMerchantAppointmentDos(result);
 
         return result;
+    }
+
+    @Override
+    public void clearAllDoctorsMerchantAppointmentDos() {
+        doctorMerchantAppointmentMapper.deleteAllDoctorMerchantAppointments();
+        userCustomerAppointmentOrderMapper.deleteAll();
+        log.info("删除mysql数据成功");
+        doctorMerchantAppointmentRedisMapper.clearAllData();
+        appointmentDoctorOrderRedisMapper.clearAllDate();
+        payRedisMapper.clearAllData();
+        log.info("删除redis数据成功和信号量成功");
     }
 
     private void getMustGenerateDoctorMerchantAppointmentDos

@@ -13,9 +13,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.czy.appcore.network.netty.api.send.SocketMessageSender;
 import com.czy.appview.view.home.OnRecommendCardClick;
-import com.czy.domain.ao.home.PostAo;
-import com.czy.domain.ao.home.PostInfoUrlAo;
 import com.czy.domain.ao.home.PostIntentAo;
+import com.czy.domain.ao.home.PostPreviewAo;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.constant.home.PostOperation;
 import com.czy.domain.constant.home.RecommendButtonType;
@@ -26,14 +25,13 @@ import com.czy.domain.dto.netty.request.PostDisLikeRequest;
 import com.czy.domain.dto.netty.request.PostLikeRequest;
 import com.czy.domain.dto.netty.request.UserBrowseTimeRequest;
 import com.czy.domain.dto.netty.request.UserClickPostRequest;
-import com.czy.domain.vo.entity.home.PostVo;
+import com.czy.domain.vo.entity.home.PostPreviewVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.PostActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 public class PostClickManager {
@@ -41,14 +39,14 @@ public class PostClickManager {
     private static final String TAG = PostClickManager.class.getName();
 
     // postList指针
-    private final List<PostAo> postAoList;
+    private final List<PostPreviewAo> postPreviewAoList;
     // Logger行为的netty发送者
     private final SocketMessageSender socketSender;
     // 启动postActivity的IntentLauncher
     private ActivityResultLauncher<Intent> openPostActivityLauncher;
 
-    public PostClickManager(@NonNull List<PostAo> postAoList, @NonNull ActivityResultCaller activityResultCaller){
-        this.postAoList = postAoList;
+    public PostClickManager(@NonNull List<PostPreviewAo> postPreviewAoList, @NonNull ActivityResultCaller activityResultCaller){
+        this.postPreviewAoList = postPreviewAoList;
         this.socketSender = MainApplication.getInstance().getMessageSender();
         Log.i(TAG, "PostClickManager init: this.socketSender : "
                 + this.socketSender + " this.socketSender == null?"
@@ -86,7 +84,7 @@ public class PostClickManager {
         return new OnRecommendCardClick() {
             @Override
             public void onCardClick(int position, RecommendCardType cardType, int cardId) {
-                PostVo postVo = getPostInfoByList(position, cardId);
+                PostPreviewVo postVo = getPostInfoByList(position, cardId);
                 Long postId = Optional.ofNullable(postVo)
                         .map(p -> p.postId)
                         .orElse(null);
@@ -107,7 +105,7 @@ public class PostClickManager {
     }
 
     public void onButtonClick(int position, RecommendCardType cardType, int cardId, RecommendButtonType buttonType){
-        PostVo postVo = getPostInfoByList(position, cardId);
+        PostPreviewVo postVo = getPostInfoByList(position, cardId);
 
         // 根据当前状态得出操作类型
         PostOperation postOperation = postVo.clickChange(buttonType);
@@ -152,17 +150,17 @@ public class PostClickManager {
      * @param cardId    卡片id
      * @return          post的view信息
      */
-    public PostVo getPostInfoByList(int position, int cardId){
-        if (postAoList.isEmpty()){
+    public PostPreviewVo getPostInfoByList(int position, int cardId){
+        if (postPreviewAoList.isEmpty()){
             return null;
         }
 //        int realIndex = getPostRealIndexByPosition(position, cardId);
-        PostAo postAo = postAoList.get(position);
+        PostPreviewAo postPreviewAo = postPreviewAoList.get(position);
         assert cardId >= 0 && cardId < 2;
-        if (RecommendCardType.TWO_SMALL_CARD.value == postAo.viewType){
-            return postAo.postVos[cardId];
+        if (RecommendCardType.TWO_SMALL_CARD.value == postPreviewAo.viewType){
+            return postPreviewAo.postPreviewVos[cardId];
         }
-        return postAo.postVos[0];
+        return postPreviewAo.postPreviewVos[0];
     }
 
     /**
@@ -173,13 +171,13 @@ public class PostClickManager {
      */
     @Deprecated(since = "2025/8/11 [理解错误: postAoList是直接可用的, 并不需要进行转换]")
     private int getPostRealIndexByPosition(int position, int cardId){
-        if (position > postAoList.size() || position < 0 || (cardId != 0 && cardId != 1)){
+        if (position > postPreviewAoList.size() || position < 0 || (cardId != 0 && cardId != 1)){
             Log.w(TAG, "getPostRealIndexByPosition: position out of range, position: " + position + " cardId:" + cardId);
             throw new IllegalArgumentException("position out of range, position: " + position + " cardId:" + cardId);
         }
         int index = 0;
         for (int i = 0; i < position; i++){
-            index += postAoList.get(i).postVos.length;
+            index += postPreviewAoList.get(i).postPreviewVos.length;
         }
         /*
          * eg: realList[size7] -> list[2,2,2,1]
@@ -247,36 +245,28 @@ public class PostClickManager {
     }
 
     // postInfoUrlAoList -> PostAoList
-    public List<PostAo> getPostAoListByResponse(List<PostInfoUrlAo> postInfoAos){
-        List<PostAo> postAoList = new ArrayList<>();
-        List<Integer> postTypeList = getPostType(postInfoAos.size());
+    public List<PostPreviewAo> getPostAoListByResponse(List<PostPreviewVo> postVoList){
+        List<PostPreviewAo> postPreviewAoList = new ArrayList<>();
+        List<Integer> postTypeList = getPostType(postVoList.size());
         if (postTypeList.isEmpty()){
             return new ArrayList<>();
         }
         int index = 0;
         for (Integer postType : postTypeList){
-            PostAo postAo = new PostAo(postType);
+            PostPreviewAo postPreviewAo = new PostPreviewAo(postType);
             if (RecommendCardType.TWO_SMALL_CARD.value == postType){
                 // post1
-                PostVo postVo1 = PostVo.getRecommendPostVoFromPostInfoUrlAo(
-                        postInfoAos.get(index)
-                );
-                postAo.postVos[0] = postVo1;
+                postPreviewAo.postPreviewVos[0] = postVoList.get(index);
                 // post2
-                PostVo postVo2 = PostVo.getRecommendPostVoFromPostInfoUrlAo(
-                        postInfoAos.get(index + 1)
-                );
-                postAo.postVos[1] = postVo2;
+                postPreviewAo.postPreviewVos[1] = postVoList.get(index + 1);;
             }
             else {
-                postAo.postVos[0] = PostVo.getRecommendPostVoFromPostInfoUrlAo(
-                        postInfoAos.get(index)
-                );
+                postPreviewAo.postPreviewVos[0] = postVoList.get(index);
             }
             index += postType;
-            postAoList.add(postAo);
+            postPreviewAoList.add(postPreviewAo);
         }
-        return postAoList;
+        return postPreviewAoList;
     }
 
     public static List<Integer> getPostType(Integer count){
@@ -328,18 +318,4 @@ public class PostClickManager {
         return postTypes;
     }
 
-    public List<PostAo> getPostAoByPostVo(List<PostVo> postVoList){
-        if (postVoList == null || postVoList.isEmpty()){
-            return new ArrayList<>();
-        }
-        List<PostInfoUrlAo> postInfoUrlAos = Optional.of(postVoList)
-                .map(list -> {
-                    // stream流转换
-                    return list.stream()
-                            .map(PostInfoUrlAo::getPostInfoUsrAoByVo)
-                            .collect(Collectors.toList());
-                })
-                .orElse(new ArrayList<>());
-        return getPostAoListByResponse(postInfoUrlAos);
-    }
 }

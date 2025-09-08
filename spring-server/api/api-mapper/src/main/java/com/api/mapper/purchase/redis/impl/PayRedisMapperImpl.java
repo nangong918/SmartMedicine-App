@@ -11,11 +11,16 @@ import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 /**
  *@author 13225
  *@date 2025/8/26 17:22
+ * 待支付订单的Mapper
+ * 用于存储订单: 支付状态, 金额(跟订单系统解耦). 订单过期时间
+ * 数据结构: OrderStatusAo
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +31,8 @@ public class PayRedisMapperImpl implements PayRedisMapper {
 
     @Override
     public void saveOrderStatus(@NotNull Long userId, @NotNull Long orderId,
-                                @NotNull Integer customerStatus, @Nullable Integer merchantStatus) {
+                                @NotNull Integer customerStatus, @Nullable Integer merchantStatus,
+                                @Nullable LocalDateTime merchantEndTime, @NotNull BigDecimal totalPrice) {
         String key = PurchaseRedisKey.Pay.ORDER_STATUS_EXPIRED + orderId + ":" + userId;
 
         OrderStatusAo ao = new OrderStatusAo();
@@ -34,6 +40,8 @@ public class PayRedisMapperImpl implements PayRedisMapper {
         ao.setOrderId(orderId);
         ao.setCustomerStatus(customerStatus);
         ao.setMerchantStatus(merchantStatus);
+        ao.setMerchantEndTime(merchantEndTime);
+        ao.setTotalPrice(totalPrice);
         redissonClient.getBucket(key).set(ao);
 
         RBucket<OrderStatusAo> bucket = redissonClient.getBucket(key);
@@ -48,9 +56,19 @@ public class PayRedisMapperImpl implements PayRedisMapper {
 
     @Override
     public void updateOrderStatus(@NotNull Long userId, @NotNull Long orderId,
-                                  @NotNull Integer customerStatus, @Nullable Integer merchantStatus){
+                                  @NotNull Integer customerStatus, @Nullable Integer merchantStatus,
+                                  @Nullable LocalDateTime merchantEndTime, @NotNull BigDecimal totalPrice){
         deleteOrderStatus(userId, orderId);
-        saveOrderStatus(userId, orderId, customerStatus, merchantStatus);
+        saveOrderStatus(userId, orderId, customerStatus, merchantStatus, merchantEndTime, totalPrice);
+    }
+
+    @Override
+    public void updateOrderStatus(@NotNull Long userId, @NotNull Long orderId, @NotNull Integer customerStatus, @Nullable Integer merchantStatus) {
+        OrderStatusAo ao = getOrderStatus(userId, orderId);
+        LocalDateTime merchantEndTime = ao.getMerchantEndTime();
+        BigDecimal totalPrice = ao.getTotalPrice();
+        deleteOrderStatus(userId, orderId);
+        saveOrderStatus(userId, orderId, customerStatus, merchantStatus, merchantEndTime, totalPrice);
     }
 
     @Override
@@ -61,5 +79,12 @@ public class PayRedisMapperImpl implements PayRedisMapper {
             return bucket.get();
         }
         return null;
+    }
+
+    @Override
+    public void clearAllData(){
+        redissonClient.getKeys().deleteByPattern(
+                PurchaseRedisKey.Pay.ORDER_STATUS_EXPIRED + "*:*"
+        );
     }
 }

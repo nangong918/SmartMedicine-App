@@ -4,6 +4,7 @@ import json.BaseBean;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  * 医生的可挂号预约记录 list(下拉列表list，等待预约)
  */
 @Data
-public class DoctorMerchantAppointmentDo implements BaseBean {
+public class DoctorMerchantAppointmentDo implements BaseBean, Serializable {
     // 医生商户id
     @Id
     private Long id;

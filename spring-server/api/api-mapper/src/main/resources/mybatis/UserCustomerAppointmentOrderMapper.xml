@@ -94,6 +94,10 @@
             </foreach>
         </if>
     </delete>
+    <delete id="deleteAll">
+        delete from <include refid="table"/>
+        where 1=1
+    </delete>
 
     <select id="getDosByDoctorMerchantAppointmentId"
             resultType="com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo">

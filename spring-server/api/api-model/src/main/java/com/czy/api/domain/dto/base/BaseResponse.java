@@ -121,6 +121,9 @@ public class BaseResponse<T> implements BaseBean, Serializable {
     }
 
     public static <T> BaseResponse<T> LogBackError(AppException appException) {
+        if (appException.getExceptionEnums() != null){
+            return LogBackError(appException.getExceptionEnums());
+        }
         return new BaseResponse<>(appException.getErrCode(), appException.getMessage(), null);
     }
 }

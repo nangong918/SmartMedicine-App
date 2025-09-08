@@ -56,10 +56,10 @@ public class PayResultHandler {
 
         // 检查是否支付
         boolean isPaid = UserOrderStatusEnum.isPaid(ao.getCustomerStatus());
-
+        log.info("[支付服务][延迟队列][订单到期检查支付状态][消息: {}]\n[支付状态检查: {}][是否支付: {}]", dto, ao, isPaid);
         // 未支付的情况
         if (!isPaid){
-            log.info("收到支付超时付消息：user: {} , 商户: {}, 订单: {}, 订单状态: {}, 订单有效时间: {}, 收到时间间隔: {}",
+            log.info("[支付服务][延迟队列] 支付超时付：user: {} , 商户: {}, 订单: {}, 订单状态: {}, 订单有效时间: {}, 收到时间间隔: {}",
                     dto.getUserId(), dto.getDoctorMerchantAppointmentId(),
                     dto.getOrderId(),
                     dto.getOrderStatusEnum(),

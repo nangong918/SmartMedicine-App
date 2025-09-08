@@ -2,88 +2,179 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="3dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/base_card"
+        android:layout_width="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/post_plus_card_background"
+        android:layout_height="wrap_content">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/basicCard"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        app:cardElevation="25dp"
-        app:cardBackgroundColor="@color/green_50">
-
-        <LinearLayout
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imgv_main"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            app:riv_corner_radius="10dp"
+            android:src="@mipmap/logo"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imgv_main">
 
             <LinearLayout
+                android:id="@+id/ly_time"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="5dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_type"
-                    tools:text="类型"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/cardImage"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_width="270dp"
-                    android:layout_height="200dp"
-                    android:src="@mipmap/logo"/>
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/time"
+                    app:tint="@color/green_900"/>
 
                 <TextView
-                    android:id="@+id/textTitle"
-                    android:background="@drawable/text_background"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:paddingStart="5dp"
-                    android:layout_width="270dp"
-                    android:text="标题"
-                    android:maxLines="1"
-                    android:textSize="20sp"
-                    android:layout_height="wrap_content"/>
-
-                <LinearLayout
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
+                    android:id="@+id/tv_time"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/cardUserFace"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:src="@mipmap/logo"/>
-
-                    <TextView
-                        android:id="@+id/cardUserID"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="220dp"
-                        android:text="用户ID"
-                        android:textSize="17sp"
-                        android:layout_height="wrap_content"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="5dp"
-                    android:layout_height="5dp">
-                </LinearLayout>
-
+                    android:layout_height="wrap_content"
+                    tools:text="2025/08/15"
+                    android:textSize="14sp"
+                    android:textColor="@color/grey_100"
+                    android:layout_marginStart="2dp"/>
             </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ly_time"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/view"
+                    app:tint="@color/green_900"/>
 
-    </com.google.android.material.card.MaterialCardView>
+                <TextView
+                    android:id="@+id/tv_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="17.4w"
+                    android:textSize="14sp"
+                    android:textColor="@color/grey_100"
+                    android:layout_marginStart="2dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ly_time"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/like"
+                    app:tint="@color/green_900"/>
+
+                <TextView
+                    android:id="@+id/tv_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="2.2w"
+                    android:textSize="14sp"
+                    android:textColor="@color/grey_100"
+                    android:layout_marginStart="2dp"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                tools:text="recommend"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/green_600"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ly_author"
+            app:layout_constraintTop_toBottomOf="@+id/imgv_main"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgv_avatar"
+                android:src="@mipmap/logo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="33dp"
+                android:layout_height="33dp"/>
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                tools:text="张良医生"
+                app:layout_constraintStart_toEndOf="@+id/imgv_avatar"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:maxLines="1"
+                android:textColor="@color/green_900"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="高血压如何预防，平时要注意这几点！高血压如何预防，平时要注意这几点！高血压如何预防，平时要注意这几点！"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/green_900"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@+id/ly_author"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="10dp"
+            android:maxLines="2"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </LinearLayout>

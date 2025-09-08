@@ -28,7 +28,7 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
     }
 
     @Override
-    public ActivityStartBinding getBinding() {
+    public ActivityStartBinding initBinding() {
         return ActivityStartBinding.inflate(getLayoutInflater());
     }
 
@@ -36,6 +36,9 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
     @Override
     protected void init() {
         super.init();
+        setStatusBarColor(
+                com.czy.appview.R.color.green_100
+        );
         initView();
         initTimer();
     }

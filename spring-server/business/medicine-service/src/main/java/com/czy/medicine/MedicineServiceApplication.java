@@ -5,10 +5,13 @@ import com.utils.common.start.PortApplicationContextInitializer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
+// 启用AOP
+@EnableAspectJAutoProxy
 // 扫描bean
 @SpringBootApplication(scanBasePackages = {
         // 扫描api模块

@@ -65,4 +65,15 @@ public class RegisterAppointmentImport {
         importDoctorMerchantAppointmentService.createDoctorMerchantAppointmentDos(50);
     }
 
+    @Test
+    public void clearAllDoctorsMerchantAppointmentDos(){
+        importDoctorMerchantAppointmentService.clearAllDoctorsMerchantAppointmentDos();
+    }
+
+    @Test
+    public void resetDoctorsMerchantAppointmentDos(){
+        clearAllDoctorsMerchantAppointmentDos();
+        createDoctorsMerchantAppointmentDos();
+    }
+
 }

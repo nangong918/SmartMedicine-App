@@ -29,7 +29,7 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
     }
 
     @Override
-    public ActivityChatBinding getBinding() {
+    public ActivityChatBinding initBinding() {
         return ActivityChatBinding.inflate(getLayoutInflater());
     }
 
@@ -127,20 +127,6 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
                 .ifPresent(liveData -> {
                     liveData.observe(this, newName -> {
                         binding.tvTitle.setText(newName);
-                    });
-                });
-        // 头像
-        Optional.ofNullable(vm)
-                .map(vm -> vm.chatVo)
-                .map(cvo -> cvo.avatarUrlOrUri)
-                .ifPresent(liveData -> {
-                    liveData.observe(this, newAvatarUrlOrUri -> {
-                        if (!TextUtils.isEmpty(newAvatarUrlOrUri)) {
-                            ImageLoadUtil.loadImageViewByNetWork(
-                                    newAvatarUrlOrUri,
-                                    binding.imgvCircle
-                            );
-                        }
                     });
                 });
         // 输入框

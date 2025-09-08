@@ -4,114 +4,85 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
-import com.czy.baseutil.activity.BaseActivity;
 import com.czy.baseutil.network.networkLoad.NetworkLoadUtils;
 import com.czy.baseutil.ui.ToastUtils;
-import com.czy.baseutil.viewModel.ViewModelUtil;
 import com.czy.domain.ao.home.PostIntentAo;
 import com.czy.domain.fragmentActivityAo.search.SearchPostAAo;
-import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.activity.PostActivity;
 import com.czy.smartmedicine.databinding.ActivitySearchBaseBinding;
+import com.czy.smartmedicine.utils.BaseVmActivity;
 import com.czy.smartmedicine.viewModel.activity.search.SearchPostVm;
-import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
 
 import java.util.Optional;
+
+import kotlin.jvm.JvmClassMappingKt;
 
 /**
  * post 搜索
  * 公用 ActivitySearchBaseBinding
  */
-public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> {
-
+public class SearchPostActivity extends
+        BaseVmActivity<ActivitySearchBaseBinding, SearchPostVm> {
 
     public SearchPostActivity() {
-        super(SearchPostActivity.class);
+        super(JvmClassMappingKt.getKotlinClass(SearchPostActivity.class),
+                JvmClassMappingKt.getKotlinClass(SearchPostVm.class));
     }
 
+    @NonNull
     @Override
-    public ActivitySearchBaseBinding getBinding() {
+    public ActivitySearchBaseBinding initBinding() {
         return ActivitySearchBaseBinding.inflate(getLayoutInflater());
     }
 
-    @Override
-    protected void init() {
-        super.init();
-
-        initViewModel();
-
-        initView();
-    }
 
     @Override
     protected void setListener() {
         super.setListener();
 
-        binding.topBar.setOnClickListener(v -> finish());
+        binding.btnBack.setOnClickListener(v -> finish());
 
         binding.btnSearch.setOnClickListener(v -> searchInfo());
     }
 
     //----------------------------view----------------------------
 
-    private void initView(){
-        binding.topBar.setTitle(
-                getString(com.czy.appview.R.string.search_post)
-        );
+    @Override
+    protected void initView(){
+        super.initView();
 
-        initViewModelVo();
 
-        observeData();
     }
 
     //----------------------------viewModel----------------------------
 
-    private SearchPostVm vm;
+    @Override
+    protected void initViewModel(){
+        super.initViewModel();
 
-    private void initViewModel(){
-        ApiViewModelFactory apiViewModelFactory = new ApiViewModelFactory(MainApplication.getApiRequestImplInstance(), MainApplication.getInstance().getMessageSender());
-        vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, SearchPostVm.class);
+        initVmAAo();
 
-        vm.init(new SearchPostAAo(), this);
+        observeData();
+    }
+
+    private void initVmAAo(){
+        SearchPostAAo aao = new SearchPostAAo();
+
+        vm.init(aao, this);
         vm.initRecyclerAdapter(binding.rclvSearch, this::openSearchPostDetailActivity);
         vm.initDialogAnswer(this, v -> {
             // todo 跳转到跟ai聊天的详情页
         });
     }
 
-    private void initViewModelVo(){
-        SearchPostVm searchPostVm = vm;
-
-        // 双向绑定
-        // SearchView -> LiveData
-        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                SearchPostVm searchPostVm = vm;
-                Optional.ofNullable(searchPostVm.searchPostAAo)
-                        .map(vo -> vo.edtvInputData)
-                        .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
-                return true;
-            }
-        });
-        // LiveData -> SearchView
-        searchPostVm.searchPostAAo.edtvInputData.observe(this, newText -> {
-            if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
-                binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
-            }
-        });
-    }
-
     private void searchInfo(){
+        // 傻逼Android没有提供双向binding
         String query = binding.searchBar.getQuery().toString();
         if (TextUtils.isEmpty(query)){
-            ToastUtils.showToastActivity(this, "请输入搜索内容");
+            ToastUtils.showToastActivity(this, getString(com.czy.appview.R.string.please_enter_search_content));
         }
         NetworkLoadUtils.showDialog(this);
         vm.searchPosts(this, query, new SyncRequestCallback() {
@@ -128,6 +99,29 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
     }
 
     private void observeData(){
+        // 双向绑定
+        // SearchView -> LiveData
+        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Optional.ofNullable(vm.searchPostAAo)
+                        .map(vo -> vo.searchInputLd)
+                        .ifPresent(edtvInputData -> edtvInputData.setValue(newText));
+                return true;
+            }
+        });
+
+        // LiveData -> SearchView
+        vm.searchPostAAo.searchInputLd.observe(this, newText -> {
+            if (newText != null && !newText.equals(binding.searchBar.getQuery().toString())) {
+                binding.searchBar.setQuery(newText, false); // 更新 SearchView 的文本
+            }
+        });
     }
     
     private void openSearchPostDetailActivity(int position, Long postId){
@@ -144,4 +138,6 @@ public class SearchPostActivity extends BaseActivity<ActivitySearchBaseBinding> 
 
         startActivity(intent);
     }
+
+
 }

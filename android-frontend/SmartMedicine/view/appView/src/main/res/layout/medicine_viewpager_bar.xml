@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:layout_alignParentBottom="true"
+    android:gravity="center_vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    tools:context="com.czy.appview.view.medicine.MedicineViewPagerBar">
+
+    <LinearLayout
+        android:id="@+id/lyClick1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_appointment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/appointment"
+            android:textColor="@color/green_900"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/v_bar1"
+            android:layout_width="36dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/green_100" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyClick2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_medical_wiki"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/medical_wiki"
+            android:textColor="@color/green_900"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <View
+            android:visibility="gone"
+            android:id="@+id/v_bar2"
+            android:layout_width="36dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/green_100" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyClick3"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_medical_shopping"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/medical_shopping"
+            android:textColor="@color/green_900"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <View
+            android:visibility="gone"
+            android:id="@+id/v_bar3"
+            android:layout_width="36dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/green_100" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyClick4"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_ai_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ai_question"
+            android:textColor="@color/green_900"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <View
+            android:visibility="gone"
+            android:id="@+id/v_bar4"
+            android:layout_width="36dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/green_100" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyClick5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_health_reminder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/health_reminder"
+            android:textColor="@color/green_900"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <View
+            android:visibility="gone"
+            android:id="@+id/v_bar5"
+            android:layout_width="36dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/green_100" />
+
+    </LinearLayout>
+
+</LinearLayout>

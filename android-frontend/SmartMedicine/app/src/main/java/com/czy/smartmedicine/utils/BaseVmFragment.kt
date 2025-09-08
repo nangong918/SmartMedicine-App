@@ -19,7 +19,7 @@ abstract class BaseVmFragment<VB : ViewBinding, VM : ViewModel>(
 
     protected open lateinit var vm: VM
     protected open lateinit var binding: VB
-    private val fragmentName: String = fragmentClassType.simpleName ?: "BaseVmFragment"
+    private val fragmentName: String = fragmentClassType.java.name
     protected open val TAG : String = fragmentName
 
     abstract fun initBinding(): VB

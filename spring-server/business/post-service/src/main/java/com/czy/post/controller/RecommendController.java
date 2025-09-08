@@ -6,12 +6,14 @@ import com.czy.api.constant.feature.FeatureConstant;
 import com.czy.api.constant.recommend.RecommendConstant;
 import com.czy.api.constant.recommend.RecommendRedisKey;
 import com.czy.api.domain.Do.user.UserDo;
-import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.RecommendPostRequest;
 import com.czy.api.domain.dto.http.response.RecommendPostResponse;
+import com.czy.api.domain.vo.post.PostPreviewVo;
+import com.czy.api.domain.vo.post.toFront.PostPreviewFVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.UserExceptions;
+import com.czy.post.front.PostFrontService;
 import com.czy.post.service.recommend.RecommendService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
@@ -44,6 +46,7 @@ public class RecommendController {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     private final RedissonService redissonService;
+    private final PostFrontService postFrontService;
 
     // 推荐帖子
     @PostMapping(RecommendConstant.RECOMMEND_POSTS)
@@ -90,9 +93,10 @@ public class RecommendController {
         try {
             long startTime = System.currentTimeMillis();
             List<Long> recommendPostIdList = recommendService.getRecommendPosts(request.getUserId());
-            List<PostInfoUrlAo> postInfoUrlAos = postSearchService.getPostInfoUrlAos(recommendPostIdList);
+            List<PostPreviewVo> postPreviewVos = postSearchService.getPostPreviewVosByIds(recommendPostIdList, userId);
+            List<PostPreviewFVo> postPreviewFVos = postFrontService.getPostPreviewFVos(postPreviewVos);
             RecommendPostResponse response = new RecommendPostResponse();
-            response.setPostInfoUrlAos(postInfoUrlAos);
+            response.setPostPreviewVos(postPreviewFVos);
             long endTime = System.currentTimeMillis();
             log.info("用户{}推荐帖子耗时{}ms", userDo.getAccount(), endTime - startTime);
             return BaseResponse.getResponseEntitySuccess(response);
@@ -125,10 +129,11 @@ public class RecommendController {
         }
 
         long startTime = System.currentTimeMillis();
-        List<PostInfoUrlAo> postInfoUrlAos = postSearchService.getPostInfoUrlAos(filterUserViewedPostIds);
+        List<PostPreviewVo> postPreviewVos = postSearchService.getPostPreviewVosByIds(filterUserViewedPostIds, userId);
+        List<PostPreviewFVo> postPreviewFVos = postFrontService.getPostPreviewFVos(postPreviewVos);
         log.info("testRecommendRandomPosts::getPostInfoUrlAos time: {}", System.currentTimeMillis() - startTime);
         RecommendPostResponse response = new RecommendPostResponse();
-        response.setPostInfoUrlAos(postInfoUrlAos);
+        response.setPostPreviewVos(postPreviewFVos);
         return BaseResponse.getResponseEntitySuccess(response);
     }
 }

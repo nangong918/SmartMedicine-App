@@ -46,20 +46,14 @@ public class HomeViewPagerBar extends ConstraintLayout {
                 binding.lyClick3,
                 binding.lyClick4
         };
-        HomeViewPagerEnum[] homeViewPagerEnums = new HomeViewPagerEnum[]{
-                HomeViewPagerEnum.RECOMMEND,
-                HomeViewPagerEnum.POPULAR,
-                HomeViewPagerEnum.FOLLOW,
-                HomeViewPagerEnum.FRIEND_CIRCLE
-        };
         for (int i = 0; i < linearLayouts.length; i++){
             int finalI = i;
             linearLayouts[i].setOnClickListener(
                     v -> {
-                        currentPosition = homeViewPagerEnums[finalI].getIndex();
+                        currentPosition = HomeViewPagerEnum.values()[finalI].getIndex();
                         if (onViewPagerBarClickListener != null){
                             onViewPagerBarClickListener.onPositionItemClick(
-                                    homeViewPagerEnums[finalI].getIndex()
+                                    HomeViewPagerEnum.values()[finalI].getIndex()
                             );
                             updateUI();
                         }
@@ -82,7 +76,7 @@ public class HomeViewPagerBar extends ConstraintLayout {
     }
 
     private void updateUI() {
-        HomeViewPagerEnum homeViewPagerEnum = HomeViewPagerEnum.getHomeViewPagerEnum(currentPosition);
+        HomeViewPagerEnum homeViewPagerEnum = HomeViewPagerEnum.getEnumByIndex(currentPosition);
         binding.tvRecommend.setTextColor(
                 HomeViewPagerEnum.RECOMMEND.equals(homeViewPagerEnum) ?
                         ContextCompat.getColor(getContext(), R.color.green_1000) :

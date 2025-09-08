@@ -10,289 +10,270 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main"
-        android:background="@color/green_90"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".activity.PostActivity">
+        android:layout_height="match_parent">
 
-        <View
-            android:id="@+id/viewBackground"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/green_10"
-            app:layout_constraintBottom_toTopOf="@+id/editTextInput"
-            android:layout_marginBottom="16dp"/>
-
-        <View
-            android:id="@+id/viewSupporter"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/green_90"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ScrollView
-            app:layout_constraintTop_toBottomOf="@+id/viewSupporter"
-            app:layout_constraintBottom_toTopOf="@+id/editTextInput"
-            android:layout_marginBottom="20dp"
-            android:id="@+id/scrollArticle"
+        <androidx.core.widget.NestedScrollView
+            android:background="@color/green_0"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/ly_commend"
             android:layout_width="match_parent"
             android:layout_height="0dp">
-
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
 
+                <!-- top view -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_height="wrap_content">
+
+                    <View
+                        android:id="@+id/btn_back"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:background="@drawable/chevron_left_24px"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- author view -->
                 <LinearLayout
-                    android:background="@color/green_50"
+                    android:layout_marginTop="30dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="15dp">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/authorFacePicture"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@mipmap/logo"/>
+                        android:id="@+id/imgv_author_avatar"
+                        tools:src="@mipmap/logo"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="20dp"/>
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tv_author_name"
+                        android:layout_marginStart="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/authorName"
-                            tools:text="想养一只Vector"
-                            android:textStyle="bold"
-                            android:textSize="18sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-
-                        <TextView
-                            android:id="@+id/time"
-                            tools:text="2023年4月18日 11点16"
-                            android:textStyle="italic"
-                            android:layout_marginTop="6dp"
-                            android:textSize="13sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-
-                    </LinearLayout>
-
-
+                        android:textSize="16sp"
+                        android:textColor="@color/green_900"
+                        tools:text="张良医生"/>
 
                 </LinearLayout>
 
+                <!-- title view -->
                 <TextView
-                    android:padding="15dp"
-                    android:id="@+id/Title"
-                    android:text="@string/title"
-                    android:textStyle="bold"
-                    android:textSize="23sp"
-                    android:layout_width="280dp"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"/>
-
-                <com.czy.appview.view.RoundedImage
-                    android:id="@+id/articlePicture"
-                    android:padding="10dp"
-                    android:layout_width="300dp"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@mipmap/logo"/>
-
-                <TextView
-                    android:id="@+id/content"
-                    android:padding="20dp"
+                    android:id="@+id/tv_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="         杜女士是一名公务员，既有着令人羡慕的职业，又有着幸福和睦的家庭，是外人眼中的人生赢家。
-四十出头的年纪，加上平时非常注意保养，精致的打扮不俗的品位，让她看起来更加的年轻、美丽，令身边朋友艳羡不已。
-可是，腿上凸起的血管却已经困扰了她三年。"/>
+                    android:textSize="30sp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:textColor="@color/green_900"
+                    tools:text="高血压如何预防，平时要注意这几点！"
+                    android:layout_marginTop="25dp"/>
 
-                <LinearLayout
-                    android:id="@+id/comment"
-                    android:orientation="vertical"
+                <!-- content view -->
+                <TextView
+                    android:id="@+id/tv_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:textColor="@color/green_900"
+                    tools:text="高血压，作为一种常见的慢性病，已成为全球范围内严重影响人们健康的重要因素之一。它不仅增加心脏病、中风和肾脏疾病的风险，还会对生活质量造成显著影响。因此，了解高血压的预防措施显得尤为重要。以下是一些日常生活中应该注意的要点。
+1. 健康饮食
+饮食习惯对高血压有着直接的影响。保持均衡饮食，尤其是增加以下食物的摄入：
+新鲜水果和蔬菜：富含维生素、矿物质和纤维，有助于降低血压。
+2. 适量运动
+定期的身体活动能够有效降低血压。建议每周至少进行150分钟的中等强度有氧运动，如快走、游泳或骑自行车。运动不仅有助于控制体重，还能改善心血管健康。
+......"
+                    android:layout_marginTop="25dp"/>
+
+                <!-- post info view -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
-                        tools:text="评论"
-                        android:text="@string/comment"
-                        android:textColor="@color/green_500"
-                        android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:background="@color/green_90"
+                        android:id="@+id/tv_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:textColor="@color/green_900"
+                        tools:text="2025-08-09 16:48"/>
+
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@mipmap/view"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_time"
+                        android:layout_marginStart="20dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_view_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_time"
+                        android:layout_marginStart="45dp"
+                        android:textColor="@color/green_900"
+                        tools:text="2.2w"/>
+
+                    <ImageView
+                        android:id="@+id/btn_like"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/favorite_24px"
+                        app:layout_constraintEnd_toStartOf="@+id/btn_collect"
+                        app:tint="@color/green_900"
+                        android:layout_width="33dp"
+                        android:layout_height="33dp"/>
+
+                    <ImageView
+                        android:id="@+id/btn_collect"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/kid_star_48px"
+                        app:tint="@color/green_900"
+                        android:layout_width="33dp"
+                        android:layout_height="33dp"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- post image -->
+                <LinearLayout
+                    android:layout_marginTop="15dp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/ly_p1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:gravity="center"
-                        android:layout_gravity="center"/>
+                        android:orientation="vertical">
+                        <ImageView
+                            android:id="@+id/img_p1"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            tools:background="@color/green_90"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ly_p2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:id="@+id/img_p2"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            tools:background="@color/green_90"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ly_p3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:id="@+id/img_p3"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            tools:background="@color/green_90"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- commend view -->
+                <LinearLayout
+                    android:background="@drawable/round_corners_bg_commend"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rclv_comment"
-                        android:background="@color/green_50"
+                        android:id="@+id/rclv_commend"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
-
+                        android:layout_height="wrap_content"/>
 
                 </LinearLayout>
 
             </LinearLayout>
 
 
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
-
-        <TextView
-            android:id="@+id/textName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/article_details"
-            android:textColor="@color/green_1000"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginStart="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageBack"
-            app:layout_constraintStart_toEndOf="@+id/imageBack"
-            app:layout_constraintTop_toTopOf="@+id/imageBack" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/btn_back"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/chevron_left_24px"
-            app:tint="@color/secondary_text" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            app:layout_constraintBottom_toBottomOf="@+id/viewBackground"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <FrameLayout
-            android:id="@+id/layoutSend"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_marginEnd="180dp"
-            android:layout_marginBottom="16dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ly_commend"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:background="@drawable/background_chat_input">
+            android:background="@color/green_90"
+            android:layout_width="match_parent"
+            android:layout_height="65dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/send_24px"
-                app:tint="@color/green_500"
-                android:padding="10dp"/>
-
-        </FrameLayout>
-
-        <LinearLayout
-            app:layout_constraintTop_toTopOf="@+id/layoutSend"
-            app:layout_constraintBottom_toBottomOf="@+id/layoutSend"
-            app:layout_constraintStart_toEndOf="@+id/layoutSend"
-            android:layout_marginStart="55dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <FrameLayout
-                android:id="@+id/favorite"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtv_commend"
+                android:layout_width="290dp"
+                android:layout_height="35dp"
+                android:background="@drawable/round_corners_commend"
+                android:hint="@string/comment"
+                android:paddingStart="10dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="15dp"
+                tools:ignore="RtlSymmetry" />
+            
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_comment"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:background="@drawable/round_corners_button_commend"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:background="@drawable/background_chat_input">
+                android:layout_marginEnd="15dp"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:textColor="@color/green_900"
+                android:text="@string/comment"/>
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/img_favorite"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/favorite_border"
-                    app:tint="@color/green_500"
-                    android:padding="10dp"/>
-
-                <TextView
-                    android:id="@+id/tv_likeNum"
-                    tools:text="1.2M"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:gravity="center"/>
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/star"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginStart="5dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:background="@drawable/background_chat_input">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imgv_star"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/star_border"
-                    app:tint="@color/green_500"
-                    android:padding="10dp"/>
-
-                <TextView
-                    android:id="@+id/tv_collectionNum"
-                    tools:text="1.2M"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:gravity="center"/>
-
-            </FrameLayout>
-
-        </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/editTextInput"
-            android:layout_width="0dp"
-            android:layout_height="45dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/background_chat_input"
-            android:hint="@string/make_comment"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textColor="@color/green_500"
-            android:textColorHint="@color/green_500"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/layoutSend"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_commentNum"
-            tools:text="1.2M"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:gravity="center"
-            tools:ignore="MissingConstraints" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

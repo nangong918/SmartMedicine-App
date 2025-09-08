@@ -2,6 +2,7 @@ package com.czy.medicine.utils;
 
 import com.czy.api.constant.UserOrderStatusEnum;
 import com.czy.api.domain.Do.medicine.UserCustomerAppointmentDo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Optional;
  * @author 13225
  * @date 2025/8/22 14:21
  */
+@Slf4j
 public class UserOrderStatusUtils {
 
     /**
@@ -20,6 +22,7 @@ public class UserOrderStatusUtils {
      */
     public static boolean checkAppointment(List<UserCustomerAppointmentDo> orderList){
         if (CollectionUtils.isEmpty(orderList)){
+            log.info("[审核预约][不存在订单, 可预约]");
             return true;
         }
 
@@ -27,6 +30,7 @@ public class UserOrderStatusUtils {
             // 是否不可预约
             if (checkCantAppointment(orderDo)){
                 // 返回不可申请
+                log.warn("已存在订单, 暂不可申请, 订单数据: {}", orderDo);
                 return false;
             }
         }

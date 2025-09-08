@@ -47,7 +47,7 @@ public class TestActivity extends BaseActivity<ActivityTestBinding> {
     }
 
     @Override
-    public ActivityTestBinding getBinding() {
+    public ActivityTestBinding initBinding() {
         return ActivityTestBinding.inflate(getLayoutInflater());
     }
 

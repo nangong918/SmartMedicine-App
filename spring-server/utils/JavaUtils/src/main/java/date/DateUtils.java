@@ -36,8 +36,14 @@ public class DateUtils {
     }
 
     @NonNull
-    public static LocalDateTime getLocalDateTime(@NonNull Long timestamp) {
+    public static LocalDateTime getLocalDateTimeByTimestamp(@NonNull Long timestamp) {
         return LocalDateTime.ofInstant(new java.util.Date(timestamp).toInstant(), ZoneId.systemDefault());
+    }
+
+    @NonNull
+    public static String getDateStringByTimestamp(@NonNull Long timestamp) {
+        LocalDateTime localDateTime = getLocalDateTimeByTimestamp(timestamp);
+        return yyyyMMddHHmmssToString(localDateTime);
     }
 
     @NonNull

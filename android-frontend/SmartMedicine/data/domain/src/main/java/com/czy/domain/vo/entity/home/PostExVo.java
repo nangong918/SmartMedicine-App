@@ -2,7 +2,7 @@ package com.czy.domain.vo.entity.home;
 
 import com.czy.domain.constant.search.PostSearchResultListEnum;
 
-public class PostExVo extends PostVo{
+public class PostExVo {
     /**
      * like匹配结果 0
      * tokenized匹配结果 1
@@ -11,8 +11,20 @@ public class PostExVo extends PostVo{
      * @see PostSearchResultListEnum
      */
     public int type = PostSearchResultListEnum.LIKE_MATCH_RESULT.getValue();
+    public PostVo postVo;
 
-    public void setPostVo(PostVo vo){
-        super.setByPostVo(vo);
+    public PostExVo() {
+    }
+
+    public PostExVo(PostVo postVo) {
+        this.postVo = postVo;
+    }
+
+    public void setPostVo(PostVo postVo){
+        this.postVo = postVo;
+    }
+
+    public void clonePostVo(PostVo postVo) throws CloneNotSupportedException{
+        this.postVo = postVo.clone();
     }
 }

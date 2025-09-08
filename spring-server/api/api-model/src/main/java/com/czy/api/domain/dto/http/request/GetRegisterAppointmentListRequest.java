@@ -1,6 +1,6 @@
 package com.czy.api.domain.dto.http.request;
 
-import com.czy.api.domain.ao.medicine.RegisterAppointmentSelectAo;
+import com.czy.api.domain.ao.medicine.AppointmentDoctorSelectAo;
 import lombok.Data;
 
 import javax.validation.Valid;
@@ -28,5 +28,5 @@ import javax.validation.constraints.NotNull;
 public class GetRegisterAppointmentListRequest {
     @Valid
     @NotNull(message = "请求参数不能为空")
-    public RegisterAppointmentSelectAo requestAo;
+    public AppointmentDoctorSelectAo requestAo;
 }

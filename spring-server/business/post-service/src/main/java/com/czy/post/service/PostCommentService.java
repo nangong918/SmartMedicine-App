@@ -1,7 +1,7 @@
 package com.czy.post.service;
 
 import com.czy.api.domain.Do.post.comment.PostCommentDo;
-import com.czy.api.domain.ao.post.PostCommentAo;
+import com.czy.api.domain.ao.post.CommentAo;
 import com.czy.api.domain.dto.service.CommentResultDto;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,24 +14,29 @@ import java.util.List;
  */
 public interface PostCommentService {
 
-    // 第二次获取的非实时性需要考虑
-    // 分页获取某个post的一级comment （一页多少条n + 第几页m）（comment在mongodb需要用Page）
-    // TODO 暂时根据时间排序，后续需要根据综合算法如点赞数排序（类似推荐系统）
-    List<PostCommentDo> getLevel1PostComments(Long postId, Integer pageSize, Integer pageNum);
-
-    // 获取某个comment的子评论（一页多少条n + 第几页m）（comment在mongodb需要用Page）
-    List<PostCommentDo> getLevel2PostComments(Long postId, Long level2CommentId, Integer pageSize, Integer pageNum);
-
-    // 通过id获取
-    PostCommentDo  getPostCommentById(Long commentId);
+    // [暂时根据时间排序，后续需要根据综合算法如点赞数排序（类似推荐系统）]
 
     /**
-     * 通过List<PostCommentDo> 获取 List<PostCommentAo>
-     * @param postCommentDoList  postCommentDoList
-     * @return                   List<PostCommentAo>
-     * 返回list中会包含null值，因为可能存在注销了的用户，所以需要设为null
+     * 分页获取某个post的一级comment （一页多少条n + 第几页m）（comment在mongodb需要用Page）
+     * @param postId              帖子id
+     * @param pageSize            每页数量
+     * @param pageNum             页数
+     * @return  List
      */
-    List<PostCommentAo> getPostCommentAoList(List<PostCommentDo> postCommentDoList);
+    List<CommentAo> getLevel1PostCommentAos(Long postId, Integer pageSize, Integer pageNum);
+
+    /**
+     * 获取某个comment的子评论（一页多少条n + 第几页m）（comment在mongodb需要用Page）
+     * @param postId              帖子id
+     * @param replyCommentId      被回复的评论id
+     * @param pageSize            每页数量
+     * @param pageNum             页数
+     * @return   List
+     */
+    List<CommentAo> getLevel2PostCommentAos(Long postId, Long replyCommentId, Integer pageSize, Integer pageNum);
+
+    // 通过id获取
+    PostCommentDo getPostCommentById(Long commentId);
 
     /**
      * 评论

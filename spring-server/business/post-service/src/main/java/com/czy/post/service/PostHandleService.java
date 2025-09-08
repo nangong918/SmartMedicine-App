@@ -2,7 +2,7 @@ package com.czy.post.service;
 
 import com.czy.api.domain.Do.post.collect.PostCollectDo;
 import com.czy.api.domain.Do.post.collect.PostCollectFolderDo;
-import com.czy.api.domain.Do.post.comment.PostCommentDo;
+import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public interface PostHandleService {
     // 评论
     // 发布评论
-    void postComment(PostCommentDo postCommentDo);
+    void postComment(PostCommentMongoDo postCommentDo);
     // 删除评论
     void deleteComment(Long postId, Long commentId);
 

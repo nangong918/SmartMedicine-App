@@ -25,7 +25,7 @@ public class PayMqSender implements RabbitMqSenderInterface {
     public void sendAppointmentPayResult(@NotNull AppointmentPayResultDto dto){
         rabbitJsonTemplate.convertAndSend(
                 // 支付交换机
-                MqConstants.Exchange.PAY_EXCHANGE,
+                MqConstants.Exchange.PAY_RESULT_EXCHANGE,
                 // 支付结果路由键
                 MqConstants.PayQueue.Routing.APPOINTMENT_PAY_RESULT_ROUTING,
                 dto
