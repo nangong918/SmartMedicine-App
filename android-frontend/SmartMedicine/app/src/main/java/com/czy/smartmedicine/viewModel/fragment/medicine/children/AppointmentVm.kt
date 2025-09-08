@@ -45,9 +45,9 @@ open class AppointmentVm(
         handler.postDelayed(object : Runnable {
             override fun run() {
                 aao.currentItem.value = (aao.currentItem.value!! + 1) % aao.imageList.size
-                handler.postDelayed(this, 2000) // 2 秒间隔
+                handler.postDelayed(this, 3000) // 3 秒间隔
             }
-        }, 2000)
+        }, 3000)
     }
 
     override fun onCleared() {

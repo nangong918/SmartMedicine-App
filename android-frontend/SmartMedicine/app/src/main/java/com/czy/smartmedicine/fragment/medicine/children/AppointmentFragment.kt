@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import com.czy.smartmedicine.databinding.FragmentAppointmentBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
 import com.czy.smartmedicine.viewModel.fragment.medicine.children.AppointmentVm
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, AppointmentVm>(
@@ -34,13 +36,21 @@ class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, Appointme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        vm.initAdapter()
+        binding.vpg2.adapter = vm.imageSliderAdapter
     }
 
     //---------------------------ViewModel---------------------------
 
     override fun initViewModel() {
         super.initViewModel()
+
+        vm.aao.province.value = "广东"
+        vm.aao.city.value = "深圳"
+        vm.aao.area.value = "南山"
+        vm.aao.date.value = LocalDateTime.now()
+        vm.aao.department.value = "皮肤科"
+
+        vm.initAdapter()
 
         observeDate()
     }
@@ -68,6 +78,43 @@ class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, Appointme
                     }
                 }
             }
+        }
+
+        // location
+        vm.aao.province.observe(viewLifecycleOwner) {
+            province ->
+            val city = vm.aao.city.value
+            val area = vm.aao.area.value
+            val location = "$province-$city-$area"
+            binding.tvLocation.text = location
+        }
+        vm.aao.city.observe(viewLifecycleOwner) {
+            city ->
+            val province = vm.aao.province.value
+            val area = vm.aao.area.value
+            val location = "$province-$city-$area"
+            binding.tvLocation.text = location
+        }
+        vm.aao.area.observe(viewLifecycleOwner) {
+            area ->
+            val province = vm.aao.province.value
+            val city = vm.aao.city.value
+            val location = "$province-$city-$area"
+            binding.tvLocation.text = location
+        }
+
+        // date
+        vm.aao.date.observe(viewLifecycleOwner) {
+            date ->
+            val formatter = DateTimeFormatter.ofPattern("MM月dd日")
+            val dateStr = date.format(formatter)
+            binding.tvDate.text = dateStr
+        }
+
+        // department
+        vm.aao.department.observe(viewLifecycleOwner) {
+            department ->
+            binding.tvDepartment.text = department
         }
     }
 }
