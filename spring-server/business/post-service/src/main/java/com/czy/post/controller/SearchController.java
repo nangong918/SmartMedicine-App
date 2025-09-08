@@ -28,7 +28,7 @@ import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.api.domain.dto.python.MedicalPredictionResponse;
 import com.czy.api.domain.dto.python.NlpSearchResponse;
 import com.czy.api.domain.entity.kafkaMessage.UserActionSearchPost;
-import com.czy.api.domain.vo.post.PostPreviewVo;
+import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.post.component.KafkaSender;
@@ -170,25 +170,25 @@ public class SearchController {
             List<Long> likePostList = Optional.ofNullable(postSearchResultAo.getLikePostPreviewVoList())
                     .filter(l -> !CollectionUtils.isEmpty(l))
                     .map(l -> l.stream()
-                            .map(PostPreviewVo::getPostId)
+                            .map(PostPreviewOldVo::getPostId)
                             .collect(Collectors.toList()))
                     .orElse(new ArrayList<>());
             List<Long> tokenizedPostList = Optional.ofNullable(postSearchResultAo.getTokenizedPostPreviewVoList())
                     .filter(l -> !CollectionUtils.isEmpty(l))
                     .map(l -> l.stream()
-                            .map(PostPreviewVo::getPostId)
+                            .map(PostPreviewOldVo::getPostId)
                             .collect(Collectors.toList()))
                     .orElse(new ArrayList<>());
             List<Long> similarPostList = Optional.ofNullable(postSearchResultAo.getSimilarPostPreviewVoList())
                     .filter(l -> !CollectionUtils.isEmpty(l))
                     .map(l -> l.stream()
-                            .map(PostPreviewVo::getPostId)
+                            .map(PostPreviewOldVo::getPostId)
                             .collect(Collectors.toList()))
                     .orElse(new ArrayList<>());
             List<Long> recommendPostList = Optional.ofNullable(postSearchResultAo.getRecommendPostPreviewVoList())
                     .filter(l -> !CollectionUtils.isEmpty(l))
                     .map(l -> l.stream()
-                            .map(PostPreviewVo::getPostId)
+                            .map(PostPreviewOldVo::getPostId)
                             .collect(Collectors.toList()))
                     .orElse(new ArrayList<>());
             postIdListMap.put(SearchLevel.ONE.getCode(), likePostList);

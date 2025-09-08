@@ -11,7 +11,7 @@ import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.entity.event.PostOssResponse;
 import com.czy.api.domain.entity.event.UserOssResponse;
-import com.czy.api.domain.vo.post.PostOldVo;
+import com.czy.api.domain.vo.post.old.PostOldVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.OssExceptions;
 import com.czy.api.exception.PostExceptions;

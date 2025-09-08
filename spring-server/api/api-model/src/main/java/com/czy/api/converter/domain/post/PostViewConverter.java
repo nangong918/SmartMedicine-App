@@ -4,7 +4,7 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.post.post.content.PostContentEntity;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.bo.post.PostViewBo;
-import com.czy.api.domain.vo.post.aaa.PostVo;
+import com.czy.api.domain.vo.post.PostVo;
 import date.DateUtils;
 import org.jetbrains.annotations.NotNull;
 import org.mapstruct.Mapper;

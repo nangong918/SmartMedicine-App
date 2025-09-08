@@ -10,10 +10,10 @@ import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.bo.post.PostViewBo;
-import com.czy.api.domain.vo.post.CommentOldVo;
-import com.czy.api.domain.vo.post.PostOldVo;
-import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.aaa.PostVo;
+import com.czy.api.domain.vo.post.old.CommentOldVo;
+import com.czy.api.domain.vo.post.old.PostOldVo;
+import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
+import com.czy.api.domain.vo.post.PostVo;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostService;
 import com.utils.minio.service.OssService;
@@ -48,7 +48,7 @@ public class PostFrontServiceImpl implements PostFrontService {
     private final PostDetailMongoMapper postDetailMongoMapper;
 
     @Override
-    public List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList){
+    public List<PostPreviewOldVo> toPostPreviewVoList(List<PostInfoAo> postAoList){
 
         List<Long> fileIds = new ArrayList<>(postAoList.size());
         for (PostInfoAo postInfoAo : postAoList){
@@ -95,7 +95,7 @@ public class PostFrontServiceImpl implements PostFrontService {
         // TODO 时间过长需要将url拆分存储在redis中
         log.info("获取post的imageUrl耗时：{} ms", System.currentTimeMillis() - userImgUrlStartTime);
 
-        List<PostPreviewVo> postPreviewVos = new ArrayList<>(postAoList.size());
+        List<PostPreviewOldVo> postPreviewVos = new ArrayList<>(postAoList.size());
 
         for (int i = 0; i < postAoList.size(); i++){
             PostInfoAo postInfoAo = postAoList.get(i);
@@ -103,7 +103,7 @@ public class PostFrontServiceImpl implements PostFrontService {
                 postPreviewVos.add(null);
                 continue;
             }
-            PostPreviewVo postPreviewVo = new PostPreviewVo();
+            PostPreviewOldVo postPreviewVo = new PostPreviewOldVo();
             postPreviewVo.setPostId(postInfoAo.getId());
             List<String> postImgUrls = new ArrayList<>();
             postImgUrls.add(fileUrls.get(i));
@@ -126,11 +126,11 @@ public class PostFrontServiceImpl implements PostFrontService {
             postPreviewVo.setAuthorAvatarUrl(
                     url
             );
-            postPreviewVo.setLikeNum(PostPreviewVo.numToString(postInfoAo.getLikeCount()));
-            postPreviewVo.setCollectNum(PostPreviewVo.numToString(postInfoAo.getCollectCount()));
-            postPreviewVo.setCommentNum(PostPreviewVo.numToString(postInfoAo.getCommentCount()));
+            postPreviewVo.setLikeNum(PostPreviewOldVo.numToString(postInfoAo.getLikeCount()));
+            postPreviewVo.setCollectNum(PostPreviewOldVo.numToString(postInfoAo.getCollectCount()));
+            postPreviewVo.setCommentNum(PostPreviewOldVo.numToString(postInfoAo.getCommentCount()));
 //            postPreviewVo.setReadNum(PostPreviewVo.numToString(postInfoAo.getReadCount()));
-            postPreviewVo.setForwardNum(PostPreviewVo.numToString(postInfoAo.getForwardCount()));
+            postPreviewVo.setForwardNum(PostPreviewOldVo.numToString(postInfoAo.getForwardCount()));
             postPreviewVo.setPostPublishTimestamp(postInfoAo.getReleaseTimestamp());
 
             // TODO user的阅读状态

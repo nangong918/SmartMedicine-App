@@ -25,9 +25,9 @@ import com.czy.api.domain.dto.http.response.GetPostPreviewListResponse;
 import com.czy.api.domain.dto.http.response.GetPostResponse;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
 import com.czy.api.domain.dto.http.response.SinglePostResponse;
-import com.czy.api.domain.vo.post.CommentOldVo;
-import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostOldVo;
+import com.czy.api.domain.vo.post.old.CommentOldVo;
+import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
+import com.czy.api.domain.vo.post.old.PostOldVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PostExceptions;
 import com.czy.post.front.PostFrontService;
@@ -157,7 +157,7 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
-    // 删除post
+    // 删除post todo 删除数据需要把评论数据一并删除
     @DeleteMapping("/postDelete")
     public BaseResponse<String> deletePost(
             @RequestParam Long postId,
@@ -169,7 +169,7 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess("删除成功");
     }
 
-    // 修改post
+    // 修改post [后续开发]
     // 只修改内容
     @PostMapping("/postUpdate")
     public BaseResponse<String>
@@ -180,7 +180,7 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess("修改成功");
     }
 
-    // 修改了全部
+    // 修改了全部 [后续开发]
     @PostMapping(PostConstant.POST_UPDATE_ALL)
     public BaseResponse<String>
     updatePostAll(@Valid @RequestBody PostUpdateRequest request){
@@ -222,7 +222,7 @@ public class PostController {
      * @param request   List<Long> postIds
      * @return      List<PostInfoAo> postInfoAos;
      */
-    @Deprecated
+    @Deprecated // 废弃, 仅供测试
     @PostMapping("/getPostInfoList/deprecated")
     public BaseResponse<GetPostInfoListResponse>
     getPosts(@Valid @RequestBody GetPostInfoListRequest request){
@@ -249,7 +249,7 @@ public class PostController {
             return BaseResponse.getResponseEntitySuccess(new GetPostPreviewListResponse());
         }
 
-        List<PostPreviewVo> postPreviewVos = postFrontService.toPostPreviewVoList(postAoList);
+        List<PostPreviewOldVo> postPreviewVos = postFrontService.toPostPreviewVoList(postAoList);
 
         GetPostPreviewListResponse response = new GetPostPreviewListResponse();
         response.setPostPreviewVos(postPreviewVos);

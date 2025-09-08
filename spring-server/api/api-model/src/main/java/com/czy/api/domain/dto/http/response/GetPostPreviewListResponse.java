@@ -1,7 +1,7 @@
 package com.czy.api.domain.dto.http.response;
 
 
-import com.czy.api.domain.vo.post.PostPreviewVo;
+import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
 import lombok.Data;
 
 import java.util.List;
@@ -12,5 +12,5 @@ import java.util.List;
  */
 @Data
 public class GetPostPreviewListResponse {
-    public List<PostPreviewVo> postPreviewVos;
+    public List<PostPreviewOldVo> postPreviewVos;
 }

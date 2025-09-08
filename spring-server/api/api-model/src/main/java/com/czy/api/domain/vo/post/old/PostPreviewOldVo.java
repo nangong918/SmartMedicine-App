@@ -1,17 +1,21 @@
-package com.czy.api.domain.vo.post;
+package com.czy.api.domain.vo.post.old;
 
-import com.czy.api.domain.ao.post.PostInfoUrlAo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * @author 13225
+ * @date 2025/6/6 11:49
+ * Post预览vo
+ * 当前设计不需要
+ * @see PostPreviewVo
+ */
 @Deprecated
 @Data
-public class PostOldVo implements Serializable {
-
+public class PostPreviewOldVo implements Serializable {
     // postId
     public Long postId = null;
 
@@ -20,9 +24,6 @@ public class PostOldVo implements Serializable {
 
     // 文章标题
     public String postTitle = "";
-
-    // 文章内容
-    public String postContent = "";
 
     // 作者id
     public Long authorId = null;
@@ -52,29 +53,6 @@ public class PostOldVo implements Serializable {
     public Boolean isCollect = false;
     // 当前用户是否不喜欢
     public Boolean isDislike = false;
-
-
-
-    public static PostOldVo getRecommendPostVoFromPostInfoUrlAo(PostInfoUrlAo postInfoUrlAo){
-        PostOldVo postVo = new PostOldVo();
-        postVo.postId = postInfoUrlAo.id;
-        postVo.postImgUrls = new ArrayList<>();
-        postVo.postImgUrls.add(postInfoUrlAo.fileUrl);
-        postVo.postTitle = postInfoUrlAo.title;
-        postVo.authorName = postInfoUrlAo.authorName;
-        postVo.authorAvatarUrl = postInfoUrlAo.authorAvatarUrl;
-        postVo.likeNum = numToString(postInfoUrlAo.likeCount);
-        postVo.collectNum = numToString(postInfoUrlAo.collectCount);
-        postVo.commentNum = numToString(postInfoUrlAo.commentCount);
-        postVo.readNum = numToString(postInfoUrlAo.readCount);
-        postVo.forwardNum = numToString(postInfoUrlAo.forwardCount);
-        postVo.postPublishTimestamp = postInfoUrlAo.releaseTimestamp;
-        // 推荐默认为没看过
-        postVo.isLike = false;
-        postVo.isCollect = false;
-        postVo.isDislike = false;
-        return postVo;
-    }
 
     public static String numToString(Long num) {
         if (num < 0) {

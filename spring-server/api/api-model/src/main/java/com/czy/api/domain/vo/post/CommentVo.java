@@ -1,4 +1,4 @@
-package com.czy.api.domain.vo.post.aaa;
+package com.czy.api.domain.vo.post;
 
 
 import lombok.Data;

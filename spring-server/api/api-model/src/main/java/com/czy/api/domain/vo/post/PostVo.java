@@ -1,4 +1,4 @@
-package com.czy.api.domain.vo.post.aaa;
+package com.czy.api.domain.vo.post;
 
 import com.czy.api.domain.Do.post.post.content.PostContentEntity;
 import com.czy.api.domain.ao.post.PostNerResult;

@@ -3,10 +3,10 @@ package com.czy.post.front;
 import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
-import com.czy.api.domain.vo.post.CommentOldVo;
-import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostOldVo;
-import com.czy.api.domain.vo.post.aaa.PostVo;
+import com.czy.api.domain.vo.post.old.CommentOldVo;
+import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
+import com.czy.api.domain.vo.post.old.PostOldVo;
+import com.czy.api.domain.vo.post.PostVo;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public interface PostFrontService {
      * @param postAoList    postAoList
      * @return              List<PostPreviewVo>
      */
-    List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList);
+    List<PostPreviewOldVo> toPostPreviewVoList(List<PostInfoAo> postAoList);
 
     // PostAo -> PostVo
     PostOldVo postAoToPostVo(PostAo postAo);

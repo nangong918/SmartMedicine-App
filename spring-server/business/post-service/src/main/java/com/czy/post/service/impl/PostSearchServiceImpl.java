@@ -20,8 +20,8 @@ import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 import com.czy.api.domain.ao.recommend.PostScoreAo;
 import com.czy.api.domain.ao.user.AuthorAo;
-import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostOldVo;
+import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
+import com.czy.api.domain.vo.post.old.PostOldVo;
 import com.czy.api.mapper.DiseaseRepository;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostStorageService;
@@ -367,7 +367,7 @@ public class PostSearchServiceImpl implements PostSearchService {
     }
 
     @Override
-    public List<PostPreviewVo> getPostPreviewVosByIds(List<Long> postIds) {
+    public List<PostPreviewOldVo> getPostPreviewVosByIds(List<Long> postIds) {
         if (CollectionUtils.isEmpty(postIds)){
             return new ArrayList<>();
         }

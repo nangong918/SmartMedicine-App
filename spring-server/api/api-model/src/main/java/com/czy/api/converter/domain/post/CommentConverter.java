@@ -2,7 +2,7 @@ package com.czy.api.converter.domain.post;
 
 import com.czy.api.domain.ao.post.CommentAo;
 import com.czy.api.domain.bo.post.CommentBo;
-import com.czy.api.domain.vo.post.aaa.CommentVo;
+import com.czy.api.domain.vo.post.CommentVo;
 import date.DateUtils;
 import org.jetbrains.annotations.NotNull;
 import org.mapstruct.Mapper;
