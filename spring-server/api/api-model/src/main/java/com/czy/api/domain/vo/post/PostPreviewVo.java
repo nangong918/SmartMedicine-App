@@ -7,8 +7,8 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 前端需要的Vo
@@ -72,16 +72,20 @@ public class PostPreviewVo implements Serializable, Cloneable {
 
         // 深克隆 postContents
         if (this.postContents != null) {
-            cloned.postContents = this.postContents.stream()
-                    .map(PostContentEntity::clone)
-                    .collect(Collectors.toList());
+            List<PostContentEntity> clonedPostContents = new ArrayList<>();
+            for (PostContentEntity content : this.postContents) {
+                clonedPostContents.add(content.clone());
+            }
+            cloned.postContents = clonedPostContents;
         }
 
         // 深克隆 nerResults
         if (this.nerResults != null) {
-            cloned.nerResults = this.nerResults.stream()
-                    .map(PostNerResult::clone)
-                    .collect(Collectors.toList());
+            List<PostNerResult> clonedNerResults = new ArrayList<>();
+            for (PostNerResult result : this.nerResults) {
+                clonedNerResults.add(result.clone());
+            }
+            cloned.nerResults = clonedNerResults;
         }
 
         return cloned;
