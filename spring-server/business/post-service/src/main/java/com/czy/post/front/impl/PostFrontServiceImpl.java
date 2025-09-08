@@ -15,6 +15,8 @@ import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 import com.czy.api.domain.vo.post.old.CommentOldVo;
 import com.czy.api.domain.vo.post.old.PostOldVo;
+import com.czy.api.domain.vo.post.toFront.PostFVo;
+import com.czy.api.domain.vo.post.toFront.PostPreviewFVo;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostService;
 import com.utils.minio.service.OssService;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -230,6 +233,36 @@ public class PostFrontServiceImpl implements PostFrontService {
                 authorAvatarUrl,
                 postImgUrls
         );
+    }
+
+    @Override
+    public List<PostFVo> getPostFVos(@NonNull List<PostVo> list) {
+        if (list.isEmpty()){
+            return Collections.emptyList();
+        }
+        return list.stream()
+                .map(postVo -> {
+                    if (postVo == null){
+                        return null;
+                    }
+                    return new PostFVo(postVo);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PostPreviewFVo> getPostPreviewFVos(@NonNull List<PostPreviewVo> list) {
+        if (list.isEmpty()){
+            return Collections.emptyList();
+        }
+        return list.stream()
+                .map(postPreviewVo -> {
+                    if (postPreviewVo == null){
+                        return null;
+                    }
+                    return new PostPreviewFVo(postPreviewVo);
+                })
+                .collect(Collectors.toList());
     }
 
 }

@@ -7,6 +7,8 @@ import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 import com.czy.api.domain.vo.post.old.CommentOldVo;
 import com.czy.api.domain.vo.post.old.PostOldVo;
+import com.czy.api.domain.vo.post.toFront.PostFVo;
+import com.czy.api.domain.vo.post.toFront.PostPreviewFVo;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,4 +43,8 @@ public interface PostFrontService {
      * @return          PostVo
      */
     PostVo getPostVo(Long postId, Long userId);
+
+    List<PostFVo> getPostFVos(@NonNull List<PostVo> list);
+
+    List<PostPreviewFVo> getPostPreviewFVos(@NonNull List<PostPreviewVo> list);
 }

@@ -28,6 +28,7 @@ import com.czy.api.domain.dto.http.response.SinglePostResponse;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.old.CommentOldVo;
 import com.czy.api.domain.vo.post.old.PostOldVo;
+import com.czy.api.domain.vo.post.toFront.PostPreviewFVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PostExceptions;
 import com.czy.api.exception.UserExceptions;
@@ -259,9 +260,10 @@ public class PostController {
                 postAoList,
                 userId
         );
+        List<PostPreviewFVo> postPreviewFVos = postFrontService.getPostPreviewFVos(postPreviewVos);
 
         GetPostPreviewListResponse response = new GetPostPreviewListResponse();
-        response.setPostPreviewVos(postPreviewVos);
+        response.setPostPreviewVos(postPreviewFVos);
 
         return BaseResponse.getResponseEntitySuccess(response);
     }

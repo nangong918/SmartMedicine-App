@@ -7,8 +7,11 @@ package com.czy.api.utils;
 public class NumberUtils {
 
     public static String numToString(Long num) {
+        if (num == null){
+            return "";
+        }
         if (num < 0) {
-            return "Invalid number";
+            return "0";
         }
 
         // 大于 1000M展示为 1B；比如105643909 -> 1.0B
