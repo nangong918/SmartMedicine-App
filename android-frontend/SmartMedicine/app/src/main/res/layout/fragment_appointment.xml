@@ -10,7 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="130dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginTop="15dp">
@@ -87,14 +87,14 @@
                 android:id="@+id/btn_select_location"
                 android:padding="10dp"
                 android:layout_marginTop="35dp"
-                android:layout_marginStart="30dp"
+                android:layout_marginStart="10dp"
                 android:gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     app:tint="@color/green_900"
                     android:src="@mipmap/location"/>
 
@@ -103,19 +103,21 @@
                     android:layout_marginStart="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:textSize="15sp"
                     android:textColor="@color/green_900"
                     tools:text="广东-深圳-南山"/>
 
             </LinearLayout>
 
             <LinearLayout
+                android:paddingStart="10dp"
                 android:id="@+id/btn_select_date"
                 android:layout_marginTop="10dp"
-                android:layout_marginStart="30dp"
+                android:layout_marginStart="10dp"
                 android:gravity="center_vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                tools:ignore="RtlSymmetry">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -128,7 +130,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="45sp"
+                    android:textSize="40sp"
                     android:textColor="@color/green_900"
                     tools:text="09月19日"/>
 
@@ -138,7 +140,7 @@
                 android:id="@+id/btn_select_department"
                 android:padding="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginStart="30dp"
+                android:layout_marginStart="10dp"
                 android:gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -154,7 +156,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:textColor="@color/green_900"
                     tools:text="皮肤科"/>
 
@@ -167,7 +169,9 @@
                 android:text="@string/search"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:layout_width="300dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_width="match_parent"
                 android:layout_height="47dp"/>
 
         </LinearLayout>
