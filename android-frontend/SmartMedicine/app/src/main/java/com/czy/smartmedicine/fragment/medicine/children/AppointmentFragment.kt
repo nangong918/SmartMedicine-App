@@ -1,9 +1,11 @@
 package com.czy.smartmedicine.fragment.medicine.children
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.czy.smartmedicine.activity.AppointmentActivity
 import com.czy.smartmedicine.databinding.FragmentAppointmentBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
 import com.czy.smartmedicine.viewModel.fragment.medicine.children.AppointmentFVm
@@ -37,6 +39,15 @@ class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, Appointme
         super.onViewCreated(view, savedInstanceState)
 
         binding.vpg2.adapter = vm.imageSliderAdapter
+    }
+
+    override fun setListener() {
+        super.setListener()
+
+        binding.btnSearch.setOnClickListener({
+            val intent = Intent(activity, AppointmentActivity::class.java)
+            startActivity(intent)
+        })
     }
 
     //---------------------------ViewModel---------------------------
