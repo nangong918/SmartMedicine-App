@@ -10,11 +10,6 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-/**
- * @deprecated Comment评论暂时不用支持Post文章那种Json的文本格式, 不需要用MongoDb
- * Use {@link com.api.mapper.post.mybatis.bo.PostCommentBoMapper} instead.
- */
-@Deprecated
 @RequiredArgsConstructor
 @Repository
 public class PostDetailMongoMapper {

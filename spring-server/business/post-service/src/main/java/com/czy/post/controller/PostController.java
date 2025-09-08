@@ -25,11 +25,12 @@ import com.czy.api.domain.dto.http.response.GetPostPreviewListResponse;
 import com.czy.api.domain.dto.http.response.GetPostResponse;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
 import com.czy.api.domain.dto.http.response.SinglePostResponse;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.old.CommentOldVo;
-import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
 import com.czy.api.domain.vo.post.old.PostOldVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PostExceptions;
+import com.czy.api.exception.UserExceptions;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
@@ -239,6 +240,11 @@ public class PostController {
     @PostMapping("/getPostInfoList")
     public BaseResponse<GetPostPreviewListResponse>
     getPostsNew(@Valid @RequestBody GetPostPreviewListRequest request){
+        Long userId = request.getUserId();
+        if (!userService.checkUserExist(userId)){
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
+        }
+
         List<Long> postIds = request.getPostIds();
         if (CollectionUtils.isEmpty(postIds)){
             return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
@@ -249,7 +255,10 @@ public class PostController {
             return BaseResponse.getResponseEntitySuccess(new GetPostPreviewListResponse());
         }
 
-        List<PostPreviewOldVo> postPreviewVos = postFrontService.toPostPreviewVoList(postAoList);
+        List<PostPreviewVo> postPreviewVos = postFrontService.toPostPreviewVoList(
+                postAoList,
+                userId
+        );
 
         GetPostPreviewListResponse response = new GetPostPreviewListResponse();
         response.setPostPreviewVos(postPreviewVos);

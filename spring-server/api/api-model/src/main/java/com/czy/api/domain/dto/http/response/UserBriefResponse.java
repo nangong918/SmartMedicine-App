@@ -1,7 +1,7 @@
 package com.czy.api.domain.dto.http.response;
 
 import com.czy.api.domain.entity.UserViewEntity;
-import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import lombok.Data;
 
 import java.util.List;
@@ -17,5 +17,5 @@ public class UserBriefResponse {
     // 用户的备注 (暂时不实现)
     public String userRemark;
     // userPosts的视图
-    public List<PostPreviewOldVo> userPosts;
+    public List<PostPreviewVo> userPosts;
 }

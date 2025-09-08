@@ -1,6 +1,5 @@
 package com.czy.api.domain.vo.post;
 
-import com.czy.api.domain.Do.post.post.content.PostContentEntity;
 import com.czy.api.domain.ao.post.PostNerResult;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -27,8 +26,6 @@ public class PostPreviewVo implements Serializable, Cloneable {
 
     // post (post_info)
     public String postTitle;
-    // mongoDb 获取内容
-    public List<PostContentEntity> postContents;
     public String postPublishTime; // yyyy-MM-dd HH:mm:ss
     // 阅读数量（点击数量） (redis-hash)
     public Long postViewNum = 0L;
@@ -69,15 +66,6 @@ public class PostPreviewVo implements Serializable, Cloneable {
     @Override
     public PostPreviewVo clone() throws CloneNotSupportedException {
         PostPreviewVo cloned = (PostPreviewVo) super.clone();
-
-        // 深克隆 postContents
-        if (this.postContents != null) {
-            List<PostContentEntity> clonedPostContents = new ArrayList<>();
-            for (PostContentEntity content : this.postContents) {
-                clonedPostContents.add(content.clone());
-            }
-            cloned.postContents = clonedPostContents;
-        }
 
         // 深克隆 nerResults
         if (this.nerResults != null) {

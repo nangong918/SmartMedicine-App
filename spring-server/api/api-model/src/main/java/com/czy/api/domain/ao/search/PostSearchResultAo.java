@@ -1,6 +1,6 @@
 package com.czy.api.domain.ao.search;
 
-import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -17,11 +17,11 @@ import java.util.List;
 @Data
 public class PostSearchResultAo {
     // like匹配结果
-    private List<PostPreviewOldVo> likePostPreviewVoList = new ArrayList<>();
+    private List<PostPreviewVo> likePostPreviewVoList = new ArrayList<>();
     // tokenized匹配结果
-    private List<PostPreviewOldVo> tokenizedPostPreviewVoList = new ArrayList<>();
+    private List<PostPreviewVo> tokenizedPostPreviewVoList = new ArrayList<>();
     // similar匹配结果
-    private List<PostPreviewOldVo> similarPostPreviewVoList = new ArrayList<>();
+    private List<PostPreviewVo> similarPostPreviewVoList = new ArrayList<>();
     // recommend匹配结果 (上述全部无结果，然后：为您推荐)
-    private List<PostPreviewOldVo> recommendPostPreviewVoList = new ArrayList<>();
+    private List<PostPreviewVo> recommendPostPreviewVoList = new ArrayList<>();
 }

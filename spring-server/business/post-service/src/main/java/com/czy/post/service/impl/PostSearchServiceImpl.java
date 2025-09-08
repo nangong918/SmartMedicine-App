@@ -20,12 +20,13 @@ import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 import com.czy.api.domain.ao.recommend.PostScoreAo;
 import com.czy.api.domain.ao.user.AuthorAo;
-import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.old.PostOldVo;
 import com.czy.api.mapper.DiseaseRepository;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostStorageService;
 import com.utils.minio.service.OssService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -367,7 +368,7 @@ public class PostSearchServiceImpl implements PostSearchService {
     }
 
     @Override
-    public List<PostPreviewOldVo> getPostPreviewVosByIds(List<Long> postIds) {
+    public List<PostPreviewVo> getPostPreviewVosByIds(List<Long> postIds, @NonNull Long userId) {
         if (CollectionUtils.isEmpty(postIds)){
             return new ArrayList<>();
         }
@@ -375,7 +376,7 @@ public class PostSearchServiceImpl implements PostSearchService {
         if (CollectionUtils.isEmpty(postInfoAos)){
             return new ArrayList<>();
         }
-        return postFrontService.toPostPreviewVoList(postInfoAos);
+        return postFrontService.toPostPreviewVoList(postInfoAos, userId);
     }
 
     @Override

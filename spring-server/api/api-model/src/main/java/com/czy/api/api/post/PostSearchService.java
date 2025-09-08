@@ -6,8 +6,9 @@ import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 import com.czy.api.domain.ao.recommend.PostScoreAo;
-import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.old.PostOldVo;
+import lombok.NonNull;
 
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,7 @@ public interface PostSearchService {
     List<PostInfoUrlAo> getPostInfoUrlAos(List<Long> postIds);
 
     // 对外提供转换方法
-    List<PostPreviewOldVo> getPostPreviewVosByIds(List<Long> postIds);
+    List<PostPreviewVo> getPostPreviewVosByIds(List<Long> postIds, @NonNull Long userId);
     PostOldVo getPostVoById(Long postId);
 
     // 获取不在postIds中的帖子

@@ -9,11 +9,12 @@ import com.czy.api.domain.Do.post.post.PostDetailDo;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
+import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.bo.post.PostViewBo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
+import com.czy.api.domain.vo.post.PostVo;
 import com.czy.api.domain.vo.post.old.CommentOldVo;
 import com.czy.api.domain.vo.post.old.PostOldVo;
-import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
-import com.czy.api.domain.vo.post.PostVo;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostService;
 import com.utils.minio.service.OssService;
@@ -21,12 +22,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -47,95 +49,62 @@ public class PostFrontServiceImpl implements PostFrontService {
     private final PostViewConverter postViewConverter;
     private final PostDetailMongoMapper postDetailMongoMapper;
 
+    @NonNull
     @Override
-    public List<PostPreviewOldVo> toPostPreviewVoList(List<PostInfoAo> postAoList){
+    public List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList, @NotNull Long userId){
 
-        List<Long> fileIds = new ArrayList<>(postAoList.size());
-        for (PostInfoAo postInfoAo : postAoList){
-            if (postInfoAo == null){
-                fileIds.add(null);
-                continue;
-            }
-            fileIds.add(postInfoAo.getFileId());
+        if (CollectionUtils.isEmpty(postAoList)){
+            return new ArrayList<>();
         }
 
-        long postUrlStartTime = System.currentTimeMillis();
-        List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
-        // TODO 时间过长需要将url拆分存储在redis中
-        log.info("获取post的imageUrl耗时：{} ms", System.currentTimeMillis() - postUrlStartTime);
+        List<Long> postIds = postAoList.stream()
+                .filter(Objects::nonNull)
+                .map(PostInfoAo::getId)
+                .collect(Collectors.toList());
 
-        List<Long> authorIds = new ArrayList<>(postAoList.size());
-        for (PostInfoAo postInfoAo : postAoList){
-            if (postInfoAo == null){
-                authorIds.add(null);
-                continue;
-            }
-            authorIds.add(postInfoAo.getAuthorId());
-        }
-        // author信息 可能存在null
-        List<UserDo> userDoList = new ArrayList<>(authorIds.size());
-        for (Long authorId : authorIds){
-            if (authorId == null){
-                userDoList.add(null);
-                continue;
-            }
-            UserDo userDo = userService.getUserById(authorId);
-            userDoList.add(userDo);
-        }
-        List<Long> userImgIds = new ArrayList<>(authorIds.size());
-        for (UserDo userDo : userDoList){
-            if (userDo == null){
-                userImgIds.add(null);
-                continue;
-            }
-            userImgIds.add(userDo.getAvatarFileId());
-        }
-        long userImgUrlStartTime = System.currentTimeMillis();
-        List<String> userImgUrls = ossService.getFileUrlsByFileIds(userImgIds);
-        // TODO 时间过长需要将url拆分存储在redis中
-        log.info("获取post的imageUrl耗时：{} ms", System.currentTimeMillis() - userImgUrlStartTime);
+        List<PostViewBo> postViewBos = postViewBoMapper.getPostViewBoListByIds(
+                postIds,
+                userId
+        );
 
-        List<PostPreviewOldVo> postPreviewVos = new ArrayList<>(postAoList.size());
+        if (CollectionUtils.isEmpty(postViewBos)){
+            return new ArrayList<>();
+        }
 
-        for (int i = 0; i < postAoList.size(); i++){
-            PostInfoAo postInfoAo = postAoList.get(i);
-            if (postInfoAo == null){
-                postPreviewVos.add(null);
-                continue;
+        List<PostPreviewVo> postPreviewVos = new ArrayList<>(postViewBos.size());
+
+        // oss
+        List<Long> postAuthorImgFileIds = new ArrayList<>(postViewBos.size());
+        // 取出全部的第一个组成一个list
+        List<Long> postImgFile0Ids = new ArrayList<>(postViewBos.size());
+        for (PostViewBo postViewBo : postViewBos) {
+            postAuthorImgFileIds.add(postViewBo.authorAvatarFileId);
+            postImgFile0Ids.add(postViewBo.postId);
+        }
+        List<String> authorImgUrls = ossService.getFileUrlsByFileIds(postAuthorImgFileIds);
+        List<String> postFileUrls = ossService.getFileUrlsByFileIds(postImgFile0Ids);
+
+        // ner
+        List<PostDetailDo> postDetailDoList = postDetailMongoMapper.findPostDetailsByIdList(
+                postIds
+        );
+        for (PostViewBo postViewBo : postViewBos){
+            List<PostNerResult> nerResults = null;
+
+            for (PostDetailDo postDetailDo : postDetailDoList){
+                if (postViewBo.postId.equals(postDetailDo.getId())){
+                    nerResults = postDetailDo.getNerResults();
+                    break;
+                }
             }
-            PostPreviewOldVo postPreviewVo = new PostPreviewOldVo();
-            postPreviewVo.setPostId(postInfoAo.getId());
-            List<String> postImgUrls = new ArrayList<>();
-            postImgUrls.add(fileUrls.get(i));
-            postPreviewVo.setPostImgUrls(postImgUrls);
-            postPreviewVo.setPostTitle(postInfoAo.getTitle());
-            postPreviewVo.setAuthorId(postInfoAo.getAuthorId());
-            String authorName = null;
-            if (!CollectionUtils.isEmpty(userDoList)){
-                authorName = Optional.ofNullable(userDoList.get(i))
-                        .map(UserDo::getUserName)
-                        .orElse(null);
-            }
-            postPreviewVo.setAuthorName(
-                    authorName
+
+            PostPreviewVo previewVo = postViewConverter.getPreviewVoByBo(
+                    postViewBo,
+                    authorImgUrls.get(postViewBos.indexOf(postViewBo)),
+                    postFileUrls.get(postViewBos.indexOf(postViewBo)),
+                    nerResults
             );
-            String url = null;
-            if (!CollectionUtils.isEmpty(userImgUrls)){
-                url = userImgUrls.get(i);
-            }
-            postPreviewVo.setAuthorAvatarUrl(
-                    url
-            );
-            postPreviewVo.setLikeNum(PostPreviewOldVo.numToString(postInfoAo.getLikeCount()));
-            postPreviewVo.setCollectNum(PostPreviewOldVo.numToString(postInfoAo.getCollectCount()));
-            postPreviewVo.setCommentNum(PostPreviewOldVo.numToString(postInfoAo.getCommentCount()));
-//            postPreviewVo.setReadNum(PostPreviewVo.numToString(postInfoAo.getReadCount()));
-            postPreviewVo.setForwardNum(PostPreviewOldVo.numToString(postInfoAo.getForwardCount()));
-            postPreviewVo.setPostPublishTimestamp(postInfoAo.getReleaseTimestamp());
-
-            // TODO user的阅读状态
-
-            postPreviewVos.add(postPreviewVo);
+            postPreviewVos.add(previewVo);
         }
 
         return postPreviewVos;

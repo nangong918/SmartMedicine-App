@@ -7,7 +7,7 @@ import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.UserBriefRequest;
 import com.czy.api.domain.dto.http.response.UserBriefResponse;
 import com.czy.api.domain.entity.UserViewEntity;
-import com.czy.api.domain.vo.post.old.PostPreviewOldVo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.post.front.PostFrontService;
@@ -58,7 +58,11 @@ public class UserBriefController {
                 request.getPostNum(),
                 request.getPostSize()
         );
-        List<PostPreviewOldVo> postPreviewVos = postFrontService.toPostPreviewVoList(postInfoAos);
+        // 他的动态
+        List<PostPreviewVo> postPreviewVos = postFrontService.toPostPreviewVoList(
+                postInfoAos,
+                request.getReceiverId()
+        );
 
         UserBriefResponse response = new UserBriefResponse();
         response.setUserView(beQueryUser);
