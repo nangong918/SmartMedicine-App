@@ -19,14 +19,14 @@ class OrderViewPagerAdapter: FragmentStateAdapter {
     constructor(fragmentActivity: FragmentActivity) : super(fragmentActivity)
     constructor(fragmentManager: FragmentManager, lifecycle: Lifecycle) : super(fragmentManager, lifecycle)
 
-    private val fragmentCache = SparseArray<Fragment>(OrderViewPagerEnum.getCount())
+    private val fragmentCache = SparseArray<Fragment>(OrderViewPagerEnum.values().size)
 
     override fun createFragment(position: Int): Fragment {
         if (fragmentCache[position] != null) {
             return fragmentCache[position]
         }
 
-        val viewPagerEnum = OrderViewPagerEnum.getEnumByIndex(position)
+        val viewPagerEnum = OrderViewPagerEnum.getByValue(position)
         val fragment = when (viewPagerEnum) {
             OrderViewPagerEnum.APPOINTMENT_ORDER -> {
                 OrderAppointmentFragment()
@@ -45,7 +45,7 @@ class OrderViewPagerAdapter: FragmentStateAdapter {
     }
 
     override fun getItemCount(): Int {
-        return OrderViewPagerEnum.getCount()
+        return OrderViewPagerEnum.values().size
     }
 
 
