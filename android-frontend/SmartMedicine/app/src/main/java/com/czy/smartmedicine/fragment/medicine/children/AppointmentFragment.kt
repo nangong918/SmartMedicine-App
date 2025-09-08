@@ -34,11 +34,40 @@ class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, Appointme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        vm.initAdapter()
     }
 
     //---------------------------ViewModel---------------------------
 
     override fun initViewModel() {
         super.initViewModel()
+
+        observeDate()
+    }
+
+    private fun observeDate() {
+        vm.aao.currentItem.observe(viewLifecycleOwner){
+            item ->
+            run {
+                binding.vpg2.setCurrentItem(item, true)
+                when(item){
+                    0 -> {
+                        binding.vVpg1.setImageResource(com.czy.appview.R.color.green_200)
+                        binding.vVpg2.setImageResource(com.czy.appview.R.color.green_100)
+                        binding.vVpg3.setImageResource(com.czy.appview.R.color.green_100)
+                    }
+                    1 -> {
+                        binding.vVpg1.setImageResource(com.czy.appview.R.color.green_100)
+                        binding.vVpg2.setImageResource(com.czy.appview.R.color.green_200)
+                        binding.vVpg3.setImageResource(com.czy.appview.R.color.green_100)
+                    }
+                    2 -> {
+                        binding.vVpg1.setImageResource(com.czy.appview.R.color.green_100)
+                        binding.vVpg2.setImageResource(com.czy.appview.R.color.green_100)
+                        binding.vVpg3.setImageResource(com.czy.appview.R.color.green_200)
+                    }
+                }
+            }
+        }
     }
 }

@@ -12,7 +12,7 @@ import com.czy.domain.OnPositionItemClick
 class OrderViewPagerBar : ConstraintLayout {
 
     private var binding: OrderViewpagerBarBinding
-    private var currentPosition: Int = OrderViewPagerEnum.APPOINTMENT_ORDER.index
+    private var currentPosition: Int = OrderViewPagerEnum.APPOINTMENT_ORDER.value
     private var onViewPagerBarClickListener: OnPositionItemClick? = null
 
     constructor(context: Context) : super(context) {
@@ -38,15 +38,15 @@ class OrderViewPagerBar : ConstraintLayout {
         val linearLayouts = arrayOf(binding.lyClick1, binding.lyClick2)
         for (i in linearLayouts.indices) {
             linearLayouts[i].setOnClickListener {
-                currentPosition = OrderViewPagerEnum.values()[i].index
-                onViewPagerBarClickListener?.onPositionItemClick(OrderViewPagerEnum.values()[i].index)
+                currentPosition = OrderViewPagerEnum.values()[i].value
+                onViewPagerBarClickListener?.onPositionItemClick(OrderViewPagerEnum.values()[i].value)
                 updateUI()
             }
         }
     }
 
     private fun updateUI() {
-        val medicineViewPagerEnum = OrderViewPagerEnum.getEnumByIndex(currentPosition)
+        val medicineViewPagerEnum = OrderViewPagerEnum.getByValue(currentPosition)
 
         binding.tvAppointment.setTextColor(
             if (OrderViewPagerEnum.APPOINTMENT_ORDER == medicineViewPagerEnum) {
