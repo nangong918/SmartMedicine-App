@@ -351,22 +351,6 @@ public class PostFileController {
         }
     }
 
-    /**
-     * 上传帖子files,netty返回
-     * @param files         需要上传的文件
-     * @param postId        第一次http获取的雪花id，此雪花id为postId也是publishId
-     * @param userId        用户Id
-     * @return              提示
-     */
-    @PostMapping("/uploadPost/netty")
-    public BaseResponse<String> uploadPostFilesNetty(
-            @RequestParam("files") List<MultipartFile> files,
-            @RequestParam("postId") Long postId,
-            @RequestParam("userId") Long userId){
-        // TODO 待完善
-        return BaseResponse.LogBackError("开发中");
-    }
-
     // 删除帖子 [不需要，因为直接调用ossService传入filesId]
 
     /**

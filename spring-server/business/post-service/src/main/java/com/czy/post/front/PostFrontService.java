@@ -1,10 +1,8 @@
 package com.czy.post.front;
 
-import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
-import com.czy.api.domain.vo.post.old.PostOldVo;
 import com.czy.api.domain.vo.post.toFront.PostFVo;
 import com.czy.api.domain.vo.post.toFront.PostPreviewFVo;
 import lombok.NonNull;
@@ -26,8 +24,6 @@ public interface PostFrontService {
     @NotNull
     List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList, @NonNull Long userId);
 
-    // PostAo -> PostVo
-    PostOldVo postAoToPostVo(PostAo postAo);
 
     /**
      * 获取帖子Vo

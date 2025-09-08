@@ -29,9 +29,11 @@ public class PostHandleServiceImpl implements PostHandleService {
 
     private final PostCollectMapper postCollectMapper;
     private final PostCollectFolderMapper postCollectFolderMapper;
+    @Deprecated
     private final PostCommentMongoMapper postCommentMongoMapper;
     private final PostInfoMapper postInfoMapper;
 
+    @Deprecated
     @Transactional
     @Override
     public void postComment(PostCommentMongoDo postCommentDo) {
@@ -44,6 +46,7 @@ public class PostHandleServiceImpl implements PostHandleService {
         postInfoMapper.updatePostInfoDo(postInfoDo);
     }
 
+    @Deprecated
     @Transactional
     @Override
     public void deleteComment(Long postId, Long commentId) {

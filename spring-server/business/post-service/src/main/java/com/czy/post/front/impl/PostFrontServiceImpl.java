@@ -4,17 +4,12 @@ import com.api.mapper.post.mongo.PostDetailMongoMapper;
 import com.api.mapper.post.mybatis.bo.PostViewBoMapper;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.converter.domain.post.PostViewConverter;
-import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
-import com.czy.api.domain.Do.user.UserDo;
-import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.bo.post.PostViewBo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
-import com.czy.api.domain.vo.post.old.CommentOldVo;
-import com.czy.api.domain.vo.post.old.PostOldVo;
 import com.czy.api.domain.vo.post.toFront.PostFVo;
 import com.czy.api.domain.vo.post.toFront.PostPreviewFVo;
 import com.czy.post.front.PostFrontService;
@@ -114,72 +109,6 @@ public class PostFrontServiceImpl implements PostFrontService {
         return postPreviewVos;
     }
 
-    @Override
-    public PostOldVo postAoToPostVo(@NonNull PostAo postAo) {
-        PostOldVo postVo = new PostOldVo();
-        // 所属info
-        postVo.postId = postAo.getId();
-
-        // file
-        postVo.postImgUrls = ossService.getFileUrlsByFileIds(postAo.getFileIds());
-
-        // author
-        postVo.authorId = postAo.getAuthorId();
-        UserDo userDo = userService.getUserById(postAo.getAuthorId());
-        if (userDo != null){
-            postVo.authorName = userDo.getUserName();
-            Long avatarFileId = userDo.getAvatarFileId();
-            if (avatarFileId != null){
-                List<Long> avatarFileIdList = new ArrayList<>();
-                avatarFileIdList.add(avatarFileId);
-                postVo.authorAvatarUrl = ossService.getFileUrlsByFileIds(avatarFileIdList).get(0);
-            }
-        }
-
-        // 内容
-        postVo.postTitle = postAo.getTitle();
-        postVo.postContent = postAo.getContent();
-        postVo.postPublishTimestamp = postAo.getReleaseTimestamp();
-
-        // 数据
-        postVo.likeNum = PostOldVo.numToString(postAo.getLikeCount());
-        postVo.collectNum = PostOldVo.numToString(postAo.getCollectCount());
-        postVo.commentNum = PostOldVo.numToString(postAo.getCommentCount());
-        postVo.readNum = PostOldVo.numToString(postAo.getReadCount());
-        postVo.forwardNum = PostOldVo.numToString(postAo.getForwardCount());
-
-        // user属性 TODO
-//        postVo.isLike = postAo.getLikeCount() > 0;
-//        postVo.isCollect = postAo.getCollectCount() > 0;
-//        postVo.isDislike = postAo.getDislikeCount() > 0;
-
-        return postVo;
-    }
-
-    private CommentOldVo getCommentVo(PostCommentMongoDo postCommentDo) {
-        CommentOldVo commentVo = new CommentOldVo();
-        commentVo.commentId = postCommentDo.getId();
-        commentVo.replyCommentId = postCommentDo.getReplyCommentId();
-        commentVo.postId = postCommentDo.getPostId();
-
-        commentVo.content = postCommentDo.getContent();
-        commentVo.commentTimestamp = postCommentDo.getTimestamp();
-
-        commentVo.commenterId = postCommentDo.getCommenterId();
-
-        UserDo userDo = userService.getUserById(postCommentDo.getCommenterId());
-        if (userDo != null){
-            commentVo.commentName = userDo.getUserName();
-            Long avatarFileId = userDo.getAvatarFileId();
-            if (avatarFileId != null){
-                List<Long> avatarFileIdList = new ArrayList<>();
-                avatarFileIdList.add(avatarFileId);
-                commentVo.commentAvatarUrl = ossService.getFileUrlsByFileIds(avatarFileIdList).get(0);
-            }
-        }
-
-        return commentVo;
-    }
 
     @Override
     public PostVo getPostVo(Long postId, Long userId) {

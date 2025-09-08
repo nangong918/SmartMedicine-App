@@ -50,6 +50,13 @@ public interface PostCommentMapper {
             @Param("size") int size
     );
 
+    /**
+     * 获取帖子
+     * @param commentId 评论id
+     * @return          帖子
+     */
+    PostCommentDo getPostCommentById(Long commentId);
+
     /// 增
     int insertLevel1Comment(
             @Param("id") Long id,
@@ -74,4 +81,6 @@ public interface PostCommentMapper {
     /// 删
     void deleteById(Long id);
     void deleteBatch(@Param("list") List<Long> idList);
+
+
 }

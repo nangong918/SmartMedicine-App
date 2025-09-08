@@ -5,20 +5,17 @@ import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostConverter;
-import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.ao.post.CommentAo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.GetCommentRequest;
-import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.GetPostPreviewListRequest;
 import com.czy.api.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import com.czy.api.domain.dto.http.response.GetPostCommentsResponse;
-import com.czy.api.domain.dto.http.response.GetPostInfoListResponse;
 import com.czy.api.domain.dto.http.response.GetPostPreviewListResponse;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
 import com.czy.api.domain.dto.http.response.SinglePostResponse;
@@ -38,6 +35,7 @@ import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
@@ -206,30 +204,6 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess("修改申请已提交，请等待");
     }
 
-    /**
-     * 预览postList
-     * 查询postList,只包含list的基本信息不包括内容content
-     * 响应体应该包含：postInfo，post-fileIds，postDetails
-     * 通过list<postId>查询post消息;
-     * FileId拿到之后直接去oss服务将fileIdList转为url
-     * 调用：/oss/getFileUrlByFileIds
-     * @param request   List<Long> postIds
-     * @return      List<PostInfoAo> postInfoAos;
-     */
-    @Deprecated // 废弃, 仅供测试
-    @PostMapping("/getPostInfoList/deprecated")
-    public BaseResponse<GetPostInfoListResponse>
-    getPosts(@Valid @RequestBody GetPostInfoListRequest request){
-        List<Long> postIds = request.getPostIds();
-        if (CollectionUtils.isEmpty(postIds)){
-            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
-        }
-        List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
-        GetPostInfoListResponse getPostResponse = new GetPostInfoListResponse();
-        getPostResponse.setPostInfoAos(postAoList);
-        return BaseResponse.getResponseEntitySuccess(getPostResponse);
-    }
-
     @PostMapping("/getPostInfoList")
     public BaseResponse<GetPostPreviewListResponse>
     getPostsNew(@Valid @RequestBody GetPostPreviewListRequest request){
@@ -296,26 +270,20 @@ public class PostController {
 
     private BaseResponse<GetPostCommentsResponse> getPostComments(
             Long postId,
-            Long leve1commentId,
+            @Nullable Long replyCommentId,
             Integer pageSize,
             Integer pageNum) {
         if (postId == null) {
             return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
-        if (leve1commentId != null) {
-            PostCommentMongoDo postCommentDo = postCommentService.getPostCommentById(leve1commentId);
-            if (postCommentDo == null || postCommentDo.getId() == null) {
-                return BaseResponse.LogBackError(PostExceptions.COMMENT_NOT_EXIST);
-            }
-        }
-
         List<CommentAo> commentAos;
         // 没有level1Id默认为他就是level1评论
-        if (leve1commentId == null) {
+        if (replyCommentId == null) {
             commentAos = postCommentService.getLevel1PostCommentAos(postId, pageSize, pageNum);
-        } else {
-            commentAos = postCommentService.getLevel2PostCommentAos(postId, leve1commentId, pageSize, pageNum);
+        }
+        else {
+            commentAos = postCommentService.getLevel2PostCommentAos(postId, replyCommentId, pageSize, pageNum);
         }
 
         GetPostCommentsResponse getPostCommentsResponse = new GetPostCommentsResponse();
@@ -325,9 +293,9 @@ public class PostController {
     }
 
     // 发表评论 逻辑在postHandler实现
-//    @Deprecated
-//    @PostMapping("/comment")
-//    public BaseResponse<BaseHttpResponse> comment(@Validated @RequestBody CommentRequest request) {
-//
-//    }
+/*    @Deprecated
+    @PostMapping("/comment")
+    public BaseResponse<BaseHttpResponse> comment(@Validated @RequestBody CommentRequest request) {
+
+    }*/
 }
