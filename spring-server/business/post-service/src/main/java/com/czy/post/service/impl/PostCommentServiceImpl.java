@@ -2,18 +2,25 @@ package com.czy.post.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.api.mapper.post.mongo.PostCommentMongoMapper;
+import com.api.mapper.post.mybatis.PostCommentMapper;
 import com.api.mapper.post.mybatis.PostInfoMapper;
+import com.api.mapper.post.mybatis.bo.PostCommentBoMapper;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.post.PostConstant;
+import com.czy.api.converter.domain.post.CommentConverter;
+import com.czy.api.domain.Do.post.comment.PostCommentDo;
 import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.user.UserDo;
+import com.czy.api.domain.ao.post.CommentAo;
 import com.czy.api.domain.ao.post.PostCommentAo;
+import com.czy.api.domain.bo.post.CommentBo;
 import com.czy.api.domain.dto.service.CommentResultDto;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PostExceptions;
 import com.czy.api.exception.UserExceptions;
 import com.czy.post.service.PostCommentService;
+import com.utils.minio.service.OssService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -25,6 +32,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -40,14 +48,13 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Reference(protocol = "dubbo", version = "1.0.0", check = false)
     private UserService userService;
     private final PostInfoMapper postInfoMapper;
+    private final PostCommentMapper postCommentMapper;
+    private final PostCommentBoMapper postCommentBoMapper;
+    private final CommentConverter commentConverter;
+    private final OssService ossService;
 
     @Override
-    public List<PostCommentMongoDo> getLevel1PostComments(Long postId, Integer pageSize, Integer pageNum) {
-        return postCommentMongoMapper.findLevel1CommentsByPostIdAndPaging(postId, pageSize, pageNum);
-    }
-
-    @Override
-    public List<PostCommentMongoDo> getLevel2PostComments(Long postId, Long level2CommentId, Integer pageSize, Integer pageNum) {
+    public List<CommentAo> getLevel1PostCommentAos(Long postId, Integer pageSize, Integer pageNum) {
         int finalPageNum = pageNum;
         if (finalPageNum < PostConstant.COMMENT_MIN_PAGE_SIZE){
             finalPageNum = PostConstant.COMMENT_MIN_PAGE_SIZE;
@@ -55,7 +62,110 @@ public class PostCommentServiceImpl implements PostCommentService {
         else if (finalPageNum > PostConstant.COMMENT_MAX_PAGE_SIZE){
             finalPageNum = PostConstant.COMMENT_MAX_PAGE_SIZE;
         }
-        return postCommentMongoMapper.findLevel2CommentsByPostIdAndReplyCommentIdPaging(postId, level2CommentId, pageSize, finalPageNum);
+
+        // 计算偏移量
+        int offset = (finalPageNum - 1) * pageSize;
+
+        List<PostCommentDo> postCommentDoList = postCommentMapper.getPostLevel1Comment(
+                postId,
+                offset,
+                PostConstant.COMMENT_PAGE_SIZE
+        );
+
+        if (CollectionUtils.isEmpty(postCommentDoList)){
+            return new ArrayList<>();
+        }
+
+        List<Long> commentIds = postCommentDoList.stream()
+                .filter(Objects::nonNull)
+                .map(PostCommentDo::getId)
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(commentIds)){
+            return new ArrayList<>();
+        }
+
+        List<CommentBo> commentBos = postCommentBoMapper.getCommentBoByIdList(
+                commentIds
+        );
+        if (CollectionUtils.isEmpty(commentBos)){
+            return new ArrayList<>();
+        }
+
+        // oss
+        List<Long> ossFileIds = commentBos.stream()
+                .map(CommentBo::getAvatarFileId)
+                .collect(Collectors.toList());
+        List<String> urls = ossService.getFileUrlsByFileIds(ossFileIds);
+
+        // ao
+        List<CommentAo> commentAos = new ArrayList<>(commentBos.size());
+        for (int i = 0; i < commentBos.size(); i++){
+            CommentAo commentAo = commentConverter.getAoByBo(
+                    commentBos.get(i),
+                    urls.get(i)
+            );
+            commentAos.add(commentAo);
+        }
+
+        return commentAos;
+    }
+
+    @Override
+    public List<CommentAo> getLevel2PostCommentAos(Long postId, Long level2CommentId, Integer pageSize, Integer pageNum) {
+        int finalPageNum = pageNum;
+        if (finalPageNum < PostConstant.COMMENT_MIN_PAGE_SIZE){
+            finalPageNum = PostConstant.COMMENT_MIN_PAGE_SIZE;
+        }
+        else if (finalPageNum > PostConstant.COMMENT_MAX_PAGE_SIZE){
+            finalPageNum = PostConstant.COMMENT_MAX_PAGE_SIZE;
+        }
+
+        // 计算偏移量
+        int offset = (finalPageNum - 1) * pageSize;
+
+        List<PostCommentDo> postCommentDoList = postCommentMapper.getCommentLevel2ByPostIdAndReplyCommentId(
+                postId,
+                level2CommentId,
+                offset,
+                PostConstant.COMMENT_PAGE_SIZE
+        );
+
+        if (CollectionUtils.isEmpty(postCommentDoList)){
+            return new ArrayList<>();
+        }
+
+        List<Long> commentIds = postCommentDoList.stream()
+                .filter(Objects::nonNull)
+                .map(PostCommentDo::getId)
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(commentIds)){
+            return new ArrayList<>();
+        }
+
+        List<CommentBo> commentBos = postCommentBoMapper.getCommentBoByIdList(
+                commentIds
+        );
+        if (CollectionUtils.isEmpty(commentBos)){
+            return new ArrayList<>();
+        }
+
+        // oss
+        List<Long> ossFileIds = commentBos.stream()
+                .map(CommentBo::getAvatarFileId)
+                .collect(Collectors.toList());
+        List<String> urls = ossService.getFileUrlsByFileIds(ossFileIds);
+
+        // ao
+        List<CommentAo> commentAos = new ArrayList<>(commentBos.size());
+        for (int i = 0; i < commentBos.size(); i++){
+            CommentAo commentAo = commentConverter.getAoByBo(
+                    commentBos.get(i),
+                    urls.get(i)
+            );
+            commentAos.add(commentAo);
+        }
+
+        return commentAos;
     }
 
     @Override

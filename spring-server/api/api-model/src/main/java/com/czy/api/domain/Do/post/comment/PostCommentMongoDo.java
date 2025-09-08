@@ -10,6 +10,7 @@ import java.io.Serializable;
  * @date 2025/4/16 21:31
  * 存放在mongoDB中，评论就没必要存储在ES中了
  */
+@Deprecated
 @org.springframework.data.mongodb.core.mapping.Document("post_comment")
 @Data
 public class PostCommentMongoDo implements Serializable {

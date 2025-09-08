@@ -52,6 +52,7 @@ public class PostFrontServiceImpl implements PostFrontService {
     private final PostViewConverter postViewConverter;
     private final PostDetailMongoMapper postDetailMongoMapper;
 
+
     @NonNull
     @Override
     public List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList, @NotNull Long userId){
@@ -153,22 +154,6 @@ public class PostFrontServiceImpl implements PostFrontService {
 //        postVo.isDislike = postAo.getDislikeCount() > 0;
 
         return postVo;
-    }
-
-    @Override
-    public PostOldVo getPostVo(Long postId) {
-        PostAo postAo = postService.findPostById(postId);
-        if (postAo != null && postAo.getId() != null){
-            return postAoToPostVo(postAo);
-        }
-        return null;
-    }
-
-    @Override
-    public List<CommentOldVo> getCommentVosByPostCommentDos(List<PostCommentMongoDo> postCommentDos) {
-        return postCommentDos.stream()
-                .map(this::getCommentVo)
-                .collect(Collectors.toList());
     }
 
     private CommentOldVo getCommentVo(PostCommentMongoDo postCommentDo) {

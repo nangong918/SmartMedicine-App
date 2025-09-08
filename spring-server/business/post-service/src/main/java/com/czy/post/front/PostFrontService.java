@@ -1,11 +1,9 @@
 package com.czy.post.front;
 
-import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
 import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
-import com.czy.api.domain.vo.post.old.CommentOldVo;
 import com.czy.api.domain.vo.post.old.PostOldVo;
 import com.czy.api.domain.vo.post.toFront.PostFVo;
 import com.czy.api.domain.vo.post.toFront.PostPreviewFVo;
@@ -30,11 +28,6 @@ public interface PostFrontService {
 
     // PostAo -> PostVo
     PostOldVo postAoToPostVo(PostAo postAo);
-
-    PostOldVo getPostVo(Long postId);
-
-    // List<PostCommentDo> -> List<CommentVo>
-    List<CommentOldVo> getCommentVosByPostCommentDos(List<PostCommentMongoDo> postCommentDos);
 
     /**
      * 获取帖子Vo

@@ -1,6 +1,7 @@
 package com.czy.post.service;
 
 import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
+import com.czy.api.domain.ao.post.CommentAo;
 import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.dto.service.CommentResultDto;
 import org.jetbrains.annotations.NotNull;
@@ -17,10 +18,10 @@ public interface PostCommentService {
     // 第二次获取的非实时性需要考虑
     // 分页获取某个post的一级comment （一页多少条n + 第几页m）（comment在mongodb需要用Page）
     // TODO 暂时根据时间排序，后续需要根据综合算法如点赞数排序（类似推荐系统）
-    List<PostCommentMongoDo> getLevel1PostComments(Long postId, Integer pageSize, Integer pageNum);
+    List<CommentAo> getLevel1PostCommentAos(Long postId, Integer pageSize, Integer pageNum);
 
     // 获取某个comment的子评论（一页多少条n + 第几页m）（comment在mongodb需要用Page）
-    List<PostCommentMongoDo> getLevel2PostComments(Long postId, Long level2CommentId, Integer pageSize, Integer pageNum);
+    List<CommentAo> getLevel2PostCommentAos(Long postId, Long level2CommentId, Integer pageSize, Integer pageNum);
 
     // 通过id获取
     PostCommentMongoDo getPostCommentById(Long commentId);

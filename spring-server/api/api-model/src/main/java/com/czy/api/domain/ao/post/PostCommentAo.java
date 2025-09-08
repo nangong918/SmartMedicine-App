@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-
+@Deprecated
 @Data
 public class PostCommentAo implements Serializable {
     // 所属帖子id；not null （索引）

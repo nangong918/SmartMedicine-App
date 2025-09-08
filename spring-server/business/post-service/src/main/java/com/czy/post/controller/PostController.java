@@ -4,15 +4,13 @@ import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.post.PostConstant;
-import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.converter.domain.post.PostConverter;
 import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
+import com.czy.api.domain.ao.post.CommentAo;
 import com.czy.api.domain.ao.post.PostAo;
-import com.czy.api.domain.ao.post.PostCommentAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.http.request.GetCommentRequest;
 import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.GetPostPreviewListRequest;
@@ -22,12 +20,11 @@ import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import com.czy.api.domain.dto.http.response.GetPostCommentsResponse;
 import com.czy.api.domain.dto.http.response.GetPostInfoListResponse;
 import com.czy.api.domain.dto.http.response.GetPostPreviewListResponse;
-import com.czy.api.domain.dto.http.response.GetPostResponse;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
 import com.czy.api.domain.dto.http.response.SinglePostResponse;
 import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.old.CommentOldVo;
-import com.czy.api.domain.vo.post.old.PostOldVo;
+import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.vo.post.toFront.PostFVo;
 import com.czy.api.domain.vo.post.toFront.PostPreviewFVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PostExceptions;
@@ -35,7 +32,6 @@ import com.czy.api.exception.UserExceptions;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
-import com.utils.minio.service.OssService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
 import exception.AppException;
@@ -47,7 +43,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,9 +50,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -76,8 +70,6 @@ public class PostController {
     private final RedissonService redissonService;
     private final PostService postService;
     private final PostCommentService postCommentService;
-    private final PostCommentConverter postCommentConverter;
-    private final OssService ossService;
     private final PostNerService postNerService;
     private final PostSearchService postSearchService;
     private final PostFrontService postFrontService;
@@ -268,29 +260,6 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
-    // 如何从各种数据查询List<postId>的逻辑在postSearchService中
-    // get Post
-    @Deprecated
-    @GetMapping("/getPost/deprecated")
-    public BaseResponse<GetPostResponse>
-    getPost(@RequestParam("postId") Long postId,
-            @RequestParam("pageNum") Integer pageNum){
-        if (ObjectUtils.isEmpty(postId)){
-            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
-        }
-        PostAo postAo = postService.findPostById(postId);
-        if (postAo == null || postAo.getId() == null){
-            return BaseResponse.LogBackError(PostExceptions.POST_NOT_EXIST);
-        }
-        if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
-            pageNum = 1;
-        }
-        List<PostCommentMongoDo> postCommentList = postCommentService.getLevel1PostComments(postId, PostConstant.COMMENT_PAGE_SIZE, pageNum);
-        GetPostResponse getPostResponse = new GetPostResponse();
-        getPostResponse.setPostAo(postAo);
-        getPostResponse.setPostCommentList(postCommentList);
-        return BaseResponse.getResponseEntitySuccess(getPostResponse);
-    }
 
     @PostMapping("/getPost")
     public BaseResponse<SinglePostResponse>
@@ -306,16 +275,14 @@ public class PostController {
         if (ObjectUtils.isEmpty(request.getPageNum()) || request.getPageNum() < 1){
             request.setPageNum(1);
         }
-        List<PostCommentMongoDo> postCommentList = postCommentService.getLevel1PostComments(
+        List<CommentAo> commentAos = postCommentService.getLevel1PostCommentAos(
                 request.getPostId(), PostConstant.COMMENT_PAGE_SIZE, request.getPageNum()
         );
 
         SinglePostResponse singlePostResponse = new SinglePostResponse();
-        // 转换为vo
-        PostOldVo postVo = postFrontService.postAoToPostVo(postAo);
-        List<CommentOldVo> commentVos = postFrontService.getCommentVosByPostCommentDos(postCommentList);
-        singlePostResponse.postVo = postVo;
-        singlePostResponse.commentVos = commentVos;
+        PostVo postVo = postFrontService.getPostVo(request.getPostId(), request.getUserId());
+        singlePostResponse.postVo = Optional.ofNullable(postVo).map(PostFVo::new).orElse(null);
+        singlePostResponse.commentAos = commentAos;
         return BaseResponse.getResponseEntitySuccess(singlePostResponse);
     }
 
@@ -343,30 +310,16 @@ public class PostController {
             }
         }
 
-        List<PostCommentMongoDo> postCommentList;
+        List<CommentAo> commentAos;
         // 没有level1Id默认为他就是level1评论
         if (leve1commentId == null) {
-            postCommentList = postCommentService.getLevel1PostComments(postId, pageSize, pageNum);
+            commentAos = postCommentService.getLevel1PostCommentAos(postId, pageSize, pageNum);
         } else {
-            postCommentList = postCommentService.getLevel2PostComments(postId, leve1commentId, pageSize, pageNum);
+            commentAos = postCommentService.getLevel2PostCommentAos(postId, leve1commentId, pageSize, pageNum);
         }
 
-        List<PostCommentAo> postCommentAoList = postCommentService.getPostCommentAoList(postCommentList);
         GetPostCommentsResponse getPostCommentsResponse = new GetPostCommentsResponse();
-
-        if (!CollectionUtils.isEmpty(postCommentAoList)) {
-            List<Long> fileIds = postCommentAoList.stream()
-                    .map(postCommentAo -> postCommentAo.getCommenterAvatarFileId() == null ? null : postCommentAo.getCommenterAvatarFileId())
-                    .collect(Collectors.toList());
-            List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
-
-            List<PostCommentDto> postCommentDtoList = new ArrayList<>();
-            for (int i = 0; i < postCommentAoList.size(); i++) {
-                PostCommentDto dto = postCommentConverter.postCommentAoToPostCommentDto(postCommentAoList.get(i), fileUrls.get(i));
-                postCommentDtoList.add(dto);
-            }
-            getPostCommentsResponse.setPostCommentDtosList(postCommentDtoList);
-        }
+        getPostCommentsResponse.commentAos = commentAos;
 
         return BaseResponse.getResponseEntitySuccess(getPostCommentsResponse);
     }
