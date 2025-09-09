@@ -38,7 +38,6 @@
             tools:text="用户名"
             android:textSize="16sp"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="20dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:textColor="@android:color/black"
@@ -51,7 +50,7 @@
             android:id="@+id/tv_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
@@ -66,7 +65,7 @@
 
     <LinearLayout
         android:id="@+id/ly_buttons"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginEnd="8dp"
@@ -75,26 +74,40 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:background="@drawable/round_corners_button_commend"
+            android:layout_width="80dp"
+            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/green_900"
+            android:layout_height="30dp"
             android:layout_marginEnd="8dp"
-            android:text="添加好友" />
+            android:text="@string/add" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/round_corners_button_commend"
+            android:layout_width="80dp"
+            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/green_900"
+            android:layout_height="30dp"
             android:layout_marginEnd="8dp"
-            android:text="同意" />
+            android:text="@string/agree" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/round_corners_button_commend"
+            android:layout_width="80dp"
+            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/green_900"
+            android:layout_height="30dp"
             android:layout_marginEnd="8dp"
-            android:text="拒绝" />
+            android:text="@string/refuse" />
     </LinearLayout>
 
 
