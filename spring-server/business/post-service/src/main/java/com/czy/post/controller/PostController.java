@@ -7,7 +7,6 @@ import com.czy.api.constant.post.PostConstant;
 import com.czy.api.converter.domain.post.PostConverter;
 import com.czy.api.domain.ao.post.CommentAo;
 import com.czy.api.domain.ao.post.PostAo;
-import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.GetCommentRequest;
@@ -216,14 +215,9 @@ public class PostController {
         if (CollectionUtils.isEmpty(postIds)){
             return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
-        List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
 
-        if (CollectionUtils.isEmpty(postAoList)){
-            return BaseResponse.getResponseEntitySuccess(new GetPostPreviewListResponse());
-        }
-
-        List<PostPreviewVo> postPreviewVos = postFrontService.toPostPreviewVoList(
-                postAoList,
+        List<PostPreviewVo> postPreviewVos = postFrontService.getPostPreviewVoListByIds(
+                postIds,
                 userId
         );
         List<PostPreviewFVo> postPreviewFVos = postFrontService.getPostPreviewFVos(postPreviewVos);

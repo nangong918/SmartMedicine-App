@@ -5,7 +5,6 @@ import com.api.mapper.post.mybatis.bo.PostViewBoMapper;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.converter.domain.post.PostViewConverter;
 import com.czy.api.domain.Do.post.post.PostDetailDo;
-import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.bo.post.PostViewBo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
@@ -26,7 +25,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -50,16 +49,11 @@ public class PostFrontServiceImpl implements PostFrontService {
 
     @NonNull
     @Override
-    public List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList, @NotNull Long userId){
+    public List<PostPreviewVo> getPostPreviewVoListByIds(List<Long> postIds, @NotNull Long userId){
 
-        if (CollectionUtils.isEmpty(postAoList)){
+        if (CollectionUtils.isEmpty(postIds)){
             return new ArrayList<>();
         }
-
-        List<Long> postIds = postAoList.stream()
-                .filter(Objects::nonNull)
-                .map(PostInfoAo::getId)
-                .collect(Collectors.toList());
 
         List<PostViewBo> postViewBos = postViewBoMapper.getPostViewBoListByIds(
                 postIds,
@@ -78,7 +72,12 @@ public class PostFrontServiceImpl implements PostFrontService {
         List<Long> postImgFile0Ids = new ArrayList<>(postViewBos.size());
         for (PostViewBo postViewBo : postViewBos) {
             postAuthorImgFileIds.add(postViewBo.authorAvatarFileId);
-            postImgFile0Ids.add(postViewBo.postId);
+            postImgFile0Ids.add(
+                    Optional.ofNullable(postViewBo.postImgFileIds)
+                            .filter(list -> !list.isEmpty())
+                            .map(l -> l.get(0))
+                            .orElse(null)
+            );
         }
         List<String> authorImgUrls = ossService.getFileUrlsByFileIds(postAuthorImgFileIds);
         List<String> postFileUrls = ossService.getFileUrlsByFileIds(postImgFile0Ids);

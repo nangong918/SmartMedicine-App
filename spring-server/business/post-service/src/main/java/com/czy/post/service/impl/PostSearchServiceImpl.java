@@ -370,11 +370,7 @@ public class PostSearchServiceImpl implements PostSearchService {
         if (CollectionUtils.isEmpty(postIds)){
             return new ArrayList<>();
         }
-        List<PostInfoAo> postInfoAos = findPostInfoList(postIds);
-        if (CollectionUtils.isEmpty(postInfoAos)){
-            return new ArrayList<>();
-        }
-        return postFrontService.toPostPreviewVoList(postInfoAos, userId);
+        return postFrontService.getPostPreviewVoListByIds(postIds, userId);
     }
 
 

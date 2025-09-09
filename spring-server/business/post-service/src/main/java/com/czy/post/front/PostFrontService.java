@@ -1,6 +1,5 @@
 package com.czy.post.front;
 
-import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
 import com.czy.api.domain.vo.post.PostVo;
 import com.czy.api.domain.vo.post.toFront.PostFVo;
@@ -22,7 +21,7 @@ public interface PostFrontService {
      * @return              List<PostPreviewVo>
      */
     @NotNull
-    List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList, @NonNull Long userId);
+    List<PostPreviewVo> getPostPreviewVoListByIds(List<Long> postIds, @NotNull Long userId);
 
 
     /**
