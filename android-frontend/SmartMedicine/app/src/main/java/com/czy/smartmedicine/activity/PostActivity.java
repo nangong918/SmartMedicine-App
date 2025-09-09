@@ -56,23 +56,6 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         });
     }
 
-
-    private void initIntent(){
-        Intent initIntent = getIntent();
-        PostIntentAo postIntentAo = (PostIntentAo) initIntent.getSerializableExtra(PostIntentAo.POST_OPEN_INTENT);
-
-        vm.postAAo.postId = Optional.ofNullable(postIntentAo)
-                .map(p -> p.postId)
-                .orElse(null);
-
-        if (vm.postAAo.postId == null){
-            Log.e(TAG, "帖子id为空");
-            Toast.makeText(this, "帖子异常，请查看其他帖子", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-    }
-
     private PostVm vm;
 
     private void initViewModel(){
@@ -80,8 +63,6 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         vm = ViewModelUtil.newViewModel(this, apiViewModelFactory, PostVm.class);
 
         initViewModelVo();
-
-        initIntent();
 
         observeLivedata();
 
@@ -93,6 +74,21 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
 
     private void initViewModelVo(){
         PostAAo aao = new PostAAo();
+
+        Intent initIntent = getIntent();
+        PostIntentAo postIntentAo = (PostIntentAo) initIntent.getSerializableExtra(PostIntentAo.POST_OPEN_INTENT);
+
+        aao.postId = Optional.ofNullable(postIntentAo)
+                .map(p -> p.postId)
+                .orElse(null);
+
+        if (aao.postId == null){
+            Log.e(TAG, "帖子id为空");
+            Toast.makeText(this, "帖子异常，请查看其他帖子", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         vm.init(aao, this);
     }
 
