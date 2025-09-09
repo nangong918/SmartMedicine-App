@@ -121,4 +121,5 @@
     <string name="friend_setting">好友设置</string>
     <string name="appointment_order">预约订单</string>
     <string name="purchase_order">购物订单</string>
+    <string name="today">今天</string>
 </resources>
