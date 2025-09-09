@@ -126,4 +126,5 @@
     <string name="add">添加</string>
     <string name="agree">同意</string>
     <string name="refuse">拒绝</string>
+    <string name="pay">支付</string>
 </resources>
