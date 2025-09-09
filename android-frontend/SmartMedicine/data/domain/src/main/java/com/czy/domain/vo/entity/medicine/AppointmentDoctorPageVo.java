@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class AppointmentDoctorPageVo implements Serializable, BaseBean {
     // 日期vo
-    private AppointmentDoctorDataVo dataVo;
+    public AppointmentDoctorDataVo dataVo;
     // 医生卡片voList
-    private List<RegisterAppointmentDoctorCardAo> cardAos = new ArrayList<>();
+    public List<RegisterAppointmentDoctorCardAo> cardAos = new ArrayList<>();
 }

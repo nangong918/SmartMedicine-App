@@ -1,25 +1,18 @@
 package com.czy.domain.fragmentActivityAo.appointment
 
 import androidx.lifecycle.MutableLiveData
-import java.time.LocalDateTime
+import com.czy.domain.ao.medicine.RegisterAppointmentDoctorCardAo
 
 class AppointmentAAo {
+    // 日期vo
+    // 预约时间：yyyy-MM-dd
+    val dateStrLd = MutableLiveData("")
+    // 剩余可预约数量
+    val leftAppointmentCount = MutableLiveData(0)
+    // 最低费用
+    val minPrice = MutableLiveData("-")
 
-    var currentItem = MutableLiveData(0)
-
-    lateinit var imageList: List<Any>
-
-    /// location
-    // 省
-    var province = MutableLiveData("")
-    // 市
-    var city = MutableLiveData("")
-    // 区
-    var area = MutableLiveData("")
-
-    // date
-    var date: MutableLiveData<LocalDateTime> = MutableLiveData(LocalDateTime.now())
-
-    // department
-    var department = MutableLiveData("")
+    // 医生卡片voList
+    var doctorVoList: List<RegisterAppointmentDoctorCardAo> = listOf()
+    val doctorVoSizeLd: MutableLiveData<Int> = MutableLiveData(0)
 }
