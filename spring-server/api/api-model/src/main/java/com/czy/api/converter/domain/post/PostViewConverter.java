@@ -36,7 +36,7 @@ public interface PostViewConverter {
     @Mapping(source = "collectNum", target = "collectNum")
     @Mapping(source = "commentNum", target = "commentNum")
     @Mapping(source = "forwardNum", target = "forwardNum")
-    @Mapping(source = "like", target = "like")
+    @Mapping(source = "isLike", target = "like")
     @Mapping(source = "collect", target = "collect")
     @Mapping(source = "dislike", target = "dislike")
     @Mapping(source = "releaseTimestamp", target = "timestamp")
@@ -71,6 +71,7 @@ public interface PostViewConverter {
         Optional.ofNullable(postDetailDo)
             .ifPresent(pdo -> {
                 vo.setPostContents(pdo.getPostContents());
+                vo.setPostContent(pdo.getOnlyContent());
                 vo.setNerResults(pdo.getNerResults());
             });
         vo.setPostImgUrls(postImgUrls);
@@ -90,7 +91,7 @@ public interface PostViewConverter {
     @Mapping(source = "collectNum", target = "collectNum")
     @Mapping(source = "commentNum", target = "commentNum")
     @Mapping(source = "forwardNum", target = "forwardNum")
-    @Mapping(source = "like", target = "like")
+    @Mapping(source = "isLike", target = "like")
     @Mapping(source = "collect", target = "collect")
     @Mapping(source = "dislike", target = "dislike")
     @Mapping(source = "releaseTimestamp", target = "timestamp")

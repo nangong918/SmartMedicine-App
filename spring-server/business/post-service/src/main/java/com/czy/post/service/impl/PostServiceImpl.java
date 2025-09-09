@@ -183,7 +183,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostInfoAo> findPublishedPostsByUserId(Long userId, int pageNum, int pageSize) {
+    public List<Long> findPublishedPostsByUserId(Long userId, int pageNum, int pageSize) {
         List<Long> postIdList = postInfoMapper.getPostInfoDoListByAuthorIdPaging(
                 userId,
                 pageNum,
@@ -195,7 +195,7 @@ public class PostServiceImpl implements PostService {
             return new ArrayList<>();
         }
 
-        return postStorageService.findPostInfoAoList(postIdList);
+        return postIdList;
     }
 
     @Override

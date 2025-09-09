@@ -11,7 +11,7 @@
  Target Server Version : 80034
  File Encoding         : 65001
 
- Date: 05/09/2025 18:31:26
+ Date: 09/09/2025 11:49:11
 */
 
 SET NAMES utf8mb4;
@@ -310,7 +310,7 @@ CREATE TABLE `user_post_action`  (
   `id` bigint NOT NULL,
   `user_id` bigint NOT NULL,
   `post_id` bigint NOT NULL,
-  `like` tinyint(1) NULL DEFAULT NULL,
+  `is_like` tinyint(1) NULL DEFAULT NULL COMMENT '改为is_like,避免与mysql的关键词like冲突',
   `collect` tinyint(1) NULL DEFAULT NULL,
   `dislike` tinyint(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,

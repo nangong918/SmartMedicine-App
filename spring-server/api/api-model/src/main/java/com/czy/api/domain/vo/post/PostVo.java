@@ -29,6 +29,8 @@ public class PostVo implements Serializable, Cloneable {
     public String postTitle;
     // mongoDb 获取内容
     public List<PostContentEntity> postContents;
+    // 向前兼容
+    public String postContent;
     public String postPublishTime; // yyyy-MM-dd HH:mm:ss
     // 阅读数量（点击数量） (redis-hash)
     public Long postViewNum = 0L;

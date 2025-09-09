@@ -5,7 +5,7 @@
     <string name="please_enter">请输入</string>
     <string name="vcode">验证码</string>
     <string name="get_vcode">获取验证码</string>
-    <string name="agree">新用户登录即同意</string>
+    <string name="agree_privacy">新用户登录即同意</string>
     <string name="privacy">隐私协议</string>
     <string name="login">登录</string>
     <string name="please_enter_the_correct_phone_number">请输入正确的手机号</string>
@@ -121,4 +121,12 @@
     <string name="friend_setting">好友设置</string>
     <string name="appointment_order">预约订单</string>
     <string name="purchase_order">购物订单</string>
+    <string name="today">今天</string>
+    <string name="price_sort">价格排序</string>
+    <string name="sort_by_distance">距离排序</string>
+    <string name="sort_time">时间排序</string>
+    <string name="add">添加</string>
+    <string name="agree">同意</string>
+    <string name="refuse">拒绝</string>
+    <string name="pay">支付</string>
 </resources>
