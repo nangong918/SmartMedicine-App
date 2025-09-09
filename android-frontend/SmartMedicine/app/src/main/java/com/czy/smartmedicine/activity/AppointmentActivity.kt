@@ -41,6 +41,14 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
             try {
                 val appointmentDoctorPageVo = extras.get(AppointmentActivity::class.java.name)
                         as? AppointmentDoctorPageVo
+                vm.aao.province = extras.getString("province", "")
+                vm.aao.city = extras.getString("city", "")
+                vm.aao.area = extras.getString("area", "")
+
+                vm.aao.department = extras.getString("department", "")
+                vm.aao.registerDepartmentCode = extras.getInt("registerDepartmentCode")
+                vm.aao.registerSubjectCode = extras.getInt("registerSubjectCode")
+
                 if (appointmentDoctorPageVo != null) {
 
                     vm.aao.dateStrLd.value = appointmentDoctorPageVo.dataVo.date
