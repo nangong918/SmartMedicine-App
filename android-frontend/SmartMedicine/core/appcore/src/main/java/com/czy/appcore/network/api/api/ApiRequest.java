@@ -6,6 +6,7 @@ import com.czy.domain.constant.backEnd.BackEndConstant;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
 import com.czy.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.domain.dto.http.request.GetMyFriendsRequest;
+import com.czy.domain.dto.http.request.GetRegisterAppointmentListRequest;
 import com.czy.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.domain.dto.http.request.IsRegisterRequest;
 import com.czy.domain.dto.http.request.LoginUserRequest;
@@ -297,5 +298,17 @@ public interface ApiRequest {
     @POST(BackEndConstant.OSS + "/oss/uploadTest")
     Observable<BaseResponse<String>> uploadImageTest(
             @Part MultipartBody.Part file
+    );
+
+    //-------------预约相关--------------
+    ;
+    /**
+     * 获取预约列表
+     * @param request   获取预约列表请求
+     * @return          获取预约列表响应
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getList")
+    Observable<BaseResponse<GetRegisterAppointmentListRequest>> getRegisterAppointmentList(
+            @Body GetRegisterAppointmentListRequest request
     );
 }

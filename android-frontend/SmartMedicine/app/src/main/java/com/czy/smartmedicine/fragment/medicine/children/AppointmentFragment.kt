@@ -44,10 +44,10 @@ class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, Appointme
     override fun setListener() {
         super.setListener()
 
-        binding.btnSearch.setOnClickListener({
+        binding.btnSearch.setOnClickListener {
             val intent = Intent(activity, AppointmentActivity::class.java)
             startActivity(intent)
-        })
+        }
     }
 
     //---------------------------ViewModel---------------------------

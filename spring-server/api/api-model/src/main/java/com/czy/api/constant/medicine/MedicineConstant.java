@@ -12,14 +12,14 @@ public class MedicineConstant {
     // Knowledge_CONTROLLER
     public static final String Knowledge_CONTROLLER = "/knowledge";
     // RegisterAppointment_CONTROLLER
-    public static final String RegisterAppointment_CONTROLLER = "/registerAppointment";
+    public static final String RegisterAppointment_CONTROLLER = "/appointment";
 
     // serviceUri
     public static final String serviceUri = "lb://" + serviceName;
 
     /// api
     // 预约
-    public static final String APPOINTMENT = "/appointment";
+    public static final String APPOINTMENT = "/apply";
     // 取消预约/退款
     public static final String CANCEL = "/cancel";
 

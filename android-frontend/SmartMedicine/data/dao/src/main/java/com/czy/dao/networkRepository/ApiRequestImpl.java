@@ -9,6 +9,7 @@ import com.czy.baseutil.network.OnThrowableCallback;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
 import com.czy.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.domain.dto.http.request.GetMyFriendsRequest;
+import com.czy.domain.dto.http.request.GetRegisterAppointmentListRequest;
 import com.czy.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.domain.dto.http.request.IsRegisterRequest;
 import com.czy.domain.dto.http.request.LoginUserRequest;
@@ -414,6 +415,20 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                                 OnThrowableCallback onThrowableCallback){
         this.sendRequestCallback(
                 mApi.uploadImageTest(file),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getList")
+    //    Observable<BaseResponse<GetRegisterAppointmentListRequest>> getRegisterAppointmentList(
+    //            @Body GetRegisterAppointmentListRequest request
+    //    );
+    public void getRegisterAppointmentList(GetRegisterAppointmentListRequest request,
+                                           OnSuccessCallback<BaseResponse<GetRegisterAppointmentListRequest>> onSuccessCallback,
+                                           OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.getRegisterAppointmentList(request),
                 onSuccessCallback,
                 onThrowableCallback
         );
