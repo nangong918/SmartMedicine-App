@@ -39,7 +39,7 @@ public interface PostViewBoMapper {
         FROM post_files pf
         WHERE pf.post_id = pi.id) AS postImgFileIds,
 
-        IFNULL(upa.like, false) AS like,
+        IFNULL(upa.is_like, false) AS isLike,
         IFNULL(upa.collect, false) AS collect,
         IFNULL(upa.dislike, false) AS dislike
 
@@ -80,7 +80,7 @@ public interface PostViewBoMapper {
         FROM post_files pf
         WHERE pf.post_id = pi.id) AS postImgFileIds,
 
-        IFNULL(upa.like, false) AS like,
+        IFNULL(upa.is_like, false) AS isLike,
         IFNULL(upa.collect, false) AS collect,
         IFNULL(upa.dislike, false) AS dislike
      FROM post_info AS pi

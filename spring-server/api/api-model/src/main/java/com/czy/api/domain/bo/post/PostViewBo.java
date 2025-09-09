@@ -39,7 +39,7 @@ public class PostViewBo {
     public List<Long> postImgFileIds;
 
     // action   (login_user INNER JOIN user_post_action INNER JOIN post_info)
-    public Boolean like;
+    public Boolean isLike;  // 改为isLike, 避免与Mysql关键词like冲突
     public Boolean collect; // 取消文件夹创建 (你开发jb那么多功能干jb啥, 别他妈的造无用的轮子)
     public Boolean dislike;
 
