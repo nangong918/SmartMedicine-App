@@ -1,4 +1,4 @@
-package com.czy.appview.view.medicine;
+package com.czy.appview.view.medicine.order;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -75,25 +75,25 @@ public class OrderViewPagerBar extends ConstraintLayout {
     }
 
     private void updateUI() {
-        OrderViewPagerEnum homeViewPagerEnum = OrderViewPagerEnum.getEnumByIndex(currentPosition);
+        OrderViewPagerEnum homeViewPagerEnum = OrderViewPagerEnum.getByValue(currentPosition);
         binding.tvAppointment.setTextColor(
-                OrderViewPagerEnum.APPOINTMENT.equals(homeViewPagerEnum) ?
+                OrderViewPagerEnum.APPOINTMENT_ORDER.equals(homeViewPagerEnum) ?
                         ContextCompat.getColor(getContext(), R.color.white) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.lyClick1.setBackgroundResource(
-                OrderViewPagerEnum.APPOINTMENT.equals(homeViewPagerEnum) ?
+                OrderViewPagerEnum.APPOINTMENT_ORDER.equals(homeViewPagerEnum) ?
                         R.color.green_100 :
                         R.color.white
         );
 
         binding.tvPurchase.setTextColor(
-                OrderViewPagerEnum.PURCHASE.equals(homeViewPagerEnum) ?
+                OrderViewPagerEnum.PURCHASE_ORDER.equals(homeViewPagerEnum) ?
                         ContextCompat.getColor(getContext(), R.color.white) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.lyClick2.setBackgroundResource(
-                OrderViewPagerEnum.PURCHASE.equals(homeViewPagerEnum) ?
+                OrderViewPagerEnum.PURCHASE_ORDER.equals(homeViewPagerEnum) ?
                         R.color.green_100 :
                         R.color.white
         );

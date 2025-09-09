@@ -63,7 +63,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.czy.appview.view.medicine.OrderViewPagerBar
+    <com.czy.appview.view.medicine.order.OrderViewPagerBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

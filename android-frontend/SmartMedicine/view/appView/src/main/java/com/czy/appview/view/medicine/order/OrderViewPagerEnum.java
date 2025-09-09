@@ -1,13 +1,13 @@
-package com.czy.appview.view.medicine;
+package com.czy.appview.view.medicine.order;
 
 import androidx.annotation.NonNull;
 
 public enum OrderViewPagerEnum {
 
     // appointment
-    APPOINTMENT(0),
+    APPOINTMENT_ORDER(0),
     // purchase
-    PURCHASE(1),
+    PURCHASE_ORDER(1),
     ;
     private final int index;
     OrderViewPagerEnum(int index) {
@@ -21,13 +21,13 @@ public enum OrderViewPagerEnum {
 
     // index -> o
     @NonNull
-    public static OrderViewPagerEnum getEnumByIndex(int index) {
+    public static OrderViewPagerEnum getByValue(int index) {
         for (OrderViewPagerEnum value : OrderViewPagerEnum.values()) {
             if (value.index == index) {
                 return value;
             }
         }
-        return APPOINTMENT;
+        return APPOINTMENT_ORDER;
     }
 
     public static int getCount() {
