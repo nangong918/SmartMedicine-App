@@ -120,4 +120,7 @@
     <string name="appointment_order">预约订单</string>
     <string name="purchase_order">购物订单</string>
     <string name="today">今天</string>
+    <string name="price_sort">价格排序</string>
+    <string name="sort_by_distance">距离排序</string>
+    <string name="sort_time">时间排序</string>
 </resources>

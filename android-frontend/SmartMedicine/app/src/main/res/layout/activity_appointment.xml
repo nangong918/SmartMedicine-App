@@ -1,58 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:orientation="vertical"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.AppointmentActivity">
 
-    <com.czy.appview.view.InfoBarView
-        android:id="@+id/top_bar"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
     <LinearLayout
-        android:gravity="center_vertical"
-        android:layout_marginTop="15dp"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:src="@mipmap/location"
-            app:tint="@color/green_900"
-            android:layout_marginStart="30dp"
-            android:layout_width="22dp"
-            android:layout_height="22dp"/>
+        <com.czy.appview.view.InfoBarView
+            android:id="@+id/top_bar"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/tv_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@mipmap/location"
+                app:tint="@color/green_900"
+                android:layout_marginStart="30dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"/>
+
+            <TextView
+                android:id="@+id/tv_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginStart="5dp"
+                tools:text="广东-深圳-南山"
+                android:textColor="@color/green_900"/>
+
+
+            <ImageView
+                android:src="@drawable/graph_2_24px"
+                app:tint="@color/green_900"
+                android:layout_marginStart="30dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"/>
+
+            <TextView
+                android:id="@+id/tv_department"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginStart="5dp"
+                tools:text="皮肤科"
+                android:textColor="@color/green_900"/>
+
+        </LinearLayout>
+
+        <com.czy.appview.view.medicine.AppointmentBar
+            android:id="@+id/appointment_bar"
+            android:layout_marginTop="15dp"
             android:layout_marginStart="5dp"
-            tools:text="广东-深圳-南山"
-            android:textColor="@color/green_900"/>
+            android:layout_marginEnd="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:gravity="end"
+            android:padding="5dp"
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:src="@drawable/graph_2_24px"
-            app:tint="@color/green_900"
-            android:layout_marginStart="30dp"
-            android:layout_width="22dp"
-            android:layout_height="22dp"/>
+            <Spinner
+                android:id="@+id/spinner_sort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="@string/price_sort"/>
 
-        <TextView
-            android:id="@+id/tv_department"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginStart="5dp"
-            tools:text="皮肤科"
-            android:textColor="@color/green_900"/>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rclv_appointment"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>
