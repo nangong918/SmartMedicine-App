@@ -10,8 +10,6 @@ import androidx.multidex.MultiDexApplication;
 
 import org.jetbrains.annotations.NotNull;
 
-// TODO 思考为什么要使用 MultiDexApplication
-// TODO 全局网络请求的NetworkLoadUtils封装
 public class NetworkLoadUtils extends MultiDexApplication {
 
     private static SimpleLoanDialog sProcessDialog = null;
@@ -20,6 +18,10 @@ public class NetworkLoadUtils extends MultiDexApplication {
 
     public static void showDialog(Context context) {
         showDialog(context, null);
+    }
+
+    public static void showDialogSafety(Activity activity){
+        activity.runOnUiThread(() -> showDialog(activity, null));
     }
 
     public static void showDialog(Context context, String msg) {
