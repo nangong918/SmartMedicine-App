@@ -73,7 +73,7 @@ public class PostFrontServiceImpl implements PostFrontService {
         for (PostViewBo postViewBo : postViewBos) {
             postAuthorImgFileIds.add(postViewBo.authorAvatarFileId);
             postImgFile0Ids.add(
-                    Optional.ofNullable(postViewBo.postImgFileIds)
+                    Optional.ofNullable(postViewBo.getPostImgFileIds())
                             .filter(list -> !list.isEmpty())
                             .map(l -> l.get(0))
                             .orElse(null)

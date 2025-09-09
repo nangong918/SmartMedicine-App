@@ -37,7 +37,7 @@ public interface PostViewBoMapper {
         (SELECT
             GROUP_CONCAT(DISTINCT pf.file_id)
         FROM post_files pf
-        WHERE pf.post_id = pi.id) AS postImgFileIds,
+        WHERE pf.post_id = pi.id) AS postImgFileIdsStr,
 
         IFNULL(upa.is_like, false) AS isLike,
         IFNULL(upa.collect, false) AS collect,
@@ -78,7 +78,7 @@ public interface PostViewBoMapper {
         (SELECT
             GROUP_CONCAT(DISTINCT pf.file_id)
         FROM post_files pf
-        WHERE pf.post_id = pi.id) AS postImgFileIds,
+        WHERE pf.post_id = pi.id) AS postImgFileIdsStr,
 
         IFNULL(upa.is_like, false) AS isLike,
         IFNULL(upa.collect, false) AS collect,
