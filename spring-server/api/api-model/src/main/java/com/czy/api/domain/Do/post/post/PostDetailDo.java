@@ -4,6 +4,7 @@ import com.czy.api.domain.Do.post.post.content.PostContentEntity;
 import com.czy.api.domain.ao.post.PostNerResult;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ public class PostDetailDo implements Serializable {
     private String title;
     // content；not null
     private List<PostContentEntity> postContents;
+    // old版本的数据兼容
+    private String content;
     // ner特诊
     private List<PostNerResult> nerResults;
 
@@ -42,7 +45,7 @@ public class PostDetailDo implements Serializable {
     }
 
     public String getOnlyContent() {
-        return Optional.ofNullable(postContents)
+        String newContent = Optional.ofNullable(postContents)
                 .filter(list -> !list.isEmpty())
                 .map(list -> list.stream()
                         .map(PostContentEntity::getContent)
@@ -50,5 +53,9 @@ public class PostDetailDo implements Serializable {
                         .reduce("", (s1, s2) -> s1 + "\n" + s2)
                 )
                 .orElse("");
+        if (StringUtils.hasText(newContent)){
+            return newContent;
+        }
+        return content;
     }
 }
