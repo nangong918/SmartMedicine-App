@@ -21,6 +21,7 @@ import com.czy.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.domain.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.domain.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.domain.dto.http.response.GetMyFriendsResponse;
+import com.czy.domain.dto.http.response.GetRegisterAppointmentListResponse;
 import com.czy.domain.dto.http.response.IsRegisterResponse;
 import com.czy.domain.dto.http.response.LoginSignResponse;
 import com.czy.domain.dto.http.response.PostPublishResponse;
@@ -308,7 +309,7 @@ public interface ApiRequest {
      * @return          获取预约列表响应
      */
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getList")
-    Observable<BaseResponse<GetRegisterAppointmentListRequest>> getRegisterAppointmentList(
+    Observable<BaseResponse<GetRegisterAppointmentListResponse>> getRegisterAppointmentList(
             @Body GetRegisterAppointmentListRequest request
     );
 }

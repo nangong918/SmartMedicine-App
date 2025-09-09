@@ -10,7 +10,7 @@ import com.czy.domain.ao.LocationAo;
  */
 public class AppointmentDoctorSelectAo {
     public LocationAo registerLocation;
-    // 9月19日：yyyy-MM-dd格式
+    // 2025-09-06 09:00:00: yyyy-MM-dd HH:mm:ss
     public String registerTime;
 
     public Integer registerDepartmentCode;

@@ -24,6 +24,7 @@ import com.czy.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.domain.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.domain.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.domain.dto.http.response.GetMyFriendsResponse;
+import com.czy.domain.dto.http.response.GetRegisterAppointmentListResponse;
 import com.czy.domain.dto.http.response.IsRegisterResponse;
 import com.czy.domain.dto.http.response.LoginSignResponse;
 import com.czy.domain.dto.http.response.PostPublishResponse;
@@ -425,7 +426,7 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
     //            @Body GetRegisterAppointmentListRequest request
     //    );
     public void getRegisterAppointmentList(GetRegisterAppointmentListRequest request,
-                                           OnSuccessCallback<BaseResponse<GetRegisterAppointmentListRequest>> onSuccessCallback,
+                                           OnSuccessCallback<BaseResponse<GetRegisterAppointmentListResponse>> onSuccessCallback,
                                            OnThrowableCallback onThrowableCallback){
         this.sendRequestCallback(
                 mApi.getRegisterAppointmentList(request),

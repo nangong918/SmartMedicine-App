@@ -22,4 +22,6 @@ class AppointmentFAo {
 
     // department
     var department = MutableLiveData("")
+    var registerDepartmentCode = MutableLiveData(1)
+    var registerSubjectCode = MutableLiveData(1)
 }

@@ -4,7 +4,6 @@ import android.os.Bundle
 import com.czy.smartmedicine.databinding.ActivityAppointmentBinding
 import com.czy.smartmedicine.utils.BaseVmActivity
 import com.czy.smartmedicine.viewModel.activity.AppointmentAVm
-import com.czy.smartmedicine.viewModel.fragment.medicine.children.AppointmentFVm
 
 class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, AppointmentAVm>(
     AppointmentActivity::class,

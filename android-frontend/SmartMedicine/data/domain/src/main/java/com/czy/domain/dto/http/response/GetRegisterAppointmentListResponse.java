@@ -8,5 +8,5 @@ import com.czy.domain.vo.entity.medicine.AppointmentDoctorPageVo;
  * @date 2025/8/19 14:41
  */
 public class GetRegisterAppointmentListResponse {
-    private AppointmentDoctorPageVo pageVo;
+    public AppointmentDoctorPageVo pageVo;
 }
