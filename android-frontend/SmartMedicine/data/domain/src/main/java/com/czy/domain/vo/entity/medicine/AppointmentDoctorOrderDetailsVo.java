@@ -1,6 +1,5 @@
 package com.czy.domain.vo.entity.medicine;
 
-import lombok.Data;
 
 /**
  * @author 13225
@@ -8,7 +7,6 @@ import lombok.Data;
  * DetailsVo就是ListVo的扩展；
  * list展示不下的东西就放在这里，所以才需要详情页面
  */
-@Data
 public class AppointmentDoctorOrderDetailsVo {
     // list中的数据
     private AppointmentDoctorOrderListVo listVo;

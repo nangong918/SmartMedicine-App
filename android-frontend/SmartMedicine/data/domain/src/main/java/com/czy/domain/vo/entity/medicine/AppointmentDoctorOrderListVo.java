@@ -1,7 +1,9 @@
 package com.czy.domain.vo.entity.medicine;
 
-import com.czy.api.domain.ao.medicine.HospitalAo;
-import lombok.Data;
+
+import androidx.annotation.NonNull;
+
+import com.czy.domain.ao.medicine.HospitalAo;
 
 import java.io.Serializable;
 
@@ -10,7 +12,6 @@ import java.io.Serializable;
  * @date 2025/8/21 10:49
  * 预约医生订单列表视图
  */
-@Data
 public class AppointmentDoctorOrderListVo implements Cloneable, Serializable {
     /// 医生视图
     public DoctorVo doctorVo;
@@ -34,15 +35,16 @@ public class AppointmentDoctorOrderListVo implements Cloneable, Serializable {
     // merchantStatus + customerStatus 由前端去整合未orderStatus；当然如果你要后端处理的话，其实也是吧Android的代码复制过来。交给前端去搞简洁一点，反正前端也是我自己写代码
     /**
      * 记录本身状态: 可预约，已结束，售罄，等待开放
-     * @see com.czy.api.constant.medicine.AppointmentMerchantStatusEnum
+     * @see com.czy.domain.constant.medicine.AppointmentMerchantStatusEnum
      */
     public Integer merchantStatus;
     /**
      * 用户预约状态: 待支付，待使用，待评价，退款中，退款失败，已取消
-     * @see com.czy.api.constant.UserOrderStatusEnum
+     * @see com.czy.domain.constant.UserOrderStatusEnum
      */
     public Integer customerStatus;
 
+    @NonNull
     @Override
     public AppointmentDoctorOrderListVo clone() throws CloneNotSupportedException {
         AppointmentDoctorOrderListVo vo = (AppointmentDoctorOrderListVo) super.clone();

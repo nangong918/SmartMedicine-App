@@ -1,8 +1,8 @@
 package com.czy.domain.vo.entity.medicine;
 
-import com.czy.api.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
-import json.BaseBean;
-import lombok.Data;
+
+import com.czy.baseutil.json.BaseBean;
+import com.czy.domain.ao.medicine.RegisterAppointmentDoctorCardAo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,6 @@ import java.util.List;
  * @date 2025/8/18 16:38
  * 挂号预约页面
  */
-@Data
 public class AppointmentDoctorPageVo implements BaseBean {
     // 日期vo
     private AppointmentDoctorDataVo dataVo;
