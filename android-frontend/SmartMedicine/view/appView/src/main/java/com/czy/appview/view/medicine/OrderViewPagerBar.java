@@ -1,4 +1,4 @@
-package com.czy.appview.view.message;
+package com.czy.appview.view.medicine;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -11,31 +11,31 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.czy.appview.R;
-import com.czy.appview.databinding.MessageViewpagerBarBinding;
+import com.czy.appview.databinding.OrderViewpagerBarBinding;
 import com.czy.appview.view.home.HomeViewPagerEnum;
 import com.czy.domain.OnPositionItemClick;
 
-public class MessageViewPagerBar extends ConstraintLayout {
-    public MessageViewPagerBar(@NonNull Context context) {
+public class OrderViewPagerBar extends ConstraintLayout {
+    public OrderViewPagerBar(@NonNull Context context) {
         super(context);
         init(context);
     }
 
-    public MessageViewPagerBar(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public OrderViewPagerBar(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public MessageViewPagerBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public OrderViewPagerBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
-    private MessageViewpagerBarBinding binding;
+    private OrderViewpagerBarBinding binding;
 
     private void init(@NonNull Context context){
         LayoutInflater inflater = LayoutInflater.from(context);
-        binding = MessageViewpagerBarBinding.inflate(inflater, this, true);
+        binding = OrderViewpagerBarBinding.inflate(inflater, this, true);
 
         setOnClickListener();
     }
@@ -49,10 +49,10 @@ public class MessageViewPagerBar extends ConstraintLayout {
             int finalI = i;
             linearLayouts[i].setOnClickListener(
                     v -> {
-                        currentPosition = MessageViewPagerEnum.values()[finalI].getIndex();
+                        currentPosition = HomeViewPagerEnum.values()[finalI].getIndex();
                         if (onViewPagerBarClickListener != null){
                             onViewPagerBarClickListener.onPositionItemClick(
-                                    MessageViewPagerEnum.values()[finalI].getIndex()
+                                    HomeViewPagerEnum.values()[finalI].getIndex()
                             );
                             updateUI();
                         }
@@ -61,7 +61,7 @@ public class MessageViewPagerBar extends ConstraintLayout {
         }
     }
 
-    private int currentPosition = MessageViewPagerEnum.MESSAGE.getIndex();
+    private int currentPosition = HomeViewPagerEnum.RECOMMEND.getIndex();
 
     private OnPositionItemClick onViewPagerBarClickListener;
 
@@ -75,27 +75,27 @@ public class MessageViewPagerBar extends ConstraintLayout {
     }
 
     private void updateUI() {
-        HomeViewPagerEnum homeViewPagerEnum = HomeViewPagerEnum.getEnumByIndex(currentPosition);
-        binding.tvMessage.setTextColor(
-                HomeViewPagerEnum.RECOMMEND.equals(homeViewPagerEnum) ?
-                        ContextCompat.getColor(getContext(), R.color.green_1000) :
+        OrderViewPagerEnum homeViewPagerEnum = OrderViewPagerEnum.getEnumByIndex(currentPosition);
+        binding.tvAppointment.setTextColor(
+                OrderViewPagerEnum.APPOINTMENT.equals(homeViewPagerEnum) ?
+                        ContextCompat.getColor(getContext(), R.color.white) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
-        binding.vBar1.setVisibility(
-                HomeViewPagerEnum.RECOMMEND.equals(homeViewPagerEnum) ?
-                        VISIBLE :
-                        GONE
+        binding.lyClick1.setBackgroundResource(
+                OrderViewPagerEnum.APPOINTMENT.equals(homeViewPagerEnum) ?
+                        R.color.green_100 :
+                        R.color.white
         );
 
-        binding.tvAddressBook.setTextColor(
-                HomeViewPagerEnum.POPULAR.equals(homeViewPagerEnum) ?
-                        ContextCompat.getColor(getContext(), R.color.green_1000) :
+        binding.tvPurchase.setTextColor(
+                OrderViewPagerEnum.PURCHASE.equals(homeViewPagerEnum) ?
+                        ContextCompat.getColor(getContext(), R.color.white) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
-        binding.vBar2.setVisibility(
-                HomeViewPagerEnum.POPULAR.equals(homeViewPagerEnum) ?
-                        VISIBLE :
-                        GONE
+        binding.lyClick2.setBackgroundResource(
+                OrderViewPagerEnum.PURCHASE.equals(homeViewPagerEnum) ?
+                        R.color.green_100 :
+                        R.color.white
         );
     }
 

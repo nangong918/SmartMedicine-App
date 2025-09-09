@@ -6,11 +6,12 @@
     android:gravity="center_vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
-    tools:context="com.czy.appview.view.message.MessageViewPagerBar">
+    tools:context="com.czy.appview.view.medicine.OrderViewPagerBar">
 
     <LinearLayout
         android:id="@+id/lyClick1"
         android:layout_width="0dp"
+        android:background="@color/green_100"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
@@ -21,17 +22,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/appointment_order"
-            android:textColor="@color/green_900"
+            android:textColor="@color/white"
             android:gravity="center"
             android:textSize="14sp"
             android:textStyle="bold" />
-
-        <View
-            android:id="@+id/v_bar1"
-            android:layout_width="36dp"
-            android:layout_height="5dp"
-            android:layout_marginTop="4dp"
-            android:background="@color/green_100" />
 
     </LinearLayout>
 
@@ -52,14 +46,6 @@
             android:gravity="center"
             android:textSize="14sp"
             android:textStyle="bold" />
-
-        <View
-            android:visibility="gone"
-            android:id="@+id/v_bar2"
-            android:layout_width="36dp"
-            android:layout_height="5dp"
-            android:layout_marginTop="4dp"
-            android:background="@color/green_100" />
 
     </LinearLayout>
 
