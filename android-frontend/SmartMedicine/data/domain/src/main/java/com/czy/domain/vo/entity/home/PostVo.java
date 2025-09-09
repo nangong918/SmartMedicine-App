@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.czy.baseutil.algorithm.SortItem;
 import com.czy.domain.constant.home.PostOperation;
 import com.czy.domain.constant.home.RecommendButtonType;
+import com.czy.domain.vo.entity.home.post.PostContentEntity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -22,6 +23,8 @@ public class PostVo extends SortItem implements Serializable, Cloneable {
 
     // post
     public String postTitle;
+    // 向前兼容
+    public List<PostContentEntity> postContents;
     public String postContent;
     public String postPublishTime;
     // 阅读数量（点击数量）

@@ -236,10 +236,6 @@ public class PostController {
             return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
-        PostAo postAo = postService.findPostById(request.getPostId());
-        if (postAo == null || postAo.getId() == null){
-            return BaseResponse.LogBackError(PostExceptions.POST_NOT_EXIST);
-        }
         if (ObjectUtils.isEmpty(request.getPageNum()) || request.getPageNum() < 1){
             request.setPageNum(1);
         }

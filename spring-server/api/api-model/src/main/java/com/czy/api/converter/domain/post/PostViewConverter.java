@@ -71,6 +71,7 @@ public interface PostViewConverter {
         Optional.ofNullable(postDetailDo)
             .ifPresent(pdo -> {
                 vo.setPostContents(pdo.getPostContents());
+                vo.setPostContent(pdo.getOnlyContent());
                 vo.setNerResults(pdo.getNerResults());
             });
         vo.setPostImgUrls(postImgUrls);
