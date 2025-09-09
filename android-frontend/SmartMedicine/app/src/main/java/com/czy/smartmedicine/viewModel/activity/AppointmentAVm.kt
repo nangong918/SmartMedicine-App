@@ -31,36 +31,38 @@ open class AppointmentAVm(
 
     //---------------------------NetWork---------------------------
 
-    fun doGetRegisterAppointmentAllDate(context: Context, callback : SyncRequestCallback, registerTime: LocalDateTime?){
+    fun doGetRegisterAppointmentAllDate(context: Context, callback: SyncRequestCallback, registerTime: Int?) {
         val request = GetRegisterAppointmentListRequest()
         request.requestAo = AppointmentDoctorSelectAo()
+
         request.requestAo.registerDepartmentCode = aao.registerDepartmentCode
         request.requestAo.registerSubjectCode = aao.registerSubjectCode
         request.requestAo.registerLocation = LocationAo()
         request.requestAo.registerLocation.province = aao.province
         request.requestAo.registerLocation.city = aao.city
-        request.requestAo.registerLocation.province = aao.area
-        request.requestAo.registerTime = if (registerTime != null) {
-            // 使用传入的时间
-            DateUtils.yyyyMMddHHmmssToString(registerTime)
-        } else {
-            // 使用当前时间
-            DateUtils.yyyyMMddHHmmssToString(LocalDateTime.now())
-        }
+        request.requestAo.registerLocation.region = aao.area
         request.requestAo.latitude = aao.latitude
         request.requestAo.longitude = aao.longitude
+
+        // 处理 registerTime: null/0 -> 当前时间; 1/2/3/4 -> 1/2/3/4天后的起始时间
+        val daysToAdd = registerTime?.coerceIn(0, 4) ?: 0
+        val targetDate = LocalDateTime.now().plusDays(daysToAdd.toLong()).toLocalDate().atStartOfDay()
+
+        request.requestAo.registerTime = DateUtils.yyyyMMddHHmmssToString(targetDate)
+
+        // 发送请求
         apiRequestImpl.getRegisterAppointmentAllDate(
             request,
-            {
-                response -> ResponseTool.handleSyncResponseEx(
+            { response ->
+                ResponseTool.handleSyncResponseEx(
                     response,
                     context,
                     callback,
                     this::handleGetRegisterAppointmentAllDateResponse
                 )
             },
-            {
-                error -> callback.onThrowable(error)
+            { error ->
+                callback.onThrowable(error)
             }
         )
     }
