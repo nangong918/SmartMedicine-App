@@ -24,6 +24,7 @@ public class PostAVo {
     public final MutableLiveData<String> postPublishTimeLd = new MutableLiveData<>("");
     public final MutableLiveData<String> postViewNumLd = new MutableLiveData<>("");
     public final List<String> postImgUrls = new ArrayList<>();
+    public final MutableLiveData<Integer> postImgNumLd = new MutableLiveData<>(0);
     // action
     public final MutableLiveData<Boolean> likePostLd = new MutableLiveData<>(false);
     public final MutableLiveData<Boolean> collectPostLd = new MutableLiveData<>(false);
@@ -41,6 +42,7 @@ public class PostAVo {
         this.postPublishTimeLd.setValue(postVo.postPublishTime);
         this.postViewNumLd.setValue(postVo.postViewNum);
         this.postImgUrls.addAll(postVo.postImgUrls);
+        this.postImgNumLd.setValue(postVo.postImgUrls.size());
         this.likePostLd.setValue(postVo.like);
         this.collectPostLd.setValue(postVo.collect);
         this.dislikePostLd.setValue(postVo.dislike);

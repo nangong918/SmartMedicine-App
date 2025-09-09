@@ -6,6 +6,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.czy.appview.view.post.CommentAdapter;
@@ -115,7 +118,7 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
 
         // post
         vm.postAAo.postAVo.postTitleLd.observe(this, postTitle -> {
-            binding.tvTime.setText(postTitle);
+            binding.tvTitle.setText(postTitle);
         });
         vm.postAAo.postAVo.postContentLd.observe(this, postContent -> {
             binding.tvContent.setText(postContent);
@@ -125,6 +128,34 @@ public class PostActivity extends BaseActivity<ActivityPostBinding> {
         });
         vm.postAAo.postAVo.postViewNumLd.observe(this, viewNum -> {
             binding.tvViewNum.setText(viewNum);
+        });
+        vm.postAAo.postAVo.postImgNumLd.observe(this, postImgNum -> {
+            ImageView[] imageViews = new ImageView[]{
+                    binding.imgP1,
+                    binding.imgP2,
+                    binding.imgP3
+            };
+            LinearLayout[] layouts = new LinearLayout[]{
+                    binding.lyP1,
+                    binding.lyP2,
+                    binding.lyP3
+            };
+
+            // 隐藏所有布局
+            for (LinearLayout layout : layouts) {
+                layout.setVisibility(View.GONE);
+            }
+
+            // 根据 postImgNum 显示相应的布局和加载图片
+            for (int i = 0; i < postImgNum; i++) {
+                if (i < imageViews.length) {
+                    layouts[i].setVisibility(View.VISIBLE);
+                    ImageLoadUtil.loadImageViewByResource(
+                            vm.postAAo.postAVo.postImgUrls.get(i),
+                            imageViews[i]
+                    );
+                }
+            }
         });
 
         // action
