@@ -254,27 +254,17 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
             缓存对象: 缓存对象为Do, 因为Vo涉及对Do的计算, 如果只因为数据存在就返回数据, 那么一定会出现缓存Vo和Do计算出来的Vo不一致
             如果缓存对象为Vo, 那么每次更新Do的时候都要删除缓存, 避免返回过时的Vo这一问题
          */
-        StringBuilder keyBuilder = new StringBuilder(MedicineRedisKey.Appointment.getDataVoList_KEY_PREFIX);
-
-        // 添加地点信息
-        keyBuilder.append(ao.getRegisterLocation().getProvince()).append(":");
-        keyBuilder.append(ao.getRegisterLocation().getCity() == null ? "null" : ao.getRegisterLocation().getCity()).append(":");
-        keyBuilder.append(ao.getRegisterLocation().getRegion() == null ? "null" : ao.getRegisterLocation().getRegion()).append(":");
-
-        // 添加科室和科目代码
-        keyBuilder.append(ao.getRegisterDepartmentCode()).append(":");
-        keyBuilder.append(ao.getRegisterSubjectCode() == null ? "null" : ao.getRegisterSubjectCode()).append(":");
 
         // 获取今天~3天后挂号列表
         LocalDateTime[] registerDates = new LocalDateTime[]{
                 // 今天
                 registerTime,
                 // 明天
-                registerTime.plusDays(1),
+                registerTime.plusDays(1).toLocalDate().atStartOfDay(),
                 // 后天
-                registerTime.plusDays(2),
+                registerTime.plusDays(2).toLocalDate().atStartOfDay(),
                 // 3天后
-                registerTime.plusDays(3),
+                registerTime.plusDays(3).toLocalDate().atStartOfDay(),
         };
 
         // 获取数据
