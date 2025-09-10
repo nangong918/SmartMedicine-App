@@ -27,6 +27,11 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
 
     override fun setListener() {
         super.setListener()
+
+        binding.appointmentBar.setOnViewPagerBarClickListener{
+            position ->
+            vm.aao.currentSelectDatePosition.value = position.toLong()
+        }
     }
 
     //---------------------------VM---------------------------
@@ -62,6 +67,8 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
                 .orElse(LocalDateTime.now().toLocalDate().atStartOfDay())
         }
 
+        // view
+        binding.appointmentBar.dataVos = vm.aao.dateList
     }
 
     private fun observeData() {
@@ -69,19 +76,21 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
         vm.aao.isAppointmentDateChanged.observe(this){
             if (it){
                 // 顶部的预约日志的数据变化了
+                binding.appointmentBar.updateUiDate()
             }
         }
 
         // 顶部的预约日志的数据的选择
         vm.aao.currentSelectDatePosition.observe(this){
             // 4个 0 ~ 3
+            binding.appointmentBar.setCurrentPosition(it.toInt())
         }
 
         // list的count
         vm.aao.doctorVoSizeLd.observe(this){
-            size -> {
-
-            }
+            size ->
+            // 0 暂无记录
+            // adapter更新
         }
     }
 

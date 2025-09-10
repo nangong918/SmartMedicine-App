@@ -134,7 +134,19 @@ open class AppointmentAVm(
     }
 
     private fun handleGetRegisterAppointmentAllDate
-                (response: BaseResponse<GetAllRegisterAppointmentDateResponse>, context: Context, callback: SyncRequestCallback){
+                (response: BaseResponse<GetAllRegisterAppointmentDateResponse>,
+                 context: Context, callback: SyncRequestCallback){
+        response.data?.let { data ->
+            data.dataVos?.let { list ->
+                val size = minOf(aao.dateList.size, list.size)
+                for (i in 0 until size) {
+                    aao.dateList[i].date = list[i].date
+                    aao.dateList[i].remainCount = list[i].remainCount
+                    aao.dateList[i].minCost = list[i].minCost
+                }
+                aao.isAppointmentDateChanged.value = true
+            }
+        }
         callback.onAllRequestSuccess()
     }
 
