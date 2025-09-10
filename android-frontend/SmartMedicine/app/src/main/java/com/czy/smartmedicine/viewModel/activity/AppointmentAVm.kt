@@ -177,7 +177,7 @@ open class AppointmentAVm(
         )
     }
 
-    fun handleAppointmentMerchant
+    private fun handleAppointmentMerchant
                 (response: BaseResponse<AppointmentDoctorResponse>, context: Context, callback: SyncRequestCallback){
                     // 其他逻辑: doctorMerchantAppointmentId; orderId
                     callback.onAllRequestSuccess()

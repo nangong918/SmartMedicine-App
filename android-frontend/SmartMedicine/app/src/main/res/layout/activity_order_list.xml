@@ -69,14 +69,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.czy.appview.view.medicine.order.OrderViewPagerBar
+            android:id="@+id/vpg_bar_order"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rclv_orders"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vpg2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

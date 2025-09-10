@@ -1,20 +1,20 @@
-package com.czy.smartmedicine.fragment.order.children
+package com.czy.smartmedicine.fragment.order
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.czy.smartmedicine.databinding.FragmentOrderAppointmentBinding
+import com.czy.smartmedicine.databinding.FragmentOrderPurchaseBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
-import com.czy.smartmedicine.viewModel.fragment.order.OrderAppointmentFVm
+import com.czy.smartmedicine.viewModel.fragment.order.OrderPurchaseFVm
 
 
-class OrderAppointmentFragment : BaseVmFragment<FragmentOrderAppointmentBinding, OrderAppointmentFVm>(
-    OrderAppointmentFragment::class,
-    OrderAppointmentFVm::class
+class OrderPurchaseFragment : BaseVmFragment<FragmentOrderPurchaseBinding, OrderPurchaseFVm>(
+    OrderPurchaseFragment::class,
+    OrderPurchaseFVm::class
 ) {
-    override fun initBinding(): FragmentOrderAppointmentBinding {
-        return FragmentOrderAppointmentBinding.inflate(layoutInflater)
+    override fun initBinding(): FragmentOrderPurchaseBinding {
+        return FragmentOrderPurchaseBinding.inflate(layoutInflater)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
