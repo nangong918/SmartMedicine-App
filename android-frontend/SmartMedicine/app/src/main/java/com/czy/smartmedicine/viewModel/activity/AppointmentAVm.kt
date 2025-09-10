@@ -15,6 +15,7 @@ import com.czy.domain.dto.http.response.GetRegisterAppointmentListResponse
 import com.czy.domain.fragmentActivityAo.appointment.AppointmentAAo
 import com.czy.smartmedicine.utils.ResponseTool
 import java.time.LocalDateTime
+import java.util.Optional
 
 
 open class AppointmentAVm(
@@ -32,7 +33,7 @@ open class AppointmentAVm(
 
     //---------------------------NetWork---------------------------
 
-    fun doGetRegisterAppointmentList(context: Context, callback: SyncRequestCallback, registerTime: Int?) {
+    fun doGetRegisterAppointmentList(context: Context, callback: SyncRequestCallback) {
         val request = GetRegisterAppointmentListRequest()
         request.requestAo = AppointmentDoctorSelectAo()
 
@@ -46,7 +47,7 @@ open class AppointmentAVm(
         request.requestAo.longitude = aao.longitude
 
         // 处理 registerTime: null/0 -> 当前时间; 1/2/3/4 -> 1/2/3/4天后的起始时间
-        val daysToAdd = registerTime?.coerceIn(0, 4) ?: 0
+        val daysToAdd = aao.currentSelectDatePosition.value?.coerceIn(0, 4) ?: 0
         val targetDate = LocalDateTime.now().plusDays(daysToAdd.toLong()).toLocalDate().atStartOfDay()
 
         request.requestAo.registerTime = DateUtils.yyyyMMddHHmmssToString(targetDate)
@@ -68,8 +69,35 @@ open class AppointmentAVm(
         )
     }
 
-    private fun handleGetRegisterAppointmentList
-                (response: BaseResponse<GetRegisterAppointmentListResponse>, context: Context, callback: SyncRequestCallback) {
+    private fun handleGetRegisterAppointmentList(
+        response: BaseResponse<GetRegisterAppointmentListResponse>,
+        context: Context,
+        callback: SyncRequestCallback
+    ) {
+        response.data?.let { data ->
+            data.pageVo?.let { pvo ->
+
+                // 更新 doctorVoList
+                aao.doctorVoList.clear()
+                aao.doctorVoList.addAll(pvo.cardAos ?: emptyList())
+
+                // 更新 dateList
+                val position = aao.currentSelectDatePosition.value
+                if (pvo.dataVo != null && position != null) {
+                    val finalInt = position.toInt()
+                    if (finalInt in aao.dateList.indices) {
+                        with(aao.dateList[finalInt]) {
+                            date = pvo.dataVo.date
+                            minCost = pvo.dataVo.minCost
+                            remainCount = pvo.dataVo.remainCount
+                        }
+                    }
+                }
+
+                // liveData通知
+                aao.doctorVoSizeLd.value = aao.doctorVoList.size
+            }
+        }
         callback.onAllRequestSuccess()
     }
 

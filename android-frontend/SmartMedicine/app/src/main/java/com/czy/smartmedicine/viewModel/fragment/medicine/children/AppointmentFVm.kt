@@ -56,7 +56,7 @@ open class AppointmentFVm(
         locationAo.region = aao.area.value
         appointmentDoctorSelectAo.registerLocation = locationAo
         appointmentDoctorSelectAo.registerTime = DateUtils.yyyyMMddHHmmssToString(
-            aao.date.value!!
+            aao.date
         )
         appointmentDoctorSelectAo.registerSubjectCode = aao.registerSubjectCode.value
         appointmentDoctorSelectAo.registerDepartmentCode = aao.registerDepartmentCode.value

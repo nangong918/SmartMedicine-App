@@ -91,7 +91,7 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
             this@AppointmentActivity,
             object : SyncRequestCallback{
                 override fun onThrowable(throwable: Throwable?) {
-                    Log.e(TAG, "获取 AppointmentDoctorPageVo 失败: ", throwable)
+                    Log.e(TAG, "获取 AllView 失败: ", throwable)
                     NetworkLoadUtils.dismissDialogSafety(this@AppointmentActivity)
                 }
 
@@ -99,6 +99,20 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
                     NetworkLoadUtils.dismissDialogSafety(this@AppointmentActivity)
                 }
             }
+        )
+        vm.doGetRegisterAppointmentList(
+            this@AppointmentActivity,
+            object : SyncRequestCallback {
+                override fun onThrowable(throwable: Throwable?) {
+                    Log.e(TAG, "获取 ViewList 失败: ", throwable)
+                    NetworkLoadUtils.dismissDialogSafety(this@AppointmentActivity)
+                }
+
+                override fun onAllRequestSuccess() {
+                    NetworkLoadUtils.dismissDialogSafety(this@AppointmentActivity)
+                }
+            },
+
         )
     }
 
