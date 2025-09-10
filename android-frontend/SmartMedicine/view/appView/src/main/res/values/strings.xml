@@ -129,4 +129,5 @@
     <string name="agree">同意</string>
     <string name="refuse">拒绝</string>
     <string name="pay">支付</string>
+    <string name="appointment_success">预约成功</string>
 </resources>

@@ -49,10 +49,13 @@ class AppointmentMerchantViewHolder(
             binding.tvDuration.text = vo.beginDate + " - " + vo.endDate
         }
 
+        binding.btnHandle.text = "预约"
     }
 
     fun setPositionClick(onPositionItemClick: OnPositionItemClick) {
-
+        binding.btnHandle.setOnClickListener{
+            onPositionItemClick.onPositionItemClick(adapterPosition)
+        }
     }
 
 

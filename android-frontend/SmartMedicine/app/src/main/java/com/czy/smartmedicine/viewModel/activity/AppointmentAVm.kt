@@ -4,15 +4,19 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.czy.appcore.network.api.handle.SyncRequestCallback
 import com.czy.appcore.network.netty.api.send.SocketMessageSender
+import com.czy.appview.view.medicine.appointment.AppointmentMerchantAdapter
 import com.czy.baseutil.date.DateUtils
 import com.czy.baseutil.network.BaseResponse
 import com.czy.dao.networkRepository.ApiRequestImpl
 import com.czy.domain.ao.LocationAo
 import com.czy.domain.ao.medicine.AppointmentDoctorSelectAo
+import com.czy.domain.dto.http.request.AppointmentDoctorRequest
 import com.czy.domain.dto.http.request.GetRegisterAppointmentListRequest
+import com.czy.domain.dto.http.response.AppointmentDoctorResponse
 import com.czy.domain.dto.http.response.GetAllRegisterAppointmentDateResponse
 import com.czy.domain.dto.http.response.GetRegisterAppointmentListResponse
 import com.czy.domain.fragmentActivityAo.appointment.AppointmentAAo
+import com.czy.smartmedicine.MainApplication
 import com.czy.smartmedicine.utils.ResponseTool
 import java.time.LocalDateTime
 import java.util.Optional
@@ -30,6 +34,8 @@ open class AppointmentAVm(
     //---------------------------FAo Ld---------------------------
 
     open var aao = AppointmentAAo()
+
+    open lateinit var merchantAdapter : AppointmentMerchantAdapter
 
     //---------------------------NetWork---------------------------
 
@@ -149,6 +155,33 @@ open class AppointmentAVm(
         }
         callback.onAllRequestSuccess()
     }
+
+    fun doAppointmentMerchant(context: Context, callback: SyncRequestCallback, doctorMerchantAppointmentId: String){
+        val request = AppointmentDoctorRequest()
+        request.userId = MainApplication.getInstance().userLoginInfoAo?.userId
+        request.doctorMerchantAppointmentId = doctorMerchantAppointmentId.toLong()
+        apiRequestImpl.appointmentDoctorMerchant(
+            request,
+            {
+                response ->
+                ResponseTool.handleSyncResponseEx(
+                    response,
+                    context,
+                    callback,
+                    ::handleAppointmentMerchant
+                )
+            },
+            {
+                error -> callback.onThrowable(error)
+            }
+        )
+    }
+
+    fun handleAppointmentMerchant
+                (response: BaseResponse<AppointmentDoctorResponse>, context: Context, callback: SyncRequestCallback){
+                    // 其他逻辑: doctorMerchantAppointmentId; orderId
+                    callback.onAllRequestSuccess()
+                }
 
     //---------------------------Logic---------------------------
 

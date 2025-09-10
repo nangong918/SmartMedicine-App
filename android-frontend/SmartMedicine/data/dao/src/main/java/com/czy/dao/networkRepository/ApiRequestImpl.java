@@ -6,6 +6,7 @@ import com.czy.baseutil.network.BaseApiRequestImpl;
 import com.czy.baseutil.network.BaseResponse;
 import com.czy.baseutil.network.OnSuccessCallback;
 import com.czy.baseutil.network.OnThrowableCallback;
+import com.czy.domain.dto.http.request.AppointmentDoctorRequest;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
 import com.czy.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.domain.dto.http.request.GetMyFriendsRequest;
@@ -20,6 +21,7 @@ import com.czy.domain.dto.http.request.RegisterUserRequest;
 import com.czy.domain.dto.http.request.SearchUserRequest;
 import com.czy.domain.dto.http.request.SendSmsRequest;
 import com.czy.domain.dto.http.request.UserBriefRequest;
+import com.czy.domain.dto.http.response.AppointmentDoctorResponse;
 import com.czy.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.domain.dto.http.response.GetAddMeRequestListResponse;
 import com.czy.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
@@ -445,6 +447,20 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                                               OnThrowableCallback onThrowableCallback){
         this.sendRequestCallback(
                 mApi.getRegisterAppointmentAllDate(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/apply")
+    //    Observable<BaseResponse<AppointmentDoctorResponse>> appointmentDoctorMerchant(
+    //            @Body AppointmentDoctorRequest request
+    //    );
+    public void appointmentDoctorMerchant(AppointmentDoctorRequest request,
+                                          OnSuccessCallback<BaseResponse<AppointmentDoctorResponse>> onSuccessCallback,
+                                          OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.appointmentDoctorMerchant(request),
                 onSuccessCallback,
                 onThrowableCallback
         );

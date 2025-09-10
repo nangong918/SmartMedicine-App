@@ -3,7 +3,10 @@ package com.czy.smartmedicine.activity
 import android.os.Bundle
 import android.util.Log
 import com.czy.appcore.network.api.handle.SyncRequestCallback
+import com.czy.appview.view.medicine.appointment.AppointmentMerchantAdapter
 import com.czy.baseutil.network.networkLoad.NetworkLoadUtils
+import com.czy.baseutil.ui.ToastUtils
+import com.czy.domain.OnPositionItemClick
 import com.czy.domain.vo.entity.medicine.AppointmentDoctorPageVo
 import com.czy.smartmedicine.databinding.ActivityAppointmentBinding
 import com.czy.smartmedicine.utils.BaseVmActivity
@@ -69,6 +72,34 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
 
         // view
         binding.appointmentBar.dataVos = vm.aao.dateList
+
+        // adapter
+        vm.merchantAdapter = AppointmentMerchantAdapter(
+            vm.aao.doctorVoList
+        ) { position ->
+
+            NetworkLoadUtils.showDialogSafety(this@AppointmentActivity)
+            vm.doAppointmentMerchant(
+                this@AppointmentActivity,
+                object : SyncRequestCallback {
+                    override fun onThrowable(throwable: Throwable?) {
+                        NetworkLoadUtils.dismissDialogSafety(this@AppointmentActivity)
+                        Log.e(TAG, "onThrowable: ", throwable)
+                    }
+
+                    override fun onAllRequestSuccess() {
+                        NetworkLoadUtils.dismissDialogSafety(this@AppointmentActivity)
+                        ToastUtils.showToastActivity(
+                            this@AppointmentActivity,
+                            getString(com.czy.appview.R.string.appointment_success)
+                        )
+                        // 跳转订单页面
+                    }
+
+                },
+                vm.aao.doctorVoList[position].doctorMerchantAppointmentId
+            )
+        }
     }
 
     private fun observeData() {
