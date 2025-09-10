@@ -1,9 +1,6 @@
 package com.czy.smartmedicine.utils
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
@@ -32,12 +29,9 @@ abstract class BaseVmActivity<VB : ViewBinding, VM : ViewModel> (
 
         initViewModel()
 
-        setListener()
-    }
-
-    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
         initView()
-        return super.onCreateView(name, context, attrs)
+
+        setListener()
     }
 
     protected open fun initView(){
