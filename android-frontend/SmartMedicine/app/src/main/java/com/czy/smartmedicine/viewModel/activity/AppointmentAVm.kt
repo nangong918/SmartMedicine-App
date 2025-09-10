@@ -11,6 +11,7 @@ import com.czy.domain.ao.LocationAo
 import com.czy.domain.ao.medicine.AppointmentDoctorSelectAo
 import com.czy.domain.dto.http.request.GetRegisterAppointmentListRequest
 import com.czy.domain.dto.http.response.GetAllRegisterAppointmentDateResponse
+import com.czy.domain.dto.http.response.GetRegisterAppointmentListResponse
 import com.czy.domain.fragmentActivityAo.appointment.AppointmentAAo
 import com.czy.smartmedicine.utils.ResponseTool
 import java.time.LocalDateTime
@@ -31,7 +32,7 @@ open class AppointmentAVm(
 
     //---------------------------NetWork---------------------------
 
-    fun doGetRegisterAppointmentAllDate(context: Context, callback: SyncRequestCallback, registerTime: Int?) {
+    fun doGetRegisterAppointmentList(context: Context, callback: SyncRequestCallback, registerTime: Int?) {
         val request = GetRegisterAppointmentListRequest()
         request.requestAo = AppointmentDoctorSelectAo()
 
@@ -51,14 +52,14 @@ open class AppointmentAVm(
         request.requestAo.registerTime = DateUtils.yyyyMMddHHmmssToString(targetDate)
 
         // 发送请求
-        apiRequestImpl.getRegisterAppointmentAllDate(
+        apiRequestImpl.getRegisterAppointmentList(
             request,
             { response ->
                 ResponseTool.handleSyncResponseEx(
                     response,
                     context,
                     callback,
-                    this::handleGetRegisterAppointmentAllDateResponse
+                    this::handleGetRegisterAppointmentList
                 )
             },
             { error ->
@@ -67,8 +68,45 @@ open class AppointmentAVm(
         )
     }
 
-    private fun handleGetRegisterAppointmentAllDateResponse
-                (response: BaseResponse<GetAllRegisterAppointmentDateResponse>, context: Context, callback: SyncRequestCallback) {
+    private fun handleGetRegisterAppointmentList
+                (response: BaseResponse<GetRegisterAppointmentListResponse>, context: Context, callback: SyncRequestCallback) {
+        callback.onAllRequestSuccess()
+    }
+
+    fun doGetRegisterAppointmentAllDate(context: Context, callback: SyncRequestCallback){
+        val request = GetRegisterAppointmentListRequest()
+        request.requestAo = AppointmentDoctorSelectAo()
+
+        request.requestAo.registerDepartmentCode = aao.registerDepartmentCode
+        request.requestAo.registerSubjectCode = aao.registerSubjectCode
+        request.requestAo.registerLocation = LocationAo()
+        request.requestAo.registerLocation.province = aao.province
+        request.requestAo.registerLocation.city = aao.city
+        request.requestAo.registerLocation.region = aao.area
+        request.requestAo.latitude = aao.latitude
+        request.requestAo.longitude = aao.longitude
+
+        request.requestAo.registerTime = DateUtils.yyyyMMddHHmmssToString(LocalDateTime.now())
+
+        apiRequestImpl.getRegisterAppointmentAllDate(
+            request,
+            {
+                response ->
+                ResponseTool.handleSyncResponseEx(
+                    response,
+                    context,
+                    callback,
+                    ::handleGetRegisterAppointmentAllDate
+                )
+            },
+            {
+                error -> callback.onThrowable(error)
+            }
+        )
+    }
+
+    private fun handleGetRegisterAppointmentAllDate
+                (response: BaseResponse<GetAllRegisterAppointmentDateResponse>, context: Context, callback: SyncRequestCallback){
         callback.onAllRequestSuccess()
     }
 
