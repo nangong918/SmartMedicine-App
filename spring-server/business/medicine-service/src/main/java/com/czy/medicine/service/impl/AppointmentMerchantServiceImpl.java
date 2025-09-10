@@ -47,7 +47,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -230,19 +229,6 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
     @NotNull
     @Override
     public List<AppointmentDoctorDataVo> getDataVoList(@NotNull AppointmentDoctorSelectAo ao) throws AppException{
-        /// 参数校验
-        if (!StringUtils.hasText(ao.getRegisterTime())){
-            return new ArrayList<>();
-        }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime registerTime;
-        try {
-            registerTime = DateUtils.getLocalDateTime(ao.getRegisterTime(), formatter);
-        } catch (Exception e) {
-            String errorMessage = "时间转换错误, timeStr: " + ao.getRegisterTime();
-            log.error(errorMessage, e);
-            throw new AppException(errorMessage, e);
-        }
 
         /// 数据源
         /*
@@ -254,6 +240,8 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
             缓存对象: 缓存对象为Do, 因为Vo涉及对Do的计算, 如果只因为数据存在就返回数据, 那么一定会出现缓存Vo和Do计算出来的Vo不一致
             如果缓存对象为Vo, 那么每次更新Do的时候都要删除缓存, 避免返回过时的Vo这一问题
          */
+        // 废弃不使用前端的值，因为查询肯定是今天~3天后
+        LocalDateTime registerTime = LocalDateTime.now();
 
         // 获取今天~3天后挂号列表
         LocalDateTime[] registerDates = new LocalDateTime[]{
