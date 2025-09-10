@@ -8,6 +8,6 @@ import com.czy.domain.vo.entity.medicine.AppointmentDoctorMerchantCardVo;
  * @date 2025/8/18 14:40
  */
 public class RegisterAppointmentDoctorCardAo {
-    private AppointmentDoctorMerchantCardVo vo;
-    private String doctorMerchantAppointmentId;
+    public AppointmentDoctorMerchantCardVo vo;
+    public String doctorMerchantAppointmentId;
 }
