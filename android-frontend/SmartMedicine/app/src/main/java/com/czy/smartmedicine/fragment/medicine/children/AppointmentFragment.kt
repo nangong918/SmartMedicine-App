@@ -2,12 +2,9 @@ package com.czy.smartmedicine.fragment.medicine.children
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.czy.appcore.network.api.handle.SyncRequestCallback
-import com.czy.baseutil.network.networkLoad.NetworkLoadUtils
 import com.czy.smartmedicine.activity.AppointmentActivity
 import com.czy.smartmedicine.databinding.FragmentAppointmentBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
@@ -48,32 +45,26 @@ class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, Appointme
         super.setListener()
 
         binding.btnSearch.setOnClickListener {
-            NetworkLoadUtils.showDialogSafety(requireActivity())
-            vm.doGetRegisterAppointmentList(requireActivity(), object : SyncRequestCallback {
-                override fun onThrowable(throwable: Throwable?) {
-                    NetworkLoadUtils.dismissDialogSafe(requireActivity())
-                    Log.e(TAG, "获取预约列表失败", throwable)
-                }
+            val intent = Intent(activity, AppointmentActivity::class.java)
 
-                override fun onAllRequestSuccess() {
-                    NetworkLoadUtils.dismissDialogSafe(requireActivity())
+            intent.putExtra(AppointmentActivity::class.java.name,
+                vm.appointmentDoctorPageVo
+            )
 
-                    val intent = Intent(activity, AppointmentActivity::class.java)
+            // location
+            intent.putExtra("province", vm.aao.province.value)
+            intent.putExtra("city", vm.aao.city.value)
+            intent.putExtra("area", vm.aao.area.value)
 
-                    intent.putExtra(AppointmentActivity::class.java.name,
-                        vm.appointmentDoctorPageVo
-                    )
+            // register
+            intent.putExtra("department", vm.aao.department.value)
+            intent.putExtra("registerDepartmentCode", vm.aao.registerDepartmentCode.value)
+            intent.putExtra("registerSubjectCode", vm.aao.registerSubjectCode.value)
 
-                    intent.putExtra("province", vm.aao.province.value)
-                    intent.putExtra("city", vm.aao.city.value)
-                    intent.putExtra("area", vm.aao.area.value)
-                    intent.putExtra("department", vm.aao.department.value)
-                    intent.putExtra("registerDepartmentCode", vm.aao.registerDepartmentCode.value)
-                    intent.putExtra("registerSubjectCode", vm.aao.registerSubjectCode.value)
+            // date
+            intent.putExtra("selectDate", vm.aao.dataLongLd.value)
 
-                    startActivity(intent)
-                }
-            })
+            startActivity(intent)
         }
     }
 
@@ -85,7 +76,7 @@ class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, Appointme
         vm.aao.province.value = "广东"
         vm.aao.city.value = "深圳"
         vm.aao.area.value = "南山"
-        vm.aao.date.value = LocalDateTime.now()
+        vm.aao.date = LocalDateTime.now()
         vm.aao.department.value = "内科-心脏内科"
 
         vm.initAdapter()
@@ -142,10 +133,11 @@ class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, Appointme
         }
 
         // date
-        vm.aao.date.observe(viewLifecycleOwner) {
-            date ->
+        vm.aao.dataLongLd.observe(viewLifecycleOwner) {
+            dateLong ->
+            vm.aao.date = LocalDateTime.now().plusDays(dateLong).toLocalDate().atStartOfDay()
             val formatter = DateTimeFormatter.ofPattern("MM月dd日")
-            val dateStr = date.format(formatter)
+            val dateStr = vm.aao.date.format(formatter)
             binding.tvDate.text = dateStr
         }
 

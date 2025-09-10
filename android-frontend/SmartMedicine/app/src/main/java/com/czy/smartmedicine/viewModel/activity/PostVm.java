@@ -57,12 +57,12 @@ public class PostVm extends ViewModel {
             @Override
             public void onThrowable(Throwable throwable) {
                 Log.e(TAG, "initialNetworkRequest::getSinglePost: ",throwable);
-                NetworkLoadUtils.dismissDialogSafe(activity);
+                NetworkLoadUtils.dismissDialogSafety(activity);
             }
 
             @Override
             public void onAllRequestSuccess() {
-                NetworkLoadUtils.dismissDialogSafe(activity);
+                NetworkLoadUtils.dismissDialogSafety(activity);
             }
         });
     }

@@ -89,13 +89,13 @@ public class SignVm extends ViewModel {
                 doCheckIsRegistered(context, new SyncRequestCallback() {
                     @Override
                     public void onThrowable(Throwable throwable) {
-                        NetworkLoadUtils.dismissDialogSafe(context);
+                        NetworkLoadUtils.dismissDialogSafety(context);
                         Log.e(TAG, "注册检查异常：", throwable);
                     }
 
                     @Override
                     public void onAllRequestSuccess() {
-                        NetworkLoadUtils.dismissDialogSafe(context);
+                        NetworkLoadUtils.dismissDialogSafety(context);
                     }
                 });
             }

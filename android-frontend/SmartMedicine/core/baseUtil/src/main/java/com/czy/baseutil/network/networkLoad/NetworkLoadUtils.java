@@ -85,12 +85,12 @@ public class NetworkLoadUtils extends MultiDexApplication {
         }
     }
 
-    public static void dismissDialogSafe(@NotNull Context context){
+    public static void dismissDialogSafety(@NotNull Context context){
         if (context instanceof Activity){
             ((Activity) context).runOnUiThread(NetworkLoadUtils::dismissDialog);
         }
         else {
-            Log.w(TAG, "dismissDialogSafe: context is not an Activity");
+            Log.w(TAG, "dismissDialogSafety: context is not an Activity");
             dismissDialog();
         }
     }

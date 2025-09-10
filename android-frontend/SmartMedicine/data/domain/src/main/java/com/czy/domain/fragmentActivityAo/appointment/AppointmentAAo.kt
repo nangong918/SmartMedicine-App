@@ -5,18 +5,6 @@ import com.czy.domain.ao.medicine.RegisterAppointmentDoctorCardAo
 import java.time.LocalDateTime
 
 class AppointmentAAo {
-    // 日期vo
-    // 预约时间：yyyy-MM-dd
-    val dateStrLd = MutableLiveData("")
-    // 剩余可预约数量
-    val leftAppointmentCount = MutableLiveData(0)
-    // 最低费用
-    val minPrice = MutableLiveData("-")
-
-    // 医生卡片voList
-    var doctorVoList: List<RegisterAppointmentDoctorCardAo> = listOf()
-    val doctorVoSizeLd: MutableLiveData<Int> = MutableLiveData(0)
-
     /// location
     // 省
     var province = ""
@@ -33,4 +21,17 @@ class AppointmentAAo {
     var department = ""
     var registerDepartmentCode = 1
     var registerSubjectCode = 1
+
+    // selectData
+    var currentSelectDate: LocalDateTime = LocalDateTime.now().toLocalDate().atStartOfDay()
+
+    // 顶部的预约日志
+    val isAppointmentDateChanged = MutableLiveData(false)
+    // 当前选择4个中的哪个?: 0~3
+    var currentSelectDatePosition = MutableLiveData(0L)
+
+    // 医生卡片voList
+    var doctorVoList: List<RegisterAppointmentDoctorCardAo> = listOf()
+    val doctorVoSizeLd: MutableLiveData<Int> = MutableLiveData(0)
+
 }
