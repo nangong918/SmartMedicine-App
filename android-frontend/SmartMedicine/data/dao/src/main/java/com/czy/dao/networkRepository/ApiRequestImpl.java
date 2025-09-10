@@ -12,6 +12,7 @@ import com.czy.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.domain.dto.http.request.GetMyFriendsRequest;
 import com.czy.domain.dto.http.request.GetRegisterAppointmentListRequest;
 import com.czy.domain.dto.http.request.GetSinglePostRequest;
+import com.czy.domain.dto.http.request.GetUserAppointmentRecordRequest;
 import com.czy.domain.dto.http.request.IsRegisterRequest;
 import com.czy.domain.dto.http.request.LoginUserRequest;
 import com.czy.domain.dto.http.request.PhoneLoginInfoRequest;
@@ -28,6 +29,7 @@ import com.czy.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
 import com.czy.domain.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.domain.dto.http.response.GetMyFriendsResponse;
 import com.czy.domain.dto.http.response.GetRegisterAppointmentListResponse;
+import com.czy.domain.dto.http.response.GetUserAppointmentRecordResponse;
 import com.czy.domain.dto.http.response.IsRegisterResponse;
 import com.czy.domain.dto.http.response.LoginSignResponse;
 import com.czy.domain.dto.http.response.PostPublishResponse;
@@ -461,6 +463,20 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                                           OnThrowableCallback onThrowableCallback){
         this.sendRequestCallback(
                 mApi.appointmentDoctorMerchant(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getCustomerList")
+    //    Observable<BaseResponse<GetUserAppointmentRecordResponse>> getUserAppointmentRecord(
+    //            @Body GetUserAppointmentRecordRequest request
+    //    );
+    public void getUserAppointmentRecord(GetUserAppointmentRecordRequest request,
+                                         OnSuccessCallback<BaseResponse<GetUserAppointmentRecordResponse>> onSuccessCallback,
+                                         OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.getUserAppointmentRecord(request),
                 onSuccessCallback,
                 onThrowableCallback
         );

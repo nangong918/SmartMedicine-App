@@ -9,6 +9,7 @@ import com.czy.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.domain.dto.http.request.GetMyFriendsRequest;
 import com.czy.domain.dto.http.request.GetRegisterAppointmentListRequest;
 import com.czy.domain.dto.http.request.GetSinglePostRequest;
+import com.czy.domain.dto.http.request.GetUserAppointmentRecordRequest;
 import com.czy.domain.dto.http.request.IsRegisterRequest;
 import com.czy.domain.dto.http.request.LoginUserRequest;
 import com.czy.domain.dto.http.request.PhoneLoginInfoRequest;
@@ -25,6 +26,7 @@ import com.czy.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
 import com.czy.domain.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.domain.dto.http.response.GetMyFriendsResponse;
 import com.czy.domain.dto.http.response.GetRegisterAppointmentListResponse;
+import com.czy.domain.dto.http.response.GetUserAppointmentRecordResponse;
 import com.czy.domain.dto.http.response.IsRegisterResponse;
 import com.czy.domain.dto.http.response.LoginSignResponse;
 import com.czy.domain.dto.http.response.PostPublishResponse;
@@ -334,5 +336,15 @@ public interface ApiRequest {
     @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/apply")
     Observable<BaseResponse<AppointmentDoctorResponse>> appointmentDoctorMerchant(
             @Body AppointmentDoctorRequest request
+    );
+
+    /**
+     * 获取用户预约列表
+     * @param request   获取用户预约列表请求
+     * @return          获取用户预约列表响应
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getCustomerList")
+    Observable<BaseResponse<GetUserAppointmentRecordResponse>> getUserAppointmentRecord(
+            @Body GetUserAppointmentRecordRequest request
     );
 }
