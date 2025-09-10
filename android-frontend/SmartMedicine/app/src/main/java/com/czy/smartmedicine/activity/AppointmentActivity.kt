@@ -39,7 +39,7 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
         val extras = intent.extras
         if (extras != null) {
             try {
-                val appointmentDoctorPageVo = extras.get(AppointmentActivity::class.java.name)
+                val appointmentDoctorPageVo = extras.getSerializable(AppointmentActivity::class.java.name)
                         as? AppointmentDoctorPageVo
                 vm.aao.province = extras.getString("province", "")
                 vm.aao.city = extras.getString("city", "")

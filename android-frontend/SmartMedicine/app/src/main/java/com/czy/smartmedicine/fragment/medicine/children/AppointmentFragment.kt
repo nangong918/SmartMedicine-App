@@ -64,6 +64,13 @@ class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, Appointme
                         vm.appointmentDoctorPageVo
                     )
 
+                    intent.putExtra("province", vm.aao.province.value)
+                    intent.putExtra("city", vm.aao.city.value)
+                    intent.putExtra("area", vm.aao.area.value)
+                    intent.putExtra("department", vm.aao.department.value)
+                    intent.putExtra("registerDepartmentCode", vm.aao.registerDepartmentCode.value)
+                    intent.putExtra("registerSubjectCode", vm.aao.registerSubjectCode.value)
+
                     startActivity(intent)
                 }
             })
