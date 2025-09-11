@@ -10,6 +10,6 @@ import java.util.List;
  * @date 2025/8/25 16:09
  */
 public class GetUserAppointmentRecordResponse {
-    private List<AppointmentDoctorOrderListAo> currentOrders;
-    private List<AppointmentDoctorOrderListAo> unprocessedOrders;
+    public List<AppointmentDoctorOrderListAo> currentOrders;
+    public List<AppointmentDoctorOrderListAo> unprocessedOrders;
 }

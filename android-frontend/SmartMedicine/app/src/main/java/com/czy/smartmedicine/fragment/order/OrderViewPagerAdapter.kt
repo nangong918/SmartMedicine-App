@@ -19,7 +19,7 @@ class OrderViewPagerAdapter: FragmentStateAdapter {
     constructor(fragmentActivity: FragmentActivity) : super(fragmentActivity)
     constructor(fragmentManager: FragmentManager, lifecycle: Lifecycle) : super(fragmentManager, lifecycle)
 
-    private val fragmentCache = SparseArray<Fragment>(OrderViewPagerEnum.values().size)
+    val fragmentCache = SparseArray<Fragment>(OrderViewPagerEnum.values().size)
 
     override fun createFragment(position: Int): Fragment {
         if (fragmentCache[position] != null) {

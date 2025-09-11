@@ -2,8 +2,10 @@ package com.czy.smartmedicine.activity.order
 
 import android.os.Bundle
 import com.czy.appview.view.medicine.order.OrderViewPagerEnum
+import com.czy.domain.constant.medicine.AppointmentSortTypeEnum
 import com.czy.domain.fragmentActivityAo.medicine.order.OrderListAAo
 import com.czy.smartmedicine.databinding.ActivityOrderListBinding
+import com.czy.smartmedicine.fragment.order.OrderAppointmentFragment
 import com.czy.smartmedicine.fragment.order.OrderViewPagerAdapter
 import com.czy.smartmedicine.utils.BaseVmActivity
 import com.czy.smartmedicine.viewModel.activity.order.OrderListVm
@@ -46,6 +48,13 @@ class OrderListActivity : BaseVmActivity<ActivityOrderListBinding, OrderListVm>(
         vm.aao.currentPageLd.value = OrderViewPagerEnum.APPOINTMENT_ORDER.index
 
         vm.viewPagerAdapter = OrderViewPagerAdapter(this)
+
+        // 初始化
+        vm.viewPagerAdapter.fragmentCache.get(OrderViewPagerEnum.APPOINTMENT_ORDER.index)?.let {
+            (it as OrderAppointmentFragment).setSortType(
+                AppointmentSortTypeEnum.TIME.code
+            )
+        }
     }
 
     private fun observeData(){
@@ -58,6 +67,14 @@ class OrderListActivity : BaseVmActivity<ActivityOrderListBinding, OrderListVm>(
                 currentPage,
                 true
             )
+
+            if (OrderViewPagerEnum.APPOINTMENT_ORDER.index == currentPage){
+                vm.viewPagerAdapter.fragmentCache.get(currentPage)?.let {
+                    (it as OrderAppointmentFragment).setCurrentList(
+                        vm.aao.fragmentCurrentAppointmentOrders
+                    )
+                }
+            }
         }
     }
 
