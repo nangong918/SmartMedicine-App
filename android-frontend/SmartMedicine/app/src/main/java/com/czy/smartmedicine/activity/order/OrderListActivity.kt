@@ -1,6 +1,7 @@
 package com.czy.smartmedicine.activity.order
 
 import android.os.Bundle
+import com.czy.appcore.network.api.handle.SyncRequestCallback
 import com.czy.appview.view.medicine.order.OrderViewPagerEnum
 import com.czy.domain.constant.medicine.AppointmentSortTypeEnum
 import com.czy.domain.fragmentActivityAo.medicine.order.OrderListAAo
@@ -79,6 +80,13 @@ class OrderListActivity : BaseVmActivity<ActivityOrderListBinding, OrderListVm>(
     }
 
     private fun initRequest(){
+        vm.doGetUserAppointmentRecord(context = this, object : SyncRequestCallback {
+            override fun onThrowable(throwable: Throwable?) {
+            }
 
+            override fun onAllRequestSuccess() {
+            }
+
+        }, null, null)
     }
 }
