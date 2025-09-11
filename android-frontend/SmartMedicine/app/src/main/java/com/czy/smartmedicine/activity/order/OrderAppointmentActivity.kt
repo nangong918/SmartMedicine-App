@@ -24,4 +24,10 @@ class OrderAppointmentActivity : BaseVmActivity<ActivityOrderAppointmentBinding,
     override fun initViewModel() {
         super.initViewModel()
     }
+
+    override fun initView() {
+        super.initView()
+
+
+    }
 }

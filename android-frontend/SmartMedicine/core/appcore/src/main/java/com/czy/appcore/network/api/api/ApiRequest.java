@@ -2,6 +2,7 @@ package com.czy.appcore.network.api.api;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.baseutil.network.BaseResponse;
+import com.czy.domain.ao.medicine.AppointmentDoctorOrderDetailsAo;
 import com.czy.domain.constant.backEnd.BackEndConstant;
 import com.czy.domain.dto.http.request.AppointmentDoctorRequest;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
@@ -347,4 +348,17 @@ public interface ApiRequest {
     Observable<BaseResponse<GetUserAppointmentRecordResponse>> getUserAppointmentRecord(
             @Body GetUserAppointmentRecordRequest request
     );
+
+    /**
+     * 获取用户预约详情
+     * @param userId    userId
+     * @param orderId   orderId
+     * @return            获取用户预约详情响应
+     */
+    @GET(BackEndConstant.MEDICINE + "/appointment/getCustomerDetails")
+    Observable<BaseResponse<AppointmentDoctorOrderDetailsAo>> getAppointmentRecordDetails(
+            @Query("userId") Long userId,
+            @Query("orderId") Long orderId
+    );
+
 }

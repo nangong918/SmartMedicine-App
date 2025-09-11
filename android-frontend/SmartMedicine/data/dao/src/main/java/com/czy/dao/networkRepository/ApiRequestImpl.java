@@ -6,6 +6,7 @@ import com.czy.baseutil.network.BaseApiRequestImpl;
 import com.czy.baseutil.network.BaseResponse;
 import com.czy.baseutil.network.OnSuccessCallback;
 import com.czy.baseutil.network.OnThrowableCallback;
+import com.czy.domain.ao.medicine.AppointmentDoctorOrderDetailsAo;
 import com.czy.domain.dto.http.request.AppointmentDoctorRequest;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
 import com.czy.domain.dto.http.request.FuzzySearchRequest;
@@ -477,6 +478,22 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                                          OnThrowableCallback onThrowableCallback){
         this.sendRequestCallback(
                 mApi.getUserAppointmentRecord(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @GET(BackEndConstant.MEDICINE + "/appointment/getCustomerDetails")
+    //    Observable<BaseResponse<AppointmentDoctorOrderDetailsAo>> getAppointmentRecordDetails(
+    //            @Query("userId") Long userId,
+    //            @Query("orderId") Long orderId
+    //    );
+    public void getAppointmentRecordDetails(Long userId,
+                                            Long orderId,
+                                            OnSuccessCallback<BaseResponse<AppointmentDoctorOrderDetailsAo>> onSuccessCallback,
+                                            OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.getAppointmentRecordDetails(userId, orderId),
                 onSuccessCallback,
                 onThrowableCallback
         );
