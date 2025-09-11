@@ -10,7 +10,7 @@ import com.czy.domain.ao.medicine.RegisterAppointmentDoctorCardAo
 import java.util.Optional
 
 class AppointmentMerchantAdapter(
-    private val appointmentList: List<RegisterAppointmentDoctorCardAo>,
+    private val appointmentList: MutableList<RegisterAppointmentDoctorCardAo>,
     private val onPositionItemClick: OnPositionItemClick
 ) : RecyclerView.Adapter<AppointmentMerchantViewHolder>() {
     override fun onCreateViewHolder(

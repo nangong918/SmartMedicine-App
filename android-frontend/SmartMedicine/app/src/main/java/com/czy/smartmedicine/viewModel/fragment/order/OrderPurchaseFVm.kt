@@ -52,9 +52,10 @@ class OrderPurchaseFVm(
         )
     }
 
-    fun handleGetUserAppointmentRecord(response: BaseResponse<GetUserAppointmentRecordResponse>, context: Context, callback: SyncRequestCallback) {
-
-        callback.onAllRequestSuccess()
+    private fun handleGetUserAppointmentRecord
+                (response: BaseResponse<GetUserAppointmentRecordResponse>, context: Context, callback: SyncRequestCallback) {
+                // todo
+                callback.onAllRequestSuccess()
     }
 
     //---------------------------Logic---------------------------
