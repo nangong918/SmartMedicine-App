@@ -6,6 +6,10 @@ import com.czy.appview.databinding.AppointmentOrderItemBinding
 import com.czy.baseutil.date.DateUtils
 import com.czy.baseutil.image.ImageLoadUtil
 import com.czy.domain.ao.medicine.AppointmentDoctorOrderListAo
+import com.czy.domain.constant.OrderStatusCalculator
+import com.czy.domain.constant.UserOrderStatusEnum
+import com.czy.domain.constant.medicine.AppointmentMerchantStatusEnum
+import com.czy.domain.constant.purchase.OrderStatusEnum
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -71,7 +75,18 @@ class AppointmentDoctorOrderViewHolder (
         // 剩余支付时间   todo 后端从redis中获取, 前端倒计时
         binding.tvRemainingPayTime
 
-        // 订单状态: AppointmentMerchantStatus + UserOrderStatus -> 订单状态 todo 从后端代码复制
+        // 订单状态: AppointmentMerchantStatus + UserOrderStatus -> 订单状态
+        val appointmentMerchantStatus = AppointmentMerchantStatusEnum.getByCode(
+            ao.listVo?.merchantStatus?: 0
+        )
+        val userOrderStatus = UserOrderStatusEnum.getByCode(
+            ao.listVo?.customerStatus?: 0
+        )
+        val orderStatusEnum : OrderStatusEnum = OrderStatusCalculator.calculateOrderStatus(
+            appointmentMerchantStatus,
+            userOrderStatus
+        )
+        binding.tvOrderStatus.text = orderStatusEnum.name
     }
 
     fun setOnOrderClick(onOrderClick: OnAppointmentOrderClick) {
