@@ -1,15 +1,21 @@
 package com.czy.smartmedicine.fragment.order
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.czy.appview.view.medicine.order.AppointmentDoctorOrderAdapter
+import com.czy.appview.view.medicine.order.OnAppointmentOrderClick
+import com.czy.domain.ao.medicine.AppointmentDoctorOrderListAo
+import com.czy.domain.constant.medicine.AppointmentSortTypeEnum
+import com.czy.domain.fragmentActivityAo.medicine.order.OrderAppointmentFAo
 import com.czy.smartmedicine.databinding.FragmentOrderAppointmentBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
 import com.czy.smartmedicine.viewModel.fragment.order.OrderAppointmentFVm
 
 
-class OrderAppointmentFragment : BaseVmFragment<FragmentOrderAppointmentBinding, OrderAppointmentFVm>(
+open class OrderAppointmentFragment : BaseVmFragment<FragmentOrderAppointmentBinding, OrderAppointmentFVm>(
     OrderAppointmentFragment::class,
     OrderAppointmentFVm::class
 ) {
@@ -39,5 +45,52 @@ class OrderAppointmentFragment : BaseVmFragment<FragmentOrderAppointmentBinding,
 
     override fun initViewModel() {
         super.initViewModel()
+
+        initVmFAo()
+
+        observeData()
+
+        initRequest()
+    }
+
+    private fun initVmFAo() {
+        vm.fao = OrderAppointmentFAo()
+
+        vm.adapter = AppointmentDoctorOrderAdapter(
+            vm.fao.currentOrders?: mutableListOf(),
+            object : OnAppointmentOrderClick {
+                override fun onBaseCardClick(position: Int, merchantId: Long?, orderId: Long?) {
+
+                }
+
+                override fun onButton1Click(position: Int, merchantId: Long?, orderId: Long?) {
+
+                }
+
+                override fun onButton2Click(position: Int, merchantId: Long?, orderId: Long?) {
+
+                }
+            }
+        )
+    }
+
+    open fun setSortType(sortType: Int) {
+        vm.fao.currentSortType.value = sortType
+    }
+
+    open fun setCurrentList(list: MutableList<AppointmentDoctorOrderListAo>) {
+        vm.fao.currentOrders = list
+        vm.fao.currentAllCount.value = list.size
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun observeData() {
+        vm.fao.currentAllCount.observe(viewLifecycleOwner){
+            count ->
+            vm.adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun initRequest() {
     }
 }

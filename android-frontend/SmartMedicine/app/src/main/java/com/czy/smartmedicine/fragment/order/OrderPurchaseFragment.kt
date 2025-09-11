@@ -39,7 +39,5 @@ class OrderPurchaseFragment : BaseVmFragment<FragmentOrderPurchaseBinding, Order
 
     override fun initViewModel() {
         super.initViewModel()
-
-        vm // todo
     }
 }
