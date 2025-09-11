@@ -473,6 +473,53 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
     }
 
     @Override
+    public AppointmentDoctorOrderListAo getAppointmentRecordDetails(@NotNull Long userId, @NotNull Long orderId) {
+        ///  1. redis查询
+        AppointmentDoctorOrderListAo ao = appointmentDoctorOrderRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
+                userId,
+                orderId
+        );
+        if (ao == null || ao.getOrderId() == null){
+            log.info("[获取user预约订单详情]缓存未命中, 获取数据库数据: userId: {}, orderId: {}", userId, orderId);
+
+            /// 2. mysql查询
+            UserCustomerAppointmentDo userCustomerAppointmentDo = userCustomerAppointmentOrderMapper.getByOrderId(orderId);
+            if (userCustomerAppointmentDo == null || userCustomerAppointmentDo.getId() == null){
+                return null;
+            }
+
+            List<UserCustomerAppointmentDo> list = new ArrayList<>(1);
+            list.add(userCustomerAppointmentDo);
+            List<UserAppointmentOrderBo> bos = doctorMerchantBoMapper.getDoctorCardBosByUserCustomerAppointmentDos(
+                    list
+            );
+            if (CollectionUtils.isEmpty(bos)){
+                return null;
+            }
+
+            // 数据计算填充: MerchantStatus
+            AppointmentMerchantStatusCalculator.calculateFillUserAppointmentOrderBos(
+                    bos
+            );
+
+            LocalDateTime registerDate = LocalDateTime.now();
+            String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
+            // bos -> aos
+            ao = appointmentDoctorOrderConverter.getAoByBo(
+                    bos.get(0),
+                    dateStr
+            );
+
+            // 缓存
+            boolean result = appointmentDoctorOrderRedisMapper.saveSingleAppointmentDoctorOrderListAo(
+                    userId,
+                    ao
+            );
+        }
+        return ao;
+    }
+
+    @Override
     public void handlePayResultMessage(@NotNull AppointmentPayResultDto dto) {
         try {
             // 解析dto

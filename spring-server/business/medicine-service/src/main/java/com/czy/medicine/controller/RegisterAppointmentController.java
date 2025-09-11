@@ -6,6 +6,7 @@ import com.api.mapper.medicine.redis.DoctorMerchantAppointmentRedisMapper;
 import com.czy.api.constant.medicine.AppointmentSortTypeEnum;
 import com.czy.api.constant.medicine.MedicineConstant;
 import com.czy.api.constant.purchase.PurchaseConstant;
+import com.czy.api.converter.domain.medicine.AppointmentDoctorOrderListConverter;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorAo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderDetailsAo;
 import com.czy.api.domain.ao.medicine.AppointmentDoctorOrderListAo;
@@ -65,6 +66,7 @@ public class RegisterAppointmentController {
     private final AppointmentMqSender appointmentMqSender;
     private final AppointmentDoctorOrderRedisMapper appointmentDoctorOrderRedisMapper;
     private final DoctorMerchantAppointmentRedisMapper doctorMerchantAppointmentRedisMapper;
+    private final AppointmentDoctorOrderListConverter appointmentDoctorOrderListConverter;
 
     /// 查：获取
 
@@ -145,14 +147,14 @@ public class RegisterAppointmentController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
-    @Deprecated
     @GetMapping("/getCustomerDetails")
     public BaseResponse<AppointmentDoctorOrderDetailsAo>
     getAppointmentRecordDetails
             (@RequestParam("userId") Long userId,
              @RequestParam("orderId") Long orderId){
-        // 暂时不开发
-        return null;
+        AppointmentDoctorOrderListAo listAo = appointmentDoctorService.getAppointmentRecordDetails(userId, orderId);
+        AppointmentDoctorOrderDetailsAo detailsAo = appointmentDoctorOrderListConverter.toDetailsAo(listAo);
+        return BaseResponse.getResponseEntitySuccess(detailsAo);
     }
 
     // 获取某个预约订单的详情
