@@ -13,6 +13,7 @@ import com.czy.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.domain.dto.http.request.GetUserAppointmentRecordRequest;
 import com.czy.domain.dto.http.request.IsRegisterRequest;
 import com.czy.domain.dto.http.request.LoginUserRequest;
+import com.czy.domain.dto.http.request.PayAppointmentOrderRequest;
 import com.czy.domain.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.domain.dto.http.request.PostPublishRequest;
 import com.czy.domain.dto.http.request.RecommendPostRequest;
@@ -30,6 +31,7 @@ import com.czy.domain.dto.http.response.GetRegisterAppointmentListResponse;
 import com.czy.domain.dto.http.response.GetUserAppointmentRecordResponse;
 import com.czy.domain.dto.http.response.IsRegisterResponse;
 import com.czy.domain.dto.http.response.LoginSignResponse;
+import com.czy.domain.dto.http.response.PayAppointmentResponse;
 import com.czy.domain.dto.http.response.PostPublishResponse;
 import com.czy.domain.dto.http.response.RecommendPostResponse;
 import com.czy.domain.dto.http.response.SearchUserResponse;
@@ -359,6 +361,16 @@ public interface ApiRequest {
     Observable<BaseResponse<AppointmentDoctorOrderDetailsAo>> getAppointmentRecordDetails(
             @Query("userId") Long userId,
             @Query("orderId") Long orderId
+    );
+
+    /**
+     * 支付
+     * @param request     支付请求
+     * @return            获取用户预约详情响应
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.PURCHASE + "/pay/appointment")
+    Observable<BaseResponse<PayAppointmentResponse>> payAppointmentOrder(
+            @Body PayAppointmentOrderRequest request
     );
 
 }

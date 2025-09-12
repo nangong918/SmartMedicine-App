@@ -3,6 +3,7 @@ package com.czy.smartmedicine.activity.order
 import android.annotation.SuppressLint
 import android.os.Bundle
 import com.czy.appcore.network.api.handle.SyncRequestCallback
+import com.czy.baseutil.network.networkLoad.NetworkLoadUtils
 import com.czy.domain.constant.OrderStatusCalculator
 import com.czy.domain.constant.UserOrderStatusEnum
 import com.czy.domain.constant.medicine.AppointmentMerchantStatusEnum
@@ -77,13 +78,15 @@ class OrderAppointmentActivity : BaseVmActivity<ActivityOrderAppointmentBinding,
     }
 
     private fun initRequest() {
+        NetworkLoadUtils.showDialogSafety(this)
         vm.doGetAppointmentRecordDetails(this, object : SyncRequestCallback {
             override fun onThrowable(throwable: Throwable?) {
+                NetworkLoadUtils.dismissDialogSafety(this@OrderAppointmentActivity)
             }
 
             override fun onAllRequestSuccess() {
+                NetworkLoadUtils.dismissDialogSafety(this@OrderAppointmentActivity)
             }
-
         })
     }
 }
