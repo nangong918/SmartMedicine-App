@@ -54,8 +54,18 @@ class OrderAppointmentAVm(
         )
     }
 
-    private fun handleGetAppointmentRecordDetails(response: BaseResponse<AppointmentDoctorOrderDetailsAo>, context: Context, syncRequestCallback: SyncRequestCallback) {
+    private fun handleGetAppointmentRecordDetails(response: BaseResponse<AppointmentDoctorOrderDetailsAo>, context: Context, callback: SyncRequestCallback) {
+        response.data?.let {
+            aao.orderId = it.orderId
+            aao.merchantId = it.doctorMerchantId
+            aao.detailsVo = it.detailsVo
 
+            aao.isDateChangeLd.value = true
+
+            callback.onAllRequestSuccess()
+            return
+        }
+        callback.onThrowable(Throwable("获取预约详情失败"))
     }
 
     //---------------------------Logic---------------------------

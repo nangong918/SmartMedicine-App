@@ -1,10 +1,15 @@
 package com.czy.domain.fragmentActivityAo.medicine.order
 
+import androidx.lifecycle.MutableLiveData
+import com.czy.domain.vo.entity.medicine.AppointmentDoctorOrderDetailsVo
+
 class OrderAppointmentAAo {
 
-
+    // view
+    lateinit var detailsVo : AppointmentDoctorOrderDetailsVo
+    val isDateChangeLd = MutableLiveData(false)
 
     // data
-    val merchantId : Long? = null
-    val orderId : Long? = null
+    var merchantId : Long? = null
+    var orderId : Long? = null
 }
