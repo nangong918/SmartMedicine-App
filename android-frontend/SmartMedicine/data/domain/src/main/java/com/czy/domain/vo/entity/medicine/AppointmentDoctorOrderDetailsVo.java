@@ -9,6 +9,6 @@ package com.czy.domain.vo.entity.medicine;
  */
 public class AppointmentDoctorOrderDetailsVo {
     // list中的数据
-    private AppointmentDoctorOrderListVo listVo;
+    public AppointmentDoctorOrderListVo listVo;
     // 后续如果有单独的details数据则在此处添加 （当然目前是没有的）
 }
