@@ -49,10 +49,10 @@ public class OrderViewPagerBar extends ConstraintLayout {
             int finalI = i;
             linearLayouts[i].setOnClickListener(
                     v -> {
-                        currentPosition = HomeViewPagerEnum.values()[finalI].getIndex();
+                        currentPosition = OrderViewPagerEnum.values()[finalI].getIndex();
                         if (onViewPagerBarClickListener != null){
                             onViewPagerBarClickListener.onPositionItemClick(
-                                    HomeViewPagerEnum.values()[finalI].getIndex()
+                                    OrderViewPagerEnum.values()[finalI].getIndex()
                             );
                             updateUI();
                         }
@@ -75,25 +75,25 @@ public class OrderViewPagerBar extends ConstraintLayout {
     }
 
     private void updateUI() {
-        OrderViewPagerEnum homeViewPagerEnum = OrderViewPagerEnum.getByValue(currentPosition);
+        OrderViewPagerEnum viewPagerEnum = OrderViewPagerEnum.getByValue(currentPosition);
         binding.tvAppointment.setTextColor(
-                OrderViewPagerEnum.APPOINTMENT_ORDER.equals(homeViewPagerEnum) ?
+                OrderViewPagerEnum.APPOINTMENT_ORDER.equals(viewPagerEnum) ?
                         ContextCompat.getColor(getContext(), R.color.white) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.lyClick1.setBackgroundResource(
-                OrderViewPagerEnum.APPOINTMENT_ORDER.equals(homeViewPagerEnum) ?
+                OrderViewPagerEnum.APPOINTMENT_ORDER.equals(viewPagerEnum) ?
                         R.color.green_100 :
                         R.color.white
         );
 
         binding.tvPurchase.setTextColor(
-                OrderViewPagerEnum.PURCHASE_ORDER.equals(homeViewPagerEnum) ?
+                OrderViewPagerEnum.PURCHASE_ORDER.equals(viewPagerEnum) ?
                         ContextCompat.getColor(getContext(), R.color.white) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
         binding.lyClick2.setBackgroundResource(
-                OrderViewPagerEnum.PURCHASE_ORDER.equals(homeViewPagerEnum) ?
+                OrderViewPagerEnum.PURCHASE_ORDER.equals(viewPagerEnum) ?
                         R.color.green_100 :
                         R.color.white
         );
