@@ -68,6 +68,10 @@ class OrderAppointmentAVm(
         callback.onThrowable(Throwable("获取预约详情失败"))
     }
 
+    fun doPayAppointmentOrder(){
+        // todo
+    }
+
     //---------------------------Logic---------------------------
 
 }
