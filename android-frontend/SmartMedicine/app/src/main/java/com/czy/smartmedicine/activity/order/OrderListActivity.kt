@@ -30,7 +30,6 @@ class OrderListActivity : BaseVmActivity<ActivityOrderListBinding, OrderListVm>(
         binding.vpgBarOrder.setOnViewPagerBarClickListener {
             position ->
             vm.aao.currentPageLd.value = position
-            binding.vpg2.setCurrentItem(position, true)
         }
     }
 

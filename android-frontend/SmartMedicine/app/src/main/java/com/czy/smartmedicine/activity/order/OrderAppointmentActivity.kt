@@ -28,6 +28,28 @@ class OrderAppointmentActivity : BaseVmActivity<ActivityOrderAppointmentBinding,
 
     override fun setListener() {
         super.setListener()
+
+        binding.btnPay.setOnClickListener{
+            NetworkLoadUtils.showDialogSafety(this)
+            vm.doPayAppointmentOrder(
+                this,
+                object : SyncRequestCallback {
+                    override fun onThrowable(throwable: Throwable?) {
+                        NetworkLoadUtils.dismissDialogSafety(this@OrderAppointmentActivity)
+                    }
+
+                    override fun onAllRequestSuccess() {
+                        NetworkLoadUtils.dismissDialogSafety(this@OrderAppointmentActivity)
+                        vm.handlePayResult(
+                            this@OrderAppointmentActivity,
+                            runnable = {
+                                finish()
+                            }
+                        )
+                    }
+                }
+            )
+        }
     }
 
     override fun initViewModel() {
