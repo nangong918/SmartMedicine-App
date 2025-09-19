@@ -73,9 +73,9 @@ class AppointmentFragment : BaseVmFragment<FragmentAppointmentBinding, Appointme
     override fun initViewModel() {
         super.initViewModel()
 
-        vm.aao.province.value = "广东"
-        vm.aao.city.value = "深圳"
-        vm.aao.area.value = "南山"
+        vm.aao.province.value = "广东省"
+        vm.aao.city.value = "深圳市"
+        vm.aao.area.value = "南山区"
         vm.aao.date = LocalDateTime.now()
         vm.aao.department.value = "内科-心脏内科"
 
