@@ -64,10 +64,10 @@ open class OrderAppointmentFragment : BaseVmFragment<FragmentOrderAppointmentBin
         vm.fao = OrderAppointmentFAo()
 
         vm.adapter = AppointmentDoctorOrderAdapter(
-            vm.fao.currentOrders?: mutableListOf(),
+            vm.fao.currentOrders,
             object : OnAppointmentOrderClick {
                 override fun onBaseCardClick(position: Int, merchantId: Long?, orderId: Long?) {
-                    vm.fao.currentOrders?.get(position)?.let {
+                    vm.fao.currentOrders[position].let {
                         val merchantStatusEnum = AppointmentMerchantStatusEnum.getByCode(it.listVo?.merchantStatus?:0)
                         val userOrderStatusEnum = UserOrderStatusEnum.getByCode(it.listVo?.customerStatus?:0)
                         val orderStatus: OrderStatusEnum = OrderStatusCalculator.calculateOrderStatus(
@@ -106,7 +106,8 @@ open class OrderAppointmentFragment : BaseVmFragment<FragmentOrderAppointmentBin
     }
 
     open fun setCurrentList(list: MutableList<AppointmentDoctorOrderListAo>) {
-        vm.fao.currentOrders = list
+        vm.fao.currentOrders.clear()
+        vm.fao.currentOrders.addAll(list)
         vm.fao.currentAllCount.value = list.size
     }
 
