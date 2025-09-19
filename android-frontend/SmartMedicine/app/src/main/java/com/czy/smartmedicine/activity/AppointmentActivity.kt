@@ -1,5 +1,6 @@
 package com.czy.smartmedicine.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import com.czy.appcore.network.api.handle.SyncRequestCallback
@@ -100,6 +101,7 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun observeData() {
         // 顶部的预约日志的数据
         vm.aao.isAppointmentDateChanged.observe(this){
@@ -113,6 +115,20 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
         vm.aao.currentSelectDatePosition.observe(this){
             // 4个 0 ~ 3
             binding.appointmentBar.setCurrentPosition(it.toInt())
+            NetworkLoadUtils.showDialogSafety(this@AppointmentActivity)
+            vm.doGetRegisterAppointmentList(
+                this@AppointmentActivity,
+                object : SyncRequestCallback {
+                    override fun onThrowable(throwable: Throwable?) {
+                        Log.e(TAG, "获取 ViewList 失败: ", throwable)
+                        NetworkLoadUtils.dismissDialogSafety(this@AppointmentActivity)
+                    }
+
+                    override fun onAllRequestSuccess() {
+                        NetworkLoadUtils.dismissDialogSafety(this@AppointmentActivity)
+                    }
+                }
+            )
         }
 
         // list的count
@@ -120,6 +136,7 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
             size ->
             // 0 暂无记录
             // adapter更新
+            vm.merchantAdapter.notifyDataSetChanged()
         }
     }
 
