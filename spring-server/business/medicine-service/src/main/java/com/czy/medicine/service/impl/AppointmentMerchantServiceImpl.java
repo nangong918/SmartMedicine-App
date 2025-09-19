@@ -173,7 +173,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
     private AppointmentDoctorDataVo getDataVo
             (List<DoctorMerchantAppointmentDo> dos, String dateStr){
         AppointmentDoctorDataVo dataVo = new AppointmentDoctorDataVo();
-        dataVo.setData(dateStr);
+        dataVo.setDate(dateStr);
 
         if (CollectionUtils.isEmpty(dos)){
             dataVo.setRemainCount(0);

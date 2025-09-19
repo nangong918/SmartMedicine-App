@@ -2,6 +2,7 @@ package com.czy.appview.view.medicine.appointment
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.RecyclerView
+import com.czy.appcore.utils.MoneyUtil
 import com.czy.appview.databinding.AppointmentMerchantItemBinding
 import com.czy.baseutil.image.ImageLoadUtil
 import com.czy.domain.OnPositionItemClick
@@ -41,7 +42,10 @@ class AppointmentMerchantViewHolder(
             binding.tvPurchaseInfo2.text = vo.hospitalAo?.hospitalVo?.level ?: ""
 
             // 费用 BigDecimal
-            binding.tvMoney.text = ("费用" + vo.cost)
+            val cost = MoneyUtil.formatToCurrency(
+                MoneyUtil.stringToBigDecimal(vo.cost, 1)
+            )
+            binding.tvMoney.text = (cost)
             // 剩余数量
             binding.tvRemain.text = "剩余数量: " + vo.remainCount?.toString()
 

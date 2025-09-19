@@ -2,6 +2,7 @@ package com.czy.appview.view.medicine;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -10,11 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.czy.appcore.utils.MoneyUtil;
 import com.czy.appview.R;
 import com.czy.appview.databinding.AppointmentBarBinding;
 import com.czy.domain.OnPositionItemClick;
 import com.czy.domain.vo.entity.medicine.AppointmentDoctorDataVo;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,10 +107,26 @@ public class AppointmentBar extends ConstraintLayout {
         Optional.ofNullable(dataVos)
                 .filter(vos -> !vos.isEmpty())
                 .ifPresent(vos -> {
+                    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MM月dd日");
                     for (int i = 0; i < Math.min(vos.size(), dateText.length); i++){
-                        dateText[i].setText(vos.get(i).date == null ? "" : vos.get(i).date);
-                        priceText[i].setText(vos.get(i).minCost == null ? "" : vos.get(i).minCost);
-                        remainText[i].setText(String.valueOf(vos.get(i).remainCount == null ? 0 : vos.get(i).remainCount)); // setText不能用Int，会被视为是使用Res资源
+                        if (i > 0){ // 等于 0 就是 “今天”
+                            String date = vos.get(i).date == null ? "" : vos.get(i).date;
+                            try {
+                                LocalDateTime localDateTime = LocalDateTime.parse(date, inputFormatter);
+                                date = localDateTime.format(outputFormatter);
+                            } catch (Exception e){
+                                Log.e(AppointmentBar.class.getName(), "时间转化异常：", e);
+                            }
+                            dateText[i].setText(date);
+                        }
+                        String money = MoneyUtil.formatToCurrency(
+                                MoneyUtil.stringToBigDecimal(vos.get(i).minCost, 1)
+                        );
+                        priceText[i].setText(money);
+                        String remainCount = getContext().getString(R.string.remain_count) +
+                                (vos.get(i).remainCount == null ? 0 : vos.get(i).remainCount);
+                        remainText[i].setText(remainCount); // setText不能用Int，会被视为是使用Res资源
                     }
                 });
     }

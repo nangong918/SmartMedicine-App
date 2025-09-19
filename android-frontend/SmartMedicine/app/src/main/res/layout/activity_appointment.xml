@@ -28,7 +28,7 @@
             <ImageView
                 android:src="@mipmap/location"
                 app:tint="@color/green_900"
-                android:layout_marginStart="30dp"
+                android:layout_marginStart="15dp"
                 android:layout_width="22dp"
                 android:layout_height="22dp"/>
 
@@ -44,10 +44,11 @@
 
             <ImageView
                 android:src="@drawable/graph_2_24px"
-                app:tint="@color/green_900"
+                android:tint="@color/green_900"
                 android:layout_marginStart="30dp"
                 android:layout_width="22dp"
-                android:layout_height="22dp"/>
+                android:layout_height="22dp"
+                tools:ignore="UseAppTint" />
 
             <TextView
                 android:id="@+id/tv_department"

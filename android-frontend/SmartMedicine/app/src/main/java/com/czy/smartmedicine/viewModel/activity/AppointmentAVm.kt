@@ -1,6 +1,7 @@
 package com.czy.smartmedicine.viewModel.activity
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.czy.appcore.network.api.handle.SyncRequestCallback
 import com.czy.appcore.network.netty.api.send.SocketMessageSender
@@ -150,9 +151,9 @@ open class AppointmentAVm(
                     aao.dateList[i].remainCount = list[i].remainCount
                     aao.dateList[i].minCost = list[i].minCost
                 }
-                aao.isAppointmentDateChanged.value = true
             }
         }
+        aao.isAppointmentDateChanged.value = true
         callback.onAllRequestSuccess()
     }
 

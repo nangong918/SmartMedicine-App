@@ -18,9 +18,11 @@
             android:layout_height="30dp"
             android:src="@drawable/chevron_left_24px"
             android:layout_marginStart="15dp"
+            android:tint="@color/green_900"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UseAppTint" />
 
 
         <TextView

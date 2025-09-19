@@ -38,4 +38,6 @@ class AppointmentAAo {
     val doctorVoList: MutableList<RegisterAppointmentDoctorCardAo> = mutableListOf()
     val doctorVoSizeLd: MutableLiveData<Int> = MutableLiveData(0)
 
+    val locationLd: MutableLiveData<String> = MutableLiveData("")
+    val departmentLd: MutableLiveData<String> = MutableLiveData("")
 }

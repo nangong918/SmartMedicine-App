@@ -49,7 +49,7 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
 
         observeData()
 
-        initRequest();
+        initRequest()
     }
 
     private fun initViewModelAAo() {
@@ -60,10 +60,14 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
             vm.aao.city = extras.getString("city", "")
             vm.aao.area = extras.getString("area", "")
 
+            vm.aao.locationLd.value = vm.aao.province + "-" + vm.aao.city + "-" + vm.aao.area
+
             // register
             vm.aao.department = extras.getString("department", "")
             vm.aao.registerDepartmentCode = extras.getInt("registerDepartmentCode")
             vm.aao.registerSubjectCode = extras.getInt("registerSubjectCode")
+
+            vm.aao.departmentLd.value = vm.aao.department
 
             // date
             vm.aao.currentSelectDatePosition.value = extras.getLong("selectDate")
@@ -111,6 +115,7 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
         // 顶部的预约日志的数据
         vm.aao.isAppointmentDateChanged.observe(this){
             if (it){
+                Log.i(TAG, "isAppointmentDateChanged: date = ${vm.aao.dateList[1].date}")
                 // 顶部的预约日志的数据变化了
                 binding.appointmentBar.updateUiDate()
             }
@@ -143,6 +148,15 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
             // adapter更新
             Log.i(TAG, "sizeLd: $size, adapterListSize: ${vm.merchantAdapter.itemCount}")
             vm.merchantAdapter.notifyDataSetChanged()
+        }
+
+        // location
+        vm.aao.locationLd.observe(this){
+            binding.tvLocation.text = it
+        }
+        // department
+        vm.aao.departmentLd.observe(this){
+            binding.tvDepartment.text = it
         }
     }
 

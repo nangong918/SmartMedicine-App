@@ -42,7 +42,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/stethoscope_24px"
-                app:tint="@color/green_900"/>
+                android:tint="@color/green_900"
+                tools:ignore="UseAppTint" />
 
             <TextView
                 android:id="@+id/tv_doctorName"
@@ -66,7 +67,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/local_hospital_24px"
-                app:tint="@color/green_900"/>
+                android:tint="@color/green_900"
+                tools:ignore="UseAppTint" />
 
             <TextView
                 android:id="@+id/tv_hospitalName"
@@ -90,7 +92,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/nest_clock_farsight_analog_24px"
-                app:tint="@color/green_900"/>
+                android:tint="@color/green_900"
+                tools:ignore="UseAppTint" />
 
             <TextView
                 android:id="@+id/tv_duration"
