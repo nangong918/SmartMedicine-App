@@ -97,6 +97,8 @@ open class OrderAppointmentFragment : BaseVmFragment<FragmentOrderAppointmentBin
                 }
             }
         )
+
+        binding.rclv.adapter = vm.adapter
     }
 
     open fun setSortType(sortType: Int) {

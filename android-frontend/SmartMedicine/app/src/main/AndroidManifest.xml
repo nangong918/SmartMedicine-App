@@ -36,9 +36,6 @@
             android:name=".activity.order.OrderListActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.OrderActivity"
-            android:exported="false" />
-        <activity
             android:name=".activity.search.SearchPostActivity"
             android:exported="false" />
         <activity

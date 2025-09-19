@@ -31,6 +31,10 @@ class OrderListActivity : BaseVmActivity<ActivityOrderListBinding, OrderListVm>(
             position ->
             vm.aao.currentPageLd.value = position
         }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     override fun initViewModel() {

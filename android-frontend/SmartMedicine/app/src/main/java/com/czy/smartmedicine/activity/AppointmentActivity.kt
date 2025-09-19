@@ -34,6 +34,10 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
             position ->
             vm.aao.currentSelectDatePosition.value = position.toLong()
         }
+
+        binding.topBar.setBack {
+            finish()
+        }
     }
 
     //---------------------------VM---------------------------
