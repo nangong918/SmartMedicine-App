@@ -101,9 +101,9 @@ public class AppointmentBar extends ConstraintLayout {
                 .filter(vos -> !vos.isEmpty())
                 .ifPresent(vos -> {
                     for (int i = 0; i < vos.size(); i++){
-                        dateText[i].setText(vos.get(i).date);
-                        priceText[i].setText(vos.get(i).minCost);
-                        remainText[i].setText(vos.get(i).remainCount);
+                        dateText[i].setText(vos.get(i).date == null ? "" : vos.get(i).date);
+                        priceText[i].setText(vos.get(i).minCost == null ? "" : vos.get(i).minCost);
+                        remainText[i].setText(String.valueOf(vos.get(i).remainCount == null ? 0 : vos.get(i).remainCount)); // setText不能用Int，会被视为是使用Res资源
                     }
                 });
     }
