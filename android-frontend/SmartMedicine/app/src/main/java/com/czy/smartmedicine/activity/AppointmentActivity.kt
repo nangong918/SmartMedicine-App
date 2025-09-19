@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import com.czy.appcore.network.api.handle.SyncRequestCallback
+import com.czy.appview.VerticalSpacingItemDecoration
 import com.czy.appview.view.medicine.appointment.AppointmentMerchantAdapter
 import com.czy.baseutil.network.networkLoad.NetworkLoadUtils
 import com.czy.baseutil.ui.ToastUtils
@@ -107,7 +108,10 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
                 vm.aao.doctorVoList[position].doctorMerchantAppointmentId
             )
         }
-        binding.rclvAppointment.adapter = vm.merchantAdapter
+        binding.rclvAppointment.apply {
+            adapter = vm.merchantAdapter
+            addItemDecoration(VerticalSpacingItemDecoration(5))
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -189,6 +193,13 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
             },
 
         )
+    }
+
+
+    override fun initView() {
+        super.initView()
+
+        binding.topBar.setTitle(getString(com.czy.appview.R.string.appointment_title))
     }
 
 }

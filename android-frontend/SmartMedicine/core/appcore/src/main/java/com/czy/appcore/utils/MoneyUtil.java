@@ -1,5 +1,8 @@
 package com.czy.appcore.utils;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
@@ -10,10 +13,15 @@ public class MoneyUtil {
     // String -> BigDecimal (入参表明保留几位小数)
     public static BigDecimal stringToBigDecimal(String str, int scale) {
         BigDecimal bigDecimal = BigDecimal.ZERO;
-        if (str == null) {
+        if (TextUtils.isEmpty(str)) {
             return bigDecimal;
         }
-        bigDecimal = new BigDecimal(str).setScale(scale, RoundingMode.HALF_UP);
+        try {
+            bigDecimal = new BigDecimal(str).setScale(scale, RoundingMode.HALF_UP);
+        } catch (Exception e){
+            Log.e("MoneyUtil", "stringToBigDecimal error, str: " + str, e);
+            return bigDecimal;
+        }
         return bigDecimal;
     }
 

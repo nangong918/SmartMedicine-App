@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class AppointmentDoctorDataVo {
     // 预约时间：yyyy-MM-dd
-    public String data;
+    public String date;
     // 剩余可预约数量
     public Integer remainCount;
     // 最低费用

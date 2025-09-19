@@ -7,6 +7,8 @@ import com.czy.appview.databinding.AppointmentMerchantItemBinding
 import com.czy.baseutil.image.ImageLoadUtil
 import com.czy.domain.OnPositionItemClick
 import com.czy.domain.ao.medicine.RegisterAppointmentDoctorCardAo
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class AppointmentMerchantViewHolder(
     private val binding: AppointmentMerchantItemBinding
@@ -50,7 +52,15 @@ class AppointmentMerchantViewHolder(
             binding.tvRemain.text = "剩余数量: " + vo.remainCount?.toString()
 
             // 预约时间区间
-            binding.tvDuration.text = vo.beginDate + " - " + vo.endDate
+            val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val outputFormatter = DateTimeFormatter.ofPattern("HH:mm")
+            val beginTime = vo.beginDate?.let {
+                LocalDateTime.parse(it, inputFormatter).format(outputFormatter)
+            }
+            val endTime = vo.endDate?.let {
+                LocalDateTime.parse(it, inputFormatter).format(outputFormatter)
+            }
+            binding.tvDuration.text = "$beginTime - $endTime"
         }
 
         binding.btnHandle.text = "预约"
