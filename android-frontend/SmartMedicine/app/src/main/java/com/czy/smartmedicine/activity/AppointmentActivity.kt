@@ -99,6 +99,7 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
                 vm.aao.doctorVoList[position].doctorMerchantAppointmentId
             )
         }
+        binding.rclvAppointment.adapter = vm.merchantAdapter
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -136,6 +137,7 @@ class AppointmentActivity : BaseVmActivity<ActivityAppointmentBinding, Appointme
             size ->
             // 0 暂无记录
             // adapter更新
+            Log.i(TAG, "sizeLd: $size, adapterListSize: ${vm.merchantAdapter.itemCount}")
             vm.merchantAdapter.notifyDataSetChanged()
         }
     }
