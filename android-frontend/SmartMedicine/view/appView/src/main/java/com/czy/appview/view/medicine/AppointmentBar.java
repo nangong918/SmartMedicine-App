@@ -86,21 +86,24 @@ public class AppointmentBar extends ConstraintLayout {
                 binding.tvDate1,
                 binding.tvDate2,
                 binding.tvDate3,
+                binding.tvDate4
         };
         TextView[] priceText = new TextView[]{
                 binding.tvPrice1,
                 binding.tvPrice2,
                 binding.tvPrice3,
+                binding.tvPrice4
         };
         TextView[] remainText = new TextView[]{
                 binding.tvRemain1,
                 binding.tvRemain2,
                 binding.tvRemain3,
+                binding.tvRemain4
         };
         Optional.ofNullable(dataVos)
                 .filter(vos -> !vos.isEmpty())
                 .ifPresent(vos -> {
-                    for (int i = 0; i < vos.size(); i++){
+                    for (int i = 0; i < Math.min(vos.size(), dateText.length); i++){
                         dateText[i].setText(vos.get(i).date == null ? "" : vos.get(i).date);
                         priceText[i].setText(vos.get(i).minCost == null ? "" : vos.get(i).minCost);
                         remainText[i].setText(String.valueOf(vos.get(i).remainCount == null ? 0 : vos.get(i).remainCount)); // setText不能用Int，会被视为是使用Res资源
