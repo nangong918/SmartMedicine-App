@@ -83,7 +83,7 @@ open class AppointmentFVm(
         )
     }
 
-    open lateinit var appointmentDoctorPageVo : AppointmentDoctorPageVo
+    open var appointmentDoctorPageVo : AppointmentDoctorPageVo? = null
 
     private fun handleGetRegisterAppointmentList
                 (response: BaseResponse<GetRegisterAppointmentListResponse>,
