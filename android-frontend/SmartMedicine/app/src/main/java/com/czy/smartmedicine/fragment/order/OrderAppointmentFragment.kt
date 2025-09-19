@@ -114,6 +114,7 @@ open class OrderAppointmentFragment : BaseVmFragment<FragmentOrderAppointmentBin
     private fun observeData() {
         vm.fao.currentAllCount.observe(viewLifecycleOwner){
             count ->
+            Log.i(TAG, "observeData: $count, adapterListCount: ${vm.adapter.itemCount}")
             vm.adapter.notifyDataSetChanged()
         }
     }

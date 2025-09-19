@@ -80,6 +80,18 @@ class OrderListActivity : BaseVmActivity<ActivityOrderListBinding, OrderListVm>(
                 }
             }
         }
+
+        vm.aao.currentAllCount[0].observe(this){
+            count ->
+            vm.viewPagerAdapter.fragmentCache.get(OrderViewPagerEnum.APPOINTMENT_ORDER.index)?.let {
+                (it as OrderAppointmentFragment).setSortType(
+                    AppointmentSortTypeEnum.TIME.code
+                )
+                it.setCurrentList(
+                    vm.aao.fragmentCurrentAppointmentOrders
+                )
+            }
+        }
     }
 
     private fun initRequest(){
