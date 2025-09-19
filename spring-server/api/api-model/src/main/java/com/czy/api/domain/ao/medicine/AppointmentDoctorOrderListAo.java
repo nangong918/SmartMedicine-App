@@ -1,6 +1,7 @@
 package com.czy.api.domain.ao.medicine;
 
 import com.czy.api.domain.vo.medicine.AppointmentDoctorOrderListVo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import date.DateUtils;
 import location.GeoUtils;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class AppointmentDoctorOrderListAo implements Cloneable, Serializable {
     public Long orderId;
     public Long doctorMerchantId;
 
+    @JsonIgnore
     public LocalDateTime getBeginDate(){
         return Optional.ofNullable(this.listVo)
                 .map(vo -> vo.beginDate)
@@ -33,6 +35,7 @@ public class AppointmentDoctorOrderListAo implements Cloneable, Serializable {
                 .orElse(LocalDateTime.MIN);
     }
 
+    @JsonIgnore
     public double getDistance(double userLongitude, double userLatitude){
         double latitude = Optional.ofNullable(listVo)
                 .map(vo -> vo.hospitalAo)
@@ -50,6 +53,7 @@ public class AppointmentDoctorOrderListAo implements Cloneable, Serializable {
         );
     }
 
+    @JsonIgnore
     public BigDecimal getCost(){
         try {
             return Optional.ofNullable(listVo)

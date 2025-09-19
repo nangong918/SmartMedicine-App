@@ -459,6 +459,27 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
                 listAos = new ArrayList<>();
             }
 
+            // file填充
+            List<Long> fileIds = new ArrayList<>(listAos.size());
+            for (AppointmentDoctorOrderListAo ao : listAos){
+                Long fileId = Optional.ofNullable(ao)
+                        .map(AppointmentDoctorOrderListAo::getListVo)
+                        .map(AppointmentDoctorOrderListVo::getDoctorVo)
+                        .map(DoctorVo::getDoctorAvatarFileAo)
+                        .map(FileResAo::getFileId)
+                        .orElse(null);
+                fileIds.add(fileId);
+            }
+            List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+            for (int i = 0; i < fileUrls.size(); i++){
+                int finalI = i;
+                Optional.ofNullable(listAos.get(i))
+                        .map(AppointmentDoctorOrderListAo::getListVo)
+                        .map(AppointmentDoctorOrderListVo::getDoctorVo)
+                        .map(DoctorVo::getDoctorAvatarFileAo)
+                        .ifPresent(fileAo -> fileAo.setFileUrl(fileUrls.get(finalI)));
+            }
+
             // 缓存
             boolean result = appointmentDoctorOrderRedisMapper.saveAppointmentDoctorOrderListAo(
                     userId,
