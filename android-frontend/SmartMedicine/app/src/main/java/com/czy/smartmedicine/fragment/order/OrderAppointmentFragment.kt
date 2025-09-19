@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.czy.appview.VerticalSpacingItemDecoration
 import com.czy.appview.view.medicine.order.AppointmentDoctorOrderAdapter
 import com.czy.appview.view.medicine.order.OnAppointmentOrderClick
 import com.czy.domain.ao.medicine.AppointmentDoctorOrderListAo
@@ -98,7 +99,10 @@ open class OrderAppointmentFragment : BaseVmFragment<FragmentOrderAppointmentBin
             }
         )
 
-        binding.rclv.adapter = vm.adapter
+        binding.rclv.apply {
+            adapter = vm.adapter
+            addItemDecoration(VerticalSpacingItemDecoration(5))
+        }
     }
 
     open fun setSortType(sortType: Int) {

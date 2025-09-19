@@ -4,24 +4,26 @@
     android:layout_height="wrap_content"
     android:id="@+id/ly_main"
     android:background="@color/green_50"
+    tools:context="com.czy.appview.view.medicine.order.AppointmentDoctorOrderViewHolder"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- 头像 -->
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/imvg_avatar"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginStart="5dp"
-        app:riv_corner_radius="10dp"
         android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_orderTime"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:riv_corner_radius="10dp"
         tools:src="@mipmap/logo" />
 
     <LinearLayout
         android:id="@+id/ly_info"
-        android:layout_width="120dp"
+        android:layout_width="110dp"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginTop="10dp"
@@ -40,7 +42,9 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/stethoscope_24px"
-                app:tint="@color/green_900"/>
+                android:tint="@color/green_900"
+                tools:ignore="UseAppTint" />
+
 
             <TextView
                 android:id="@+id/tv_doctorName"
@@ -57,14 +61,15 @@
         <LinearLayout
             android:layout_marginTop="5dp"
             android:gravity="center_vertical"
-            android:layout_width="120dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content">
 
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/local_hospital_24px"
-                app:tint="@color/green_900"/>
+                android:tint="@color/green_900"
+                tools:ignore="UseAppTint" />
 
             <TextView
                 android:id="@+id/tv_hospitalName"
@@ -81,14 +86,15 @@
         <LinearLayout
             android:layout_marginTop="5dp"
             android:gravity="center_vertical"
-            android:layout_width="120dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content">
 
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/nest_clock_farsight_analog_24px"
-                app:tint="@color/green_900"/>
+                android:tint="@color/green_900"
+                tools:ignore="UseAppTint" />
 
             <TextView
                 android:id="@+id/tv_duration"
@@ -116,7 +122,7 @@
 
 
     <LinearLayout
-        android:layout_width="170dp"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
         android:layout_marginStart="15dp"
         android:gravity="end"
@@ -151,6 +157,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical"
             android:gravity="center_vertical">
 
             <androidx.appcompat.widget.AppCompatButton
@@ -167,7 +175,7 @@
                 android:id="@+id/btn_handle2"
                 android:layout_width="70dp"
                 android:layout_height="20dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/round_corners_button_commend"
                 android:gravity="center"
                 android:textColor="@color/green_900"
@@ -189,7 +197,7 @@
         android:layout_marginStart="5dp"
         android:layout_marginBottom="5dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imvg_avatar"
+        app:layout_constraintTop_toBottomOf="@+id/ly_info"
         tools:text="下单时间：2025-08-17 20:30:15" />
 
     <TextView
