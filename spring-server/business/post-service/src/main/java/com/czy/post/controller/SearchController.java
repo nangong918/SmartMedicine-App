@@ -14,14 +14,8 @@ import com.czy.api.constant.search.result.PersonalResultIntent;
 import com.czy.api.constant.search.result.PostRecommendResult;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.Do.user.UserHealthDataDo;
-import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostNerResult;
-import com.czy.api.domain.ao.search.AppFunctionAo;
-import com.czy.api.domain.ao.search.DiseaseQuestionAo;
-import com.czy.api.domain.ao.search.PersonalEvaluateAo;
-import com.czy.api.domain.ao.search.PostRecommendAo;
-import com.czy.api.domain.ao.search.PostSearchResultAo;
-import com.czy.api.domain.ao.search.QuestionAo;
+import com.czy.api.domain.ao.search.*;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
@@ -43,21 +37,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -272,7 +256,7 @@ public class SearchController {
             // 推荐意图
             if (nlpSearchResponse.getType() == NlpResultEnum.RECOMMEND.getCode()){
                 response.setType(FuzzySearchResponseEnum.RECOMMEND_QUESTION_RESULT.getType());
-                PostRecommendAo ao = handleRecommendIntent(sentence);
+                PostRecommendAo ao = handleRecommendIntent(sentence, userId);
                 response.setData(ao);
                 return response;
             }
@@ -389,7 +373,7 @@ public class SearchController {
     }
 
     // 推荐意图存在争议
-    private PostRecommendAo handleRecommendIntent(String sentence){
+    private PostRecommendAo handleRecommendIntent(String sentence, Long userId){
         PostRecommendAo postRecommendAo = new PostRecommendAo();
         List<PostNerResult> nerResults = postNerService.getPostNerResults(sentence);
         PostRecommendResult postRecommendResult = PostRecommendResult.NO_RECOMMEND;
@@ -402,8 +386,7 @@ public class SearchController {
             postRecommendAo.setRecommendType(PostRecommendResult.NO_DATA.getCode());
             return postRecommendAo;
         }
-        List<PostInfoUrlAo> postInfoUrlAos = postSearchService.getPostInfoUrlAos(tokenizedPostIdList);
-        postRecommendAo.setPostInfoUrlAos(postInfoUrlAos);
+        postRecommendAo.setPostPreviewVos(postSearchService.getPostPreviewVosByIds(tokenizedPostIdList, userId));
         postRecommendAo.setRecommendType(PostRecommendResult.HAS_DATA.getCode());
         return postRecommendAo;
     }
