@@ -4,6 +4,6 @@ import androidx.lifecycle.MutableLiveData
 
 open class MessageMainFAo {
 
-    open val currentPosition : MutableLiveData<Int> = MutableLiveData(0)
+    open val currentPositionLd : MutableLiveData<Int> = MutableLiveData(0)
 
 }

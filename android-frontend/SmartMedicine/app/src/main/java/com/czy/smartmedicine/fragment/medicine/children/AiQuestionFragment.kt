@@ -34,6 +34,8 @@ class AiQuestionFragment : BaseVmFragment<FragmentAiQuestionBinding, AiQuestionV
     // initView
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.smSendMessage.setAiView()
     }
 
     //---------------------------ViewModel---------------------------

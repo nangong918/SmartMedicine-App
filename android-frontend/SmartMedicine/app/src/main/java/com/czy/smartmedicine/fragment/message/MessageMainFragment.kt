@@ -46,7 +46,7 @@ class MessageMainFragment : BaseVmFragment<FragmentMessageMainBinding, MessageMa
 
         // 设置顶部导航栏的点击监听器
         binding.messageSelectBar.setOnViewPagerBarClickListener { position ->
-            vm.fao.currentPosition.value = position
+            vm.fao.currentPositionLd.value = position
             binding.vPager2.setCurrentItem(position, true)
         }
 
@@ -54,7 +54,7 @@ class MessageMainFragment : BaseVmFragment<FragmentMessageMainBinding, MessageMa
         binding.vPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                vm.fao.currentPosition.value = position
+                vm.fao.currentPositionLd.value = position
             }
         })
     }
@@ -65,7 +65,7 @@ class MessageMainFragment : BaseVmFragment<FragmentMessageMainBinding, MessageMa
         super.initViewModel()
 
         val fao = MessageMainFAo()
-        fao.currentPosition.value = MessageViewPagerEnum.MESSAGE.index
+        fao.currentPositionLd.value = MessageViewPagerEnum.MESSAGE.index
 
         vm.init(fao, this)
 
@@ -76,9 +76,9 @@ class MessageMainFragment : BaseVmFragment<FragmentMessageMainBinding, MessageMa
     }
 
     private fun observeData() {
-        vm.fao.currentPosition.observe(viewLifecycleOwner){
+        vm.fao.currentPositionLd.observe(viewLifecycleOwner){
             position ->
-            run {
+            if (position != null){
                 if (!isAdded){
                     return@observe
                 }

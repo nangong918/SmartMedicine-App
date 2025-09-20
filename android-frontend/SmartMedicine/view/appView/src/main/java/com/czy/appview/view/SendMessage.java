@@ -39,6 +39,11 @@ public class SendMessage extends ConstraintLayout {
         binding = ViewSendMessageBinding.inflate(inflater, this, true);
     }
 
+    public void setAiView(){
+        binding.btnCall.setVisibility(GONE);
+        binding.btnPicture.setVisibility(GONE);
+    }
+
     public EditText getEditText() {
         return binding.edtv;
     }
