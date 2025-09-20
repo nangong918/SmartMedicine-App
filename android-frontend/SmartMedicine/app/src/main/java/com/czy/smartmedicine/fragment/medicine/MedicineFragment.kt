@@ -44,7 +44,7 @@ class MedicineFragment : BaseVmFragment<FragmentMedicineBinding, MedicineVm>(
 
         // 设置顶部导航栏的点击监听器
         binding.medicineSelectBar.setOnViewPagerBarClickListener { position ->
-            vm.fao.currentPosition.value = position
+            vm.fao.currentPositionLd.value = position
             binding.vPager2.setCurrentItem(position, true)
         }
 
@@ -52,7 +52,7 @@ class MedicineFragment : BaseVmFragment<FragmentMedicineBinding, MedicineVm>(
         binding.vPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                vm.fao.currentPosition.value = position
+                vm.fao.currentPositionLd.value = position
             }
         })
     }
@@ -63,12 +63,24 @@ class MedicineFragment : BaseVmFragment<FragmentMedicineBinding, MedicineVm>(
         super.initViewModel()
 
         val fao = MedicineFAo()
-        fao.currentPosition.value = MedicineViewPagerEnum.APPOINTMENT.index
+        fao.currentPositionLd.value = MedicineViewPagerEnum.APPOINTMENT.index
 
         vm.init(fao, this)
 
         // 设置 ViewPager2 的适配器
         binding.vPager2.adapter = vm.medicineViewPagerAdapter
+
+        observeData()
+    }
+
+    private fun observeData() {
+        vm.fao.currentPositionLd.observe(viewLifecycleOwner){
+            if (it != null){
+                binding.medicineSelectBar.setCurrentPosition(it)
+                // 避免循环观察
+//                binding.vPager2.setCurrentItem(it, true)
+            }
+        }
     }
 
 }

@@ -89,12 +89,23 @@ public class MedicineViewPagerBar extends ConstraintLayout {
                         GONE
         );
 
+        binding.tvAiQuestion.setTextColor(
+                MedicineViewPagerEnum.AI_QUESTION.equals(medicineViewPagerEnum) ?
+                        ContextCompat.getColor(getContext(), R.color.green_1000) :
+                        ContextCompat.getColor(getContext(), R.color.green_900)
+        );
+        binding.vBar2.setVisibility(
+                MedicineViewPagerEnum.AI_QUESTION.equals(medicineViewPagerEnum) ?
+                        VISIBLE :
+                        GONE
+        );
+
         binding.tvMedicalWiki.setTextColor(
                 MedicineViewPagerEnum.MEDICAL_WIKI.equals(medicineViewPagerEnum) ?
                         ContextCompat.getColor(getContext(), R.color.green_1000) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
-        binding.vBar2.setVisibility(
+        binding.vBar3.setVisibility(
                 MedicineViewPagerEnum.MEDICAL_WIKI.equals(medicineViewPagerEnum) ?
                         VISIBLE :
                         GONE
@@ -105,19 +116,8 @@ public class MedicineViewPagerBar extends ConstraintLayout {
                         ContextCompat.getColor(getContext(), R.color.green_1000) :
                         ContextCompat.getColor(getContext(), R.color.green_900)
         );
-        binding.vBar3.setVisibility(
-                MedicineViewPagerEnum.MEDICAL_SHOPPING.equals(medicineViewPagerEnum) ?
-                        VISIBLE :
-                        GONE
-        );
-
-        binding.tvAiQuestion.setTextColor(
-                MedicineViewPagerEnum.AI_QUESTION.equals(medicineViewPagerEnum) ?
-                        ContextCompat.getColor(getContext(), R.color.green_1000) :
-                        ContextCompat.getColor(getContext(), R.color.green_900)
-        );
         binding.vBar4.setVisibility(
-                MedicineViewPagerEnum.AI_QUESTION.equals(medicineViewPagerEnum) ?
+                MedicineViewPagerEnum.MEDICAL_SHOPPING.equals(medicineViewPagerEnum) ?
                         VISIBLE :
                         GONE
         );
