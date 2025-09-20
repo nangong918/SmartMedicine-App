@@ -7,22 +7,32 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.czy.appcore.network.netty.api.receive.FriendApiHandler
 import com.czy.appcore.network.netty.api.send.SocketMessageSender
+import com.czy.appview.view.contact.ContactAdapter
 import com.czy.baseutil.network.BaseResponse
 import com.czy.dao.networkRepository.ApiRequestImpl
+import com.czy.domain.ao.chat.ChatContactItemAo
 import com.czy.domain.ao.chat.UserLoginInfoAo
+import com.czy.domain.ao.newUser.MyFriendItemAo
+import com.czy.domain.ao.userBrief.UserBriefIntentAo
 import com.czy.domain.constant.NettyConstants
 import com.czy.domain.dto.http.request.BaseHttpRequest
+import com.czy.domain.dto.http.request.GetMyFriendsRequest
+import com.czy.domain.dto.http.response.GetMyFriendsResponse
 import com.czy.domain.dto.netty.response.AddUserToTargetUserResponse
 import com.czy.domain.dto.netty.response.HandleAddUserResponse
+import com.czy.domain.entity.UserViewEntity
 import com.czy.domain.fragmentActivityAo.message.AddressBookFAo
 import com.czy.smartmedicine.MainApplication
+import com.czy.smartmedicine.fragment.friends.ContactUserGroupFragment
 import com.czy.smartmedicine.fragment.message.children.AddressBookFragment
 import com.czy.smartmedicine.manager.HttpRequestManager
 import com.czy.smartmedicine.utils.ViewModelUtil
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.LinkedList
 import java.util.Optional
+import java.util.stream.Collectors
 
 open class AddressBookVm(
     private val apiRequestImpl: ApiRequestImpl,
@@ -42,7 +52,8 @@ open class AddressBookVm(
         initReceiveAddUserApi()
     }
 
-    //---------------------------NetWork---------------------------
+    open var adapter : ContactAdapter? = null
+
 
     //---------------------------NetWork---------------------------
 
@@ -79,7 +90,94 @@ open class AddressBookVm(
     }
 
 
-    //---------------------------Logic---------------------------
+    //==========获取我的全部好友
+    private fun doGetMyFriendList(request: GetMyFriendsRequest) {
+        apiRequestImpl.getMyFriendList(
+            request,
+            { response ->
+                this.handleGetMyFriendListResponse(response)
+            },
+            { throwable -> ViewModelUtil.globalThrowableToast(throwable) }
+        )
+    }
+
+    private fun handleGetMyFriendListResponse(response : BaseResponse<GetMyFriendsResponse>) {
+        if (ViewModelUtil.handleResponse(response)) {
+            // 获取响应的list
+            val myFriendItemAos = Optional.ofNullable<BaseResponse<GetMyFriendsResponse>>(response)
+                .map { obj: BaseResponse<GetMyFriendsResponse> -> obj.data }
+                .map<List<MyFriendItemAo>> { data: GetMyFriendsResponse -> data.addMeRequestList }
+                .orElse(ArrayList())
+
+//            // 通过两者计算获取新增的list
+            val list = myFriendItemAos.stream()
+                .map { myFriendItemAo: MyFriendItemAo ->
+                    // 使用 Optional 检查 userViewEntity 是否为 null
+                    val userViewEntity =
+                        Optional.ofNullable(myFriendItemAo.userViewEntity)
+                            .orElse(UserViewEntity())
+
+                    val contactItem = ChatContactItemAo()
+                    // 设置头像 URL
+                    contactItem.chatContactItemVo.avatarUrlOrUri =
+                        (Optional.ofNullable(userViewEntity.avatarUrl).orElse(""))
+                    // 设置名称
+                    contactItem.chatContactItemVo.name =
+                        (Optional.ofNullable(userViewEntity.userName).orElse(""))
+                    // 设置账号
+                    contactItem.contactAccount =
+                        (Optional.ofNullable(userViewEntity.userAccount).orElse(""))
+                    // userId
+                    contactItem.userId = (Optional.ofNullable(userViewEntity.userId)
+                        .orElse(NettyConstants.ERROR_ID))
+                    contactItem
+                }
+                .collect(Collectors.toList())
+
+            fao.contactListVo.contactItemList.postValue(list)
+        }
+    }
+
+
+    //==========获取用户的好友列表
+    /**
+     * 将本地的数据交给后端，避免重复数据申请，代码待实现
+     * @param accountList   不使用的时候不能传入null；暂时传入new LinkedList<>();
+     */
+    fun getMyFriendList(accountList: List<String?>?) {
+        var finalList = accountList
+        if (accountList == null) {
+            finalList = LinkedList()
+        }
+        val request = GetMyFriendsRequest()
+        request.senderId = MainApplication.getInstance().userLoginInfoAo?.userId
+        request.receiverId = NettyConstants.SERVER_ID
+        request.accountList = finalList
+        doGetMyFriendList(request)
+    }
+
+
+    //==========点击用户
+    fun onUserClicked(position: Int, onFinish: OnUserClickedFinish) {
+        Log.d(TAG, "onUserClicked::position: $position")
+        val ccAo = fao.contactListVo.contactItemList?.value?.get(position) ?: ChatContactItemAo()
+
+        val ubAo = UserBriefIntentAo()
+
+        ubAo.avatarUrl = ccAo.chatContactItemVo?.avatarUrlOrUri ?: ""
+
+        ubAo.userAccount = ccAo.contactAccount?: ""
+        ubAo.userName = ccAo.chatContactItemVo?.name?: ""
+
+        ubAo.userId = ccAo.userId?: NettyConstants.ERROR_ID
+
+        onFinish.onFinish(ubAo)
+    }
+
+    interface OnUserClickedFinish {
+        fun onFinish(ao: UserBriefIntentAo?)
+    }
+
 
     @Synchronized
     private fun processFriendsMessage() {
@@ -98,22 +196,24 @@ open class AddressBookVm(
         // 首次打开：Http请求
         if (HttpRequestManager.getIsFirstOpen(AddressBookFragment::class.java.name)) {
             val request = BaseHttpRequest()
-            request.senderId = Optional.ofNullable(MainApplication.getInstance().userLoginInfoAo)
-                .map { ao: UserLoginInfoAo -> ao.userId }
-                .orElse(NettyConstants.ERROR_ID)
-            if (NettyConstants.ERROR_ID == request.senderId) {
-                Log.w(TAG, "doGetUserNewMessage: senderId is empty")
-                return
-            }
+            request.senderId = MainApplication.getInstance().userLoginInfoAo?.userId?:NettyConstants.ERROR_ID
+
+            // 取与我相关的添加请求
             doGetMyFriendApplyList(request)
-        } else {
+            // 获取好友列表
+            getMyFriendList(LinkedList())
+        }
+        else {
             val num = MainApplication.getInstance().friendsApplyNum
             fao.newFriends.postValue(num)
+
+            val cacheList: List<ChatContactItemAo> = MainApplication.getInstance().friendList?: ArrayList()
+            fao.contactListVo.contactItemList.postValue(cacheList)
         }
     }
 
     //==========获取与我相关的添加请求
-    private fun doGetMyFriendApplyList(request: BaseHttpRequest) {
+    fun doGetMyFriendApplyList(request: BaseHttpRequest) {
         apiRequestImpl.getMyFriendApplyList(
             request,
             {
@@ -132,6 +232,8 @@ open class AddressBookVm(
                 .ifPresent { ld -> ld.postValue(response.data) }
         }
     }
+
+    //---------------------------Logic---------------------------
 
     //---------------------------EventBus---------------------------
 
@@ -162,8 +264,14 @@ open class AddressBookVm(
     }
 
     //---------------------------logic---------------------------
-    fun storage() {
+
+    private fun storage() {
         MainApplication.getInstance().friendsApplyNum = fao.newFriends.value ?:0
+        MainApplication.getInstance().friendList = fao.contactListVo.contactItemList.value?: listOf()
+    }
+
+    fun onPause() {
+        storage()
     }
 
     fun onDestroy() {
