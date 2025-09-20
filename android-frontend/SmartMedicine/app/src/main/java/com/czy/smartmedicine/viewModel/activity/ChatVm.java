@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 
@@ -258,6 +259,9 @@ public class ChatVm extends ViewModel {
 
     public void sendMessage(){
         String message = chatVo.inputText.getValue();
+        if (TextUtils.isEmpty(message)){
+            return;
+        }
 //        String receiverAccount = chatVo.contactAccount;
         Long receiverId = chatVo.contactId;
         // 用Netty长连接发送消息
