@@ -2,8 +2,8 @@ package com.czy.domain.ao.search;
 
 
 import com.czy.domain.constant.search.PostSearchResultListEnum;
-import com.czy.domain.vo.entity.home.PostExVo;
-import com.czy.domain.vo.entity.home.PostVo;
+import com.czy.domain.vo.entity.home.PostPreviewExVo;
+import com.czy.domain.vo.entity.home.PostPreviewVo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
  */
 public class PostSearchResultAo {
     // like匹配结果
-    public List<PostVo> likePostPreviewVoList = new ArrayList<>();
+    public List<PostPreviewVo> likePostPreviewVoList = new ArrayList<>();
     // tokenized匹配结果
-    public List<PostVo> tokenizedPostPreviewVoList = new ArrayList<>();
+    public List<PostPreviewVo> tokenizedPostPreviewVoList = new ArrayList<>();
     // similar匹配结果
-    public List<PostVo> similarPostPreviewVoList = new ArrayList<>();
+    public List<PostPreviewVo> similarPostPreviewVoList = new ArrayList<>();
     // recommend匹配结果 (上述全部无结果，然后：为您推荐)
-    public List<PostVo> recommendPostPreviewVoList = new ArrayList<>();
+    public List<PostPreviewVo> recommendPostPreviewVoList = new ArrayList<>();
 
     public void clearAll(){
         this.likePostPreviewVoList.clear();
@@ -34,39 +34,39 @@ public class PostSearchResultAo {
         this.recommendPostPreviewVoList.clear();
     }
 
-    public List<PostExVo> getPostExVoList(){
-        List<PostExVo> allList = new ArrayList<>();
+    public List<PostPreviewExVo> getPostExVoList(){
+        List<PostPreviewExVo> allList = new ArrayList<>();
         // 使用 Stream API 将数据填充到 List<PostExVo>
-        List<PostExVo> list1 = likePostPreviewVoList.stream()
-                .map(postVo -> {
-                    PostExVo postExVo = new PostExVo();
-                    postExVo.setPostVo(postVo);
-                    postExVo.type = PostSearchResultListEnum.LIKE_MATCH_RESULT.getValue();
-                    return postExVo;
+        List<PostPreviewExVo> list1 = likePostPreviewVoList.stream()
+                .map(postPreviewVo -> {
+                    PostPreviewExVo postPreviewExVo = new PostPreviewExVo();
+                    postPreviewExVo.setPostPreviewVo(postPreviewVo);
+                    postPreviewExVo.type = PostSearchResultListEnum.LIKE_MATCH_RESULT.getValue();
+                    return postPreviewExVo;
                 })
                 .collect(Collectors.toList());
-        List<PostExVo> list2 = tokenizedPostPreviewVoList.stream()
-                .map(postVo -> {
-                    PostExVo postExVo = new PostExVo();
-                    postExVo.setPostVo(postVo);
-                    postExVo.type = PostSearchResultListEnum.TOKENIZED_MATCH_RESULT.getValue();
-                    return postExVo;
+        List<PostPreviewExVo> list2 = tokenizedPostPreviewVoList.stream()
+                .map(postPreviewVo -> {
+                    PostPreviewExVo postPreviewExVo = new PostPreviewExVo();
+                    postPreviewExVo.setPostPreviewVo(postPreviewVo);
+                    postPreviewExVo.type = PostSearchResultListEnum.TOKENIZED_MATCH_RESULT.getValue();
+                    return postPreviewExVo;
                 })
                 .collect(Collectors.toList());
-        List<PostExVo> list3 = similarPostPreviewVoList.stream()
-                .map(postVo -> {
-                    PostExVo postExVo = new PostExVo();
-                    postExVo.setPostVo(postVo);
-                    postExVo.type = PostSearchResultListEnum.SIMILAR_MATCH_RESULT.getValue();
-                    return postExVo;
+        List<PostPreviewExVo> list3 = similarPostPreviewVoList.stream()
+                .map(postPreviewVo -> {
+                    PostPreviewExVo postPreviewExVo = new PostPreviewExVo();
+                    postPreviewExVo.setPostPreviewVo(postPreviewVo);
+                    postPreviewExVo.type = PostSearchResultListEnum.SIMILAR_MATCH_RESULT.getValue();
+                    return postPreviewExVo;
                 })
                 .collect(Collectors.toList());
-        List<PostExVo> list4 = recommendPostPreviewVoList.stream()
-                .map(postVo -> {
-                    PostExVo postExVo = new PostExVo();
-                    postExVo.setPostVo(postVo);
-                    postExVo.type = PostSearchResultListEnum.RECOMMEND_MATCH_RESULT.getValue();
-                    return postExVo;
+        List<PostPreviewExVo> list4 = recommendPostPreviewVoList.stream()
+                .map(postPreviewVo -> {
+                    PostPreviewExVo postPreviewExVo = new PostPreviewExVo();
+                    postPreviewExVo.setPostPreviewVo(postPreviewVo);
+                    postPreviewExVo.type = PostSearchResultListEnum.RECOMMEND_MATCH_RESULT.getValue();
+                    return postPreviewExVo;
                 })
                 .collect(Collectors.toList());
 

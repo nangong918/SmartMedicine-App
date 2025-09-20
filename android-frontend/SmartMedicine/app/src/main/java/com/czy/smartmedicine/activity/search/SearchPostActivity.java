@@ -1,5 +1,6 @@
 package com.czy.smartmedicine.activity.search;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.SearchView;
@@ -72,7 +73,10 @@ public class SearchPostActivity extends
         SearchPostAAo aao = new SearchPostAAo();
 
         vm.init(aao, this);
-        vm.initRecyclerAdapter(binding.rclvSearch, this::openSearchPostDetailActivity);
+
+        vm.initRecyclerAdapter(this::openSearchPostDetailActivity);
+        binding.rclvSearch.setAdapter(vm.adapter);
+
         vm.initDialogAnswer(this, v -> {
             // todo 跳转到跟ai聊天的详情页
         });
@@ -91,9 +95,14 @@ public class SearchPostActivity extends
                 NetworkLoadUtils.dismissDialog();
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onAllRequestSuccess() {
                 NetworkLoadUtils.dismissDialog();
+                runOnUiThread(() -> {
+                    // ui通知items变化
+                    vm.adapter.notifyDataSetChanged();
+                });
             }
         });
     }

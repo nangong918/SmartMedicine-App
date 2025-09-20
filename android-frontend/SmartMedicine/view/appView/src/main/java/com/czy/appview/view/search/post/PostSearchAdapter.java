@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewPostSearchBinding;
-import com.czy.domain.vo.entity.home.PostExVo;
+import com.czy.domain.vo.entity.home.PostPreviewExVo;
 
 import java.util.List;
 
@@ -18,13 +18,13 @@ public class PostSearchAdapter extends RecyclerView.Adapter<PostSearchViewHolder
     private final static String TAG = PostSearchAdapter.class.getName();
 
     // list指针
-    private final List<PostExVo> postExVosPointer;
+    private final List<PostPreviewExVo> postPreviewExVosPointer;
 
     private final OnPostClick onPostClick;
 
-    public PostSearchAdapter(@NonNull List<PostExVo> postSearchResultAo,
+    public PostSearchAdapter(@NonNull List<PostPreviewExVo> postSearchResultAo,
                              @NonNull OnPostClick onPostClick){
-        this.postExVosPointer = postSearchResultAo;
+        this.postPreviewExVosPointer = postSearchResultAo;
         this.onPostClick = onPostClick;
     }
 
@@ -38,17 +38,17 @@ public class PostSearchAdapter extends RecyclerView.Adapter<PostSearchViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostSearchViewHolder holder, int position) {
-        PostExVo postExVo = postExVosPointer.get(position);
-        if (postExVo == null){
+        PostPreviewExVo postPreviewExVo = postPreviewExVosPointer.get(position);
+        if (postPreviewExVo == null){
             Log.w(TAG, "postExVo数据为空");
             return;
         }
         // 设置数据
-        holder.setAo(postExVo);
+        holder.setAo(postPreviewExVo);
     }
 
     @Override
     public int getItemCount() {
-        return postExVosPointer.size();
+        return postPreviewExVosPointer.size();
     }
 }

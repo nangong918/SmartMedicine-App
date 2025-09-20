@@ -9,7 +9,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModel;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.appcore.network.api.handle.SyncRequestCallback;
@@ -33,7 +32,7 @@ import com.czy.domain.constant.search.PostSearchResultListEnum;
 import com.czy.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.domain.fragmentActivityAo.search.SearchPostAAo;
-import com.czy.domain.vo.entity.home.PostExVo;
+import com.czy.domain.vo.entity.home.PostPreviewExVo;
 import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.utils.ResponseTool;
 
@@ -66,14 +65,11 @@ public class SearchPostVm extends ViewModel {
 
     public DialogAnswer dialogAnswer;
 
-    public void initRecyclerAdapter(RecyclerView recyclerView, OnPostClick onPostClick){
-
-        adapter = new PostSearchAdapter(
-                searchPostAAo.postExVoList,
+    public void initRecyclerAdapter(OnPostClick onPostClick){
+        this.adapter = new PostSearchAdapter(
+                searchPostAAo.postPreviewExVoList,
                 onPostClick
         );
-
-        recyclerView.setAdapter(adapter);
     }
 
     public void initDialogAnswer(FragmentActivity activity, View.OnClickListener onViewDetailsClickListener){
@@ -137,7 +133,7 @@ public class SearchPostVm extends ViewModel {
                 .orElse("");
 
         // 清理数据
-        searchPostAAo.postExVoList.clear();
+        searchPostAAo.postPreviewExVoList.clear();
 
         if (data == null){
             callback.onAllRequestSuccess();
@@ -148,6 +144,8 @@ public class SearchPostVm extends ViewModel {
             return;
         }
         FuzzySearchResponseEnum enumType = FuzzySearchResponseEnum.getByType(fuzzySearchType);
+
+        Log.i(TAG, "模糊搜索::enumType：" + enumType);
 
         switch (enumType){
             case ERROR_RESULT -> {
@@ -180,7 +178,12 @@ public class SearchPostVm extends ViewModel {
 
 
                     // 搜索
-                    searchPostAAo.postExVoList.addAll(ao.getPostExVoList());
+                    searchPostAAo.postPreviewExVoList.addAll(ao.getPostExVoList());
+
+                    Log.i(TAG, "模糊搜索::SEARCH_POST_RESULT; list.size：" + searchPostAAo.postPreviewExVoList.size());
+//                    Log.i(TAG, "第一结点检查：postExVo: " + (searchPostAAo.postExVoList.isEmpty() ?
+//                            "null" : searchPostAAo.postExVoList.get(0).toJsonString()));
+
                 } catch (Exception e) {
                     Log.e(TAG, "模糊搜索::error[类型fastJson转换错误] enumType：" + enumType, e);
                 }
@@ -195,8 +198,8 @@ public class SearchPostVm extends ViewModel {
 
                     // 问题
                     if (postSearchResultAo != null){
-                        List<PostExVo> postExVoList = postSearchResultAo.getPostExVoList();
-                        searchPostAAo.postExVoList.addAll(postExVoList);
+                        List<PostPreviewExVo> postPreviewExVoList = postSearchResultAo.getPostExVoList();
+                        searchPostAAo.postPreviewExVoList.addAll(postPreviewExVoList);
                     }
 
                     String answer = Optional.ofNullable(ao.diseaseQuestionAo)
@@ -217,12 +220,12 @@ public class SearchPostVm extends ViewModel {
                             jsonString, PostRecommendAo.class
                     );
                     // 转换
-                    List<PostExVo> recommendPostVoList = Optional.ofNullable(ao.postVos)
+                    List<PostPreviewExVo> recommendPostVoList = Optional.ofNullable(ao.postPreviewVos)
                             .map(vos -> {
                                 return vos.stream()
                                         .map(vo -> {
-                                            PostExVo exVo = new PostExVo();
-                                            exVo.setPostVo(vo);
+                                            PostPreviewExVo exVo = new PostPreviewExVo();
+                                            exVo.setPostPreviewVo(vo);
                                             exVo.type = PostSearchResultListEnum.RECOMMEND_MATCH_RESULT.getValue();
                                             return exVo;
                                         })
@@ -231,7 +234,7 @@ public class SearchPostVm extends ViewModel {
                             .orElse(new ArrayList<>());
                     // 推荐
                     if (!recommendPostVoList.isEmpty()){
-                        searchPostAAo.postExVoList.addAll(recommendPostVoList);
+                        searchPostAAo.postPreviewExVoList.addAll(recommendPostVoList);
                     }
                 } catch (Exception e){
                     Log.e(TAG, "模糊搜索::error[类型gson转换错误] enumType：" + enumType, e);
@@ -274,8 +277,7 @@ public class SearchPostVm extends ViewModel {
             }
         }
 
-        // ui通知items变化
-        adapter.notifyDataSetChanged();
+        Log.i(TAG, "adapter list 更新检查; list count: " + adapter.getItemCount());
 
         callback.onAllRequestSuccess();
     }
