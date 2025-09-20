@@ -122,12 +122,11 @@
 
 
     <LinearLayout
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginStart="15dp"
         android:gravity="end"
-        android:layout_marginEnd="5dp"
         android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ly_info"
         app:layout_constraintTop_toTopOf="@+id/ly_info">
 
@@ -135,8 +134,8 @@
             android:id="@+id/tv_orderStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
             android:layout_marginEnd="10dp"
+            android:maxLines="1"
             android:textColor="@color/green_900"
             android:textSize="25sp"
             tools:text="待付款" />
@@ -158,8 +157,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:orientation="vertical"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_handle1"
@@ -176,10 +175,10 @@
                 android:layout_width="70dp"
                 android:layout_height="20dp"
                 android:layout_marginTop="6dp"
+                android:layout_marginEnd="10dp"
                 android:background="@drawable/round_corners_button_commend"
                 android:gravity="center"
                 android:textColor="@color/green_900"
-                android:layout_marginEnd="10dp"
                 android:textSize="12sp"
                 tools:text="取消" />
 
@@ -193,7 +192,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/grey_100"
         android:textSize="11sp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="5dp"
         android:layout_marginBottom="5dp"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,7 +1,9 @@
 package com.czy.appview.view.medicine.order
 
 import android.annotation.SuppressLint
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.czy.appcore.utils.MoneyUtil
 import com.czy.appview.databinding.AppointmentOrderItemBinding
 import com.czy.baseutil.date.DateUtils
 import com.czy.baseutil.image.ImageLoadUtil
@@ -43,10 +45,13 @@ class AppointmentDoctorOrderViewHolder (
             binding.tvHospitalName.text = hAo.hospitalVo?.name?: ""
         }
 
-        // 剩余数量
-        binding.tvRemain.text = ao.listVo?.cost?: ""
+        // 剩余数量 (取消)
+        binding.tvRemain.visibility = View.GONE
+//        binding.tvRemain.text = "剩余名额:" + ao.listVo?.remainCount
         // 费用 BigDecimal
-        binding.tvPrice.text = ao.listVo?.cost?: ""
+        binding.tvPrice.text = MoneyUtil.formatToCurrency(
+            MoneyUtil.stringToBigDecimal(ao.listVo?.cost?: "", 1)
+        )
 
         // 预约时间区间
         ao.listVo?.let {
@@ -70,7 +75,7 @@ class AppointmentDoctorOrderViewHolder (
         }
 
         // 用户预约之后审批结果时间
-        binding.tvOrderTime.text = ao.listVo?.approveDate?:""
+        binding.tvOrderTime.text = "下单时间:" + (ao.listVo?.approveDate?:"")
 
         // 剩余支付时间   todo 后端从redis中获取, 前端倒计时
         binding.tvRemainingPayTime
@@ -86,7 +91,86 @@ class AppointmentDoctorOrderViewHolder (
             appointmentMerchantStatus,
             userOrderStatus
         )
-        binding.tvOrderStatus.text = orderStatusEnum.name
+        binding.tvOrderStatus.text = orderStatusEnum.getName()
+
+        when (orderStatusEnum){
+            OrderStatusEnum.NULL -> {
+                binding.btnHandle1.visibility = View.GONE
+                binding.btnHandle2.visibility = View.GONE
+            }
+            OrderStatusEnum.UNORDERED -> {
+                binding.btnHandle1.visibility = View.VISIBLE
+                binding.btnHandle2.visibility = View.GONE
+
+                binding.btnHandle1.text = "再次预约"
+            }
+            OrderStatusEnum.WAITING_AUDIT -> {
+                binding.btnHandle1.visibility = View.GONE
+                binding.btnHandle2.visibility = View.GONE
+            }
+            OrderStatusEnum.WAIT_PAY -> {
+                binding.btnHandle1.visibility = View.VISIBLE
+                binding.btnHandle2.visibility = View.VISIBLE
+
+                binding.btnHandle1.text = "支付"
+                binding.btnHandle2.text = "取消"
+            }
+            OrderStatusEnum.WAIT_USE -> {
+                binding.btnHandle1.visibility = View.VISIBLE
+                binding.btnHandle2.visibility = View.VISIBLE
+
+                binding.btnHandle1.text = "详情"
+                binding.btnHandle2.text = "申请退款"
+            }
+            OrderStatusEnum.WAIT_COMMENT -> {
+                binding.btnHandle1.visibility = View.VISIBLE
+                binding.btnHandle2.visibility = View.VISIBLE
+
+                binding.btnHandle1.text = "评价"
+                binding.btnHandle2.text = "再次预约"
+            }
+            OrderStatusEnum.REFUNDING -> {
+                binding.btnHandle1.visibility = View.VISIBLE
+                binding.btnHandle2.visibility = View.VISIBLE
+
+                binding.btnHandle1.text = "退款详情"
+                binding.btnHandle2.text = "取消退款"
+            }
+            OrderStatusEnum.REFUND_SUCCESS -> {
+                binding.btnHandle1.visibility = View.VISIBLE
+                binding.btnHandle2.visibility = View.VISIBLE
+
+                binding.btnHandle1.text = "退款详情"
+                binding.btnHandle2.text = "再次预约"
+            }
+            OrderStatusEnum.REFUND_FAILED -> {
+                binding.btnHandle1.visibility = View.VISIBLE
+                binding.btnHandle2.visibility = View.GONE
+
+                binding.btnHandle1.text = "退款详情"
+            }
+            OrderStatusEnum.COMPLETED -> {
+                binding.btnHandle1.visibility = View.VISIBLE
+                binding.btnHandle2.visibility = View.VISIBLE
+
+                binding.btnHandle1.text = "详情"
+                binding.btnHandle2.text = "再次预约"
+            }
+            OrderStatusEnum.CANCELED -> {
+                binding.btnHandle1.visibility = View.VISIBLE
+                binding.btnHandle2.visibility = View.VISIBLE
+
+                binding.btnHandle1.text = "详情"
+                binding.btnHandle2.text = "再次预约"
+            }
+            OrderStatusEnum.EXPIRED -> {
+                binding.btnHandle1.visibility = View.VISIBLE
+                binding.btnHandle2.visibility = View.VISIBLE
+
+                binding.btnHandle1.text = "详情"
+                binding.btnHandle2.text = "再次预约"
+            }
+        }
     }
 
     fun setOnOrderClick(onOrderClick: OnAppointmentOrderClick) {
