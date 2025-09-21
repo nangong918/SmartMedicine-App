@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.czy.baseutil.activity.BaseActivity;
-import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.baseutil.ui.ToastUtils;
 import com.czy.baseutil.viewModel.ViewModelUtil;
 import com.czy.domain.ao.chat.ChatActivityStartAo;
@@ -15,8 +14,6 @@ import com.czy.smartmedicine.MainApplication;
 import com.czy.smartmedicine.databinding.ActivityChatBinding;
 import com.czy.smartmedicine.viewModel.activity.ChatVm;
 import com.czy.smartmedicine.viewModel.base.ApiViewModelFactory;
-
-import java.util.Optional;
 
 /**
  * @author 13225
@@ -73,13 +70,11 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
         // 获取传递的对象
         try {
             Intent intent = getIntent();
-            Optional.ofNullable(intent)
-                    .map(i -> (ChatActivityStartAo)i.getSerializableExtra(
-                            ChatActivityStartAo.class.getName()
-                    ))
-                    .ifPresent(ao -> {
-                        this.startAo = ao;
-                    });
+            this.startAo = (ChatActivityStartAo)intent.getSerializableExtra(
+                    ChatActivityStartAo.class.getName()
+            );
+            Log.i(TAG, "initIntentData::get ChatActivityStartAo: " + ((startAo == null) ? "null" : startAo.toJsonString()));
+
         } catch (Exception e) {
             Log.d(TAG, "initIntentData::get ChatActivityStartAo SerializableExtra Error: ", e);
             ToastUtils.showToast(this, "获取聊天对象失败");
@@ -110,7 +105,7 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
         chatVo.contactId = startAo.contactId;
 
         vm.setStartAo(startAo);
-        vm.init(chatVo);
+        vm.init();
 
         // 观察数据
         observeData();
@@ -121,14 +116,19 @@ public class ChatActivity extends BaseActivity<ActivityChatBinding> {
 
     private void observeData(){
         // 标题
-        Optional.ofNullable(vm)
-                .map(vm -> vm.chatVo)
-                .map(cvo -> cvo.name)
-                .ifPresent(liveData -> {
-                    liveData.observe(this, newName -> {
-                        binding.tvTitle.setText(newName);
-                    });
-                });
+        vm.chatVo.name.observe(this, newName -> {
+            if (TextUtils.isEmpty(newName)){
+                return;
+            }
+            binding.tvTitle.setText(newName);
+        });
+        // 头像
+        vm.chatVo.avatarUrl.observe(this, newAvatarUrl -> {
+            if (TextUtils.isEmpty(newAvatarUrl)){
+                return;
+            }
+            vm.chatMessageAdapter.setCurrentAvatarUrl(newAvatarUrl);
+        });
         // 输入框
 //        Optional.ofNullable(viewModel)
 //                .map(vm -> vm.chatVo)
