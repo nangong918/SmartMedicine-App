@@ -75,11 +75,18 @@ public class MessageVm extends ViewModel {
 
     private OnRecentContactMessageChange getOnRecentContactMessageChange(){
         return list -> {
+            if (list == null){
+                return;
+            }
+
             // 先赋值
             messageVo.chatContactListVo.chatContactList = list;
             // 更新ui
-            chatContactAdapter.setCurrentList(
-                    messageVo.chatContactListVo.chatContactList
+//            chatContactAdapter.setCurrentList(
+//                    messageVo.chatContactListVo.chatContactList
+//            );
+            messageVo.totalMessageCountLd.setValue(
+                    list.size()
             );
         };
     }
@@ -298,7 +305,7 @@ public class MessageVm extends ViewModel {
                 public void run() {
                     if (chatContactAdapter != null){
                         // 更新 UI
-                        chatContactAdapter.setCurrentList(messageVo.chatContactListVo.chatContactList);
+                        messageVo.totalMessageCountLd.setValue(messageVo.chatContactListVo.chatContactList.size());
                         Log.i(TAG, "chatContactAdapter is not null, 刷新ui");
                     }
                     else{
@@ -329,7 +336,6 @@ public class MessageVm extends ViewModel {
                 this::handleGetUserNewMessage,
                 throwable -> {
                     Log.i(TAG, "getUserNewMessage error: " + throwable);
-                    ViewModelUtil.globalThrowableToast(throwable);
                 }
         );
     }

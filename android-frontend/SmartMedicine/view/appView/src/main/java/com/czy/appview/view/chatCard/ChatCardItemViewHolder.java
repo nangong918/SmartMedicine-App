@@ -23,7 +23,7 @@ public class ChatCardItemViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void bind(ChatContactItemAo chatContactItemAo){
-        ImageLoadUtil.loadImageViewByNetWork(chatContactItemAo.chatContactItemVo.avatarUrl, binding.imvgAvatar);
+        ImageLoadUtil.loadImageViewByResource(chatContactItemAo.chatContactItemVo.avatarUrl, binding.imvgAvatar);
         binding.tvName.setText(chatContactItemAo.chatContactItemVo.name);
         binding.tvMessagePreview.setText(chatContactItemAo.chatContactItemVo.messagePreview);
         binding.tvTime.setText(chatContactItemAo.chatContactItemVo.time);
