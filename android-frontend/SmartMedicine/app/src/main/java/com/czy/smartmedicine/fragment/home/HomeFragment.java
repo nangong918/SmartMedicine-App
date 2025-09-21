@@ -18,6 +18,7 @@ import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.fragmentActivityAo.home.HomeFAo;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.activity.search.SearchPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
@@ -106,9 +107,12 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
                 case MotionEvent.ACTION_DOWN:
                     dX = view.getX() - motionEvent.getRawX();
                     dY = view.getY() - motionEvent.getRawY();
+                    isDragging = false; // 重置拖动状态
                     break;
 
                 case MotionEvent.ACTION_MOVE:
+                    isDragging = true; // 设置为正在拖动
+
                     float newX = motionEvent.getRawX() + dX;
                     float newY = motionEvent.getRawY() + dY;
 
@@ -138,6 +142,15 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
                             .setDuration(0)
                             .start();
                     break;
+
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    // 拖动结束，判断是否是点击
+                    if (!isDragging) {
+                        view.performClick(); // 触发点击事件
+                    }
+                    break;
+
                 default:
                     return false;
             }
@@ -145,10 +158,13 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
         });
 
         binding.btnAi.setOnClickListener(v -> {
-
+            ((MainActivity)requireActivity()).turnToAiFragment();
         });
     }
 
+    // ai data: 需要整理到fao
+    // 记录是否拖动
+    boolean isDragging = false;
     private float dX = 50, dY = 50;
 
 

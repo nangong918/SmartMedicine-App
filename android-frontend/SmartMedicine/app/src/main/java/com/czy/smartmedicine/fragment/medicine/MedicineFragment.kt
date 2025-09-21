@@ -1,9 +1,11 @@
 package com.czy.smartmedicine.fragment.medicine
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.viewpager2.widget.ViewPager2
 import com.czy.appview.R
 import com.czy.appview.view.medicine.MedicineViewPagerEnum
@@ -14,10 +16,28 @@ import com.czy.smartmedicine.utils.BaseVmFragment
 import com.czy.smartmedicine.viewModel.fragment.medicine.MedicineVm
 
 
-class MedicineFragment : BaseVmFragment<FragmentMedicineBinding, MedicineVm>(
+open class MedicineFragment : BaseVmFragment<FragmentMedicineBinding, MedicineVm>(
     MedicineFragment::class,
     MedicineVm::class
 ) {
+
+    private var initPosition = MedicineViewPagerEnum.APPOINTMENT.index
+    private var isFirstOnPageSelected = true
+
+    fun setInitPosition(position: Int){
+        initPosition = position
+        Log.i(TAG, "setInitPosition::initPosition: $initPosition")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "onResume::initPosition: $initPosition")
+        if (vm.fao.currentPositionLd.value != initPosition){
+            vm.fao.currentPositionLd.value = initPosition
+            binding.vPager2.setCurrentItem(vm.fao.currentPositionLd.value!!, true)
+        }
+    }
+
     override fun initBinding(): FragmentMedicineBinding {
         return FragmentMedicineBinding.inflate(layoutInflater)
     }
@@ -54,6 +74,10 @@ class MedicineFragment : BaseVmFragment<FragmentMedicineBinding, MedicineVm>(
         binding.vPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
+                if (isFirstOnPageSelected){
+                    isFirstOnPageSelected = false;
+                    return@onPageSelected
+                }
                 vm.fao.currentPositionLd.value = position
             }
         })
@@ -65,14 +89,32 @@ class MedicineFragment : BaseVmFragment<FragmentMedicineBinding, MedicineVm>(
         super.initViewModel()
 
         val fao = MedicineFAo()
-        fao.currentPositionLd.value = MedicineViewPagerEnum.APPOINTMENT.index
+        fao.currentPositionLd.value = initPosition
 
+        Log.i(TAG, "initPosition1: ${fao.currentPositionLd.value}")
         vm.init(fao, this)
+        Log.i(TAG, "initPosition2: ${vm.fao.currentPositionLd.value}")
+
+        observeData()
 
         // 设置 ViewPager2 的适配器
         binding.vPager2.adapter = vm.medicineViewPagerAdapter
 
-        observeData()
+//        val handler = Handler(Looper.getMainLooper())
+//        handler.postDelayed({
+//            binding.vPager2.setCurrentItem(initPosition, true)
+//        }, 1000L) // 延迟1秒
+
+        binding.vPager2.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                // 布局完成后设置当前项
+                Log.i(TAG, "viewTreeObserver: ${vm.fao.currentPositionLd.value}")
+                binding.vPager2.setCurrentItem(vm.fao.currentPositionLd.value!!, true)
+                // 移除监听器，避免重复调用
+                binding.vPager2.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
     }
 
     private fun observeData() {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.czy.appview.view.DialogConfirm;
+import com.czy.appview.view.medicine.MedicineViewPagerEnum;
 import com.czy.baseutil.activity.ActivityLaunchUtils;
 import com.czy.baseutil.activity.BaseActivity;
 import com.czy.baseutil.image.ImageLoadUtil;
@@ -201,18 +203,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         }
     }
 
+    private final SparseArray<Fragment> fragmentMap = new SparseArray<>(SelectItemEnum.values().length);
+
     public void turnToTargetFragment(SelectItemEnum fragmentType, Class<? extends Fragment> clazz, Bundle args){
         binding.mainBottomBar.setSelected(fragmentType);
 
-        Fragment newFragment = null;
+        Fragment newFragment = fragmentMap.get(fragmentType.getPosition());
 
-        try {
-            // 如果没有参数，使用无参构造函数
-            newFragment = clazz.getConstructor().newInstance();
-        } catch (NoSuchMethodException e) {
-            Log.e(TAG, "No such constructor", e);
-        } catch (Exception e) {
-            Log.e(TAG, "Error creating fragment", e);
+        if (newFragment == null){
+            try {
+                // 如果没有参数，使用无参构造函数
+                newFragment = clazz.getConstructor().newInstance();
+            } catch (NoSuchMethodException e) {
+                Log.e(TAG, "No such constructor", e);
+            } catch (Exception e) {
+                Log.e(TAG, "Error creating fragment", e);
+            }
         }
 
         if (newFragment != null) {
@@ -226,6 +232,31 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             transaction.replace(binding.fragmentContainer.getId(), newFragment);
             transaction.commit();
         }
+    }
+
+    public void turnToAiFragment(){
+        setStatusBarColor(
+                com.czy.appview.R.color.green_0
+        );
+        this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+
+        binding.mainBottomBar.setSelected(SelectItemEnum.MEDICAL);
+
+        Fragment newFragment = fragmentMap.get(SelectItemEnum.MEDICAL.getPosition());
+
+        if (newFragment == null){
+            newFragment = new MedicineFragment();
+        }
+        if (newFragment instanceof MedicineFragment){
+            ((MedicineFragment) newFragment).setInitPosition(MedicineViewPagerEnum.AI_QUESTION.getIndex());
+        }
+        else {
+            Log.w(TAG, "turnToAiFragment::error: newFragment !instanceof MedicineFragment");
+        }
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(binding.fragmentContainer.getId(), newFragment);
+        transaction.commit();
     }
 
     public void setBaseBarColorRes(@ColorRes int colorResId){
