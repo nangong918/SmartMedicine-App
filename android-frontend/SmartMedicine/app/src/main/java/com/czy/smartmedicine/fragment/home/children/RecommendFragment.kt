@@ -36,6 +36,16 @@ class RecommendFragment : BaseVmFragment<FragmentRecommendBinding, RecommendVm>(
     // initView
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    //---------------------------ViewModel---------------------------
+
+    override fun initViewModel() {
+        super.initViewModel()
+
+        initVmFAo()
+
+        observeData()
 
         // 初始化点击管理器 (RecyclerView中用到了, 必须在其之前)
         vm.initPostClickManager(this)
@@ -60,10 +70,19 @@ class RecommendFragment : BaseVmFragment<FragmentRecommendBinding, RecommendVm>(
         })
     }
 
-    //---------------------------ViewModel---------------------------
+    private fun initVmFAo(){
 
-    override fun initViewModel() {
-        super.initViewModel()
+    }
+
+    private fun observeData(){
+        vm.fao.recommendPostCount.observe(viewLifecycleOwner){
+            count ->
+            if (count == null){
+                binding.progressBar.visibility = View.VISIBLE
+                return@observe
+            }
+            binding.progressBar.visibility = if (count > 0) View.GONE else View.VISIBLE
+        }
     }
 
 }

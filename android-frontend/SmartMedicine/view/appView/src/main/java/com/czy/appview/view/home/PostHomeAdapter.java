@@ -13,18 +13,17 @@ import com.czy.domain.ao.home.PostPreviewAo;
 import com.czy.domain.constant.home.RecommendCardType;
 
 import java.util.List;
-import java.util.Optional;
 
 public class PostHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final static String TAG = PostHomeAdapter.class.getName();
 
-    private final List<PostPreviewAo> postPreviewAoList;
+    private final List<PostPreviewAo> postPreviewAoListPointer;
     private final OnRecommendCardClick onRecommendCardClick;
 
-    public PostHomeAdapter(List<PostPreviewAo> postPreviewAoList,
+    public PostHomeAdapter(@NonNull List<PostPreviewAo> postPreviewAoListPointer,
                            OnRecommendCardClick onRecommendCardClick) {
-        this.postPreviewAoList = postPreviewAoList;
+        this.postPreviewAoListPointer = postPreviewAoListPointer;
         this.onRecommendCardClick = onRecommendCardClick;
     }
 
@@ -35,7 +34,7 @@ public class PostHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
      */
     @Override
     public int getItemViewType(int position) {
-        PostPreviewAo postPreviewAo = postPreviewAoList.get(position);
+        PostPreviewAo postPreviewAo = postPreviewAoListPointer.get(position);
         if (postPreviewAo != null) {
             return postPreviewAo.viewType; // 确保 viewType 是枚举类型的整数值
         }
@@ -67,7 +66,7 @@ public class PostHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        PostPreviewAo postPreviewAo = postPreviewAoList.get(position);
+        PostPreviewAo postPreviewAo = postPreviewAoListPointer.get(position);
         if (postPreviewAo == null){
             return;
         }
@@ -81,8 +80,6 @@ public class PostHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return Optional.ofNullable(postPreviewAoList)
-                .map(List::size)
-                .orElse(0);
+        return postPreviewAoListPointer.size();
     }
 }
