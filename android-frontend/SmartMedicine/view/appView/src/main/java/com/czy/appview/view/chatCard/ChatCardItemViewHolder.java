@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewChatCardItemBinding;
 import com.czy.domain.OnPositionItemClick;
-import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.ao.message.ChatContactItemAo;
 
 
 /**
@@ -23,7 +23,7 @@ public class ChatCardItemViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void bind(ChatContactItemAo chatContactItemAo){
-        ImageLoadUtil.loadImageViewByNetWork(chatContactItemAo.chatContactItemVo.avatarUrlOrUri, binding.imvgAvatar);
+        ImageLoadUtil.loadImageViewByNetWork(chatContactItemAo.chatContactItemVo.avatarUrl, binding.imvgAvatar);
         binding.tvName.setText(chatContactItemAo.chatContactItemVo.name);
         binding.tvMessagePreview.setText(chatContactItemAo.chatContactItemVo.messagePreview);
         binding.tvTime.setText(chatContactItemAo.chatContactItemVo.time);

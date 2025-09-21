@@ -10,8 +10,7 @@ import com.czy.appcore.network.netty.api.send.SocketMessageSender
 import com.czy.appview.view.contact.ContactAdapter
 import com.czy.baseutil.network.BaseResponse
 import com.czy.dao.networkRepository.ApiRequestImpl
-import com.czy.domain.ao.chat.ChatContactItemAo
-import com.czy.domain.ao.chat.UserLoginInfoAo
+import com.czy.domain.ao.message.ContactItemAo
 import com.czy.domain.ao.newUser.MyFriendItemAo
 import com.czy.domain.ao.userBrief.UserBriefIntentAo
 import com.czy.domain.constant.NettyConstants
@@ -23,7 +22,6 @@ import com.czy.domain.dto.netty.response.HandleAddUserResponse
 import com.czy.domain.entity.UserViewEntity
 import com.czy.domain.fragmentActivityAo.message.AddressBookFAo
 import com.czy.smartmedicine.MainApplication
-import com.czy.smartmedicine.fragment.friends.ContactUserGroupFragment
 import com.czy.smartmedicine.fragment.message.children.AddressBookFragment
 import com.czy.smartmedicine.manager.HttpRequestManager
 import com.czy.smartmedicine.utils.ViewModelUtil
@@ -97,7 +95,7 @@ open class AddressBookVm(
             { response ->
                 this.handleGetMyFriendListResponse(response)
             },
-            { throwable -> ViewModelUtil.globalThrowableToast(throwable) }
+            { throwable -> Log.e(TAG, "handleGetMyFriendListResponse: ", throwable) }
         )
     }
 
@@ -117,18 +115,19 @@ open class AddressBookVm(
                         Optional.ofNullable(myFriendItemAo.userViewEntity)
                             .orElse(UserViewEntity())
 
-                    val contactItem = ChatContactItemAo()
+                    val contactItem =
+                        ContactItemAo()
                     // 设置头像 URL
-                    contactItem.chatContactItemVo.avatarUrlOrUri =
+                    contactItem.contactItemVo.avatarUrl =
                         (Optional.ofNullable(userViewEntity.avatarUrl).orElse(""))
                     // 设置名称
-                    contactItem.chatContactItemVo.name =
+                    contactItem.contactItemVo.name =
                         (Optional.ofNullable(userViewEntity.userName).orElse(""))
                     // 设置账号
                     contactItem.contactAccount =
                         (Optional.ofNullable(userViewEntity.userAccount).orElse(""))
                     // userId
-                    contactItem.userId = (Optional.ofNullable(userViewEntity.userId)
+                    contactItem.contactId = (Optional.ofNullable(userViewEntity.userId)
                         .orElse(NettyConstants.ERROR_ID))
                     contactItem
                 }
@@ -160,16 +159,16 @@ open class AddressBookVm(
     //==========点击用户
     fun onUserClicked(position: Int, onFinish: OnUserClickedFinish) {
         Log.d(TAG, "onUserClicked::position: $position")
-        val ccAo = fao.contactListVo.contactItemList?.value?.get(position) ?: ChatContactItemAo()
+        val ccAo = fao.contactListVo.contactItemList?.value?.get(position) ?: ContactItemAo()
 
         val ubAo = UserBriefIntentAo()
 
-        ubAo.avatarUrl = ccAo.chatContactItemVo?.avatarUrlOrUri ?: ""
+        ubAo.avatarUrl = ccAo.contactItemVo?.avatarUrl ?: ""
 
         ubAo.userAccount = ccAo.contactAccount?: ""
-        ubAo.userName = ccAo.chatContactItemVo?.name?: ""
+        ubAo.userName = ccAo.contactItemVo?.name?: ""
 
-        ubAo.userId = ccAo.userId?: NettyConstants.ERROR_ID
+        ubAo.userId = ccAo.contactId?: NettyConstants.ERROR_ID
 
         onFinish.onFinish(ubAo)
     }
@@ -207,7 +206,7 @@ open class AddressBookVm(
             val num = MainApplication.getInstance().friendsApplyNum
             fao.newFriends.postValue(num)
 
-            val cacheList: List<ChatContactItemAo> = MainApplication.getInstance().friendList?: ArrayList()
+            val cacheList: List<ContactItemAo> = MainApplication.getInstance().friendList?: ArrayList()
             fao.contactListVo.contactItemList.postValue(cacheList)
         }
     }
@@ -220,7 +219,7 @@ open class AddressBookVm(
                 response -> this.handleGetMyFriendApplyList(response)
             },
             {
-                throwable -> ViewModelUtil.globalThrowableToast(throwable)
+                throwable -> Log.e(TAG, "handleGetMyFriendApplyList: ", throwable)
             }
         )
     }

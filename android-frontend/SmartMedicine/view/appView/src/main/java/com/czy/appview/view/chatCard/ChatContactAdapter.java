@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewChatCardItemBinding;
 import com.czy.domain.OnPositionItemClick;
-import com.czy.domain.ao.chat.ChatContactItemAo;
-import com.czy.domain.vo.entity.contact.ContactDiffCallback;
+import com.czy.domain.ao.message.ChatContactItemAo;
+import com.czy.domain.vo.entity.message.contact.ContactDiffCallback;
 
 import java.util.ArrayList;
 import java.util.List;

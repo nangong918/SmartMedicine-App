@@ -1,4 +1,4 @@
-package com.czy.domain.vo.entity.contact;
+package com.czy.domain.vo.entity.message.contact;
 
 
 
@@ -9,15 +9,17 @@ package com.czy.domain.vo.entity.contact;
 public class ChatContactItemVo {
 
     // 头像（支持网络 URL 或本地 URI）
-    public String avatarUrlOrUri = "";
+    public String avatarUrl = "";
 
     // 名称
     public String name = "";
+    // 备注
+    public String remark = "";
 
     // 消息概览
     public String messagePreview = "";
 
-    // 时间
+    // 时间 yyyy-MM-dd HH:mm:ss
     public String time = "";
 
     // 未读消息条数 （注意0条的时候隐藏view）
@@ -27,8 +29,9 @@ public class ChatContactItemVo {
 
     }
     public ChatContactItemVo(ChatContactItemVo vo){
-        this.avatarUrlOrUri = vo.avatarUrlOrUri;
+        this.avatarUrl = vo.avatarUrl;
         this.name = vo.name;
+        this.remark = vo.remark;
         this.messagePreview = vo.messagePreview;
         this.time = vo.time;
         this.unreadCount = vo.unreadCount;

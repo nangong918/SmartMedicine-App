@@ -1,11 +1,11 @@
-package com.czy.domain.ao.chat;
+package com.czy.domain.ao.message;
 
 import android.util.Log;
 
 import com.czy.baseutil.algorithm.SortItem;
 import com.czy.baseutil.json.BaseBean;
 import com.czy.domain.constant.NettyConstants;
-import com.czy.domain.vo.entity.contact.ChatContactItemVo;
+import com.czy.domain.vo.entity.message.contact.ChatContactItemVo;
 
 import java.util.Objects;
 
@@ -21,8 +21,8 @@ public class ChatContactItemAo extends SortItem implements BaseBean {
     // data
     // 联系人账号信息，用于搜索
     public String contactAccount;
-    public Long userId;
-    public Long timestamp;
+    public Long contactId;
+    public Long timestamp;  // long 用于排序 不是用于显示时间
 
     public ChatContactItemAo() {
 
@@ -30,7 +30,7 @@ public class ChatContactItemAo extends SortItem implements BaseBean {
 
     public ChatContactItemAo(ChatContactItemAo ao){
         this.contactAccount = ao.contactAccount;
-        this.userId = ao.userId;
+        this.contactId = ao.contactId;
         this.chatContactItemVo = new ChatContactItemVo(ao.chatContactItemVo);
         this.timestamp = ao.timestamp;
         this.index = ao.index;
@@ -39,7 +39,7 @@ public class ChatContactItemAo extends SortItem implements BaseBean {
     // 用于判断两个对象是否属于一个对象（用唯一标识符判断）
     public boolean isItemEquals(Object o){
         if (o instanceof ChatContactItemAo that){
-            return this.contactAccount.equals(that.contactAccount);
+            return this.contactId.equals(that.contactId);
         }
         return false;
     }
@@ -51,11 +51,11 @@ public class ChatContactItemAo extends SortItem implements BaseBean {
             String thisName = chatContactItemVo.name == null ? "" : chatContactItemVo.name;
             String thatName = that.chatContactItemVo.name == null ? "" : that.chatContactItemVo.name;
             String thisMessagePreview = chatContactItemVo.messagePreview == null ? "" : chatContactItemVo.messagePreview;
-            Long thisUserId = userId == null ? NettyConstants.ERROR_ID : userId;
+            Long thisUserId = contactId == null ? NettyConstants.ERROR_ID : contactId;
             String thatMessagePreview = that.chatContactItemVo.messagePreview == null ? "" : that.chatContactItemVo.messagePreview;
             String thisTime = chatContactItemVo.time == null ? "" : chatContactItemVo.time;
             String thatTime = that.chatContactItemVo.time == null ? "" : that.chatContactItemVo.time;
-            Long thatUserId = that.userId == null ? NettyConstants.ERROR_ID : userId;
+            Long thatUserId = that.contactId == null ? NettyConstants.ERROR_ID : contactId;
             int thisUnreadCount = chatContactItemVo.unreadCount;
             int thatUnreadCount = that.chatContactItemVo.unreadCount;
             String thisContactAccount = contactAccount == null ? "" : contactAccount;
@@ -80,11 +80,11 @@ public class ChatContactItemAo extends SortItem implements BaseBean {
         String thisName = chatContactItemVo.name == null ? "" : chatContactItemVo.name;
         String thatName = that.chatContactItemVo.name == null ? "" : that.chatContactItemVo.name;
         String thisMessagePreview = chatContactItemVo.messagePreview == null ? "" : chatContactItemVo.messagePreview;
-        Long thisUserId = userId == null ? NettyConstants.ERROR_ID : userId;
+        Long thisUserId = contactId == null ? NettyConstants.ERROR_ID : contactId;
         String thatMessagePreview = that.chatContactItemVo.messagePreview == null ? "" : that.chatContactItemVo.messagePreview;
         String thisTime = chatContactItemVo.time == null ? "" : chatContactItemVo.time;
         String thatTime = that.chatContactItemVo.time == null ? "" : that.chatContactItemVo.time;
-        Long thatUserId = that.userId == null ? NettyConstants.ERROR_ID : userId;
+        Long thatUserId = that.contactId == null ? NettyConstants.ERROR_ID : contactId;
         int thisUnreadCount = chatContactItemVo.unreadCount;
         int thatUnreadCount = that.chatContactItemVo.unreadCount;
         String thisContactAccount = contactAccount == null ? "" : contactAccount;

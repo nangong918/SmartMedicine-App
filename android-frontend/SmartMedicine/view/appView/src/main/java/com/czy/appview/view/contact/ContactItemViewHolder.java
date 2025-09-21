@@ -1,12 +1,14 @@
 package com.czy.appview.view.contact;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.appview.databinding.ViewContactItemBinding;
+import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.domain.OnPositionItemClick;
-import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.ao.message.ContactItemAo;
 
 
 /**
@@ -21,12 +23,19 @@ public class ContactItemViewHolder extends RecyclerView.ViewHolder{
         this.binding = binding;
     }
 
-    public void bind(ChatContactItemAo chatContactItemAo){
-        if (chatContactItemAo == null){
+    public void bind(ContactItemAo contactItemAo){
+        if (contactItemAo == null){
             return;
         }
-        ImageLoadUtil.loadImageViewByNetWork(chatContactItemAo.chatContactItemVo.avatarUrlOrUri, binding.imvgAvatar);
-        binding.tvName.setText(chatContactItemAo.chatContactItemVo.name);
+        ImageLoadUtil.loadImageViewByResource(contactItemAo.contactItemVo.avatarUrl, binding.imvgAvatar);
+        String name = contactItemAo.contactItemVo.remark;
+        if (TextUtils.isEmpty(contactItemAo.contactItemVo.remark)){
+            name = contactItemAo.contactItemVo.name;
+            if (TextUtils.isEmpty(contactItemAo.contactItemVo.name)){
+                name = "";
+            }
+        }
+        binding.tvName.setText(name);
     }
 
     public void setPositionClick(OnPositionItemClick onPositionItemClick){

@@ -1,4 +1,4 @@
-package com.czy.domain.vo.entity.message;
+package com.czy.domain.vo.entity.chat;
 
 
 import android.util.Log;

@@ -2,8 +2,6 @@ package com.czy.domain.vo.entity.chat;
 
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.czy.domain.vo.entity.message.ChatMessageItemVo;
-
 import java.util.List;
 import java.util.Optional;
 

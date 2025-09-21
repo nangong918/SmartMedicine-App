@@ -1,7 +1,7 @@
 package com.czy.domain.fragmentActivityAo.message
 
 import androidx.lifecycle.MutableLiveData
-import com.czy.domain.vo.entity.contact.ContactListVo
+import com.czy.domain.vo.entity.message.contact.ContactListVo
 
 open class AddressBookFAo {
 

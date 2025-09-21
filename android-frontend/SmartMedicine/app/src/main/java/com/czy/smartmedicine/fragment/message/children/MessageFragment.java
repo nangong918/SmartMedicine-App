@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import com.czy.domain.fragmentActivityAo.MessageVo;
 import com.czy.smartmedicine.databinding.FragmentMessageBinding;
 import com.czy.smartmedicine.utils.BaseVmFragment;
-import com.czy.smartmedicine.viewModel.fragment.MessageVm;
+import com.czy.smartmedicine.viewModel.fragment.message.MessageVm;
 
 import kotlin.jvm.JvmClassMappingKt;
 

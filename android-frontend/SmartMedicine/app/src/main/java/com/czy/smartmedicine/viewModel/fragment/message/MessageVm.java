@@ -1,4 +1,4 @@
-package com.czy.smartmedicine.viewModel.fragment;
+package com.czy.smartmedicine.viewModel.fragment.message;
 
 
 import android.content.Intent;
@@ -21,7 +21,7 @@ import com.czy.baseutil.network.BaseResponse;
 import com.czy.appview.view.chatCard.ChatContactAdapter;
 import com.czy.domain.OnPositionItemClick;
 import com.czy.domain.ao.chat.ChatActivityStartAo;
-import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.ao.message.ChatContactItemAo;
 import com.czy.domain.bo.UserChatLastViewMessageBo;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
@@ -123,7 +123,7 @@ public class MessageVm extends ViewModel {
             List<ChatContactItemAo> list = recyclerViewVo.chatContactList;
             list.get(position).chatContactItemVo.unreadCount = 0;
             // 通知后端那一条被读了
-            Long userId = list.get(position).userId;
+            Long userId = list.get(position).contactId;
             socketHaveReadMessage(userId);
             // ui 更新
 //            messageVo.chatContactListVo.chatContactListLd.postValue(list);
@@ -189,9 +189,9 @@ public class MessageVm extends ViewModel {
         ChatContactItemAo item = new ChatContactItemAo();
         item.contactAccount = Optional.ofNullable(response.account).orElse("");
         // 应该替换为本地url加载
-        item.chatContactItemVo.avatarUrlOrUri = response.avatarUrls;
+        item.chatContactItemVo.avatarUrl = response.avatarUrls;
         item.chatContactItemVo.name = response.senderName;
-        item.userId = response.senderId;
+        item.contactId = response.senderId;
         item.chatContactItemVo.setMessagePreview(response.getContent());
         item.timestamp = Optional.ofNullable(response.timestamp)
                 .map(t -> {
@@ -241,7 +241,7 @@ public class MessageVm extends ViewModel {
         String contactAccount = response.account == null ? "" : response.account;
         ChatContactItemAo item = new ChatContactItemAo();
         item.contactAccount = contactAccount;
-        item.userId = response.senderId;
+        item.contactId = response.senderId;
         item.timestamp = Optional.ofNullable(response.timestamp)
                 .map(t -> {
                     try {
@@ -342,7 +342,7 @@ public class MessageVm extends ViewModel {
                 ChatContactItemAo ao = new ChatContactItemAo();
                 // view: ChatContactItemVo
                 // 头像 URL
-                ao.chatContactItemVo.avatarUrlOrUri =
+                ao.chatContactItemVo.avatarUrl =
                         lastMessageBo.friendViewEntity.avatarUrl;
                 // name = name + (备注) ? 备注 : account
                 ao.chatContactItemVo.name = getFinalName(lastMessageBo);
@@ -356,7 +356,7 @@ public class MessageVm extends ViewModel {
                 ao.chatContactItemVo.unreadCount = lastMessageBo.unreadCount;
                 // data
                 ao.contactAccount = lastMessageBo.friendViewEntity.userAccount;
-                ao.userId = lastMessageBo.friendViewEntity.userId;
+                ao.contactId = lastMessageBo.friendViewEntity.userId;
                 ao.timestamp = lastMessageBo.timestamp;
 
                 chatContactList.add(ao);

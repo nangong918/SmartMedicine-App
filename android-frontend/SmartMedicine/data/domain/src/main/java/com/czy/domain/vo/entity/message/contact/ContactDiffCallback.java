@@ -1,9 +1,9 @@
-package com.czy.domain.vo.entity.contact;
+package com.czy.domain.vo.entity.message.contact;
 
 
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.ao.message.ChatContactItemAo;
 
 import java.util.List;
 import java.util.Optional;

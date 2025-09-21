@@ -8,7 +8,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.czy.baseutil.algorithm.SortUtils;
-import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.ao.message.ChatContactItemAo;
 import com.czy.domain.constant.NettyConstants;
 
 import java.util.ArrayList;
@@ -337,7 +337,7 @@ public class ChatMessageManager {
                 for (int i = 0; i < chatContactItemAoList.size(); i++){
                     ChatContactItemAo chatContactItemAo = chatContactItemAoList.get(i);
                     // 相同的情况：存在
-                    if (item.userId != null && item.userId.equals(chatContactItemAo.userId)){
+                    if (item.contactId != null && item.contactId.equals(chatContactItemAo.contactId)){
                         isExist.set(true);
                         // 复制原来的数据，因为要移除原来的数据
                         ChatContactItemAo ao = new ChatContactItemAo(item);
