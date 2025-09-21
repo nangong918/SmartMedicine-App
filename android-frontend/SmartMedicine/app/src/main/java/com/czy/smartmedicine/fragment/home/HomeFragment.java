@@ -1,9 +1,11 @@
 package com.czy.smartmedicine.fragment.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -61,6 +63,7 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void setListener() {
         super.setListener();
@@ -93,7 +96,61 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
             Intent intent = new Intent(requireActivity(), SearchPostActivity.class);
             startActivity(intent);
         });
+
+        // ai拖拽
+        binding.btnAi.setX(dX);
+        binding.btnAi.setY(dY);
+
+        binding.btnAi.setOnTouchListener((view, motionEvent) -> {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    dX = view.getX() - motionEvent.getRawX();
+                    dY = view.getY() - motionEvent.getRawY();
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    float newX = motionEvent.getRawX() + dX;
+                    float newY = motionEvent.getRawY() + dY;
+
+                    // 获取父视图的边界
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int leftBoundary = 0;
+                    int rightBoundary = parent.getWidth() - view.getWidth();
+                    int topBoundary = 0;
+                    int bottomBoundary = parent.getHeight() - view.getHeight();
+
+                    // 边界检查
+                    if (newX < leftBoundary) {
+                        newX = leftBoundary;
+                    } else if (newX > rightBoundary) {
+                        newX = rightBoundary;
+                    }
+
+                    if (newY < topBoundary) {
+                        newY = topBoundary;
+                    } else if (newY > bottomBoundary) {
+                        newY = bottomBoundary;
+                    }
+
+                    view.animate()
+                            .x(newX)
+                            .y(newY)
+                            .setDuration(0)
+                            .start();
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        });
+
+        binding.btnAi.setOnClickListener(v -> {
+
+        });
     }
+
+    private float dX = 50, dY = 50;
+
 
     //---------------------------viewModel---------------------------
 
