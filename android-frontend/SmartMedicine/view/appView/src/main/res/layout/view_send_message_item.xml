@@ -40,7 +40,7 @@
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imgv_message"
-            tools:text="test text"/>
+            tools:text="test texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest texttest text"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -55,7 +55,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="2023/10/9"
         app:layout_constraintTop_toBottomOf="@+id/ly_content"/>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
