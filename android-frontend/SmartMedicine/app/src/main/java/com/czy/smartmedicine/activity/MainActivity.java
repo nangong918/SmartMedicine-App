@@ -106,12 +106,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     protected void setListener() {
         super.setListener();
         binding.mainBottomBar.clickListener(position -> {
-            SelectItemEnum fragmentType = SelectItemEnum.HOME;
             try {
-                fragmentType = SelectItemEnum.getItem(position);
+                currentSelected = SelectItemEnum.getItem(position);
             } catch (Exception ignored){
             }
-            changeFragment(fragmentType);
+            changeFragment();
         });
 
         // MainActivity给HomeFragment初始化点击事件
@@ -153,52 +152,55 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     //---------------------------fragment---------------------------
 
     private FragmentManager fragmentManager;
+    private SelectItemEnum currentSelected = SelectItemEnum.HOME;
+    private SelectItemEnum lastSelected = null;
 
     private void initFragment(){
         fragmentManager = getSupportFragmentManager();
 
-        SelectItemEnum fragmentType = SelectItemEnum.HOME;
+        currentSelected = SelectItemEnum.HOME;
         try {
             if (getIntent().hasExtra(SelectItemEnum.INTENT_EXTRA_NAME)){
-                fragmentType = (SelectItemEnum) getIntent().getSerializableExtra(SelectItemEnum.INTENT_EXTRA_NAME);
+                currentSelected = (SelectItemEnum) getIntent().getSerializableExtra(SelectItemEnum.INTENT_EXTRA_NAME);
             }
         } catch (Exception ignored){
         }
 
-        changeFragment(fragmentType);
+        changeFragment();
     }
 
-    private void changeFragment(SelectItemEnum fragmentType){
-        if (fragmentType != null){
-            switch(fragmentType){
-                case HOME -> {
-                    setStatusBarColor(
-                            com.czy.appview.R.color.green_90
-                    );
-                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
-                    turnToTargetFragment(SelectItemEnum.HOME, HomeFragment.class, null);
-                }
-                case MEDICAL -> {
-                    setStatusBarColor(
-                            com.czy.appview.R.color.green_0
-                    );
-                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
-                    turnToTargetFragment(SelectItemEnum.MEDICAL, MedicineFragment.class, null);
-                }
-                case MESSAGE -> {
-                    setStatusBarColor(
-                            com.czy.appview.R.color.green_0
-                    );
-                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
-                    turnToTargetFragment(SelectItemEnum.MESSAGE, MessageMainFragment.class, null);
-                }
-                case MINE -> {
-                    setStatusBarColor(
-                            com.czy.appview.R.color.green_0
-                    );
-                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
-                    turnToTargetFragment(SelectItemEnum.MINE, MineFragment.class, null);
-                }
+    private void changeFragment(){
+        if (currentSelected == lastSelected){
+            return;
+        }
+        switch(currentSelected){
+            case HOME -> {
+                setStatusBarColor(
+                        com.czy.appview.R.color.green_90
+                );
+                this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                turnToTargetFragment(SelectItemEnum.HOME, HomeFragment.class, null);
+            }
+            case MEDICAL -> {
+                setStatusBarColor(
+                        com.czy.appview.R.color.green_0
+                );
+                this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                turnToTargetFragment(SelectItemEnum.MEDICAL, MedicineFragment.class, null);
+            }
+            case MESSAGE -> {
+                setStatusBarColor(
+                        com.czy.appview.R.color.green_0
+                );
+                this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                turnToTargetFragment(SelectItemEnum.MESSAGE, MessageMainFragment.class, null);
+            }
+            case MINE -> {
+                setStatusBarColor(
+                        com.czy.appview.R.color.green_0
+                );
+                this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                turnToTargetFragment(SelectItemEnum.MINE, MineFragment.class, null);
             }
         }
     }
@@ -231,6 +233,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.replace(binding.fragmentContainer.getId(), newFragment);
             transaction.commit();
+
+            // 缓存
+            lastSelected = currentSelected;
         }
     }
 
@@ -240,9 +245,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         );
         this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
 
-        binding.mainBottomBar.setSelected(SelectItemEnum.MEDICAL);
+        currentSelected = SelectItemEnum.MEDICAL;
 
-        Fragment newFragment = fragmentMap.get(SelectItemEnum.MEDICAL.getPosition());
+        binding.mainBottomBar.setSelected(currentSelected);
+
+        Fragment newFragment = fragmentMap.get(currentSelected.getPosition());
 
         if (newFragment == null){
             newFragment = new MedicineFragment();
@@ -257,6 +264,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(binding.fragmentContainer.getId(), newFragment);
         transaction.commit();
+
+        // 缓存
+        lastSelected = currentSelected;
     }
 
     public void setBaseBarColorRes(@ColorRes int colorResId){
