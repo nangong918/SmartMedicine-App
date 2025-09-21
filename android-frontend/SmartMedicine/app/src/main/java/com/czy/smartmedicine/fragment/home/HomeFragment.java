@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -103,15 +104,18 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
         binding.btnAi.setY(dY);
 
         binding.btnAi.setOnTouchListener((view, motionEvent) -> {
+            Log.i(getTAG(), "onTouchListener::motionEvent.getAction(): " + motionEvent.getAction());
             switch (motionEvent.getAction()) {
-                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_DOWN -> {
                     dX = view.getX() - motionEvent.getRawX();
                     dY = view.getY() - motionEvent.getRawY();
                     isDragging = false; // 重置拖动状态
-                    break;
+                    actionDownStartTime = System.currentTimeMillis();
+                }
 
-                case MotionEvent.ACTION_MOVE:
-                    isDragging = true; // 设置为正在拖动
+                case MotionEvent.ACTION_MOVE -> {
+                    // 设置为正在拖动
+                    isDragging = true;
 
                     float newX = motionEvent.getRawX() + dX;
                     float newY = motionEvent.getRawY() + dY;
@@ -141,18 +145,22 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
                             .y(newY)
                             .setDuration(0)
                             .start();
-                    break;
+                }
 
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    // 拖动结束，判断是否是点击
-                    if (!isDragging) {
+                case MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    boolean isClick =
+                            // 拖动结束，判断是否是点击
+                            !isDragging ||
+                            // 拖拽时间小于200
+                            System.currentTimeMillis() - actionDownStartTime < 150;
+                    if (isClick) {
                         view.performClick(); // 触发点击事件
                     }
-                    break;
+                }
 
-                default:
+                default -> {
                     return false;
+                }
             }
             return true;
         });
@@ -165,6 +173,7 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
     // ai data: 需要整理到fao
     // 记录是否拖动
     boolean isDragging = false;
+    long actionDownStartTime = 0L;
     private float dX = 50, dY = 50;
 
 
