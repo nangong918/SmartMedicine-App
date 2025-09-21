@@ -129,7 +129,7 @@ open class MedicineFragment : BaseVmFragment<FragmentMedicineBinding, MedicineVm
                         when (enum) {
                             MedicineViewPagerEnum.APPOINTMENT -> {
                                 (requireActivity() as MainActivity).setBaseBarColorRes(
-                                    R.color.green_0
+                                    R.color.green_50
                                 )
                             }
                             MedicineViewPagerEnum.AI_QUESTION -> {

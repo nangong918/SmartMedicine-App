@@ -185,7 +185,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 setStatusBarColor(
                         com.czy.appview.R.color.green_0
                 );
-                this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                this.setBaseBarColorRes(com.czy.appview.R.color.green_50);
                 turnToTargetFragment(SelectItemEnum.MEDICAL, MedicineFragment.class, null);
             }
             case MESSAGE -> {
