@@ -14,18 +14,17 @@ import com.czy.api.domain.Do.post.post.PostDetailEsDo;
 import com.czy.api.domain.Do.post.post.PostFilesDo;
 import com.czy.api.domain.Do.post.post.PostInfoDo;
 import com.czy.api.domain.Do.user.UserDo;
-import com.czy.api.domain.ao.post.PostAo;
 import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostSearchEsAo;
 import com.czy.api.domain.ao.recommend.PostScoreAo;
 import com.czy.api.domain.ao.user.AuthorAo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostOldVo;
 import com.czy.api.mapper.DiseaseRepository;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostStorageService;
 import com.utils.minio.service.OssService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -367,28 +366,13 @@ public class PostSearchServiceImpl implements PostSearchService {
     }
 
     @Override
-    public List<PostPreviewVo> getPostPreviewVosByIds(List<Long> postIds) {
+    public List<PostPreviewVo> getPostPreviewVosByIds(List<Long> postIds, @NonNull Long userId) {
         if (CollectionUtils.isEmpty(postIds)){
             return new ArrayList<>();
         }
-        List<PostInfoAo> postInfoAos = findPostInfoList(postIds);
-        if (CollectionUtils.isEmpty(postInfoAos)){
-            return new ArrayList<>();
-        }
-        return postFrontService.toPostPreviewVoList(postInfoAos);
+        return postFrontService.getPostPreviewVoListByIds(postIds, userId);
     }
 
-    @Override
-    public PostOldVo getPostVoById(Long postId) {
-        if (postId == null){
-            return null;
-        }
-        PostAo postAo = postStorageService.findPostAoById(postId);
-        if (postAo == null || postAo.getId() == null){
-            return null;
-        }
-        return postFrontService.postAoToPostVo(postAo);
-    }
 
     @Override
     public List<Long> getNotInPostIds(Set<Long> postIds, int limitNum) {

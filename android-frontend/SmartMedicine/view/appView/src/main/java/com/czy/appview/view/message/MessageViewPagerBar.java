@@ -49,10 +49,10 @@ public class MessageViewPagerBar extends ConstraintLayout {
             int finalI = i;
             linearLayouts[i].setOnClickListener(
                     v -> {
-                        currentPosition = HomeViewPagerEnum.values()[finalI].getIndex();
+                        currentPosition = MessageViewPagerEnum.values()[finalI].getIndex();
                         if (onViewPagerBarClickListener != null){
                             onViewPagerBarClickListener.onPositionItemClick(
-                                    HomeViewPagerEnum.values()[finalI].getIndex()
+                                    MessageViewPagerEnum.values()[finalI].getIndex()
                             );
                             updateUI();
                         }
@@ -61,7 +61,7 @@ public class MessageViewPagerBar extends ConstraintLayout {
         }
     }
 
-    private int currentPosition = HomeViewPagerEnum.RECOMMEND.getIndex();
+    private int currentPosition = MessageViewPagerEnum.MESSAGE.getIndex();
 
     private OnPositionItemClick onViewPagerBarClickListener;
 

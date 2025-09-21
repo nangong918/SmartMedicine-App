@@ -1,7 +1,8 @@
 package com.czy.domain.ao.chat;
 
 import com.czy.baseutil.json.BaseBean;
-import com.czy.domain.vo.entity.message.ChatMessageItemVo;
+import com.czy.domain.ao.message.ChatContactItemAo;
+import com.czy.domain.vo.entity.chat.ChatMessageItemVo;
 
 import java.io.Serializable;
 import java.util.List;
@@ -39,9 +40,9 @@ public class ChatActivityStartAo implements Serializable, BaseBean {
     public static ChatActivityStartAo getStartAoByChatContactItemAo(ChatContactItemAo ao, String inputText){
         ChatActivityStartAo startAo = new ChatActivityStartAo();
         startAo.contactName = ao.chatContactItemVo.name;
-        startAo.avatarUrl = ao.chatContactItemVo.avatarUrlOrUri;
+        startAo.avatarUrl = ao.chatContactItemVo.avatarUrl;
         startAo.contactAccount = ao.contactAccount;
-        startAo.contactId = ao.userId;
+        startAo.contactId = ao.contactId;
         startAo.inputText = Optional.ofNullable(inputText).orElse("");
         return startAo;
     }

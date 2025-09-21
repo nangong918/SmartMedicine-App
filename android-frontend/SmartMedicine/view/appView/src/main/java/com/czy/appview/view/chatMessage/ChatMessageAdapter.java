@@ -15,7 +15,7 @@ import com.czy.appview.databinding.ViewReceivedMessageItemBinding;
 import com.czy.appview.databinding.ViewSendMessageItemBinding;
 import com.czy.domain.constant.MessageTypeEnum;
 import com.czy.domain.vo.entity.chat.ChatMessageDiffCallback;
-import com.czy.domain.vo.entity.message.ChatMessageItemVo;
+import com.czy.domain.vo.entity.chat.ChatMessageItemVo;
 
 import java.util.ArrayList;
 import java.util.List;

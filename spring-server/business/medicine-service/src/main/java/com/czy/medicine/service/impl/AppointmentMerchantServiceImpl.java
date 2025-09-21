@@ -47,7 +47,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -174,7 +173,7 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
     private AppointmentDoctorDataVo getDataVo
             (List<DoctorMerchantAppointmentDo> dos, String dateStr){
         AppointmentDoctorDataVo dataVo = new AppointmentDoctorDataVo();
-        dataVo.setData(dateStr);
+        dataVo.setDate(dateStr);
 
         if (CollectionUtils.isEmpty(dos)){
             dataVo.setRemainCount(0);
@@ -230,19 +229,6 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
     @NotNull
     @Override
     public List<AppointmentDoctorDataVo> getDataVoList(@NotNull AppointmentDoctorSelectAo ao) throws AppException{
-        /// 参数校验
-        if (!StringUtils.hasText(ao.getRegisterTime())){
-            return new ArrayList<>();
-        }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime registerTime;
-        try {
-            registerTime = DateUtils.getLocalDateTime(ao.getRegisterTime(), formatter);
-        } catch (Exception e) {
-            String errorMessage = "时间转换错误, timeStr: " + ao.getRegisterTime();
-            log.error(errorMessage, e);
-            throw new AppException(errorMessage, e);
-        }
 
         /// 数据源
         /*
@@ -254,27 +240,19 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
             缓存对象: 缓存对象为Do, 因为Vo涉及对Do的计算, 如果只因为数据存在就返回数据, 那么一定会出现缓存Vo和Do计算出来的Vo不一致
             如果缓存对象为Vo, 那么每次更新Do的时候都要删除缓存, 避免返回过时的Vo这一问题
          */
-        StringBuilder keyBuilder = new StringBuilder(MedicineRedisKey.Appointment.getDataVoList_KEY_PREFIX);
-
-        // 添加地点信息
-        keyBuilder.append(ao.getRegisterLocation().getProvince()).append(":");
-        keyBuilder.append(ao.getRegisterLocation().getCity() == null ? "null" : ao.getRegisterLocation().getCity()).append(":");
-        keyBuilder.append(ao.getRegisterLocation().getRegion() == null ? "null" : ao.getRegisterLocation().getRegion()).append(":");
-
-        // 添加科室和科目代码
-        keyBuilder.append(ao.getRegisterDepartmentCode()).append(":");
-        keyBuilder.append(ao.getRegisterSubjectCode() == null ? "null" : ao.getRegisterSubjectCode()).append(":");
+        // 废弃不使用前端的值，因为查询肯定是今天~3天后
+        LocalDateTime registerTime = LocalDateTime.now();
 
         // 获取今天~3天后挂号列表
         LocalDateTime[] registerDates = new LocalDateTime[]{
                 // 今天
                 registerTime,
                 // 明天
-                registerTime.plusDays(1),
+                registerTime.plusDays(1).toLocalDate().atStartOfDay(),
                 // 后天
-                registerTime.plusDays(2),
+                registerTime.plusDays(2).toLocalDate().atStartOfDay(),
                 // 3天后
-                registerTime.plusDays(3),
+                registerTime.plusDays(3).toLocalDate().atStartOfDay(),
         };
 
         // 获取数据
@@ -481,6 +459,27 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
                 listAos = new ArrayList<>();
             }
 
+            // file填充
+            List<Long> fileIds = new ArrayList<>(listAos.size());
+            for (AppointmentDoctorOrderListAo ao : listAos){
+                Long fileId = Optional.ofNullable(ao)
+                        .map(AppointmentDoctorOrderListAo::getListVo)
+                        .map(AppointmentDoctorOrderListVo::getDoctorVo)
+                        .map(DoctorVo::getDoctorAvatarFileAo)
+                        .map(FileResAo::getFileId)
+                        .orElse(null);
+                fileIds.add(fileId);
+            }
+            List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
+            for (int i = 0; i < fileUrls.size(); i++){
+                int finalI = i;
+                Optional.ofNullable(listAos.get(i))
+                        .map(AppointmentDoctorOrderListAo::getListVo)
+                        .map(AppointmentDoctorOrderListVo::getDoctorVo)
+                        .map(DoctorVo::getDoctorAvatarFileAo)
+                        .ifPresent(fileAo -> fileAo.setFileUrl(fileUrls.get(finalI)));
+            }
+
             // 缓存
             boolean result = appointmentDoctorOrderRedisMapper.saveAppointmentDoctorOrderListAo(
                     userId,
@@ -492,6 +491,53 @@ public class AppointmentMerchantServiceImpl implements AppointmentDoctorService 
             }
         }
         return listAos;
+    }
+
+    @Override
+    public AppointmentDoctorOrderListAo getAppointmentRecordDetails(@NotNull Long userId, @NotNull Long orderId) {
+        ///  1. redis查询
+        AppointmentDoctorOrderListAo ao = appointmentDoctorOrderRedisMapper.getAppointmentDoctorOrderListAoByOrderId(
+                userId,
+                orderId
+        );
+        if (ao == null || ao.getOrderId() == null){
+            log.info("[获取user预约订单详情]缓存未命中, 获取数据库数据: userId: {}, orderId: {}", userId, orderId);
+
+            /// 2. mysql查询
+            UserCustomerAppointmentDo userCustomerAppointmentDo = userCustomerAppointmentOrderMapper.getByOrderId(orderId);
+            if (userCustomerAppointmentDo == null || userCustomerAppointmentDo.getId() == null){
+                return null;
+            }
+
+            List<UserCustomerAppointmentDo> list = new ArrayList<>(1);
+            list.add(userCustomerAppointmentDo);
+            List<UserAppointmentOrderBo> bos = doctorMerchantBoMapper.getDoctorCardBosByUserCustomerAppointmentDos(
+                    list
+            );
+            if (CollectionUtils.isEmpty(bos)){
+                return null;
+            }
+
+            // 数据计算填充: MerchantStatus
+            AppointmentMerchantStatusCalculator.calculateFillUserAppointmentOrderBos(
+                    bos
+            );
+
+            LocalDateTime registerDate = LocalDateTime.now();
+            String dateStr = DateUtils.yyyyMMddHHmmssToString(registerDate);
+            // bos -> aos
+            ao = appointmentDoctorOrderConverter.getAoByBo(
+                    bos.get(0),
+                    dateStr
+            );
+
+            // 缓存
+            boolean result = appointmentDoctorOrderRedisMapper.saveSingleAppointmentDoctorOrderListAo(
+                    userId,
+                    ao
+            );
+        }
+        return ao;
     }
 
     @Override

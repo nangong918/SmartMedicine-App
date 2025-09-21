@@ -32,6 +32,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
                 "com.api.mapper",
                 // 扫描本模块
                 "com.czy.feature",
+                // 扫描工具类
+                "com.czy.spring",
 //                // 扫描工具类 Webflux的异常处理
 //                "com.utils.webflux.handler",
                 "com.utils.redis",

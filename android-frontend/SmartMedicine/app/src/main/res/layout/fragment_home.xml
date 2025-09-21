@@ -22,6 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/v_pager2"
         android:layout_width="match_parent"
@@ -37,11 +39,33 @@
         android:layout_marginBottom="50dp"
         android:layout_marginEnd="24dp"
         android:src="@drawable/add_24px"
-        android:backgroundTint="@color/green_50"
+        android:backgroundTint="@color/green_90"
         app:tint="@color/green_900"
         android:foregroundGravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/btn_ai"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:background="@color/green_100"
+        app:cardCornerRadius="150dp"
+        app:elevation="20dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginStart="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/home_select_bar">
+
+        <ImageView
+            android:padding="10dp"
+            android:background="@color/green_90"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/robot_2_24px"
+            android:tint="@color/green_900"
+            tools:ignore="UseAppTint" />
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

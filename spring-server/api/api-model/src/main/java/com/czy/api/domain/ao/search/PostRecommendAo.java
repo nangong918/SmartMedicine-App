@@ -1,6 +1,6 @@
 package com.czy.api.domain.ao.search;
 
-import com.czy.api.domain.ao.post.PostInfoUrlAo;
+import com.czy.api.domain.vo.post.PostPreviewVo;
 import lombok.Data;
 
 import java.util.List;
@@ -15,5 +15,5 @@ public class PostRecommendAo {
         @see com.czy.api.constant.search.result.PostRecommendResult
      */
     private Integer recommendType;
-    private List<PostInfoUrlAo> postInfoUrlAos;
+    private List<PostPreviewVo> postPreviewVos; // todo
 }

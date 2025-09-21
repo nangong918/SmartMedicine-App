@@ -9,22 +9,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewRecommendCardBinding;
 import com.czy.appview.databinding.ViewRecommendCardPlusBinding;
-import com.czy.domain.ao.home.PostAo;
+import com.czy.domain.ao.home.PostPreviewAo;
 import com.czy.domain.constant.home.RecommendCardType;
 
 import java.util.List;
-import java.util.Optional;
 
 public class PostHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final static String TAG = PostHomeAdapter.class.getName();
 
-    private final List<PostAo> postAoList;
+    private final List<PostPreviewAo> postPreviewAoListPointer;
     private final OnRecommendCardClick onRecommendCardClick;
 
-    public PostHomeAdapter(List<PostAo> postAoList,
+    public PostHomeAdapter(@NonNull List<PostPreviewAo> postPreviewAoListPointer,
                            OnRecommendCardClick onRecommendCardClick) {
-        this.postAoList = postAoList;
+        this.postPreviewAoListPointer = postPreviewAoListPointer;
         this.onRecommendCardClick = onRecommendCardClick;
     }
 
@@ -35,9 +34,9 @@ public class PostHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
      */
     @Override
     public int getItemViewType(int position) {
-        PostAo postAo = postAoList.get(position);
-        if (postAo != null) {
-            return postAo.viewType; // 确保 viewType 是枚举类型的整数值
+        PostPreviewAo postPreviewAo = postPreviewAoListPointer.get(position);
+        if (postPreviewAo != null) {
+            return postPreviewAo.viewType; // 确保 viewType 是枚举类型的整数值
         }
         return -1; // 或者其他默认值
     }
@@ -67,22 +66,20 @@ public class PostHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        PostAo postAo = postAoList.get(position);
-        if (postAo == null){
+        PostPreviewAo postPreviewAo = postPreviewAoListPointer.get(position);
+        if (postPreviewAo == null){
             return;
         }
-        RecommendCardType recommendCardType = RecommendCardType.valueOf(postAo.viewType);
+        RecommendCardType recommendCardType = RecommendCardType.valueOf(postPreviewAo.viewType);
         switch (recommendCardType){
-            case SINGLE_BIG_CARD -> ((PostHomePlusViewHolder)holder).setView(postAo);
-            case TWO_SMALL_CARD -> ((PostHomeViewHolder)holder).setView(postAo);
+            case SINGLE_BIG_CARD -> ((PostHomePlusViewHolder)holder).setView(postPreviewAo);
+            case TWO_SMALL_CARD -> ((PostHomeViewHolder)holder).setView(postPreviewAo);
             default -> Log.w(TAG, "未知的推荐卡片类型");
         }
     }
 
     @Override
     public int getItemCount() {
-        return Optional.ofNullable(postAoList)
-                .map(List::size)
-                .orElse(0);
+        return postPreviewAoListPointer.size();
     }
 }

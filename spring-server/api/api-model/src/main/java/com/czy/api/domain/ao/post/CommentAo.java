@@ -1,7 +1,7 @@
 package com.czy.api.domain.ao.post;
 
 
-import com.czy.api.domain.vo.post.aaa.CommentVo;
+import com.czy.api.domain.vo.post.CommentVo;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 

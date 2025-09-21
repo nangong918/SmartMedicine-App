@@ -8,5 +8,6 @@ package com.czy.domain.dto.http.request;
  */
 public class GetSinglePostRequest {
     public Long postId;
+    public Long userId;
     public Integer pageNum = 0;
 }

@@ -7,4 +7,6 @@ public interface BackEndConstant {
 //    String SEARCH = "/search-service";
     String POST = "/post-service";
 //    String RECOMMEND = "/recommend-service";
+    String MEDICINE = "/medicine-service";
+    String PURCHASE = "/purchase-service";
 }

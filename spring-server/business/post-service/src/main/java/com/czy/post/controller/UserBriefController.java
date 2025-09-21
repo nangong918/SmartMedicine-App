@@ -2,7 +2,6 @@ package com.czy.post.controller;
 
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.post.PostConstant;
-import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.UserBriefRequest;
 import com.czy.api.domain.dto.http.response.UserBriefResponse;
@@ -53,12 +52,16 @@ public class UserBriefController {
             return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
         }
 
-        List<PostInfoAo> postInfoAos = postService.findPublishedPostsByUserId(
+        List<Long> postIds = postService.findPublishedPostsByUserId(
                 beQueryUser.getUserId(),
                 request.getPostNum(),
                 request.getPostSize()
         );
-        List<PostPreviewVo> postPreviewVos = postFrontService.toPostPreviewVoList(postInfoAos);
+        // 他的动态
+        List<PostPreviewVo> postPreviewVos = postFrontService.getPostPreviewVoListByIds(
+                postIds,
+                request.getReceiverId()
+        );
 
         UserBriefResponse response = new UserBriefResponse();
         response.setUserView(beQueryUser);

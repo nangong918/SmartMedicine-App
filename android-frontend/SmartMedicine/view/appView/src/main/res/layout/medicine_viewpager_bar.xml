@@ -44,10 +44,10 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_medical_wiki"
+            android:id="@+id/tv_ai_question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/medical_wiki"
+            android:text="@string/ai_question"
             android:textColor="@color/green_900"
             android:gravity="center"
             android:textSize="13sp"
@@ -72,10 +72,10 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_medical_shopping"
+            android:id="@+id/tv_medical_wiki"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/medical_shopping"
+            android:text="@string/medical_wiki"
             android:textColor="@color/green_900"
             android:gravity="center"
             android:textSize="13sp"
@@ -100,10 +100,10 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_ai_question"
+            android:id="@+id/tv_medical_shopping"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ai_question"
+            android:text="@string/medical_shopping"
             android:textColor="@color/green_900"
             android:gravity="center"
             android:textSize="13sp"

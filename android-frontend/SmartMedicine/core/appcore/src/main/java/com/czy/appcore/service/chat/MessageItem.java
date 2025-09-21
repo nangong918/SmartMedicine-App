@@ -8,7 +8,7 @@ import com.czy.domain.constant.MessageTypeEnum;
 import com.czy.domain.dto.netty.forwardMessage.SendTextDataRequest;
 import com.czy.domain.dto.netty.forwardMessage.UserImageResponse;
 import com.czy.domain.dto.netty.forwardMessage.UserTextDataResponse;
-import com.czy.domain.vo.entity.message.ChatMessageItemVo;
+import com.czy.domain.vo.entity.chat.ChatMessageItemVo;
 
 import java.util.Objects;
 import java.util.Optional;

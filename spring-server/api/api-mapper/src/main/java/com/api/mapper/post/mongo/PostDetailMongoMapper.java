@@ -10,11 +10,6 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-/**
- * @author 13225
- * @date 2025/4/17 21:25
- */
-
 @RequiredArgsConstructor
 @Repository
 public class PostDetailMongoMapper {

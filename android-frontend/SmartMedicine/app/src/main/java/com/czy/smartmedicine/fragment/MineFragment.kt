@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.czy.baseutil.image.ImageLoadUtil
 import com.czy.baseutil.ui.ToastUtils
 import com.czy.domain.fragmentActivityAo.mine.MineFAo
-import com.czy.smartmedicine.activity.OrderActivity
+import com.czy.smartmedicine.activity.order.OrderListActivity
 import com.czy.smartmedicine.databinding.FragmentMineBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
 import com.czy.smartmedicine.viewModel.fragment.MineVm
@@ -153,7 +153,7 @@ class MineFragment : BaseVmFragment<FragmentMineBinding, MineVm>(
                 return@setOnClickListener
             }
 
-            val intent = Intent(requireActivity(), OrderActivity::class.java)
+            val intent = Intent(requireActivity(), OrderListActivity::class.java)
             startActivity(intent)
         }
 

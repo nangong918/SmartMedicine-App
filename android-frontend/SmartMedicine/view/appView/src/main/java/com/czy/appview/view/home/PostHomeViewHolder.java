@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewRecommendCardBinding;
-import com.czy.domain.ao.home.PostAo;
+import com.czy.domain.ao.home.PostPreviewAo;
 
 public class PostHomeViewHolder extends RecyclerView.ViewHolder {
 
@@ -20,7 +20,7 @@ public class PostHomeViewHolder extends RecyclerView.ViewHolder {
         PostHomeItemViewManager.setClick(binding, onClick, this);
     }
 
-    public void setView(@NonNull PostAo postAo){
-        PostHomeItemViewManager.setView(binding, postAo);
+    public void setView(@NonNull PostPreviewAo postPreviewAo){
+        PostHomeItemViewManager.setView(binding, postPreviewAo);
     }
 }

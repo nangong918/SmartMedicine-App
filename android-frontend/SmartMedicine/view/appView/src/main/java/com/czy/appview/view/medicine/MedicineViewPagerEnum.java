@@ -4,12 +4,12 @@ public enum MedicineViewPagerEnum {
 
     // 挂号预约
     APPOINTMENT(0),
-    // 医疗百科
-    MEDICAL_WIKI(1),
-    // 医疗购物
-    MEDICAL_SHOPPING(2),
     // AI问答
-    AI_QUESTION(3),
+    AI_QUESTION(1),
+    // 医疗百科
+    MEDICAL_WIKI(2),
+    // 医疗购物
+    MEDICAL_SHOPPING(3),
     // 健康提醒
     HEALTH_REMINDER(4),
     ;

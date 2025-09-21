@@ -1,9 +1,12 @@
 package com.czy.smartmedicine.fragment.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,6 +19,7 @@ import com.czy.baseutil.image.ImageLoadUtil;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.fragmentActivityAo.home.HomeFAo;
 import com.czy.smartmedicine.MainApplication;
+import com.czy.smartmedicine.activity.MainActivity;
 import com.czy.smartmedicine.activity.PublishPostActivity;
 import com.czy.smartmedicine.activity.search.SearchPostActivity;
 import com.czy.smartmedicine.databinding.FragmentHomeBinding;
@@ -61,6 +65,7 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void setListener() {
         super.setListener();
@@ -93,7 +98,84 @@ public class HomeFragment extends BaseVmFragment<FragmentHomeBinding, HomeVm> {
             Intent intent = new Intent(requireActivity(), SearchPostActivity.class);
             startActivity(intent);
         });
+
+        // ai拖拽
+        binding.btnAi.setX(dX);
+        binding.btnAi.setY(dY);
+
+        binding.btnAi.setOnTouchListener((view, motionEvent) -> {
+            Log.i(getTAG(), "onTouchListener::motionEvent.getAction(): " + motionEvent.getAction());
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN -> {
+                    dX = view.getX() - motionEvent.getRawX();
+                    dY = view.getY() - motionEvent.getRawY();
+                    isDragging = false; // 重置拖动状态
+                    actionDownStartTime = System.currentTimeMillis();
+                }
+
+                case MotionEvent.ACTION_MOVE -> {
+                    // 设置为正在拖动
+                    isDragging = true;
+
+                    float newX = motionEvent.getRawX() + dX;
+                    float newY = motionEvent.getRawY() + dY;
+
+                    // 获取父视图的边界
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int leftBoundary = 0;
+                    int rightBoundary = parent.getWidth() - view.getWidth();
+                    int topBoundary = 0;
+                    int bottomBoundary = parent.getHeight() - view.getHeight();
+
+                    // 边界检查
+                    if (newX < leftBoundary) {
+                        newX = leftBoundary;
+                    } else if (newX > rightBoundary) {
+                        newX = rightBoundary;
+                    }
+
+                    if (newY < topBoundary) {
+                        newY = topBoundary;
+                    } else if (newY > bottomBoundary) {
+                        newY = bottomBoundary;
+                    }
+
+                    view.animate()
+                            .x(newX)
+                            .y(newY)
+                            .setDuration(0)
+                            .start();
+                }
+
+                case MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    boolean isClick =
+                            // 拖动结束，判断是否是点击
+                            !isDragging ||
+                            // 拖拽时间小于200
+                            System.currentTimeMillis() - actionDownStartTime < 150;
+                    if (isClick) {
+                        view.performClick(); // 触发点击事件
+                    }
+                }
+
+                default -> {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        binding.btnAi.setOnClickListener(v -> {
+            ((MainActivity)requireActivity()).turnToAiFragment();
+        });
     }
+
+    // ai data: 需要整理到fao
+    // 记录是否拖动
+    boolean isDragging = false;
+    long actionDownStartTime = 0L;
+    private float dX = 50, dY = 50;
+
 
     //---------------------------viewModel---------------------------
 

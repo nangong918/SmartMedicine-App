@@ -80,4 +80,9 @@
         ORDER BY timestamp DESC
         LIMIT #{size} OFFSET #{offset};
     </select>
+    <select id="getPostCommentById" resultType="com.czy.api.domain.Do.post.comment.PostCommentDo">
+        SELECT *
+        FROM post_comment
+        WHERE id = #{commentId};
+    </select>
 </mapper>

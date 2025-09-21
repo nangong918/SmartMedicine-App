@@ -14,14 +14,8 @@ import com.czy.api.constant.search.result.PersonalResultIntent;
 import com.czy.api.constant.search.result.PostRecommendResult;
 import com.czy.api.domain.Do.user.UserDo;
 import com.czy.api.domain.Do.user.UserHealthDataDo;
-import com.czy.api.domain.ao.post.PostInfoUrlAo;
 import com.czy.api.domain.ao.post.PostNerResult;
-import com.czy.api.domain.ao.search.AppFunctionAo;
-import com.czy.api.domain.ao.search.DiseaseQuestionAo;
-import com.czy.api.domain.ao.search.PersonalEvaluateAo;
-import com.czy.api.domain.ao.search.PostRecommendAo;
-import com.czy.api.domain.ao.search.PostSearchResultAo;
-import com.czy.api.domain.ao.search.QuestionAo;
+import com.czy.api.domain.ao.search.*;
 import com.czy.api.domain.dto.base.BaseResponse;
 import com.czy.api.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.api.domain.dto.http.response.FuzzySearchResponse;
@@ -34,6 +28,7 @@ import com.czy.api.exception.UserExceptions;
 import com.czy.post.component.KafkaSender;
 import com.czy.post.config.SearchTestConfig;
 import com.czy.post.service.search.FuzzySearchService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -42,21 +37,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -232,7 +217,7 @@ public class SearchController {
         return pythonResponseEntity;
     }
 
-    private FuzzySearchResponse handleNlpResult(NlpSearchResponse nlpSearchResponse, String sentence, Long userId) {
+    private FuzzySearchResponse handleNlpResult(NlpSearchResponse nlpSearchResponse, String sentence, @NonNull Long userId) {
         // error
         if (nlpSearchResponse == null ||
                 nlpSearchResponse.getCode() != 200 ||
@@ -258,7 +243,7 @@ public class SearchController {
         }
         // 搜索意图
         else if (nlpSearchResponse.getType() == NlpResultEnum.SEARCH.getCode()){
-            PostSearchResultAo ao = handleSearchIntent(sentence);
+            PostSearchResultAo ao = handleSearchIntent(sentence, userId);
             FuzzySearchResponse response = new FuzzySearchResponse();
             response.setType(FuzzySearchResponseEnum.SEARCH_POST_RESULT.getType());
             response.setData(ao);
@@ -271,7 +256,7 @@ public class SearchController {
             // 推荐意图
             if (nlpSearchResponse.getType() == NlpResultEnum.RECOMMEND.getCode()){
                 response.setType(FuzzySearchResponseEnum.RECOMMEND_QUESTION_RESULT.getType());
-                PostRecommendAo ao = handleRecommendIntent(sentence);
+                PostRecommendAo ao = handleRecommendIntent(sentence, userId);
                 response.setData(ao);
                 return response;
             }
@@ -290,7 +275,7 @@ public class SearchController {
             // disease question问题意图
             else {
                 response.setType(FuzzySearchResponseEnum.QUESTION_RESULT.getType());
-                PostSearchResultAo postSearchResultAo = handleSearchIntent(sentence);
+                PostSearchResultAo postSearchResultAo = handleSearchIntent(sentence, userId);
                 DiseaseQuestionAo diseaseQuestionAo = handleQuestionIntent(sentence, nlpSearchResponse.getType());
                 QuestionAo questionAo = new QuestionAo();
                 questionAo.setDiseaseQuestionAo(diseaseQuestionAo);
@@ -306,7 +291,7 @@ public class SearchController {
         return response;
     }
 
-    private PostSearchResultAo handleSearchIntent(String sentence){
+    private PostSearchResultAo handleSearchIntent(String sentence, @NonNull Long userId){
         PostSearchResultAo postSearchResultAo = new PostSearchResultAo();
 
         // 0~1级搜索 到此处说明sentence本身就是title，所以likeTitle传递sentence;
@@ -368,10 +353,10 @@ public class SearchController {
 
         // 转换
         long startTimeChange = System.currentTimeMillis();
-        postSearchResultAo.setLikePostPreviewVoList(postSearchService.getPostPreviewVosByIds(likePostIdList));
-        postSearchResultAo.setTokenizedPostPreviewVoList(postSearchService.getPostPreviewVosByIds(tokenizedPostIdList));
-        postSearchResultAo.setSimilarPostPreviewVoList(postSearchService.getPostPreviewVosByIds(similarList));
-        postSearchResultAo.setRecommendPostPreviewVoList(postSearchService.getPostPreviewVosByIds(neo4jRulePostIdList));
+        postSearchResultAo.setLikePostPreviewVoList(postSearchService.getPostPreviewVosByIds(likePostIdList, userId));
+        postSearchResultAo.setTokenizedPostPreviewVoList(postSearchService.getPostPreviewVosByIds(tokenizedPostIdList, userId));
+        postSearchResultAo.setSimilarPostPreviewVoList(postSearchService.getPostPreviewVosByIds(similarList, userId));
+        postSearchResultAo.setRecommendPostPreviewVoList(postSearchService.getPostPreviewVosByIds(neo4jRulePostIdList, userId));
         if (searchTestConfig.isDebug){
             // 转换耗时:79
             log.info("转换耗时:{}", System.currentTimeMillis() - startTimeChange);
@@ -388,7 +373,7 @@ public class SearchController {
     }
 
     // 推荐意图存在争议
-    private PostRecommendAo handleRecommendIntent(String sentence){
+    private PostRecommendAo handleRecommendIntent(String sentence, Long userId){
         PostRecommendAo postRecommendAo = new PostRecommendAo();
         List<PostNerResult> nerResults = postNerService.getPostNerResults(sentence);
         PostRecommendResult postRecommendResult = PostRecommendResult.NO_RECOMMEND;
@@ -401,8 +386,7 @@ public class SearchController {
             postRecommendAo.setRecommendType(PostRecommendResult.NO_DATA.getCode());
             return postRecommendAo;
         }
-        List<PostInfoUrlAo> postInfoUrlAos = postSearchService.getPostInfoUrlAos(tokenizedPostIdList);
-        postRecommendAo.setPostInfoUrlAos(postInfoUrlAos);
+        postRecommendAo.setPostPreviewVos(postSearchService.getPostPreviewVosByIds(tokenizedPostIdList, userId));
         postRecommendAo.setRecommendType(PostRecommendResult.HAS_DATA.getCode());
         return postRecommendAo;
     }

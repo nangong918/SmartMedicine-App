@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import com.czy.domain.fragmentActivityAo.MessageVo;
 import com.czy.smartmedicine.databinding.FragmentMessageBinding;
 import com.czy.smartmedicine.utils.BaseVmFragment;
-import com.czy.smartmedicine.viewModel.fragment.MessageVm;
+import com.czy.smartmedicine.viewModel.fragment.message.MessageVm;
 
 import kotlin.jvm.JvmClassMappingKt;
 
@@ -99,7 +99,7 @@ public class MessageFragment extends BaseVmFragment<FragmentMessageBinding, Mess
     }
 
     private void observeData() {
-        // 观察RecyclerView todo 此处逻辑需要核对 (注意, 我暂时还没设置任何地方去设置totalMessageCountLd)
+        // 观察RecyclerView
         vm.messageVo.totalMessageCountLd.observe(this, totalMessageCount -> {
             if (totalMessageCount <= 0){
                 binding.rclvMessage.setVisibility(View.INVISIBLE);
@@ -108,6 +108,10 @@ public class MessageFragment extends BaseVmFragment<FragmentMessageBinding, Mess
             else {
                 binding.rclvMessage.setVisibility(View.VISIBLE);
                 binding.lyHaveNoMessage.setVisibility(View.GONE);
+                // 更新view
+                vm.chatContactAdapter.setCurrentList(
+                        vm.messageVo.chatContactListVo.chatContactList
+                );
             }
         });
 

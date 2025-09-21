@@ -20,7 +20,8 @@ public enum UserOrderStatusEnum implements Serializable {
     WAITING_EVALUATION(4, "待评价"),
     REFUNDING(5, "退款中"),
     REFUND_FAILED(6, "退款失败"), // 退卷失败 -> 待使用 / 待评价
-    CANCELED(7, "已取消")
+    CANCELED(7, "已取消"),
+    COMPLETED(8, "已完成"),
     ;
 
     private final int code;

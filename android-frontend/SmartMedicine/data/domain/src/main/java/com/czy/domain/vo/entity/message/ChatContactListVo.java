@@ -1,7 +1,7 @@
 package com.czy.domain.vo.entity.message;
 
 
-import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.ao.message.ChatContactItemAo;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -112,6 +112,7 @@ public class ImageLoadUtil {
         if (TextUtils.isEmpty(urlOrUri)){
             imageView.setImageResource(R.drawable.icon_default_acatar);
             Log.w(TAG, "urlOrUri is empty");
+            return;
         }
 
         // 网络

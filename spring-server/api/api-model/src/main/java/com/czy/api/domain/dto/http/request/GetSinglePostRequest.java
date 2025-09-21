@@ -13,6 +13,8 @@ import javax.validation.constraints.NotNull;
 public class GetSinglePostRequest {
     @NotNull(message = "帖子ID不能为空")
     public Long postId;
+    @NotNull(message = "用户ID不能为空")
+    public Long userId;
     @NotNull(message = "页码不能为空")
     @Min(value = 0, message = "获取的评论页数至少从第1页开始")
     public Integer pageNum = 0;

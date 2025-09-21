@@ -2,18 +2,15 @@ package com.czy.appview.view.chatCard;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.czy.appview.databinding.ViewChatCardItemBinding;
 import com.czy.domain.OnPositionItemClick;
-import com.czy.domain.ao.chat.ChatContactItemAo;
-import com.czy.domain.vo.entity.contact.ContactDiffCallback;
+import com.czy.domain.ao.message.ChatContactItemAo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,30 +31,10 @@ public class ChatContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     // 更新View，与当前的view对比然后更新指定的view
     @SuppressLint("NotifyDataSetChanged")
-    public void setCurrentList(List<ChatContactItemAo> newList){
-        // 入参为null
-        if (newList == null){
-            currentList.clear();
-            notifyDataSetChanged();
-            return;
-        }
-        // 相同地址的情况
-        if (newList == currentList){
-            // 地址相同直接更新
-            Log.i(ChatContactAdapter.class.getName(), "currentList: size" + currentList.size());
-            notifyDataSetChanged();
-        }
-        else {
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContactDiffCallback(this.currentList, newList), true);
-            // 清空并添加新的列表
-            this.currentList.clear();
-            this.currentList.addAll(newList);
-            // 通过 diffResult 更新 RecyclerView
-            diffResult.dispatchUpdatesTo(this);
-            // TODO BUG此处有问题，暂时使用全部更新Bug
-            Log.i(ChatContactAdapter.class.getName(), "currentList: size" + currentList.size());
-            notifyItemChanged(newList.size() - 1);
-        }
+    public void setCurrentList(@NonNull List<ChatContactItemAo> newList){
+        currentList.clear();
+        currentList.addAll(newList);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -72,18 +49,17 @@ public class ChatContactAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ChatContactItemAo chatContactItemAo = Optional.ofNullable(currentList)
+        Optional.of(currentList)
                 .filter(list -> list.size() >= position)
                 .map(list -> list.get(position))
-                .orElse(new ChatContactItemAo());
-        ((ChatCardItemViewHolder)holder).bind(chatContactItemAo);
-        ((ChatCardItemViewHolder)holder).setPositionClick(onPositionItemClick);
+                .ifPresent(ao -> {
+                    ((ChatCardItemViewHolder)holder).bind(ao);
+                    ((ChatCardItemViewHolder)holder).setPositionClick(onPositionItemClick);
+                });
     }
 
     @Override
     public int getItemCount() {
-        return Optional.of(currentList)
-                .map(List::size)
-                .orElse(0);
+        return currentList.size();
     }
 }

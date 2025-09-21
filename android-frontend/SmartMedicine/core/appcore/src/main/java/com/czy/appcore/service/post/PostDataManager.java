@@ -1,7 +1,9 @@
 package com.czy.appcore.service.post;
 
 
-import com.czy.domain.ao.home.PostAo;
+import androidx.annotation.NonNull;
+
+import com.czy.domain.ao.home.PostPreviewAo;
 import com.czy.domain.vo.entity.home.PostVo;
 
 import java.util.ArrayList;
@@ -23,9 +25,12 @@ public class PostDataManager {
 
     /// 缓存对象
     // RecommendPosts (只有首页推荐才有大卡片小卡片的区分, 采用ao)
-    public final List<PostAo> recommendPosts = new ArrayList<>();
+    @NonNull
+    public final List<PostPreviewAo> recommendPosts = new ArrayList<>();
     // PopularPosts
+    @NonNull
     public final List<PostVo> popularPosts = new ArrayList<>();
     // CommunityPosts
+    @NonNull
     public final List<PostVo> communityPosts = new ArrayList<>();
 }

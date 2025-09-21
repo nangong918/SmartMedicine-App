@@ -73,6 +73,9 @@ public interface AppointmentDoctorService {
     @NotNull List<AppointmentDoctorOrderListAo> getAppointmentRecordList(@NotNull Long userId, int sortType,
                                                                          @Nullable Double userLongitude, @Nullable Double userLatitude) throws AppException;
 
+
+    AppointmentDoctorOrderListAo getAppointmentRecordDetails(@NotNull Long userId, @NotNull Long orderId);
+
     void handlePayResultMessage(@NotNull AppointmentPayResultDto dto);
 
     /**

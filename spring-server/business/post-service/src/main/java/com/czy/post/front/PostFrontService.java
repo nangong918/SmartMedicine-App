@@ -1,12 +1,11 @@
 package com.czy.post.front;
 
-import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
-import com.czy.api.domain.ao.post.PostAo;
-import com.czy.api.domain.ao.post.PostInfoAo;
-import com.czy.api.domain.vo.post.CommentOldVo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostOldVo;
-import com.czy.api.domain.vo.post.aaa.PostVo;
+import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.vo.post.toFront.PostFVo;
+import com.czy.api.domain.vo.post.toFront.PostPreviewFVo;
+import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -17,19 +16,13 @@ import java.util.List;
  */
 public interface PostFrontService {
     /**
-     * 转换成前端需要的类型
+     * 转换成前端需要的类型    (会过滤null, 不保证与入参数量相等)
      * @param postAoList    postAoList
      * @return              List<PostPreviewVo>
      */
-    List<PostPreviewVo> toPostPreviewVoList(List<PostInfoAo> postAoList);
+    @NotNull
+    List<PostPreviewVo> getPostPreviewVoListByIds(List<Long> postIds, @NotNull Long userId);
 
-    // PostAo -> PostVo
-    PostOldVo postAoToPostVo(PostAo postAo);
-
-    PostOldVo getPostVo(Long postId);
-
-    // List<PostCommentDo> -> List<CommentVo>
-    List<CommentOldVo> getCommentVosByPostCommentDos(List<PostCommentMongoDo> postCommentDos);
 
     /**
      * 获取帖子Vo
@@ -38,4 +31,8 @@ public interface PostFrontService {
      * @return          PostVo
      */
     PostVo getPostVo(Long postId, Long userId);
+
+    List<PostFVo> getPostFVos(@NonNull List<PostVo> list);
+
+    List<PostPreviewFVo> getPostPreviewFVos(@NonNull List<PostPreviewVo> list);
 }

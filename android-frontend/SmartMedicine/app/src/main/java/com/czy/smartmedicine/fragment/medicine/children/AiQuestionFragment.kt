@@ -35,11 +35,34 @@ class AiQuestionFragment : BaseVmFragment<FragmentAiQuestionBinding, AiQuestionV
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.smSendMessage.setAiView()
     }
 
     //---------------------------ViewModel---------------------------
 
     override fun initViewModel() {
         super.initViewModel()
+
+        // 初始化数据
+        initVmFAo()
+
+        // 观察数据
+        observeData()
+
+        // 初始请求
+        initRequest()
+
+        // 绑定数据
+        binding.vm = vm
+        binding.lifecycleOwner = this
+    }
+
+    private fun initVmFAo() {
+    }
+
+    private fun observeData() {
+    }
+
+    private fun initRequest(){
     }
 }

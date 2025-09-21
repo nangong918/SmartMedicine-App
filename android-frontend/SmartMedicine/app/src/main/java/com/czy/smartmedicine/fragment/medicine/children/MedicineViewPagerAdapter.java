@@ -40,9 +40,9 @@ public class MedicineViewPagerAdapter extends FragmentStateAdapter {
         MedicineViewPagerEnum viewPagerEnum = MedicineViewPagerEnum.getEnumByIndex(position);
         Fragment fragment = switch (viewPagerEnum) {
             case APPOINTMENT -> new AppointmentFragment();
+            case AI_QUESTION -> new AiQuestionFragment();
             case MEDICAL_WIKI -> new MedicalWikiFragment();
             case MEDICAL_SHOPPING -> new MedicalShoppingFragment();
-            case AI_QUESTION -> new AiQuestionFragment();
             case HEALTH_REMINDER -> new HealthReminderFragment();
             default -> {
                 Log.w(TAG, "Unexpected value: " + viewPagerEnum);

@@ -24,6 +24,9 @@
         android:theme="@style/Theme.SmartMedicine"
         tools:targetApi="31">
         <activity
+            android:name=".activity.AppointmentActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.order.OrderPurchaseActivity"
             android:exported="false" />
         <activity
@@ -31,9 +34,6 @@
             android:exported="false" />
         <activity
             android:name=".activity.order.OrderListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.OrderActivity"
             android:exported="false" />
         <activity
             android:name=".activity.search.SearchPostActivity"

@@ -23,17 +23,17 @@ import com.czy.appcore.network.netty.service.NettySocketService;
 import com.czy.appcore.network.netty.service.NettySocketServiceInitiator;
 import com.czy.appcore.service.chat.ChatMessageManager;
 import com.czy.appcore.service.post.PostDataManager;
+import com.czy.appview.view.GlobalDialogFragment;
 import com.czy.baseutil.file.SecuritySharedPreferencesUtils;
 import com.czy.baseutil.image.ImageManager;
 import com.czy.baseutil.ui.ToastUtils;
-import com.czy.appview.view.GlobalDialogFragment;
-import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.domain.ao.chat.UserLoginInfoAo;
 import com.czy.domain.ao.login.LoginTokenAo;
+import com.czy.domain.ao.message.ContactItemAo;
 import com.czy.domain.constant.NettyConstants;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
 import com.czy.domain.netty.Message;
-import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.manager.HttpRequestManager;
 import com.google.gson.Gson;
 
@@ -348,7 +348,7 @@ public class MainApplication extends Application {
 
     //==========friendsList
 
-    public List<ChatContactItemAo> friendList = new ArrayList<>();
+    public List<ContactItemAo> friendList = new ArrayList<>();
 
     //----------------------------Global View----------------------------
 

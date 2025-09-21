@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 
@@ -45,7 +46,7 @@ import com.czy.domain.dto.netty.request.FetchUserMessageRequest;
 import com.czy.domain.dto.netty.response.FetchUserMessageResponse;
 import com.czy.domain.dto.netty.response.HaveReadMessageResponse;
 import com.czy.domain.dto.netty.response.UploadFileResponse;
-import com.czy.domain.vo.entity.message.ChatMessageItemVo;
+import com.czy.domain.vo.entity.chat.ChatMessageItemVo;
 import com.czy.domain.fragmentActivityAo.chat.ChatVo;
 import com.czy.dao.networkRepository.ApiRequestImpl;
 import com.czy.smartmedicine.MainApplication;
@@ -258,6 +259,9 @@ public class ChatVm extends ViewModel {
 
     public void sendMessage(){
         String message = chatVo.inputText.getValue();
+        if (TextUtils.isEmpty(message)){
+            return;
+        }
 //        String receiverAccount = chatVo.contactAccount;
         Long receiverId = chatVo.contactId;
         // 用Netty长连接发送消息

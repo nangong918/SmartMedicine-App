@@ -19,7 +19,7 @@ public class AppointmentDoctorSelectAo {
     @Valid
     @NotNull(message = "挂号地点不能为空")
     public LocationAo registerLocation;
-    // 9月19日：yyyy-MM-dd格式
+    // 9月19日：yyyy-MM-dd HH:mm:ss格式
     @NotEmpty(message = "挂号时间不能为空")
     public String registerTime;
     /**

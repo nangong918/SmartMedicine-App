@@ -6,12 +6,17 @@ import com.czy.baseutil.network.BaseApiRequestImpl;
 import com.czy.baseutil.network.BaseResponse;
 import com.czy.baseutil.network.OnSuccessCallback;
 import com.czy.baseutil.network.OnThrowableCallback;
+import com.czy.domain.ao.medicine.AppointmentDoctorOrderDetailsAo;
+import com.czy.domain.dto.http.request.AppointmentDoctorRequest;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
 import com.czy.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.domain.dto.http.request.GetMyFriendsRequest;
+import com.czy.domain.dto.http.request.GetRegisterAppointmentListRequest;
 import com.czy.domain.dto.http.request.GetSinglePostRequest;
+import com.czy.domain.dto.http.request.GetUserAppointmentRecordRequest;
 import com.czy.domain.dto.http.request.IsRegisterRequest;
 import com.czy.domain.dto.http.request.LoginUserRequest;
+import com.czy.domain.dto.http.request.PayAppointmentOrderRequest;
 import com.czy.domain.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.domain.dto.http.request.PostPublishRequest;
 import com.czy.domain.dto.http.request.RecommendPostRequest;
@@ -19,12 +24,17 @@ import com.czy.domain.dto.http.request.RegisterUserRequest;
 import com.czy.domain.dto.http.request.SearchUserRequest;
 import com.czy.domain.dto.http.request.SendSmsRequest;
 import com.czy.domain.dto.http.request.UserBriefRequest;
+import com.czy.domain.dto.http.response.AppointmentDoctorResponse;
 import com.czy.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.domain.dto.http.response.GetAddMeRequestListResponse;
+import com.czy.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
 import com.czy.domain.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.domain.dto.http.response.GetMyFriendsResponse;
+import com.czy.domain.dto.http.response.GetRegisterAppointmentListResponse;
+import com.czy.domain.dto.http.response.GetUserAppointmentRecordResponse;
 import com.czy.domain.dto.http.response.IsRegisterResponse;
 import com.czy.domain.dto.http.response.LoginSignResponse;
+import com.czy.domain.dto.http.response.PayAppointmentResponse;
 import com.czy.domain.dto.http.response.PostPublishResponse;
 import com.czy.domain.dto.http.response.RecommendPostResponse;
 import com.czy.domain.dto.http.response.SearchUserResponse;
@@ -414,6 +424,92 @@ public class ApiRequestImpl extends BaseApiRequestImpl {
                                 OnThrowableCallback onThrowableCallback){
         this.sendRequestCallback(
                 mApi.uploadImageTest(file),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getList")
+    //    Observable<BaseResponse<GetRegisterAppointmentListRequest>> getRegisterAppointmentList(
+    //            @Body GetRegisterAppointmentListRequest request
+    //    );
+    public void getRegisterAppointmentList(GetRegisterAppointmentListRequest request,
+                                           OnSuccessCallback<BaseResponse<GetRegisterAppointmentListResponse>> onSuccessCallback,
+                                           OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.getRegisterAppointmentList(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getAllDate")
+    //    Observable<BaseResponse<GetAllRegisterAppointmentDateResponse>> getRegisterAppointmentAllDate(
+    //            @Body GetRegisterAppointmentListRequest request
+    //    );
+    public void getRegisterAppointmentAllDate(GetRegisterAppointmentListRequest request,
+                                              OnSuccessCallback<BaseResponse<GetAllRegisterAppointmentDateResponse>> onSuccessCallback,
+                                              OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.getRegisterAppointmentAllDate(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/apply")
+    //    Observable<BaseResponse<AppointmentDoctorResponse>> appointmentDoctorMerchant(
+    //            @Body AppointmentDoctorRequest request
+    //    );
+    public void appointmentDoctorMerchant(AppointmentDoctorRequest request,
+                                          OnSuccessCallback<BaseResponse<AppointmentDoctorResponse>> onSuccessCallback,
+                                          OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.appointmentDoctorMerchant(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getCustomerList")
+    //    Observable<BaseResponse<GetUserAppointmentRecordResponse>> getUserAppointmentRecord(
+    //            @Body GetUserAppointmentRecordRequest request
+    //    );
+    public void getUserAppointmentRecord(GetUserAppointmentRecordRequest request,
+                                         OnSuccessCallback<BaseResponse<GetUserAppointmentRecordResponse>> onSuccessCallback,
+                                         OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.getUserAppointmentRecord(request),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @GET(BackEndConstant.MEDICINE + "/appointment/getCustomerDetails")
+    //    Observable<BaseResponse<AppointmentDoctorOrderDetailsAo>> getAppointmentRecordDetails(
+    //            @Query("userId") Long userId,
+    //            @Query("orderId") Long orderId
+    //    );
+    public void getAppointmentRecordDetails(Long userId,
+                                            Long orderId,
+                                            OnSuccessCallback<BaseResponse<AppointmentDoctorOrderDetailsAo>> onSuccessCallback,
+                                            OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.getAppointmentRecordDetails(userId, orderId),
+                onSuccessCallback,
+                onThrowableCallback
+        );
+    }
+
+    //    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.PURCHASE + "/pay/appointment")
+    //    Observable<BaseResponse<PayAppointmentResponse>> payAppointmentOrder(
+    //            @Body PayAppointmentOrderRequest request
+    //    );
+    public void payAppointmentOrder(PayAppointmentOrderRequest request,
+                                    OnSuccessCallback<BaseResponse<PayAppointmentResponse>> onSuccessCallback,
+                                    OnThrowableCallback onThrowableCallback){
+        this.sendRequestCallback(
+                mApi.payAppointmentOrder(request),
                 onSuccessCallback,
                 onThrowableCallback
         );

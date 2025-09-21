@@ -13,10 +13,10 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
- * @author 13225
- * @date 2025/4/17 21:26
+ * @deprecated Comment评论暂时不用支持Post文章那种Json的文本格式, 不需要用MongoDb
+ * Use {@link com.api.mapper.post.mybatis.PostCommentMapper} instead.
  */
-
+@Deprecated
 @RequiredArgsConstructor
 @Repository
 public class PostCommentMongoMapper {

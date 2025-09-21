@@ -51,16 +51,18 @@ public class PostVm extends ViewModel {
     private void initialNetworkRequest(FragmentActivity activity) {
         // 利用postId去网络请求帖子信息（先请求1页的评论内容）
         NetworkLoadUtils.showDialog(activity);
+        Log.i(TAG, "initialNetworkRequest");
         // 获取帖子信息；初始化请求分页为1
         getSinglePost(1, activity, new SyncRequestCallback() {
             @Override
             public void onThrowable(Throwable throwable) {
-                NetworkLoadUtils.dismissDialogSafe(activity);
+                Log.e(TAG, "initialNetworkRequest::getSinglePost: ",throwable);
+                NetworkLoadUtils.dismissDialogSafety(activity);
             }
 
             @Override
             public void onAllRequestSuccess() {
-                NetworkLoadUtils.dismissDialogSafe(activity);
+                NetworkLoadUtils.dismissDialogSafety(activity);
             }
         });
     }
@@ -76,9 +78,14 @@ public class PostVm extends ViewModel {
             return;
         }
 
+        Long userId = Optional.ofNullable(MainApplication.getInstance().getUserLoginInfoAo())
+                .map(ao -> ao.userId)
+                .orElse(null);
+
         GetSinglePostRequest request = new GetSinglePostRequest();
         request.postId = postId;
         request.pageNum = pageNum;
+        request.userId = userId;
 
         apiRequestImpl.getSinglePost(
                 request,
@@ -90,7 +97,7 @@ public class PostVm extends ViewModel {
                 ),
                 throwable -> {
                     Log.w(TAG, throwable);
-                    ViewModelUtil.globalThrowableToast(throwable);
+                    callback.onThrowable(throwable);
                 }
         );
     }
@@ -112,6 +119,7 @@ public class PostVm extends ViewModel {
 
     private void handleSinglePost(BaseResponse<SinglePostResponse> response, Context context, SyncRequestCallback callback){
         SinglePostResponse singlePostResponse = response.getData();
+        Log.i(TAG, "handleSinglePost");
         postAAo.postAVo.initByResponse(
                 singlePostResponse.postVo,
                 singlePostResponse.commentAos
@@ -122,5 +130,6 @@ public class PostVm extends ViewModel {
                         .orElse(0)
         );
         callback.onAllRequestSuccess();
+        Log.i(TAG, "handleSinglePost::onAllRequestSuccess");
     }
 }

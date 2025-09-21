@@ -1,6 +1,6 @@
 package com.czy.appcore.service.chat;
 
-import com.czy.domain.ao.chat.ChatContactItemAo;
+import com.czy.domain.ao.message.ChatContactItemAo;
 
 import java.util.List;
 

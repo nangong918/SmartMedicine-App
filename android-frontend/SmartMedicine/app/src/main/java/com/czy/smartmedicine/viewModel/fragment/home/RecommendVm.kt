@@ -18,6 +18,7 @@ import com.czy.domain.ao.chat.UserLoginInfoAo
 import com.czy.domain.constant.NettyConstants
 import com.czy.domain.dto.http.request.RecommendPostRequest
 import com.czy.domain.dto.http.response.RecommendPostResponse
+import com.czy.domain.fragmentActivityAo.home.RecommendFAo
 import com.czy.smartmedicine.MainApplication
 import com.czy.smartmedicine.fragment.home.HomeFragment
 import com.czy.smartmedicine.manager.HttpRequestManager
@@ -36,6 +37,10 @@ open class RecommendVm(
         val TAG: String = RecommendVm::class.java.name
     }
 
+    //---------------------------FAo---------------------------
+
+    open var fao: RecommendFAo = RecommendFAo()
+
     //==========RecyclerView
 
     open lateinit var postHomeAdapter: PostHomeAdapter
@@ -44,13 +49,18 @@ open class RecommendVm(
         val onRecommendCardClick: OnRecommendCardClick =
             postClickManager.getOnRecommendCardClick(activity)
 
+        fao.recommendPosts = MainApplication.getInstance().postDataManager.recommendPosts
+
         // adapter的地址指针指向数据仓库的recommendList
         postHomeAdapter = PostHomeAdapter(
-            MainApplication.getInstance().postDataManager.recommendPosts,
+            fao.recommendPosts,
             onRecommendCardClick
         )
 
         recyclerView.adapter = postHomeAdapter
+
+        // 更新view
+        fao.recommendPostCount.value = fao.recommendPosts.size
     }
 
     //---------------------------NetWork---------------------------
@@ -68,7 +78,8 @@ open class RecommendVm(
     private fun getRecommendPostsP(context: Context, callback: SyncRequestCallback) {
         if (!TestConfig.IS_TEST) {
             getRecommendPosts(context, callback)
-        } else {
+        }
+        else {
             testGetRandomPosts(context, callback)
         }
     }
@@ -117,7 +128,6 @@ open class RecommendVm(
             },
             { throwable ->
                 callback.onThrowable(throwable)
-                ViewModelUtil.globalThrowableToast(throwable)
             }
         )
     }
@@ -132,17 +142,17 @@ open class RecommendVm(
         context: Context,
         callback: SyncRequestCallback
     ) {
-        val postInfoAos = Optional.ofNullable(response)
+        val postPreviewVos = Optional.ofNullable(response)
             .map { obj: BaseResponse<RecommendPostResponse> -> obj.data }
-            .map { obj: RecommendPostResponse -> obj.getPostVos() }
+            .map { obj: RecommendPostResponse -> obj.postVos }
             .orElse(ArrayList())
 
-        if (postInfoAos.isEmpty()) {
+        if (postPreviewVos.isEmpty()) {
             return
         }
 
-        // postInfoUrlAo -> PostAo
-        val newPostAoList = postClickManager.getPostAoListByResponse(postInfoAos)
+        // postInfoUrlAo -> PostPreviewAo
+        val newPostAoList = postClickManager.getPostAoListByResponse(postPreviewVos)
 
         // homeList原先存在的列表
         val recommendPost = MainApplication.getInstance().postDataManager.recommendPosts
@@ -156,7 +166,7 @@ open class RecommendVm(
         recommendPost.addAll(newPostAoList)
 
         Log.i(TAG, "推荐数据检查：[原数据：$beforeSize] " +
-                "[处理前 新数据：${postInfoAos.size}] " +
+                "[处理前 新数据：${postPreviewVos.size}] " +
                 "[处理后 新数据：${newPostAoList.size}] " +
                 "[总数据：${recommendPost.size}]"
         )

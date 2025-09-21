@@ -1,6 +1,6 @@
 package com.czy.domain.fragmentActivityAo;
 
-import com.czy.domain.vo.entity.contact.ContactListVo;
+import com.czy.domain.vo.entity.message.contact.ContactListVo;
 
 public class ContactUserGroupVo {
 

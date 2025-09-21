@@ -4,48 +4,42 @@ import com.czy.api.api.post.PostNerService;
 import com.czy.api.api.post.PostSearchService;
 import com.czy.api.api.user.user.UserService;
 import com.czy.api.constant.post.PostConstant;
-import com.czy.api.converter.domain.post.PostCommentConverter;
 import com.czy.api.converter.domain.post.PostConverter;
-import com.czy.api.domain.Do.post.comment.PostCommentMongoDo;
+import com.czy.api.domain.ao.post.CommentAo;
 import com.czy.api.domain.ao.post.PostAo;
-import com.czy.api.domain.ao.post.PostCommentAo;
-import com.czy.api.domain.ao.post.PostInfoAo;
 import com.czy.api.domain.ao.post.PostNerResult;
 import com.czy.api.domain.dto.base.BaseResponse;
-import com.czy.api.domain.dto.http.PostCommentDto;
 import com.czy.api.domain.dto.http.request.GetCommentRequest;
-import com.czy.api.domain.dto.http.request.GetPostInfoListRequest;
 import com.czy.api.domain.dto.http.request.GetPostPreviewListRequest;
 import com.czy.api.domain.dto.http.request.GetSinglePostRequest;
 import com.czy.api.domain.dto.http.request.PostPublishRequest;
 import com.czy.api.domain.dto.http.request.PostUpdateRequest;
 import com.czy.api.domain.dto.http.response.GetPostCommentsResponse;
-import com.czy.api.domain.dto.http.response.GetPostInfoListResponse;
 import com.czy.api.domain.dto.http.response.GetPostPreviewListResponse;
-import com.czy.api.domain.dto.http.response.GetPostResponse;
 import com.czy.api.domain.dto.http.response.PostPublishResponse;
 import com.czy.api.domain.dto.http.response.SinglePostResponse;
-import com.czy.api.domain.vo.post.CommentOldVo;
 import com.czy.api.domain.vo.post.PostPreviewVo;
-import com.czy.api.domain.vo.post.PostOldVo;
+import com.czy.api.domain.vo.post.PostVo;
+import com.czy.api.domain.vo.post.toFront.PostFVo;
+import com.czy.api.domain.vo.post.toFront.PostPreviewFVo;
 import com.czy.api.exception.CommonExceptions;
 import com.czy.api.exception.PostExceptions;
+import com.czy.api.exception.UserExceptions;
 import com.czy.post.front.PostFrontService;
 import com.czy.post.service.PostCommentService;
 import com.czy.post.service.PostService;
-import com.utils.minio.service.OssService;
 import com.utils.redisson.service.RedissonClusterLock;
 import com.utils.redisson.service.RedissonService;
 import exception.AppException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,9 +47,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
  * @author 13225
@@ -74,8 +67,6 @@ public class PostController {
     private final RedissonService redissonService;
     private final PostService postService;
     private final PostCommentService postCommentService;
-    private final PostCommentConverter postCommentConverter;
-    private final OssService ossService;
     private final PostNerService postNerService;
     private final PostSearchService postSearchService;
     private final PostFrontService postFrontService;
@@ -157,7 +148,7 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
-    // 删除post
+    // 删除post todo 删除数据需要把评论数据一并删除
     @DeleteMapping("/postDelete")
     public BaseResponse<String> deletePost(
             @RequestParam Long postId,
@@ -169,7 +160,7 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess("删除成功");
     }
 
-    // 修改post
+    // 修改post [后续开发]
     // 只修改内容
     @PostMapping("/postUpdate")
     public BaseResponse<String>
@@ -180,7 +171,7 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess("修改成功");
     }
 
-    // 修改了全部
+    // 修改了全部 [后续开发]
     @PostMapping(PostConstant.POST_UPDATE_ALL)
     public BaseResponse<String>
     updatePostAll(@Valid @RequestBody PostUpdateRequest request){
@@ -212,74 +203,31 @@ public class PostController {
         return BaseResponse.getResponseEntitySuccess("修改申请已提交，请等待");
     }
 
-    /**
-     * 预览postList
-     * 查询postList,只包含list的基本信息不包括内容content
-     * 响应体应该包含：postInfo，post-fileIds，postDetails
-     * 通过list<postId>查询post消息;
-     * FileId拿到之后直接去oss服务将fileIdList转为url
-     * 调用：/oss/getFileUrlByFileIds
-     * @param request   List<Long> postIds
-     * @return      List<PostInfoAo> postInfoAos;
-     */
-    @Deprecated
-    @PostMapping("/getPostInfoList/deprecated")
-    public BaseResponse<GetPostInfoListResponse>
-    getPosts(@Valid @RequestBody GetPostInfoListRequest request){
-        List<Long> postIds = request.getPostIds();
-        if (CollectionUtils.isEmpty(postIds)){
-            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
-        }
-        List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
-        GetPostInfoListResponse getPostResponse = new GetPostInfoListResponse();
-        getPostResponse.setPostInfoAos(postAoList);
-        return BaseResponse.getResponseEntitySuccess(getPostResponse);
-    }
-
     @PostMapping("/getPostInfoList")
     public BaseResponse<GetPostPreviewListResponse>
     getPostsNew(@Valid @RequestBody GetPostPreviewListRequest request){
+        Long userId = request.getUserId();
+        if (!userService.checkUserExist(userId)){
+            return BaseResponse.LogBackError(UserExceptions.USER_NOT_EXIST);
+        }
+
         List<Long> postIds = request.getPostIds();
         if (CollectionUtils.isEmpty(postIds)){
             return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
-        List<PostInfoAo> postAoList = postSearchService.findPostInfoList(postIds);
 
-        if (CollectionUtils.isEmpty(postAoList)){
-            return BaseResponse.getResponseEntitySuccess(new GetPostPreviewListResponse());
-        }
-
-        List<PostPreviewVo> postPreviewVos = postFrontService.toPostPreviewVoList(postAoList);
+        List<PostPreviewVo> postPreviewVos = postFrontService.getPostPreviewVoListByIds(
+                postIds,
+                userId
+        );
+        List<PostPreviewFVo> postPreviewFVos = postFrontService.getPostPreviewFVos(postPreviewVos);
 
         GetPostPreviewListResponse response = new GetPostPreviewListResponse();
-        response.setPostPreviewVos(postPreviewVos);
+        response.setPostPreviewVos(postPreviewFVos);
 
         return BaseResponse.getResponseEntitySuccess(response);
     }
 
-    // 如何从各种数据查询List<postId>的逻辑在postSearchService中
-    // get Post
-    @Deprecated
-    @GetMapping("/getPost/deprecated")
-    public BaseResponse<GetPostResponse>
-    getPost(@RequestParam("postId") Long postId,
-            @RequestParam("pageNum") Integer pageNum){
-        if (ObjectUtils.isEmpty(postId)){
-            return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
-        }
-        PostAo postAo = postService.findPostById(postId);
-        if (postAo == null || postAo.getId() == null){
-            return BaseResponse.LogBackError(PostExceptions.POST_NOT_EXIST);
-        }
-        if (ObjectUtils.isEmpty(pageNum) || pageNum < 1){
-            pageNum = 1;
-        }
-        List<PostCommentMongoDo> postCommentList = postCommentService.getLevel1PostComments(postId, PostConstant.COMMENT_PAGE_SIZE, pageNum);
-        GetPostResponse getPostResponse = new GetPostResponse();
-        getPostResponse.setPostAo(postAo);
-        getPostResponse.setPostCommentList(postCommentList);
-        return BaseResponse.getResponseEntitySuccess(getPostResponse);
-    }
 
     @PostMapping("/getPost")
     public BaseResponse<SinglePostResponse>
@@ -288,23 +236,17 @@ public class PostController {
             return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
-        PostAo postAo = postService.findPostById(request.getPostId());
-        if (postAo == null || postAo.getId() == null){
-            return BaseResponse.LogBackError(PostExceptions.POST_NOT_EXIST);
-        }
         if (ObjectUtils.isEmpty(request.getPageNum()) || request.getPageNum() < 1){
             request.setPageNum(1);
         }
-        List<PostCommentMongoDo> postCommentList = postCommentService.getLevel1PostComments(
+        List<CommentAo> commentAos = postCommentService.getLevel1PostCommentAos(
                 request.getPostId(), PostConstant.COMMENT_PAGE_SIZE, request.getPageNum()
         );
 
         SinglePostResponse singlePostResponse = new SinglePostResponse();
-        // 转换为vo
-        PostOldVo postVo = postFrontService.postAoToPostVo(postAo);
-        List<CommentOldVo> commentVos = postFrontService.getCommentVosByPostCommentDos(postCommentList);
-        singlePostResponse.postVo = postVo;
-        singlePostResponse.commentVos = commentVos;
+        PostVo postVo = postFrontService.getPostVo(request.getPostId(), request.getUserId());
+        singlePostResponse.postVo = Optional.ofNullable(postVo).map(PostFVo::new).orElse(null);
+        singlePostResponse.commentAos = commentAos;
         return BaseResponse.getResponseEntitySuccess(singlePostResponse);
     }
 
@@ -318,52 +260,32 @@ public class PostController {
 
     private BaseResponse<GetPostCommentsResponse> getPostComments(
             Long postId,
-            Long leve1commentId,
+            @Nullable Long replyCommentId,
             Integer pageSize,
             Integer pageNum) {
         if (postId == null) {
             return BaseResponse.LogBackError(CommonExceptions.PARAM_ERROR);
         }
 
-        if (leve1commentId != null) {
-            PostCommentMongoDo postCommentDo = postCommentService.getPostCommentById(leve1commentId);
-            if (postCommentDo == null || postCommentDo.getId() == null) {
-                return BaseResponse.LogBackError(PostExceptions.COMMENT_NOT_EXIST);
-            }
-        }
-
-        List<PostCommentMongoDo> postCommentList;
+        List<CommentAo> commentAos;
         // 没有level1Id默认为他就是level1评论
-        if (leve1commentId == null) {
-            postCommentList = postCommentService.getLevel1PostComments(postId, pageSize, pageNum);
-        } else {
-            postCommentList = postCommentService.getLevel2PostComments(postId, leve1commentId, pageSize, pageNum);
+        if (replyCommentId == null) {
+            commentAos = postCommentService.getLevel1PostCommentAos(postId, pageSize, pageNum);
+        }
+        else {
+            commentAos = postCommentService.getLevel2PostCommentAos(postId, replyCommentId, pageSize, pageNum);
         }
 
-        List<PostCommentAo> postCommentAoList = postCommentService.getPostCommentAoList(postCommentList);
         GetPostCommentsResponse getPostCommentsResponse = new GetPostCommentsResponse();
-
-        if (!CollectionUtils.isEmpty(postCommentAoList)) {
-            List<Long> fileIds = postCommentAoList.stream()
-                    .map(postCommentAo -> postCommentAo.getCommenterAvatarFileId() == null ? null : postCommentAo.getCommenterAvatarFileId())
-                    .collect(Collectors.toList());
-            List<String> fileUrls = ossService.getFileUrlsByFileIds(fileIds);
-
-            List<PostCommentDto> postCommentDtoList = new ArrayList<>();
-            for (int i = 0; i < postCommentAoList.size(); i++) {
-                PostCommentDto dto = postCommentConverter.postCommentAoToPostCommentDto(postCommentAoList.get(i), fileUrls.get(i));
-                postCommentDtoList.add(dto);
-            }
-            getPostCommentsResponse.setPostCommentDtosList(postCommentDtoList);
-        }
+        getPostCommentsResponse.commentAos = commentAos;
 
         return BaseResponse.getResponseEntitySuccess(getPostCommentsResponse);
     }
 
     // 发表评论 逻辑在postHandler实现
-//    @Deprecated
-//    @PostMapping("/comment")
-//    public BaseResponse<BaseHttpResponse> comment(@Validated @RequestBody CommentRequest request) {
-//
-//    }
+/*    @Deprecated
+    @PostMapping("/comment")
+    public BaseResponse<BaseHttpResponse> comment(@Validated @RequestBody CommentRequest request) {
+
+    }*/
 }

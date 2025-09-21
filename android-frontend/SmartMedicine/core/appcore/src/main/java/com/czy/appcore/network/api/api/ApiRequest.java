@@ -2,13 +2,18 @@ package com.czy.appcore.network.api.api;
 
 import com.czy.appcore.BaseConfig;
 import com.czy.baseutil.network.BaseResponse;
+import com.czy.domain.ao.medicine.AppointmentDoctorOrderDetailsAo;
 import com.czy.domain.constant.backEnd.BackEndConstant;
+import com.czy.domain.dto.http.request.AppointmentDoctorRequest;
 import com.czy.domain.dto.http.request.BaseHttpRequest;
 import com.czy.domain.dto.http.request.FuzzySearchRequest;
 import com.czy.domain.dto.http.request.GetMyFriendsRequest;
+import com.czy.domain.dto.http.request.GetRegisterAppointmentListRequest;
 import com.czy.domain.dto.http.request.GetSinglePostRequest;
+import com.czy.domain.dto.http.request.GetUserAppointmentRecordRequest;
 import com.czy.domain.dto.http.request.IsRegisterRequest;
 import com.czy.domain.dto.http.request.LoginUserRequest;
+import com.czy.domain.dto.http.request.PayAppointmentOrderRequest;
 import com.czy.domain.dto.http.request.PhoneLoginInfoRequest;
 import com.czy.domain.dto.http.request.PostPublishRequest;
 import com.czy.domain.dto.http.request.RecommendPostRequest;
@@ -16,12 +21,17 @@ import com.czy.domain.dto.http.request.RegisterUserRequest;
 import com.czy.domain.dto.http.request.SearchUserRequest;
 import com.czy.domain.dto.http.request.SendSmsRequest;
 import com.czy.domain.dto.http.request.UserBriefRequest;
+import com.czy.domain.dto.http.response.AppointmentDoctorResponse;
 import com.czy.domain.dto.http.response.FuzzySearchResponse;
 import com.czy.domain.dto.http.response.GetAddMeRequestListResponse;
+import com.czy.domain.dto.http.response.GetAllRegisterAppointmentDateResponse;
 import com.czy.domain.dto.http.response.GetHandleMyAddUserResponseListResponse;
 import com.czy.domain.dto.http.response.GetMyFriendsResponse;
+import com.czy.domain.dto.http.response.GetRegisterAppointmentListResponse;
+import com.czy.domain.dto.http.response.GetUserAppointmentRecordResponse;
 import com.czy.domain.dto.http.response.IsRegisterResponse;
 import com.czy.domain.dto.http.response.LoginSignResponse;
+import com.czy.domain.dto.http.response.PayAppointmentResponse;
 import com.czy.domain.dto.http.response.PostPublishResponse;
 import com.czy.domain.dto.http.response.RecommendPostResponse;
 import com.czy.domain.dto.http.response.SearchUserResponse;
@@ -298,4 +308,69 @@ public interface ApiRequest {
     Observable<BaseResponse<String>> uploadImageTest(
             @Part MultipartBody.Part file
     );
+
+    //-------------预约相关--------------
+    ;
+    /**
+     * 获取预约列表
+     * @param request   获取预约列表请求
+     * @return          获取预约列表响应
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getList")
+    Observable<BaseResponse<GetRegisterAppointmentListResponse>> getRegisterAppointmentList(
+            @Body GetRegisterAppointmentListRequest request
+    );
+
+    /**
+     * 获取所有预约时间
+     * @param request   获取预约列表请求
+     * @return          获取预约列表响应
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getAllDate")
+    Observable<BaseResponse<GetAllRegisterAppointmentDateResponse>> getRegisterAppointmentAllDate(
+            @Body GetRegisterAppointmentListRequest request
+    );
+
+    /**
+     * 预约
+     * @param request   预约请求
+     * @return          预约响应
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/apply")
+    Observable<BaseResponse<AppointmentDoctorResponse>> appointmentDoctorMerchant(
+            @Body AppointmentDoctorRequest request
+    );
+
+    /**
+     * 获取用户预约列表
+     * @param request   获取用户预约列表请求
+     * @return          获取用户预约列表响应
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.MEDICINE + "/appointment/getCustomerList")
+    Observable<BaseResponse<GetUserAppointmentRecordResponse>> getUserAppointmentRecord(
+            @Body GetUserAppointmentRecordRequest request
+    );
+
+    /**
+     * 获取用户预约详情
+     * @param userId    userId
+     * @param orderId   orderId
+     * @return            获取用户预约详情响应
+     */
+    @GET(BackEndConstant.MEDICINE + "/appointment/getCustomerDetails")
+    Observable<BaseResponse<AppointmentDoctorOrderDetailsAo>> getAppointmentRecordDetails(
+            @Query("userId") Long userId,
+            @Query("orderId") Long orderId
+    );
+
+    /**
+     * 支付
+     * @param request     支付请求
+     * @return            获取用户预约详情响应
+     */
+    @POST(BaseConfig.AUTH_TOKEN_PREFIX + BackEndConstant.PURCHASE + "/pay/appointment")
+    Observable<BaseResponse<PayAppointmentResponse>> payAppointmentOrder(
+            @Body PayAppointmentOrderRequest request
+    );
+
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.czy.appview.view.DialogConfirm;
+import com.czy.appview.view.medicine.MedicineViewPagerEnum;
 import com.czy.baseutil.activity.ActivityLaunchUtils;
 import com.czy.baseutil.activity.BaseActivity;
 import com.czy.baseutil.image.ImageLoadUtil;
@@ -104,12 +106,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     protected void setListener() {
         super.setListener();
         binding.mainBottomBar.clickListener(position -> {
-            SelectItemEnum fragmentType = SelectItemEnum.HOME;
             try {
-                fragmentType = SelectItemEnum.getItem(position);
+                currentSelected = SelectItemEnum.getItem(position);
             } catch (Exception ignored){
             }
-            changeFragment(fragmentType);
+            changeFragment();
         });
 
         // MainActivity给HomeFragment初始化点击事件
@@ -151,68 +152,75 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     //---------------------------fragment---------------------------
 
     private FragmentManager fragmentManager;
+    private SelectItemEnum currentSelected = SelectItemEnum.HOME;
+    private SelectItemEnum lastSelected = null;
 
     private void initFragment(){
         fragmentManager = getSupportFragmentManager();
 
-        SelectItemEnum fragmentType = SelectItemEnum.HOME;
+        currentSelected = SelectItemEnum.HOME;
         try {
             if (getIntent().hasExtra(SelectItemEnum.INTENT_EXTRA_NAME)){
-                fragmentType = (SelectItemEnum) getIntent().getSerializableExtra(SelectItemEnum.INTENT_EXTRA_NAME);
+                currentSelected = (SelectItemEnum) getIntent().getSerializableExtra(SelectItemEnum.INTENT_EXTRA_NAME);
             }
         } catch (Exception ignored){
         }
 
-        changeFragment(fragmentType);
+        changeFragment();
     }
 
-    private void changeFragment(SelectItemEnum fragmentType){
-        if (fragmentType != null){
-            switch(fragmentType){
-                case HOME -> {
-                    setStatusBarColor(
-                            com.czy.appview.R.color.green_90
-                    );
-                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
-                    turnToTargetFragment(SelectItemEnum.HOME, HomeFragment.class, null);
-                }
-                case MEDICAL -> {
-                    setStatusBarColor(
-                            com.czy.appview.R.color.green_0
-                    );
-                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
-                    turnToTargetFragment(SelectItemEnum.MEDICAL, MedicineFragment.class, null);
-                }
-                case MESSAGE -> {
-                    setStatusBarColor(
-                            com.czy.appview.R.color.green_0
-                    );
-                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
-                    turnToTargetFragment(SelectItemEnum.MESSAGE, MessageMainFragment.class, null);
-                }
-                case MINE -> {
-                    setStatusBarColor(
-                            com.czy.appview.R.color.green_0
-                    );
-                    this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
-                    turnToTargetFragment(SelectItemEnum.MINE, MineFragment.class, null);
-                }
+    private void changeFragment(){
+        if (currentSelected == lastSelected){
+            return;
+        }
+        switch(currentSelected){
+            case HOME -> {
+                setStatusBarColor(
+                        com.czy.appview.R.color.green_90
+                );
+                this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                turnToTargetFragment(SelectItemEnum.HOME, HomeFragment.class, null);
+            }
+            case MEDICAL -> {
+                setStatusBarColor(
+                        com.czy.appview.R.color.green_0
+                );
+                this.setBaseBarColorRes(com.czy.appview.R.color.green_50);
+                turnToTargetFragment(SelectItemEnum.MEDICAL, MedicineFragment.class, null);
+            }
+            case MESSAGE -> {
+                setStatusBarColor(
+                        com.czy.appview.R.color.green_0
+                );
+                this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                turnToTargetFragment(SelectItemEnum.MESSAGE, MessageMainFragment.class, null);
+            }
+            case MINE -> {
+                setStatusBarColor(
+                        com.czy.appview.R.color.green_0
+                );
+                this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+                turnToTargetFragment(SelectItemEnum.MINE, MineFragment.class, null);
             }
         }
     }
 
+    private final SparseArray<Fragment> fragmentMap = new SparseArray<>(SelectItemEnum.values().length);
+
     public void turnToTargetFragment(SelectItemEnum fragmentType, Class<? extends Fragment> clazz, Bundle args){
         binding.mainBottomBar.setSelected(fragmentType);
 
-        Fragment newFragment = null;
+        Fragment newFragment = fragmentMap.get(fragmentType.getPosition());
 
-        try {
-            // 如果没有参数，使用无参构造函数
-            newFragment = clazz.getConstructor().newInstance();
-        } catch (NoSuchMethodException e) {
-            Log.e(TAG, "No such constructor", e);
-        } catch (Exception e) {
-            Log.e(TAG, "Error creating fragment", e);
+        if (newFragment == null){
+            try {
+                // 如果没有参数，使用无参构造函数
+                newFragment = clazz.getConstructor().newInstance();
+            } catch (NoSuchMethodException e) {
+                Log.e(TAG, "No such constructor", e);
+            } catch (Exception e) {
+                Log.e(TAG, "Error creating fragment", e);
+            }
         }
 
         if (newFragment != null) {
@@ -225,7 +233,40 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.replace(binding.fragmentContainer.getId(), newFragment);
             transaction.commit();
+
+            // 缓存
+            lastSelected = currentSelected;
         }
+    }
+
+    public void turnToAiFragment(){
+        setStatusBarColor(
+                com.czy.appview.R.color.green_0
+        );
+        this.setBaseBarColorRes(com.czy.appview.R.color.green_0);
+
+        currentSelected = SelectItemEnum.MEDICAL;
+
+        binding.mainBottomBar.setSelected(currentSelected);
+
+        Fragment newFragment = fragmentMap.get(currentSelected.getPosition());
+
+        if (newFragment == null){
+            newFragment = new MedicineFragment();
+        }
+        if (newFragment instanceof MedicineFragment){
+            ((MedicineFragment) newFragment).setInitPosition(MedicineViewPagerEnum.AI_QUESTION.getIndex());
+        }
+        else {
+            Log.w(TAG, "turnToAiFragment::error: newFragment !instanceof MedicineFragment");
+        }
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(binding.fragmentContainer.getId(), newFragment);
+        transaction.commit();
+
+        // 缓存
+        lastSelected = currentSelected;
     }
 
     public void setBaseBarColorRes(@ColorRes int colorResId){

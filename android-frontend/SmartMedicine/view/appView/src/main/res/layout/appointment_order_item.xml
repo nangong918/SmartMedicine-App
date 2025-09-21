@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/ly_main"
+    android:background="@color/green_50"
+    tools:context="com.czy.appview.view.medicine.order.AppointmentDoctorOrderViewHolder"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 头像 -->
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imvg_avatar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_orderTime"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:riv_corner_radius="10dp"
+        tools:src="@mipmap/logo" />
+
+    <LinearLayout
+        android:id="@+id/ly_info"
+        android:layout_width="110dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imvg_avatar"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+        
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/stethoscope_24px"
+                android:tint="@color/green_900"
+                tools:ignore="UseAppTint" />
+
+
+            <TextView
+                android:id="@+id/tv_doctorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/green_900"
+                android:textSize="11sp"
+                tools:text="张伟医生"
+                android:maxLines="1"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/local_hospital_24px"
+                android:tint="@color/green_900"
+                tools:ignore="UseAppTint" />
+
+            <TextView
+                android:id="@+id/tv_hospitalName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/green_900"
+                android:textSize="11sp"
+                tools:text="广东省人民医院"
+                android:maxLines="1"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/nest_clock_farsight_analog_24px"
+                android:tint="@color/green_900"
+                tools:ignore="UseAppTint" />
+
+            <TextView
+                android:id="@+id/tv_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/green_900"
+                android:textSize="11sp"
+                tools:text="12:00~18:00"
+                android:maxLines="1"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
+        
+        <TextView
+            android:id="@+id/tv_remain"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey_100"
+            android:textSize="10sp"
+            tools:text="剩余名额: 0"
+            tools:ignore="SmallSp" />
+        
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="end"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ly_info"
+        app:layout_constraintTop_toTopOf="@+id/ly_info">
+
+        <TextView
+            android:id="@+id/tv_orderStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:maxLines="1"
+            android:textColor="@color/green_900"
+            android:textSize="25sp"
+            tools:text="待付款" />
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:maxLines="1"
+            android:textColor="@color/green_900"
+            android:textSize="22sp"
+            tools:text="￥90" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_handle1"
+                android:layout_width="70dp"
+                android:layout_height="20dp"
+                android:background="@drawable/round_corners_button_commend"
+                android:gravity="center"
+                android:textColor="@color/green_900"
+                android:textSize="12sp"
+                tools:text="支付" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_handle2"
+                android:layout_width="70dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/round_corners_button_commend"
+                android:gravity="center"
+                android:textColor="@color/green_900"
+                android:textSize="12sp"
+                tools:text="取消" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_orderTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/grey_100"
+        android:textSize="11sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ly_info"
+        tools:text="下单时间：2025-08-17 20:30:15" />
+
+    <TextView
+        android:id="@+id/tv_remainingPayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/grey_100"
+        android:textSize="11sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_orderTime"
+        tools:text="剩余支付时间：14:59" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

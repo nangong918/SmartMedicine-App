@@ -3,6 +3,7 @@ package com.czy.api.domain.dto.http.request;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -13,6 +14,6 @@ import java.util.List;
 public class GetPostPreviewListRequest {
     @NotEmpty(message = "帖子 IDs 不能为空")
     public List<Long> postIds;
-    @NotEmpty(message = "用户账号不能为空")
-    public String userAccount;
+    @NotNull(message = "用户Id不能为空")
+    public Long userId;
 }
