@@ -101,6 +101,8 @@ public class SearchKnowledgeController {
                 .call()
                 .content();
 
+        log.info("模型响应内容是:{}", response);
+
         return BaseResponse.getResponseEntitySuccess(response);
     }
 

@@ -99,9 +99,12 @@ public class MedicalQuestionToolServiceImpl implements MedicalQuestionToolServic
             @ToolParam(description = "单个实体", required = true)
             MedicalRecognitionResult.Entity entity
     ){
+        log.info("实体名称: {}", entity.getName());
+        log.info("实体类型: {}", entity.getType());
         List<String> questionKnowledgeList = new ArrayList<>();
         if (entity.getType().equals(MedicalEntityEnum.DISEASE.getDescription())){
             DiseaseDo diseaseDo = diseaseRepository.findByName(entity.getName());
+            log.info("疾病: {}", diseaseDo);
             questionKnowledgeList.add(diseaseDo.toDocumentString());
         }
         else {

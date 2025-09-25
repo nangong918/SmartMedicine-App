@@ -3,6 +3,7 @@ import com.ai.medicine.domain.Do.neo4j.DiseaseDo;
 import com.ai.medicine.domain.Do.neo4j.SymptomsDo;
 import com.ai.medicine.domain.Do.neo4j.base.BaseNeo4jMatchDo;
 import com.ai.medicine.domain.Do.neo4j.rels.HasSymptomRelsDo;
+import com.ai.medicine.domain.MedicalRecognitionResult;
 import com.ai.medicine.domain.constant.MedicalEntityEnum;
 import com.ai.medicine.domain.constant.MedicalRelationEnum;
 import com.ai.medicine.mapper.DiseaseRepository;
@@ -146,6 +147,19 @@ public class Neo4jTests {
     private MedicalQuestionToolService medicalQuestionToolService;
 
     @Test
+    public void singleEntityTest(){
+        var d = "咽炎";
+
+        MedicalRecognitionResult.Entity entity = new MedicalRecognitionResult.Entity();
+        entity.setName(d);
+        entity.setType(MedicalEntityEnum.DISEASE.getDescription());
+        List<String> knowledge = medicalQuestionToolService.entityKnowledge(
+                entity
+        );
+        log.info("知识：{}", knowledge);
+    }
+
+    @Test
     public void knowledgeSearchToolTest2(){
         // 1. 注册工具回调
         ToolCallback[] toolCallbacks = ToolCallbacks.from(medicalQuestionToolService);
@@ -186,7 +200,7 @@ public class Neo4jTests {
                 .build();
 
         // 3. 用户问题示例
-        String userQuestion = "我感觉到头痛，还有一些发烧，我应该是生了什么病？这种病要怎么治疗呢？";
+        String userQuestion = "我感觉到吞咽痛，还有一些发烧，我应该是生了什么病？这种病要怎么治疗呢？";
 
 
         // 渲染提示词，替换模板中的 <text> 为用户输入
