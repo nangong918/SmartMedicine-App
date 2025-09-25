@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.czy.appcore.BaseConfig
@@ -65,7 +66,8 @@ open class AiQuestionVm(
         chatMessageItemVo.viewType = ChatMessageItemVo.VIEW_TYPE_SENDER
 
         fao.chatList.add(chatMessageItemVo)
-        fao.chatCountLd.value = fao.chatList.size
+        adapter?.setCurrentList(fao.chatList)
+//        fao.chatCountLd.value = fao.chatList.size
 
         val request = QuestionRequest()
         request.question = question
@@ -79,7 +81,8 @@ open class AiQuestionVm(
         // 创建请求体
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json)
 
-        val url: String = "http:// " + BaseConfig.LOCAL_DNS + ":52333/ai/question"
+        val url: String = "http://" + BaseConfig.LOCAL_DNS.trim() + ":52333/ai/question"
+        Log.i(TAG, "url: $url")
 
         // 创建请求
         val httpRequest = Request.Builder()
@@ -104,6 +107,8 @@ open class AiQuestionVm(
             response.body()?.let { responseBody ->
                 val responseData = responseBody.string()
 
+                Log.i(TAG, "Response: $responseData")
+
                 // 使用 Gson 解析响应数据
                 val baseResponseType = object : TypeToken<BaseResponse<String>>() {}.type
                 val baseResponse: BaseResponse<String> = gson.fromJson(responseData, baseResponseType)
@@ -117,7 +122,8 @@ open class AiQuestionVm(
                     chatMessageItemVo.viewType = ChatMessageItemVo.VIEW_TYPE_RECEIVER
 
                     fao.chatList.add(chatMessageItemVo)
-                    fao.chatCountLd.value = fao.chatList.size
+                    adapter?.setCurrentList(fao.chatList)
+//                    fao.chatCountLd.value = fao.chatList.size
 
                     callback.onAllRequestSuccess()
                 }

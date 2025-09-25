@@ -78,12 +78,14 @@ class AiQuestionFragment : BaseVmFragment<FragmentAiQuestionBinding, AiQuestionV
     override fun setListener() {
         super.setListener()
 
-        vm.doSendQuestion(requireContext(), object : SyncRequestCallback {
-            override fun onThrowable(throwable: Throwable?) {
-            }
+        binding.smSendMessage.setSendClickListener {
+            vm.doSendQuestion(requireContext(), object : SyncRequestCallback {
+                override fun onThrowable(throwable: Throwable?) {
+                }
 
-            override fun onAllRequestSuccess() {
-            }
-        })
+                override fun onAllRequestSuccess() {
+                }
+            })
+        }
     }
 }

@@ -34,7 +34,6 @@ abstract class BaseVmFragment<VB : ViewBinding, VM : ViewModel>(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        this.setListener()
         return binding.root
     }
 
@@ -42,6 +41,8 @@ abstract class BaseVmFragment<VB : ViewBinding, VM : ViewModel>(
         super.onViewCreated(view, savedInstanceState)
         // 此处binding才生效
         initViewModel()
+
+        this.setListener()
     }
 
     protected open fun setListener() {
