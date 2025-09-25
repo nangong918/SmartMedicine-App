@@ -1,6 +1,8 @@
 package com.czy.smartmedicine.viewModel.fragment.medicine.children
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -31,6 +33,8 @@ import okhttp3.Response
 import java.io.IOException
 import java.time.LocalDateTime
 import java.util.Optional
+import java.util.concurrent.TimeUnit
+import kotlin.math.log
 
 
 open class AiQuestionVm(
@@ -76,7 +80,13 @@ open class AiQuestionVm(
         val json = gson.toJson(request)
 
         // 创建 OkHttpClient 实例
-        val client = OkHttpClient()
+        // 创建 OkHttpClient 实例并设置超时
+        val client = OkHttpClient.Builder()
+            .connectTimeout(2, TimeUnit.MINUTES)  // 设置连接超时
+            .readTimeout(2, TimeUnit.MINUTES)     // 设置读取超时
+            .writeTimeout(2, TimeUnit.MINUTES)    // 设置写入超时
+            .build()
+
 
         // 创建请求体
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json)
@@ -93,16 +103,17 @@ open class AiQuestionVm(
         // 发起请求
         client.newCall(httpRequest).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
+                Log.e(TAG, "请求失败: ${e.message}")
                 callback.onThrowable(e)
             }
 
             override fun onResponse(call: Call, response: Response) {
-                handleSendQuestion(call, response, callback)
+                handleSendQuestion(context, response, callback)
             }
         })
     }
 
-    private fun handleSendQuestion(call: Call, response: Response, callback: SyncRequestCallback){
+    private fun handleSendQuestion(context: Context, response: Response, callback: SyncRequestCallback){
         if (response.isSuccessful) {
             response.body()?.let { responseBody ->
                 val responseData = responseBody.string()
@@ -122,17 +133,25 @@ open class AiQuestionVm(
                     chatMessageItemVo.viewType = ChatMessageItemVo.VIEW_TYPE_RECEIVER
 
                     fao.chatList.add(chatMessageItemVo)
-                    adapter?.setCurrentList(fao.chatList)
+
+                    val handler = Handler(Looper.getMainLooper())
+                    // 在主线程中处理响应
+                    handler.post {
+                        adapter?.setCurrentList(fao.chatList)
+
+                    }
 //                    fao.chatCountLd.value = fao.chatList.size
 
                     callback.onAllRequestSuccess()
                 }
                 else {
+                    Log.e(TAG, "请求失败: baseResponse.code != 200")
                     callback.onThrowable(Throwable(SyncRequestCallback.RESPONSE_BASE_ERROR))
                 }
             }
         }
         else {
+            Log.e(TAG, "请求失败: ")
             callback.onThrowable(Throwable(SyncRequestCallback.RESPONSE_BASE_ERROR))
         }
     }

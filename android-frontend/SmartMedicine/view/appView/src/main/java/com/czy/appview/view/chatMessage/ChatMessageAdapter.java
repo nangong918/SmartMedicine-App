@@ -104,6 +104,12 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.currentAvatarUrl = currentAvatarUrl;
     }
 
+    private boolean isAI = false;
+
+    public void setIsAI(boolean isAI){
+        this.isAI = isAI;
+    }
+
     //实现不同的viewType
     @Override
     public int getItemViewType(int position) {
@@ -148,10 +154,15 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             // 处理发送方对话框的数据和视图
             ((ReceiverViewHolder) holder).binding.tvMessage.setText(vo.content);
             ((ReceiverViewHolder) holder).binding.tvTime.setText(vo.time);
-            ImageLoadUtil.loadImageViewByResource(
-                    this.currentAvatarUrl,
-                    ((ReceiverViewHolder) holder).binding.imgvProfile
-            );
+            if (isAI){
+                ((ReceiverViewHolder) holder).binding.imgvProfile.setImageResource(R.mipmap.logo);
+            }
+            else {
+                ImageLoadUtil.loadImageViewByResource(
+                        this.currentAvatarUrl,
+                        ((ReceiverViewHolder) holder).binding.imgvProfile
+                );
+            }
             if (MessageTypeEnum.image.code == vo.messageType){
                 ((ReceiverViewHolder) holder).binding.imgvMessage.setVisibility(View.VISIBLE);
                 // 图片消息：3.3.3 加载图片 (可以区分url和uri)

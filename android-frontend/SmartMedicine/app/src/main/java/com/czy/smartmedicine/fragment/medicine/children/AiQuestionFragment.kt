@@ -49,6 +49,7 @@ class AiQuestionFragment : BaseVmFragment<FragmentAiQuestionBinding, AiQuestionV
         // 初始化数据
         initVmFAo()
         vm.adapter = ChatMessageAdapter("")
+        vm.adapter!!.setIsAI(true)
         binding.rclvMessage.adapter = vm.adapter
 
         // 观察数据
