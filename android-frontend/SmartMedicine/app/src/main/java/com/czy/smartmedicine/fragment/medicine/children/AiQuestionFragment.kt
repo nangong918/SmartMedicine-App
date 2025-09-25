@@ -1,10 +1,13 @@
 package com.czy.smartmedicine.fragment.medicine.children
 
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.czy.appcore.network.api.handle.SyncRequestCallback
+import com.czy.appview.view.chatMessage.ChatMessageAdapter
 import com.czy.smartmedicine.databinding.FragmentAiQuestionBinding
 import com.czy.smartmedicine.utils.BaseVmFragment
 import com.czy.smartmedicine.viewModel.fragment.medicine.children.AiQuestionVm
@@ -45,6 +48,8 @@ class AiQuestionFragment : BaseVmFragment<FragmentAiQuestionBinding, AiQuestionV
 
         // 初始化数据
         initVmFAo()
+        vm.adapter = ChatMessageAdapter("")
+        binding.rclvMessage.adapter = vm.adapter
 
         // 观察数据
         observeData()
@@ -60,9 +65,25 @@ class AiQuestionFragment : BaseVmFragment<FragmentAiQuestionBinding, AiQuestionV
     private fun initVmFAo() {
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun observeData() {
+        vm.fao.chatCountLd.observe(this){
+            vm.adapter?.notifyDataSetChanged()
+        }
     }
 
     private fun initRequest(){
+    }
+
+    override fun setListener() {
+        super.setListener()
+
+        vm.doSendQuestion(requireContext(), object : SyncRequestCallback {
+            override fun onThrowable(throwable: Throwable?) {
+            }
+
+            override fun onAllRequestSuccess() {
+            }
+        })
     }
 }
