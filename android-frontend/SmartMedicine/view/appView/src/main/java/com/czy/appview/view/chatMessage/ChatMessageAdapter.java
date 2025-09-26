@@ -59,6 +59,14 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
+    private String currentAvatarUrl;
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void setCurrentAvatarUrl(String avatarUrl) {
+        this.currentAvatarUrl = avatarUrl;
+        notifyDataSetChanged();
+    }
+
     private final List<ChatMessageItemVo> currentList = new ArrayList<>();
 
     // 更新View，与当前的view对比然后更新指定的view
@@ -92,7 +100,14 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .ifPresent(Runnable::run);
     }
 
-    public ChatMessageAdapter(){
+    public ChatMessageAdapter(String currentAvatarUrl){
+        this.currentAvatarUrl = currentAvatarUrl;
+    }
+
+    private boolean isAI = false;
+
+    public void setIsAI(boolean isAI){
+        this.isAI = isAI;
     }
 
     //实现不同的viewType
@@ -139,6 +154,15 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             // 处理发送方对话框的数据和视图
             ((ReceiverViewHolder) holder).binding.tvMessage.setText(vo.content);
             ((ReceiverViewHolder) holder).binding.tvTime.setText(vo.time);
+            if (isAI){
+                ((ReceiverViewHolder) holder).binding.imgvProfile.setImageResource(R.mipmap.logo);
+            }
+            else {
+                ImageLoadUtil.loadImageViewByResource(
+                        this.currentAvatarUrl,
+                        ((ReceiverViewHolder) holder).binding.imgvProfile
+                );
+            }
             if (MessageTypeEnum.image.code == vo.messageType){
                 ((ReceiverViewHolder) holder).binding.imgvMessage.setVisibility(View.VISIBLE);
                 // 图片消息：3.3.3 加载图片 (可以区分url和uri)

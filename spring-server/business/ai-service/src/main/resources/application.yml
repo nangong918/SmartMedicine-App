@@ -1,0 +1,64 @@
+# 通用配置（所有环境共享）
+server:
+  port: 52333
+
+
+spring:
+  application:
+    name: ai-medicine
+  ai:
+    dashscope:
+      api-key: ${ALI_API_KEY}
+      agent:
+        deepseek-id: "deepseek-r1"
+      embedding:
+        options:
+          model: "text-embedding-v3"
+    openai:
+      api-key: ${ALI_API_KEY}
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+      chat:
+        options:
+          model: qwen-max
+    mcp: #
+      server:
+        enabled: true
+        name: mcp-server-test
+        version: 1.0.0
+        type: ASYNC # STDIO 服务器 同步模式; WebFlux Server 异步模式: ASYNC
+        instructions: "此服务提供商品库存资源管理问题的mcp服务"
+        #        sse-message-endpoint: /mcp
+        capabilities:
+          tool: true
+          resource: true
+          prompt: true
+          completion: true
+
+      client:
+        enabled: true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+  data:
+    #-------------------------MongoDb-------------------------
+    # MongoDB 配置项，对应 MongoProperties 类
+    mongodb:
+      host: 127.0.0.1
+      port: 27017
+      database: test
+#      username: test01
+#      password: password01
+
+    #-------------------------Neo4j-------------------------
+#    neo4j:
+#      uri: bolt://localhost:7687
+#      username: neo4j
+#      password: 12345678
+  # 傻逼SpringBoot3吃饱了城的给Neo4j的配置从spring.data改为Spring直属了
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: 12345678
+

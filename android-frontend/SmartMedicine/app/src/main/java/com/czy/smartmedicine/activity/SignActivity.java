@@ -184,19 +184,22 @@ public class SignActivity extends BaseActivity<ActivitySignBinding> {
                 registerForActivityResult(
                         new ActivityResultContracts.StartActivityForResult(),
                         result -> {
-                            NetworkLoadUtils.showDialog(this);
-                            vm.doCheckIsRegistered(this, new SyncRequestCallback() {
-                                @Override
-                                public void onThrowable(Throwable throwable) {
-                                    NetworkLoadUtils.dismissDialog();
-                                    Log.e(TAG, "注册检查异常：", throwable);
-                                }
+                            // 注册结束之后如果手机号合法就进行检查
+                            if (Boolean.TRUE.equals(vm.signVo.isPhoneValid.getValue())){
+                                NetworkLoadUtils.showDialog(this);
+                                vm.doCheckIsRegistered(this, new SyncRequestCallback() {
+                                    @Override
+                                    public void onThrowable(Throwable throwable) {
+                                        NetworkLoadUtils.dismissDialog();
+                                        Log.e(TAG, "注册检查异常：", throwable);
+                                    }
 
-                                @Override
-                                public void onAllRequestSuccess() {
-                                    NetworkLoadUtils.dismissDialog();
-                                }
-                            });
+                                    @Override
+                                    public void onAllRequestSuccess() {
+                                        NetworkLoadUtils.dismissDialog();
+                                    }
+                                });
+                            }
                         }
                 );
     }

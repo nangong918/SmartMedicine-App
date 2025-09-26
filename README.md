@@ -7,7 +7,103 @@
 
 ##### 项目功能
 
-文章推荐,医疗社区,动态发布,在线问诊,AI问答,疾病预测,便捷搜索等功能
+文章推荐, 医疗社区, 动态发布, 在线问诊, AI问答, 疾病预测, 便捷搜索等功能
+
+![img.png](assets/start.png)
+
+启动页面
+
+![img.png](assets/signIn.png)
+
+登录页
+
+![img.png](assets/signUp.png)
+
+注册页
+
+![img.png](assets/home.png)
+
+![img.png](assets/post.png)
+
+![img.png](assets/publish.png)
+
+首页推荐
+* 推荐算法采用MF矩阵分解, FM隐因子, NCF神经网络
+* 矩阵分解采用SVD、ALS
+* 用户, 帖子 特征基于Neo4j知识图谱的实体关系集合
+* Android端在[点赞, 收藏, 评论, 搜索, 浏览]都进行了埋点时间, 根据规则集对该用户在该实体的感兴趣程度做埋点
+* 埋点数据通过Kafka(隐性评分)和Http请求(显性评分)交给feature-service并做计算
+* 推荐层采用Lambda架构, 分为[在线层, 近线层, 离线层]: 
+  * 在线层: 使用实时数据, 保证实时响应
+  * 近线层: 使用实时数据 + 离线计算数据, 尽量实时响应
+  * 离线层: 定时任务, 不使用实时数据, 离线计算历史数据, 保证精确性.
+
+![img.png](assets/ai_question.png)
+
+AI问诊 (v2.0版本由Bert升级为Spring AI 调用DeepSeek)
+* Spring AI 进行AI应用层开发具有更好的意图识别和实体命名识别
+* RAG增强索引
+  * 用户结构化数据问题的模糊实体通过Milvus向量索引匹配精确实体, 交给Neo4j和ElasticSearch进行知识抽取
+  * 用户非结构化数据的问题直接使用Milvus向量索引相关文档交给DeepSeek进行AIGC
+* MCP 协议
+  * 集成了MCP Service和Client, ChatModel集成MCP之后调用@ToolService能为用户提供App内快捷的操作, 如:
+    * AI快捷搜索查询
+    * AI快捷挂号
+    * AI快捷充值
+
+
+![img.png](assets/search.png)
+
+文章搜索
+* 文章搜索采用Mysql的Like匹配 + ElasticSearch分层搜索策略
+* 策略图如下
+![搜索引擎流程planC.png](assets/搜索引擎流程planC.png)
+
+![img.png](assets/friends.png)
+
+搜索 \ 添加好友
+* 系统采用Netty进行长连接, 不使用WebSocket. 相比Websocket, Netty的长连接更加轻便.
+* Json序列化需要Java进行反射, 耗时较长. 项目采用Protobuf传输数据, 减少数据在网络应用层转化耗时
+
+![img.png](assets/friends2.png)
+
+![img.png](assets/friends3.png)
+
+
+好友 \ 预览
+
+![img.png](assets/message.png)
+
+消息界面
+
+![img.png](assets/chat.png)
+
+聊天
+* 聊天后端使用Netty和RabbitMq进行消息传递.
+* 前端使用EventBus进行异步消息传递, 避免的Activity销毁而导致数据丢失
+* 前端使用了MMKV进行缓存数据, 并使用Room(SQLite)对消息进行本地持久化
+
+![img.png](assets/appointment_home.png)
+
+![img.png](assets/appointment_search.png)
+
+![img.png](assets/appointment_list.png)
+
+![img.png](assets/pay.png)
+
+挂号预约
+* 挂号预约采用Redisson的原子令牌进行获取商品锁和归还商品锁, 避免了超预约问题.
+* 订单支付队列采用RabbitMq的正常队列 + 死信队列组成 消息延迟支付功能
+* 超时未支付则执行取消事务: 订单取消并回滚商品
+* 关于在支付过程中出现订单超时问题. 在支付过程中如果出现了订单超时并且回滚则用乐观锁验证最终一致性. 如果最终不一致则事务回滚
+
+![img.png](assets/mine.png)
+
+我的页面
+
+
+# ** 注意上述, 以上为2025年9月升级最新版本, 而下面的内容为2024年本人毕业设计内容(未升级的系统) **
+
 
 ##### 环境配置
 

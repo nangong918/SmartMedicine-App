@@ -86,9 +86,8 @@ public class ChatVm extends ViewModel {
     public ChatMessageAdapter chatMessageAdapter;
 
     public ChatVo chatVo = new ChatVo();
-    public void init(ChatVo chatVo) {
+    public void init() {
         this.messageHandler = new Handler(Looper.getMainLooper());
-        setVo(chatVo);
         initSocketReceiver();
         initEventBus();
         setChatMessageManager();
@@ -144,7 +143,7 @@ public class ChatVm extends ViewModel {
 
     @SuppressLint("NotifyDataSetChanged")
     public void initRecyclerView(@NonNull RecyclerView recyclerView){
-        chatMessageAdapter = new ChatMessageAdapter();
+        chatMessageAdapter = new ChatMessageAdapter(chatVo.avatarUrl.getValue());
         chatMessageAdapter.setOnSetMessageCallback(
                 () -> {
                     // recyclerView滚动到最下面
@@ -168,7 +167,7 @@ public class ChatVm extends ViewModel {
         chatVo.inputText.setValue(ao.inputText);
         chatVo.contactAccount = ao.contactAccount;
         chatVo.contactId = ao.contactId;
-        chatVo.avatarUrlOrUri.setValue(ao.avatarUrl);
+        chatVo.avatarUrl.setValue(ao.avatarUrl);
     }
     // TODO 改为下拉刷新view （全部做完再完善）
     //---------------------------NetWork---------------------------

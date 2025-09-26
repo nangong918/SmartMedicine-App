@@ -12,7 +12,7 @@ public class ChatVo {
     // 输入框
     public final MutableLiveData<String> inputText = new MutableLiveData<>("");
     // 头像
-    public MutableLiveData<String> avatarUrlOrUri = new MutableLiveData<>("");
+    public MutableLiveData<String> avatarUrl = new MutableLiveData<>("");
     // 加载中
     public final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(true);
 
