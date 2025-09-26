@@ -7,7 +7,71 @@
 
 ##### 项目功能
 
-文章推荐,医疗社区,动态发布,在线问诊,AI问答,疾病预测,便捷搜索等功能
+文章推荐, 医疗社区, 动态发布, 在线问诊, AI问答, 疾病预测, 便捷搜索等功能
+
+![img.png](assets/start.png)
+
+启动页面
+
+![img.png](assets/signIn.png)
+
+登录页
+
+![img.png](assets/signUp.png)
+
+注册页
+
+![img.png](assets/home.png)
+
+![img.png](assets/post.png)
+
+![img.png](assets/publish.png)
+
+首页推荐
+
+![img.png](assets/ai_question.png)
+
+AI问诊 (v2.0版本由Bert升级为Spring AI 调用DeepSeek)
+* Spring AI 进行AI应用层开发具有更好的意图识别和实体命名识别
+* 用户结构化数据问题的模糊实体通过Milvus向量索引匹配精确实体, 交给Neo4j和ElasticSearch进行知识抽取
+* 用户非结构化数据的问题直接使用Milvus向量索引相关文档交给DeepSeek进行AIGC
+
+![img.png](assets/search.png)
+
+文章搜索
+
+![img.png](assets/friends.png)
+
+搜索 \ 添加好友
+
+![img.png](assets/friends2.png)
+
+![img.png](assets/friends3.png)
+
+好友 \ 预览
+
+![img.png](assets/message.png)
+
+消息界面
+
+![img.png](assets/chat.png)
+
+聊天
+
+![img.png](assets/appointment_home.png)
+
+![img.png](assets/appointment_search.png)
+
+![img.png](assets/appointment_list.png)
+
+![img.png](assets/pay.png)
+
+挂号预约
+
+![img.png](assets/mine.png)
+
+我的页面
+
 
 ##### 环境配置
 
